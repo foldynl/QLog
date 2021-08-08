@@ -10,6 +10,7 @@ matrix:
     arch: amd64
     sudo: required
     dist: focal
+    sudo: require
     addons:
       apt:
         sources:
