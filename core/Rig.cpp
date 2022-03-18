@@ -17,6 +17,7 @@ MODULE_IDENTIFICATION("qlog.core.rig");
 #define HAMLIB_FILPATHLEN FILPATHLEN
 #endif
 
+#define POLL_INTERVAL 2000
 
 static QString modeToString(rmode_t mode, QString &submode) {
     FCT_IDENTIFICATION;
@@ -123,7 +124,7 @@ void Rig::start() {
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(500);
+    timer->start(POLL_INTERVAL);
 }
 
 void Rig::update() {
@@ -133,7 +134,7 @@ void Rig::update() {
 
     if (!rig) return;
 
-    if (!rigLock.tryLock(200)) return;
+    if (!rigLock.tryLock(POLL_INTERVAL)) return;
 
     freq_t vfo_freq;
 
@@ -152,7 +153,7 @@ void Rig::update() {
     {
         __closeRig();
          emit rigErrorPresent(QString(tr("Get Frequency Error - ")) + QString(rigerror(status)));
-        timer->start(500);
+        timer->start(POLL_INTERVAL);
         rigLock.unlock();
         return;
     }
@@ -178,7 +179,7 @@ void Rig::update() {
     {
         __closeRig();
         emit rigErrorPresent(QString(tr("Get Mode Error - ")) + QString(rigerror(status)));
-        timer->start(500);
+        timer->start(POLL_INTERVAL);
         rigLock.unlock();
         return;
     }
@@ -217,7 +218,7 @@ void Rig::update() {
         emit rigErrorPresent(QString(tr("Get Level Error - ")) + QString(rigerror(status)));
         */
     }
-    timer->start(500);
+    timer->start(POLL_INTERVAL);
     rigLock.unlock();
 }
 
