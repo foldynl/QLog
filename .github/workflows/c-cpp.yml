@@ -14,6 +14,8 @@ jobs:
       run: sudo apt-get -y install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libsqlite3-dev libhamlib++-dev libqt5charts5-dev qttools5-dev-tools libqt5keychain1 qt5keychain-dev qtwebengine5-dev build-essential
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        submodules: recursive
     - name: configure
       run: qmake QLog.pro
     - name: make
