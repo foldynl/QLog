@@ -1,0 +1,20 @@
+on: [push, pull_request]
+
+jobs:
+  ubuntu-build:
+    name: Ubuntu CI
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+        
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Install dependencies
+      run: sudo apt-get -y install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libsqlite3-dev libhamlib++-dev libqt5charts5-dev qttools5-dev-tools libqt5keychain1 qt5keychain-dev qtwebengine5-dev build-essential
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: configure
+      run: qmake QLog.pro
+    - name: make
+      run: make -j4
