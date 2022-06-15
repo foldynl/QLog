@@ -490,6 +490,11 @@ void QSODetailDialog::setReadOnlyMode(bool inReadOnly)
             ui->satModeEdit->setEnabled(false);
             ui->satNameEdit->setEnabled(false);
         }
+        this->setWindowTitle(tr("Edit QSO"));
+    }
+    else
+    {
+        this->setWindowTitle(tr("QSO Detail"));
     }
 
     ui->timeLockButton->setEnabled(!inReadOnly);
