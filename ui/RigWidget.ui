@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>302</width>
-    <height>139</height>
+    <height>141</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -184,6 +184,9 @@
      </item>
      <item>
       <widget class="QComboBox" name="bandComboBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
        </property>
@@ -194,6 +197,9 @@
      </item>
      <item>
       <widget class="QComboBox" name="modeComboBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
        </property>

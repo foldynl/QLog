@@ -280,6 +280,8 @@ void RigWidget::rigConnected()
     FCT_IDENTIFICATION;
 
     ui->rigProfilCombo->setStyleSheet("QComboBox {color: green}");
+    ui->bandComboBox->setEnabled(true);
+    ui->modeComboBox->setEnabled(true);
 }
 
 void RigWidget::rigDisconnected()
@@ -287,6 +289,8 @@ void RigWidget::rigDisconnected()
     FCT_IDENTIFICATION;
 
     ui->rigProfilCombo->setStyleSheet("QComboBox {color: red}");
+    ui->bandComboBox->setEnabled(false);
+    ui->modeComboBox->setEnabled(false);
     resetRigInfo();
 }
 
