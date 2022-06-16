@@ -82,6 +82,7 @@ public:
     static int getITUZMax();
     static int getCQZMin();
     static int getCQZMax();
+
     QStringList contestList() { return contests.values(); }
     QStringList propagationModesList() { return propagationModes.values(); }
     QStringList propagationModesIDList() { return propagationModes.keys(); }
@@ -99,6 +100,7 @@ public:
     QString iotaTextToID(const QString &iotaText) { return iotaRef.key(iotaText);}
     QStringList sotaIDList() { return sotaRef.keys();}
     QString getIANATimeZone(double, double);
+    bool haveFavoriteFreq(const QString&, const QString&, double &);
 
 signals:
 

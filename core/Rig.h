@@ -78,6 +78,10 @@ public:
     static Rig* instance();
 
     static bool isNetworkRig(const struct rig_caps *caps);
+    static QString getModeNormalizedText(rmode_t hamlibMode, QString &submode);
+    static QString getModeFromRigMode(const QString &);
+
+    QStringList getAvailableModes();
 
 public slots:
     void start();
@@ -91,7 +95,6 @@ public slots:
     void setMode(const QString &);
     void setMode(rmode_t);
     void setPTT(bool);
-    QStringList getAvailableModes();
 
 signals:
     void frequencyChanged(VFOID, double, double, double);

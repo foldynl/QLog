@@ -44,6 +44,40 @@ bool Rig::isNetworkRig(const struct rig_caps *caps)
     return ret;
 }
 
+QString Rig::getModeNormalizedText(rmode_t hamlibMode, QString &submode)
+{
+    FCT_IDENTIFICATION;
+
+    switch ( hamlibMode )
+    {
+    case RIG_MODE_AM: return "AM";
+    case RIG_MODE_CW: return "CW";
+    case RIG_MODE_USB: {submode = "USB"; return "SSB";}
+    case RIG_MODE_LSB: {submode = "LSB"; return "SSB";}
+    case RIG_MODE_RTTY: return "RTTY";
+    case RIG_MODE_FM: return "FM";
+    case RIG_MODE_WFM: return "FM";
+    case RIG_MODE_CWR: return "CW";
+    case RIG_MODE_RTTYR: return "RTTY";
+    case RIG_MODE_AMS: return "AM";
+    case RIG_MODE_PKTLSB: {submode = "LSB"; return "SSB";}
+    case RIG_MODE_PKTUSB: {submode = "USB"; return "SSB";}
+    case RIG_MODE_PKTFM: return "FM";
+    case RIG_MODE_ECSSUSB: {submode = "USB"; return "SSB";}
+    case RIG_MODE_ECSSLSB: {submode = "LSB"; return "SSB";}
+    case RIG_MODE_FAX: return "";
+    case RIG_MODE_SAM: return "";
+    case RIG_MODE_SAL: return "AM";
+    case RIG_MODE_SAH: return "AM";
+    case RIG_MODE_DSB: return "";
+    case RIG_MODE_FMN: return "FM";
+    case RIG_MODE_PKTAM: return "AM";
+    default :
+        submode = QString();
+        return QString();
+    }
+}
+
 void Rig::stopTimer()
 {
     FCT_IDENTIFICATION;
@@ -798,6 +832,23 @@ QStringList Rig::getAvailableModes()
     return modeList;
 }
 
+QString Rig::getModeFromRigMode(const QString &rigMode)
+{
+    FCT_IDENTIFICATION;
+
+    rmode_t rmodet;
+
+    rmodet = rig_parse_mode(rigMode.toLocal8Bit().data());
+
+    if ( rmodet == RIG_MODE_NONE )
+    {
+        return QString();
+    }
+    QString submode;
+
+    return getModeNormalizedText(rmodet, submode);
+}
+
 Rig::Rig(QObject *parent) :
     SerialPort(parent),
     LoA(VFO1, this),
@@ -851,34 +902,7 @@ QString LocalOscilator::getModeText() const
 
 QString LocalOscilator::getModeNormalizedText(QString &submode) const
 {
-    switch (getMode())
-    {
-    case RIG_MODE_AM: return "AM";
-    case RIG_MODE_CW: return "CW";
-    case RIG_MODE_USB: {submode = "USB"; return "SSB";}
-    case RIG_MODE_LSB: {submode = "LSB"; return "SSB";}
-    case RIG_MODE_RTTY: return "RTTY";
-    case RIG_MODE_FM: return "FM";
-    case RIG_MODE_WFM: return "FM";
-    case RIG_MODE_CWR: return "CW";
-    case RIG_MODE_RTTYR: return "RTTY";
-    case RIG_MODE_AMS: return "AM";
-    case RIG_MODE_PKTLSB: {submode = "LSB"; return "SSB";}
-    case RIG_MODE_PKTUSB: {submode = "USB"; return "SSB";}
-    case RIG_MODE_PKTFM: return "FM";
-    case RIG_MODE_ECSSUSB: {submode = "USB"; return "SSB";}
-    case RIG_MODE_ECSSLSB: {submode = "LSB"; return "SSB";}
-    case RIG_MODE_FAX: return "";
-    case RIG_MODE_SAM: return "";
-    case RIG_MODE_SAL: return "AM";
-    case RIG_MODE_SAH: return "AM";
-    case RIG_MODE_DSB: return "";
-    case RIG_MODE_FMN: return "FM";
-    case RIG_MODE_PKTAM: return "AM";
-    default :
-        submode = QString();
-        return QString();
-    }
+    return Rig::getModeNormalizedText(getMode(), submode);
 }
 
 void LocalOscilator::setMode(const rmode_t &value)

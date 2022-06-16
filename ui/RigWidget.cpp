@@ -51,7 +51,6 @@ RigWidget::RigWidget(QWidget *parent) :
     connect(rig, &Rig::pttChanged, this, &RigWidget::updatePTT);
 
     resetRigInfo();
-
 }
 
 RigWidget::~RigWidget()
@@ -176,7 +175,14 @@ void RigWidget::bandComboChanged(QString newBand)
     QSqlTableModel* bandComboModel = dynamic_cast<QSqlTableModel*>(ui->bandComboBox->model());
     QSqlRecord record = bandComboModel->record(ui->bandComboBox->currentIndex());
 
-    double newFreq = record.value("start_freq").toDouble();
+    double newFreq;
+
+    if ( ! Data::instance()->haveFavoriteFreq(ui->bandComboBox->currentText(),
+                                              Rig::getModeFromRigMode(ui->modeComboBox->currentText()),
+                                              newFreq) )
+    {
+        newFreq = record.value("start_freq").toDouble();
+    }
 
     qCDebug(runtime) << "Tunning freq: " << newFreq;
 

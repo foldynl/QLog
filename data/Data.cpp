@@ -455,6 +455,52 @@ QString Data::getIANATimeZone(double lat, double lon)
     return ret;
 }
 
+bool Data::haveFavoriteFreq(const QString &band, const QString &mode, double& favoriteFreq)
+{
+    FCT_IDENTIFICATION;
+
+    qInfo() << band << mode;
+    qCDebug(function_parameters) << band << mode;
+
+    if ( band.isEmpty() || mode.isEmpty() )
+    {
+        return false;
+    }
+
+    QSqlQuery query;
+    if ( ! query.prepare(
+            " SELECT AVG(freq) "
+            " FROM (SELECT freq "
+            "       FROM contacts "
+            "       WHERE band = :band and mode = :mode "
+            "       ORDER BY freq "
+            "       LIMIT 2 - (SELECT COUNT(*) FROM contacts WHERE band = :band and mode = :mode) % 2 "
+            "       OFFSET (SELECT (COUNT(*) - 1) / 2 "
+            "               FROM contacts WHERE band = :band and mode = :mode)) LIMIT 1")
+             )
+    {
+        qWarning() << "Cannot prepare Select statement";
+        return false;
+    }
+
+    query.bindValue(":band", band);
+    query.bindValue(":mode", mode);
+
+    if ( ! query.exec() )
+    {
+        qWarning() << "Cannot execte Select statement" << query.lastError();
+        return false;
+    }
+
+    if ( query.next() && !query.value(0).isNull() )
+    {
+        favoriteFreq = query.value(0).toDouble();
+        return true;
+    }
+
+    return false;
+}
+
 void Data::loadContests() {
     FCT_IDENTIFICATION;
 
