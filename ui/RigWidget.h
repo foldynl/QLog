@@ -37,11 +37,12 @@ public slots:
     void rigConnected();
     void rigDisconnected();
 
-
-
 private:
 
     void resetRigInfo();
+    void saveLastSeenFreq();
+    double lastSeenFreq;
+    bool rigOnline;
 
     Ui::RigWidget *ui;
 };

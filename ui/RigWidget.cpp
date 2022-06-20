@@ -14,6 +14,8 @@ MODULE_IDENTIFICATION("qlog.ui.rigwidget");
 
 RigWidget::RigWidget(QWidget *parent) :
     QWidget(parent),
+    lastSeenFreq(0.0),
+    rigOnline(false),
     ui(new Ui::RigWidget)
 {
     FCT_IDENTIFICATION;
@@ -58,6 +60,7 @@ RigWidget::~RigWidget()
 {
     FCT_IDENTIFICATION;
 
+    saveLastSeenFreq();
     delete ui;
 }
 
@@ -72,10 +75,12 @@ void RigWidget::updateFrequency(VFOID vfoid, double vfoFreq, double ritFreq, dou
     ui->freqLabel->setText(QString("%1 MHz").arg(QSTRING_FREQ(vfoFreq)));
     if ( Data::band(vfoFreq).name != ui->bandComboBox->currentText() )
     {
+        saveLastSeenFreq();
         ui->bandComboBox->blockSignals(true);
         ui->bandComboBox->setCurrentText(Data::band(vfoFreq).name);
         ui->bandComboBox->blockSignals(false);
     }
+    lastSeenFreq = vfoFreq;
 }
 
 void RigWidget::updateMode(VFOID vfoid, QString rawMode, QString mode, QString submode)
@@ -173,10 +178,17 @@ void RigWidget::bandComboChanged(QString newBand)
 
     qCDebug(runtime) << "new Band:" << newBand;
 
+    saveLastSeenFreq();
+
     QSqlTableModel* bandComboModel = dynamic_cast<QSqlTableModel*>(ui->bandComboBox->model());
     QSqlRecord record = bandComboModel->record(ui->bandComboBox->currentIndex());
 
     double newFreq = record.value("start_freq").toDouble();
+
+    if ( ! record.value("last_seen_freq").isNull() )
+    {
+        newFreq = record.value("last_seen_freq").toDouble();
+    }
 
     qCDebug(runtime) << "Tunning freq: " << newFreq;
 
@@ -248,7 +260,7 @@ void RigWidget::refreshBandCombo()
     QSqlTableModel *bandComboModel = dynamic_cast<QSqlTableModel*>(ui->bandComboBox->model());
     bandComboModel->setFilter(QString("enabled = 1 AND start_freq >= %1 AND end_freq <= %2").arg(profile.txFreqStart + profile.xitOffset)
                                                                                             .arg(profile.txFreqEnd + profile.xitOffset));
-    dynamic_cast<QSqlTableModel*>(ui->bandComboBox->model())->select();
+    bandComboModel->select();
     ui->bandComboBox->setCurrentText(currSelection);
     ui->bandComboBox->blockSignals(false);
 }
@@ -280,6 +292,7 @@ void RigWidget::rigConnected()
     FCT_IDENTIFICATION;
 
     ui->rigProfilCombo->setStyleSheet("QComboBox {color: green}");
+    rigOnline = true;
 }
 
 void RigWidget::rigDisconnected()
@@ -287,6 +300,7 @@ void RigWidget::rigDisconnected()
     FCT_IDENTIFICATION;
 
     ui->rigProfilCombo->setStyleSheet("QComboBox {color: red}");
+    rigOnline = false;
     resetRigInfo();
 }
 
@@ -301,4 +315,25 @@ void RigWidget::resetRigInfo()
     updateRIT(VFO1, RigProfilesManager::instance()->getCurProfile1().ritOffset);
     updateXIT(VFO1, RigProfilesManager::instance()->getCurProfile1().xitOffset);
     updatePTT(VFO1, false);
+}
+
+void RigWidget::saveLastSeenFreq()
+{
+    FCT_IDENTIFICATION;
+
+    if ( rigOnline && lastSeenFreq != 0.0 )
+    {
+        QSqlTableModel *bandComboModel = dynamic_cast<QSqlTableModel*>(ui->bandComboBox->model());
+
+        QModelIndexList bandIndex = bandComboModel->match(bandComboModel->index(0,bandComboModel->fieldIndex("name")),
+                                                          Qt::DisplayRole,
+                                                          Data::freqToBand(lastSeenFreq),1, Qt::MatchExactly);
+        if ( bandIndex.size() > 0 )
+        {
+            bandComboModel->setData(bandComboModel->index(bandIndex.at(0).row(),
+                                                          bandComboModel->fieldIndex("last_seen_freq")),
+                                    lastSeenFreq);
+            bandComboModel->submitAll();
+        }
+    }
 }
