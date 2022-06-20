@@ -24,5 +24,6 @@
         <file>data/timezone21.bin</file>
         <file>sql/migration_008.sql</file>
         <file>sql/migration_009.sql</file>
+        <file>sql/migration_010.sql</file>
     </qresource>
 </RCC>
