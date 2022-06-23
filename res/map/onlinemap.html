@@ -5,10 +5,6 @@
   <title>Online Map</title>
   <meta charset="utf8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-   <script src="https://foldynl.github.io/QLog/js/L.MaidenheadConfWorked.js"></script>
-   <script src="https://unpkg.com/@joergdietrich/leaflet.terminator"></script>
   <style>
     body {
       padding: 0;
@@ -17,6 +13,7 @@
     html, body, #map {
       height: 100%;
     }
+
   </style>
 </head>
 
@@ -24,66 +21,147 @@
 
   <div id="map"></div>
 
+
   <script>
-    var mapOptions = {
-             center: [0,0],
-             zoom: 2,
-             minZoom: 2,
+    let QLogOnlineMap = (function () {
+      let pub = {};
+
+      function loadAsset(src, type, additionalAttributes) {
+        return new Promise(function (resolve, reject) {
+          let element;
+
+          switch(type) {
+            case 'css':
+              element = document.createElement('link');
+              element.setAttribute('href', src);
+              element.setAttribute('rel', 'stylesheet');
+              break;
+            case 'js':
+            default:
+              element = document.createElement('script');
+              element.setAttribute('src', src);
+              element.setAttribute('type', "text/javascript");
+          }
+
+          for (const [key, value] of Object.entries(additionalAttributes)) {
+            element.setAttribute(key, value);
+          }
+
+          element.onload = () => resolve(element);
+          element.onerror = () => reject(new Error(`Asset load error for ${src}`));
+
+          document.head.append(element);
+        });
+      }
+
+      function createMap() {
+        loadAsset('https://unpkg.com/leaflet@1.7.1/dist/leaflet.css', 'css', {
+          integrity: 'sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==',
+          crossorigin: ''
+        }).then(function(){
+          return loadAsset('https://unpkg.com/leaflet@1.7.1/dist/leaflet.js', 'js', {
+            integrity: 'sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==',
+            crossorigin: ''
+          })
+        }).then(function() {
+          return loadAsset('https://foldynl.github.io/QLog/js/L.MaidenheadConfWorked.js', 'js', {})
+        }).then(function() {
+          return loadAsset('https://unpkg.com/@joergdietrich/leaflet.terminator', 'js', {})
+        }).then(function() {
+          let mapOptions = {
+            center: [0,0],
+            zoom: 2,
+            minZoom: 2,
+          },
+          mylocations = [];
+          locations = [];
+
+
+          //@todo using global varialbes to commincate with other is super dirty. FIX ME :)
+          window.grids_worked = [];
+          window.grids_confirmed = [];
+          window.map = L.map('map', mapOptions);
+
+
+          L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  {
+                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                  }).addTo(map);
+
+          var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
+
+
+          var t = L.terminator({fillOpacity: 0.2});
+
+          setInterval(function(){updateTerminator(t)}, 60000);
+
+          function updateTerminator(t)
+          {
+            var t2 = L.terminator({fillOpacity: 0.2});
+            t.setLatLngs(t2.getLatLngs());
+            t.redraw();
           }
 
 
-    var grids_worked = [];
-    var grids_confirmed = [];
-    var mylocations = [];
-    var locations = [];
+          var layerControl = new L.Control.Layers(null, {
+            "Grip": maidenheadConfWorked,
+            "Gray-Line": t,},{}).addTo(map);
 
-    var map = L.map('map', mapOptions);
-    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                {
-                   attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                }).addTo(map);
+          var greenIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
 
-    var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
+          var yellowIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
 
-    var t = L.terminator({fillOpacity: 0.2});
+          var homeIcon = new L.Icon({
+            iconUrl: 'https://img.icons8.com/officel/30/000000/radio-tower.png',
+            iconSize: [50, 50],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+          });
 
-    setInterval(function(){updateTerminator(t)}, 60000);
 
-    function updateTerminator(t)
-    {
-       var t2 = L.terminator({fillOpacity: 0.2});
-       t.setLatLngs(t2.getLatLngs());
-       t.redraw();
-    }
+        })
+      }
 
-    var layerControl = new L.Control.Layers(null, {
-    "Grip": maidenheadConfWorked,
-    "Gray-Line": t,},{}).addTo(map);
 
-    var greenIcon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41]
-    });
+      pub.init = function () {
+        let onlineHandler;
+        if (navigator.onLine === false) {
+          document.getElementById('map').innerHTML='<h2>No Internet Connenction :(</h2>';
+          onlineHandler = function() {
+            window.removeEventListener('online', this);
+            document.getElementById('map').innerHTML='';
+            createMap();
+          }
 
-    var yellowIcon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41]
-    });
+          window.addEventListener('online', onlineHandler);
+        } else {
+          createMap();
+        }
 
-    var homeIcon = new L.Icon({
-      iconUrl: 'https://img.icons8.com/officel/30/000000/radio-tower.png',
-      iconSize: [50, 50],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34]
-    });
+      }
+
+      return pub;
+
+    })();
+
+
+    QLogOnlineMap.init();
+
+
 
   </script>
 
