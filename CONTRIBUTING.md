@@ -25,7 +25,7 @@ information like:
 
 * Your non-sensitive information - ADIF export, log file etc.
 * Your hardware configuration
-* Your distribution
+* Your OS, distribution etc.
 * Your version of libraries (especial Qt, Hamlib)
 
 ### Pull Requests
@@ -61,7 +61,7 @@ able quickly identify and resolve potential issues.
 ### Repository Structure
 
 **Branch Names:**
-- Current Release branch: `master`
+- Latest Public Release branch: `master`
 - Upcoming release branch: `testing_$VERSION`
 
 ### Coding Conventions
