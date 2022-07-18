@@ -5,7 +5,7 @@ jobs:
     name: Ubuntu CI
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-22.04]
         
     runs-on: ${{ matrix.os }}
 
@@ -22,3 +22,25 @@ jobs:
       run: qmake QLog.pro
     - name: make
       run: make -j2
+
+   macos-build:
+     name: MacOS CI
+     runs-on: macos-11
+
+     steps:
+     - name: Install dependencies
+       run: |
+         brew update
+         brew install qt5
+         brew link qt5 --force
+         brew install hamlib
+         brew link hamlib --force
+         brew install --ignore-dependencies qtkeychain
+     - name: Checkout code
+       uses: actions/checkout@v3
+       with:
+         submodules: recursive
+     - name: configure
+       run: qmake QLog.pro
+     - name: make
+       run: make -j2
