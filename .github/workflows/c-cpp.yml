@@ -23,7 +23,7 @@ jobs:
     - name: make
       run: make -j2
 
-   macos-build:
+  macos-build:
      name: MacOS CI
      runs-on: macos-11
 
