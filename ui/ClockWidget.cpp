@@ -39,15 +39,14 @@ ClockWidget::ClockWidget(QWidget *parent) :
 void ClockWidget::updateClock() {
     FCT_IDENTIFICATION;
 
-    QLocale locale;
-    QDateTime now = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
-    ui->clockLabel->setText(now.toString(locale.timeFormat(QLocale::LongFormat)).remove("UTC")); //hack: remove timezone from LongFormat
-
-    if (now.time().second() == 0)
+    int second = QDateTime::currentDateTime().time().second();
+    if (second == 0)
     {
         updateSun();
         updateSunGraph();
     }
+
+    ui->clockLabel->setText(QDateTime::currentDateTime().toLocalTime().toString("HH:mm:ss"));
 
     /* Use only in case when you want to debug which widget is focussed*/
 //    QWidget * fw = qApp->focusWidget();
