@@ -1,12 +1,19 @@
-function Component() {
-    // default constructor
+var targetDirectoryPage = null;
+
+function Component()
+{
+    installer.gainAdminRights();
+    component.loaded.connect(this, this.installerLoaded);
 }
 
 Component.prototype.createOperations = function() {
     component.createOperations();
 
     if (installer.value("os") === "win") {
-       component.addOperation("CreateShortcut", "@TargetDir@/qlog.exe", "@StartMenuDir@/QLog.lnk");
+       component.addOperation("CreateShortcut",
+			      "@TargetDir@/qlog.exe",
+			      "@StartMenuDir@/QLog.lnk",
+			      "workingDirectory=@TargetDir@");
     }
 }
 
