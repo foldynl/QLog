@@ -6,4 +6,7 @@
     <ReleaseDate>2022-07-15</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>
+    <UserInterfaces>
+       <UserInterface>targetwidget.ui</UserInterface>
+    </UserInterfaces>
 </Package>
