@@ -34,7 +34,7 @@ jobs:
          otool -L qlog.app/Contents/MacOS/qlog
          install_name_tool -change /usr/local/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
          find .
-     - name: artefact
+     - name: artifact
        uses: actions/upload-artifact@v3
        with:
          name: my-artifact
