@@ -25,10 +25,7 @@ jobs:
          mkdir build
          cd build
          qmake -config release ..
-     - name: make
-       run: make -j2
-     - name: build package
-       run: |
+         make -j2
          macdeployqt qlog.app -dmg
          find .
          cp /usr/local/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
