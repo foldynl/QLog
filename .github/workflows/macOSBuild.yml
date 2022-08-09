@@ -26,13 +26,17 @@ jobs:
          cd build
          qmake -config release ..
          make -j2
-         macdeployqt qlog.app -dmg
-         find .
+         macdeployqt qlog.app
          cp /usr/local/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp /usr/local/lib/libqt5keychain.dylib qlog.app/Contents/Frameworks/libqt5keychain.dylib
-         find .
          otool -L qlog.app/Contents/MacOS/qlog
          install_name_tool -change /usr/local/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
+         install_name_tool -change /usr/local/lib/libqt5keychain.dylib @executable_path/../Frameworks/libqt5keychain.dylib qlog.app/Contents/MacOS/qlog
+         otool -L qlog.app/Contents/MacOS/qlog
+         macdeployqt qlog.app -dmg -verbose=2
+         find .
+     - name: test
+       run: |
          find .
      - name: artifact
        uses: actions/upload-artifact@v3
