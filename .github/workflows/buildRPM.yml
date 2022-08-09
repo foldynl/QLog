@@ -1,0 +1,30 @@
+name: Fedora Build RPM
+
+on: [push, pull_request]
+
+jobs:
+  get_fedora_releases:
+    name: Get Fedora Releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query Fedora
+        id: releases
+        uses: sgallagher/get-fedora-releases-action@v1
+    outputs:
+      stable: ${{ steps.releases.outputs.stable }}
+      development: ${{ steps.releases.outputs.development }}
+      active: ${{ steps.releases.outputs.active }}
+
+  unit_tests_fedora_stable:
+    name: Unit Tests (Stable Fedora)
+    needs: get_fedora_releases
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    strategy:
+      matrix:
+        release: ${{ fromJson(needs.get_fedora_releases.outputs.stable) }}
+    container:
+      image: quay.io/fedora/fedora:${{ matrix.release }}-x86_64
+    steps:
+       - name: Run the tests
+         run: echo "running tests"
