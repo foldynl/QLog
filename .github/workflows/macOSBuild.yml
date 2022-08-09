@@ -1,0 +1,45 @@
+name: MacOS Build
+
+on: [workflow_dispatch]
+
+jobs:
+  macos-build:
+     name: MacOS Build
+     runs-on: macos-12
+
+     steps:
+     - name: Install dependencies
+       run: |
+         brew update
+         brew install qt5
+         brew link qt5 --force
+         brew install hamlib
+         brew link hamlib --force
+         brew install qtkeychain
+     - name: Checkout code
+       uses: actions/checkout@v3
+       with:
+         submodules: recursive
+     - name: configure
+       run: |
+         mkdir build
+         cd build
+         qmake -config release ..
+     - name: make
+       run: make -j2
+     - name: build package
+       run: |
+         macdeployqt qlog.app -dmg
+         find .
+         cp /usr/local/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
+         cp /usr/local/lib/libqt5keychain.dylib qlog.app/Contents/Frameworks/libqt5keychain.dylib
+         find .
+         otool -L qlog.app/Contents/MacOS/qlog
+         install_name_tool -change /usr/local/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
+         find .
+     - name: artefact
+       uses: actions/upload-artifact@v3
+       with:
+         name: my-artifact
+         path: /Users/runner/work/QLog/QLog/build/qlog.app
+
