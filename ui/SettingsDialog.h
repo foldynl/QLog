@@ -11,6 +11,7 @@
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
 #include "data/AntProfile.h"
+#include "data/CWKeyProfile.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -49,6 +50,12 @@ public slots:
     void doubleClickAntProfile(QModelIndex);
     void clearAntProfileForm();
 
+    void addCWKeyProfile();
+    void delCWKeyProfile();
+    void refreshCWKeyProfilesView();
+    void doubleClickCWKeyProfile(QModelIndex);
+    void clearCWKeyProfileForm();
+
     void refreshStationProfilesView();
     void addStationProfile();
     void deleteStationProfile();
@@ -79,6 +86,8 @@ private:
     RigProfilesManager *rigProfManager;
     RotProfilesManager *rotProfManager;
     AntProfilesManager *antProfManager;
+    CWKeyProfilesManager *cwKeyProfManager;
+
     QCompleter *sotaCompleter;
     QCompleter *iotaCompleter;
     Ui::SettingsDialog *ui;

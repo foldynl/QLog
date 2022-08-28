@@ -31,6 +31,7 @@
 #include "core/Rotator.h"
 #include "core/LogParam.h"
 #include "core/Callsign.h"
+#include "core/CWKeyer.h"
 
 #define WIDGET_INDEX_SERIAL_RIG  0
 #define STACKED_WIDGET_NETWORK_RIG 1
@@ -45,6 +46,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     rigProfManager(RigProfilesManager::instance()),
     rotProfManager(RotProfilesManager::instance()),
     antProfManager(AntProfilesManager::instance()),
+    cwKeyProfManager(CWKeyProfilesManager::instance()),
     ui(new Ui::SettingsDialog)
 {
     FCT_IDENTIFICATION;
@@ -65,6 +67,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     QStringListModel* antModel = new QStringListModel();
     ui->antProfilesListView->setModel(antModel);
+
+    QStringListModel* cwKeyModel = new QStringListModel();
+    ui->cwProfilesListView->setModel(cwKeyModel);
 
     QStringListModel* profilesModes = new QStringListModel();
     ui->stationProfilesListView->setModel(profilesModes);
@@ -147,6 +152,16 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->rotParitySelect->addItem(tr("Mark"), Rotator::SERIAL_PARITY_MARK);
     ui->rotParitySelect->addItem(tr("Space"), Rotator::SERIAL_PARITY_SPACE);
 
+    ui->cwModelSelect->addItem(tr("Dummy"), CWKey::DUMMY_KEYER);
+    ui->cwModelSelect->addItem(tr("K3NG with CLI"), CWKey::K3NG_WITH_CLI_KEYER);
+    ui->cwModelSelect->setCurrentIndex(ui->cwModelSelect->findData(DEFAULT_CWKEY_MODEL));
+
+    ui->cwKeyModeSelect->addItem(tr("Single Paddle"), CWKey::SINGLE_PADDLE);
+    ui->cwKeyModeSelect->addItem(tr("IAMBIC A"), CWKey::IAMBIC_A);
+    ui->cwKeyModeSelect->addItem(tr("IAMBIC B"), CWKey::IAMBIC_B);
+    ui->cwKeyModeSelect->addItem(tr("Ultimate"), CWKey::ULTIMATE);
+    ui->cwKeyModeSelect->setCurrentIndex(ui->cwKeyModeSelect->findData(CWKey::IAMBIC_B));
+
     readSettings();
 }
 
@@ -177,7 +192,7 @@ void SettingsDialog::save() {
         return;
     }
 
-    if ( ui->rigAddProfileButton->text() == tr("Modify") )
+    if ( ui->cwAddProfileButton->text() == tr("Modify") )
     {
         ui->tabWidget->setCurrentIndex(1);
         ui->equipmentTabWidget->setCurrentIndex(1);
@@ -185,10 +200,18 @@ void SettingsDialog::save() {
         return;
     }
 
-    if ( ui->rotAddProfileButton->text() == tr("Modify") )
+    if ( ui->rigAddProfileButton->text() == tr("Modify") )
     {
         ui->tabWidget->setCurrentIndex(1);
         ui->equipmentTabWidget->setCurrentIndex(2);
+        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
+        return;
+    }
+
+    if ( ui->rotAddProfileButton->text() == tr("Modify") )
+    {
+        ui->tabWidget->setCurrentIndex(1);
+        ui->equipmentTabWidget->setCurrentIndex(3);
         QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
         return;
     }
@@ -632,6 +655,100 @@ void SettingsDialog::clearAntProfileForm()
     ui->antAddProfileButton->setText(tr("Add"));
 }
 
+void SettingsDialog::addCWKeyProfile()
+{
+    FCT_IDENTIFICATION;
+
+    if ( ui->cwProfileNameEdit->text().isEmpty() )
+    {
+        ui->cwProfileNameEdit->setPlaceholderText(tr("Must not be empty"));
+        return;
+    }
+
+    if ( ui->cwAddProfileButton->text() == tr("Modify"))
+    {
+        ui->cwAddProfileButton->setText(tr("Add"));
+    }
+
+    CWKeyProfile profile;
+
+    profile.profileName = ui->cwProfileNameEdit->text();
+    profile.model = ui->cwModelSelect->currentData().toInt();
+    profile.defaultSpeed = ui->cwDefaulSpeed->value();
+    profile.keyMode = ui->cwKeyModeSelect->currentData().toInt();
+    profile.portPath = ui->cwPortEdit->text();
+    profile.baudrate = ui->cwBaudSelect->currentText().toInt();
+
+    cwKeyProfManager->addProfile(profile.profileName, profile);
+
+    refreshCWKeyProfilesView();
+
+    clearCWKeyProfileForm();
+}
+
+void SettingsDialog::delCWKeyProfile()
+{
+    FCT_IDENTIFICATION;
+
+    foreach (QModelIndex index, ui->cwProfilesListView->selectionModel()->selectedRows())
+    {
+        cwKeyProfManager->removeProfile(ui->cwProfilesListView->model()->data(index).toString());
+        ui->cwProfilesListView->model()->removeRow(index.row());
+    }
+    ui->cwProfilesListView->clearSelection();
+
+    clearCWKeyProfileForm();
+
+}
+
+void SettingsDialog::refreshCWKeyProfilesView()
+{
+    FCT_IDENTIFICATION;
+
+    QStringListModel* model = (QStringListModel*)ui->cwProfilesListView->model();
+    QStringList profiles = model->stringList();
+
+    profiles.clear();
+
+
+    profiles << cwKeyProfManager->profileNameList();
+
+    model->setStringList(profiles);
+}
+
+void SettingsDialog::doubleClickCWKeyProfile(QModelIndex i)
+{
+    FCT_IDENTIFICATION;
+
+    CWKeyProfile profile;
+
+    profile = cwKeyProfManager->getProfile(ui->cwProfilesListView->model()->data(i).toString());
+
+    ui->cwProfileNameEdit->setText(profile.profileName);
+    ui->cwModelSelect->setCurrentIndex(ui->cwModelSelect->findData(profile.model));
+    ui->cwDefaulSpeed->setValue(profile.defaultSpeed);
+    ui->cwKeyModeSelect->setCurrentIndex(ui->cwKeyModeSelect->findData(profile.keyMode));
+    ui->cwPortEdit->setText(profile.portPath);
+    ui->cwBaudSelect->setCurrentText(QString::number(profile.baudrate));
+
+    ui->cwAddProfileButton->setText(tr("Modify"));
+}
+
+void SettingsDialog::clearCWKeyProfileForm()
+{
+    FCT_IDENTIFICATION;
+
+    ui->cwProfileNameEdit->setPlaceholderText(QString());
+    ui->cwProfileNameEdit->clear();
+    ui->cwModelSelect->setCurrentIndex(ui->cwModelSelect->findData(DEFAULT_CWKEY_MODEL));
+    ui->cwKeyModeSelect->setCurrentIndex(ui->cwKeyModeSelect->findData(CWKey::IAMBIC_B));
+    ui->cwDefaulSpeed->setValue(20);
+    ui->cwPortEdit->clear();
+    ui->cwBaudSelect->setCurrentIndex(0);
+
+    ui->cwAddProfileButton->setText(tr("Add"));
+}
+
 void SettingsDialog::refreshRigProfilesView()
 {
     FCT_IDENTIFICATION;
@@ -1071,6 +1188,9 @@ void SettingsDialog::readSettings() {
     QStringList ants = antProfManager->profileNameList();
     ((QStringListModel*)ui->antProfilesListView->model())->setStringList(ants);
 
+    QStringList cwKeys = cwKeyProfManager->profileNameList();
+    ((QStringListModel*)ui->cwProfilesListView->model())->setStringList(cwKeys);
+
     /************/
     /* Callbook */
     /************/
@@ -1168,6 +1288,7 @@ void SettingsDialog::writeSettings() {
     rigProfManager->save();
     rotProfManager->save();
     antProfManager->save();
+    cwKeyProfManager->save();
 
     /************/
     /* Callbook */

@@ -17,6 +17,7 @@
 #include "ui/MainWindow.h"
 #include "Rig.h"
 #include "Rotator.h"
+#include "CWKeyer.h"
 #include "AppGuard.h"
 #include "logformat/AdxFormat.h"
 #include "ui/SettingsDialog.h"
@@ -167,6 +168,17 @@ static void startRotThread() {
     rot->moveToThread(rotThread);
     QObject::connect(rotThread, SIGNAL(started()), rot, SLOT(start()));
     rotThread->start();
+}
+
+static void startCWKeyerThread()
+{
+    FCT_IDENTIFICATION;
+
+    QThread* cwKeyerThread = new QThread;
+    CWKeyer* cwKeyer = CWKeyer::instance();
+    cwKeyer->moveToThread(cwKeyerThread);
+    QObject::connect(cwKeyerThread, SIGNAL(started()), cwKeyer, SLOT(start()));
+    cwKeyerThread->start();
 }
 
 static void debugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -338,6 +350,7 @@ int main(int argc, char* argv[])
     splash.showMessage(QObject::tr("Starting Application"), Qt::AlignBottom|Qt::AlignCenter);
     startRigThread();
     startRotThread();
+    startCWKeyerThread();
 
     MainWindow w;
     QIcon icon(":/res/qlog.png");

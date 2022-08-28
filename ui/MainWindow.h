@@ -34,11 +34,13 @@ signals:
 public slots:
     void rigErrorHandler(const QString &error, const QString &errorDetail);
     void rotErrorHandler(const QString &error, const QString &errorDetail);
+    void cwKeyerErrorHandler(const QString &error, const QString &errorDetail);
     void stationProfileChanged();
 
 private slots:
     void rigConnect();
     void rotConnect();
+    void cwKeyerConnect();
     void showSettings();
     void showStatistics();
     void importLog();

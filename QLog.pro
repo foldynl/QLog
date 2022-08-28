@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network xml charts webenginewidgets
+QT       += core gui sql network xml charts webenginewidgets serialport
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
@@ -30,6 +30,9 @@ CONFIG += c++11
 SOURCES += \
         core/AlertEvaluator.cpp \
         core/AppGuard.cpp \
+        core/CWDummyKey.cpp \
+        core/CWKey.cpp \
+        core/CWKeyer.cpp \
         core/CallbookManager.cpp \
         core/Callsign.cpp \
         core/ClubLog.cpp \
@@ -57,6 +60,7 @@ SOURCES += \
         core/main.cpp \
         core/zonedetect.c \
         data/AntProfile.cpp \
+        data/CWKeyProfile.cpp \
         data/Data.cpp \
         data/Dxcc.cpp \
         data/RigProfile.cpp \
@@ -112,6 +116,9 @@ SOURCES += \
 HEADERS += \
         core/AlertEvaluator.h \
         core/AppGuard.h \
+        core/CWDummyKey.h \
+        core/CWKey.h \
+        core/CWKeyer.h \
         core/CallbookManager.h \
         core/Callsign.h \
         core/ClubLog.h \
@@ -139,6 +146,7 @@ HEADERS += \
         core/zonedetect.h \
         data/AntProfile.h \
         data/Band.h \
+        data/CWKeyProfile.h \
         data/Data.h \
         data/DxSpot.h \
         data/Dxcc.h \
