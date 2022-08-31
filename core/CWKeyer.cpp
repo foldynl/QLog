@@ -69,8 +69,8 @@ void CWKeyer::__openCWKey()
     switch ( newProfile.model )
     {
     case CWKey::DUMMY_KEYER:
-        cwKey = new CWWinKey2("/dev/ttyUSB0",
-                              1200,
+        cwKey = new CWWinKey2("/dev/pts/2",
+                              38400,
                               this);
         break;
     case CWKey::WINKEY2_KEYER:
@@ -99,7 +99,7 @@ void CWKeyer::__openCWKey()
         return;
     }
 
-    //cwKey->sendText(QString("TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING")); //TODO, must be removed !!!!!!!!!!!!
+    cwKey->sendText(QString("TEST")); //TODO, must be removed !!!!!!!!!!!!
     connectedRigProfile = newProfile;
 
     emit cwKeyConnected();

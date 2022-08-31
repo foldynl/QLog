@@ -44,10 +44,6 @@ bool CWWinKey2::open()
 
     __close(); //close if open
 
-    connect(&serial, &QSerialPort::readyRead, this, &CWWinKey2::handleReadyRead);
-    connect(&serial, &QSerialPort::bytesWritten, this, &CWWinKey2::handleBytesWritten);
-    connect(&serial, &QSerialPort::errorOccurred, this, &CWWinKey2::handleError);
-
     /***************/
     /* Open Port   */
     /***************/
@@ -73,19 +69,15 @@ bool CWWinKey2::open()
     cmd.resize(2);
     cmd[0] = 0x00;
     cmd[1] = 0x02;
-qCDebug(runtime) << "sending";
-    serial.write(cmd);
-serial.flush();
-    qCDebug(runtime) << "sent";
-QCoreApplication::processEvents();
-//    if ( sendBytes(cmd) != 2 )
-  //  {
-    //    qCDebug(runtime) << "Sending error";
-      //  return false;
-    //}
 
-    //receiveBytes(cmd);
-#if 0
+    if ( sendBytes(cmd) != 2 )
+    {
+       qCDebug(runtime) << "Sending error";
+       return false;
+    }
+
+    receiveBytes(cmd);
+
     qCDebug(runtime) << "Host Mode enabled";
     QThread::msleep(300);
 
@@ -106,7 +98,10 @@ QCoreApplication::processEvents();
     receiveBytes(cmd);
     qCDebug(runtime) << "Mode setting done";
     QThread::msleep(300);
-#endif
+
+    connect(&serial, &QSerialPort::readyRead, this, &CWWinKey2::handleReadyRead);
+    connect(&serial, &QSerialPort::bytesWritten, this, &CWWinKey2::handleBytesWritten);
+    connect(&serial, &QSerialPort::errorOccurred, this, &CWWinKey2::handleError);
     return true;
 }
 
@@ -176,7 +171,7 @@ void CWWinKey2::handleReadyRead()
     serial.read((char*)&rcvByte,1);
     portMutex.unlock();
 
-    qCDebug(runtime) << "RCV: " << Qt::hex << rcvByte;
+    qCDebug(runtime) << "RCV: 0x" << Qt::hex << rcvByte;
 
     if ( (rcvByte & 0xC0) == 0xC0 )
     {
