@@ -348,6 +348,7 @@ int main(int argc, char* argv[])
     }
 
     splash.showMessage(QObject::tr("Starting Application"), Qt::AlignBottom|Qt::AlignCenter);
+
     startRigThread();
     startRotThread();
     startCWKeyerThread();

@@ -17,6 +17,7 @@
 #include "core/QRZ.h"
 #include "data/RigProfile.h"
 #include "data/AntProfile.h"
+#include "data/CWKeyProfile.h"
 #include "data/Data.h"
 #include "core/Callsign.h"
 
@@ -35,6 +36,8 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+
+    CWKeyProfilesManager::instance(); //TODO remove, make it better - workaround
 
     /*****************************************/
     /* Hack, remove timezone from LongFormat */

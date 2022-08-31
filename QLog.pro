@@ -33,6 +33,7 @@ SOURCES += \
         core/CWDummyKey.cpp \
         core/CWKey.cpp \
         core/CWKeyer.cpp \
+        core/CWWinKey.cpp \
         core/CallbookManager.cpp \
         core/Callsign.cpp \
         core/ClubLog.cpp \
@@ -119,6 +120,7 @@ HEADERS += \
         core/CWDummyKey.h \
         core/CWKey.h \
         core/CWKeyer.h \
+        core/CWWinKey.h \
         core/CallbookManager.h \
         core/Callsign.h \
         core/ClubLog.h \

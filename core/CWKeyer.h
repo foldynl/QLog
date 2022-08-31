@@ -26,12 +26,14 @@ public slots:
 
     void setMode(const CWKey::CWKeyModeID);
     void setSpeed(const qint16 wpm);
+    void sendText(const QString&);
 
 private slots:
     void openImpl();
     void closeImpl();
     void setModeImpl(const CWKey::CWKeyModeID);
     void setSpeedImpl(const qint16 wpm);
+    void sendTextImpl(const QString&);
     void stopTimerImplt();
 
 private:

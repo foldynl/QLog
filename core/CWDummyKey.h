@@ -13,9 +13,10 @@ public:
     virtual bool sendText(QString text) override;
     virtual bool setWPM(qint16 wpm) override;
     virtual bool setMode(CWKeyModeID mode) override;
+    virtual bool isConnected();
 
 private:
-    bool isConnected;
+    bool isUsed;
 };
 
 #endif // CWDUMMYKEY_H

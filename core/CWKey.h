@@ -30,10 +30,7 @@ public:
     };
 
 public:
-    explicit CWKey(const QString &portName,
-                   const qint32 baudrate,
-                   const qint32 msec = 30000,
-                   QObject *parent = nullptr);
+    explicit CWKey(QObject *parent = nullptr);
     ~CWKey() {};
 
     virtual bool open() = 0;
@@ -41,15 +38,9 @@ public:
     virtual bool sendText(QString text) = 0;
     virtual bool setWPM(qint16 wpm) = 0;
     virtual bool setMode(CWKeyModeID mode) = 0;
+    virtual QString lastError() = 0;
+    //virtual bool imediatellyStop() = 0;
 
-protected:
-    virtual qint64 sendBytes(const QByteArray &requestData);
-    virtual qint64 receiveBytes(QByteArray &data);
-    virtual bool isConnected();
-
-private:
-    QSerialPort serial;
-    qint32 timeout;
 };
 
 #endif // CWKEY_H

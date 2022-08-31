@@ -1,6 +1,7 @@
 #include "CWKeyer.h"
 #include "CWKey.h"
 #include "CWDummyKey.h"
+#include "CWWinKey.h"
 #include "core/debug.h"
 #include "data/CWKeyProfile.h"
 
@@ -68,7 +69,14 @@ void CWKeyer::__openCWKey()
     switch ( newProfile.model )
     {
     case CWKey::DUMMY_KEYER:
-        cwKey = new CWDummyKey();
+        cwKey = new CWWinKey2("/dev/ttyUSB0",
+                              1200,
+                              this);
+        break;
+    case CWKey::WINKEY2_KEYER:
+        cwKey = new CWWinKey2(newProfile.portPath,
+                              newProfile.baudrate,
+                              this);
         break;
     default:
         cwKey = nullptr;
@@ -85,12 +93,13 @@ void CWKeyer::__openCWKey()
 
     if ( ! cwKey->open() )
     {
-        __closeCWKey();
         emit cwKeyerError(tr("Open Connection Error"),
-                          QString());
+                          cwKey->lastError());
+        __closeCWKey();
         return;
     }
 
+    //cwKey->sendText(QString("TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING")); //TODO, must be removed !!!!!!!!!!!!
     connectedRigProfile = newProfile;
 
     emit cwKeyConnected();
@@ -168,6 +177,26 @@ void CWKeyer::setSpeedImpl(const qint16 wpm)
     cwKeyLock.lock();
 
     cwKey->setWPM(wpm);
+
+    cwKeyLock.unlock();
+}
+
+void CWKeyer::sendText(const QString &text)
+{
+    FCT_IDENTIFICATION;
+
+    QMetaObject::invokeMethod(this, "sendTextImpl",
+                              Qt::QueuedConnection,
+                              Q_ARG(QString, text));
+}
+
+void CWKeyer::sendTextImpl(const QString &text)
+{
+    FCT_IDENTIFICATION;
+
+    cwKeyLock.lock();
+
+    cwKey->sendText(text);
 
     cwKeyLock.unlock();
 }

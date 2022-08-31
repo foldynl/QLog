@@ -1,11 +1,11 @@
 #include "CWDummyKey.h"
 #include "core/debug.h"
 
-MODULE_IDENTIFICATION("qlog.data.CWKey");
+MODULE_IDENTIFICATION("qlog.data.cwdummykey");
 
 CWDummyKey::CWDummyKey(QObject *parent)
-    : CWKey("DUMMY", 9600, 30000, parent),
-      isConnected(false)
+    : CWKey(parent),
+      isUsed(false)
 {
     FCT_IDENTIFICATION;
 }
@@ -16,7 +16,7 @@ bool CWDummyKey::open()
 
     qInfo() << "Key is Connected";
 
-    isConnected = true;
+    isUsed = true;
 
     return true;
 }
@@ -27,7 +27,7 @@ bool CWDummyKey::close()
 
     qInfo() << "Key is Disconnected";
 
-    isConnected = false;
+    isUsed = false;
 
     return true;
 }
@@ -36,7 +36,7 @@ bool CWDummyKey::sendText(QString text)
 {
     FCT_IDENTIFICATION;
 
-    if ( isConnected )
+    if ( isUsed )
     {
         qInfo() << "Sending " << text;
     }
@@ -48,7 +48,7 @@ bool CWDummyKey::setWPM(qint16 wpm)
 {
     FCT_IDENTIFICATION;
 
-    if ( isConnected )
+    if ( isUsed )
     {
         qInfo() << "Setting Speed " << wpm;
     }
@@ -60,10 +60,17 @@ bool CWDummyKey::setMode(CWKeyModeID mode)
 {
     FCT_IDENTIFICATION;
 
-    if ( isConnected )
+    if ( isUsed )
     {
         qInfo() << "Setting Mode " << mode;
     }
 
     return true;
+}
+
+bool CWDummyKey::isConnected()
+{
+    FCT_IDENTIFICATION;
+
+    return isUsed;
 }
