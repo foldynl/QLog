@@ -36,6 +36,8 @@ jobs:
          brew install hamlib
          brew link hamlib --force
          brew install --ignore-dependencies qtkeychain
+         cd  /usr/local/
+         find .
      - name: Checkout code
        uses: actions/checkout@v3
        with:
