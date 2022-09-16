@@ -47,6 +47,7 @@ jobs:
          submodules: recursive
      - name: configure
        run: | 
+         cp -r ./qtkeychain .
          cd qtkeychain
          cmake .
          make && make install
