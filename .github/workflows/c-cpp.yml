@@ -35,7 +35,7 @@ jobs:
          brew link qt5 --force
          brew install hamlib
          brew link hamlib --force
-         brew install qtkeychain
+         brew install qtkeychain@0.13.2
          brew link qtkeychain --force
          cd  /usr/local/
          find .
