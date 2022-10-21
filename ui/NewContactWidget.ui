@@ -1184,6 +1184,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
