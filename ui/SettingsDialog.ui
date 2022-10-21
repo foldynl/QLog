@@ -3427,6 +3427,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>stationSOTAEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>sotaEditFinished()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>335</x>
+     <y>439</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
@@ -3470,5 +3486,6 @@
   <slot>rigStackWidgetChanged(int)</slot>
   <slot>rotStackWidgetChanged(int)</slot>
   <slot>cwKeyStackWidgetChanged(int)</slot>
+  <slot>sotaEditFinished()</slot>
  </slots>
 </ui>

@@ -185,6 +185,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->cwKeyModeSelect->addItem(tr("Ultimate"), CWKey::ULTIMATE);
     ui->cwKeyModeSelect->setCurrentIndex(ui->cwKeyModeSelect->findData(CWKey::IAMBIC_B));
 
+    connect(&sotaApi, &SOTAApi::summitResult,
+            this, &SettingsDialog::sotaSummitResult);
+
     readSettings();
 }
 
@@ -1434,6 +1437,26 @@ void SettingsDialog::sotaChanged(QString newSOTA)
     {
         ui->stationSOTAEdit->setCompleter(nullptr);
     }
+}
+
+void SettingsDialog::sotaSummitResult(const QMap<QString, QString> &data)
+{
+    FCT_IDENTIFICATION;
+
+    if ( data.value("summitCode") != ui->stationSOTAEdit->text() )
+    {
+        return;
+    }
+    // always replace locator and QTH
+    ui->stationLocatorEdit->setText(data.value("locator").toUpper());
+    ui->stationQTHEdit->setText(data.value("name"));
+}
+
+void SettingsDialog::sotaEditFinished()
+{
+    FCT_IDENTIFICATION;
+
+    sotaApi.querySummit(ui->stationSOTAEdit->text());
 }
 
 void SettingsDialog::primaryCallbookChanged(int index)

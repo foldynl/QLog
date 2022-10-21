@@ -57,6 +57,7 @@ SOURCES += \
         core/QRZ.cpp \
         core/Rig.cpp \
         core/Rotator.cpp \
+        core/SOTAApi.cpp \
         core/Sat.cpp \
         core/SerialPort.cpp \
         core/Wsjtx.cpp \
@@ -147,6 +148,7 @@ HEADERS += \
         core/QRZ.h \
         core/Rig.h \
         core/Rotator.h \
+        core/SOTAApi.h \
         core/Sat.h \
         core/SerialPort.h \
         core/Wsjtx.h \

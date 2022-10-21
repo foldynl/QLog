@@ -199,6 +199,9 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
 
     connect(contactTimer, &QTimer::timeout, this, &NewContactWidget::updateTimeOff);
 
+    connect(&sotaApi, &SOTAApi::summitResult,
+            this, &NewContactWidget::sotaSummitResult);
+
     ui->rstSentEdit->installEventFilter(this);
 
     /**************/
@@ -582,6 +585,19 @@ void NewContactWidget::callsignResult(const QMap<QString, QString>& data)
     }
 
     lastCallbookQueryData = QMap<QString, QString>(data);
+}
+
+void NewContactWidget::sotaSummitResult(const QMap<QString, QString> &data)
+{
+    FCT_IDENTIFICATION;
+
+    if ( data.value("summitCode") != ui->sotaEdit->text() )
+    {
+        return;
+    }
+    // always replace locator and QTH
+    ui->gridEdit->setText(data.value("locator").toUpper());
+    ui->qthEdit->setText(data.value("name"));
 }
 
 void NewContactWidget::bandChanged()
@@ -2066,6 +2082,13 @@ void NewContactWidget::sotaChanged(QString newSOTA)
     {
         ui->sotaEdit->setCompleter(nullptr);
     }
+}
+
+void NewContactWidget::sotaEditFinished()
+{
+    FCT_IDENTIFICATION;
+
+    sotaApi.querySummit(ui->sotaEdit->text());
 }
 
 void NewContactWidget::formFieldChangedString(const QString &)

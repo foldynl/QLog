@@ -2202,6 +2202,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>sotaEdit</sender>
+   <signal>editingFinished()</signal>
+   <receiver>NewContactWidget</receiver>
+   <slot>sotaEditFinished()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>347</x>
+     <y>293</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>237</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>saveContact()</slot>
@@ -2225,5 +2241,6 @@
   <slot>frequencyRXChanged()</slot>
   <slot>rigProfileComboChanged(QString)</slot>
   <slot>antProfileComboChanged(QString)</slot>
+  <slot>sotaEditFinished()</slot>
  </slots>
 </ui>

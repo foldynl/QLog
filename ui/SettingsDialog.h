@@ -14,6 +14,7 @@
 #include "data/AntProfile.h"
 #include "data/CWKeyProfile.h"
 #include "data/CWShortcutProfile.h"
+#include "core/SOTAApi.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -87,6 +88,8 @@ public slots:
     void paperDirBrowse();
     void cancelled();
     void sotaChanged(QString);
+    void sotaSummitResult(const QMap<QString, QString>& data);
+    void sotaEditFinished();
     void primaryCallbookChanged(int);
     void secondaryCallbookChanged(int);
 
@@ -107,6 +110,7 @@ private:
     CWShortcutProfilesManager *cwShortcutProfManager;
     QCompleter *sotaCompleter;
     QCompleter *iotaCompleter;
+    SOTAApi sotaApi;
     Ui::SettingsDialog *ui;
 };
 

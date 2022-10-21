@@ -11,6 +11,7 @@
 #include "data/DxSpot.h"
 #include "core/Rig.h"
 #include "core/CallbookManager.h"
+#include "core/SOTAApi.h"
 
 namespace Ui {
 class NewContactWidget;
@@ -91,8 +92,10 @@ private slots:
     void markContact();
     void editCallsignFinished();
     void callsignResult(const QMap<QString, QString>& data);
+    void sotaSummitResult(const QMap<QString, QString>& data);
     void propModeChanged(const QString&);
     void sotaChanged(QString);
+    void sotaEditFinished();
     void formFieldChangedString(const QString&);
     void formFieldChanged();
     void useNearestCallsign();
@@ -132,6 +135,7 @@ private:
     DxccEntity dxccEntity;
     QString defaultReport;
     CallbookManager callbookManager;
+    SOTAApi sotaApi;
     QTimer* contactTimer;
     Ui::NewContactWidget *ui;
     CoordPrecision coordPrec;
