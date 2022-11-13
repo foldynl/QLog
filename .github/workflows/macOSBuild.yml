@@ -1,12 +1,12 @@
 name: macOS 12 deployment
 
-#on: [push, pull_request]
+on: [push, pull_request]
 
-on:
-  workflow_dispatch:
-  push:
-     branches:
-       - master
+#on:
+#  workflow_dispatch:
+#  push:
+#     branches:
+#       - master
 
 jobs:
   macos-build:
@@ -22,6 +22,7 @@ jobs:
          brew install hamlib
          brew link hamlib --force
          brew install qtkeychain
+         brew install dbus-glib
      - name: Checkout Code
        uses: actions/checkout@v3
        with:
@@ -38,6 +39,7 @@ jobs:
          macdeployqt qlog.app
          cp /usr/local/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp /usr/local/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
+         cp /usr/local/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
          install_name_tool -change /usr/local/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change /usr/local/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
          otool -L qlog.app/Contents/MacOS/qlog
