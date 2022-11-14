@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network xml charts webenginewidgets serialport
+QT       += core gui sql network xml charts webenginewidgets serialport dbus
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
