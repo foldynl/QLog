@@ -44,7 +44,7 @@ jobs:
          cp /usr/local/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
          cp /usr/local/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
          cp `brew --prefix brotli`/lib/libbrotlicommon.1.dylib qlog.app/Contents/Frameworks/libbrotlicommon.1.dylib
-         cp /usr/local/opt/icu4c/lib/libicui18n.71.dylib log.app/Contents/Frameworks/libicui18n.71.dylib
+         cp /usr/local/opt/icu4c/lib/libicui18n.71.dylib qlog.app/Contents/Frameworks/libicui18n.71.dylib
          install_name_tool -change /usr/local/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change /usr/local/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change @loader_path/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
