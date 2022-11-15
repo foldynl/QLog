@@ -23,6 +23,8 @@ jobs:
          brew link hamlib --force
          brew install qtkeychain
          brew install dbus-glib
+         brew install brotli
+         brew install icu4c
      - name: Checkout Code
        uses: actions/checkout@v3
        with:
@@ -37,11 +39,16 @@ jobs:
        run: |
          cd build
          macdeployqt qlog.app
+         find /usr/local/opt/icu4c/lib/
          cp /usr/local/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp /usr/local/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
          cp /usr/local/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
+         cp `brew --prefix brotli`/lib/libbrotlicommon.1.dylib qlog.app/Contents/Frameworks/libbrotlicommon.1.dylib
+         cp /usr/local/opt/icu4c/lib/libicui18n.71.dylib log.app/Contents/Frameworks/libicui18n.71.dylib
          install_name_tool -change /usr/local/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change /usr/local/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
+         install_name_tool -change @loader_path/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
+         install_name_tool -change /usr/local/opt/icu4c/lib/libicui18n.71.dylib @executable_path/../Frameworks/libicui18n.71.dylib qlog.app/Contents/MacOS/qlog
          otool -L qlog.app/Contents/MacOS/qlog
          macdeployqt qlog.app -dmg
      - name: Copy artifact
