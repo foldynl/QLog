@@ -128,10 +128,16 @@ xcode-select --install
 install the tools anyway.
 
 ##### MacOS build
-Last dependencies before building QLog are `hamlib` and `qtkeychain`:  
+Last dependencies before building QLog are:
 ```
+ brew install qt6
+ brew link qt6 --force
  brew install hamlib
- brew install --ignore-dependencies qtkeychain
+ brew link hamlib --force
+ brew install qtkeychain
+ brew install dbus-glib
+ brew install brotli
+ brew install icu4c
 ```
 
 As soon as the steps above are finished, QLog source can be opened in QtCreator, configured, built and run.  
