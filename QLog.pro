@@ -337,7 +337,7 @@ unix:!macx {
 
 macx: {
    INCLUDEPATH += /usr/local/include
-   LIBS += -L/usr/local/lib -lhamlib
+   LIBS += /usr/local/lib -lhamlib
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=

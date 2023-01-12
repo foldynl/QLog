@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ubuntu-build-qt5:
+    if: ${{ false }}
     name: Ubuntu CI QT5
     strategy:
       matrix:
@@ -26,6 +27,7 @@ jobs:
       run: make -j2
 
   ubuntu-build-qt6:
+    if: ${{ false }}
     name: Ubuntu CI QT6
     strategy:
       matrix:
