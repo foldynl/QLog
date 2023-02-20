@@ -1095,12 +1095,12 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="344"/>
         <source>Spots Deduplication</source>
-        <translation type="unfinished"></translation>
+        <translation>Spots Dubletten entfernen</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="347"/>
         <source>Spots Dedup</source>
-        <translation type="unfinished"></translation>
+        <translation>Spots Dubletten entfernen</translation>
     </message>
 </context>
 <context>
@@ -1160,7 +1160,7 @@
     <message>
         <location filename="../ui/DxWidget.ui" line="40"/>
         <source>Insert a &lt;b&gt;hostname:port&lt;/b&gt; of DXC Serveru. Press &lt;b&gt;CTRL + DEL&lt;/b&gt; to delete a highlighted DXC server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge &lt;b&gt;hostname:port&lt;/b&gt; eines DXC Servers ein. Drücke &lt;b&gt;CTRL + DEL&lt;/b&gt; um einen markierten DXC-Server zu löschen.</translation>
     </message>
     <message>
         <source>Raw</source>
@@ -1302,22 +1302,22 @@
     <message>
         <location filename="../models/DxccTableModel.cpp" line="73"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>Gearbeitet</translation>
     </message>
     <message>
         <location filename="../models/DxccTableModel.cpp" line="77"/>
         <source>eQSL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/DxccTableModel.cpp" line="81"/>
         <source>LoTW</source>
-        <translation type="unfinished">LotW</translation>
+        <translation>LotW</translation>
     </message>
     <message>
         <location filename="../models/DxccTableModel.cpp" line="85"/>
         <source>Paper</source>
-        <translation type="unfinished"></translation>
+        <translation>Papier</translation>
     </message>
 </context>
 <context>
@@ -1341,7 +1341,7 @@
     <message>
         <location filename="../ui/DxccTableWidget.cpp" line="114"/>
         <source>Mode</source>
-        <translation type="unfinished">Betriebsart</translation>
+        <translation>Betriebsart</translation>
     </message>
 </context>
 <context>
@@ -1349,32 +1349,32 @@
     <message>
         <location filename="../core/Eqsl.cpp" line="365"/>
         <source>Incorrect Password or QTHProfile Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Falsches Passwort oder QTHProfil-Id</translation>
     </message>
     <message>
         <location filename="../core/Eqsl.cpp" line="380"/>
         <source>ADIF file not found in eQSL response</source>
-        <translation type="unfinished"></translation>
+        <translation>ADIF-Datei nicht in der eQSL-Antwort gefunden</translation>
     </message>
     <message>
         <location filename="../core/Eqsl.cpp" line="397"/>
         <source>Incorrect Username or password</source>
-        <translation type="unfinished"></translation>
+        <translation>Falscher Benutzername oder Passwort</translation>
     </message>
     <message>
         <location filename="../core/Eqsl.cpp" line="434"/>
         <source>Unknown Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Fehler</translation>
     </message>
     <message>
         <location filename="../core/Eqsl.cpp" line="458"/>
         <source>Cannot opet temporary file</source>
-        <translation type="unfinished"></translation>
+        <translation>Temporäre Datei kann nicht geöffnet werden</translation>
     </message>
     <message>
         <location filename="../core/Eqsl.cpp" line="558"/>
         <source>Unknown Reply from eQSL</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannte Antwort von eQSL</translation>
     </message>
 </context>
 <context>
@@ -1382,104 +1382,104 @@
     <message>
         <location filename="../ui/Eqsldialog.ui" line="14"/>
         <source>eQSL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.ui" line="20"/>
         <source>Upload</source>
-        <translation type="unfinished">Hochladen</translation>
+        <translation>Hochladen</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.ui" line="26"/>
         <source>My Grigsquare</source>
-        <translation type="unfinished"></translation>
+        <translation>Mein Locator</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.ui" line="47"/>
         <source>My Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Mein Rufzeichen</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.ui" line="67"/>
         <location filename="../ui/Eqsldialog.ui" line="93"/>
         <source>eQSL QTH Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL QTH Profil</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.ui" line="33"/>
         <source>Show Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl anzeigen</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.ui" line="54"/>
         <source>Use Comment as a QSL Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar als QSL-Nachricht verwenden</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.ui" line="80"/>
         <location filename="../ui/Eqsldialog.ui" line="86"/>
         <source>Download</source>
-        <translation type="unfinished">Herunterladen</translation>
+        <translation>Herunterladen</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="44"/>
         <source>Downloading from eQSL</source>
-        <translation type="unfinished"></translation>
+        <translation>Von eQSL herunter laden</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="44"/>
         <location filename="../ui/Eqsldialog.cpp" line="178"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="55"/>
         <source>Processing eQSL QSLs</source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL QSLs verarbeiten</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="77"/>
         <source>QLog Error</source>
-        <translation type="unfinished">QLog Fehler</translation>
+        <translation>QLog Fehler</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="77"/>
         <source>eQSL update failed: </source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL-Update fehlgeschlagen: </translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="178"/>
         <source>Uploading to eQSL</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach eQSL hoch laden</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="189"/>
         <location filename="../ui/Eqsldialog.cpp" line="221"/>
         <source>QLog Information</source>
-        <translation type="unfinished">QLog Information</translation>
+        <translation>QLog Information</translation>
     </message>
     <message numerus="yes">
         <location filename="../ui/Eqsldialog.cpp" line="189"/>
         <source>%n QSO(s) uploaded.</source>
-        <translation type="unfinished">
-            <numerusform>%n QSO hochgeladen.</numerusform>
+        <translation>
+            <numerusform>%n QSO(s) hochgeladen.</numerusform>
             <numerusform>%n QSOs hochgeladen.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="205"/>
         <source>Cannot upload the QSO(s): </source>
-        <translation type="unfinished"></translation>
+        <translation>Kann QSO(s) nicht hoch laden: </translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="205"/>
         <source>QLog Warning</source>
-        <translation type="unfinished">QLog Warnung</translation>
+        <translation>QLog Warnung</translation>
     </message>
     <message>
         <location filename="../ui/Eqsldialog.cpp" line="221"/>
         <source>No QSOs found to upload.</source>
-        <translation type="unfinished">Keine QSOs zum Upload gefunden.</translation>
+        <translation>Keine QSOs zum Upload gefunden.</translation>
     </message>
 </context>
 <context>
@@ -1487,7 +1487,7 @@
     <message>
         <location filename="../ui/ExportDialog.ui" line="14"/>
         <source>Export Selected QSOs</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählte QSOs exportieren</translation>
     </message>
     <message>
         <source>Export</source>
@@ -1496,7 +1496,7 @@
     <message>
         <location filename="../ui/ExportDialog.ui" line="23"/>
         <source>Export only QSOs from the given period</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur QSOs aus dem angegebenen Zeitraum exportieren</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="26"/>
@@ -1541,12 +1541,12 @@
     <message>
         <location filename="../ui/ExportDialog.cpp" line="15"/>
         <source>Export All QSOs</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle QSOs exportieren</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.cpp" line="31"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message numerus="yes">
         <source>Exported %n contacts.</source>
@@ -1561,7 +1561,7 @@
     <message>
         <location filename="../core/HamQTH.cpp" line="84"/>
         <source>HamQTH</source>
-        <translation type="unfinished">HamQTH</translation>
+        <translation>HamQTH</translation>
     </message>
 </context>
 <context>
@@ -1579,14 +1579,14 @@
     <message>
         <location filename="../ui/ImportDialog.ui" line="115"/>
         <source>My Grid</source>
-        <translation>Mein Grid</translation>
+        <translation>Mein Locator</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="131"/>
         <location filename="../ui/ImportDialog.ui" line="160"/>
         <location filename="../ui/ImportDialog.ui" line="189"/>
         <source>The value is used when an input record does not contain the value</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Wert wird verwendet, wenn der Eintrag den Wert nicht enthält</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="173"/>
@@ -1606,7 +1606,7 @@
     <message>
         <location filename="../ui/ImportDialog.ui" line="47"/>
         <source>ADX</source>
-        <translation type="unfinished">ADX</translation>
+        <translation>ADX</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="65"/>
@@ -1616,17 +1616,17 @@
     <message>
         <location filename="../ui/ImportDialog.ui" line="100"/>
         <source>The values are used when an input record does not contain the value</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Werte werden verwendet, wenn der Eintrag die Werte nicht enthalten</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="199"/>
         <source>Import only QSOs from the given period</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur QSOs aus dem angegebenen Zeitraum importieren</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="202"/>
         <source>Date Range</source>
-        <translation>Zeitbereich</translation>
+        <translation>Zeitraum</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="208"/>
@@ -1636,7 +1636,7 @@
     <message>
         <location filename="../ui/ImportDialog.ui" line="231"/>
         <source>Start</source>
-        <translation>Start</translation>
+        <translation>Beginn</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="260"/>
@@ -1651,12 +1651,12 @@
     <message>
         <location filename="../ui/ImportDialog.ui" line="276"/>
         <source>Recalculate DXCC Entity Information (DXCC, Country name, Continent etc.)</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuberechnung der DXCC-Informationen (DXCC, Ländername, Kontinent usw.)</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="279"/>
         <source>Update DXCC Entity Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisierung der DXCC-Einträge</translation>
     </message>
     <message>
         <source>Update DXCC entities</source>
@@ -1672,32 +1672,32 @@
     <message>
         <location filename="../ui/ImportDialog.cpp" line="41"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="47"/>
         <source>Select File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei auswählen</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="115"/>
         <source>&lt;p&gt;&lt;b&gt;In-Log QSO:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;Logbuch QSO:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="119"/>
         <source>&lt;p&gt;&lt;b&gt;Importing:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;Importieren:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="124"/>
         <source>Duplicate QSO</source>
-        <translation type="unfinished"></translation>
+        <translation>Doppeltes QSO</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="125"/>
         <source>&lt;p&gt;Do you want to import duplicate QSO?&lt;/p&gt;%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Doppelte QSOs importieren?&lt;/p&gt;%1 %2</translation>
     </message>
 </context>
 <context>
@@ -1705,54 +1705,55 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="15"/>
         <source>QSO ID</source>
+        <translatorcomment>Original descriptions may be more meaningful here?</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="16"/>
         <source>Time on</source>
-        <translation>Startzeit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="17"/>
         <source>Time off</source>
-        <translation>Endzeit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="18"/>
         <source>Call</source>
-        <translation>Rufzeichen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="234"/>
         <source>RST Sent</source>
-        <translation>RST Ges</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="238"/>
         <source>RST Rcvd</source>
-        <translation>RST Empf</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="21"/>
         <source>Frequency</source>
-        <translation>Frequenz</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="22"/>
         <location filename="../models/LogbookModel.cpp" line="226"/>
         <source>Band</source>
-        <translation>Band</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="23"/>
         <location filename="../models/LogbookModel.cpp" line="230"/>
         <source>Mode</source>
-        <translation>Betriebsart</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="24"/>
         <source>Submode</source>
-        <translation>Unterart</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="99"/>
@@ -1797,7 +1798,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="131"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="132"/>
@@ -1812,29 +1813,29 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="151"/>
         <source>QTH</source>
-        <translation>QTH</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="27"/>
         <location filename="../models/LogbookModel.cpp" line="242"/>
         <source>Gridsquare</source>
-        <translation>Gridsquare</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="28"/>
         <source>DXCC</source>
-        <translation>DXCC</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="68"/>
         <location filename="../models/LogbookModel.cpp" line="222"/>
         <source>Country</source>
-        <translation>Land</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="30"/>
         <source>Continent</source>
-        <translation>Kontinent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="19"/>
@@ -2596,13 +2597,13 @@
     <message>
         <location filename="../ui/LogbookWidget.ui" line="39"/>
         <source>Search Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Rufzeichen suchen</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="125"/>
         <location filename="../ui/LogbookWidget.cpp" line="175"/>
         <source>User Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer-Filter</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="194"/>
@@ -2633,32 +2634,32 @@
     <message>
         <location filename="../ui/LogbookWidget.ui" line="229"/>
         <source>Edit Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Wert Bearbeiten</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="232"/>
         <source>Ctrl+E</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="237"/>
         <source>Column Visibility </source>
-        <translation type="unfinished"></translation>
+        <translation>Spalten-Sichtbarkeit </translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="240"/>
         <source>Which columns should be displayed</source>
-        <translation type="unfinished"></translation>
+        <translation>Welche Spalten sollen angezeigt werden</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="249"/>
         <source>Export Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählte exportieren</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="252"/>
         <source>Export selected QSOs</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählte QSOs exportieren</translation>
     </message>
     <message>
         <source>Date</source>
@@ -2791,22 +2792,22 @@
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="628"/>
         <source>Downloading eQSL Image</source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL-Bild herunter laden</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="628"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="646"/>
         <source>QLog Error</source>
-        <translation type="unfinished">QLog Fehler</translation>
+        <translation>QLog Fehler</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="646"/>
         <source>eQSL Download Image failed: </source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL-Bild download fehlgeschlagen: </translation>
     </message>
     <message numerus="yes">
         <source>%n contacts</source>
