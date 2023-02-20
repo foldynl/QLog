@@ -264,7 +264,7 @@
     <message>
         <location filename="../ui/AlertWidget.ui" line="72"/>
         <source> min(s)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AlertWidget.ui" line="98"/>
@@ -450,7 +450,7 @@
     <message>
         <location filename="../ui/BandmapWidget.ui" line="181"/>
         <source> min(s)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/BandmapWidget.cpp" line="656"/>
@@ -557,7 +557,7 @@
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="213"/>
         <source>F1</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="238"/>
@@ -872,7 +872,7 @@
     <message>
         <location filename="../ui/ColumnSettingSimpleDialog.ui" line="14"/>
         <source>Column Visibility Setting</source>
-        <translation>Einstellung der Sichtbarkeit von Spalten</translation>
+        <translation>Sichtbarkeit der Spalten</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.cpp" line="303"/>
@@ -905,7 +905,7 @@
     <message>
         <location filename="../data/Data.cpp" line="658"/>
         <source>New Slot</source>
-        <translation type="unfinished">Neuer Slot</translation>
+        <translation>Neuer Slot</translation>
     </message>
     <message>
         <location filename="../data/Data.cpp" line="660"/>
@@ -1045,7 +1045,7 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="212"/>
         <source>Log Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Log Status</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="220"/>
@@ -1065,7 +1065,7 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="241"/>
         <source>New Slot</source>
-        <translation type="unfinished">Neuer Slot</translation>
+        <translation>Neuer Slot</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="248"/>
@@ -1123,7 +1123,7 @@
     <message>
         <location filename="../ui/DxWidget.cpp" line="96"/>
         <source>Mode</source>
-        <translation type="unfinished">Betriebsart</translation>
+        <translation>Betriebsart</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="97"/>
@@ -1138,17 +1138,17 @@
     <message>
         <location filename="../ui/DxWidget.cpp" line="99"/>
         <source>Continent</source>
-        <translation type="unfinished">Kontinent</translation>
+        <translation>Kontinent</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="100"/>
         <source>Spotter Continent</source>
-        <translation type="unfinished"></translation>
+        <translation>Spotter Kontinent</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="101"/>
         <source>Band</source>
-        <translation type="unfinished">Band</translation>
+        <translation>Band</translation>
     </message>
     <message>
         <source>Country</source>
@@ -1173,87 +1173,87 @@
     <message>
         <location filename="../ui/DxWidget.ui" line="444"/>
         <source>Send DX Cluster Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Sende DX-Cluster Kommando</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="457"/>
         <source>Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommandos</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="98"/>
         <source>Spots</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="103"/>
         <source>WCY</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="108"/>
         <source>WWV</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="113"/>
         <source>To All</source>
-        <translation type="unfinished"></translation>
+        <translation>An alle</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="118"/>
         <source>Console</source>
-        <translation type="unfinished"></translation>
+        <translation>Konsole</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="473"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="476"/>
         <source>Filter DXC</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter  DXC</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="481"/>
         <source>Spot Last QSO</source>
-        <translation type="unfinished"></translation>
+        <translation>Letztes QSO spotten</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="484"/>
         <source>Send last QSO spot</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte QSO spot senden</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="489"/>
         <source>Show HF Stats</source>
-        <translation type="unfinished"></translation>
+        <translation>HF Statistik anzeigen</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="494"/>
         <source>Show VHF Stats</source>
-        <translation type="unfinished"></translation>
+        <translation>VHF Statistik anzeigen</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="499"/>
         <source>Show WCY</source>
-        <translation type="unfinished"></translation>
+        <translation>WCY anzeigen</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="504"/>
         <source>Show WWV</source>
-        <translation type="unfinished"></translation>
+        <translation>WWV anzeigen</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="509"/>
         <source>Column Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Spalten-Sichtbarkeit</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="512"/>
         <source>Which columns should be displayed</source>
-        <translation type="unfinished"></translation>
+        <translation>Welche Spalten sollen angezeigt werden</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="71"/>
@@ -1269,7 +1269,7 @@
     <message>
         <location filename="../ui/DxWidget.cpp" line="546"/>
         <source>DX Cluster is temporarily unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>DX Cluster vorübergehend nicht erreichbar</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="987"/>
@@ -1279,22 +1279,22 @@
     <message>
         <location filename="../ui/DxWidget.cpp" line="1078"/>
         <source>DX Spot</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="1079"/>
         <source>Callsign: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rufzeichen: </translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="1081"/>
         <source>Frequency: </source>
-        <translation type="unfinished"></translation>
+        <translation>Frequenz: </translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="1083"/>
         <source>Remarks:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bemerkungen:</translation>
     </message>
 </context>
 <context>
