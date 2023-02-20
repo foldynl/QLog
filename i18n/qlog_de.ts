@@ -6,163 +6,163 @@
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="14"/>
         <source>Alert Rule Detail</source>
-        <translation type="unfinished"></translation>
+        <translation>Alarmregel Detail</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="24"/>
         <source>Rule Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Regelname</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="34"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiv</translation>
+        <translation>Aktiv</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="51"/>
         <source>Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Quellen</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="60"/>
         <source>DX Cluster</source>
-        <translation type="unfinished">DX Cluster</translation>
+        <translation>DX Cluster</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="70"/>
         <source>WSJTX</source>
-        <translation type="unfinished">WSJTX</translation>
+        <translation>WSJTX</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="109"/>
         <source>DX</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="117"/>
         <source>DX Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>DX Rufzeichen</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="124"/>
         <location filename="../ui/AlertRuleDetail.ui" line="164"/>
         <source>Use Perl-like regular expression</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwenden Sie Perl-ähnliche reguläre Ausdrücke</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="127"/>
         <location filename="../ui/AlertRuleDetail.ui" line="167"/>
         <source>.*</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="137"/>
         <location filename="../ui/AlertRuleDetail.ui" line="386"/>
         <source>Country</source>
-        <translation type="unfinished">Land</translation>
+        <translation>Land</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="147"/>
         <source>Log Status</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="157"/>
         <source>Spot Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Spot-Kommentar</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="191"/>
         <source>Modes</source>
-        <translation type="unfinished">Betriebsarten</translation>
+        <translation>Betriebsarten</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="214"/>
         <source>Phone</source>
-        <translation type="unfinished"></translation>
+        <translation>Phonie</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="227"/>
         <source>CW</source>
-        <translation type="unfinished">CW</translation>
+        <translation>CW</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="240"/>
         <source>Digital</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="253"/>
         <source>FT8</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="278"/>
         <source>Bands</source>
-        <translation type="unfinished">Bänder</translation>
+        <translation>Bänder</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="309"/>
         <location filename="../ui/AlertRuleDetail.ui" line="398"/>
         <source>Continent</source>
-        <translation type="unfinished">Kontinent</translation>
+        <translation>Kontinent</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="323"/>
         <location filename="../ui/AlertRuleDetail.ui" line="412"/>
         <source>North America</source>
-        <translation type="unfinished"></translation>
+        <translation>Nordamerika</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="330"/>
         <location filename="../ui/AlertRuleDetail.ui" line="422"/>
         <source>Africa</source>
-        <translation type="unfinished"></translation>
+        <translation>Afrika</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="337"/>
         <location filename="../ui/AlertRuleDetail.ui" line="432"/>
         <source>Antarctica</source>
-        <translation type="unfinished"></translation>
+        <translation>Antarktis</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="344"/>
         <location filename="../ui/AlertRuleDetail.ui" line="442"/>
         <source>South America</source>
-        <translation type="unfinished"></translation>
+        <translation>Südamarika</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="351"/>
         <location filename="../ui/AlertRuleDetail.ui" line="452"/>
         <source>Asia</source>
-        <translation type="unfinished"></translation>
+        <translation>Asien</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="358"/>
         <location filename="../ui/AlertRuleDetail.ui" line="462"/>
         <source>Europe</source>
-        <translation type="unfinished"></translation>
+        <translation>Europa</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="365"/>
         <location filename="../ui/AlertRuleDetail.ui" line="472"/>
         <source>Oceania</source>
-        <translation type="unfinished"></translation>
+        <translation>Ozeanien</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="378"/>
         <source>Spotter</source>
-        <translation type="unfinished">Entdecker</translation>
+        <translation>Beobachter</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="56"/>
         <source>All</source>
-        <translation type="unfinished">Alle</translation>
+        <translation>Alle</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="138"/>
         <source>Must not be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Darf nicht leer sein</translation>
     </message>
 </context>
 <context>
@@ -170,37 +170,37 @@
     <message>
         <location filename="../ui/AlertSettingDialog.ui" line="14"/>
         <source>Alerts Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Alarmregel</translation>
     </message>
     <message>
         <location filename="../ui/AlertSettingDialog.ui" line="22"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regel</translation>
     </message>
     <message>
         <location filename="../ui/AlertSettingDialog.ui" line="86"/>
         <source>Add</source>
-        <translation type="unfinished">Hinzufügen</translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <location filename="../ui/AlertSettingDialog.ui" line="93"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../ui/AlertSettingDialog.ui" line="100"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location filename="../ui/AlertSettingDialog.cpp" line="17"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../ui/AlertSettingDialog.cpp" line="18"/>
         <source>State</source>
-        <translation type="unfinished">Staat</translation>
+        <translation>Staat</translation>
     </message>
 </context>
 <context>
@@ -212,32 +212,32 @@
     <message>
         <location filename="../models/AlertTableModel.cpp" line="52"/>
         <source>Callsign</source>
-        <translation type="unfinished">Rufzeichen</translation>
+        <translation>Rufzeichen</translation>
     </message>
     <message>
         <location filename="../models/AlertTableModel.cpp" line="53"/>
         <source>Frequency</source>
-        <translation type="unfinished">Frequenz</translation>
+        <translation>Frequenz</translation>
     </message>
     <message>
         <location filename="../models/AlertTableModel.cpp" line="54"/>
         <source>Mode</source>
-        <translation type="unfinished">Betriebsart</translation>
+        <translation>Betriebsart</translation>
     </message>
     <message>
         <location filename="../models/AlertTableModel.cpp" line="55"/>
         <source>Updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisiert</translation>
     </message>
     <message>
         <location filename="../models/AlertTableModel.cpp" line="56"/>
         <source>Last Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Aktualisierung</translation>
     </message>
     <message>
         <location filename="../models/AlertTableModel.cpp" line="57"/>
         <source>Last Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzter Kommentar</translation>
     </message>
     <message>
         <source>Comment</source>
@@ -249,17 +249,17 @@
     <message>
         <location filename="../ui/AlertWidget.ui" line="14"/>
         <source>Alerts</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinweise</translation>
     </message>
     <message>
         <location filename="../ui/AlertWidget.ui" line="62"/>
         <source>Clear older than</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen wenn älter als</translation>
     </message>
     <message>
         <location filename="../ui/AlertWidget.ui" line="69"/>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie</translation>
     </message>
     <message>
         <location filename="../ui/AlertWidget.ui" line="72"/>
@@ -269,7 +269,7 @@
     <message>
         <location filename="../ui/AlertWidget.ui" line="98"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Löschen</translation>
     </message>
 </context>
 <context>
@@ -277,112 +277,112 @@
     <message>
         <location filename="../ui/AwardsDialog.ui" line="14"/>
         <source>Awards</source>
-        <translation type="unfinished"></translation>
+        <translation>Diplome</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="20"/>
         <source>Options</source>
-        <translation type="unfinished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="26"/>
         <source>Award</source>
-        <translation type="unfinished"></translation>
+        <translation>Diplom</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="36"/>
         <source>My DXCC Entity</source>
-        <translation type="unfinished"></translation>
+        <translation>Mein DXCC Eintrag</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="46"/>
         <source>Confirmed by</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestätigt durch</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="55"/>
         <source>LoTW</source>
-        <translation type="unfinished">LotW</translation>
+        <translation>LotW</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="65"/>
         <source>eQSL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="75"/>
         <source>Paper</source>
-        <translation type="unfinished"></translation>
+        <translation>Papier</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="87"/>
         <source>Mode</source>
-        <translation type="unfinished">Betriebsart</translation>
+        <translation>Betriebsart</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="96"/>
         <source>CW</source>
-        <translation type="unfinished">CW</translation>
+        <translation>CW</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="106"/>
         <source>Phone</source>
-        <translation type="unfinished"></translation>
+        <translation>Phonie</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="116"/>
         <source>Digi</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="33"/>
         <source>DXCC</source>
-        <translation type="unfinished">DXCC</translation>
+        <translation>DXCC</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="34"/>
         <source>ITU</source>
-        <translation type="unfinished">ITU</translation>
+        <translation>ITU</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="35"/>
         <source>WAC</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="36"/>
         <source>WAZ</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="37"/>
         <source>IOTA</source>
-        <translation type="unfinished">IOTA</translation>
+        <translation>IOTA</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="39"/>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>erledigt</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="171"/>
         <source>TOTAL Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>TOTAL Gearbeitet</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="183"/>
         <source>TOTAL Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>TOTAL Bestätigt</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="196"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestätigt</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="204"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>Gearbeitet</translation>
     </message>
 </context>
 <context>
@@ -390,17 +390,17 @@
     <message>
         <location filename="../models/AwardsTableModel.cpp" line="50"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestätigt</translation>
     </message>
     <message>
         <location filename="../models/AwardsTableModel.cpp" line="54"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>Gearbeitet</translation>
     </message>
     <message>
         <location filename="../models/AwardsTableModel.cpp" line="58"/>
         <source>Still Waiting</source>
-        <translation type="unfinished"></translation>
+        <translation>Wartend</translation>
     </message>
 </context>
 <context>
@@ -413,22 +413,22 @@
     <message>
         <location filename="../ui/BandmapWidget.ui" line="136"/>
         <source>In</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergrößern</translation>
     </message>
     <message>
         <location filename="../ui/BandmapWidget.ui" line="150"/>
         <source>Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkleinern</translation>
     </message>
     <message>
         <location filename="../ui/BandmapWidget.ui" line="165"/>
         <source>Clear older than</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen wenn älter als</translation>
     </message>
     <message>
         <location filename="../ui/BandmapWidget.ui" line="178"/>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -437,7 +437,7 @@
     <message>
         <location filename="../ui/BandmapWidget.ui" line="126"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Löschen</translation>
     </message>
     <message>
         <source>Zoom In</source>
@@ -455,12 +455,12 @@
     <message>
         <location filename="../ui/BandmapWidget.cpp" line="656"/>
         <source>Show Band</source>
-        <translation type="unfinished"></translation>
+        <translation>Band anzeigen</translation>
     </message>
     <message>
         <location filename="../ui/BandmapWidget.cpp" line="669"/>
         <source>Center RX</source>
-        <translation type="unfinished"></translation>
+        <translation>RX zentrieren</translation>
     </message>
 </context>
 <context>
@@ -468,48 +468,48 @@
     <message>
         <location filename="../core/CWCatKey.cpp" line="36"/>
         <source>No Rig is connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Rig verbunden</translation>
     </message>
     <message>
         <location filename="../core/CWCatKey.cpp" line="46"/>
         <location filename="../core/CWCatKey.cpp" line="116"/>
         <location filename="../core/CWCatKey.cpp" line="171"/>
         <source>Rig does not support Morse over CAT</source>
-        <translation type="unfinished"></translation>
+        <translation>Rig unterstützt kein CW über CAT</translation>
     </message>
     <message>
         <location filename="../core/CWCatKey.cpp" line="102"/>
         <location filename="../core/CWCatKey.cpp" line="109"/>
         <location filename="../core/CWCatKey.cpp" line="116"/>
         <source>Cannot sent Text to Rig</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann keinen Text an Rig übertragen</translation>
     </message>
     <message>
         <location filename="../core/CWCatKey.cpp" line="102"/>
         <location filename="../core/CWCatKey.cpp" line="132"/>
         <location filename="../core/CWCatKey.cpp" line="157"/>
         <source>Key is not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Keyer verbunden</translation>
     </message>
     <message>
         <location filename="../core/CWCatKey.cpp" line="109"/>
         <location filename="../core/CWCatKey.cpp" line="139"/>
         <location filename="../core/CWCatKey.cpp" line="164"/>
         <source>Rig is not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Rig verbunden</translation>
     </message>
     <message>
         <location filename="../core/CWCatKey.cpp" line="132"/>
         <location filename="../core/CWCatKey.cpp" line="139"/>
         <source>Cannot set Key Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastengeschwindigkeit nicht einstellbar</translation>
     </message>
     <message>
         <location filename="../core/CWCatKey.cpp" line="157"/>
         <location filename="../core/CWCatKey.cpp" line="164"/>
         <location filename="../core/CWCatKey.cpp" line="171"/>
         <source>Cannot stop Text Sending</source>
-        <translation type="unfinished"></translation>
+        <translation>Textübertragung kann nicht beendet werden</translation>
     </message>
 </context>
 <context>
@@ -522,17 +522,17 @@
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="40"/>
         <source>CW Key Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>CW-Tasten Profil</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="94"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="103"/>
         <source> WPM</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="399"/>
@@ -542,32 +542,32 @@
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="402"/>
         <source>Clear</source>
-        <translation type="unfinished">Leeren</translation>
+        <translation>Leeren</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="167"/>
         <source>&amp;CW</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="180"/>
         <source>Text to send</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu sendender Text</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="213"/>
         <source>F1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="238"/>
         <source>F2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="254"/>
         <source>F3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="62"/>
@@ -577,47 +577,47 @@
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="137"/>
         <source>Sent text</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesendeter Text</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="151"/>
         <source>Echoed text</source>
-        <translation type="unfinished"></translation>
+        <translation>Echotext</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="270"/>
         <source>F4</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="286"/>
         <source>F5</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="302"/>
         <source>F6</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="318"/>
         <source>F7</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="370"/>
         <source>Immediatelly stop CW sending</source>
-        <translation type="unfinished"></translation>
+        <translation>CW-Senden sofort beenden</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="373"/>
         <source>Hal&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.cpp" line="328"/>
         <source>Rig must be connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Rig muss verbunden sein</translation>
     </message>
 </context>
 <context>
@@ -625,22 +625,22 @@
     <message>
         <location filename="../core/CWKeyer.cpp" line="100"/>
         <source>No CW Key Profile selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein CW-Tasten Profil ausgewählt</translation>
     </message>
     <message>
         <location filename="../core/CWKeyer.cpp" line="133"/>
         <source>Initialization Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Initialisierungsfehler</translation>
     </message>
     <message>
         <location filename="../core/CWKeyer.cpp" line="134"/>
         <source>Internal Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Interner Fehler</translation>
     </message>
     <message>
         <location filename="../core/CWKeyer.cpp" line="140"/>
         <source>Connection Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindungsfehler</translation>
     </message>
 </context>
 <context>
@@ -648,39 +648,39 @@
     <message>
         <location filename="../core/CWWinKey.cpp" line="117"/>
         <source>Connected devices is not WinKey</source>
-        <translation type="unfinished"></translation>
+        <translation>Angeschlossener Keyer ist nicht WinKey</translation>
     </message>
     <message>
         <location filename="../core/CWWinKey.cpp" line="156"/>
         <source>Connected devices is not WinKey v2 or newer</source>
-        <translation type="unfinished"></translation>
+        <translation>Angeschlossener Keyer ist nicht WinKey v2 oder neuer</translation>
     </message>
     <message>
         <location filename="../core/CWWinKey.cpp" line="232"/>
         <source>Cannot sent Text to Rig</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann keinen Text an Rig übertragen</translation>
     </message>
     <message>
         <location filename="../core/CWWinKey.cpp" line="232"/>
         <location filename="../core/CWWinKey.cpp" line="395"/>
         <location filename="../core/CWWinKey.cpp" line="434"/>
         <source>Key is not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Taste verbunden</translation>
     </message>
     <message>
         <location filename="../core/CWWinKey.cpp" line="369"/>
         <source>Communication Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommunikationsfehler</translation>
     </message>
     <message>
         <location filename="../core/CWWinKey.cpp" line="395"/>
         <source>Cannot set Key Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyer-Geschwindigkeit nicht einstellbar</translation>
     </message>
     <message>
         <location filename="../core/CWWinKey.cpp" line="434"/>
         <source>Cannot Stop Text Sending</source>
-        <translation type="unfinished"></translation>
+        <translation>Textübertragung kann nicht beendet werden</translation>
     </message>
 </context>
 <context>
@@ -688,7 +688,7 @@
     <message>
         <location filename="../core/CallbookManager.cpp" line="103"/>
         <source>&lt;p&gt;The secondary callbook will be used&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Das sekundäre Callbook wird verwendet</translation>
     </message>
 </context>
 <context>
@@ -696,12 +696,12 @@
     <message>
         <location filename="../ui/StyleItemDelegate.h" line="301"/>
         <source>Enabled</source>
-        <translation type="unfinished">Aktiv</translation>
+        <translation>Aktiv</translation>
     </message>
     <message>
         <location filename="../ui/StyleItemDelegate.h" line="302"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Inaktiv</translation>
     </message>
 </context>
 <context>
@@ -740,48 +740,48 @@
     <message>
         <location filename="../ui/ClublogDialog.ui" line="14"/>
         <source>Clublog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.ui" line="20"/>
         <source>Upload</source>
-        <translation type="unfinished">Hochladen</translation>
+        <translation>Hochladen</translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.ui" line="26"/>
         <source>My Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Mein Rufzeichen</translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.ui" line="33"/>
         <source>My GridSquare</source>
-        <translation type="unfinished"></translation>
+        <translation>Mein Locator</translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.ui" line="40"/>
         <source>Show Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl anzeigen</translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.cpp" line="110"/>
         <source>Uploading to Clublog</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach Clublog hoch laden</translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.cpp" line="110"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.cpp" line="122"/>
         <location filename="../ui/ClublogDialog.cpp" line="154"/>
         <source>QLog Information</source>
-        <translation type="unfinished">QLog Information</translation>
+        <translation>QLog Information</translation>
     </message>
     <message numerus="yes">
         <location filename="../ui/ClublogDialog.cpp" line="122"/>
         <source>%n QSO(s) uploaded.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n QSO hochgeladen.</numerusform>
             <numerusform>%n QSOs hochgeladen.</numerusform>
         </translation>
@@ -789,17 +789,17 @@
     <message>
         <location filename="../ui/ClublogDialog.cpp" line="138"/>
         <source>QLog Warning</source>
-        <translation type="unfinished">QLog Warnung</translation>
+        <translation>QLog Warnung</translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.cpp" line="138"/>
         <source>Cannot upload the QSO(s): </source>
-        <translation type="unfinished"></translation>
+        <translation>Kann QSO(s) nicht hoch laden: </translation>
     </message>
     <message>
         <location filename="../ui/ClublogDialog.cpp" line="154"/>
         <source>No QSOs found to upload.</source>
-        <translation type="unfinished">Keine QSOs zum Upload gefunden.</translation>
+        <translation>Keine QSOs zum Upload gefunden.</translation>
     </message>
 </context>
 <context>
@@ -807,17 +807,17 @@
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="14"/>
         <source>Column Visibility Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellung der Sichtbarkeit von Spalten</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="24"/>
         <source>General</source>
-        <translation type="unfinished">Allgemein</translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="47"/>
         <source>My Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Information</translation>
     </message>
     <message>
         <source>QSL</source>
@@ -831,27 +831,27 @@
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="93"/>
         <source>Members</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitglied</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="116"/>
         <source>Conditionals</source>
-        <translation type="unfinished"></translation>
+        <translation>Bedingungen</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="139"/>
         <source>Contests</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteste</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="162"/>
         <source>Others</source>
-        <translation type="unfinished"></translation>
+        <translation>Andere</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.cpp" line="21"/>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>erledigt</translation>
     </message>
 </context>
 <context>
@@ -859,12 +859,12 @@
     <message>
         <location filename="../ui/ColumnSettingDialog.cpp" line="247"/>
         <source>Unselect All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle abwählen</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.cpp" line="248"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
 </context>
 <context>
@@ -872,12 +872,12 @@
     <message>
         <location filename="../ui/ColumnSettingSimpleDialog.ui" line="14"/>
         <source>Column Visibility Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellung der Sichtbarkeit von Spalten</translation>
     </message>
     <message>
         <location filename="../ui/ColumnSettingDialog.cpp" line="303"/>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>erledigt</translation>
     </message>
 </context>
 <context>
@@ -885,22 +885,22 @@
     <message>
         <location filename="../data/Data.cpp" line="650"/>
         <source>New Entity</source>
-        <translation type="unfinished">Neues DXCC</translation>
+        <translation>Neuer Eintrag</translation>
     </message>
     <message>
         <location filename="../data/Data.cpp" line="652"/>
         <source>New Band</source>
-        <translation type="unfinished">Neues Band</translation>
+        <translation>Neues Band</translation>
     </message>
     <message>
         <location filename="../data/Data.cpp" line="654"/>
         <source>New Mode</source>
-        <translation type="unfinished">Neuer Mode</translation>
+        <translation>Neuer Mode</translation>
     </message>
     <message>
         <location filename="../data/Data.cpp" line="656"/>
         <source>New Band&amp;Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Neues Band&amp;Mode</translation>
     </message>
     <message>
         <location filename="../data/Data.cpp" line="658"/>
@@ -910,12 +910,12 @@
     <message>
         <location filename="../data/Data.cpp" line="660"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestätigt</translation>
     </message>
     <message>
         <location filename="../data/Data.cpp" line="662"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>Gearbeitet</translation>
     </message>
 </context>
 <context>
@@ -958,89 +958,89 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="20"/>
         <source>DX Cluster Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>DX Cluster Filter</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="39"/>
         <source>General Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Allgemeine Filter</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="45"/>
         <source>Bands</source>
-        <translation type="unfinished">Bänder</translation>
+        <translation>Bänder</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="150"/>
         <source>Continent</source>
-        <translation type="unfinished">Kontinent</translation>
+        <translation>Kontinent</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="158"/>
         <location filename="../ui/DxFilterDialog.ui" line="282"/>
         <source>North America</source>
-        <translation type="unfinished"></translation>
+        <translation>Nordamerika</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="165"/>
         <location filename="../ui/DxFilterDialog.ui" line="289"/>
         <source>Africa</source>
-        <translation type="unfinished"></translation>
+        <translation>Afrika</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="172"/>
         <location filename="../ui/DxFilterDialog.ui" line="296"/>
         <source>Antarctica</source>
-        <translation type="unfinished"></translation>
+        <translation>Antarktis</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="179"/>
         <location filename="../ui/DxFilterDialog.ui" line="303"/>
         <source>South America</source>
-        <translation type="unfinished"></translation>
+        <translation>Südamarika</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="186"/>
         <location filename="../ui/DxFilterDialog.ui" line="310"/>
         <source>Asia</source>
-        <translation type="unfinished"></translation>
+        <translation>Asien</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="193"/>
         <location filename="../ui/DxFilterDialog.ui" line="317"/>
         <source>Europe</source>
-        <translation type="unfinished"></translation>
+        <translation>Europa</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="200"/>
         <location filename="../ui/DxFilterDialog.ui" line="324"/>
         <source>Oceania</source>
-        <translation type="unfinished"></translation>
+        <translation>Ozeanien</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="82"/>
         <source>Modes</source>
-        <translation type="unfinished">Betriebsarten</translation>
+        <translation>Betriebsarten</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="99"/>
         <source>Phone</source>
-        <translation type="unfinished"></translation>
+        <translation>Phonie</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="112"/>
         <source>CW</source>
-        <translation type="unfinished">CW</translation>
+        <translation>CW</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="125"/>
         <source>Digital</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="138"/>
         <source>FT8</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="212"/>
@@ -1050,17 +1050,17 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="220"/>
         <source>New Mode</source>
-        <translation type="unfinished">Neuer Mode</translation>
+        <translation>Neuer Mode</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="227"/>
         <source>New Entity</source>
-        <translation type="unfinished">Neues DXCC</translation>
+        <translation>Neuer Eintrag</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="234"/>
         <source>New Band</source>
-        <translation type="unfinished">Neues Band</translation>
+        <translation>Neues Band</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="241"/>
@@ -1070,27 +1070,27 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="248"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>Gearbeitet</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="255"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestätigt</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="268"/>
         <source>Extended Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Erweiterte Filter</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="274"/>
         <source>Spotter Continent</source>
-        <translation type="unfinished"></translation>
+        <translation>Spotter Kontinent</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="336"/>
         <source>Others</source>
-        <translation type="unfinished"></translation>
+        <translation>Andere</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="344"/>
@@ -5533,22 +5533,22 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/SettingsDialog.ui" line="160"/>
         <source>SOTA (Optional parameter)</source>
-        <translation type="unfinished"></translation>
+        <translation>SOTA (Optionaler Parameter)</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="115"/>
         <source>SOTA</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="71"/>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="197"/>
         <source>IOTA</source>
-        <translation type="unfinished">IOTA</translation>
+        <translation>IOTA</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="204"/>
@@ -5558,27 +5558,27 @@ Unmatched QSLs:
         <location filename="../ui/SettingsDialog.ui" line="1250"/>
         <location filename="../ui/SettingsDialog.ui" line="2222"/>
         <source>Profile Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Profilname</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="146"/>
         <source>IOTA  (Optional parameter)</source>
-        <translation type="unfinished"></translation>
+        <translation>IOTA  (Optionaler Parameter)</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="129"/>
         <source>SIG Information (Optional parameter)</source>
-        <translation type="unfinished"></translation>
+        <translation>SIG Information (Optionaler Parameter)</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="211"/>
         <source>VUCC</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="122"/>
         <source>QTH</source>
-        <translation type="unfinished">QTH</translation>
+        <translation>QTH</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="167"/>
@@ -5616,55 +5616,55 @@ Unmatched QSLs:
         <location filename="../ui/SettingsDialog.ui" line="626"/>
         <location filename="../ui/SettingsDialog.ui" line="2086"/>
         <source>1200</source>
-        <translation type="unfinished">1200</translation>
+        <translation>1200</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="621"/>
         <location filename="../ui/SettingsDialog.ui" line="1684"/>
         <location filename="../ui/SettingsDialog.ui" line="2081"/>
         <source>2400</source>
-        <translation type="unfinished">2400</translation>
+        <translation>2400</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="616"/>
         <location filename="../ui/SettingsDialog.ui" line="1679"/>
         <location filename="../ui/SettingsDialog.ui" line="2076"/>
         <source>4800</source>
-        <translation type="unfinished">4800</translation>
+        <translation>4800</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="611"/>
         <location filename="../ui/SettingsDialog.ui" line="1674"/>
         <location filename="../ui/SettingsDialog.ui" line="2071"/>
         <source>9600</source>
-        <translation type="unfinished">9600</translation>
+        <translation>9600</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="606"/>
         <location filename="../ui/SettingsDialog.ui" line="1669"/>
         <location filename="../ui/SettingsDialog.ui" line="2066"/>
         <source>19200</source>
-        <translation type="unfinished">19200</translation>
+        <translation>19200</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="601"/>
         <location filename="../ui/SettingsDialog.ui" line="1664"/>
         <location filename="../ui/SettingsDialog.ui" line="2061"/>
         <source>38400</source>
-        <translation type="unfinished">38400</translation>
+        <translation>38400</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="596"/>
         <location filename="../ui/SettingsDialog.ui" line="1659"/>
         <location filename="../ui/SettingsDialog.ui" line="2056"/>
         <source>57600</source>
-        <translation type="unfinished">57600</translation>
+        <translation>57600</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="591"/>
         <location filename="../ui/SettingsDialog.ui" line="2051"/>
         <source>115200</source>
-        <translation type="unfinished">115200</translation>
+        <translation>115200</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1697"/>
@@ -5736,7 +5736,7 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1331"/>
         <source>MHz</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1340"/>
@@ -5762,25 +5762,25 @@ Unmatched QSLs:
         <location filename="../ui/SettingsDialog.ui" line="1726"/>
         <location filename="../ui/SettingsDialog.ui" line="2117"/>
         <source>5</source>
-        <translation type="unfinished">5</translation>
+        <translation>5</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1721"/>
         <location filename="../ui/SettingsDialog.ui" line="2112"/>
         <source>6</source>
-        <translation type="unfinished">6</translation>
+        <translation>6</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1716"/>
         <location filename="../ui/SettingsDialog.ui" line="2107"/>
         <source>7</source>
-        <translation type="unfinished">7</translation>
+        <translation>7</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1711"/>
         <location filename="../ui/SettingsDialog.ui" line="2102"/>
         <source>8</source>
-        <translation type="unfinished">8</translation>
+        <translation>8</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1734"/>
@@ -5792,7 +5792,7 @@ Unmatched QSLs:
         <location filename="../ui/SettingsDialog.ui" line="1748"/>
         <location filename="../ui/SettingsDialog.ui" line="2133"/>
         <source>1</source>
-        <translation type="unfinished">1</translation>
+        <translation>1</translation>
     </message>
     <message>
         <source>1.5</source>
@@ -5802,7 +5802,7 @@ Unmatched QSLs:
         <location filename="../ui/SettingsDialog.ui" line="1753"/>
         <location filename="../ui/SettingsDialog.ui" line="2138"/>
         <source>2</source>
-        <translation type="unfinished">2</translation>
+        <translation>2</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1773"/>
@@ -5894,7 +5894,7 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1465"/>
         <source>VFO</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1541"/>
@@ -5905,7 +5905,7 @@ Unmatched QSLs:
         <location filename="../ui/SettingsDialog.ui" line="1356"/>
         <location filename="../ui/SettingsDialog.ui" line="1388"/>
         <source> MHz</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="57"/>
@@ -5915,12 +5915,12 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/SettingsDialog.ui" line="139"/>
         <source>WWFF</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1455"/>
         <source>Mode</source>
-        <translation type="unfinished">Betriebsart</translation>
+        <translation>Betriebsart</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1482"/>
@@ -5975,7 +5975,7 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/SettingsDialog.ui" line="796"/>
         <source>F1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="821"/>
@@ -6017,32 +6017,32 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/SettingsDialog.ui" line="872"/>
         <source>F2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1043"/>
         <source>F3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1076"/>
         <source>F4</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1109"/>
         <source>F5</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1142"/>
         <source>F6</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1175"/>
         <source>F7</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1440"/>
