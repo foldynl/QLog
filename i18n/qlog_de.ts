@@ -572,7 +572,7 @@
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="62"/>
         <source>Shortcuts profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Shortcut Profile</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="137"/>
@@ -817,7 +817,7 @@
     <message>
         <location filename="../ui/ColumnSettingDialog.ui" line="47"/>
         <source>My Info</source>
-        <translation>Eigene Information</translation>
+        <translation>Eigene Info</translation>
     </message>
     <message>
         <source>QSL</source>
@@ -1369,7 +1369,7 @@
     <message>
         <location filename="../core/Eqsl.cpp" line="458"/>
         <source>Cannot opet temporary file</source>
-        <translation>Temporäre Datei kann nicht geöffnet werden</translation>
+        <translation>Kann temporäre Datei nicht öffnen</translation>
     </message>
     <message>
         <location filename="../core/Eqsl.cpp" line="558"/>
@@ -2354,7 +2354,7 @@
         <location filename="../models/LogbookModel.cpp" line="133"/>
         <location filename="../models/LogbookModel.cpp" line="254"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Anmerkungen</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="134"/>
@@ -2374,38 +2374,38 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="138"/>
         <source>POTA Ref</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="139"/>
         <source>Contest Precedence</source>
-        <translation type="unfinished"></translation>
+        <translation>Contest Vorrang</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="140"/>
         <source>Propagation Mode</source>
-        <translation type="unfinished">Ausbreitungsart</translation>
+        <translation>Ausbreitungsart</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="141"/>
         <source>Public Encryption Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffentlicher Chiffrierschlüssel</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="142"/>
         <source>QRZ Upload Date</source>
-        <translation type="unfinished"></translation>
+        <translation>QRZ Upload Datum</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="143"/>
         <source>QRZ Upload Status</source>
-        <translation type="unfinished"></translation>
+        <translation>QRZ Upload Status</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="145"/>
         <location filename="../models/LogbookModel.cpp" line="246"/>
         <source>QSL Message</source>
-        <translation type="unfinished">QSL-Nachricht</translation>
+        <translation>QSL-Nachricht</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="148"/>
@@ -2425,102 +2425,102 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="154"/>
         <source>Rig</source>
-        <translation type="unfinished">Rig</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="155"/>
         <source>Contact PWR</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontakt PWR</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="156"/>
         <source>SAT Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>SAT Betriebsart</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="157"/>
         <source>SAT Name</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="158"/>
         <source>Solar Flux</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="159"/>
         <source>Special Activity Group (ASCII)</source>
-        <translation type="unfinished"></translation>
+        <translation>Spezielle Aktivitätsgruppe (ASCII)</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="160"/>
         <source>Special Activity Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Spezielle Aktivitätsgruppe</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="162"/>
         <source>Special Activity Group Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Spezielle Aktivitätsgruppe Info</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="163"/>
         <source>Silent Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Verstorben</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="164"/>
         <source>SKCC Member</source>
-        <translation type="unfinished"></translation>
+        <translation>SKCC Mitglied</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="165"/>
         <source>SOTA</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="166"/>
         <source>Contest Serial Number RX</source>
-        <translation type="unfinished"></translation>
+        <translation>Contest Seriennummer RX</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="167"/>
         <source>Contest Exchange RX</source>
-        <translation type="unfinished"></translation>
+        <translation>Contest Austausch RX</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="168"/>
         <source>Logging Station Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Logging Station Rufzeichen</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="169"/>
         <source>Contest Serial Number TX</source>
-        <translation type="unfinished"></translation>
+        <translation>Contest Seriennummer TX</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="170"/>
         <source>Contest Exchange TX</source>
-        <translation type="unfinished"></translation>
+        <translation>Contest Austausch TX</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="171"/>
         <source>SWL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="172"/>
         <source>Ten-Ten Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten-Ten Nummer</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="173"/>
         <source>UKSMG Member</source>
-        <translation type="unfinished"></translation>
+        <translation>UKSMG Mitglied</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="174"/>
         <source>USA-CA Counties</source>
-        <translation type="unfinished"></translation>
+        <translation>USA-CA Bezirke</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="175"/>
@@ -2535,7 +2535,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="177"/>
         <source>Web URL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>CQ</source>
@@ -2832,12 +2832,12 @@
     <message>
         <location filename="../core/Lotw.cpp" line="96"/>
         <source>Upload cancelled by user</source>
-        <translation type="unfinished"></translation>
+        <translation>Upload vom Benutzer abgebrochen</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="100"/>
         <source>Upload rejected by LoTW</source>
-        <translation type="unfinished"></translation>
+        <translation>Upload durch LoTW abgelehnt</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="104"/>
@@ -2847,42 +2847,42 @@
     <message>
         <location filename="../core/Lotw.cpp" line="108"/>
         <source>TQSL utility error</source>
-        <translation type="unfinished"></translation>
+        <translation>TQSL-Utility Fehler</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="112"/>
         <source>TQSLlib error</source>
-        <translation type="unfinished"></translation>
+        <translation>TQSLib Fehler</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="116"/>
         <source>Unable to open input file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Eingabedatei nicht öffnes</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="120"/>
         <source>Unable to open output file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Ausgabedatei nicht öffnes</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="124"/>
         <source>All QSOs were duplicates or out of date range</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle QSOs waren Duplikate oder außerhalb des Datumsbereichs</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="128"/>
         <source>Some QSOs were duplicates or out of date range</source>
-        <translation type="unfinished"></translation>
+        <translation>Einige QSOs waren Duplikate oder außerhalb des Datumsbereichs</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="132"/>
         <source>Command syntax error</source>
-        <translation type="unfinished"></translation>
+        <translation>Befehls-Syntaxfehler</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="136"/>
         <source>LoTW Connection error (no network or LoTW is unreachable)</source>
-        <translation type="unfinished"></translation>
+        <translation>LoTW Verbindungsfehler (kein Netzwerk oder LoTW ist nicht erreichbar)</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="140"/>
@@ -2892,12 +2892,12 @@
     <message>
         <location filename="../core/Lotw.cpp" line="262"/>
         <source>Cannot open temporary file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann temporäre Datei nicht öffnen</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="274"/>
         <source>Incorrect Loging or password</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlerhafte Anmeldung oder falsches Passwort</translation>
     </message>
 </context>
 <context>
@@ -2969,7 +2969,7 @@
     <message>
         <location filename="../ui/LotwDialog.cpp" line="47"/>
         <source>Downloading from LotW</source>
-        <translation type="unfinished"></translation>
+        <translation>Von LotW herunterladen</translation>
     </message>
     <message>
         <location filename="../ui/LotwDialog.cpp" line="59"/>
@@ -2984,7 +2984,7 @@
     <message>
         <location filename="../ui/LotwDialog.cpp" line="77"/>
         <source>LoTW Update failed: </source>
-        <translation type="unfinished"></translation>
+        <translation>LotW-Update fehlgeschlagen: </translation>
     </message>
     <message>
         <source>LotW Update completed.</source>
@@ -3039,7 +3039,7 @@
     <message>
         <location filename="../ui/LotwDialog.cpp" line="176"/>
         <source>LoTW Error</source>
-        <translation type="unfinished"></translation>
+        <translation>LotW Fehler</translation>
     </message>
     <message>
         <location filename="../ui/LotwDialog.cpp" line="181"/>
