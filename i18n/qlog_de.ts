@@ -1870,7 +1870,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="37"/>
         <source>QSLr</source>
-        <translation>QSL Eingang</translation>
+        <translation>QSL Ein</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="38"/>
@@ -1955,12 +1955,12 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="56"/>
         <source>Award Submitted</source>
-        <translation type="unfinished">Award eingereicht</translation>
+        <translation>Award eingereicht</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="57"/>
         <source>Award Granted</source>
-        <translation type="unfinished">Aword erteilt</translation>
+        <translation>Award erteilt</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="58"/>
@@ -2112,7 +2112,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="146"/>
         <source>QSLr Via</source>
-        <translation>QSL Eingang via</translation>
+        <translation>QSL Ein via</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="147"/>
@@ -2405,17 +2405,17 @@
         <location filename="../models/LogbookModel.cpp" line="145"/>
         <location filename="../models/LogbookModel.cpp" line="246"/>
         <source>QSL Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QSL-Nachricht</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="148"/>
         <source>QSL Via</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="149"/>
         <source>QSO Completed</source>
-        <translation type="unfinished"></translation>
+        <translation>QSO beendet</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="150"/>
@@ -2573,7 +2573,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="276"/>
         <source>QSL Sent</source>
-        <translation>QSL Ges</translation>
+        <translation>QSL Aus</translation>
     </message>
     <message>
         <source>LotW Rcvd</source>
@@ -2842,7 +2842,7 @@
     <message>
         <location filename="../core/Lotw.cpp" line="104"/>
         <source>Unexpected response from TQSL server</source>
-        <translation type="unfinished"></translation>
+        <translation>Unerwartete Antwort vom TQSL-Server</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="108"/>
@@ -2887,7 +2887,7 @@
     <message>
         <location filename="../core/Lotw.cpp" line="140"/>
         <source>Unexpected Error from TQSL</source>
-        <translation type="unfinished"></translation>
+        <translation>Unerwarteter Fehler von TQSL</translation>
     </message>
     <message>
         <location filename="../core/Lotw.cpp" line="262"/>
@@ -2974,7 +2974,7 @@
     <message>
         <location filename="../ui/LotwDialog.cpp" line="59"/>
         <source>Processing LotW QSLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Verarbeitung von LotW QSLs</translation>
     </message>
     <message>
         <location filename="../ui/LotwDialog.cpp" line="77"/>
@@ -3443,17 +3443,17 @@
     <message>
         <location filename="../ui/MainWindow.cpp" line="569"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwenden Sie den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="585"/>
         <source>Clublog is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Clublog ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwenden Sie den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="603"/>
         <source>QRZ.com is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>QRZ.com ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwenden Sie den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="623"/>
@@ -3678,12 +3678,12 @@
     <message>
         <location filename="../ui/NewContactWidget.ui" line="1575"/>
         <source>QSL Sent</source>
-        <translation>QSL Ausgang</translation>
+        <translation>QSL Aus</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.ui" line="1601"/>
         <source>QSLSent via</source>
-        <translation>QSL Ausgang via</translation>
+        <translation>QSL Aus via</translation>
     </message>
     <message>
         <source>DXCC</source>
@@ -4079,38 +4079,38 @@
     <message>
         <location filename="../ui/PaperQSLDialog.ui" line="14"/>
         <source>QSL FIles</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL Dateien</translation>
     </message>
     <message>
         <location filename="../ui/PaperQSLDialog.ui" line="23"/>
         <source>QSL Files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QSL Dateien</translation>
     </message>
     <message>
         <location filename="../ui/PaperQSLDialog.ui" line="37"/>
         <location filename="../ui/PaperQSLDialog.cpp" line="42"/>
         <source>Add File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei hinzufügen</translation>
     </message>
     <message>
         <location filename="../ui/PaperQSLDialog.cpp" line="89"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location filename="../ui/PaperQSLDialog.cpp" line="97"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../ui/PaperQSLDialog.cpp" line="97"/>
         <source>Delete QSL file?</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL Datei löschen?</translation>
     </message>
     <message>
         <location filename="../ui/PaperQSLDialog.cpp" line="119"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnen</translation>
     </message>
 </context>
 <context>
@@ -4118,7 +4118,7 @@
     <message>
         <location filename="../core/main.cpp" line="270"/>
         <source>QLog Help</source>
-        <translation type="unfinished"></translation>
+        <translation>QLog Hilfe</translation>
     </message>
 </context>
 <context>
@@ -4142,7 +4142,7 @@
     <message>
         <location filename="../core/main.cpp" line="325"/>
         <source>QLog is already running</source>
-        <translation type="unfinished"></translation>
+        <translation>QLog wird bereits ausgeführt</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="340"/>
@@ -4152,7 +4152,7 @@
     <message>
         <location filename="../core/main.cpp" line="350"/>
         <source>Could not export a QLog database to ADIF as a backup.&lt;p&gt;Try to export your log to ADIF manually</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine QLog-Datenbank konnte nicht als Backup nach ADIF exportiert werden.&lt;p&gt;Versuchen Sie, Ihr Log manuell nach ADIF zu exportieren</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="357"/>
@@ -4194,27 +4194,27 @@
     <message>
         <location filename="../ui/DxWidget.cpp" line="479"/>
         <source>DXC Server Name Error</source>
-        <translation type="unfinished"></translation>
+        <translation>DXC Server Namensfehler</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="480"/>
         <source>DXC Server address must be in format&lt;p&gt;&lt;b&gt;hostname:port&lt;/b&gt; (ex. hamqth.com:7300)&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Adresse des DXC-Servers muss das Format&lt;p&gt;&lt;b&gt;Hostname:Port&lt;/b&gt; haben (z.B. hamqth.com:7300)&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.cpp" line="919"/>
         <source>DXC Server Connection Error</source>
-        <translation type="unfinished"></translation>
+        <translation>DXC Server Verbindungsfehler</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="1336"/>
         <source>Your callsign is empty. Please, set your Station Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihr Rufzeichen ist nicht angegeben. Bitte richten Sie Ihr Stationsprofil ein.</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="1346"/>
         <source>&lt;b&gt;Time Off&lt;/b&gt; must not be younger than &lt;b&gt;Time On&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Time Off&lt;/b&gt; darf nicht früher sein als &lt;b&gt;Time On&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="144"/>
@@ -4222,42 +4222,42 @@
         <location filename="../ui/AlertRuleDetail.cpp" line="161"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="478"/>
         <source>QLog Info</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="145"/>
         <source>Rule name is already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Regelname ist bereits vorhanden.</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="155"/>
         <source>Callsign Regular Expression is incorrect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der reguläre Ausdruck für das Rufzeichen ist fehlerhaft..</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="162"/>
         <source>Comment Regular Expression is incorrect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar Regulärer Ausdruck ist fehlerhaft.</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="341"/>
         <source>Cannot Update Alert Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisierung der Alarmregeln nicht möglich</translation>
     </message>
     <message>
         <location filename="../ui/QSOFilterDetail.cpp" line="479"/>
         <source>Filter name is already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtername ist bereits vorhanden.</translation>
     </message>
     <message>
         <location filename="../ui/QSOFilterDetail.cpp" line="593"/>
         <source>Cannot update QSO Filter Conditions - </source>
-        <translation type="unfinished"></translation>
+        <translation>QSO-Filterbedingungen können nicht aktualisiert werden - </translation>
     </message>
     <message>
         <location filename="../ui/QSOFilterDetail.cpp" line="604"/>
         <source>Cannot delete QSO Filter Conditions before updating - </source>
-        <translation type="unfinished"></translation>
+        <translation>QSO-Filterbedingungen können vor dem Aktualisieren nicht gelöscht werden - </translation>
     </message>
     <message>
         <location filename="../ui/QSOFilterDetail.cpp" line="613"/>
@@ -4268,7 +4268,7 @@
         <location filename="../ui/SettingsDialog.cpp" line="219"/>
         <location filename="../ui/SettingsDialog.cpp" line="1463"/>
         <source>Please, define at least one Station Locations Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte definieren Sie mindestens ein Stationsstandortprofil</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="278"/>
@@ -4541,50 +4541,50 @@
     <message>
         <location filename="../ui/QSLImportStatDialog.ui" line="14"/>
         <source>QSL Import Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL-Import Zusammenfassung</translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.ui" line="20"/>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusammenfassung</translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.ui" line="26"/>
         <source>Downloaded:</source>
-        <translation type="unfinished"></translation>
+        <translation>Heruntergeladen:</translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.ui" line="40"/>
         <source>Updated:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisiert:</translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.ui" line="54"/>
         <source>Unmatched:</source>
-        <translation type="unfinished"></translation>
+        <translation>nicht gefunden:</translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.ui" line="68"/>
         <source>Errors:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler:</translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.ui" line="85"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.cpp" line="21"/>
         <source>New QSLs: 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Neue QSLs: </translation>
     </message>
     <message>
         <location filename="../ui/QSLImportStatDialog.cpp" line="26"/>
         <source>
 Unmatched QSLs: 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>nicht gefundene QSLs: </translation>
     </message>
 </context>
 <context>
@@ -4884,7 +4884,7 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1421"/>
         <source>&amp;QSL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1432"/>
@@ -4902,62 +4902,62 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1442"/>
         <source>Manage QSL Card</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL-Karte verwalten</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1467"/>
         <source>QSL Sent via</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL Aus via</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1493"/>
         <source>Received Message: </source>
-        <translation type="unfinished"></translation>
+        <translation>Empfangene Nachricht: </translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1522"/>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation>Empfangen</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1541"/>
         <source>Paper</source>
-        <translation type="unfinished"></translation>
+        <translation>Papier</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1560"/>
         <source>LoTW</source>
-        <translation type="unfinished">LotW</translation>
+        <translation>LotW</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1579"/>
         <source>eQSL</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1586"/>
         <source>QSL via</source>
-        <translation type="unfinished">QSL via</translation>
+        <translation>QSL via</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1649"/>
         <source>Sent</source>
-        <translation type="unfinished">Gesendet</translation>
+        <translation>Gesendet</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1659"/>
         <source>Show QSL Card</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL-Karte ansehen</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1825"/>
         <source>&amp;Contest</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1841"/>
         <source>Contest Name</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1851"/>
@@ -4992,52 +4992,52 @@ Unmatched QSLs:
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="184"/>
         <source>No</source>
-        <translation type="unfinished">Nein</translation>
+        <translation>Nein</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="185"/>
         <source>Yes</source>
-        <translation type="unfinished">Ja</translation>
+        <translation>Ja</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="186"/>
         <source>Requested</source>
-        <translation type="unfinished">Erbeten</translation>
+        <translation>Angefordert</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="187"/>
         <source>Queued</source>
-        <translation type="unfinished">In Warteschlange</translation>
+        <translation>In Warteschlange</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="188"/>
         <source>Ignored</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignoriert</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="203"/>
         <source>Bureau</source>
-        <translation type="unfinished">Büro</translation>
+        <translation>Büro</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="204"/>
         <source>Direct</source>
-        <translation type="unfinished">Direkt</translation>
+        <translation>Direkt</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="205"/>
         <source>Electronic</source>
-        <translation type="unfinished"></translation>
+        <translation>Elektronisch</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="353"/>
         <source>Submit changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen übermitteln</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="353"/>
         <source>Really submit all changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wirklich alle Änderungen übermitteln?</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="362"/>
@@ -5045,88 +5045,88 @@ Unmatched QSLs:
         <location filename="../ui/QSODetailDialog.cpp" line="602"/>
         <location filename="../ui/QSODetailDialog.cpp" line="1049"/>
         <source>QLog Error</source>
-        <translation type="unfinished">QLog Fehler</translation>
+        <translation>QLog Fehler</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="362"/>
         <source>Cannot save all changes - internal error</source>
-        <translation type="unfinished"></translation>
+        <translation>Es können nicht alle Änderungen gespeichert werden - interner Fehler</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="408"/>
         <source>Cannot save all changes - try to reset all changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Es können nicht alle Änderungen gespeichert werden - versuchen Sie, alle Änderungen zurückzusetzen</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="544"/>
         <source>QSO Detail</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="544"/>
         <source>Edit QSO</source>
-        <translation type="unfinished"></translation>
+        <translation>QSO Bearbeiten</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="584"/>
         <source>Downloading eQSL Image</source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL-Bild herunterladen</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="584"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="602"/>
         <source>eQSL Download Image failed: </source>
-        <translation type="unfinished"></translation>
+        <translation>eQSL-Bild download fehlgeschlagen: </translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="765"/>
         <source>DX Callsign must not be empty</source>
-        <translation type="unfinished"></translation>
+        <translation>DX-Rufzeichen darf nicht leer sein</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="769"/>
         <source>DX callsign has an incorrect format</source>
-        <translation type="unfinished"></translation>
+        <translation>DX-Rufzeichen hat ein falsches Format</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="773"/>
         <source>TX Frequency must not be 0</source>
-        <translation type="unfinished"></translation>
+        <translation>TX Frequenz darf nicht 0 sein</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="777"/>
         <location filename="../ui/QSODetailDialog.cpp" line="811"/>
         <source>DX Grid has an incorrect format</source>
-        <translation type="unfinished"></translation>
+        <translation>DX Feld hat ein fehlerhaftes Format</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="783"/>
         <source>Based on callsign, DXCC Country is different from the entered value - expecting </source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgrund des Rufzeichens unterscheidet sich das DXCC-Land vom eingegebenen Wert - in Erwartung </translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="787"/>
         <source>Based on callsign, DXCC Continent is different from the entered value - expecting </source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgrund des Rufzeichens unterscheidet sich der DXCC-Kontinent vom eingegebenen Wert - in Erwartung </translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="791"/>
         <source>Based on callsign, DXCC ITU is different from the entered value - expecting </source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgrund des Rufzeichens unterscheidet sich das DXCC-ITU vom eingegebenen Wert - in Erwartung </translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="795"/>
         <source>Based on callsign, DXCC CQZ is different from the entered value - expecting </source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgrund des Rufzeichens unterscheidet sich die DXCC-CQZ vom eingegebenen Wert - in Erwartung </translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="799"/>
         <source>VUCC has an incorrect format</source>
-        <translation type="unfinished"></translation>
+        <translation>VUCC hat ein fehlerhaftes Format</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="803"/>
