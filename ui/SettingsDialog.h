@@ -14,6 +14,7 @@
 #include "data/AntProfile.h"
 #include "data/CWKeyProfile.h"
 #include "data/CWShortcutProfile.h"
+#include "data/RotUsrButtonsProfile.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -45,6 +46,12 @@ public slots:
     void refreshRotProfilesView();
     void doubleClickRotProfile(QModelIndex);
     void clearRotProfileForm();
+
+    void addRotUsrButtonsProfile();
+    void delRotUsrButtonsProfile();
+    void refreshRotUsrButtonsProfilesView();
+    void doubleClickRotUsrButtonsProfile(QModelIndex);
+    void clearRotUsrButtonsProfileForm();
 
     void addAntProfile();
     void delAntProfile();
@@ -114,6 +121,7 @@ private:
     AntProfilesManager *antProfManager;
     CWKeyProfilesManager *cwKeyProfManager;
     CWShortcutProfilesManager *cwShortcutProfManager;
+    RotUsrButtonsProfilesManager *rotUsrButtonsProfManager;
     QCompleter *sotaCompleter;
     QCompleter *iotaCompleter;
     QCompleter *wwffCompleter;

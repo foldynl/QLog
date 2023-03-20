@@ -50,6 +50,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     antProfManager(AntProfilesManager::instance()),
     cwKeyProfManager(CWKeyProfilesManager::instance()),
     cwShortcutProfManager(CWShortcutProfilesManager::instance()),
+    rotUsrButtonsProfManager(RotUsrButtonsProfilesManager::instance()),
     ui(new Ui::SettingsDialog)
 {
     FCT_IDENTIFICATION;
@@ -61,6 +62,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     QStringListModel* rotModel = new QStringListModel();
     ui->rotProfilesListView->setModel(rotModel);
+
+    QStringListModel* rotUsrButtonModel = new QStringListModel();
+    ui->rotUsrButtonListView->setModel(rotUsrButtonModel);
 
     QStringListModel* antModel = new QStringListModel();
     ui->antProfilesListView->setModel(antModel);
@@ -263,6 +267,14 @@ void SettingsDialog::save() {
     }
 
     if ( ui->rotAddProfileButton->text() == tr("Modify") )
+    {
+        ui->tabWidget->setCurrentIndex(1);
+        ui->equipmentTabWidget->setCurrentIndex(3);
+        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
+        return;
+    }
+
+    if ( ui->rotUsrButtonAddProfileButton->text() == tr("Modify") )
     {
         ui->tabWidget->setCurrentIndex(1);
         ui->equipmentTabWidget->setCurrentIndex(3);
@@ -664,6 +676,118 @@ void SettingsDialog::clearRotProfileForm()
     ui->rotParitySelect->setCurrentIndex(0);
 
     ui->rotAddProfileButton->setText(tr("Add"));
+}
+
+void SettingsDialog::addRotUsrButtonsProfile()
+{
+    FCT_IDENTIFICATION;
+
+    if ( ui->rotUsrButtonProfileNameEdit->text().isEmpty() )
+    {
+        ui->rotUsrButtonProfileNameEdit->setPlaceholderText(tr("Must not be empty"));
+        return;
+    }
+
+    if ( ui->rotUsrButtonAddProfileButton->text() == tr("Modify"))
+    {
+        ui->rotUsrButtonAddProfileButton->setText(tr("Add"));
+    }
+
+    RotUsrButtonsProfile profile;
+
+    profile.profileName = ui->rotUsrButtonProfileNameEdit->text();
+
+    profile.shortDescs[0] = ui->rotUsrButton1Edit->text();
+    profile.bearings[0] = ui->rotUsrButtonSpinBox1->value();
+
+    profile.shortDescs[1] = ui->rotUsrButton2Edit->text();
+    profile.bearings[1] = ui->rotUsrButtonSpinBox2->value();
+
+    profile.shortDescs[2] = ui->rotUsrButton3Edit->text();
+    profile.bearings[2] = ui->rotUsrButtonSpinBox3->value();
+
+    profile.shortDescs[3] = ui->rotUsrButton4Edit->text();
+    profile.bearings[3] = ui->rotUsrButtonSpinBox4->value();
+
+    rotUsrButtonsProfManager->addProfile(profile.profileName, profile);
+
+    refreshRotUsrButtonsProfilesView();
+
+    clearRotUsrButtonsProfileForm();
+}
+
+void SettingsDialog::delRotUsrButtonsProfile()
+{
+    FCT_IDENTIFICATION;
+
+    foreach (QModelIndex index, ui->rotUsrButtonListView->selectionModel()->selectedRows())
+    {
+        rotUsrButtonsProfManager->removeProfile(ui->rotUsrButtonListView->model()->data(index).toString());
+        ui->rotUsrButtonListView->model()->removeRow(index.row());
+    }
+    ui->rotUsrButtonListView->clearSelection();
+
+    clearRotUsrButtonsProfileForm();
+
+}
+
+void SettingsDialog::refreshRotUsrButtonsProfilesView()
+{
+    FCT_IDENTIFICATION;
+
+    QStringList profiles;
+    profiles << rotUsrButtonsProfManager->profileNameList();
+
+    QStringListModel* model = static_cast<QStringListModel*>(ui->rotUsrButtonListView->model());
+    if ( model ) model->setStringList(profiles);
+
+}
+
+void SettingsDialog::doubleClickRotUsrButtonsProfile(QModelIndex i)
+{
+    FCT_IDENTIFICATION;
+
+    RotUsrButtonsProfile profile;
+
+    profile = rotUsrButtonsProfManager->getProfile(ui->rotUsrButtonListView->model()->data(i).toString());
+
+    ui->rotUsrButtonProfileNameEdit->setText(profile.profileName);
+
+    ui->rotUsrButton1Edit->setText(profile.shortDescs[0]);
+    ui->rotUsrButtonSpinBox1->setValue(profile.bearings[0]);
+
+    ui->rotUsrButton2Edit->setText(profile.shortDescs[1]);
+    ui->rotUsrButtonSpinBox2->setValue(profile.bearings[1]);
+
+    ui->rotUsrButton3Edit->setText(profile.shortDescs[2]);
+    ui->rotUsrButtonSpinBox3->setValue(profile.bearings[2]);
+
+    ui->rotUsrButton4Edit->setText(profile.shortDescs[3]);
+    ui->rotUsrButtonSpinBox4->setValue(profile.bearings[3]);
+
+    ui->rotUsrButtonAddProfileButton->setText(tr("Modify"));
+}
+
+void SettingsDialog::clearRotUsrButtonsProfileForm()
+{
+    FCT_IDENTIFICATION;
+
+    ui->rotUsrButtonProfileNameEdit->setPlaceholderText(QString());
+    ui->rotUsrButtonProfileNameEdit->clear();
+
+    ui->rotUsrButton1Edit->clear();
+    ui->rotUsrButtonSpinBox1->setValue(-1);
+
+    ui->rotUsrButton2Edit->clear();
+    ui->rotUsrButtonSpinBox2->setValue(-1);
+
+    ui->rotUsrButton3Edit->clear();
+    ui->rotUsrButtonSpinBox3->setValue(-1);
+
+    ui->rotUsrButton4Edit->clear();
+    ui->rotUsrButtonSpinBox4->setValue(-1);
+
+    ui->rotUsrButtonAddProfileButton->setText(tr("Add"));
 }
 
 void SettingsDialog::addAntProfile()
@@ -1696,6 +1820,9 @@ void SettingsDialog::readSettings() {
     QStringList rots = rotProfManager->profileNameList();
     (static_cast<QStringListModel*>(ui->rotProfilesListView->model()))->setStringList(rots);
 
+    QStringList rotButtons = rotUsrButtonsProfManager->profileNameList();
+    (static_cast<QStringListModel*>(ui->rotUsrButtonListView->model()))->setStringList(rotButtons);
+
     QStringList ants = antProfManager->profileNameList();
     (static_cast<QStringListModel*>(ui->antProfilesListView->model()))->setStringList(ants);
 
@@ -1799,6 +1926,7 @@ void SettingsDialog::writeSettings() {
     stationProfManager->save();
     rigProfManager->save();
     rotProfManager->save();
+    rotUsrButtonsProfManager->save();
     antProfManager->save();
     cwKeyProfManager->save();
     cwShortcutProfManager->save();

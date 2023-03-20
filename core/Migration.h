@@ -37,7 +37,7 @@ private:
     bool fillMyDXCC();
     QString fixIntlField(QSqlQuery &query, const QString &columName, const QString &columnNameIntl);
 
-    static const int latestVersion = 16;
+    static const int latestVersion = 17;
 };
 
 #endif // MIGRATION_H

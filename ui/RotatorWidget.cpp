@@ -6,6 +6,7 @@
 #include "core/debug.h"
 #include "core/Gridsquare.h"
 #include "data/StationProfile.h"
+#include "data/RotUsrButtonsProfile.h"
 
 MODULE_IDENTIFICATION("qlog.ui.rotatorwidget");
 
@@ -29,19 +30,33 @@ RotatorWidget::RotatorWidget(QWidget *parent) :
     ui->rotProfileCombo->setStyleSheet("QComboBox {color: red}");
     refreshRotProfileCombo();
 
+    QStringListModel* userButtonModel = new QStringListModel(this);
+    ui->userButtonsProfileCombo->setModel(userButtonModel);
+    refreshRotUserButtonProfileCombo();
+
     connect(Rotator::instance(), &Rotator::positionChanged, this, &RotatorWidget::positionChanged);
     connect(Rotator::instance(), &Rotator::rotConnected, this, &RotatorWidget::rotConnected);
     connect(Rotator::instance(), &Rotator::rotDisconnected, this, &RotatorWidget::rotDisconnected);
+
+    rotDisconnected();
 }
 
-void RotatorWidget::gotoPosition() {
+void RotatorWidget::gotoPosition()
+{
     FCT_IDENTIFICATION;
 
-    int azimuth = ui->gotoSpinBox->value();
-    int elevation = 0;
-    Rotator::instance()->setPosition(azimuth, elevation);
+    setBearing(ui->gotoSpinBox->value());
 }
 
+void RotatorWidget::setBearing(double in_azimuth)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << in_azimuth;
+
+    azimuth = in_azimuth;
+    Rotator::instance()->setPosition(azimuth, 0);
+}
 
 void RotatorWidget::positionChanged(int in_azimuth, int in_elevation) {
     FCT_IDENTIFICATION;
@@ -66,6 +81,53 @@ void RotatorWidget::resizeEvent(QResizeEvent* event) {
 
     ui->compassView->fitInView(compassScene->sceneRect(), Qt::KeepAspectRatio);
     QWidget::resizeEvent(event);
+}
+
+void RotatorWidget::qsoBearingClicked()
+{
+    FCT_IDENTIFICATION;
+
+    if ( contact )
+    {
+        double newBearing = contact->getQSOBearing();
+        qCDebug(runtime) << "QSO Bearing:" << newBearing;
+        if ( !qIsNaN(newBearing) )
+        {
+            setBearing(newBearing);
+        }
+    }
+}
+
+void RotatorWidget::userButton1()
+{
+    FCT_IDENTIFICATION;
+
+    double bearing = RotUsrButtonsProfilesManager::instance()->getCurProfile1().bearings[0];
+    if ( bearing >= 0 ) setBearing(bearing);
+}
+
+void RotatorWidget::userButton2()
+{
+    FCT_IDENTIFICATION;
+
+    double bearing = RotUsrButtonsProfilesManager::instance()->getCurProfile1().bearings[1];
+    if ( bearing >= 0 ) setBearing(bearing);
+}
+
+void RotatorWidget::userButton3()
+{
+    FCT_IDENTIFICATION;
+
+    double bearing = RotUsrButtonsProfilesManager::instance()->getCurProfile1().bearings[2];
+    if ( bearing >= 0 ) setBearing(bearing);
+}
+
+void RotatorWidget::userButton4()
+{
+    FCT_IDENTIFICATION;
+
+    double bearing = RotUsrButtonsProfilesManager::instance()->getCurProfile1().bearings[3];
+    if ( bearing >= 0 ) setBearing(bearing);
 }
 
 void RotatorWidget::refreshRotProfileCombo()
@@ -93,6 +155,73 @@ void RotatorWidget::refreshRotProfileCombo()
     }
 
     ui->rotProfileCombo->blockSignals(false);
+}
+
+void RotatorWidget::refreshRotUserButtonProfileCombo()
+{
+    FCT_IDENTIFICATION;
+
+    ui->userButtonsProfileCombo->blockSignals(true);
+
+    RotUsrButtonsProfilesManager *buttonManager =  RotUsrButtonsProfilesManager::instance();
+
+    QStringList currProfiles = buttonManager->profileNameList();
+    QStringListModel* model = dynamic_cast<QStringListModel*>(ui->userButtonsProfileCombo->model());
+
+    model->setStringList(currProfiles);
+
+    if ( buttonManager->getCurProfile1().profileName.isEmpty()
+         && currProfiles.count() > 0 )
+    {
+        /* changing profile from empty to something */
+        ui->userButtonsProfileCombo->setCurrentText(currProfiles.first());
+    }
+    else
+    {
+        /* no profile change, just refresh the combo and preserve current profile */
+        ui->userButtonsProfileCombo->setCurrentText(buttonManager->getCurProfile1().profileName);
+    }
+
+    rotUserButtonProfileComboChanged(ui->userButtonsProfileCombo->currentText());
+
+    ui->userButtonsProfileCombo->blockSignals(false);
+}
+
+void RotatorWidget::refreshRotUserButtons()
+{
+    FCT_IDENTIFICATION;
+
+    RotUsrButtonsProfile profile = RotUsrButtonsProfilesManager::instance()->getCurProfile1();
+
+    setUserButtonDesc(ui->userButton_1,
+                      profile.shortDescs[0],
+                      profile.bearings[0]);
+    setUserButtonDesc(ui->userButton_2,
+                      profile.shortDescs[1],
+                      profile.bearings[1]);
+    setUserButtonDesc(ui->userButton_3,
+                      profile.shortDescs[2],
+                      profile.bearings[2]);
+    setUserButtonDesc(ui->userButton_4,
+                      profile.shortDescs[3],
+                      profile.bearings[3]);
+}
+
+void RotatorWidget::setUserButtonDesc(QPushButton *button,
+                                      const QString &desc,
+                                      const double value)
+{
+    FCT_IDENTIFICATION;
+
+    if ( value >= 0 )
+    {
+        button->setText(desc);
+        button->setEnabled(true);
+    }
+    else
+    {
+        button->setText("");
+    }
 }
 
 void RotatorWidget::redrawMap()
@@ -180,11 +309,25 @@ void RotatorWidget::rotProfileComboChanged(QString profileName)
     emit rotProfileChanged();
 }
 
+void RotatorWidget::rotUserButtonProfileComboChanged(QString profileName)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << profileName;
+
+    RotUsrButtonsProfilesManager::instance()->setCurProfile1(profileName);
+
+    refreshRotUserButtons();
+
+    emit rotUserButtonChanged();
+}
+
 void RotatorWidget::reloadSettings()
 {
     FCT_IDENTIFICATION;
 
     refreshRotProfileCombo();
+    refreshRotUserButtonProfileCombo();
 }
 
 void RotatorWidget::rotConnected()
@@ -192,6 +335,11 @@ void RotatorWidget::rotConnected()
     FCT_IDENTIFICATION;
 
     ui->rotProfileCombo->setStyleSheet("QComboBox {color: green}");
+    ui->gotoSpinBox->setEnabled(true);
+    ui->gotoButton->setEnabled(true);
+    ui->qsoBearingButton->setEnabled(true);
+    ui->userButtonsProfileCombo->setEnabled(true);
+    refreshRotUserButtons();
 }
 
 void RotatorWidget::rotDisconnected()
@@ -199,9 +347,24 @@ void RotatorWidget::rotDisconnected()
     FCT_IDENTIFICATION;
 
     ui->rotProfileCombo->setStyleSheet("QComboBox {color: red}");
+    ui->gotoSpinBox->setEnabled(false);
+    ui->gotoButton->setEnabled(false);
+    ui->qsoBearingButton->setEnabled(false);
+    ui->userButtonsProfileCombo->setEnabled(false);
+    ui->userButton_1->setEnabled(false);
+    ui->userButton_2->setEnabled(false);
+    ui->userButton_3->setEnabled(false);
+    ui->userButton_4->setEnabled(false);
 }
 
 RotatorWidget::~RotatorWidget()
 {
     delete ui;
+}
+
+void RotatorWidget::registerContactWidget(const NewContactWidget *contactWidget)
+{
+    FCT_IDENTIFICATION;
+
+    contact = contactWidget;
 }

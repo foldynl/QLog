@@ -2256,6 +2256,339 @@
             </widget>
            </item>
            <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="title">
+              <string>User Buttons Profiles</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_10">
+              <item row="0" column="0" rowspan="2">
+               <widget class="QListView" name="rotUsrButtonListView">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+                <property name="toolTip">
+                 <string>List of all available CW Shortcuts Profiles</string>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QPushButton" name="rotUsrButtonAddProfileButton">
+                <property name="text">
+                 <string>Add</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QPushButton" name="rotUsrButtonDelProfileButton">
+                <property name="text">
+                 <string>Delete</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" colspan="2">
+               <widget class="QGroupBox" name="rotUsrButtonGroup">
+                <property name="minimumSize">
+                 <size>
+                  <width>400</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="title">
+                 <string/>
+                </property>
+                <layout class="QFormLayout" name="formLayout_25">
+                 <property name="horizontalSpacing">
+                  <number>2</number>
+                 </property>
+                 <property name="verticalSpacing">
+                  <number>2</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="rotUsrButtonProfileNameLabel">
+                   <property name="text">
+                    <string>Profile Name</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLineEdit" name="rotUsrButtonProfileNameEdit">
+                   <property name="maxLength">
+                    <number>25</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <layout class="QHBoxLayout" name="horizontalLayout_15">
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="rotUsrButton1Label">
+                     <property name="text">
+                      <string>Button 1</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="rotUsrButton1Edit">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>60</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Short Desciption of the Button (up to 7 chars)</string>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="maxLength">
+                      <number>7</number>
+                     </property>
+                     <property name="frame">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="2" column="0">
+                  <layout class="QHBoxLayout" name="horizontalLayout_16">
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="rotUsrButton2Label">
+                     <property name="text">
+                      <string>Button 2</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="rotUsrButton2Edit">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>60</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Short Desciption of the Button (up to 7 chars)</string>
+                     </property>
+                     <property name="maxLength">
+                      <number>5</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="3" column="0">
+                  <layout class="QHBoxLayout" name="horizontalLayout_24">
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="rotUsrButton3Label">
+                     <property name="text">
+                      <string>Button 3</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="rotUsrButton3Edit">
+                     <property name="maximumSize">
+                      <size>
+                       <width>60</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Short Desciption of the Button (up to 7 chars)</string>
+                     </property>
+                     <property name="maxLength">
+                      <number>5</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="4" column="0">
+                  <layout class="QHBoxLayout" name="horizontalLayout_25">
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="rotUsrButton4Label">
+                     <property name="text">
+                      <string>Button 4</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="rotUsrButton4Edit">
+                     <property name="maximumSize">
+                      <size>
+                       <width>60</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Short Desciption of the Button (up to 7 chars)</string>
+                     </property>
+                     <property name="maxLength">
+                      <number>5</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QSpinBox" name="rotUsrButtonSpinBox1">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="specialValueText">
+                    <string>Blank</string>
+                   </property>
+                   <property name="suffix">
+                    <string>°</string>
+                   </property>
+                   <property name="minimum">
+                    <number>-1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>359</number>
+                   </property>
+                   <property name="value">
+                    <number>-1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QSpinBox" name="rotUsrButtonSpinBox2">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="specialValueText">
+                    <string>Blank</string>
+                   </property>
+                   <property name="suffix">
+                    <string>°</string>
+                   </property>
+                   <property name="minimum">
+                    <number>-1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>359</number>
+                   </property>
+                   <property name="value">
+                    <number>-1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QSpinBox" name="rotUsrButtonSpinBox3">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="specialValueText">
+                    <string>Blank</string>
+                   </property>
+                   <property name="suffix">
+                    <string>°</string>
+                   </property>
+                   <property name="minimum">
+                    <number>-1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>359</number>
+                   </property>
+                   <property name="value">
+                    <number>-1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QSpinBox" name="rotUsrButtonSpinBox4">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="specialValueText">
+                    <string>Blank</string>
+                   </property>
+                   <property name="suffix">
+                    <string>°</string>
+                   </property>
+                   <property name="minimum">
+                    <number>-1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>359</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>-1</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer_7">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -3034,8 +3367,6 @@
   <tabstop>cwDefaulSpeed</tabstop>
   <tabstop>cwPortEdit</tabstop>
   <tabstop>cwBaudSelect</tabstop>
-  <tabstop>cwHostNameEdit</tabstop>
-  <tabstop>cwNetPortSpin</tabstop>
   <tabstop>cwAddProfileButton</tabstop>
   <tabstop>cwDelProfileButton</tabstop>
   <tabstop>cwShortcutProfileNameEdit</tabstop>
@@ -3071,8 +3402,9 @@
   <tabstop>rigGetPTTStateCheckBox</tabstop>
   <tabstop>rigGetXITCheckBox</tabstop>
   <tabstop>rigGetRITCheckBox</tabstop>
-  <tabstop>rigGetKeySpeedCheckBox</tabstop>
+  <tabstop>cwNetPortSpin</tabstop>
   <tabstop>rigKeySpeedSyncCheckBox</tabstop>
+  <tabstop>rigGetKeySpeedCheckBox</tabstop>
   <tabstop>rigPollIntervalSpinBox</tabstop>
   <tabstop>rigPortEdit</tabstop>
   <tabstop>rigBaudSelect</tabstop>
@@ -3080,22 +3412,30 @@
   <tabstop>rigStopBitsSelect</tabstop>
   <tabstop>rigFlowControlSelect</tabstop>
   <tabstop>rigParitySelect</tabstop>
-  <tabstop>rigHostNameEdit</tabstop>
-  <tabstop>rigNetPortSpin</tabstop>
   <tabstop>rigAddProfileButton</tabstop>
   <tabstop>rigDelProfileButton</tabstop>
   <tabstop>rotProfileNameEdit</tabstop>
   <tabstop>rotModelSelect</tabstop>
+  <tabstop>rigNetPortSpin</tabstop>
   <tabstop>rotPortEdit</tabstop>
   <tabstop>rotBaudSelect</tabstop>
   <tabstop>rotDataBitsSelect</tabstop>
   <tabstop>rotStopBitsSelect</tabstop>
   <tabstop>rotFlowControlSelect</tabstop>
   <tabstop>rotParitySelect</tabstop>
-  <tabstop>rotHostNameEdit</tabstop>
-  <tabstop>rotNetPortSpin</tabstop>
   <tabstop>rotAddProfileButton</tabstop>
   <tabstop>rotDelProfileButton</tabstop>
+  <tabstop>rotUsrButtonProfileNameEdit</tabstop>
+  <tabstop>rotUsrButton1Edit</tabstop>
+  <tabstop>rotUsrButtonSpinBox1</tabstop>
+  <tabstop>rotUsrButton2Edit</tabstop>
+  <tabstop>rotUsrButtonSpinBox2</tabstop>
+  <tabstop>rotUsrButton3Edit</tabstop>
+  <tabstop>rotUsrButtonSpinBox3</tabstop>
+  <tabstop>rotUsrButton4Edit</tabstop>
+  <tabstop>rotUsrButtonSpinBox4</tabstop>
+  <tabstop>rotUsrButtonAddProfileButton</tabstop>
+  <tabstop>rotUsrButtonDelProfileButton</tabstop>
   <tabstop>primaryCallbookCombo</tabstop>
   <tabstop>secondaryCallbookCombo</tabstop>
   <tabstop>hamQthUsernameEdit</tabstop>
@@ -3118,16 +3458,24 @@
   <tabstop>paperFolderPathButton</tabstop>
   <tabstop>bandTableView</tabstop>
   <tabstop>modeTableView</tabstop>
-  <tabstop>dxccStartDateCheckBox</tabstop>
   <tabstop>dxccStartDate</tabstop>
+  <tabstop>wsjtForwardEdit</tabstop>
   <tabstop>wsjtPortSpin</tabstop>
+  <tabstop>wsjtMulticastCheckbox</tabstop>
+  <tabstop>wsjtMulticastAddressEdit</tabstop>
+  <tabstop>wsjtMulticastTTLSpin</tabstop>
   <tabstop>notifLogIDEdit</tabstop>
   <tabstop>notifDXSpotsEdit</tabstop>
   <tabstop>notifSpotAlertEdit</tabstop>
   <tabstop>notifQSOEdit</tabstop>
   <tabstop>notifWSJTXCQSpotsEdit</tabstop>
-  <tabstop>equipmentTabWidget</tabstop>
   <tabstop>tabWidget</tabstop>
+  <tabstop>dxccStartDateCheckBox</tabstop>
+  <tabstop>cwHostNameEdit</tabstop>
+  <tabstop>rigHostNameEdit</tabstop>
+  <tabstop>rotNetPortSpin</tabstop>
+  <tabstop>rotHostNameEdit</tabstop>
+  <tabstop>equipmentTabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -3138,8 +3486,8 @@
    <slot>wwffEditFinished()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>585</x>
-     <y>246</y>
+     <x>651</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>335</x>
@@ -3154,8 +3502,8 @@
    <slot>rigTXOffsetChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>333</x>
-     <y>119</y>
+     <x>489</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -3170,8 +3518,8 @@
    <slot>addAntProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>363</x>
-     <y>426</y>
+     <x>434</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3186,8 +3534,8 @@
    <slot>rotStackWidgetChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>119</y>
+     <x>625</x>
+     <y>318</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3202,8 +3550,8 @@
    <slot>sotaEditFinished()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>585</x>
-     <y>153</y>
+     <x>472</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>335</x>
@@ -3218,8 +3566,8 @@
    <slot>addCWKeyProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>102</y>
+     <x>299</x>
+     <y>366</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3234,8 +3582,8 @@
    <slot>adjustRigCOMPortTextColor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>463</x>
-     <y>124</y>
+     <x>625</x>
+     <y>524</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3250,8 +3598,8 @@
    <slot>adjustLocatorTextColor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>459</x>
-     <y>227</y>
+     <x>531</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
      <x>359</x>
@@ -3266,8 +3614,8 @@
    <slot>adjustVUCCLocatorTextColor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>638</x>
-     <y>289</y>
+     <x>531</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>377</x>
@@ -3298,8 +3646,8 @@
    <slot>cwKeyChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>123</y>
+     <x>625</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3314,8 +3662,8 @@
    <slot>addRigProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>108</y>
+     <x>289</x>
+     <y>702</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3330,8 +3678,8 @@
    <slot>rigChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>472</x>
-     <y>124</y>
+     <x>625</x>
+     <y>186</y>
     </hint>
     <hint type="destinationlabel">
      <x>359</x>
@@ -3346,8 +3694,8 @@
    <slot>delAntProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>566</x>
-     <y>426</y>
+     <x>637</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3362,8 +3710,8 @@
    <slot>rotChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
-     <y>122</y>
+     <x>625</x>
+     <y>185</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3378,8 +3726,8 @@
    <slot>doubleClickRotProfile(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>58</x>
-     <y>116</y>
+     <x>83</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3394,8 +3742,8 @@
    <slot>delCWShortcutProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>100</x>
-     <y>116</y>
+     <x>523</x>
+     <y>702</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3410,8 +3758,8 @@
    <slot>sotaChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>635</x>
-     <y>165</y>
+     <x>472</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>377</x>
@@ -3442,8 +3790,8 @@
    <slot>rigGetFreqChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>333</x>
-     <y>120</y>
+     <x>489</x>
+     <y>385</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3458,8 +3806,8 @@
    <slot>doubleClickCWKeyProfile(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>58</x>
-     <y>116</y>
+     <x>83</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3474,8 +3822,8 @@
    <slot>paperDirBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>637</x>
-     <y>636</y>
+     <x>647</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>298</x>
@@ -3490,8 +3838,8 @@
    <slot>addRotProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>108</y>
+     <x>299</x>
+     <y>419</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3506,8 +3854,8 @@
    <slot>rigStackWidgetChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>472</x>
-     <y>121</y>
+     <x>625</x>
+     <y>601</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3538,8 +3886,8 @@
    <slot>addCWShortcutProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>87</x>
-     <y>116</y>
+     <x>307</x>
+     <y>702</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3554,8 +3902,8 @@
    <slot>delRigProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>100</x>
-     <y>108</y>
+     <x>518</x>
+     <y>702</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3570,8 +3918,8 @@
    <slot>doubleClickCWShortcutProfile(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>73</x>
-     <y>125</y>
+     <x>98</x>
+     <y>515</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3586,8 +3934,8 @@
    <slot>adjustCallsignTextColor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>459</x>
-     <y>134</y>
+     <x>531</x>
+     <y>128</y>
     </hint>
     <hint type="destinationlabel">
      <x>359</x>
@@ -3602,8 +3950,8 @@
    <slot>wwffChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>585</x>
-     <y>246</y>
+     <x>651</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>335</x>
@@ -3618,8 +3966,8 @@
    <slot>delRotProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>100</x>
-     <y>108</y>
+     <x>523</x>
+     <y>419</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3634,8 +3982,8 @@
    <slot>delCWKeyProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>100</x>
-     <y>102</y>
+     <x>523</x>
+     <y>366</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3650,8 +3998,8 @@
    <slot>cwKeyStackWidgetChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>119</y>
+     <x>625</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3666,8 +4014,8 @@
    <slot>eqslDirBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>637</x>
-     <y>484</y>
+     <x>647</x>
+     <y>448</y>
     </hint>
     <hint type="destinationlabel">
      <x>359</x>
@@ -3682,8 +4030,8 @@
    <slot>rigRXOffsetChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>471</x>
-     <y>119</y>
+     <x>624</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>347</x>
@@ -3730,8 +4078,8 @@
    <slot>addStationProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>461</x>
-     <y>320</y>
+     <x>454</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>359</x>
@@ -3746,8 +4094,8 @@
    <slot>adjustCWKeyCOMPortTextColor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>443</x>
-     <y>124</y>
+     <x>625</x>
+     <y>295</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3762,8 +4110,8 @@
    <slot>adjustRotCOMPortTextColor()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>443</x>
-     <y>123</y>
+     <x>625</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
@@ -3778,8 +4126,8 @@
    <slot>deleteStationProfile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>638</x>
-     <y>320</y>
+     <x>650</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>359</x>
@@ -3794,8 +4142,8 @@
    <slot>doubleClickRigProfile(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>58</x>
-     <y>116</y>
+     <x>83</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -3810,8 +4158,8 @@
    <slot>save()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>326</x>
-     <y>851</y>
+     <x>335</x>
+     <y>775</y>
     </hint>
     <hint type="destinationlabel">
      <x>297</x>
@@ -3826,8 +4174,8 @@
    <slot>cancelled()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>326</x>
-     <y>851</y>
+     <x>335</x>
+     <y>775</y>
     </hint>
     <hint type="destinationlabel">
      <x>297</x>
@@ -3858,8 +4206,8 @@
    <slot>potaEditFinished()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
-     <y>153</y>
+     <x>472</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
@@ -3874,8 +4222,8 @@
    <slot>potaChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>607</x>
-     <y>153</y>
+     <x>472</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
@@ -3890,8 +4238,8 @@
    <slot>joinMulticastChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>404</x>
-     <y>118</y>
+     <x>174</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
      <x>340</x>
@@ -3908,6 +4256,54 @@
     <hint type="sourcelabel">
      <x>404</x>
      <y>183</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotUsrButtonAddProfileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>addRotUsrButtonsProfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>656</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotUsrButtonDelProfileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>delRotUsrButtonsProfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>539</x>
+     <y>656</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rotUsrButtonListView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>doubleClickRotUsrButtonsProfile(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>137</x>
+     <y>569</y>
     </hint>
     <hint type="destinationlabel">
      <x>340</x>
@@ -3966,5 +4362,8 @@
   <slot>potaChanged(QString)</slot>
   <slot>joinMulticastChanged(int)</slot>
   <slot>adjustWSJTXMulticastAddrTextColor()</slot>
+  <slot>doubleClickRotUsrButtonsProfile(QModelIndex)</slot>
+  <slot>delRotUsrButtonsProfile()</slot>
+  <slot>addRotUsrButtonsProfile()</slot>
  </slots>
 </ui>

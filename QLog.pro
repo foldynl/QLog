@@ -81,6 +81,7 @@ SOURCES += \
         data/Dxcc.cpp \
         data/RigProfile.cpp \
         data/RotProfile.cpp \
+        data/RotUsrButtonsProfile.cpp \
         data/StationProfile.cpp \
         logformat/AdiFormat.cpp \
         logformat/AdxFormat.cpp \
@@ -176,6 +177,7 @@ HEADERS += \
         data/ProfileManager.h \
         data/RigProfile.h \
         data/RotProfile.h \
+        data/RotUsrButtonsProfile.h \
         data/SOTAEntity.h \
         data/SpotAlert.h \
         data/StationProfile.h \

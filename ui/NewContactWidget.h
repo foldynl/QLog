@@ -48,6 +48,8 @@ public:
     QString getMyWWFT() const;
     QString getMyVUCC() const;
     QString getMyPWR() const;
+    double getQSOBearing() const;
+
 
 signals:
     void contactAdded(QSqlRecord record);

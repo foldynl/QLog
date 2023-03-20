@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->setupUi(this);
 
     ui->cwconsoleWidget->registerContactWidget(ui->newContactWidget);
+    ui->rotatorWidget->registerContactWidget(ui->newContactWidget);
 
     QSettings settings;
 

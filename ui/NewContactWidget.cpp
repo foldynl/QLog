@@ -2361,6 +2361,21 @@ QString NewContactWidget::getMyPWR() const
     return QString::number(ui->powerEdit->value(), 'f');
 }
 
+double NewContactWidget::getQSOBearing() const
+{
+    FCT_IDENTIFICATION;
+
+    double ret_bearing = qQNaN();
+
+    if ( !ui->bearingInfo->text().isEmpty() )
+    {
+        QString bearingString = ui->bearingInfo->text();
+        ret_bearing = bearingString.mid(0,bearingString.length()-1).toDouble();
+    }
+
+    return ret_bearing;
+}
+
 void NewContactWidget::propModeChanged(const QString &propModeText)
 {
     FCT_IDENTIFICATION;
