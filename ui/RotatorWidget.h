@@ -56,6 +56,8 @@ private:
     void setUserButtonDesc(QPushButton *button, const QString&, const double);
 
     QGraphicsPathItem* compassNeedle;
+    QGraphicsPathItem* destinationAzimuthNeedle;
+    bool waitingFirstValue;
     QGraphicsScene* compassScene;
     Ui::RotatorWidget *ui;
     int azimuth;
