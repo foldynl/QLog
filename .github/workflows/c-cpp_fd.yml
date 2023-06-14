@@ -1,0 +1,27 @@
+name: CI Linux/macOS
+
+on: [push, pull_request]
+
+jobs:
+  fedora-build-qt5:
+    name: Fedora CI QT5
+    strategy:
+      matrix:
+        os: [fedora38]
+        
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Install dependencies
+      run: |
+         sudo dnf update
+         sudo dnf install qt5-qtbase-devel qt5-qtwebengine-devel qt5-qtcharts-devel hamlib-devel qtkeychain-qt5-devel qt5-qtserialport-devel pkg-config
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: configure
+      run: qmake QLog.pro
+    - name: make
+      run: make -j8
+
