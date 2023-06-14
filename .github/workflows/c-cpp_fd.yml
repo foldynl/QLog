@@ -14,8 +14,8 @@ jobs:
     steps:
     - name: Install dependencies
       run: |
-         sudo dnf update
-         sudo dnf install qt5-qtbase-devel qt5-qtwebengine-devel qt5-qtcharts-devel hamlib-devel qtkeychain-qt5-devel qt5-qtserialport-devel pkg-config
+         sudo dnf -y update
+         sudo dnf -y install qt5-qtbase-devel qt5-qtwebengine-devel qt5-qtcharts-devel hamlib-devel qtkeychain-qt5-devel qt5-qtserialport-devel pkg-config
     - name: Checkout code
       uses: actions/checkout@v3
       with:
