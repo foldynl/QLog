@@ -21,7 +21,7 @@ jobs:
       with:
         submodules: recursive
     - name: configure
-      run: qmake QLog.pro
+      run: qmake-qt5 QLog.pro
     - name: make
       run: make -j8
 
