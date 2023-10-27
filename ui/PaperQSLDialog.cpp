@@ -1,6 +1,5 @@
 #include <QLabel>
 #include <QDesktopServices>
-#include <QUrl>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QMimeDatabase>
@@ -154,7 +153,7 @@ void PaperQSLDialog::addFileToDialog(const QFileInfo &file)
 
     if ( mimeType.name().contains("image", Qt::CaseInsensitive))
     {
-       fileLabel->setToolTip(QString("<img src='file:///%1'>").arg(file.absoluteFilePath()));
+       fileLabel->setToolTip(QString("<img src='%1'>").arg(file.absoluteFilePath()));
     }
 
     fileLayout->addWidget(fileLabel);

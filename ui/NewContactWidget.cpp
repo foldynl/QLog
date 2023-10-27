@@ -1817,8 +1817,9 @@ void NewContactWidget::updateCoordinates(double lat, double lon, CoordPrecision 
     {
         dxDistance = distance;
         QString unit;
+        double showDistance = Gridsquare::distance2localeUnitDistance(dxDistance, unit);
 
-        ui->distanceInfo->setText(QString::number(Gridsquare::distance2localeUnitDistance(dxDistance, unit), '.', 1) + QString(" %1").arg(unit));
+        ui->distanceInfo->setText(QString::number(showDistance, '.', 1) + QString(" %1").arg(unit));
         ui->bearingInfo->setText(QString("%1°").arg(bearing));
 
         QString partnerTimeZoneString = Data::instance()->getIANATimeZone(lat, lon);

@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     conditionsLabel = new QLabel("", ui->statusBar);
     conditionsLabel->setIndent(20);
-    conditionsLabel->setToolTip(QString("<img src='%1'>").arg(QUrl::fromLocalFile(PropConditions::solarSummaryFile()).toString()));
+    conditionsLabel->setToolTip(QString("<img src='%1'>").arg(PropConditions::solarSummaryFile()));
     callsignLabel = new QLabel(profile.callsign.toLower(), ui->statusBar);
     callsignLabel->setIndent(10);
     locatorLabel = new QLabel(profile.locator.toLower(), ui->statusBar);
