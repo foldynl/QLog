@@ -75,6 +75,15 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     ui->setupUi(this);
 
+#ifdef QLOG_FLATPAK_PACKAGE
+    ui->lotwTextMessage->setVisible(true);
+    ui->tqslPathEdit->setVisible(false);
+    ui->tqslPathButton->setVisible(false);
+    ui->lotwtqslPathLabel->setVisible(false);
+#else
+    ui->lotwTextMessage->setVisible(false);
+#endif
+
     RotTypeModel* rotTypeModel = new RotTypeModel(this);
     ui->rotModelSelect->setModel(rotTypeModel);
 

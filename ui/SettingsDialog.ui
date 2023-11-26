@@ -3317,7 +3317,7 @@
             </widget>
            </item>
            <item row="3" column="0">
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="lotwtqslPathLabel">
              <property name="text">
               <string>TQSL Path</string>
              </property>
@@ -3364,7 +3364,7 @@
              </property>
             </spacer>
            </item>
-           <item row="4" column="1">
+           <item row="5" column="1">
             <spacer name="verticalSpacer_19">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -3376,6 +3376,13 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLabel" name="lotwTextMessage">
+             <property name="text">
+              <string>&lt;b&gt;Using an internal TQSL instance&lt;/b&gt;</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
