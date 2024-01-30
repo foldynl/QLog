@@ -64,8 +64,6 @@ jobs:
      - name: Install dependencies
        run: |
          unset HOMEBREW_NO_INSTALL_FROM_API
-     #    brew update
-     #    brew upgrade || true
          brew install qt6
          brew link qt6 --force
          brew install hamlib
