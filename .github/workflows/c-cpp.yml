@@ -4,12 +4,14 @@ on:
   push:
     branches:
       - 'testing_*'
+      - 'GitHubCI*'
   pull_request:
     branches:
       - 'testing_*'
       - master
 jobs:
   ubuntu-build-qt5:
+    if: false
     name: Ubuntu CI QT5
     strategy:
       matrix:
@@ -32,6 +34,7 @@ jobs:
       run: make -j2
 
   ubuntu-build-qt6:
+    if: false
     name: Ubuntu CI QT6
     strategy:
       matrix:
@@ -72,7 +75,7 @@ jobs:
          brew install brotli
          brew install icu4c
          brew install pkg-config
-
+         find /usr/local
      - name: Checkout code
        uses: actions/checkout@v3
        with:
@@ -87,7 +90,6 @@ jobs:
        run: |
          cd build
          macdeployqt qlog.app
-         find /usr/local/opt/icu4c/lib/
          cp /usr/local/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp /usr/local/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
          cp /usr/local/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
