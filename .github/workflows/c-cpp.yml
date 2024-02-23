@@ -77,7 +77,7 @@ jobs:
          brew install brotli
          brew install icu4c
          brew install pkg-config
-         ls /usr
+         ls /usr/local
          asdsa
 
      - name: Checkout code
