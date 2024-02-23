@@ -68,7 +68,6 @@ jobs:
        run: |
          unset HOMEBREW_NO_INSTALL_FROM_API
          brew update
-         brew upgrade || true
          brew install qt6
          brew link qt6 --force
          brew install hamlib
@@ -78,7 +77,8 @@ jobs:
          brew install brotli
          brew install icu4c
          brew install pkg-config
-         find /opt/homebrew/
+         ls /usr
+         asdsa
 
      - name: Checkout code
        uses: actions/checkout@v4
