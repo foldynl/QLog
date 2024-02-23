@@ -432,7 +432,7 @@ macx: {
    }
 
    INCLUDEPATH += /usr/local/include /opt/homebrew/include
-   LIBS += -L/opt/homebrew/ -L/usr/local/lib -lhamlib
+   LIBS += -L/opt/homebrew/lib -L/usr/local/lib -lhamlib
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=
