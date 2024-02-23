@@ -431,8 +431,8 @@ macx: {
       INSTALLS += target
    }
 
-   INCLUDEPATH += /usr/local/include
-   LIBS += -L/usr/local/lib -lhamlib
+   INCLUDEPATH += /usr/local/include /opt/homebrew/include
+   LIBS += -L/opt/homebrew/ -L/usr/local/lib -lhamlib
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=
