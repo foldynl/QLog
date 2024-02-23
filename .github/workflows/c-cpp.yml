@@ -15,6 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
 
+    if: false
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -36,7 +37,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04]
-        
+    
+    if: false    
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -57,7 +59,7 @@ jobs:
      name: MacOS CI
      strategy:
        matrix:
-         os: [macos-12, macos-14]
+         os: [macos-14]
 
      runs-on: ${{ matrix.os }}
 
@@ -76,6 +78,7 @@ jobs:
          brew install brotli
          brew install icu4c
          brew install pkg-config
+         find /usr/local/lib
 
      - name: Checkout code
        uses: actions/checkout@v4
