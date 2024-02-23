@@ -78,7 +78,7 @@ jobs:
          brew install brotli
          brew install icu4c
          brew install pkg-config
-         find /usr/local/lib
+         find /opt/homebrew/
 
      - name: Checkout code
        uses: actions/checkout@v4
