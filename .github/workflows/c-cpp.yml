@@ -73,6 +73,7 @@ jobs:
          brew install dbus-glib
          brew install brotli
          brew install icu4c
+         brew install libiconv
          brew install pkg-config
          find /usr/local
          exit 0
