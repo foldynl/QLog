@@ -1,3 +1,4 @@
+#include <iconv.h>
 #include <QJsonDocument>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -421,24 +422,53 @@ QString Data::removeAccents(const QString &input)
     /* https://www.medo64.com/2020/10/stripping-diacritics-in-qt/ */
     /* More about normalization https://unicode.org/reports/tr15/ */
 
-    const QString &formD = input.normalized(QString::NormalizationForm_D);
-    QString filtered;
+//    const QString &formD = input.normalized(QString::NormalizationForm_D);
+//    QString filtered;
 
-    for (int i = 0; i < formD.length(); i++)
+//    for (int i = 0; i < formD.length(); i++)
+//    {
+//        if (formD.at(i).category() != QChar::Mark_NonSpacing)
+//        {
+//            filtered.append(formD.at(i));
+//        }
+//    }
+
+//    QString ret = filtered.normalized(QString::NormalizationForm_C).toLatin1();
+
+    const QByteArray& utf8Data = input.toUtf8();
+    iconv_t cd = iconv_open("ASCII//TRANSLIT", "UTF-8");
+
+    if ( cd == (iconv_t)-1 )
     {
-        if (formD.at(i).category() != QChar::Mark_NonSpacing)
-        {
-            filtered.append(formD.at(i));
-        }
+        qWarning() << "Iconv initialization error";
+        //it is better to have data in the wrong encoding than to lose data
+        return input;
     }
 
-    QString ret = filtered.normalized(QString::NormalizationForm_C).toLatin1().replace('?',"");
+    char* output_ascii = new char[utf8Data.size() * 4];
+    memset(output_ascii, 0, utf8Data.size() * 4);
+    const char* inbuf = utf8Data.constData();
+    char *output = output_ascii;
 
-    /* If stripped string is empty then QString to store NULL value do DB */
-    if ( ret.length() == 0 )
+    size_t inbytesleft = utf8Data.size();
+    size_t outbytesleft = utf8Data.size() * 4;
+
+    size_t result = iconv(cd, (char**)&inbuf, &inbytesleft, &output, &outbytesleft);
+
+    if ( result == static_cast<size_t>(-1) )
     {
+        qWarning() << "Iconv Error";
+        delete[] output_ascii;
+        //it is better to have data in the wrong encoding than to lose data
+        return input;
+    }
+
+    iconv_close(cd);
+    QString ret = QString::fromLatin1(output_ascii);
+    delete[] output_ascii;
+
+    if ( ret.isEmpty() )
         ret = QString();
-    }
     return ret;
 
 }
