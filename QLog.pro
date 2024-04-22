@@ -447,7 +447,7 @@ macx: {
    }
 
    INCLUDEPATH += /usr/local/include
-   LIBS += -L/usr/local/lib -lhamlib -lsqlite3
+   LIBS += -L/usr/local/lib -lhamlib -lsqlite3 -liconv
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=
