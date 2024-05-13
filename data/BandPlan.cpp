@@ -171,6 +171,7 @@ BandPlan::BandPlanMode BandPlan::freq2BandMode(const double freq)
     // 3cm QO100
     else if (freq >= 10489.505 && freq < 10489.540) return BAND_MODE_CW;
     else if (freq >= 10489.540 && freq < 10489.580) return BAND_MODE_FT8;
+    else if (freq >= 10489.580 && freq < 10489.650) return BAND_MODE_DIGITAL;
     else if (freq >= 10489.650 && freq < 10489.745) return BAND_MODE_USB;
     else if (freq >= 10489.755 && freq < 10489.850) return BAND_MODE_USB;
     else if (freq >= 10489.850 && freq < 10489.990) return BAND_MODE_PHONE;
