@@ -163,13 +163,16 @@ BandPlan::BandPlanMode BandPlan::freq2BandMode(const double freq)
     // 13cm QO100
     else if (freq >= 2400.005 && freq < 2400.040) return BAND_MODE_CW;
     else if (freq >= 2400.040 && freq < 2400.080) return BAND_MODE_FT8;
-    else if (freq >= 2400.150 && freq < 2400.350) return BAND_MODE_USB;
+    else if (freq >= 2400.080 && freq < 2400.150) return BAND_MODE_DIGITAL;
+    else if (freq >= 2400.150 && freq < 2400.245) return BAND_MODE_USB;
+    else if (freq >= 2400.255 && freq < 2400.350) return BAND_MODE_USB;
     else if (freq >= 2400.350 && freq < 2400.490) return BAND_MODE_PHONE;
 
     // 3cm QO100
     else if (freq >= 10489.505 && freq < 10489.540) return BAND_MODE_CW;
     else if (freq >= 10489.540 && freq < 10489.580) return BAND_MODE_FT8;
-    else if (freq >= 10489.650 && freq < 10489.850) return BAND_MODE_USB;
+    else if (freq >= 10489.650 && freq < 10489.745) return BAND_MODE_USB;
+    else if (freq >= 10489.755 && freq < 10489.850) return BAND_MODE_USB;
     else if (freq >= 10489.850 && freq < 10489.990) return BAND_MODE_PHONE;
 
     return BAND_MODE_PHONE;
