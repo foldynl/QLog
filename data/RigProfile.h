@@ -61,6 +61,8 @@ public:
     bool keySpeedSync;
     qint32 driver;
     bool dxSpot2Rig;
+    QString pttType;
+    QString pttPortPath;
 
     bool operator== (const RigProfile &profile);
     bool operator!= (const RigProfile &profile);

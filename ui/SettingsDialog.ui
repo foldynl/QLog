@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>783</width>
-    <height>794</height>
+    <height>854</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1827,7 +1827,7 @@
                  <item row="14" column="1">
                   <widget class="QComboBox" name="rigPortTypeCombo"/>
                  </item>
-                 <item row="15" column="0" colspan="2">
+                 <item row="16" column="0" colspan="2">
                   <widget class="QStackedWidget" name="rigStackedWidget">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -1887,7 +1887,24 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="0">
+                     <item row="2" column="0">
+                      <widget class="QLabel" name="rigPTTPortLabel">
+                       <property name="text">
+                        <string>PTT Port</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="1">
+                      <widget class="QLineEdit" name="rigPTTPortEdit">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
                       <widget class="QLabel" name="rigBaudLabel">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1900,7 +1917,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="1">
+                     <item row="3" column="1">
                       <widget class="QComboBox" name="rigBaudSelect">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1953,76 +1970,14 @@
                        </item>
                       </widget>
                      </item>
-                     <item row="2" column="0">
+                     <item row="4" column="0">
                       <widget class="QLabel" name="rigDataBitsLabel">
                        <property name="text">
                         <string>Data Bits</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="0">
-                      <widget class="QLabel" name="rigFlowControlLabel">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>Flow Control</string>
-                       </property>
-                      </widget>
-                     </item>
                      <item row="4" column="1">
-                      <layout class="QHBoxLayout" name="horizontalLayout_17">
-                       <property name="spacing">
-                        <number>6</number>
-                       </property>
-                       <item>
-                        <widget class="QComboBox" name="rigFlowControlSelect">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QLabel" name="rigParityLabel">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="text">
-                          <string>Parity</string>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QComboBox" name="rigParitySelect">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="2" column="1">
                       <layout class="QHBoxLayout" name="horizontalLayout_26">
                        <property name="spacing">
                         <number>6</number>
@@ -2088,6 +2043,78 @@
                         </widget>
                        </item>
                       </layout>
+                     </item>
+                     <item row="6" column="0">
+                      <widget class="QLabel" name="rigFlowControlLabel">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>0</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string>Flow Control</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="6" column="1">
+                      <layout class="QHBoxLayout" name="horizontalLayout_17">
+                       <property name="spacing">
+                        <number>6</number>
+                       </property>
+                       <item>
+                        <widget class="QComboBox" name="rigFlowControlSelect">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="rigParityLabel">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="text">
+                          <string>Parity</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="rigParitySelect">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="rigPTTTypeLabel">
+                       <property name="text">
+                        <string>PTT Type</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QComboBox" name="rigPTTTypeCombo"/>
                      </item>
                     </layout>
                    </widget>
@@ -4046,6 +4073,8 @@
   <tabstop>rigPollIntervalSpinBox</tabstop>
   <tabstop>rigPortTypeCombo</tabstop>
   <tabstop>rigPortEdit</tabstop>
+  <tabstop>rigPTTPortEdit</tabstop>
+  <tabstop>rigPTTTypeCombo</tabstop>
   <tabstop>rigBaudSelect</tabstop>
   <tabstop>rigDataBitsSelect</tabstop>
   <tabstop>rigStopBitsSelect</tabstop>
@@ -5069,6 +5098,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>rigPTTTypeCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>rigPTTTypeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>548</x>
+     <y>591</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>425</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
@@ -5130,5 +5175,6 @@
   <slot>rigInterfaceChanged(int)</slot>
   <slot>clublogSettingChanged()</slot>
   <slot>rotInterfaceChanged(int)</slot>
+  <slot>rigPTTTypeChanged(int)</slot>
  </slots>
 </ui>

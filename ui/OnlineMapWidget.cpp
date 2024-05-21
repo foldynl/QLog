@@ -18,6 +18,7 @@
 #include "data/Data.h"
 #include "rotator/Rotator.h"
 #include "rig/Rig.h"
+#include "rig/macros.h"
 #include "data/BandPlan.h"
 
 MODULE_IDENTIFICATION("qlog.ui.onlinemapwidget");

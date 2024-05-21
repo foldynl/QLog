@@ -26,22 +26,26 @@ Rig::Rig(QObject *parent)
     drvMapping[HAMLIB_DRIVER] = DrvParams(HAMLIB_DRIVER,
                                           "Hamlib",
                                           &HamlibRigDrv::getModelList,
-                                          &HamlibRigDrv::getCaps);
+                                          &HamlibRigDrv::getCaps,
+                                          &HamlibRigDrv::getPTTTypeList);
 #ifdef Q_OS_WIN
     drvMapping[OMNIRIG_DRIVER] = DrvParams(OMNIRIG_DRIVER,
                                            "Omnirig v1",
                                            &OmnirigRigDrv::getModelList,
-                                           &OmnirigRigDrv::getCaps);
+                                           &OmnirigRigDrv::getCaps,
+                                           nullptr);
 
     drvMapping[OMNIRIGV2_DRIVER] = DrvParams(OMNIRIGV2_DRIVER,
                                              "Omnirig v2",
                                              &OmnirigV2RigDrv::getModelList,
-                                             &OmnirigV2RigDrv::getCaps);
+                                             &OmnirigV2RigDrv::getCaps,
+                                             nullptr);
 #endif
     drvMapping[TCI_DRIVER] = DrvParams(TCI_DRIVER,
                                        "TCI",
                                        &TCIRigDrv::getModelList,
-                                       &TCIRigDrv::getCaps);
+                                       &TCIRigDrv::getCaps,
+                                       nullptr);
 
 }
 
@@ -89,6 +93,20 @@ const QList<QPair<int, QString>> Rig::getModelList(const DriverID &id) const
          && drvMapping.value(id).getModeslListFunction != nullptr )
     {
         ret = (drvMapping.value(id).getModeslListFunction)();
+    }
+    return ret;
+}
+
+const QList<QPair<QString, QString> > Rig::getPTTTypeList(const DriverID &id) const
+{
+    FCT_IDENTIFICATION;
+
+    QList<QPair<QString, QString>> ret;
+
+    if ( drvMapping.contains(id)
+         && drvMapping.value(id).getPTTTypeListFunction != nullptr )
+    {
+        ret = (drvMapping.value(id).getPTTTypeListFunction)();
     }
     return ret;
 }

@@ -41,6 +41,7 @@ public:
     bool isMorseOverCatSupported();
     const QStringList getAvailableRawModes();
     const QList<QPair<int, QString>> getModelList(const DriverID &id) const;
+    const QList<QPair<QString, QString>> getPTTTypeList(const DriverID &id) const;
     const QList<QPair<int, QString>> getDriverList() const;
     const RigCaps getRigCaps(const DriverID &, int) const;
 
@@ -100,21 +101,25 @@ private:
         DrvParams(const DriverID id,
                   const QString &driverName,
                   QList<QPair<int, QString>> (*getModelfct)(),
-                  RigCaps (*getCapsfct)(int)) :
+                  RigCaps (*getCapsfct)(int),
+                  QList<QPair<QString, QString>> (*getPTTTypefct)()) :
             driverID(id),
             driverName(driverName),
             getModeslListFunction(getModelfct),
-            getCapsFunction(getCapsfct){};
+            getCapsFunction(getCapsfct),
+            getPTTTypeListFunction(getPTTTypefct){};
 
         DrvParams() :
             driverID(UNDEF_DRIVER),
             getModeslListFunction(nullptr),
-            getCapsFunction(nullptr){};
+            getCapsFunction(nullptr),
+            getPTTTypeListFunction(nullptr){};
 
         DriverID driverID;
         QString driverName;
         QList<QPair<int, QString>> (*getModeslListFunction)();
         RigCaps (*getCapsFunction)(int);
+        QList<QPair<QString, QString>> (*getPTTTypeListFunction)();
     };
 
     QMap<int, DrvParams> drvMapping;

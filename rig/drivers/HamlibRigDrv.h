@@ -12,6 +12,7 @@ class HamlibRigDrv : public GenericRigDrv
 {
 public:
     static QList<QPair<int, QString>> getModelList();
+    static QList<QPair<QString, QString> > getPTTTypeList();
     static RigCaps getCaps(int model);
     explicit HamlibRigDrv(const RigProfile &profile,
                           QObject *parent = nullptr);
@@ -63,6 +64,7 @@ private:
     const QString hamlibVFO2String(const vfo_t vfo) const;
     serial_handshake_e stringToHamlibFlowControl(const QString &in_flowcontrol);
     serial_parity_e stringToHamlibParity(const QString &in_parity);
+    ptt_type_t stringToHamlibPTT_Type(const QString &in_ptt);
     QString hamlibErrorString(int);
 
     RIG* rig;
@@ -82,5 +84,4 @@ private:
     QMutex drvLock;
 
 };
-
 #endif // RIG_DRIVERS_HAMLIBRIGDRV_H

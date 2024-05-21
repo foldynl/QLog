@@ -16,6 +16,11 @@
 #define HAMLIB_FILPATHLEN FILPATHLEN
 #endif
 
+// macro introduced hamlib 4.6
+#ifndef PTTPORT
+#define PTTPORT(r) (&r->state.pttport)
+#endif
+
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Drv mutex"; \
                         QMutexLocker locker(&drvLock); \
                         qCDebug(runtime) << "Using Drv"
@@ -31,6 +36,34 @@ QList<QPair<int, QString>> HamlibRigDrv::getModelList()
     rig_list_foreach(addRig, &ret);
 
     return ret;
+}
+
+QList<QPair<QString, QString> > HamlibRigDrv::getPTTTypeList()
+{
+    FCT_IDENTIFICATION;
+
+    QList<QPair<QString, QString>> ret;
+
+    ret << QPair<QString, QString>("none", tr("None"))
+        << QPair<QString, QString>("cat", tr("CAT"))
+        << QPair<QString, QString>("dtr", tr("DTR"))
+        << QPair<QString, QString>("rts", tr("RTS"));
+
+    return ret;
+}
+
+ptt_type_t HamlibRigDrv::stringToHamlibPTT_Type(const QString &in_ptt)
+{
+    FCT_IDENTIFICATION;
+
+    if ( in_ptt == "cat" )
+        return RIG_PTT_RIG;
+    else if ( in_ptt == "dtr" )
+        return RIG_PTT_SERIAL_DTR;
+    else if ( in_ptt == "rts" )
+        return RIG_PTT_SERIAL_RTS;
+
+    return RIG_PTT_NONE;
 }
 
 int HamlibRigDrv::addRig(const rig_caps *caps, void *data)
@@ -134,6 +167,7 @@ HamlibRigDrv::~HamlibRigDrv()
     drvLock.unlock();
 }
 
+
 bool HamlibRigDrv::open()
 {
     FCT_IDENTIFICATION;
@@ -171,6 +205,18 @@ bool HamlibRigDrv::open()
         lastErrorText = tr("Unsupported Rig Driver");
         qCDebug(runtime) << "Rig Open Error" << lastErrorText;
         return false;
+    }
+
+    ptt_type_t pttType = stringToHamlibPTT_Type(rigProfile.pttType);
+
+    qCDebug(runtime) << "Using PTT Type" << rigProfile.pttType;
+    PTTPORT(rig)->type.ptt = pttType;
+
+    if ( pttType == RIG_PTT_SERIAL_RTS
+         || pttType == RIG_PTT_SERIAL_DTR )
+    {
+        qCDebug(runtime) << "Using PTT Port" << rigProfile.pttPortPath;
+        strncpy(PTTPORT(rig)->pathname, rigProfile.pttPortPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
     }
 
     int status = rig_open(rig);
@@ -335,7 +381,7 @@ void HamlibRigDrv::setPTT(bool newPTTState)
 
     qCDebug(function_parameters) << newPTTState;
 
-    if ( !rigProfile.getPTTInfo )
+    if ( !rigProfile.getPTTInfo || PTTPORT(rig)->type.ptt == RIG_PTT_NONE )
         return;
 
     MUTEXLOCKER;

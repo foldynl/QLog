@@ -2,7 +2,6 @@
 #define QLOG_CORE_SERIALPORT_H
 
 #include <QObject>
-#include <hamlib/rig.h>
 
 class SerialPort : public QObject
 {
@@ -18,10 +17,6 @@ public:
     static const QString SERIAL_PARITY_MARK;
     static const QString SERIAL_PARITY_SPACE;
     static const QString SERIAL_PARITY_NO;
-
-    static serial_handshake_e stringToHamlibFlowControl(const QString &in_flowcontrol);
-    static serial_parity_e stringToParity(const QString &in_parity);
-
 };
 
 #endif // QLOG_CORE_SERIALPORT_H
