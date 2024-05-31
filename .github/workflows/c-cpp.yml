@@ -104,3 +104,9 @@ jobs:
          install_name_tool -change /usr/local/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
          otool -L qlog.app/Contents/MacOS/qlog
          macdeployqt qlog.app -dmg
+         codesign --force --deep -s - /Users/runner/work/QLog/QLog/build/qlog.dmg
+     - name: Copy artifact
+       uses: actions/upload-artifact@v4
+       with:
+         name: qlog
+         path: /Users/runner/work/QLog/QLog/build/qlog.dmg
