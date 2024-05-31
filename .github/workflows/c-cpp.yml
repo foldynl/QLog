@@ -59,7 +59,7 @@ jobs:
      name: MacOS CI
      strategy:
        matrix:
-         os: [macos-13]
+         os: [macos-13, macos-14]
 
      runs-on: ${{ matrix.os }}
 
@@ -108,5 +108,5 @@ jobs:
      - name: Copy artifact
        uses: actions/upload-artifact@v4
        with:
-         name: qlog
+         name: qlog-${{ matrix.os }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
