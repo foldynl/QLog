@@ -83,6 +83,10 @@ jobs:
        uses: actions/checkout@v4
        with:
          submodules: recursive
+     - name: Get version from tag
+       run : |
+         TAGVERSION=$(git describe --tags)
+         echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
      - name: Configure and compile
        run: |
          mkdir build
@@ -108,5 +112,5 @@ jobs:
      - name: Copy artifact
        uses: actions/upload-artifact@v4
        with:
-         name: QLog-${{github.ref_name}}-${{ matrix.os }}
+         name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
