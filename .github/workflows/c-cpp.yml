@@ -108,5 +108,5 @@ jobs:
      - name: Copy artifact
        uses: actions/upload-artifact@v4
        with:
-         name: qlog-${{ matrix.os }}
+         name: QLog-${{github.ref_name}}-${{ matrix.os }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
