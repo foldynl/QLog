@@ -3,7 +3,7 @@ name: CI Linux/macOS
 on:
   push:
     branches:
-      - '*'
+      - 'testing_*'
   pull_request:
     branches:
       - 'testing_*'
@@ -11,7 +11,6 @@ on:
 jobs:
   ubuntu-build-qt5:
     name: Ubuntu CI QT5
-    if: false
     strategy:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
@@ -34,7 +33,6 @@ jobs:
 
   ubuntu-build-qt6:
     name: Ubuntu CI QT6
-    if: false
     strategy:
       matrix:
         os: [ubuntu-22.04]
@@ -59,7 +57,7 @@ jobs:
      name: MacOS CI
      strategy:
        matrix:
-         os: [macos-12, macos-13, macos-14]
+         os: [macos-12, macos-13]
 
      runs-on: ${{ matrix.os }}
 
@@ -109,9 +107,3 @@ jobs:
          install_name_tool -change `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
          otool -L qlog.app/Contents/MacOS/qlog
          macdeployqt qlog.app -dmg
-         codesign --force --deep -s - /Users/runner/work/QLog/QLog/build/qlog.dmg
-     - name: Copy artifact
-       uses: actions/upload-artifact@v4
-       with:
-         name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
-         path: /Users/runner/work/QLog/QLog/build/qlog.dmg

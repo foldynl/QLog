@@ -1,4 +1,4 @@
-name: macOS 12 deployment
+name: macOS deployment
 
 #on: [push, pull_request]
 
@@ -11,7 +11,11 @@ on:
 jobs:
   macos-build:
      name: MacOS Build
-     runs-on: macos-12
+     strategy:
+       matrix:
+         os: [macos-12, macos-13]
+
+     runs-on: ${{ matrix.os }}
 
      steps:
      - name: Install Dependencies
@@ -31,24 +35,30 @@ jobs:
      - name: Checkout Code
        uses: actions/checkout@v4
        with:
+         fetch-depth: 0
          submodules: recursive
+     - name: Get version from tag
+       run : |
+         TAGVERSION=$(git describe --tags)
+         echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
+
      - name: Configure and compile
        run: |
          mkdir build
          cd build
          qmake -config release ..
-         make -j2
+         make -j4
      - name: Build dmg
        run: |
          cd build
          macdeployqt qlog.app
-         cp /usr/local/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
-         cp /usr/local/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
-         cp /usr/local/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
+         cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
+         cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
+         cp `brew --prefix`/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
          cp `brew --prefix brotli`/lib/libbrotlicommon.1.dylib qlog.app/Contents/Frameworks/libbrotlicommon.1.dylib
-         cp /usr/local/opt/icu4c/lib/libicui18n.74.dylib qlog.app/Contents/Frameworks/libicui18n.74.dylib
-         install_name_tool -change /usr/local/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change /usr/local/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
+         cp `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib qlog.app/Contents/Frameworks/libicui18n.74.dylib
+         install_name_tool -change `brew --prefix`/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
+         install_name_tool -change `brew --prefix`/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change @loader_path/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
          install_name_tool -change /usr/local/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
          otool -L qlog.app/Contents/MacOS/qlog
@@ -56,6 +66,6 @@ jobs:
      - name: Copy artifact
        uses: actions/upload-artifact@v4
        with:
-         name: qlog
+         name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
 
