@@ -177,6 +177,10 @@ bool HamlibRigDrv::open()
         return false;
     }
 
+    qCDebug(runtime) << "Using PTT Type" << "Fixed RTS";
+
+    rig_set_conf(rig, rig_token_lookup(rig, "ptt_type"), "RTS");
+
     int status = rig_open(rig);
 
     if ( status != RIG_OK )
