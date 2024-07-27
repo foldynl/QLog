@@ -13,7 +13,7 @@ jobs:
      name: MacOS Build
      strategy:
        matrix:
-         os: [macos-14]
+         os: [macos-12, macos-13]
 
      runs-on: ${{ matrix.os }}
 
@@ -39,7 +39,7 @@ jobs:
          submodules: recursive
      - name: Get version from tag
        run : |
-         TAGVERSION="0.37.2"
+         TAGVERSION=$(git describe --tags)
          echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
 
      - name: Configure and compile
@@ -68,4 +68,3 @@ jobs:
        with:
          name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
-
