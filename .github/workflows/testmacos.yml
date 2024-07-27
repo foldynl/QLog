@@ -1,4 +1,4 @@
-name: macOS deployment
+name: macOS test
 
 #on: [push, pull_request]
 
@@ -26,4 +26,5 @@ jobs:
      - name: Get version from tag
        run : |
          TAGVERSION=$(git describe --tags)
+         echo $(git describe --tags)
          echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
