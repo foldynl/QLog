@@ -25,6 +25,6 @@ jobs:
          submodules: recursive
      - name: Get version from tag
        run : |
-         TAGVERSION=$(git describe --tags)
-         echo $(git describe --tags)
+         git fetch -a
+         TAGVERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
          echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
