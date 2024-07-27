@@ -465,7 +465,7 @@ macx: {
       target.path = $$PREFIX
       INSTALLS += target
    }
-
+   QMAKE_TARGET_BUNDLE_PREFIX = com.aa5sh
    INCLUDEPATH += /usr/local/include /opt/homebrew/include
    LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
