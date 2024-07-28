@@ -39,7 +39,7 @@ jobs:
          submodules: recursive
      - name: Get version from tag
        run : |
-         TAGVERSION=$(git describe --tags)
+         TAGVERSION="0.37.2" #$(git describe --tags)
          echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
 
      - name: Configure and compile
