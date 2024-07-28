@@ -126,15 +126,15 @@ jobs:
            MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
        run: |
            # Turn our base64-encoded certificate back to a regular .p12 file
-           echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+           ##echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
            # We need to create a new keychain, otherwise using the certificate will prompt
            # with a UI dialog asking for the certificate password, which we can't
            # use in a headless CI environment
-           security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
-           security default-keychain -s build.keychain
-           security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
-           security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+           ##security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
+           ##security default-keychain -s build.keychain
+           ##security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+           ##security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+           ##security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
            # We finally codesign our app bundle, specifying the Hardened runtime option
            /usr/bin/codesign --timestamp -s "$MACOS_CERTIFICATE_NAME" --options runtime --deep -f /Users/runner/work/QLog/QLog/build/qlog.dmg
      - name: "Notarize app bundle"
