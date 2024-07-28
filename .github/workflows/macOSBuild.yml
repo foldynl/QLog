@@ -48,9 +48,15 @@ jobs:
          cd build
          qmake -config release ..
          make -j4
+     - name: Copy artifact
+       uses: actions/upload-artifact@v4
+       with:
+         name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}-App
+         path: /Users/runner/work/QLog/QLog/build/qlog.app
      - name: Build app
        run: |
          cd build
+         ln -s /usr/local/lib ./
          macdeployqt qlog.app
          cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
