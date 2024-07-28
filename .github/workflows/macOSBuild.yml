@@ -13,7 +13,7 @@ jobs:
      name: MacOS Build
      strategy:
        matrix:
-         os: [macos-12, macos-13]
+         os: [macos-13]
 
      runs-on: ${{ matrix.os }}
 
@@ -48,14 +48,15 @@ jobs:
          cd build
          qmake -config release ..
          make -j4
+         
      - name: Codesign app bundle
          # Extract the secrets we defined earlier as environment variables
-         env: 
+       env: 
            MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
            MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}
            MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
            MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
-         run: |
+       run: |
            # Turn our base64-encoded certificate back to a regular .p12 file
            echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
            # We need to create a new keychain, otherwise using the certificate will prompt
@@ -70,11 +71,11 @@ jobs:
            /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime /build/qlog.app -v
      - name: "Notarize app bundle"
          # Extract the secrets we defined earlier as environment variables
-         env:
+       env:
            PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
            PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
            PROD_MACOS_NOTARIZATION_PWD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
-         run: |
+       run: |
            # Store the notarization credentials so that we can prevent a UI password dialog
            # from blocking the CI
 
@@ -96,11 +97,9 @@ jobs:
            echo "Notarize app"
            xcrun notarytool submit "notarization.zip" --keychain-profile "notarytool-profile" --wait
 
-          # Finally, we need to "attach the staple" to our executable, which will allow our app to be
-          # validated by macOS even when an internet connection is not available.
-          echo "Attach staple"
-          xcrun stapler staple "release/qlog.app"
-      - name: Copy artifact zip
+           echo "Attach staple"
+           xcrun stapler staple "release/qlog.app"
+     - name: Copy artifact zip
        uses: actions/upload-artifact@v4
        with:
          name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
