@@ -68,7 +68,7 @@ jobs:
            security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
            # We finally codesign our app bundle, specifying the Hardened runtime option
-           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime /build/qlog.app -v
+           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime /Users/runner/work/QLog/QLog/build/qlog.app -v
      - name: "Notarize app bundle"
          # Extract the secrets we defined earlier as environment variables
        env:
@@ -87,7 +87,7 @@ jobs:
            # notarization service
 
            echo "Creating temp notarization archive"
-           ditto -c -k --keepParent "release/qlog.app" "notarization.zip"
+           ditto -c -k --keepParent "/Users/runner/work/QLog/QLog/build/qlog.app" "notarization.zip"
 
            # Here we send the notarization request to the Apple's Notarization service, waiting for the result.
            # This typically takes a few seconds inside a CI environment, but it might take more depending on the App
@@ -98,7 +98,7 @@ jobs:
            xcrun notarytool submit "notarization.zip" --keychain-profile "notarytool-profile" --wait
 
            echo "Attach staple"
-           xcrun stapler staple "release/qlog.app"
+           xcrun stapler staple "/Users/runner/work/QLog/QLog/build/qlog.app"
      - name: Copy artifact zip
        uses: actions/upload-artifact@v4
        with:
