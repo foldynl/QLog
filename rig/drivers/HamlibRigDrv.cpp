@@ -16,6 +16,10 @@
 #define HAMLIB_FILPATHLEN FILPATHLEN
 #endif
 
+#ifndef PTTPORT
+#define PTTPORT(r) (&r->state.pttport)
+#endif
+
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Drv mutex"; \
                         QMutexLocker locker(&drvLock); \
                         qCDebug(runtime) << "Using Drv"
@@ -179,7 +183,9 @@ bool HamlibRigDrv::open()
 
     qCDebug(runtime) << "Using PTT Type" << "Fixed RTS";
 
+    strncpy(PTTPORT(rig)->pathname, rigProfile.portPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
     rig_set_conf(rig, rig_token_lookup(rig, "ptt_type"), "RTS");
+    rig_set_conf (rig, rig_token_lookup(rig, "ptt_share"), "1");
 
     int status = rig_open(rig);
 
