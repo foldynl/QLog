@@ -65,8 +65,8 @@ jobs:
          cp `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib qlog.app/Contents/Frameworks/libicui18n.74.dylib
          cp `brew --prefix`/lib/libglib-2.0.0.dylib qlog.app/Contents/Frameworks/libglib-2.0.0.dylib
          cp `brew --prefix`/lib/libbrotlidec.1.dylib qlog.app/Contents/Frameworks/libbrotlidec.1.dylib
-         install_name_tool -change `brew --prefix`/lib/libglib-2.0.0.dylib @executable_path/../Frameworks/libglib-2.0.0.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libbrotlidec.1.dylib @executable_path/../Frameworks/libbrotlidec.1.dylib qlog.app/Contents/MacOS/qlog
+         install_name_tool -change `brew --prefix`/lib/libglib-2.0.0.dylib @rpath/../Frameworks/libglib-2.0.0.dylib qlog.app/Contents/MacOS/qlog
+         install_name_tool -change `brew --prefix`/lib/libbrotlidec.1.dylib @rpath/../Frameworks/libbrotlidec.1.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change `brew --prefix`/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change `brew --prefix`/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change @loader_path/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
