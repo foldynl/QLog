@@ -52,22 +52,6 @@ jobs:
        run: |
          cd build
          macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
-         cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
-         cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
-         cp `brew --prefix`/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
-         cp `brew --prefix`/lib/libbrotlicommon.1.dylib qlog.app/Contents/Frameworks/libbrotlicommon.1.dylib
-         cp `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib qlog.app/Contents/Frameworks/libicui18n.74.dylib
-         cp `brew --prefix`/lib/libglib-2.0.0.dylib qlog.app/Contents/Frameworks/libglib-2.0.0.dylib
-         cp `brew --prefix`/lib/libbrotlidec.1.dylib qlog.app/Contents/Frameworks/libbrotlidec.1.dylib
-         install_name_tool -change `brew --prefix`/lib/libglib-2.0.0.dylib @executable_path/../Frameworks/libglib-2.0.0.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libbrotlidec.1.dylib @executable_path/../Frameworks/libbrotlidec.1.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
-         install_name_tool -change `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
-         otool -L qlog.app/Contents/MacOS/qlog
-         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
      - name: Codesign app bundle
          # Extract the secrets we defined earlier as environment variables
        env: 
@@ -171,5 +155,5 @@ jobs:
      - name: Copy artifact
        uses: actions/upload-artifact@v4
        with:
-         name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
+         name: QLog-${{ env.TAGVERSION }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
