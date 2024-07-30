@@ -72,7 +72,7 @@ jobs:
          install_name_tool -change `brew --prefix`/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
          install_name_tool -change `brew --prefix`/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
          install_name_tool -change `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -add_rpath @executable_path/../Frameworks @executable_path/qlog.app/Contents/MacOS/qlog
+         install_name_tool -add_rpath @executable_path/../Frameworks @executable_path/../MacOS/qlog
          otool -L qlog.app/Contents/MacOS/qlog
          macdeployqt qlog.app
      - name: Codesign app bundle
