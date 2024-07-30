@@ -40,7 +40,7 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
     main_page->setWebChannel(&channel);
 
     setPage(main_page);
-    main_page->load(QUrl(QLatin1String("https://www.aa5sh.com/onlinemap.html")));
+    main_page->load(QUrl(QLatin1String("qrc:/res/map/onlinemap.html")));
     connect(this, &OnlineMapWidget::loadFinished, this, &OnlineMapWidget::finishLoading);
 
     setFocusPolicy(Qt::ClickFocus);
