@@ -51,7 +51,7 @@ jobs:
      - name: Build app
        run: |
          cd build
-         macdeployqt qlog.app
+         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
          cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
          cp `brew --prefix`/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
@@ -67,7 +67,7 @@ jobs:
          install_name_tool -change `brew --prefix`/lib/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
          install_name_tool -change `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
          otool -L qlog.app/Contents/MacOS/qlog
-         macdeployqt qlog.app
+         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
      - name: Codesign app bundle
          # Extract the secrets we defined earlier as environment variables
        env: 
