@@ -4,9 +4,9 @@ name: macOS deployment
 
 on:
   workflow_dispatch:
-  push:
-     branches:
-       - master
+  #push:
+  #   branches:
+  #     - master
 
 jobs:
   macos-build:
