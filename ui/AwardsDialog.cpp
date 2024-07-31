@@ -38,9 +38,11 @@ AwardsDialog::AwardsDialog(QWidget *parent) :
     ui->awardComboBox->addItem(tr("WAS"), QVariant("was"));
     ui->awardComboBox->addItem(tr("WPX"), QVariant("wpx"));
     ui->awardComboBox->addItem(tr("IOTA"), QVariant("iota"));
-
+    ui->awardComboBox->addItem(tr("POTA Hunter"),QVariant("potah"));
+    ui->awardComboBox->addItem(tr("POTA Activator"),QVariant("potaa"));
+    ui->awardComboBox->addItem(tr("SOTA"),QVariant("sota"));
+    ui->awardComboBox->addItem(tr("WWFF"),QVariant("wwff"));
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Done"));
-
     ui->awardTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->awardTableView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
@@ -151,7 +153,37 @@ void AwardsDialog::refreshTable(int)
         uniqColumns = "c.iota";
         excludePart = " AND c.iota is not NULL ";
     }
-
+    else if ( awardSelected == "potah" )
+    {
+        headersColumns = "p.reference col1, translate_to_locale(p.name) col2 ";
+        uniqColumns = "c.pota_ref";
+        sqlPart = " FROM pota_directory p "
+                  "     INNER JOIN contacts c ON p.reference = c.pota_ref "
+                  "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+    }
+    else if ( awardSelected == "potaa" )
+    {
+        headersColumns = "p.reference col1, translate_to_locale(p.name) col2 ";
+        uniqColumns = "c.my_pota_ref";
+        sqlPart = " FROM pota_directory p "
+                  "     INNER JOIN contacts c ON p.reference = c.my_pota_ref "
+                  "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+    }   else if ( awardSelected == "sota" )
+    {
+        headersColumns = "s.summit_code col1, NULL col2 ";
+        uniqColumns = "c.sota_ref";
+        sqlPart = " FROM sota_summits s "
+                  "     INNER JOIN contacts c ON s.summit_code = c.sota_ref "
+                  "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+    }
+    else if ( awardSelected == "wwff" )
+    {
+        headersColumns = "w.reference col1, translate_to_locale(w.name) col2 ";
+        uniqColumns = "c.wwff_ref";
+        sqlPart = " FROM wwff_directory w "
+                  "     INNER JOIN contacts c ON w.reference = c.wwff_ref "
+                  "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+    }
     if ( ui->eqslCheckBox->isChecked() )
     {
         confirmed << " eqsl_qsl_rcvd = 'Y' ";
