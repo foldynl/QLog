@@ -72,8 +72,8 @@ jobs:
            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
            # We finally codesign our app bundle, specifying the Hardened runtime option
            /usr/bin/codesign --timestamp -s "$MACOS_CERTIFICATE_NAME" --options runtime --deep -f /Users/runner/work/QLog/QLog/build/qlog.app
-           /usr/bin/codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --entitlements /Users/runner/work/QLog/QLog/entitlements.xml --options runtime qlog.app/Contents/Frameworks/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess 
-           /usr/bin/codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --options runtime qlog.app/Contents/MacOS/qlog
+           /usr/bin/codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --entitlements /Users/runner/work/QLog/QLog/entitlements.xml --options runtime /Users/runner/work/QLog/QLog/build/qlog.app/Contents/Frameworks/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess 
+           /usr/bin/codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --options runtime /Users/runner/work/QLog/QLog/build/qlog.app/Contents/MacOS/qlog
      - name: "Notarize app bundle"
          # Extract the secrets we defined earlier as environment variables
        env:
