@@ -102,6 +102,10 @@ DxFilterDialog::DxFilterDialog(QWidget *parent) :
     /*****************/
     bool deduplication = settings.value("dxc/filter_deduplication", false).toBool();
     ui->deduplicationcheckbox->setChecked(deduplication);
+    int duplicationtime = settings.value("dxc/filter_duplicationtime", 360).toInt();
+    ui->time_spinBox_dupe->setValue(duplicationtime);
+    int duplicationfreq = settings.value("dxc/filter_deduplicationfreq", 1).toInt();
+    ui->freq_spinBox_dupe->setValue(duplicationfreq);
 
     /**********/
     /* MEMBER */
@@ -185,6 +189,8 @@ void DxFilterDialog::accept()
     /* Deduplication */
     /*****************/
     settings.setValue("dxc/filter_deduplication", ui->deduplicationcheckbox->isChecked());
+    settings.setValue("dxc/filter_duplicationtime",ui->time_spinBox_dupe->value() );
+    settings.setValue("dxc/filter_deduplicationfreq", ui->freq_spinBox_dupe->value());
 
     /**********/
     /* MEMBER */

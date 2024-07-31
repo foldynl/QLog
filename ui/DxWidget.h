@@ -178,6 +178,9 @@ private:
     QRegularExpression bandregexp;
     uint dxccStatusFilter;
     bool deduplicateSpots;
+    int deduplicatetime;
+    int deduplicatefreq;
+
     QSet<QString> dxMemberFilter;
     QSqlRecord lastQSO;
     quint8 reconnectAttempts;
@@ -194,6 +197,8 @@ private:
     QString bandFilterRegExp();
     uint dxccStatusFilterValue();
     bool spotDedupValue();
+    int getDedupTimeValue();
+    int getDedupFreqValue();
     QStringList dxMemberList();
     bool getAutoconnectServer();
     void saveAutoconnectServer(bool);
