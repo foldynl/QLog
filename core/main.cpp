@@ -562,6 +562,8 @@ int main(int argc, char* argv[])
     w.setWindowIcon(icon);
 
     w.show();
-
+#ifdef Q_OS_OSX
+    w.setLayoutGeometry();
+#endif
     return app.exec();
 }
