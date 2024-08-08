@@ -13,7 +13,7 @@ jobs:
      name: MacOS Build
      strategy:
        matrix:
-         os: [macos-12, macos-13]
+         os: [macos-12]
 
      runs-on: ${{ matrix.os }}
 
@@ -39,7 +39,7 @@ jobs:
          submodules: recursive
      - name: Get version from tag
        run : |
-         TAGVERSION=$(git describe --tags)
+         TAGVERSION="0.37.2" #$(git describe --tags)
          echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
 
      - name: Configure and compile
@@ -51,7 +51,7 @@ jobs:
      - name: Build dmg
        run: |
          cd build
-         macdeployqt qlog.app
+         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
          cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
          cp `brew --prefix`/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
