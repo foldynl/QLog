@@ -171,7 +171,20 @@ void AwardsDialog::refreshTable(int)
         headersColumns = "p.reference col1, translate_to_locale(p.name) col2 ";
         uniqColumns = "c.pota_ref";
         sqlPart = " FROM pota_directory p "
-                  "     INNER JOIN contacts c ON p.reference = c.pota_ref "
+                  "     INNER JOIN "
+                  "(WITH RECURSIVE split(id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, pota, str) AS ( "
+                  "SELECT id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, '', pota_ref||',' FROM contacts "
+                  "WHERE station_callsign = '" + stationCallsign + "' "
+                  "UNION ALL SELECT "
+                  "id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, "
+                  "substr(str, 0, instr(str, ',')), "
+                  "substr(str, instr(str, ',')+1) "
+                  "FROM split WHERE str!='' "
+                  ") "
+                  "SELECT id, callsign, station_callsign,  my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, pota pota_ref "
+                  "FROM split "
+                  "WHERE pota!='' ORDER BY ID) "
+                  " c ON p.reference = c.pota_ref "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name ";
         excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }
@@ -180,9 +193,21 @@ void AwardsDialog::refreshTable(int)
         headersColumns = "p.reference col1, translate_to_locale(p.name) col2 ";
         uniqColumns = "c.my_pota_ref";
         sqlPart = " FROM pota_directory p "
-                  "     INNER JOIN contacts c ON p.reference = c.my_pota_ref "
-                  "     LEFT OUTER JOIN modes m on c.mode = m.name "
-                  "     WHERE station_callsign = '" + stationCallsign + "'";
+                  "     INNER JOIN "
+                  "(WITH RECURSIVE split(id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, pota, str) AS ( "
+                  "SELECT id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, '', my_pota_ref||',' FROM contacts "
+                  "WHERE station_callsign = '" + stationCallsign + "' "
+                                      "UNION ALL SELECT "
+                                      "id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, "
+                                      "substr(str, 0, instr(str, ',')), "
+                                      "substr(str, instr(str, ',')+1) "
+                                      "FROM split WHERE str!='' "
+                                      ") "
+                                      "SELECT id, callsign, station_callsign,  my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, pota my_pota_ref "
+                                      "FROM split "
+                                      "WHERE pota!='' ORDER BY ID) "
+                                      " c ON p.reference = c.my_pota_ref "
+                                      "     LEFT OUTER JOIN modes m on c.mode = m.name ";
         excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }   else if ( awardSelected == "sota" )
     {
@@ -316,7 +341,6 @@ void AwardsDialog::refreshTable(int)
         "GROUP BY 2,3 "
         ") "
         "ORDER BY 1,2 COLLATE LOCALEAWARE ASC ");
-    //qWarning() << detailedViewModel->query().lastQuery();
     qDebug(runtime) << detailedViewModel->query().lastQuery();
 
     detailedViewModel->setHeaderData(1, Qt::Horizontal, "");
