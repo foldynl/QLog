@@ -51,7 +51,7 @@ jobs:
      - name: Build dmg
        run: |
          cd build
-         macdeployqt qlog.app
+         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
          cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
          cp `brew --prefix`/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
