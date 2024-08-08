@@ -214,9 +214,21 @@ void AwardsDialog::refreshTable(int)
         headersColumns = "s.summit_code col1, NULL col2 ";
         uniqColumns = "c.sota_ref";
         sqlPart = " FROM sota_summits s "
-                  "     INNER JOIN contacts c ON s.summit_code = c.sota_ref "
-                  "     LEFT OUTER JOIN modes m on c.mode = m.name "
-                  "     WHERE station_callsign = '" + stationCallsign + "'";
+                  "     INNER JOIN "
+                  "(WITH RECURSIVE split(id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, sota, str) AS ( "
+                  "SELECT id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, '', sota_ref||',' FROM contacts "
+                  "WHERE station_callsign = '" + stationCallsign + "' "
+                                      "UNION ALL SELECT "
+                                      "id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, "
+                                      "substr(str, 0, instr(str, ',')), "
+                                      "substr(str, instr(str, ',')+1) "
+                                      "FROM split WHERE str!='' "
+                                      ") "
+                                      "SELECT id, callsign, station_callsign,  my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, sota sota_ref "
+                                      "FROM split "
+                                      "WHERE sota!='' ORDER BY ID) "
+                  "c ON s.summit_code = c.sota_ref "
+                                      "     LEFT OUTER JOIN modes m on c.mode = m.name ";
         excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }
     else if ( awardSelected == "wwff" )
@@ -224,9 +236,21 @@ void AwardsDialog::refreshTable(int)
         headersColumns = "w.reference col1, translate_to_locale(w.name) col2 ";
         uniqColumns = "c.wwff_ref";
         sqlPart = " FROM wwff_directory w "
-                  "     INNER JOIN contacts c ON w.reference = c.wwff_ref "
-                  "     LEFT OUTER JOIN modes m on c.mode = m.name "
-                  "     WHERE station_callsign = '" + stationCallsign + "'";
+                  "     INNER JOIN "
+                  "(WITH RECURSIVE split(id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, wwff, str) AS ( "
+                  "SELECT id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, '', wwff_ref||',' FROM contacts "
+                  "WHERE station_callsign = '" + stationCallsign + "' "
+                                      "UNION ALL SELECT "
+                                      "id, callsign, station_callsign, my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, "
+                                      "substr(str, 0, instr(str, ',')), "
+                                      "substr(str, instr(str, ',')+1) "
+                                      "FROM split WHERE str!='' "
+                                      ") "
+                                      "SELECT id, callsign, station_callsign,  my_dxcc, band, dxcc, eqsl_qsl_rcvd, lotw_qsl_rcvd, qsl_rcvd,prop_mode,mode, wwff wwff_ref "
+                                      "FROM split "
+                                      "WHERE wwff!='' ORDER BY ID) "
+                                      "c ON w.reference = c.wwff_ref "
+                                      "     LEFT OUTER JOIN modes m on c.mode = m.name ";
         excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }
     if ( ui->eqslCheckBox->isChecked() )
