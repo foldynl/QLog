@@ -8,6 +8,7 @@
 #include "data/Data.h"
 #include "data/BandPlan.h"
 #include <QSqlError>
+
 MODULE_IDENTIFICATION("qlog.ui.awardsdialog");
 
 AwardsDialog::AwardsDialog(QWidget *parent) :
@@ -30,6 +31,16 @@ AwardsDialog::AwardsDialog(QWidget *parent) :
     ui->myEntityComboBox->setModel(entityCallsignModel);
     ui->myEntityComboBox->setModelColumn(1);
     ui->myEntityComboBox->blockSignals(false);
+
+    stationCallsignModel = new SqlListModel("SELECT distinct station_callsign from contacts;","",this);
+    ui->stationComboBox->blockSignals(true);
+    while(stationCallsignModel->canFetchMore())
+    {
+        stationCallsignModel->fetchMore();
+    }
+    ui->stationComboBox->setModel(stationCallsignModel);
+    ui->stationComboBox->setModelColumn(0);
+    ui->stationComboBox->blockSignals(false);
 
     ui->awardComboBox->addItem(tr("DXCC"), QVariant("dxcc"));
     ui->awardComboBox->addItem(tr("ITU"), QVariant("itu"));
@@ -74,6 +85,8 @@ void AwardsDialog::refreshTable(int)
     QString sqlPart = "FROM contacts c, modes m  "
                       "WHERE c.mode = m.name"
                       "      AND c.my_dxcc = '" + entitySelected + "' ";
+
+    QString stationCallsign = getSelectedCallsign();
 
     if ( ui->cwCheckBox->isChecked() )
     {
@@ -160,6 +173,7 @@ void AwardsDialog::refreshTable(int)
         sqlPart = " FROM pota_directory p "
                   "     INNER JOIN contacts c ON p.reference = c.pota_ref "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+        excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }
     else if ( awardSelected == "potaa" )
     {
@@ -167,14 +181,18 @@ void AwardsDialog::refreshTable(int)
         uniqColumns = "c.my_pota_ref";
         sqlPart = " FROM pota_directory p "
                   "     INNER JOIN contacts c ON p.reference = c.my_pota_ref "
-                  "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+                  "     LEFT OUTER JOIN modes m on c.mode = m.name "
+                  "     WHERE station_callsign = '" + stationCallsign + "'";
+        excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }   else if ( awardSelected == "sota" )
     {
         headersColumns = "s.summit_code col1, NULL col2 ";
         uniqColumns = "c.sota_ref";
         sqlPart = " FROM sota_summits s "
                   "     INNER JOIN contacts c ON s.summit_code = c.sota_ref "
-                  "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+                  "     LEFT OUTER JOIN modes m on c.mode = m.name "
+                  "     WHERE station_callsign = '" + stationCallsign + "'";
+        excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }
     else if ( awardSelected == "wwff" )
     {
@@ -182,7 +200,9 @@ void AwardsDialog::refreshTable(int)
         uniqColumns = "c.wwff_ref";
         sqlPart = " FROM wwff_directory w "
                   "     INNER JOIN contacts c ON w.reference = c.wwff_ref "
-                  "     LEFT OUTER JOIN modes m on c.mode = m.name ";
+                  "     LEFT OUTER JOIN modes m on c.mode = m.name "
+                  "     WHERE station_callsign = '" + stationCallsign + "'";
+        excludePart = " and c.station_callsign = '" + stationCallsign + "' ";
     }
     if ( ui->eqslCheckBox->isChecked() )
     {
@@ -223,80 +243,80 @@ void AwardsDialog::refreshTable(int)
         stmt_sum_total << QString("SUM(d.'%1') '%2'").arg(dxccBands[i].name, dxccBands[i].name);
     }
     detailedViewModel->setQuery(
-                    "WITH dxcc_summary AS ( "
-                    "SELECT  " + headersColumns +", "
-                    + stmt_max_part.join(",") + ", "
-                    "    MAX(CASE WHEN prop_mode = 'SAT' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as 'SAT', "
-                    "    MAX(CASE WHEN prop_mode = 'EME' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as 'EME' "
-                    + sqlPart
-                    + excludePart +
-                    "GROUP BY  1,2), "
-                    " ituzCTE AS ( "
-                    " SELECT 1 AS n, 1 AS value "
-                    " UNION ALL "
-                    " SELECT n + 1, value + 1 "
-                    " FROM ituzCTE "
-                    " WHERE n < 90 ), "
-                    " cqzCTE AS ( "
-                    " SELECT 1 AS n, 1 AS value "
-                    " UNION ALL "
-                    " SELECT n + 1, value + 1 "
-                    " FROM cqzCTE "
-                    " WHERE n < 40 ), "
-                    "continents as "
-                    "(values ('NA', '" + tr("North America") + "'),('SA','" + tr("South America") + "'),('EU', '" + tr("Europe") + "'),('AF', '" + tr("Africa") + "'),('OC', '" + tr("Oceania") + "'),('AS', '" + tr("Asia") + "'),('AN', '" + tr("Antarctica") + "')) "
-                    "SELECT * FROM ( "
-                    "SELECT 0 column_idx, "
-                    "       '" + tr("TOTAL Worked") + "',  "
-                    "       count(DISTINCT " + uniqColumns + "), "
-                    + stmt_total_padding.join(",") + ", " +
-                    "       NULL 'SAT', "
-                    "       NULL 'EME' "
-                    "FROM contacts c, modes m "
-                    "WHERE c.mode = m.name "
-                    "      AND c.my_dxcc = '" + entitySelected + "' "
-                    "      AND m.dxcc IN (" + modes.join(",") + ") "
-                    + excludePart +
-                    "UNION ALL "
-                    "SELECT 0 column_idx, "
-                    "       '" + tr("TOTAL Confirmed") + "',  "
-                    "       count(DISTINCT " + uniqColumns + "), "
-                    + stmt_total_padding.join(",") + ", " +
-                    "       NULL 'SAT', "
-                    "       NULL 'EME' "
-                    "FROM contacts c, modes m "
-                    "WHERE (" + confirmed.join("or") + ") "
-                    "      AND c.mode = m.name "
-                    "      AND m.dxcc IN (" + modes.join(",") + ") "
-                    "      AND c.my_dxcc = '" + entitySelected + "' "
-                    + excludePart +
-                    "UNION ALL "
-                    "SELECT 1 column_idx, "
-                    "       '" + tr("Confirmed") + "', NULL prefix, "
-                    + stmt_sum_confirmed.join(",") + ", " +
-                    "       SUM(CASE WHEN a.'SAT' > 1 THEN 1 ELSE 0 END) 'SAT',  "
-                    "       SUM(CASE WHEN a.'EME' > 1 THEN 1 ELSE 0 END) 'EME'  "
-                    "FROM dxcc_summary a "
-                    "GROUP BY 1 "
-                    "UNION ALL "
-                    "SELECT 2 column_idx, "
-                    "       '" + tr("Worked") + "', NULL prefix, "
-                    + stmt_sum_worked.join(",") + ", " +
-                    "       SUM(CASE WHEN a.'SAT' > 0 THEN 1 ELSE 0 END) 'SAT',  "
-                    "       SUM(CASE WHEN a.'EME' > 0 THEN 1 ELSE 0 END) 'EME'  "
-                    "FROM dxcc_summary a "
-                    "GROUP BY 1 "
-                    "UNION ALL "
-                    "SELECT 3 column_idx,  "
-                    "       col1, col2, "
-                    + stmt_sum_total.join(",") + ", " +
-                    "       SUM(d.'SAT') 'SAT',  "
-                    "       SUM(d.'EME') 'EME'  "
-                    "       from dxcc_summary d "
-                    "GROUP BY 2,3 "
-                    ") "
-                    "ORDER BY 1,2 COLLATE LOCALEAWARE ASC ");
-
+        "WITH dxcc_summary AS ( "
+        "SELECT  " + headersColumns +", "
+        + stmt_max_part.join(",") + ", "
+                                    "    MAX(CASE WHEN prop_mode = 'SAT' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as 'SAT', "
+                                                    "    MAX(CASE WHEN prop_mode = 'EME' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as 'EME' "
+        + sqlPart
+        + excludePart +
+        "GROUP BY  1,2), "
+        " ituzCTE AS ( "
+        " SELECT 1 AS n, 1 AS value "
+        " UNION ALL "
+        " SELECT n + 1, value + 1 "
+        " FROM ituzCTE "
+        " WHERE n < 90 ), "
+        " cqzCTE AS ( "
+        " SELECT 1 AS n, 1 AS value "
+        " UNION ALL "
+        " SELECT n + 1, value + 1 "
+        " FROM cqzCTE "
+        " WHERE n < 40 ), "
+        "continents as "
+        "(values ('NA', '" + tr("North America") + "'),('SA','" + tr("South America") + "'),('EU', '" + tr("Europe") + "'),('AF', '" + tr("Africa") + "'),('OC', '" + tr("Oceania") + "'),('AS', '" + tr("Asia") + "'),('AN', '" + tr("Antarctica") + "')) "
+                                                                                                                                                                                                                                   "SELECT * FROM ( "
+                                                                                                                                                                                                                                   "SELECT 0 column_idx, "
+                                                                                                                                                                                                                                   "       '" + tr("TOTAL Worked") + "',  "
+                               "       count(DISTINCT " + uniqColumns + "), "
+        + stmt_total_padding.join(",") + ", " +
+        "       NULL 'SAT', "
+        "       NULL 'EME' "
+        "FROM contacts c, modes m "
+        "WHERE c.mode = m.name "
+        "      AND c.my_dxcc = '" + entitySelected + "' "
+                           "      AND m.dxcc IN (" + modes.join(",") + ") "
+        + excludePart +
+        "UNION ALL "
+        "SELECT 0 column_idx, "
+        "       '" + tr("TOTAL Confirmed") + "',  "
+                                  "       count(DISTINCT " + uniqColumns + "), "
+        + stmt_total_padding.join(",") + ", " +
+        "       NULL 'SAT', "
+        "       NULL 'EME' "
+        "FROM contacts c, modes m "
+        "WHERE (" + confirmed.join("or") + ") "
+                                 "      AND c.mode = m.name "
+                                 "      AND m.dxcc IN (" + modes.join(",") + ") "
+                            "      AND c.my_dxcc = '" + entitySelected + "' "
+        + excludePart +
+        "UNION ALL "
+        "SELECT 1 column_idx, "
+        "       '" + tr("Confirmed") + "', NULL prefix, "
+        + stmt_sum_confirmed.join(",") + ", " +
+        "       SUM(CASE WHEN a.'SAT' > 1 THEN 1 ELSE 0 END) 'SAT',  "
+        "       SUM(CASE WHEN a.'EME' > 1 THEN 1 ELSE 0 END) 'EME'  "
+        "FROM dxcc_summary a "
+        "GROUP BY 1 "
+        "UNION ALL "
+        "SELECT 2 column_idx, "
+        "       '" + tr("Worked") + "', NULL prefix, "
+        + stmt_sum_worked.join(",") + ", " +
+        "       SUM(CASE WHEN a.'SAT' > 0 THEN 1 ELSE 0 END) 'SAT',  "
+        "       SUM(CASE WHEN a.'EME' > 0 THEN 1 ELSE 0 END) 'EME'  "
+        "FROM dxcc_summary a "
+        "GROUP BY 1 "
+        "UNION ALL "
+        "SELECT 3 column_idx,  "
+        "       col1, col2, "
+        + stmt_sum_total.join(",") + ", " +
+        "       SUM(d.'SAT') 'SAT',  "
+        "       SUM(d.'EME') 'EME'  "
+        "       from dxcc_summary d "
+        "GROUP BY 2,3 "
+        ") "
+        "ORDER BY 1,2 COLLATE LOCALEAWARE ASC ");
+    //qWarning() << detailedViewModel->query().lastQuery();
     qDebug(runtime) << detailedViewModel->query().lastQuery();
 
     detailedViewModel->setHeaderData(1, Qt::Horizontal, "");
@@ -371,6 +391,13 @@ QString AwardsDialog::getSelectedEntity()
     return comboData.toString();
 }
 
+QString AwardsDialog::getSelectedCallsign()
+{
+    FCT_IDENTIFICATION;
+
+    return ui->stationComboBox->currentText();
+}
+
 QString AwardsDialog::getSelectedAward()
 {
     FCT_IDENTIFICATION;
@@ -379,3 +406,11 @@ QString AwardsDialog::getSelectedAward()
     qCDebug(runtime) << ret;
     return ret;
 }
+
+void AwardsDialog::on_stationComboBox_currentIndexChanged(int index)
+{
+    FCT_IDENTIFICATION;
+
+    refreshTable(0);
+}
+
