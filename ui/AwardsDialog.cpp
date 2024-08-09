@@ -38,10 +38,11 @@ AwardsDialog::AwardsDialog(QWidget *parent) :
     ui->awardComboBox->addItem(tr("WAS"), QVariant("was"));
     ui->awardComboBox->addItem(tr("WPX"), QVariant("wpx"));
     ui->awardComboBox->addItem(tr("IOTA"), QVariant("iota"));
-    ui->awardComboBox->addItem(tr("POTA Hunter"),QVariant("potah"));
-    ui->awardComboBox->addItem(tr("POTA Activator"),QVariant("potaa"));
-    ui->awardComboBox->addItem(tr("SOTA"),QVariant("sota"));
-    ui->awardComboBox->addItem(tr("WWFF"),QVariant("wwff"));
+    ui->awardComboBox->addItem(tr("POTA Hunter"), QVariant("potah"));
+    ui->awardComboBox->addItem(tr("POTA Activator"), QVariant("potaa"));
+    ui->awardComboBox->addItem(tr("SOTA"), QVariant("sota"));
+    ui->awardComboBox->addItem(tr("WWFF"), QVariant("wwff"));
+
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Done"));
     ui->awardTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->awardTableView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -62,100 +63,119 @@ void AwardsDialog::refreshTable(int)
 {
     FCT_IDENTIFICATION;
 
+    const QList<Band>& dxccBands = BandPlan::bandsList(true, true);
+
+    if ( dxccBands.size() == 0 )
+        return;
+
     QStringList confirmed("1=2 ");
     QStringList modes("'NONE'");
     QString headersColumns;
     QString uniqColumns;
-    QString excludePart;
+    QString addWherePart;
+    QString sqlPart;
 
-    QString awardSelected = getSelectedAward();
-    QString entitySelected = getSelectedEntity();
-
-    QString sqlPart = "FROM contacts c, modes m  "
-                      "WHERE c.mode = m.name"
-                      "      AND c.my_dxcc = '" + entitySelected + "' ";
+    const QString &awardSelected = getSelectedAward();
 
     if ( ui->cwCheckBox->isChecked() )
-    {
         modes << "'CW'";
-    }
 
     if ( ui->phoneCheckBox->isChecked() )
-    {
         modes << "'PHONE'";
-    }
 
     if ( ui->digiCheckBox->isChecked() )
-    {
         modes << "'DIGITAL'";
-
-    }
 
     if ( awardSelected == "dxcc" )
     {
+        setEntityInputEnabled(true);
+        const QString &entitySelected = getSelectedEntity();
         headersColumns = "translate_to_locale(d.name) col1, d.prefix col2 ";
         uniqColumns = "c.dxcc";
         sqlPart = " FROM dxcc_entities d "
                   "     LEFT OUTER JOIN contacts c ON d.id = c.dxcc "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name "
                   "WHERE (c.id is NULL or c.my_dxcc = '" + entitySelected + "') ";
+        addWherePart = " AND (c.id is NULL OR c.my_dxcc = '" + entitySelected + "') ";
     }
     else if ( awardSelected == "waz" )
     {
+        setEntityInputEnabled(true);
+        const QString &entitySelected = getSelectedEntity();
         headersColumns = "d.n col1, null col2 ";
         uniqColumns = "c.cqz";
         sqlPart = " FROM cqzCTE d "
                   "     LEFT OUTER JOIN contacts c ON d.n = c.cqz "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name "
                   "WHERE (c.id is NULL or c.my_dxcc = '" + entitySelected + "') ";
+        addWherePart = " AND (c.id is NULL OR c.my_dxcc = '" + entitySelected + "') ";
     }
     else if ( awardSelected == "itu" )
     {
+        setEntityInputEnabled(true);
+        const QString &entitySelected = getSelectedEntity();
         headersColumns = "d.n col1, null col2 ";
         uniqColumns = "c.ituz";
         sqlPart = " FROM ituzCTE d "
                   "     LEFT OUTER JOIN contacts c ON d.n = c.ituz "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name "
                   "WHERE (c.id is NULL or c.my_dxcc = '" + entitySelected + "') ";
+        addWherePart = " AND (c.id is NULL OR c.my_dxcc = '" + entitySelected + "') ";
 
     }
     else if ( awardSelected == "wac" )
     {
+        setEntityInputEnabled(true);
+        const QString &entitySelected = getSelectedEntity();
         headersColumns = "d.column2 col1, d.column1 col2 ";
         uniqColumns = "c.cont";
         sqlPart = " FROM continents d "
                   "     LEFT OUTER JOIN contacts c ON d.column1 = c.cont "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name "
                   "WHERE (c.id is NULL or c.my_dxcc = '" + entitySelected + "') ";
+        addWherePart = " AND (c.id is NULL OR c.my_dxcc = '" + entitySelected + "') ";
 
     }
     else if ( awardSelected == "was" )
     {
+        setEntityInputEnabled(true);
+        const QString &entitySelected = getSelectedEntity();
         headersColumns = "d.subdivision_name col1, d.code col2 ";
         uniqColumns = "c.state";
         sqlPart = " FROM adif_enum_primary_subdivision d "
                   "     LEFT OUTER JOIN contacts c ON d.dxcc = c.dxcc AND d.code = c.state "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name "
                   "WHERE (c.id is NULL or c.my_dxcc = '" + entitySelected + "' AND d.dxcc in (6, 110, 291)) ";
+        addWherePart = " AND (c.id is NULL or c.my_dxcc = '" + entitySelected + "' AND c.dxcc in (6, 110, 291)) ";
     }
     else if ( awardSelected == "wpx" )
     {
+        setEntityInputEnabled(true);
+        const QString &entitySelected = getSelectedEntity();
         headersColumns = "c.pfx col1, null col2 ";
         uniqColumns = "c.pfx";
         sqlPart = "FROM contacts c, modes m  "
                   "WHERE c.mode = m.name"
                   "      AND c.pfx is not null"
                   "      AND c.my_dxcc = '" + entitySelected + "'";
+        addWherePart = " AND c.my_dxcc = '" + entitySelected + "' ";
     }
     else if ( awardSelected == "iota" )
     {
+        setEntityInputEnabled(true);
+        const QString &entitySelected = getSelectedEntity();
         headersColumns = "c.iota col1, NULL col2 ";
         uniqColumns = "c.iota";
-        excludePart = " AND c.iota is not NULL ";
+        sqlPart = "FROM contacts c, modes m  "
+                  "WHERE c.mode = m.name"
+                  "      AND c.my_dxcc = '" + entitySelected + "' ";
+        addWherePart = " AND c.iota is not NULL "
+                       " AND c.my_dxcc = '" + entitySelected + "' ";
     }
     else if ( awardSelected == "potah" )
     {
-        headersColumns = "p.reference col1, translate_to_locale(p.name) col2 ";
+        setEntityInputEnabled(false);
+        headersColumns = "p.reference col1, p.name col2 ";
         uniqColumns = "c.pota_ref";
         sqlPart = " FROM pota_directory p "
                   "     INNER JOIN contacts c ON p.reference = c.pota_ref "
@@ -163,13 +183,16 @@ void AwardsDialog::refreshTable(int)
     }
     else if ( awardSelected == "potaa" )
     {
-        headersColumns = "p.reference col1, translate_to_locale(p.name) col2 ";
+        setEntityInputEnabled(false);
+        headersColumns = "p.reference col1, p.name col2 ";
         uniqColumns = "c.my_pota_ref";
         sqlPart = " FROM pota_directory p "
                   "     INNER JOIN contacts c ON p.reference = c.my_pota_ref "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name ";
-    }   else if ( awardSelected == "sota" )
+    }
+    else if ( awardSelected == "sota" )
     {
+        setEntityInputEnabled(false);
         headersColumns = "s.summit_code col1, NULL col2 ";
         uniqColumns = "c.sota_ref";
         sqlPart = " FROM sota_summits s "
@@ -178,35 +201,24 @@ void AwardsDialog::refreshTable(int)
     }
     else if ( awardSelected == "wwff" )
     {
-        headersColumns = "w.reference col1, translate_to_locale(w.name) col2 ";
+        setEntityInputEnabled(false);
+        headersColumns = "w.reference col1, w.name col2 ";
         uniqColumns = "c.wwff_ref";
         sqlPart = " FROM wwff_directory w "
                   "     INNER JOIN contacts c ON w.reference = c.wwff_ref "
                   "     LEFT OUTER JOIN modes m on c.mode = m.name ";
     }
+
     if ( ui->eqslCheckBox->isChecked() )
-    {
         confirmed << " eqsl_qsl_rcvd = 'Y' ";
-    }
 
     if ( ui->lotwCheckBox->isChecked() )
-    {
         confirmed << " lotw_qsl_rcvd = 'Y' ";
-    }
 
     if ( ui->paperCheckBox->isChecked() )
-    {
         confirmed << " qsl_rcvd = 'Y' ";
-    }
 
-    QString innerCase = " CASE WHEN (" + confirmed.join("or") + ") THEN 2 ELSE 1 END ";
-
-    const QList<Band>& dxccBands = BandPlan::bandsList(true, true);
-
-    if ( dxccBands.size() == 0 )
-    {
-        return;
-    }
+    const QString &innerCase = " CASE WHEN (" + confirmed.join("or") + ") THEN 2 ELSE 1 END ";
 
     QStringList stmt_max_part;
     QStringList stmt_total_padding;
@@ -214,14 +226,15 @@ void AwardsDialog::refreshTable(int)
     QStringList stmt_sum_worked;
     QStringList stmt_sum_total;
 
-    for ( int i = 0; i < dxccBands.size(); i++ )
+    for ( const Band& band : dxccBands )
     {
-        stmt_max_part << QString(" MAX(CASE WHEN band = '%1' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as '%2'").arg(dxccBands[i].name, dxccBands[i].name);
-        stmt_total_padding << QString(" NULL '%1'").arg(dxccBands[i].name);
-        stmt_sum_confirmed << QString("SUM(CASE WHEN a.'%1' > 1 THEN 1 ELSE 0 END) '%2'").arg(dxccBands[i].name, dxccBands[i].name);
-        stmt_sum_worked << QString("SUM(CASE WHEN a.'%1' > 0 THEN 1 ELSE 0 END) '%2'").arg(dxccBands[i].name, dxccBands[i].name);
-        stmt_sum_total << QString("SUM(d.'%1') '%2'").arg(dxccBands[i].name, dxccBands[i].name);
+        stmt_max_part << QString(" MAX(CASE WHEN band = '%1' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as '%2'").arg(band.name, band.name);
+        stmt_total_padding << QString(" NULL '%1'").arg(band.name);
+        stmt_sum_confirmed << QString("SUM(CASE WHEN a.'%1' > 1 THEN 1 ELSE 0 END) '%2'").arg(band.name, band.name);
+        stmt_sum_worked << QString("SUM(CASE WHEN a.'%1' > 0 THEN 1 ELSE 0 END) '%2'").arg(band.name, band.name);
+        stmt_sum_total << QString("SUM(d.'%1') '%2'").arg(band.name, band.name);
     }
+
     detailedViewModel->setQuery(
                     "WITH dxcc_summary AS ( "
                     "SELECT  " + headersColumns +", "
@@ -229,7 +242,7 @@ void AwardsDialog::refreshTable(int)
                     "    MAX(CASE WHEN prop_mode = 'SAT' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as 'SAT', "
                     "    MAX(CASE WHEN prop_mode = 'EME' AND m.dxcc IN (" + modes.join(",") + ") THEN " + innerCase + " ELSE 0 END) as 'EME' "
                     + sqlPart
-                    + excludePart +
+                    + addWherePart +
                     "GROUP BY  1,2), "
                     " ituzCTE AS ( "
                     " SELECT 1 AS n, 1 AS value "
@@ -254,9 +267,8 @@ void AwardsDialog::refreshTable(int)
                     "       NULL 'EME' "
                     "FROM contacts c, modes m "
                     "WHERE c.mode = m.name "
-                    "      AND c.my_dxcc = '" + entitySelected + "' "
                     "      AND m.dxcc IN (" + modes.join(",") + ") "
-                    + excludePart +
+                    + addWherePart +
                     "UNION ALL "
                     "SELECT 0 column_idx, "
                     "       '" + tr("TOTAL Confirmed") + "',  "
@@ -268,8 +280,7 @@ void AwardsDialog::refreshTable(int)
                     "WHERE (" + confirmed.join("or") + ") "
                     "      AND c.mode = m.name "
                     "      AND m.dxcc IN (" + modes.join(",") + ") "
-                    "      AND c.my_dxcc = '" + entitySelected + "' "
-                    + excludePart +
+                    + addWherePart +
                     "UNION ALL "
                     "SELECT 1 column_idx, "
                     "       '" + tr("Confirmed") + "', NULL prefix, "
@@ -310,13 +321,13 @@ void AwardsDialog::awardTableDoubleClicked(QModelIndex idx)
 {
     FCT_IDENTIFICATION;
 
-    QString myEntitySelected = getSelectedEntity();
-    QString awardSelected = getSelectedAward();
+    const QString &awardSelected = getSelectedAward();
     QStringList addlFilters;
     QString band;
     QString country;
 
-    addlFilters << QString("my_dxcc='%1'").arg(myEntitySelected);
+    if ( ui->myEntityComboBox->isEnabled() )
+        addlFilters << QString("my_dxcc='%1'").arg(getSelectedEntity());
 
     if ( idx.row() > 3 )
     {
@@ -324,29 +335,45 @@ void AwardsDialog::awardTableDoubleClicked(QModelIndex idx)
         {
             country = detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString();
         }
-        if ( awardSelected == "itu" )
+        else if ( awardSelected == "itu" )
         {
             addlFilters << QString("ituz = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
         }
-        if ( awardSelected == "iota" )
+        else if ( awardSelected == "iota" )
         {
             addlFilters << QString("upper(iota) = upper('%1')").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
         }
-        if ( awardSelected == "wac" )
+        else if ( awardSelected == "wac" )
         {
             addlFilters << QString("cont = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),2),Qt::DisplayRole).toString());
         }
-        if ( awardSelected == "was" )
+        else if ( awardSelected == "was" )
         {
             addlFilters << QString("state = '%1' and dxcc in (6, 110, 291)").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),2),Qt::DisplayRole).toString());
         }
-        if ( awardSelected == "waz" )
+        else if ( awardSelected == "waz" )
         {
             addlFilters << QString("cqz = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
         }
-        if ( awardSelected == "wpx" )
+        else if ( awardSelected == "wpx" )
         {
             addlFilters << QString("pfx = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
+        }
+        else if ( awardSelected == "potah" )
+        {
+            addlFilters << QString("pota_ref = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
+        }
+        else if ( awardSelected == "potaa" )
+        {
+            addlFilters << QString("my_pota_ref = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
+        }
+        else if ( awardSelected == "sota" )
+        {
+            addlFilters << QString("sota_ref = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
+        }
+        else if ( awardSelected == "wwff" )
+        {
+            addlFilters << QString("wwff_ref = '%1'").arg(detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString());
         }
 
         if ( idx.column() > 2 )
@@ -358,24 +385,32 @@ void AwardsDialog::awardTableDoubleClicked(QModelIndex idx)
     }
 }
 
-QString AwardsDialog::getSelectedEntity()
+const QString AwardsDialog::getSelectedEntity() const
 {
     FCT_IDENTIFICATION;
 
     int row = ui->myEntityComboBox->currentIndex();
-    QModelIndex idx = ui->myEntityComboBox->model()->index(row,0);
-    QVariant comboData = ui->myEntityComboBox->model()->data(idx);
+    const QModelIndex &idx = ui->myEntityComboBox->model()->index(row,0);
+    const QVariant &comboData = ui->myEntityComboBox->model()->data(idx);
 
     qCDebug(runtime) << comboData.toString();
 
     return comboData.toString();
 }
 
-QString AwardsDialog::getSelectedAward()
+const QString AwardsDialog::getSelectedAward() const
 {
     FCT_IDENTIFICATION;
 
     QString ret = ui->awardComboBox->itemData(ui->awardComboBox->currentIndex()).toString();
     qCDebug(runtime) << ret;
     return ret;
+}
+
+void AwardsDialog::setEntityInputEnabled(bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    ui->myEntityComboBox->setEnabled(enabled);
+    ui->myEntityLabel->setEnabled(enabled);
 }
