@@ -55,13 +55,13 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
 
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
 
-    if ( decode.message.startsWith("CQ") )
+    if ( decode.message.startsWith("CQ") ||
+         decode.message.endsWith("73") ||
+         decode.message.endsWith("RRR") )
     {
         QRegularExpressionMatch match = cqRE.match((decode.message));
 
-        if (  match.hasMatch() ||
-            decode.message.endsWith("73") ||
-            decode.message.endsWith("RRR") )
+        if (  match.hasMatch()  )
         {
             WsjtxEntry entry;
 
