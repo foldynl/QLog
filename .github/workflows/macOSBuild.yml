@@ -13,7 +13,7 @@ jobs:
      name: MacOS Build
      strategy:
        matrix:
-         os: [macos-12]
+         os: [macos-13]
 
      runs-on: ${{ matrix.os }}
 
@@ -39,7 +39,7 @@ jobs:
          submodules: recursive
      - name: Get version from tag
        run : |
-         TAGVERSION="0.37.2" #$(git describe --tags)
+         TAGVERSION=$(git describe --tags)
          echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
 
      - name: Configure and compile
@@ -51,21 +51,10 @@ jobs:
      - name: Build dmg
        run: |
          cd build
-         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
-         cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
-         cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
-         cp `brew --prefix`/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
-         cp `brew --prefix brotli`/lib/libbrotlicommon.1.dylib qlog.app/Contents/Frameworks/libbrotlicommon.1.dylib
-         cp `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib qlog.app/Contents/Frameworks/libicui18n.74.dylib
-         install_name_tool -change `brew --prefix`/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change @loader_path/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
-         install_name_tool -change /usr/local/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
-         otool -L qlog.app/Contents/MacOS/qlog
+         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog 
          macdeployqt qlog.app -dmg
      - name: Copy artifact
        uses: actions/upload-artifact@v4
        with:
          name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
-
