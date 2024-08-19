@@ -79,6 +79,7 @@ private slots:
     void saveProfileLayoutGeometry();
     void setEquipmentKeepOptions(bool);
 
+
 private:
     Ui::MainWindow* ui;
     QLabel* conditionsLabel;

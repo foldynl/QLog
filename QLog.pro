@@ -164,6 +164,7 @@ SOURCES += \
         ui/SettingsDialog.cpp \
         ui/ShowUploadDialog.cpp \
         ui/StatisticsWidget.cpp \
+        ui/Steppir.cpp \
         ui/SwitchButton.cpp \
         ui/WebEnginePage.cpp \
         ui/WsjtxFilterDialog.cpp \
@@ -297,6 +298,7 @@ HEADERS += \
         ui/QrzDialog.h \
         ui/ShowUploadDialog.h \
         ui/SplashScreen.h \
+        ui/Steppir.h \
         ui/StyleItemDelegate.h \
         ui/RigWidget.h \
         ui/RotatorWidget.h \
@@ -349,6 +351,7 @@ FORMS += \
         ui/SettingsDialog.ui \
         ui/ShowUploadDialog.ui \
         ui/StatisticsWidget.ui \
+        ui/Steppir.ui \
         ui/WsjtxFilterDialog.ui \
         ui/WsjtxWidget.ui
 

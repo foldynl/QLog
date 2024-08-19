@@ -1234,3 +1234,5 @@ MainWindow::~MainWindow()
 
     delete ui;
 }
+
+
