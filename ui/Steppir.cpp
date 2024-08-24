@@ -6,41 +6,18 @@
 #include <QDebug>
 #include <QTimer>
 #include <data/BandPlan.h>
+#include <QSettings>
 
 Steppir::Steppir(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Steppir)
 {
-    ui->setupUi(this);
-    serial = new QSerialPort(this);
-   // connect(serial, &QSerialPort::readyRead, this, &Steppir::readData);
-   // serial->setPortName("/dev/ttyS0"); // Replace with your serial port
-   // serial->setBaudRate(QSerialPort::Baud19200);
-   // serial->setDataBits(QSerialPort::Data8);
-   // serial->setParity(QSerialPort::NoParity);
-   // serial->setStopBits(QSerialPort::OneStop);
-   // serial->setFlowControl(QSerialPort::NoFlowControl);
 
+    ui->setupUi(this);
 
     socket = new QTcpSocket(this);
-    socket->connectToHost("192.168.2.136", 4002);
-    if (socket->state() != QAbstractSocket::ConnectingState && socket->state() != QAbstractSocket::ConnectedState) {
-        qDebug() << "Connection failed: " << socket->errorString();
-    }
+    serial = new QSerialPort(this);
 
-    if (socket->waitForConnected(3000)) {
-        qDebug() << "Connected to Steppir antenna.";
-    } else {
-        qDebug() << "Failed to connect to Steppir antenna: " << socket->errorString();
-    }
-    connect(socket, &QTcpSocket::readyRead, this, &Steppir::readData);
-    connect(socket, &QTcpSocket::connected, this, &Steppir::onConnected);
-    connect(socket, &QTcpSocket::errorOccurred, this, &Steppir::onError);
-
-    qWarning() << "In Steppir";
-    timer = new QTimer;
-    connect(timer, &QTimer::timeout, this, &Steppir::pollSteppir);
-    timer->start(500);
 
 }
 
@@ -50,25 +27,90 @@ Steppir::~Steppir()
     delete ui;
 }
 
-void Steppir::openSerialPort() {
-    serial->setPortName("COM1"); // Set the correct COM port
-    serial->setBaudRate(QSerialPort::Baud19200);
-    serial->setDataBits(QSerialPort::Data8);
-    serial->setParity(QSerialPort::NoParity);
-    serial->setStopBits(QSerialPort::OneStop);
-    serial->setFlowControl(QSerialPort::NoFlowControl);
+void Steppir::open()
+{
+    QSettings settings;
+    baud = settings.value("steppir/baudrate").toString() ;
+    serialport = settings.value("steppir/portedit").toString();
+    networkport = settings.value("steppir/netport").toInt();
+    networkhost = settings.value("steppir/hostname").toString();
+    pollint = settings.value("steppir/poll").toInt();
 
-    if (serial->open(QIODevice::ReadWrite)) {
-        qDebug() << "Serial port opened";
-    } else {
-        qDebug() << "Failed to open serial port";
+
+
+    if (serialport.length() > 5 )
+    {
+        connect(serial, &QSerialPort::readyRead, this, &Steppir::readData);
+        openSerialPort();
+    }
+
+    if (networkhost.length() > 5){
+        socket->connectToHost(networkhost, networkport);
+        if (socket->state() != QAbstractSocket::ConnectingState && socket->state() != QAbstractSocket::ConnectedState) {
+            qDebug() << "Connection failed: " << socket->errorString();
+        }
+
+        if (socket->waitForConnected(3000)) {
+            qDebug() << "Connected to Steppir antenna.";
+        } else {
+            qDebug() << "Failed to connect to Steppir antenna: " << socket->errorString();
+        }
+        connect(socket, &QTcpSocket::readyRead, this, &Steppir::readData);
+        connect(socket, &QTcpSocket::connected, this, &Steppir::onConnected);
+        connect(socket, &QTcpSocket::errorOccurred, this, &Steppir::onError);
+    }
+
+    timer = new QTimer;
+    connect(timer, &QTimer::timeout, this, &Steppir::pollSteppir);
+
+    if (serial->isOpen() || serial->open(QIODevice::ReadWrite)) {
+        timer->start(pollint);
+    } else if (socket->state() == QAbstractSocket::ConnectedState) {
+        timer->start(pollint);
     }
 }
 
+void Steppir::close()
+{
+    if (serial->isOpen() || serial->open(QIODevice::ReadWrite)) {
+        serial->close();
+    } else if (socket->state() == QAbstractSocket::ConnectedState) {
+        socket->close();
+    }
+    else {
+        qDebug() << "Failed to open serial or network port.";
+    }
+}
+
+void Steppir::openSerialPort() {
+    qDebug() << "In openSerialPort";
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+        if(serialport ==info.systemLocation()) {
+            serial->setPortName(serialport); // Set the correct COM port
+            serial->setBaudRate(baud.toInt());
+            serial->setDataBits(QSerialPort::Data8);
+            serial->setParity(QSerialPort::NoParity);
+            serial->setStopBits(QSerialPort::OneStop);
+            serial->setFlowControl(QSerialPort::NoFlowControl);
+
+            if (serial->open(QIODevice::ReadWrite)) {
+                qDebug() << "Serial port opened";
+            } else {
+                serial->close();
+                qDebug() << serial->errorString();
+                qDebug() << "Failed to open serial port";
+            }
+        }
+
+    }
+
+
+}
+
 void Steppir::closeSerialPort() {
-  //  if (serial->isOpen()) {
-  //      serial->close();
-  //  }
+    if (serial->isOpen()) {
+        serial->close();
+    }
 }
 
 void Steppir::onConnected(){
@@ -116,7 +158,12 @@ void Steppir::sendSetCommand(QString frequency, char direction, char steppircomm
 }
 
 void Steppir::readData() {
-    buffer.append(socket->readAll());
+    if (serial->isOpen() || serial->open(QIODevice::ReadWrite)) {
+      buffer.append(serial->readAll());
+    } else if (socket->state() == QAbstractSocket::ConnectedState) {
+      buffer.append(socket->readAll());
+    }
+
 
     int index;
     while ((index = buffer.indexOf('\r')) != -1) {
@@ -136,7 +183,6 @@ void Steppir::parseResponse(const QByteArray &response) {
         return;
     }
     QString resp = response.toHex();
-    //qWarning() << "Input Str " << resp;
     bool ok;
 
     // Frequency
@@ -278,12 +324,11 @@ void Steppir::pollSteppir()
         serial->write(command);
         serial->flush();
     } else if (socket->state() == QAbstractSocket::ConnectedState) {
-        // Write the command to the TCP socket
         socket->write(command);
         socket->flush();
     }
     else {
-        qDebug() << "Failed to open serial port.";
+        qDebug() << "Steppir - Nothing is open";
     }
 }
 

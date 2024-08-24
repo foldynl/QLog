@@ -24,6 +24,8 @@ public:
     void closeSerialPort();
     void sendStatusRequest();
     void sendSetCommand(QString frequency, char direction, char steppircommand);
+    void open();
+    void close();
 
 private slots:
     void readData();
@@ -65,6 +67,11 @@ private:
     bool AutoTracking;
     bool Tuning;
     QString band;
+    QString baud;
+    QString serialport;
+    int networkport;
+    QString networkhost;
+    int pollint;
 };
 
 #endif // STEPPIR_H

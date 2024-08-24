@@ -14,7 +14,7 @@
    <string/>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::DockOption::AllowNestedDocks|QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks|QMainWindow::DockOption::GroupedDragging</set>
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::GroupedDragging</set>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -40,7 +40,7 @@
        </sizepolicy>
       </property>
       <property name="focusPolicy">
-       <enum>Qt::FocusPolicy::ClickFocus</enum>
+       <enum>Qt::ClickFocus</enum>
       </property>
      </widget>
     </item>
@@ -83,6 +83,7 @@
     <addaction name="actionConnectRig"/>
     <addaction name="actionConnectCWKeyer"/>
     <addaction name="actionConnectRotator"/>
+    <addaction name="actionConnect_Steppir"/>
     <addaction name="separator"/>
     <addaction name="actionEquipmentKeepOptions"/>
    </widget>
@@ -157,7 +158,7 @@
     <bool>false</bool>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+    <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <property name="floatable">
     <bool>false</bool>
@@ -195,7 +196,7 @@
    </attribute>
    <widget class="MapWidget" name="mapWidget">
     <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::ClickFocus</enum>
+     <enum>Qt::ClickFocus</enum>
     </property>
    </widget>
   </widget>
@@ -303,7 +304,7 @@
     <string notr="true">Ctrl+Q</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::QuitRole</enum>
+    <enum>QAction::QuitRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -317,7 +318,7 @@
     <string>&amp;Settings</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::PreferencesRole</enum>
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionNewContact">
@@ -372,7 +373,7 @@
     <string>&amp;About</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::AboutRole</enum>
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionSaveContact">
@@ -608,10 +609,10 @@
     <string notr="true">Ctrl+F</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -628,10 +629,10 @@
     <string notr="true">Ctrl+M</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -645,10 +646,10 @@
     <string notr="true">Ctrl+PgDown</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -662,10 +663,10 @@
     <string notr="true">Ctrl+PgUp</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -679,10 +680,10 @@
     <string notr="true">Alt+Return</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -696,10 +697,10 @@
     <string notr="true">Alt+Up</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -713,10 +714,10 @@
     <string notr="true">Alt+Down</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -730,10 +731,10 @@
     <string notr="true">Alt+Right</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -747,10 +748,10 @@
     <string notr="true">Alt+Left</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -764,13 +765,13 @@
     <string notr="true">Alt+\</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -779,6 +780,14 @@
   <action name="actionSteppir">
    <property name="text">
     <string>Steppir</string>
+   </property>
+  </action>
+  <action name="actionConnect_Steppir">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Connect Steppir</string>
    </property>
   </action>
  </widget>
@@ -1559,6 +1568,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionConnect_Steppir</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>steppirConnect()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>settingsChanged()</signal>
@@ -1569,6 +1594,7 @@
   <slot>exportLog()</slot>
   <slot>showAbout()</slot>
   <slot>rigConnect()</slot>
+  <slot>steppirConnect()</slot>
   <slot>showStatistics()</slot>
   <slot>showLotw()</slot>
   <slot>rotConnect()</slot>

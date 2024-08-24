@@ -423,6 +423,19 @@ void MainWindow::rigErrorHandler(const QString &error, const QString &errorDetai
     ui->actionConnectRig->setChecked(false);
 }
 
+void MainWindow::steppirConnect()
+{
+     FCT_IDENTIFICATION;
+    if ( ui->actionConnect_Steppir->isChecked() )
+    {
+        ui->SteppirDock->open();
+    }
+    else
+    {
+        ui->SteppirDock->close();
+    }
+}
+
 void MainWindow::rotErrorHandler(const QString &error, const QString &errorDetail)
 {
     FCT_IDENTIFICATION;
@@ -734,6 +747,7 @@ void MainWindow::saveEquipmentConnOptions()
         settings.setValue("equipment/rigconnected", ui->actionConnectRig->isChecked());
         settings.setValue("equipment/rotconnected", ui->actionConnectRotator->isChecked());
         settings.setValue("equipment/cwkeyconnected", ui->actionConnectCWKeyer->isChecked());
+        settings.setValue("equipment/steppirconnected",ui->actionConnect_Steppir->isChecked());
     }
 }
 
@@ -770,6 +784,15 @@ void MainWindow::restoreConnectionStates()
                 if ( !ui->actionConnectCWKeyer->isChecked() )
                     ui->actionConnectCWKeyer->setChecked(true);
             });
+        }
+
+        if ( settings.value("equipment/steppirconnected", false).toBool() )
+        {
+            QTimer::singleShot(3000, this, [this]()
+                               {
+                                   if ( !ui->actionConnect_Steppir->isChecked() )
+                                       ui->actionConnect_Steppir->setChecked(true);
+                               });
         }
     }
 }

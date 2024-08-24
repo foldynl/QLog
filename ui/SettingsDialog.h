@@ -115,6 +115,19 @@ public slots:
     void hrdlogSettingChanged();
     void clublogSettingChanged();
 
+private slots:
+    void on_steppirPollIntervalSpinBox_valueChanged(int arg1);
+
+    void on_steppirPortTypeCombo_currentIndexChanged(int index);
+
+    void on_steppirPortEdit_textChanged(const QString &arg1);
+
+    void on_steppirBaudSelect_currentIndexChanged(int index);
+
+    void on_steppirHostNameEdit_textChanged(const QString &arg1);
+
+    void on_steppirNetPortSpin_valueChanged(int arg1);
+
 private:
     void readSettings();
     void writeSettings();
