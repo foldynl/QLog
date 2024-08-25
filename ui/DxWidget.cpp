@@ -119,7 +119,6 @@ bool DxTableModel::addEntry(DxSpot entry, bool deduplicate,
                             qint16 dedup_interval, double dedup_freq_tolerance)
 {
     bool shouldInsert = true;
-
     if ( deduplicate )
     {
         for (const DxSpot &record : qAsConst(dxData))
@@ -128,7 +127,7 @@ bool DxTableModel::addEntry(DxSpot entry, bool deduplicate,
                 break;
 
             if ( record.callsign == entry.callsign
-                 && qAbs(record.freq - entry.freq) < dedup_freq_tolerance )
+                 && qAbs(MHz(record.freq) - MHz(entry.freq)) < kHz(dedup_freq_tolerance) )
             {
                 qCDebug(runtime) << "Duplicate spot" << record.callsign << record.freq <<  entry.callsign << entry.freq;
                 shouldInsert = false;
@@ -680,6 +679,22 @@ uint DxWidget::dxccStatusFilterValue()
 
     QSettings settings;
     return settings.value("dxc/filter_dxcc_status", DxccStatus::All).toUInt();
+}
+
+int DxWidget::getDedupTimeValue()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+    return settings.value("dxc/filter_duplicationtime", DEDUPLICATION_TIME).toInt();
+}
+
+int DxWidget::getDedupFreqValue()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+    return settings.value("dxc/filter_duplicationfreq", DEDUPLICATION_FREQ_TOLERANCE).toInt();
 }
 
 bool DxWidget::spotDedupValue()
@@ -1244,6 +1259,8 @@ void DxWidget::reloadSetting()
     bandregexp.setPattern(bandFilterRegExp());
     dxccStatusFilter = dxccStatusFilterValue();
     deduplicateSpots = spotDedupValue();
+    deduplicatetime = getDedupTimeValue();
+    deduplicatefreq = getDedupFreqValue();
     QStringList tmp = dxMemberList();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     dxMemberFilter = QSet<QString>(tmp.begin(), tmp.end());
@@ -1504,7 +1521,7 @@ void DxWidget::processDxSpot(const QString &spotter,
               || (dxMemberFilter.size() && spot.memberList2Set().intersects(dxMemberFilter)))
         )
     {
-        if ( dxTableModel->addEntry(spot, deduplicateSpots) )
+        if ( dxTableModel->addEntry(spot, deduplicateSpots, deduplicatetime, deduplicatefreq) )
             emit newFilteredSpot(spot);
     }
 }
