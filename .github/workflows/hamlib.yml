@@ -1,0 +1,44 @@
+name: macOS deployment
+
+#on: [push, pull_request]
+
+on:
+  workflow_dispatch:
+  push:
+     branches:
+       - master
+
+jobs:
+  macos-build:
+     name: MacOS Build
+     strategy:
+       matrix:
+         os: [macos-13]
+
+     runs-on: ${{ matrix.os }}
+
+     steps:
+     - name: Install Dependencies
+       run: |
+         unset HOMEBREW_NO_INSTALL_FROM_API
+         brew update
+         brew upgrade || true
+         brew install autoconf
+         brew install automake
+         brew install pkg-config
+         brew install libtool
+         brew install libusb-compat
+     - name: Checkout Code
+       uses: actions/checkout@master
+       with:
+         name: hamlib/hamlib
+         path: ./hamlib
+         submodules: recursive 
+         
+     - name: Configure and compile
+       run: |
+         cd ./hamlib
+         ./configure --disable-dependency-tracking -prefix=./hamlib
+         make install
+
+
