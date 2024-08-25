@@ -29,9 +29,11 @@ private:
     Ui::AwardsDialog *ui;
     AwardsTableModel *detailedViewModel;
     SqlListModel* entityCallsignModel;
+    QString selectedAward;
 
-    QString getSelectedEntity();
-    QString getSelectedAward();
+    const QString getSelectedEntity() const;
+    const QString getSelectedAward() const;
+    void setEntityInputEnabled(bool);
 };
 
 #endif // QLOG_UI_AWARDSDIALOG_H
