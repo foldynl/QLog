@@ -38,7 +38,9 @@ jobs:
      - name: Configure and compile
        run: |
          cd ./hamlib
-         ./configure --disable-dependency-tracking -prefix=./hamlib
-         make install
+         ./configure -prefix=/Users/runner/work/QLog/QLog/hamlib
+         make -j 4
+         make check
+         make distcheck
 
 
