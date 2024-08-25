@@ -37,6 +37,20 @@ jobs:
        with:
          fetch-depth: 0
          submodules: recursive
+     - name: Checkout Code
+       uses: actions/checkout@v4
+       with:
+         repository: hamlib/hamlib
+         path: ./hamlib
+         
+     - name: Configure and compile
+       run: |
+         cd ./hamlib
+         ./bootstrap
+         ./configure --prefix=/Users/runner/work/QLog/QLog/hamlib
+         make -j 4
+         make check
+         make install
      - name: Get version from tag
        run : |
          TAGVERSION=$(git describe --tags)
@@ -46,7 +60,7 @@ jobs:
        run: |
          mkdir build
          cd build
-         qmake -config release ..
+         qmake "HAMLIBINCLUDEPATH = /Users/runner/work/QLog/QLog/hamlib/include" "HAMLIBLIBPATH = /Users/runner/work/QLog/QLog/hamlib/lib" -config release ..
          make -j4
      - name: Build dmg
        run: |
