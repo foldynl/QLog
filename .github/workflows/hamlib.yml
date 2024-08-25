@@ -38,10 +38,9 @@ jobs:
      - name: Configure and compile
        run: |
          cd ./hamlib
-         ./bootstrap
-         ./configure -prefix=/Users/runner/work/QLog/QLog/hamlib
+         ./configure --prefix=/Users/runner/work/QLog/QLog/hamlib
          make -j 4
          make check
-         make distcheck
+         make install
 
 
