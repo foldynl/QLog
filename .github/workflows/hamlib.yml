@@ -1,4 +1,4 @@
-name: macOS deployment
+name: hamlib deployment
 
 #on: [push, pull_request]
 
@@ -38,6 +38,7 @@ jobs:
      - name: Configure and compile
        run: |
          cd ./hamlib
+         autoreconf -i
          ./configure -prefix=/Users/runner/work/QLog/QLog/hamlib
          make -j 4
          make check
