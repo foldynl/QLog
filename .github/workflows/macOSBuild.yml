@@ -65,7 +65,7 @@ jobs:
        run: |
          mkdir build
          cd build
-         qmake "HAMLIBINCLUDEPATH = /Users/runner/work/QLog/QLog/hamlib/include" "HAMLIBLIBPATH = /Users/runner/work/QLog/QLog/hamlib/lib" -config release ..
+         qmake "HAMLIBINCLUDEPATH = /Users/runner/work/QLog/QLog/hamlib/include" "HAMLIBLIBPATH = /Users/runner/work/QLog/QLog/hamlib/lib" "HAMLIBVERSION_MAJOR = 4" "HAMLIBVERSION_MINOR = 6" "HAMLIBVERSION_PATCH = 0" -config release ..
          make -j4
      - name: Build dmg
        run: |
