@@ -32,6 +32,11 @@ jobs:
          brew install brotli
          brew install icu4c
          brew install pkg-config
+         brew install automake
+         brew install autoconf
+         brew install libtool
+         brew install libusb-compat
+         
      - name: Checkout Code
        uses: actions/checkout@v4
        with:
