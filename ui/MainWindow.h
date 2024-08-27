@@ -42,10 +42,12 @@ public slots:
     void rotErrorHandler(const QString &error, const QString &errorDetail);
     void cwKeyerErrorHandler(const QString &error, const QString &errorDetail);
     void stationProfileChanged();
+    void setLayoutGeometry();
 
 private slots:
     void rigConnect();
     void rotConnect();
+    void steppirConnect();
     void cwKeyerConnect();
     void cwKeyerConnectProfile(QString);
     void cwKeyerDisconnectProfile(QString);
@@ -75,9 +77,10 @@ private slots:
     void shortcutALTBackslash();
     void setManualContact(bool);
     void showEditLayout();
-    void setLayoutGeometry();
+
     void saveProfileLayoutGeometry();
     void setEquipmentKeepOptions(bool);
+
 
 private:
     Ui::MainWindow* ui;

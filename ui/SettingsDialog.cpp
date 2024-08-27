@@ -87,6 +87,9 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->rigPortTypeCombo->addItem(tr("Network"));
     ui->rigPortTypeCombo->addItem(tr("Special - Omnirig"));
 
+    ui->steppirPortTypeCombo->addItem(tr("Serial"));
+    ui->steppirPortTypeCombo->addItem(tr("Network"));
+
 #ifdef QLOG_FLATPAK
     ui->lotwTextMessage->setVisible(true);
     ui->tqslPathEdit->setVisible(false);
@@ -2279,6 +2282,17 @@ void SettingsDialog::readSettings() {
     ui->notifWSJTXCQSpotsEdit->setText(NetworkNotification::getNotifWSJTXCQSpotAddrs());
     ui->notifSpotAlertEdit->setText(NetworkNotification::getNotifSpotAlertAddrs());
 
+    /***********/
+    /* STEPPIR */
+    /***********/
+    ui->steppirBaudSelect->setCurrentIndex(settings.value("steppir/baud").toInt());
+    ui->steppirHostNameEdit->setText(settings.value("steppir/hostname").toString());
+    ui->steppirPortTypeCombo->setCurrentIndex(settings.value("steppir/portype").toInt());
+    ui->steppirPollIntervalSpinBox->setValue(settings.value("steppir/poll").toInt());
+    ui->steppirPortEdit->setText(settings.value("steppir/portedit").toString());
+    ui->steppirNetPortSpin->setValue(settings.value("steppir/netport").toInt());
+
+
     /******************/
     /* END OF Reading */
     /******************/
@@ -2387,6 +2401,17 @@ void SettingsDialog::writeSettings() {
     Wsjtx::saveConfigMulticastJoin(ui->wsjtMulticastCheckbox->isChecked());
     Wsjtx::saveConfigMulticastAddress(ui->wsjtMulticastAddressEdit->text());
     Wsjtx::saveConfigMulticastTTL(ui->wsjtMulticastTTLSpin->value());
+
+    /***********/
+    /* STEPPIR */
+    /***********/
+    settings.setValue("steppir/baud",ui->steppirBaudSelect->currentIndex());
+    settings.setValue("steppir/hostname",ui->steppirHostNameEdit->text());
+    settings.setValue("steppir/portype",ui->steppirPortTypeCombo->currentIndex());
+    settings.setValue("steppir/poll",ui->steppirPollIntervalSpinBox->value());
+    settings.setValue("steppir/portedit",ui->steppirPortEdit->text());
+    settings.setValue("steppir/netport",ui->steppirNetPortSpin->value());
+    settings.setValue("steppir/baudrate",ui->steppirBaudSelect->currentText());
 
     NetworkNotification::saveNotifQSOAdiAddrs(ui->notifQSOEdit->text());
     NetworkNotification::saveNotifDXSpotAddrs(ui->notifDXSpotsEdit->text());
@@ -2627,3 +2652,61 @@ SettingsDialog::~SettingsDialog() {
     iotaCompleter->deleteLater();
     delete ui;
 }
+
+void SettingsDialog::on_steppirPollIntervalSpinBox_valueChanged(int arg1)
+{
+
+}
+
+
+void SettingsDialog::on_steppirPortTypeCombo_currentIndexChanged(int index)
+{
+    FCT_IDENTIFICATION;
+    qWarning() << "steppirPortTypeCombo " << index;
+
+    switch (index)
+    {
+    // Serial
+    case RIGPORT_SERIAL_INDEX:
+    {
+        ui->steppirStackedWidget->setCurrentIndex(STACKED_WIDGET_SERIAL_SETTING);
+        ui->steppirHostNameEdit->clear();
+    }
+    break;
+
+        // Network
+    case RIGPORT_NETWORK_INDEX:
+        ui->steppirStackedWidget->setCurrentIndex(STACKED_WIDGET_NETWORK_SETTING);
+        ui->steppirPortEdit->clear();
+        ui->steppirNetPortSpin->setValue(RIG_NET_DEFAULT_PORT);
+        break;
+
+    default:
+        qWarning() << "Unsupported Network Port" << index;
+    }
+}
+
+
+void SettingsDialog::on_steppirPortEdit_textChanged(const QString &arg1)
+{
+
+}
+
+
+void SettingsDialog::on_steppirBaudSelect_currentIndexChanged(int index)
+{
+
+}
+
+
+void SettingsDialog::on_steppirHostNameEdit_textChanged(const QString &arg1)
+{
+
+}
+
+
+void SettingsDialog::on_steppirNetPortSpin_valueChanged(int arg1)
+{
+
+}
+

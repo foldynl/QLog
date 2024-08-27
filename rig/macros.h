@@ -9,5 +9,8 @@
 #ifndef MHz
 #define MHz(f)  ((double)((f)*(double)1000000))
 #endif
+#ifndef kHz
+#define kHz(f)  ((double)((f)*(double)1000))
+#endif
 
 #endif // RIG_MACROS_H

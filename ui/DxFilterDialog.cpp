@@ -11,6 +11,7 @@
 #include "core/debug.h"
 #include "data/Dxcc.h"
 #include "core/MembershipQE.h"
+#include "DxWidget.h"
 
 MODULE_IDENTIFICATION("qlog.ui.dxfilterdialog");
 
@@ -101,7 +102,11 @@ DxFilterDialog::DxFilterDialog(QWidget *parent) :
     /* Deduplication */
     /*****************/
     bool deduplication = settings.value("dxc/filter_deduplication", false).toBool();
-    ui->deduplicationcheckbox->setChecked(deduplication);
+    ui->deduplicationGroupBox->setChecked(deduplication);
+    int duplicationtime = settings.value("dxc/filter_duplicationtime", DEDUPLICATION_TIME).toInt();
+    ui->dedupTimeDiffSpinbox->setValue(duplicationtime);
+    int duplicationfreq = settings.value("dxc/filter_deduplicationfreq", DEDUPLICATION_FREQ_TOLERANCE).toInt();
+    ui->dedupFreqDiffSpinbox->setValue(duplicationfreq);
 
     /**********/
     /* MEMBER */
@@ -184,7 +189,9 @@ void DxFilterDialog::accept()
     /*****************/
     /* Deduplication */
     /*****************/
-    settings.setValue("dxc/filter_deduplication", ui->deduplicationcheckbox->isChecked());
+    settings.setValue("dxc/filter_deduplication", ui->deduplicationGroupBox->isChecked());
+    settings.setValue("dxc/filter_duplicationtime",ui->dedupTimeDiffSpinbox->value() );
+    settings.setValue("dxc/filter_deduplicationfreq", ui->dedupFreqDiffSpinbox->value());
 
     /**********/
     /* MEMBER */
