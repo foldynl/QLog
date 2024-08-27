@@ -577,10 +577,41 @@ bool HamlibRigDrv::checkFreqChange()
     }
 
     if ( rigProfile.getFreqInfo
-        && (rig->caps->get_freq || rig->caps->get_vfo) )
+        && rig->caps->get_freq  )
     {
         freq_t vfo_freq;
         int status = rig_get_freq(rig, RIG_VFO_CURR, &vfo_freq);
+
+        if ( status == RIG_OK )
+        {
+            qCDebug(runtime) << "Rig Freq: "<< QSTRING_FREQ(Hz2MHz(vfo_freq));
+            qCDebug(runtime) << "Object Freq: "<< QSTRING_FREQ(Hz2MHz(currFreq));
+
+            if ( vfo_freq != currFreq || forceSendState )
+            {
+                currFreq = vfo_freq;
+                qCDebug(runtime) << "emitting FREQ changed";
+                emit frequencyChanged(Hz2MHz(currFreq),
+                                      Hz2MHz(getRITFreq()),
+                                      Hz2MHz(getXITFreq()));
+            }
+        }
+        else
+        {
+            lastErrorText = hamlibErrorString(status);
+            emit errorOccured(tr("Get Frequency Error"),
+                              lastErrorText);
+            qCWarning(runtime) << "Get Freq error" << lastErrorText;
+            return false;
+        }
+    }
+    else     if ( rigProfile.getFreqInfo
+        && rig->caps->get_vfo )
+    {
+        freq_t vfo_freq;
+        vfo_t vfo;
+        rig_get_freq(rig, &vfo);
+        int status = rig_get_freq(rig, vfo, &vfo_freq);
 
         if ( status == RIG_OK )
         {
