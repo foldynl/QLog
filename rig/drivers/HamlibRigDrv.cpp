@@ -610,7 +610,7 @@ bool HamlibRigDrv::checkFreqChange()
     {
         freq_t vfo_freq;
         vfo_t vfo;
-        rig_get_freq(rig, &vfo);
+        rig_get_vfo(rig, &vfo);
         int status = rig_get_freq(rig, vfo, &vfo_freq);
 
         if ( status == RIG_OK )
