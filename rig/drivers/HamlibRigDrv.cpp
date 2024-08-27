@@ -577,7 +577,7 @@ bool HamlibRigDrv::checkFreqChange()
     }
 
     if ( rigProfile.getFreqInfo
-         && rig->caps->get_freq )
+        && (rig->caps->get_freq || rig->caps->get_vfo) )
     {
         freq_t vfo_freq;
         int status = rig_get_freq(rig, RIG_VFO_CURR, &vfo_freq);
