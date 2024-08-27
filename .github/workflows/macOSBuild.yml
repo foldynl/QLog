@@ -71,7 +71,7 @@ jobs:
        run: |
          cd build
          macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog 
-         macdeployqt qlog.app
+         #macdeployqt qlog.app
      - name: Codesign app bundle
          # Extract the secrets we defined earlier as environment variables
        env: 
@@ -91,8 +91,9 @@ jobs:
            security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
            # We finally codesign our app bundle, specifying the Hardened runtime option
-           /usr/bin/codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --entitlements entitlements.xml --options runtime /Users/runner/work/QLog/QLog/build/qlog.app/Contents/Frameworks/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
-           /usr/bin/codesign --timestamp -s "$MACOS_CERTIFICATE_NAME" --options runtime --deep -f /Users/runner/work/QLog/QLog/build/qlog.app
+           sudo codesign --deep --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --options runtime /Users/runner/work/QLog/QLog/build/qlog.app
+           sudo codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --entitlements QtWebEngineProcess.entitlements --options runtime /Users/runner/work/QLog/QLog/build/qlog.app/Contents/Frameworks/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+           sudo codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --options runtime /Users/runner/work/QLog/QLog/build/qlog.app/Contents/MacOS/qlog
      - name: "Notarize app bundle"
          # Extract the secrets we defined earlier as environment variables
        env:
