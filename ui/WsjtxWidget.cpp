@@ -186,6 +186,17 @@ void WsjtxWidget::statusReceived(WsjtxStatus newStatus)
         clearTable();
     }
 
+    if ( !Rig::instance()->isRigConnected() )
+    {
+        const QPair<QString, QString>& legacy = Data::instance()->legacyMode(newStatus.mode);
+        QString mode = ( !legacy.first.isEmpty() ) ? legacy.first
+                                                   : newStatus.mode.toUpper();
+        QString submode = ( !legacy.first.isEmpty() ) ? legacy.second
+                                                      : QString();
+        emit modeChanged(VFO1, newStatus.mode, mode, submode, 0);
+        emit frequencyChanged(VFO1, currFreq, currFreq, currFreq);
+    }
+
     status = newStatus;
     wsjtxTableModel->spotAging();
     ui->tableView->repaint();

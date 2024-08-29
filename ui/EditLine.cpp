@@ -18,6 +18,7 @@ void NewContactEditLine::focusInEvent(QFocusEvent *event)
          reason != Qt::PopupFocusReason )
     {
         end(false);
+        emit focusIn();
     }
 
     //Deselect text when focus
@@ -37,6 +38,7 @@ void NewContactEditLine::focusOutEvent(QFocusEvent *event)
          reason != Qt::PopupFocusReason )
     {
         home(false);
+        emit focusOut();
     }
 }
 

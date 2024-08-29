@@ -81,7 +81,7 @@ private:
     void drawTXRXMarks(double);
     void resizeEvent(QResizeEvent * event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
-    void centerRXFreqPosition();
+    void scrollToFreq(double freq);
     QPointF Freq2ScenePos(const double) const;
     double ScenePos2Freq(const QPointF &point) const;
     DxSpot nearestSpot(const double) const;
@@ -89,7 +89,10 @@ private:
     void setBandmapAnimation(bool);
     void setBand(const Band &newBand, bool savePrevBandZoom = true);
     void saveCurrentZoom();
-    BandmapWidget::BandmapZoom savedZoom(Band);
+    BandmapWidget::BandmapZoom getSavedZoom(Band);
+    void saveCurrentScrollFreq();
+    double getSavedScrollFreq(Band);
+    double visibleCentreFreq() const;
 
 private slots:
     void centerRXActionChecked(bool);
@@ -120,6 +123,7 @@ private:
     int zoomWidgetYOffset;
     bool bandmapAnimation;
     QString currBandMode;
+    QSettings settings;
 
     struct LastTuneDx
     {

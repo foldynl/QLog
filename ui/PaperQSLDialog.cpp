@@ -48,11 +48,22 @@ void PaperQSLDialog::addFileClick()
                                                     tr("Add File"),
                                                     lastPath,
 #if defined(Q_OS_WIN)
-                                                    ""
+                                                    "",
 #elif defined(Q_OS_MACOS)
-                                                    ""
+                                                    "",
 #else
-                                                    ""
+                                                    "",
+#endif
+                                                    nullptr,
+#if defined(Q_OS_LINUX)
+                                                    // Do not use the Native Dialog under Linux because the dialog is case-sensitive.
+                                                    // QT variant looks different but it is case-insensitive.
+                                                    // More information:
+                                                    // https://stackoverflow.com/questions/34858220/qt-how-to-set-a-case-insensitive-filter-on-qfiledialog
+                                                    // https://bugreports.qt.io/browse/QTBUG-51712
+                                                    QFileDialog::DontUseNativeDialog
+#else
+                                                    QFileDialog::Options()
 #endif
                                                    );
     if ( !filename.isEmpty() )

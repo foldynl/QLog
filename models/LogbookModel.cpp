@@ -188,16 +188,10 @@ QVariant LogbookModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::DecorationRole && index.column() == COLUMN_CALL) {
-        QModelIndex dxcc_index = this->index(index.row(), COLUMN_DXCC);
-        int dxcc = QSqlTableModel::data(dxcc_index, Qt::DisplayRole).toInt();
-        QString flag = Data::instance()->dxccFlag(dxcc);
+        const QString &flag = Data::instance()->dxccFlag(QSqlTableModel::data(this->index(index.row(), COLUMN_DXCC), Qt::DisplayRole).toInt());
 
-        if (!flag.isEmpty()) {
-            return QIcon(QString(":/flags/16/%1.png").arg(flag));
-        }
-        else {
-            return QIcon(":/flags/16/unknown.png");
-        }
+        return ( !flag.isEmpty() ) ? QIcon(QString(":/flags/16/%1.png").arg(flag))
+                                   : QIcon(":/flags/16/unknown.png");
     }
 
     if (role == Qt::DecorationRole && (index.column() == COLUMN_QSL_RCVD || index.column() == COLUMN_QSL_SENT ||

@@ -33,7 +33,7 @@ private:
 
 Q_DECLARE_METATYPE(RotUsrButtonsProfile);
 
-class RotUsrButtonsProfilesManager : QObject, public ProfileManager<RotUsrButtonsProfile>
+class RotUsrButtonsProfilesManager : QObject, public ProfileManagerSQL<RotUsrButtonsProfile>
 {
     Q_OBJECT
 

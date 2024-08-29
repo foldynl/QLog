@@ -47,6 +47,32 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.38.0" date="2024-08-29">
+      <description>
+        <ul>
+          <li>[NEW] - Logbook - Added Send DX Spot to the QSO Context Menu</li>
+          <li>[NEW] - DX Filter - Added Dedup Time/Freq difference setting (@aa5sh)</li>
+          <li>[NEW] - Rig Setting - Added RTS/DTR PTT Type support (issue #353)</li>
+          <li>[NEW] - Bandmap - Scrollbar position is saved per band (issue #415)</li>
+          <li>[NEW] - New Contact - Added a dynamic value completer for SIG field (issue #425)</li>
+          <li>[NEW] - Awards - Added SOTA/POTA/WWFF (@aa5sh issue #311)</li>
+          <li>[NEW] - Awards - Added Not-Worked Filter</li>
+          <li>[NEW] - New Contact - Added Long Path Azimuth info</li>
+          <li>[NEW] - POTA Fields allow a comma-delimited list of one or more POTA Refs</li>
+          <li>[NEW] - WSJTX tunes freq/mode like Rig if rig is disconnected</li>
+          <li>[CHANGED] - Alert Widget is a Dock Widget (issue #399)</li>
+          <li>[CHANGED] - QLog adds more information from callbook for WSJTX QSOs (issues #403 #405 #420)</li>
+          <li>[CHANGED] - File Open dialogs are not a native dialog under Linux (issue #427)</li>
+          <li>[CHANGED] - Profiles transferred to DB</li>
+          <li>[CHANGED] - LOV last_dates transferred to DB</li>
+          <li>[CHANGED] - DX Cluster - Login Callsign is always the base Callsign</li>
+          <li>[REMOVED] - Setting DXCC Date</li>
+          <li>Fix for MacOS Layout Geometry Restore (@aa5sh)</li>
+          <li>Fixed TQSL does not block GUI thread</li>
+          <li>Fixed MacOS build process (@aa5sh)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.37.2" date="2024-07-26">
       <description>
         <ul>

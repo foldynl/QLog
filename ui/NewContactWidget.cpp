@@ -165,7 +165,7 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     wwffCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     uiDynamic->wwffEdit->setCompleter(nullptr);
 
-    potaCompleter = new QCompleter(Data::instance()->potaIDList(), this);
+    potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), this);
     potaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     potaCompleter->setFilterMode(Qt::MatchStartsWith);
     potaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
@@ -176,6 +176,12 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     sotaCompleter->setFilterMode(Qt::MatchStartsWith);
     sotaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     uiDynamic->sotaEdit->setCompleter(nullptr);
+
+    sigCompleter = new QCompleter(uiDynamic->sigEdit);
+    sigCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    sigCompleter->setFilterMode(Qt::MatchStartsWith);
+    sigCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    uiDynamic->sigEdit->setCompleter(sigCompleter);
 
     /**************/
     /* CONNECTs   */
@@ -219,6 +225,7 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     connect(uiDynamic->wwffEdit, &QLineEdit::editingFinished, this, &NewContactWidget::wwffEditFinished);
     connect(uiDynamic->wwffEdit, &QLineEdit::textChanged, this, &NewContactWidget::wwffChanged);
     connect(uiDynamic->satNameEdit, &QLineEdit::textChanged, this, &NewContactWidget::satNameChanged);
+    connect(uiDynamic->sigEdit, &NewContactEditLine::focusIn, this, &NewContactWidget::refreshSIGCompleter);
 
     ui->rstSentEdit->installEventFilter(this);
     ui->rstRcvdEdit->installEventFilter(this);
@@ -1707,7 +1714,7 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
 
     const DxccEntity &dxcc = Data::instance()->lookupDxcc(savedCallsign);
 
-    if ( !dxcc.country.isEmpty() )
+    if ( dxcc.dxcc != 0 )
     {
         if ( record.value("country_intl").toString().isEmpty()
              && record.value("country").toString().isEmpty() )
@@ -1727,12 +1734,63 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
     }
 
     // add information from callbook if it is a known callsign
-    if ( record.value("name_intl").toString().isEmpty()
-         && record.value("name").toString().isEmpty()
-         && savedCallsign == ui->callsignEdit->text()
-         && !uiDynamic->nameEdit->text().isEmpty() )
+    // based on the poll #420, QLog adds more information from callbook
+    if ( savedCallsign == ui->callsignEdit->text() )
     {
-       record.setValue("name_intl", uiDynamic->nameEdit->text());
+        // information independent of QTH
+        if ( record.value("name_intl").toString().isEmpty()
+             && record.value("name").toString().isEmpty()
+             && !uiDynamic->nameEdit->text().isEmpty() )
+            record.setValue("name_intl", uiDynamic->nameEdit->text());
+
+        if ( record.value("email").toString().isEmpty()
+             && !uiDynamic->emailEdit->text().isEmpty() )
+            record.setValue("email", uiDynamic->emailEdit->text());
+
+        if ( record.value("qsl_via").toString().isEmpty()
+             && !ui->qslViaEdit->text().isEmpty() )
+            record.setValue("qsl_via", ui->qslViaEdit->text());
+
+        if ( record.value("web").toString().isEmpty()
+             && !uiDynamic->urlEdit->text().isEmpty() )
+            record.setValue("web", uiDynamic->urlEdit->text());
+
+        if ( record.value("darc_dok").toString().isEmpty()
+             && !uiDynamic->dokEdit->text().isEmpty() )
+            record.setValue("darc_dok", uiDynamic->dokEdit->text());
+
+        // information depending on QTH (Grid)
+        const QString &savedGrid = record.value("gridsquare").toString();
+        if ( savedGrid.startsWith(uiDynamic->gridEdit->text(), Qt::CaseSensitivity::CaseInsensitive)
+             || uiDynamic->gridEdit->text().startsWith(savedGrid, Qt::CaseSensitivity::CaseInsensitive ) )
+        {
+            if ( uiDynamic->gridEdit->text().size() > savedGrid.size() )
+                record.setValue("gridsquare", uiDynamic->gridEdit->text());
+
+            if ( record.value("qth_intl").toString().isEmpty()
+                 && record.value("qth").toString().isEmpty()
+                 && !uiDynamic->qthEdit->text().isEmpty() )
+                record.setValue("qth_intl", uiDynamic->qthEdit->text());
+
+            if ( record.value("iota").toString().isEmpty()
+                 && !uiDynamic->iotaEdit->text().isEmpty() )
+                record.setValue("iota", uiDynamic->iotaEdit->text());
+
+            if ( record.value("cnty").toString().isEmpty()
+                 && !uiDynamic->countyEdit->text().isEmpty() )
+                record.setValue("cnty", uiDynamic->countyEdit->text());
+
+            if ( record.value("state").toString().isEmpty()
+                 && !uiDynamic->stateEdit->text().isEmpty() )
+                record.setValue("state", uiDynamic->stateEdit->text());
+
+            // fix ITUz and CQz from callbook, if necessary
+            if ( record.value("ituz").toString() != uiDynamic->ituEdit->text() )
+                record.setValue("ituz", uiDynamic->ituEdit->text());
+
+            if ( record.value("cqz").toString() != uiDynamic->cqzEdit->text() )
+                record.setValue("cqz", uiDynamic->cqzEdit->text());
+        }
     }
 
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
@@ -1882,9 +1940,15 @@ void NewContactWidget::updateCoordinates(double lat, double lon, CoordPrecision 
         dxDistance = distance;
         QString unit;
         double showDistance = Gridsquare::distance2localeUnitDistance(dxDistance, unit);
+        double LPBearing = bearing - 180;
+
+        if ( LPBearing < 0 )
+            LPBearing += 360;
 
         ui->distanceInfo->setText(QString::number(showDistance, '.', 1) + QString(" %1").arg(unit));
-        ui->bearingInfo->setText(QString("%1°").arg(QString::number(bearing,'.', 1)));
+        ui->bearingInfo->setText(QString("%1° (%2: %3°)").arg(QString::number(bearing, '.', 1),
+                                                              tr("LP"),
+                                                              QString::number(LPBearing, '.', 1)));
 
         QString partnerTimeZoneString = Data::instance()->getIANATimeZone(lat, lon);
 
@@ -2105,17 +2169,10 @@ void NewContactWidget::__changeFrequency(VFOID, double vfoFreq, double ritFreq, 
     updateRXBand(ritFreq);
     ui->freqRXEdit->blockSignals(false);
 
-    if ( ritFreq != xitFreq
-         || RigProfilesManager::instance()->getCurProfile1().ritOffset != 0.0
-         || RigProfilesManager::instance()->getCurProfile1().xitOffset != 0.0
-         || isManualEnterMode )
-    {
-        showRXTXFreqs(true);
-    }
-    else
-    {
-        showRXTXFreqs(false);
-    }
+    showRXTXFreqs(( ritFreq != xitFreq
+                    || RigProfilesManager::instance()->getCurProfile1().ritOffset != 0.0
+                    || RigProfilesManager::instance()->getCurProfile1().xitOffset != 0.0
+                    || isManualEnterMode ));
 }
 
 /* Power is changed from RIG */
@@ -2590,6 +2647,19 @@ void NewContactWidget::webLookup()
         QDesktopServices::openUrl(GenericCallbook::getWebLookupURL(callsign));
 }
 
+void NewContactWidget::refreshSIGCompleter()
+{
+    FCT_IDENTIFICATION;
+
+    QStringListModel *model = static_cast<QStringListModel*>(sigCompleter->model());
+
+    if( !model )
+        model = new QStringListModel();
+
+    model->setStringList(Data::instance()->sigIDList());
+    sigCompleter->setModel(model);
+}
+
 QString NewContactWidget::getCallsign() const
 {
     FCT_IDENTIFICATION;
@@ -2751,15 +2821,10 @@ double NewContactWidget::getQSOBearing() const
 {
     FCT_IDENTIFICATION;
 
-    double ret_bearing = qQNaN();
 
-    if ( !ui->bearingInfo->text().isEmpty() )
-    {
-        const QString &bearingString = ui->bearingInfo->text();
-        ret_bearing = bearingString.mid(0,bearingString.length()-1).toDouble();
-    }
-
-    return ret_bearing;
+    const QString &bearingString = ui->bearingInfo->text();
+    return ( !bearingString.isEmpty() ? bearingString.mid(0,bearingString.indexOf("°")).toDouble()
+                                      : qQNaN());
 }
 
 double NewContactWidget::getQSODistance() const

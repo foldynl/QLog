@@ -164,30 +164,51 @@ void LotwDialog::upload() {
 
         if ( showDialog.exec() == QDialog::Accepted )
         {
-            Lotw lotw;
-            QString ErrorString;
 
-            if ( lotw.uploadAdif(data, ErrorString) == 0 )
+            QProgressDialog* dialog = new QProgressDialog(tr("Processing LoTW"),
+                                                          "",
+                                                          0, 0, this);
+            dialog->setCancelButton(nullptr);
+            dialog->setWindowModality(Qt::WindowModal);
+            dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+            dialog->setAutoClose(true);
+            dialog->setMinimumDuration(0);
+            dialog->show();
+
+            Lotw *lotw = new Lotw(dialog);
+
+            connect(lotw, &Lotw::uploadFinished, this, [this, lotw, dialog, query_where, count]()
             {
+                dialog->done(QDialog::Accepted);
+
                 QMessageBox::information(this, tr("QLog Information"), tr("%n QSO(s) uploaded.", "", count));
 
-                query_string = "UPDATE contacts "
+                QString queryString = "UPDATE contacts "
                                "SET lotw_qsl_sent='Y', lotw_qslsdate = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
                                + query_where;
 
-                qCDebug(runtime) << query_string;
+                qCDebug(runtime) << queryString;
 
-                QSqlQuery query_update(query_string);
+                QSqlQuery query_update(queryString);
                 if ( ! query_update.exec() )
                 {
                     qWarning() << "Cannot execute update query" << query_update.lastError().text();
                     return;
                 }
-            }
-            else
+                lotw->deleteLater();
+            });
+
+            connect(lotw, &Lotw::uploadError, this, [this, lotw, dialog](const QString &errorString)
             {
-                QMessageBox::critical(this, tr("LoTW Error"), ErrorString);
-            }
+                qInfo() << "Error" << errorString;
+                dialog->done(QDialog::Accepted);
+                qCInfo(runtime) << "LoTW Upload Error: " << errorString;
+                QMessageBox::warning(this, tr("QLog Warning"),
+                                     tr("Cannot upload the QSO(s): ") + errorString);
+                lotw->deleteLater();
+            });
+
+            lotw->uploadAdif(data);
         }
     }
     else {

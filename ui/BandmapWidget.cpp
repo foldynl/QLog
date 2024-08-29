@@ -27,6 +27,8 @@ MODULE_IDENTIFICATION("qlog.ui.bandmapwidget");
 //Pixel between each step in BandMap
 #define PIXELSPERSTEP 10
 
+#define WIDGET_CENTER ( height()/2 - 50 )
+
 BandmapWidget::BandmapWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::BandmapWidget),
@@ -39,19 +41,16 @@ BandmapWidget::BandmapWidget(QWidget *parent) :
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     ui->setupUi(this);
 
-    double freq = settings.value("newcontact/frequency", 3.5).toDouble();
+    double newContactFreq = settings.value("newcontact/frequency", 3.5).toDouble();
+    double ritFreq = newContactFreq + RigProfilesManager::instance()->getCurProfile1().ritOffset;
+    double xitFreq = newContactFreq + RigProfilesManager::instance()->getCurProfile1().xitOffset;
     const QString &mode = settings.value("newcontact/mode", "CW").toString();
     const QString &submode = settings.value("newcontact/submode").toString();
-
-    freq += RigProfilesManager::instance()->getCurProfile1().ritOffset;
-
     keepRXCenter = settings.value("bandmap/centerrx", true).toBool();
 
-    setBand(BandPlan::freq2Band(freq), false);
+    setBand(BandPlan::freq2Band(ritFreq), false);
 
     bandmapScene = new GraphicsScene(this);
     bandmapScene->setFocusOnTouch(false);
@@ -72,7 +71,7 @@ BandmapWidget::BandmapWidget(QWidget *parent) :
     update_timer->start(BANDMAP_MAX_REFRESH_TIME);
 
     updateMode(VFO1, QString(), mode, submode, 0);
-    updateTunedFrequency(VFO1, freq, freq, freq);
+    updateTunedFrequency(VFO1, newContactFreq, ritFreq, xitFreq);
 }
 
 void BandmapWidget::update()
@@ -206,7 +205,7 @@ void BandmapWidget::updateStations()
     QMap<double, DxSpot>::iterator lower = spots.lowerBound(currentBand.start);
     QMap<double, DxSpot>::iterator upper = spots.upperBound(currentBand.end);
 
-    for (; lower != upper; lower++)
+    while ( lower != upper )
     {
         double freq_y = ((lower.key() - currentBand.start) / step) * PIXELSPERSTEP;
         double text_y = std::max(min_y + 5, freq_y);
@@ -244,6 +243,7 @@ void BandmapWidget::updateStations()
 
         text->setDefaultTextColor(Data::statusToColor(lower.value().status, qApp->palette().color(QPalette::Text)));
         textItemList.append(text);
+        ++lower;
     }
 
     pendingSpots = 0;
@@ -366,8 +366,6 @@ void BandmapWidget::drawTXRXMarks(double step)
     /* Draw RX frequency mark */
     /**************************/
     drawFreqMark(rx_freq, step, QColor(30, 180, 30), &rxMark);
-
-    centerRXFreqPosition();
 
     /**************************/
     /* Draw TX frequency mark */
@@ -517,35 +515,56 @@ void BandmapWidget::setBand(const Band &newBand, bool savePrevBandZoom)
     if ( savePrevBandZoom )
     {
         saveCurrentZoom();
+        saveCurrentScrollFreq();
     }
     currentBand = newBand;
-    zoom = savedZoom(newBand);
+    zoom = getSavedZoom(newBand);
+    zoomFreq = getSavedScrollFreq(newBand);
+    zoomWidgetYOffset = WIDGET_CENTER;
 }
 
 void BandmapWidget::saveCurrentZoom()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     settings.setValue("bandmap/zoom/" + currentBand.name, zoom);
 }
 
-BandmapWidget::BandmapZoom BandmapWidget::savedZoom(Band band)
+BandmapWidget::BandmapZoom BandmapWidget::getSavedZoom(Band band)
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     QVariant zoomVariant = settings.value("bandmap/zoom/" + band.name, ZOOM_10KHZ);
     return zoomVariant.value<BandmapWidget::BandmapZoom>();
 }
 
-void BandmapWidget::spotAgingChanged(int)
+void BandmapWidget::saveCurrentScrollFreq()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
+    settings.setValue("bandmap/scroll/" + currentBand.name, visibleCentreFreq());
+}
+
+double BandmapWidget::getSavedScrollFreq(Band band)
+{
+    FCT_IDENTIFICATION;
+
+    return settings.value("bandmap/scroll/" + band.name, 0.0).toDouble();
+}
+
+double BandmapWidget::visibleCentreFreq() const
+{
+    FCT_IDENTIFICATION;
+
+    QPoint point(0,ui->scrollArea->verticalScrollBar()->value() + WIDGET_CENTER);
+    double ret = ScenePos2Freq(ui->graphicsView->mapToScene(point));
+    qCDebug(runtime) << "Centre freq" << ret;
+    return ret;
+}
+
+void BandmapWidget::spotAgingChanged(int)
+{
+    FCT_IDENTIFICATION;
 
     settings.setValue("bandmap/spot_aging", ui->clearSpotOlderSpin->value());
 }
@@ -565,16 +584,9 @@ void BandmapWidget::zoomIn()
 
     if ( zoomFreq == 0.0 )
     {
-        if ( keepRXCenter )
-        {
-            zoomFreq = rx_freq;
-        }
-        else
-        {
-            QPoint point(0,ui->scrollArea->verticalScrollBar()->value() + this->height()/2 - 50);
-            zoomFreq = ScenePos2Freq(ui->graphicsView->mapToScene(point));
-        }
-        zoomWidgetYOffset = this->height()/2 - 50;
+        zoomWidgetYOffset = WIDGET_CENTER;
+        zoomFreq = ( keepRXCenter ) ? rx_freq
+                                    : visibleCentreFreq();
     }
 
     if ( zoom > ZOOM_100HZ )
@@ -583,6 +595,7 @@ void BandmapWidget::zoomIn()
     }
     setBandmapAnimation(false);
     update();
+    scrollToFreq(zoomFreq);
     setBandmapAnimation(true);
 }
 
@@ -592,16 +605,9 @@ void BandmapWidget::zoomOut()
 
     if ( zoomFreq == 0.0 )
     {
-        if ( keepRXCenter )
-        {
-            zoomFreq = rx_freq;
-        }
-        else
-        {
-            QPoint point(0,ui->scrollArea->verticalScrollBar()->value() + this->height()/2 - 50);
-            zoomFreq = ScenePos2Freq(ui->graphicsView->mapToScene(point));
-        }
-        zoomWidgetYOffset = this->height()/2 - 50;
+        zoomWidgetYOffset = WIDGET_CENTER;
+        zoomFreq = ( keepRXCenter ) ? rx_freq
+                                    : visibleCentreFreq();
     }
 
     if ( zoom < ZOOM_10KHZ )
@@ -610,6 +616,7 @@ void BandmapWidget::zoomOut()
     }
     setBandmapAnimation(false);
     update();
+    scrollToFreq(zoomFreq);
     setBandmapAnimation(true);
 }
 
@@ -699,7 +706,7 @@ void BandmapWidget::showContextMenu(const QPoint &point)
         connect(action, &QAction::triggered, this, [this, enabledBand]()
         {
             setBand(enabledBand);
-            this->update();
+            update();
         });
         bandsMenu.addAction(action);
     }
@@ -715,11 +722,9 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     contextMenu.exec(ui->graphicsView->mapToGlobal(point));
 }
 
-void BandmapWidget::updateTunedFrequency(VFOID vfoid, double vfoFreq, double ritFreq, double xitFreq)
+void BandmapWidget::updateTunedFrequency(VFOID, double vfoFreq, double ritFreq, double xitFreq)
 {
     FCT_IDENTIFICATION;
-
-    Q_UNUSED(vfoid)
 
     qCDebug(function_parameters) << vfoFreq << ritFreq << xitFreq;
 
@@ -752,6 +757,7 @@ void BandmapWidget::updateTunedFrequency(VFOID vfoid, double vfoFreq, double rit
         /* Draw TX and RX Marks */
         /************************/
         drawTXRXMarks(step);
+        scrollToFreq(rx_freq);
     }
 
     updateNearestSpot();
@@ -794,7 +800,7 @@ void BandmapWidget::resizeEvent(QResizeEvent *event)
 
     QWidget::resizeEvent(event);
 
-    centerRXFreqPosition();
+    scrollToFreq(rx_freq);
 }
 
 bool BandmapWidget::eventFilter(QObject *, QEvent *event)
@@ -846,11 +852,11 @@ bool BandmapWidget::eventFilter(QObject *, QEvent *event)
     return false;
 }
 
-void BandmapWidget::centerRXFreqPosition()
+void BandmapWidget::scrollToFreq(double freq)
 {
     FCT_IDENTIFICATION;
 
-    qreal freqScenePos = Freq2ScenePos(rx_freq).y();
+    qreal freqScenePos = Freq2ScenePos(freq).y();
 
     QPropertyAnimation *anim = new QPropertyAnimation(ui->scrollArea->verticalScrollBar(), "value", this);
     anim->setDuration((bandmapAnimation) ? 300 : 0);
@@ -858,15 +864,13 @@ void BandmapWidget::centerRXFreqPosition()
 
     if ( keepRXCenter )
     {
-
         /* If RX freq should be center then center it */
-        anim->setEndValue(freqScenePos - (this->height()/2) + 50);
-        //ui->scrollArea->verticalScrollBar()->setValue(freqScenePos - (this->height()/2) + 50);
+        anim->setEndValue(freqScenePos - (WIDGET_CENTER));
     }
     else
     {
         /* If RX freq is out-of-scene then keep the RX mark visible - this is not centering !!! */
-        int sceneSize = this->height() - 60;
+        int sceneSize = height() - 60;
         int sliderSceneMin = ui->scrollArea->verticalScrollBar()->value();
         int sliderSceneMax = ui->scrollArea->verticalScrollBar()->value() + sceneSize;
 
@@ -941,13 +945,12 @@ void BandmapWidget::centerRXActionChecked(bool state)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     keepRXCenter = state;
+    zoomFreq = 0.0;
     settings.setValue("bandmap/centerrx", keepRXCenter);
 
-    zoomFreq = 0.0;
-    centerRXFreqPosition();
+    if ( keepRXCenter )
+        scrollToFreq(rx_freq);
 }
 
 void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *evt)

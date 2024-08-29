@@ -62,16 +62,10 @@ void QRZ::queryCallsign(const QString &callsign)
 
     const Callsign qCall(callsign);
 
-    if (qCall.isValid())
-    {
-        // currently QRZ.com does not handle correctly prefixes and suffixes.
-        // That's why it's better to give it away if possible
-        params.addQueryItem("callsign", qCall.getBase());
-    }
-    else
-    {
-        params.addQueryItem("callsign", callsign);
-    }
+    // currently QRZ.com does not handle correctly prefixes and suffixes.
+    // That's why it's better to give it away if possible
+    params.addQueryItem("callsign", (qCall.isValid()) ? qCall.getBase()
+                                                      : callsign);
 
     QUrl url(API_URL);
 
@@ -289,7 +283,8 @@ void QRZ::authenticate()
     }
 }
 
-void QRZ::processReply(QNetworkReply* reply) {
+void QRZ::processReply(QNetworkReply* reply)
+{
     FCT_IDENTIFICATION;
 
     /* always process one requests per class */
@@ -509,12 +504,12 @@ void QRZ::processReply(QNetworkReply* reply) {
     /*****************/
     else if ( messageType == "actionsInsert")
     {
-         QString replayString(reply->readAll());
+         const QString replayString(reply->readAll());
          qCDebug(runtime) << replayString;
 
          const QMap<QString, QString> &data = parseActionResponse(replayString);
 
-         QString status = data.value("RESULT", "FAILED");
+         const QString &status = data.value("RESULT", "FAILED");
 
          if ( status == "OK" || status == "REPLACE" )
          {
@@ -545,14 +540,14 @@ void QRZ::processReply(QNetworkReply* reply) {
     reply->deleteLater();
 }
 
-QMap<QString, QString> QRZ::parseActionResponse(const QString &reponseString)
+QMap<QString, QString> QRZ::parseActionResponse(const QString &reponseString) const
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << reponseString;
 
     QMap<QString, QString> data;
-    QStringList parsedResponse(reponseString.split("&"));
+    const QStringList &parsedResponse = reponseString.split("&");
 
     for ( const QString &param : parsedResponse )
     {

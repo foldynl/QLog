@@ -41,14 +41,21 @@ bool LogParam::setParam(const QString &name, const QString &value)
     return true;
 }
 
-QString LogParam::getParam(const QString &name)
+bool LogParam::setParam(const QString &name, const QDate &value)
+{
+    FCT_IDENTIFICATION;
+
+    return setParam(name, value.toString(Qt::ISODate));
+}
+
+QVariant LogParam::getParam(const QString &name)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << name;
 
-    QString ret;
-    QString *valueCached = localCache.object(name);
+    QVariant ret;
+    QVariant *valueCached = localCache.object(name);
 
     if ( valueCached )
     {
@@ -74,12 +81,14 @@ QString LogParam::getParam(const QString &name)
             return QString();
         }
 
-        query.next();
-        ret = query.value(0).toString();
-        localCache.insert(name, new QString(ret));
+        if ( query.first() )
+        {
+            ret = query.value(0);
+            localCache.insert(name, new QVariant(ret));
+        }
     }
     qDebug(runtime) << "value: " << ret;
     return ret;
 }
 
-QCache<QString, QString> LogParam::localCache(10);
+QCache<QString, QVariant> LogParam::localCache(10);

@@ -45,7 +45,7 @@ private:
 
 Q_DECLARE_METATYPE(StationProfile)
 
-class StationProfilesManager : QObject, public ProfileManager<StationProfile>
+class StationProfilesManager : QObject, public ProfileManagerSQL<StationProfile>
 {
     Q_OBJECT
 

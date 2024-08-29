@@ -24,12 +24,16 @@ public slots:
     void clearAllAlerts();
     void entryDoubleClicked(QModelIndex index);
     void alertAgingChanged(int);
+    void showEditRules();
 
+private slots:
+    void showColumnVisibility();
 
 signals:
     void alertsCleared();
     void tuneDx(QString, double, BandPlan::BandPlanMode);
     void tuneWsjtx(WsjtxDecode);
+    void rulesChanged();
 
 private:
     Ui::AlertWidget *ui;

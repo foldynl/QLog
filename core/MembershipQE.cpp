@@ -456,7 +456,7 @@ bool MembershipQE::importData(const QString &clubid, const QByteArray &data)
 
         if ( fields.count() < 4 )
         {
-            qInfo(runtime) << "Invalid line in the input file " << line;
+            qInfo(runtime) << "Invalid line in the input file " << line << clubid;
             continue;
         }
 

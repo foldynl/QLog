@@ -16,7 +16,7 @@ public:
     ~Lotw();
 
     void update(const QDate &, bool, const QString &);
-    int uploadAdif(const QByteArray &, QString &);
+    void uploadAdif(const QByteArray &);
 
     static const QString getUsername();
     static const QString getPassword();
@@ -31,6 +31,9 @@ signals:
     void updateComplete(QSLMergeStat update);
     void updateFailed(QString);
 
+    void uploadFinished();
+    void uploadError(QString);
+
 public slots:
     void processReply(QNetworkReply* reply);
     void abortRequest();
@@ -38,6 +41,7 @@ public slots:
 private:
     QNetworkAccessManager* nam;
     QNetworkReply *currentReply;
+    QTemporaryFile file;
 
     static const QString SECURE_STORAGE_KEY;
     static const QString CONFIG_USERNAME_KEY;

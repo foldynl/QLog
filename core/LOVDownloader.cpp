@@ -1,4 +1,3 @@
-#include <QSettings>
 #include <QStandardPaths>
 #include <QDir>
 #include <QSqlQuery>
@@ -9,6 +8,7 @@
 #include <QSqlRecord>
 #include <QApplication>
 #include <QRegularExpression>
+#include "LogParam.h"
 
 #include "LOVDownloader.h"
 #include "debug.h"
@@ -50,14 +50,12 @@ void LOVDownloader::update(const SourceType & sourceType)
 
     abortRequested = false;
 
-    QSettings settings;
-
-    SourceDefinition sourceDef = sourceMapping[sourceType];
+    const SourceDefinition &sourceDef = sourceMapping[sourceType];
 
     Q_ASSERT(sourceDef.type == sourceType);
 
     QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
-    QDate last_update = settings.value(sourceDef.lastTimeConfigName).toDate();
+    QDate last_update = LogParam::getParam(sourceDef.lastTimeConfigName).toDate();
 
     if ( dir.exists(sourceDef.fileName)
          && last_update.isValid()
@@ -1010,9 +1008,7 @@ void LOVDownloader::processReply(QNetworkReply *reply)
         file.close();
         reply->deleteLater();
 
-        QSettings settings;
-        settings.setValue(sourceDef.lastTimeConfigName, QDateTime::currentDateTimeUtc().date());
-
+        LogParam::setParam(sourceDef.lastTimeConfigName, QDateTime::currentDateTimeUtc().date());
         loadData(sourceDef);
     }
     else

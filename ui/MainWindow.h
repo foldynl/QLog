@@ -6,7 +6,6 @@
 #include "ui/SwitchButton.h"
 #include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
-#include "ui/AlertWidget.h"
 #include "core/PropConditions.h"
 #include "core/MembershipQE.h"
 #include "core/ClubLog.h"
@@ -31,7 +30,6 @@ public:
 
 signals:
     void settingsChanged();
-    void alertRulesChanged();
     void themeChanged(int);
     void altBackslash(bool active);
     void manualMode(bool);
@@ -91,7 +89,6 @@ private:
     SwitchButton* darkLightModeSwith;
     QLabel* darkIconLabel;
     StatisticsWidget* stats;
-    AlertWidget* alertWidget;
     NetworkNotification networknotification;
     AlertEvaluator alertEvaluator;
     PropConditions *conditions;

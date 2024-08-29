@@ -44,12 +44,20 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     ui->contactTable->setModel(model);
 
+    QAction *separator = new QAction(this);
+    separator->setSeparator(true);
+
+    QAction *separator1 = new QAction(this);
+    separator1->setSeparator(true);
+
     ui->contactTable->addAction(ui->actionEditContact);
     ui->contactTable->addAction(ui->actionFilter);
-    ui->contactTable->addAction(ui->actionExportAs);
     ui->contactTable->addAction(ui->actionLookup);
+    ui->contactTable->addAction(ui->actionSendDXCSpot);
+    ui->contactTable->addAction(ui->actionExportAs);
+    ui->contactTable->addAction(separator);
     ui->contactTable->addAction(ui->actionDisplayedColumns);
-    //ui->contactTable->addAction(ui->actionUploadClublog);
+    ui->contactTable->addAction(separator1);
     ui->contactTable->addAction(ui->actionDeleteContact);
 
     //ui->contactTable->sortByColumn(1, Qt::DescendingOrder);
@@ -197,15 +205,16 @@ void LogbookWidget::filterSelectedCallsign()
 {
     FCT_IDENTIFICATION;
 
-    QModelIndexList modeList= ui->contactTable->selectionModel()->selectedRows();
+    const QModelIndexList &modeList = ui->contactTable->selectionModel()->selectedRows();
     if ( modeList.count() > 0 )
     {
-        QSqlRecord record = model->record(modeList.first().row());
+        const QSqlRecord &record = model->record(modeList.first().row());
         filterCallsign(record.value("callsign").toString());
     }
 }
 
-void LogbookWidget::filterCountryBand(const QString &countryName, const QString &band,
+void LogbookWidget::filterCountryBand(const QString &countryName,
+                                      const QString &band,
                                       const QString &addlFilter)
 {
     FCT_IDENTIFICATION;
@@ -251,15 +260,15 @@ void LogbookWidget::filterCountryBand(const QString &countryName, const QString 
     updateTable();
 }
 
-void LogbookWidget::lookupSelectedCallsign() {
+void LogbookWidget::lookupSelectedCallsign()
+{
     FCT_IDENTIFICATION;
 
-    QModelIndexList modeList = ui->contactTable->selectionModel()->selectedRows();
+    const QModelIndexList &modeList = ui->contactTable->selectionModel()->selectedRows();
     if ( modeList.count() > 0)
     {
-        QSqlRecord record = model->record(modeList.first().row());
-        QString callsign = record.value("callsign").toString();
-        QDesktopServices::openUrl(GenericCallbook::getWebLookupURL(callsign));
+        const QSqlRecord &record = model->record(modeList.first().row());
+        QDesktopServices::openUrl(GenericCallbook::getWebLookupURL(record.value("callsign").toString()));
     }
 }
 
@@ -303,7 +312,7 @@ void LogbookWidget::restoreBandFilter()
 
     QSettings settings;
     ui->bandFilter->blockSignals(true);
-    QString value = settings.value("logbook/filters/band").toString();
+    const QString &value = settings.value("logbook/filters/band").toString();
     if ( !value.isEmpty() )
     {
         ui->bandFilter->setCurrentText(value);
@@ -340,7 +349,7 @@ void LogbookWidget::restoreModeFilter()
 
     QSettings settings;
     ui->modeFilter->blockSignals(true);
-    QString value = settings.value("logbook/filters/mode").toString();
+    const QString &value = settings.value("logbook/filters/mode").toString();
     if ( !value.isEmpty() )
     {
         ui->modeFilter->setCurrentText(value);
@@ -376,7 +385,7 @@ void LogbookWidget::restoreCountryFilter()
 
     QSettings settings;
     ui->countryFilter->blockSignals(true);
-    QString value = settings.value("logbook/filters/country").toString();
+    const QString &value = settings.value("logbook/filters/country").toString();
     if ( !value.isEmpty() )
     {
         ui->countryFilter->setCurrentText(value);
@@ -413,7 +422,7 @@ void LogbookWidget::restoreUserFilter()
 
     QSettings settings;
     ui->userFilter->blockSignals(true);
-    QString value = settings.value("logbook/filters/user").toString();
+    const QString &value = settings.value("logbook/filters/user").toString();
     if ( !value.isEmpty() )
     {
         ui->userFilter->setCurrentText(value);
@@ -440,7 +449,7 @@ void LogbookWidget::refreshClubFilter()
     FCT_IDENTIFICATION;
 
     ui->clubFilter->blockSignals(true);
-    QString member = ui->clubFilter->currentText();
+    const QString &member = ui->clubFilter->currentText();
     ui->clubFilter->clear();
     ui->clubFilter->addItems(QStringList(tr("Club")) << MembershipQE::instance()->getEnabledClubLists());
     ui->clubFilter->setCurrentText(member);
@@ -457,7 +466,7 @@ void LogbookWidget::restoreclubFilter()
 {
     QSettings settings;
     ui->clubFilter->blockSignals(true);
-    QString value = settings.value("logbook/filters/member").toString();
+    const QString &value = settings.value("logbook/filters/member").toString();
     if ( !value.isEmpty() )
     {
         ui->clubFilter->setCurrentText(value);
@@ -483,7 +492,8 @@ void LogbookWidget::restoreFilters()
     updateTable();
 }
 
-void LogbookWidget::uploadClublog() {
+void LogbookWidget::uploadClublog()
+{
     FCT_IDENTIFICATION;
 
     QByteArray data;
@@ -591,17 +601,14 @@ void LogbookWidget::exportContact()
     FCT_IDENTIFICATION;
 
     QList<QSqlRecord>QSOs;
-    auto selectedIndexes = ui->contactTable->selectionModel()->selectedRows();
+    const QModelIndexList &selectedIndexes = ui->contactTable->selectionModel()->selectedRows();
 
     if ( selectedIndexes.count() < 1 )
-    {
         return;
-    }
 
-    for (auto &index : qAsConst(selectedIndexes))
-    {
+    for ( const QModelIndex &index : selectedIndexes )
         QSOs << model->record(index.row());
-    }
+
     ExportDialog dialog(QSOs);
     dialog.exec();
 }
@@ -750,7 +757,8 @@ void LogbookWidget::updateTable()
     emit logbookUpdated();
 }
 
-void LogbookWidget::saveTableHeaderState() {
+void LogbookWidget::saveTableHeaderState()
+{
     FCT_IDENTIFICATION;
 
     QSettings settings;
@@ -758,17 +766,20 @@ void LogbookWidget::saveTableHeaderState() {
     settings.setValue("logbook/state", logbookState);
 }
 
-void LogbookWidget::showTableHeaderContextMenu(const QPoint& point) {
+void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
+{
     FCT_IDENTIFICATION;
 
     QMenu* contextMenu = new QMenu(this);
-    for (int i = 0; i < model->columnCount(); i++) {
-        QString name = model->headerData(i, Qt::Horizontal).toString();
+    for (int i = 0; i < model->columnCount(); i++)
+    {
+        const QString &name = model->headerData(i, Qt::Horizontal).toString();
         QAction* action = new QAction(name, contextMenu);
         action->setCheckable(true);
         action->setChecked(!ui->contactTable->isColumnHidden(i));
 
-        connect(action, &QAction::triggered, this, [this, i]() {
+        connect(action, &QAction::triggered, this, [this, i]()
+        {
             ui->contactTable->setColumnHidden(i, !ui->contactTable->isColumnHidden(i));
             saveTableHeaderState();
         });
@@ -876,6 +887,18 @@ void LogbookWidget::reloadSetting()
     FCT_IDENTIFICATION;
     /* Refresh dynamic Club selection combobox */
     refreshClubFilter();
+}
+
+void LogbookWidget::sendDXCSpot()
+{
+    FCT_IDENTIFICATION;
+
+    const QModelIndexList &selectedIndexes = ui->contactTable->selectionModel()->selectedRows();
+
+    if ( selectedIndexes.count() < 1 )
+        return;
+
+    emit sendDXSpotContactReq(model->record(selectedIndexes.at(0).row()));
 }
 
 void LogbookWidget::colorsFilterWidget(QComboBox *widget)

@@ -45,7 +45,7 @@ private:
 
 Q_DECLARE_METATYPE(CWKeyProfile);
 
-class CWKeyProfilesManager : QObject, public ProfileManager<CWKeyProfile>
+class CWKeyProfilesManager : QObject, public ProfileManagerSQL<CWKeyProfile>
 {
     Q_OBJECT
 

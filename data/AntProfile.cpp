@@ -27,7 +27,7 @@ QDataStream& operator>>(QDataStream& in, AntProfile& v)
 
 AntProfilesManager::AntProfilesManager(QObject *parent) :
     QObject(parent),
-    ProfileManager<AntProfile>("equipment/ant")
+    ProfileManagerSQL<AntProfile>("ant_profiles")
 {
     FCT_IDENTIFICATION;
 

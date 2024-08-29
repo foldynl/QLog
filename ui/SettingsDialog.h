@@ -20,6 +20,7 @@
 #include "core/LogLocale.h"
 #include "rig/Rig.h"
 #include "ui/MainWindow.h"
+#include "core/MultiselectCompleter.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -47,6 +48,7 @@ public slots:
     void rigGetFreqChanged(int);
     void rigPortTypeChanged(int);
     void rigInterfaceChanged(int);
+    void rigPTTTypeChanged(int);
 
     void addRotProfile();
     void delRotProfile();
@@ -136,7 +138,8 @@ private:
     QCompleter *sotaCompleter;
     QCompleter *iotaCompleter;
     QCompleter *wwffCompleter;
-    QCompleter *potaCompleter;
+    MultiselectCompleter *potaCompleter;
+    QCompleter *sigCompleter;
     QList<QCheckBox*> memberListCheckBoxes;
     Ui::SettingsDialog *ui;
     LogLocale locale;

@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 TARGET = qlog
 TEMPLATE = app
-VERSION = 0.37.2
+VERSION = 0.38.0
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
@@ -67,6 +67,7 @@ SOURCES += \
         core/Lotw.cpp \
         core/MembershipQE.cpp \
         core/Migration.cpp \
+        core/MultiselectCompleter.cpp \
         core/NetworkNotification.cpp \
         core/PropConditions.cpp \
         core/QRZ.cpp \
@@ -191,6 +192,7 @@ HEADERS += \
         core/Lotw.h \
         core/MembershipQE.h \
         core/Migration.h \
+        core/MultiselectCompleter.h \
         core/NetworkNotification.h \
         core/PropConditions.h \
         core/QRZ.h \

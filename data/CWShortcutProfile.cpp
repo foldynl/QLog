@@ -43,7 +43,7 @@ QDataStream& operator>>(QDataStream& in, CWShortcutProfile& v)
 
 CWShortcutProfilesManager::CWShortcutProfilesManager(QObject *parent) :
     QObject(parent),
-    ProfileManager<CWShortcutProfile>("equipment/cwshortcut")
+    ProfileManagerSQL<CWShortcutProfile>("cwshortcut_profiles")
 {
     FCT_IDENTIFICATION;
 

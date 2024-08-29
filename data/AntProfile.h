@@ -29,7 +29,7 @@ private:
 
 Q_DECLARE_METATYPE(AntProfile)
 
-class AntProfilesManager : QObject, public ProfileManager<AntProfile>
+class AntProfilesManager : QObject, public ProfileManagerSQL<AntProfile>
 {
     Q_OBJECT
 

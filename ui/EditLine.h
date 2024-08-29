@@ -13,6 +13,10 @@ public:
     void setText(const QString & text);
     void spaceForbidden(bool);
 
+signals:
+    void focusIn();
+    void focusOut();
+
 protected:
     void focusInEvent(QFocusEvent* event) override;
     void focusOutEvent(QFocusEvent* event) override;

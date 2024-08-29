@@ -1,6 +1,8 @@
 #include "AlertWidget.h"
 #include "ui_AlertWidget.h"
 #include "core/debug.h"
+#include "AlertSettingDialog.h"
+#include "ui/ColumnSettingDialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.alertwidget");
 
@@ -23,6 +25,10 @@ AlertWidget::AlertWidget(QWidget *parent) :
     ui->alertTableView->setSortingEnabled(true);
     ui->alertTableView->sortByColumn(AlertTableModel::COLUMN_UPDATED, Qt::DescendingOrder);
     ui->alertTableView->horizontalHeader()->setSectionsMovable(true);
+
+    ui->alertTableView->addAction(ui->actionEditRules);
+    ui->alertTableView->addAction(ui->actionColumnVisibility);
+    ui->alertTableView->addAction(ui->actionClear);
 
     restoreTableHeaderState();
 
@@ -84,6 +90,24 @@ void AlertWidget::alertAgingChanged(int)
     FCT_IDENTIFICATION;
 
     settings.setValue("alert/alert_aging", ui->clearAlertOlderSpinBox->value());
+}
+
+void AlertWidget::showEditRules()
+{
+    FCT_IDENTIFICATION;
+
+    AlertSettingDialog dialog(this);
+    dialog.exec();
+    emit rulesChanged();
+}
+
+void AlertWidget::showColumnVisibility()
+{
+    FCT_IDENTIFICATION;
+
+    ColumnSettingSimpleDialog dialog(ui->alertTableView);
+    dialog.exec();
+    saveTableHeaderState();
 }
 
 void AlertWidget::alertAging()

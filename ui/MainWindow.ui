@@ -100,6 +100,7 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
+    <addaction name="actionAlerts"/>
     <addaction name="actionBandmap"/>
     <addaction name="actionClock"/>
     <addaction name="actionChat"/>
@@ -278,6 +279,15 @@
     <number>2</number>
    </attribute>
    <widget class="ProfileImageWidget" name="profileImageWidget"/>
+  </widget>
+  <widget class="QDockWidget" name="alertDockWidget">
+   <property name="windowTitle">
+    <string>Alerts</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="AlertWidget" name="alertsWidget"/>
   </widget>
   <action name="actionQuit">
    <property name="icon">
@@ -492,19 +502,9 @@
     <string>&amp;QRZ.com</string>
    </property>
   </action>
-  <action name="actionAlert">
+  <action name="actionEditAlertRules">
    <property name="text">
     <string>Edit Rules</string>
-   </property>
-  </action>
-  <action name="actionShowAlerts">
-   <property name="text">
-    <string>Show Alerts</string>
-   </property>
-  </action>
-  <action name="actionClearAlerts">
-   <property name="text">
-    <string>Clear Alerts</string>
    </property>
   </action>
   <action name="actionBeepSettingAlert">
@@ -776,6 +776,21 @@
     <bool>true</bool>
    </property>
   </action>
+  <action name="actionAlerts">
+   <property name="text">
+    <string>Alerts</string>
+   </property>
+  </action>
+  <action name="actionClearAlerts">
+   <property name="text">
+    <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionShowAlerts">
+   <property name="text">
+    <string>Show Alerts</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -869,6 +884,12 @@
    <class>ProfileImageWidget</class>
    <extends>QWidget</extends>
    <header>ui/ProfileImageWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AlertWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/AlertWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -1277,42 +1298,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionAlert</sender>
+   <sender>actionEditAlertRules</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>alertRuleSetting()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>456</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShowAlerts</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showAlerts()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>456</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionClearAlerts</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>clearAlerts()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1529,6 +1518,54 @@
     <hint type="destinationlabel">
      <x>883</x>
      <y>518</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAlerts</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showAlerts()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClearAlerts</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearAlerts()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShowAlerts</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showAlerts()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
     </hint>
    </hints>
   </connection>

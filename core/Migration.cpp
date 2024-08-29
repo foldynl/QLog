@@ -206,6 +206,9 @@ bool Migration::functionMigration(int version)
     case 28:
         ret = resetConfigs();
         break;
+    case 29:
+        ret = profiles2DB();
+        break;
     default:
         ret = true;
     }
@@ -640,6 +643,71 @@ bool Migration::resetConfigs()
     // I don't know why, but when the layout is saved, the sort indicator
     // is not displayed when the sortable view is turned on. So I rather remove the view state
     settings.remove("wsjtx/state");
+    return true;
+}
+
+bool Migration::profiles2DB()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    setSelectedProfile("ant_profiles", settings.value("equipment/ant/profile1", QString()).toString());
+    settings.remove("equipment/ant/profile1");
+    setSelectedProfile("cwkey_profiles", settings.value("equipment/cwkey/profile1", QString()).toString());
+    settings.remove("equipment/cwkey/profile1");
+    setSelectedProfile("cwshortcut_profiles", settings.value("equipment/cwshortcut/profile1", QString()).toString());
+    settings.remove("equipment/cwshortcut/profile1");
+    setSelectedProfile("rig_profiles", settings.value("equipment/rig/profile1", QString()).toString());
+    settings.remove("equipment/rig/profile1");
+    setSelectedProfile("rot_profiles", settings.value("equipment/rot/profile1", QString()).toString());
+    settings.remove("equipment/rot/profile1");
+    setSelectedProfile("rot_user_buttons_profiles", settings.value("equipment/rotusrbuttons/profile1", QString()).toString());
+    settings.remove("equipment/rotusrbuttons/profile1");
+    setSelectedProfile("station_profiles", settings.value("station/profile1", QString()).toString());
+    settings.remove("station/profile1");
+    setSelectedProfile("main_layout_profiles", settings.value("newcontact/layoutprofile/profile1", QString()).toString());
+    settings.remove("newcontact/layoutprofile/profile1");
+
+    // LOVs to DB
+    settings.remove("last_cty_update");
+    settings.remove("last_sat_update");
+    settings.remove("last_sotasummits_update");
+    settings.remove("last_wwffdirectory_update");
+    settings.remove("last_iota_update");
+    settings.remove("last_pota_update");
+    settings.remove("last_membershipcontent_update");
+
+    settings.remove("dxcc/start");
+
+    return true;
+}
+
+bool Migration::setSelectedProfile(const QString &tablename, const QString &profileName)
+{
+    FCT_IDENTIFICATION;
+
+    QSqlQuery query;
+
+    if ( !query.prepare(QString("UPDATE %1 "
+                                      "SET selected = CASE "
+                                      "               WHEN profile_name = :profileName THEN 1 "
+                                      "               ELSE NULL "
+                                      "               END "
+                                      "WHERE selected = 1 OR profile_name = :profileName2").arg(tablename)) )
+    {
+        qWarning() << "Cannot prepare Update statement for" << tablename;
+        return false;
+    }
+
+    query.bindValue(":profileName", profileName);
+    query.bindValue(":profileName2", profileName);
+
+    if( !query.exec() )
+    {
+        qWarning()<< "Cannot update the profile" << tablename << profileName << query.lastError();
+        return false;
+    }
     return true;
 }
 

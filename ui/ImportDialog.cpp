@@ -61,7 +61,20 @@ void ImportDialog::browse()
 
     QString filename = QFileDialog::getOpenFileName(this, tr("Select File"),
                                                     lastPath,
-                                                    ui->typeSelect->currentText().toUpper() + "(*." + ui->typeSelect->currentText().toLower() + ")");
+                                                    ui->typeSelect->currentText().toUpper() + "(*." + ui->typeSelect->currentText().toLower() + ")",
+                                                    nullptr,
+#if defined(Q_OS_LINUX)
+                                                    // Do not use the Native Dialog under Linux because the dialog is case-sensitive.
+                                                    // QT variant looks different but it is case-insensitive.
+                                                    // More information:
+                                                    // https://stackoverflow.com/questions/34858220/qt-how-to-set-a-case-insensitive-filter-on-qfiledialog
+                                                    // https://bugreports.qt.io/browse/QTBUG-51712
+                                                    QFileDialog::DontUseNativeDialog
+#else
+                                                    QFileDialog::Options()
+#endif
+
+                                                    );
     if ( !filename.isEmpty() )
     {
         settings.setValue("import/last_path", QFileInfo(filename).path());

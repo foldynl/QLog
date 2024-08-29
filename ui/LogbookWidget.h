@@ -24,6 +24,7 @@ signals:
     void logbookUpdated();
     void contactUpdated(QSqlRecord&);
     void contactDeleted(const QSqlRecord&);
+    void sendDXSpotContactReq(const QSqlRecord&);
 
     // Clublog special signals
     // unfortunately, special rules are applied for uploading to Clublog.
@@ -70,6 +71,7 @@ public slots:
     void handleBeforeDelete(int);
     void focusSearchCallsign();
     void reloadSetting();
+    void sendDXCSpot();
 
 private:
     ClubLog* clublog;

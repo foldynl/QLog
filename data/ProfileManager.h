@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QLoggingCategory>
 #include "core/debug.h"
+#include <QtSql>
 
 #define MOD_NAME "qlog.data.profilemanager"
 
@@ -90,20 +91,22 @@
  *  for or planned for ("I know this works for cola<float> and cola<string>, if you want
  *  to use something else, tell me first and will can verify it works before enabling it.").
 */
-
 template<class T>
-class ProfileManager
+class ProfileManagerSQL
 {
 public:
-    explicit ProfileManager(const QString &configPrefix)
-        : configPrefix(configPrefix)
+    explicit ProfileManagerSQL(const QString &tableName)
+        : tableName(tableName)
     {
         QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
         qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
 
-        QSettings settings;
+        QSqlQuery query(QString("SELECT profile_name FROM %1 WHERE IFNULL(selected, 0) = 1").arg(tableName));
+        currentProfile1 = query.first() ? query.value(0).toString() : QString();
 
-        currentProfile1 = settings.value(this->configPrefix + "/profile1", QString()).toString();
+        if ( currentProfile1.isEmpty() )
+            qDebug() << "Empty profile name for " << tableName
+                     << "SQL Error" << query.lastError().text();
     };
 
     const T getCurProfile1()
@@ -111,14 +114,41 @@ public:
         QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
         qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
 
-        if ( ! currentProfile1.isEmpty() )
+        return ( ! currentProfile1.isEmpty() ) ? getProfile(currentProfile1)
+                                               : T();
+    };
+
+    void __setCurProfile1(const QString &profileName)
+    {
+        if ( profiles.contains(profileName) || profileName.isEmpty() )
         {
-            return getProfile(currentProfile1);
+            QSqlQuery query;
+
+            // atomic change
+            if ( !query.prepare(QString("UPDATE %1 "
+                                              "SET selected = CASE "
+                                              "               WHEN profile_name = :profileName THEN 1 "
+                                              "               ELSE NULL "
+                                              "               END "
+                                              "WHERE selected = 1 OR profile_name = :profileName2").arg(tableName)) )
+            {
+                qWarning() << "Cannot prepare Update statement for" << tableName;
+                return;
+            }
+
+            query.bindValue(":profileName", profileName);
+            query.bindValue(":profileName2", profileName);
+
+            if ( query.exec() )
+                currentProfile1 = profileName;
+            else
+                qWarning() << "Cannot set the selected profile for " << tableName
+                           << query.lastError().text();
         }
         else
-        {
-            return T();
-        }
+            qWarning() << "Cannot set Current Profile to "
+                       << profileName
+                       << "because is not not a valid profile name" << tableName;
     };
 
     void setCurProfile1(const QString &profileName)
@@ -126,23 +156,9 @@ public:
         QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
         qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
 
-        QSettings settings;
-
         currProfMutex.lock();
-
-        if ( profiles.contains(profileName) || profileName.isEmpty() )
-        {
-            currentProfile1 = profileName;
-            settings.setValue(configPrefix + "/profile1", profileName);
-        }
-        else
-        {
-            qWarning() << "Cannot set Current Profile to "
-                       << profileName
-                       << "because is not not a valid profile name";
-        }
+        __setCurProfile1(profileName);
         currProfMutex.unlock();
-
     };
 
     void saveCurProfile1()
@@ -150,10 +166,8 @@ public:
         QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
         qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
 
-        QSettings settings;
-
         currProfMutex.lock();
-        settings.setValue(configPrefix + "/profile1", currentProfile1);
+        __setCurProfile1(currentProfile1);
         currProfMutex.unlock();
     };
 
@@ -172,7 +186,7 @@ public:
         else
         {
             if ( !profileName.isEmpty() )
-                qWarning() << "Profile " << profileName << " not found";
+                qWarning() << "Profile " << profileName << " not found" << tableName;
             return T();
         }
     };
@@ -185,7 +199,6 @@ public:
         profilesMutex.lock();
         profiles.insert(profileName, QVariant::fromValue(profile));
         profilesMutex.unlock();
-
     };
 
     int removeProfile(const QString &profileName)
@@ -196,9 +209,7 @@ public:
         currProfMutex.lock();
         if ( currentProfile1 == profileName )
         {
-
-            currentProfile1 = QString();
-
+            __setCurProfile1(QString());
         }
         currProfMutex.unlock();
 
@@ -214,26 +225,17 @@ public:
         QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
         qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
 
-        QStringList ret;
-
         profilesMutex.lock();
-
-        auto keys = profiles.keys();
-        for ( auto &key : qAsConst(keys) )
-        {
-            ret << key;
-        }
-
+        QStringList ret(profiles.keys());
         profilesMutex.unlock();
 
         return ret;
-
     };
 
 private:
     QMap<QString, QVariant> profiles;
     QString currentProfile1;
-    QString configPrefix;
+    QString tableName;
     QMutex profilesMutex;
     QMutex currProfMutex;
 };

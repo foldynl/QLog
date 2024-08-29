@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QComboBox>
 #include <QStringListModel>
+#include <QGraphicsLayout>
 #include "StatisticsWidget.h"
 #include "ui_StatisticsWidget.h"
 #include "core/debug.h"
@@ -589,6 +590,8 @@ void StatisticsWidget::drawBarGraphs(const QString &title, QSqlQuery &query)
     chart->setTitle(title);
     chart->legend()->hide();
     chart->setAnimationOptions(QChart::SeriesAnimations);
+    chart->layout()->setContentsMargins(0, 0, 0, 0);
+    chart->setBackgroundRoundness(0);
 
     ui->stackedWidget->setCurrentIndex(0);
     ui->graphView->setChart(chart);

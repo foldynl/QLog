@@ -34,7 +34,7 @@ private:
 
 Q_DECLARE_METATYPE(MainLayoutProfile);
 
-class MainLayoutProfilesManager : QObject, public ProfileManager<MainLayoutProfile>
+class MainLayoutProfilesManager : QObject, public ProfileManagerSQL<MainLayoutProfile>
 {
     Q_OBJECT
 

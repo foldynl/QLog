@@ -30,6 +30,7 @@
 #include "data/BandPlan.h"
 #include "core/DxServerString.h"
 #include "rig/macros.h"
+#include "core/Callsign.h"
 
 #define CONSOLE_VIEW 4
 #define NUM_OF_RECONNECT_ATTEMPTS 3
@@ -119,7 +120,6 @@ bool DxTableModel::addEntry(DxSpot entry, bool deduplicate,
                             qint16 dedup_interval, double dedup_freq_tolerance)
 {
     bool shouldInsert = true;
-
     if ( deduplicate )
     {
         for (const DxSpot &record : qAsConst(dxData))
@@ -128,7 +128,7 @@ bool DxTableModel::addEntry(DxSpot entry, bool deduplicate,
                 break;
 
             if ( record.callsign == entry.callsign
-                 && qAbs(record.freq - entry.freq) < dedup_freq_tolerance )
+                 && qAbs(MHz(record.freq) - MHz(entry.freq)) < kHz(dedup_freq_tolerance) )
             {
                 qCDebug(runtime) << "Duplicate spot" << record.callsign << record.freq <<  entry.callsign << entry.freq;
                 shouldInsert = false;
@@ -502,8 +502,10 @@ void DxWidget::connectCluster()
 {
     FCT_IDENTIFICATION;
 
+    const Callsign connectCallsign(StationProfilesManager::instance()->getCurProfile1().callsign);
     connectedServerString = new DxServerString(ui->serverSelect->currentText(),
-                                               StationProfilesManager::instance()->getCurProfile1().callsign.toLower());
+                                               connectCallsign.isValid() ? connectCallsign.getBase().toLower()
+                                                                         : QString());
 
     if ( !connectedServerString )
     {
@@ -680,6 +682,22 @@ uint DxWidget::dxccStatusFilterValue()
 
     QSettings settings;
     return settings.value("dxc/filter_dxcc_status", DxccStatus::All).toUInt();
+}
+
+int DxWidget::getDedupTimeValue()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+    return settings.value("dxc/filter_duplicationtime", DEDUPLICATION_TIME).toInt();
+}
+
+int DxWidget::getDedupFreqValue()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+    return settings.value("dxc/filter_duplicationfreq", DEDUPLICATION_FREQ_TOLERANCE).toInt();
 }
 
 bool DxWidget::spotDedupValue()
@@ -1244,6 +1262,8 @@ void DxWidget::reloadSetting()
     bandregexp.setPattern(bandFilterRegExp());
     dxccStatusFilter = dxccStatusFilterValue();
     deduplicateSpots = spotDedupValue();
+    deduplicatetime = getDedupTimeValue();
+    deduplicatefreq = getDedupFreqValue();
     QStringList tmp = dxMemberList();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     dxMemberFilter = QSet<QString>(tmp.begin(), tmp.end());
@@ -1252,29 +1272,41 @@ void DxWidget::reloadSetting()
 #endif
 }
 
+void DxWidget::prepareQSOSpot(QSqlRecord qso)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(runtime) << "QSO" << qso;
+
+    if ( !ui->commandEdit->isEnabled() )
+        return;
+
+    if ( qso.contains(QStringLiteral("start_time")) )
+    {
+        //qso is valid record
+        if ( qso.contains(QStringLiteral("freq"))
+             && qso.contains(QStringLiteral("callsign")) )
+        {
+            double spotFreq = ( qso.contains("freq_rx")
+                                && qso.value("freq_rx").toDouble() != 0.0 ) ? qso.value("freq_rx").toDouble()
+                                                                            : qso.value("freq").toDouble();
+
+            // DX Spider allow to enter QSO freq in MHz but it is not reliable for SHF bands.
+            // a more reliable way is to send a spot with kHz value
+            ui->commandEdit->setText(QString("dx %1 %2 ").arg(QString::number(Hz2kHz(MHz(spotFreq)), 'f', 0),
+                                                              qso.value("callsign").toString()));
+            ui->commandEdit->setFocus();
+        }
+    }
+}
+
 void DxWidget::actionCommandSpotQSO()
 {
     FCT_IDENTIFICATION;
 
     qCDebug(runtime) << "Last QSO" << lastQSO;
 
-    if ( lastQSO.contains(QStringLiteral("start_time")) )
-    {
-        //lastQSO is valid record
-        if ( lastQSO.contains(QStringLiteral("freq"))
-             && lastQSO.contains(QStringLiteral("callsign")) )
-        {
-            double spotFreq = ( lastQSO.contains("freq_rx")
-                                && lastQSO.value("freq_rx").toDouble() != 0.0 ) ? lastQSO.value("freq_rx").toDouble()
-                                                                                : lastQSO.value("freq").toDouble();
-
-            // DX Spider allow to enter QSO freq in MHz but it is not reliable for SHF bands.
-            // a more reliable way is to send a spot with kHz value
-            ui->commandEdit->setText(QString("dx %1 %2 ").arg(QString::number(Hz2kHz(MHz(spotFreq)), 'f', 0),
-                                                             lastQSO.value("callsign").toString()));
-            ui->commandEdit->setFocus();
-        }
-    }
+    prepareQSOSpot(lastQSO);
     ui->commandButton->setDefaultAction(ui->actionSpotQSO);
 }
 
@@ -1504,7 +1536,7 @@ void DxWidget::processDxSpot(const QString &spotter,
               || (dxMemberFilter.size() && spot.memberList2Set().intersects(dxMemberFilter)))
         )
     {
-        if ( dxTableModel->addEntry(spot, deduplicateSpots) )
+        if ( dxTableModel->addEntry(spot, deduplicateSpots, deduplicatetime, deduplicatefreq) )
             emit newFilteredSpot(spot);
     }
 }

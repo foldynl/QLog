@@ -143,7 +143,7 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     ui->sotaEdit->setCompleter(nullptr);
 
     /* POTA Completer */
-    potaCompleter.reset(new QCompleter(Data::instance()->potaIDList(), this));
+    potaCompleter.reset(new MultiselectCompleter(Data::instance()->potaIDList(), this));
     potaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     potaCompleter->setFilterMode(Qt::MatchStartsWith);
     potaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
@@ -183,6 +183,13 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     myWWFFCompleter->setFilterMode(Qt::MatchStartsWith);
     myWWFFCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->myWWFFEdit->setCompleter(nullptr);
+
+    /* SIF Completer */
+    sigCompleter.reset(new QCompleter(Data::instance()->sigIDList(), this));
+    sigCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    sigCompleter->setFilterMode(Qt::MatchStartsWith);
+    sigCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    ui->sigEdit->setCompleter(sigCompleter.data());
 
     /* Combo Mapping */
     /* do no use Data::qslPaperSentStatusBox for it because

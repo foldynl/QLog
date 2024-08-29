@@ -67,83 +67,111 @@ void Lotw::update(const QDate &start_date, bool qso_since, const QString &statio
     get(params);
 }
 
-int Lotw::uploadAdif(const QByteArray &data, QString &ErrorString)
+void Lotw::uploadAdif(const QByteArray &data)
 {
     FCT_IDENTIFICATION;
 
-    QTemporaryFile file;
     file.open();
     file.write(data);
     file.flush();
 
-    ErrorString = "";
     QStringList args;
     args << "-d" << "-q" << "-u" << file.fileName();
-    int ErrorCode = QProcess::execute(getTQSLPath("tqsl"),args);
 
-    /* list of Error Codes: http://www.arrl.org/command-1 */
-    switch ( ErrorCode )
+    QProcess *tqslProcess = new QProcess();
+
+    connect(tqslProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [this, tqslProcess](int exitCode, QProcess::ExitStatus exitStatus)
     {
-    case -2: // Error code of QProcess::execute - Process cannot start
-        ErrorString = tr("TQSL not found");
-        break;
+        qCDebug(runtime) << "Process finished with exit code" << exitCode << "and exit status" << exitStatus;
 
-    case -1: // Error code of QProcess::execute - Process crashed
-        ErrorString = tr("TQSL crashed");
-        break;
+        /* list of Error Codes: http://www.arrl.org/command-1 */
+        switch ( exitCode )
+        {
+        case 0: // Success
+            emit uploadFinished();
+            break;
 
-    case 0: // Success
-        break;
+        case 1: // Cancelled by user
+            emit uploadError(tr("Upload cancelled by user"));
+            break;
 
-    case 1: // Cancelled by user
-        ErrorString = tr("Upload cancelled by user");
-        break;
+        case 2: // Rejected by LoTW
+            emit uploadError(tr("Upload rejected by LoTW"));
+            break;
 
-    case 2: // Rejected by LoTW
-        ErrorString = tr("Upload rejected by LoTW");
-        break;
+        case 3: // Unexpected response from TQSL server
+            emit uploadError(tr("Unexpected response from TQSL server"));
+            break;
 
-    case 3: // Unexpected response from TQSL server
-        ErrorString = tr("Unexpected response from TQSL server");
-        break;
+        case 4: // TQSL error
+            emit uploadError(tr("TQSL utility error"));
+            break;
 
-    case 4: // TQSL error
-        ErrorString = tr("TQSL utility error");
-        break;
+        case 5: // TQSLlib error
+            emit uploadError(tr("TQSLlib error"));
+            break;
 
-    case 5: // TQSLlib error
-        ErrorString = tr("TQSLlib error");
-        break;
+        case 6: // Unable to open input file
+            emit uploadError(tr("Unable to open input file"));
+            break;
 
-    case 6: // Unable to open input file
-        ErrorString = tr("Unable to open input file");
-        break;
+        case 7: // Unable to open output file
+            emit uploadError(tr("Unable to open output file"));
+            break;
 
-    case 7: // Unable to open output file
-        ErrorString = tr("Unable to open output file");
-        break;
+        case 8: // All QSOs were duplicates or out of date range
+            emit uploadError(tr("All QSOs were duplicates or out of date range"));
+            break;
 
-    case 8: // All QSOs were duplicates or out of date range
-        ErrorString = tr("All QSOs were duplicates or out of date range");
-        break;
+        case 9: // Some QSOs were duplicates or out of date range
+            emit uploadError(tr("Some QSOs were duplicates or out of date range"));
+            break;
 
-    case 9: // Some QSOs were duplicates or out of date range
-        ErrorString = tr("Some QSOs were duplicates or out of date range");
-        break;
+        case 10: // Command syntax error
+            emit uploadError(tr("Command syntax error"));
+            break;
 
-    case 10: // Command syntax error
-        ErrorString = tr("Command syntax error");
-        break;
+        case 11: // LoTW Connection error (no network or LoTW is unreachable)
+            emit uploadError(tr("LoTW Connection error (no network or LoTW is unreachable)"));
+            break;
 
-    case 11: // LoTW Connection error (no network or LoTW is unreachable)
-        ErrorString = tr("LoTW Connection error (no network or LoTW is unreachable)");
-        break;
+        default:
+            emit uploadError(tr("Unexpected Error from TQSL"));
+        }
 
-    default:
-        ErrorString = tr("Unexpected Error from TQSL");
-    }
+        tqslProcess->deleteLater();
+    });
 
-    return ErrorCode;
+    connect(tqslProcess, &QProcess::errorOccurred, this, [this, tqslProcess](QProcess::ProcessError error)
+    {
+        qDebug() << "Process error:" << error;
+
+        switch ( error )
+        {
+        case QProcess::FailedToStart: // Error code of QProcess::execute - Process cannot start
+            emit uploadError(tr("TQSL not found"));
+            break;
+
+        case QProcess::Crashed: // Error code of QProcess::execute - Process crashed
+            emit uploadError(tr("TQSL crashed"));
+            break;
+        default:
+            emit uploadError(tr("Unexpected Error from TQSL"));
+        }
+        tqslProcess->deleteLater();
+    });
+
+    connect(tqslProcess, &QProcess::readyReadStandardOutput, this, [tqslProcess]()
+    {
+        qCDebug(runtime)<< "TQSL output: " << qPrintable(tqslProcess->readAllStandardOutput());
+    });
+
+    tqslProcess->setProcessChannelMode(QProcess::MergedChannels);
+    tqslProcess->setReadChannel(QProcess::StandardOutput);
+
+    qCDebug(runtime) << getTQSLPath("tqsl") << args;
+    tqslProcess->start(getTQSLPath("tqsl"),args);
 }
 
 const QString Lotw::getUsername()

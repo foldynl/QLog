@@ -22,6 +22,7 @@
 #include "models/LogbookModel.h"
 #include "ui/EditLine.h"
 #include "data/BandPlan.h"
+#include "core/MultiselectCompleter.h"
 
 namespace Ui {
 class NewContactWidget;
@@ -243,6 +244,7 @@ private slots:
     void rigProfileComboChanged(const QString&);
     void antProfileComboChanged(const QString&);
     void webLookup();
+    void refreshSIGCompleter();
 
 private:
     void fillFieldsFromLastQSO(const QString &callsign);
@@ -299,8 +301,9 @@ private:
     PropConditions *prop_cond;
     QCompleter *satCompleter;
     QCompleter *sotaCompleter;
-    QCompleter *potaCompleter;
+    MultiselectCompleter *potaCompleter;
     QCompleter *wwffCompleter;
+    QCompleter *sigCompleter;
     QTimeZone partnerTimeZone;
     double QSOFreq;
     qint32 bandwidthFilter;

@@ -6,6 +6,7 @@
 #include <QSortFilterProxyModel>
 #include "data/WsjtxEntry.h"
 #include "models/WsjtxTableModel.h"
+#include "rig/Rig.h"
 
 namespace Ui {
 class WsjtxWidget;
@@ -36,6 +37,8 @@ signals:
     void CQSpot(WsjtxEntry);
     void filteredCQSpot(WsjtxEntry);
     void spotsCleared();
+    void frequencyChanged(VFOID, double, double, double);
+    void modeChanged(VFOID, QString, QString, QString, qint32);
 
 private:
     uint dxccStatusFilterValue() const;

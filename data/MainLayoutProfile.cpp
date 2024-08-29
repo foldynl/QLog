@@ -40,7 +40,7 @@ QDataStream& operator>>(QDataStream& in, MainLayoutProfile& v)
 
 MainLayoutProfilesManager::MainLayoutProfilesManager(QObject *parent) :
     QObject(parent),
-    ProfileManager<MainLayoutProfile>("newcontact/layoutprofile")
+    ProfileManagerSQL<MainLayoutProfile>("main_layout_profiles")
 {
     FCT_IDENTIFICATION;
 

@@ -304,6 +304,14 @@
     <string>Export selected QSOs</string>
    </property>
   </action>
+  <action name="actionSendDXCSpot">
+   <property name="text">
+    <string>Send DX Spot</string>
+   </property>
+   <property name="toolTip">
+    <string>Logbook - Send DX Spot</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -540,6 +548,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSendDXCSpot</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>sendDXCSpot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>deleteContact()</slot>
@@ -556,5 +580,6 @@
   <slot>doubleClickColumn(QModelIndex)</slot>
   <slot>exportContact()</slot>
   <slot>clubFilterChanged()</slot>
+  <slot>sendDXCSpot()</slot>
  </slots>
 </ui>

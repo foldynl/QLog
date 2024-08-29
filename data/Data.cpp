@@ -6,6 +6,7 @@
 #include "core/Callsign.h"
 #include "core/debug.h"
 #include "BandPlan.h"
+#include "data/StationProfile.h"
 
 MODULE_IDENTIFICATION("qlog.data.data");
 
@@ -81,7 +82,7 @@ Data::Data(QObject *parent) :
                 "       valid_from,"
                 "       valid_to "
                 "FROM sota_summits "
-                "WHERE summit_code = UPPER(:code)"
+                "WHERE summit_code = :code"
                 );
 
     isPOTAQueryValid = queryPOTA.prepare(
@@ -94,7 +95,7 @@ Data::Data(QObject *parent) :
                 "       longitude,"
                 "       grid "
                 "FROM pota_directory "
-                "WHERE reference = UPPER(:code)"
+                "WHERE reference = :code"
                 );
 
     isWWFFQueryValid = queryWWFF.prepare(
@@ -114,7 +115,7 @@ Data::Data(QObject *parent) :
                 "       valid_from,"
                 "       valid_to "
                 "FROM wwff_directory "
-                "WHERE reference = UPPER(:reference)"
+                "WHERE reference = :reference"
                 );
 }
 
@@ -135,21 +136,15 @@ Data* Data::instance() {
     return &instance;
 }
 
-DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode) {
+DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
+{
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << dxcc << " " << band << " " << mode;
 
-    QString filter;
-    QSettings settings;
-    const QVariant &start = settings.value("dxcc/start");
+    const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
 
-    if ( start.toDate().isValid() )
-    {
-        filter = QString("AND start_time >= '%1'").arg(start.toDate().toString("yyyy-MM-dd"));
-    }
-
-    QString sql_mode(":mode ");
+    QString sql_mode(":mode");
 
     if ( mode != BandPlan::MODE_GROUP_STRING_CW
          && mode != BandPlan::MODE_GROUP_STRING_PHONE
@@ -159,15 +154,26 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode) 
     }
 
     QSqlQuery query;
+    QString sqlStatement = QString("WITH all_dxcc_qsos AS (SELECT DISTINCT contacts.mode, contacts.band, "
+                                         "                                       contacts.qsl_rcvd, contacts.lotw_qsl_rcvd "
+                                         "                       FROM contacts "
+                                         "                       WHERE dxcc = :dxcc %1) "
+                                         "  SELECT (SELECT 1 FROM all_dxcc_qsos LIMIT 1) as entity,"
+                                         "         (SELECT 1 FROM all_dxcc_qsos WHERE band = :band LIMIT 1) as band, "
+                                         "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) "
+                                         "          WHERE modes.dxcc = %2 LIMIT 1) as mode, "
+                                         "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) "
+                                         "          WHERE modes.dxcc = %3 AND all_dxcc_qsos.band = :band LIMIT 1) as slot, "
+                                         "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) "
+                                         "          WHERE modes.dxcc = %4 AND all_dxcc_qsos.band = :band "
+                                         "                AND (all_dxcc_qsos.qsl_rcvd = 'Y' OR all_dxcc_qsos.lotw_qsl_rcvd = 'Y') LIMIT 1) as confirmed")
+                                         .arg(( profile.dxcc != 0 ) ? QString(" AND my_dxcc = %1").arg(profile.dxcc)
+                                                                    : "",
+                                              sql_mode,
+                                              sql_mode,
+                                              sql_mode);
 
-    if ( ! query.prepare("WITH all_dxcc_qsos AS (SELECT DISTINCT contacts.mode, contacts.band, contacts.qsl_rcvd, contacts.lotw_qsl_rcvd FROM contacts WHERE dxcc = :dxcc " + filter + ") "
-                         "  SELECT (SELECT 1 FROM all_dxcc_qsos LIMIT 1) as entity,"
-                         "         (SELECT 1 FROM all_dxcc_qsos WHERE band = :band LIMIT 1) as band, "
-                         "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) WHERE modes.dxcc = " + sql_mode + " LIMIT 1) as mode, "
-                         "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) WHERE modes.dxcc = " + sql_mode + " AND all_dxcc_qsos.band = :band LIMIT 1) as slot, "
-                         "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) WHERE modes.dxcc = " + sql_mode + " AND all_dxcc_qsos.band = :band AND (all_dxcc_qsos.qsl_rcvd = 'Y' OR all_dxcc_qsos.lotw_qsl_rcvd = 'Y') LIMIT 1) as confirmed"
-                         )
-       )
+    if ( ! query.prepare(sqlStatement) )
     {
         qWarning() << "Cannot prepare Select statement";
         return DxccStatus::UnknownStatus;
@@ -183,34 +189,32 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode) 
         return DxccStatus::UnknownStatus;
     }
 
-    if (query.next()) {
-        if (query.value(0).isNull()) {
+    if ( query.next() )
+    {
+        if ( query.value(0).isNull() )
             return DxccStatus::NewEntity;
-        }
-        if (query.value(1).isNull()) {
-            if (query.value(2).isNull()) {
+
+        if ( query.value(1).isNull() )
+        {
+            if ( query.value(2).isNull() )
                 return DxccStatus::NewBandMode;
-            }
-            else {
+            else
                 return DxccStatus::NewBand;
-            }
         }
-        if (query.value(2).isNull()) {
+
+        if ( query.value(2).isNull() )
             return DxccStatus::NewMode;
-        }
-        if (query.value(3).isNull()) {
+
+        if ( query.value(3).isNull() )
             return DxccStatus::NewSlot;
-        }
-        if ( query.value(4).isNull()) {
+
+        if ( query.value(4).isNull() )
             return DxccStatus::Worked;
-        }
-        else {
+        else
             return DxccStatus::Confirmed;
-        }
     }
-    else {
-        return DxccStatus::UnknownStatus;
-    }
+
+    return DxccStatus::UnknownStatus;
 }
 
 #define RETURNCODE(a) \
@@ -576,6 +580,19 @@ QString Data::getIANATimeZone(double lat, double lon)
     return ret;
 }
 
+QStringList Data::sigIDList()
+{
+    FCT_IDENTIFICATION;
+
+    QStringList sigLOV;
+    QSqlQuery query(QLatin1String("SELECT DISTINCT sig_intl FROM contacts"));
+
+    while ( query.next() )
+        sigLOV << query.value(0).toString();
+
+    return sigLOV;
+}
+
 void Data::loadContests()
 {
     FCT_IDENTIFICATION;
@@ -905,7 +922,7 @@ SOTAEntity Data::lookupSOTA(const QString &SOTACode)
         return SOTAEntity();
     }
 
-    querySOTA.bindValue(":code", SOTACode);
+    querySOTA.bindValue(":code", SOTACode.toUpper());
 
     if ( ! querySOTA.exec() )
     {
@@ -957,7 +974,7 @@ POTAEntity Data::lookupPOTA(const QString &POTACode)
         return POTAEntity();
     }
 
-    queryPOTA.bindValue(":code", POTACode);
+    queryPOTA.bindValue(":code", POTACode.toUpper());
 
     if ( ! queryPOTA.exec() )
     {
@@ -999,7 +1016,7 @@ WWFFEntity Data::lookupWWFF(const QString &reference)
         return WWFFEntity();
     }
 
-    queryWWFF.bindValue(":reference", reference);
+    queryWWFF.bindValue(":reference", reference.toUpper());
 
     if ( ! queryWWFF.exec() )
     {
@@ -1034,13 +1051,6 @@ WWFFEntity Data::lookupWWFF(const QString &reference)
     }
 
     return WWFFRet;
-}
-
-QString Data::dxccFlag(int dxcc) {
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << dxcc;
-    return flags.value(dxcc);
 }
 
 const char Data::translitTab[] = {

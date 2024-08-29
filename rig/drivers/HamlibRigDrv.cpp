@@ -16,6 +16,11 @@
 #define HAMLIB_FILPATHLEN FILPATHLEN
 #endif
 
+// macro introduced hamlib 4.6
+#ifndef PTTPORT
+#define PTTPORT(r) (&r->state.pttport)
+#endif
+
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Drv mutex"; \
                         QMutexLocker locker(&drvLock); \
                         qCDebug(runtime) << "Using Drv"
@@ -29,6 +34,20 @@ QList<QPair<int, QString>> HamlibRigDrv::getModelList()
 
     rig_load_all_backends();
     rig_list_foreach(addRig, &ret);
+
+    return ret;
+}
+
+QList<QPair<QString, QString> > HamlibRigDrv::getPTTTypeList()
+{
+    FCT_IDENTIFICATION;
+
+    QList<QPair<QString, QString>> ret;
+
+    ret << QPair<QString, QString>("None", tr("None"))
+        << QPair<QString, QString>("RIG", tr("CAT"))
+        << QPair<QString, QString>("DTR", tr("DTR"))
+        << QPair<QString, QString>("RTS", tr("RTS"));
 
     return ret;
 }
@@ -69,8 +88,7 @@ RigCaps HamlibRigDrv::getCaps(int model)
         ret.canGetXIT = ( caps->get_xit && ((caps->has_get_func) & (RIG_FUNC_XIT)) );
         ret.canGetKeySpeed = ( ((caps->has_get_level) & (RIG_LEVEL_KEYSPD)) );
 
-        //currently only CAT PTT is supported
-        ret.canGetPTT = ( caps->get_ptt && (caps->ptt_type == RIG_PTT_RIG || caps->ptt_type == RIG_PTT_RIG_MICDATA));
+        ret.canGetPTT = ( caps->get_ptt );
         ret.canSendMorse = ( caps->send_morse != nullptr );
 
         /* due to a hamlib issue #855 (https://github.com/Hamlib/Hamlib/issues/855)
@@ -169,6 +187,28 @@ bool HamlibRigDrv::open()
         rig->state.rigport.parm.serial.stop_bits = rigProfile.stopbits;
         rig->state.rigport.parm.serial.handshake = stringToHamlibFlowControl(rigProfile.flowcontrol);
         rig->state.rigport.parm.serial.parity = stringToHamlibParity(rigProfile.parity);
+
+        qCDebug(runtime) << "Using PTT Type" << rigProfile.pttType.toLocal8Bit().constData()
+                         << "PTT Path" << rigProfile.pttPortPath;
+
+        if ( !rigProfile.pttPortPath.isEmpty() )
+        {
+            strncpy(PTTPORT(rig)->pathname, rigProfile.pttPortPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
+        }
+
+        if ( rig_set_conf(rig, rig_token_lookup(rig, "ptt_type"), rigProfile.pttType.toLocal8Bit().constData()) != RIG_OK )
+        {
+            lastErrorText = tr("Cannot set PTT Type");
+            qCDebug(runtime) << "Rig Open Error" << lastErrorText;
+            return false;
+        }
+
+        if ( rig_set_conf(rig, rig_token_lookup(rig, "ptt_share"), "1") != RIG_OK )
+        {
+            lastErrorText = tr("Cannot set PTT Share");
+            qCDebug(runtime) << "Rig Open Error" << lastErrorText;
+            return false;
+        }
     }
     else
     {
@@ -339,7 +379,7 @@ void HamlibRigDrv::setPTT(bool newPTTState)
 
     qCDebug(function_parameters) << newPTTState;
 
-    if ( !rigProfile.getPTTInfo )
+    if ( !rigProfile.getPTTInfo || PTTPORT(rig)->type.ptt == RIG_PTT_NONE )
         return;
 
     MUTEXLOCKER;

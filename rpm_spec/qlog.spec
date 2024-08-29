@@ -42,6 +42,28 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_metainfodir}/*
 
 %changelog
+* Thu Aug 29 2024 Ladislav Foldyna - 0.38.0-1
+- [NEW] - Logbook - Added Send DX Spot to the QSO Context Menu
+- [NEW] - DX Filter - Added Dedup Time/Freq difference setting (@aa5sh)
+- [NEW] - Rig Setting - Added RTS/DTR PTT Type support (issue #353)
+- [NEW] - Bandmap - Scrollbar position is saved per band (issue #415)
+- [NEW] - New Contact - Added a dynamic value completer for SIG field (issue #425)
+- [NEW] - Awards - Added SOTA/POTA/WWFF (@aa5sh issue #311)
+- [NEW] - Awards - Added Not-Worked Filter
+- [NEW] - New Contact - Added Long Path Azimuth info
+- [NEW] - POTA Fields allow a comma-delimited list of one or more POTA Refs
+- [NEW] - WSJTX tunes freq/mode like Rig if rig is disconnected
+- [CHANGED] - Alert Widget is a Dock Widget (issue #399)
+- [CHANGED] - QLog adds more information from callbook for WSJTX QSOs (issues #403 #405 #420)
+- [CHANGED] - File Open dialogs are not a native dialog under Linux (issue #427)
+- [CHANGED] - Profiles transferred to DB
+- [CHANGED] - LOV last_dates transferred to DB
+- [CHANGED] - DX Cluster - Login Callsign is always the base Callsign
+- [REMOVED] - Setting DXCC Date
+- Fix for MacOS Layout Geometry Restore (@aa5sh)
+- Fixed TQSL does not block GUI thread
+- Fixed MacOS build process (@aa5sh)
+
 * Fri Jul 26 2024 Ladislav Foldyna - 0.37.2-1
 - Fixed Field QSL Send Via should be retained (issue #413)
 - Fixed Set rotator position fails if azimuth > 180 (issue #417)

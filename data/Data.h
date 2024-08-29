@@ -97,7 +97,7 @@ public:
     SOTAEntity lookupSOTA(const QString &SOTACode);
     POTAEntity lookupPOTA(const QString &POTACode);
     WWFFEntity lookupWWFF(const QString &reference);
-    QString dxccFlag(int dxcc);
+    const QString dxccFlag(int dxcc) const {return flags.value(dxcc);} ;
     QPair<QString, QString> legacyMode(const QString &mode);
     QStringList satModeList() { return satModes.values();}
     QStringList satModesIDList() { return satModes.keys(); }
@@ -110,6 +110,7 @@ public:
     QStringList wwffIDList() { return wwffRefID.keys();}
     QStringList potaIDList() { return potaRefID.keys();}
     QString getIANATimeZone(double, double);
+    QStringList sigIDList();
 
 signals:
 
@@ -127,7 +128,7 @@ private:
     void loadPOTA();
     void loadTZ();
 
-    QMap<int, QString> flags;
+    QHash<int, QString> flags;
     QMap<QString, QString> contests;
     QMap<QString, QString> propagationModes;
     QMap<QString, QPair<QString, QString>> legacyModes;

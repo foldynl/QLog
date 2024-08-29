@@ -49,7 +49,7 @@ private:
 
 Q_DECLARE_METATYPE(RotProfile);
 
-class RotProfilesManager : QObject, public ProfileManager<RotProfile>
+class RotProfilesManager : QObject, public ProfileManagerSQL<RotProfile>
 {
     Q_OBJECT
 

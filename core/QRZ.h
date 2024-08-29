@@ -55,7 +55,7 @@ private:
 
     void authenticate();
     void actionInsert(QByteArray& data, const QString &insertPolicy);
-    QMap<QString, QString> parseActionResponse(const QString&);
+    QMap<QString, QString> parseActionResponse(const QString&) const;
 
     const static QString SECURE_STORAGE_KEY;
     const static QString SECURE_STORAGE_API_KEY;

@@ -42,7 +42,6 @@ void DxccTableWidget::setDxcc(int dxcc, Band highlightedBand)
 
     if ( dxcc )
     {
-        QSettings settings;
         const QList<Band>& dxccBands = BandPlan::bandsList(true, true);
 
         if ( dxccBands.size() == 0 )
@@ -52,18 +51,12 @@ void DxccTableWidget::setDxcc(int dxcc, Band highlightedBand)
 
         QString filter("1 = 1");
         StationProfile profile = StationProfilesManager::instance()->getCurProfile1();
-        const QVariant &start = settings.value("dxcc/start");
         QStringList stmt_band_part1;
         QStringList stmt_band_part2;
 
         if ( profile != StationProfile() )
         {
             filter.append(QString(" AND c.my_dxcc = %1").arg(profile.dxcc));
-        }
-
-        if ( start.toDate().isValid() )
-        {
-            filter.append(QString(" AND c.start_time >= '%1'").arg(start.toDate().toString("yyyy-MM-dd")));
         }
 
         for ( int i = 0; i < dxccBands.size(); i++ )

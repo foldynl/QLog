@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     stats(new StatisticsWidget),
-    alertWidget(new AlertWidget),
     clublogRT(new ClubLog(this))
 {
     FCT_IDENTIFICATION;
@@ -78,6 +77,7 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->cwConsoleDockWidget->hide();
     ui->chatDockWidget->hide();
     ui->profileImageDockWidget->hide();
+    ui->alertDockWidget->hide();
 
     setupLayoutMenu();
 
@@ -105,7 +105,7 @@ MainWindow::MainWindow(QWidget* parent) :
     menuAlert->addAction(ui->actionShowAlerts);
     menuAlert->addAction(ui->actionClearAlerts);
     menuAlert->addSeparator();
-    menuAlert->addAction(ui->actionAlert);
+    menuAlert->addAction(ui->actionEditAlertRules);
     menuAlert->addAction(ui->actionBeepSettingAlert);
     ui->actionBeepSettingAlert->setChecked(settings.value("alertbeep", false).toBool());
     alertButton->setMenu(menuAlert);
@@ -163,6 +163,9 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->wsjtxWidget, &WsjtxWidget::filteredCQSpot, ui->onlineMapWidget, &OnlineMapWidget::drawWSJTXSpot);
     connect(ui->wsjtxWidget, &WsjtxWidget::spotsCleared, ui->onlineMapWidget, &OnlineMapWidget::clearWSJTXSpots);
     connect(ui->wsjtxWidget, &WsjtxWidget::reply, wsjtx, &Wsjtx::startReply);
+    connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->newContactWidget, &NewContactWidget::changeFrequency);
+    connect(ui->wsjtxWidget, &WsjtxWidget::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
+
     connect(this, &MainWindow::settingsChanged, wsjtx, &Wsjtx::reloadSetting);
     connect(this, &MainWindow::settingsChanged, ui->rotatorWidget, &RotatorWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->rigWidget, &RigWidget::reloadSettings);
@@ -171,9 +174,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::settingsChanged, ui->onlineMapWidget, &OnlineMapWidget::flyToMyQTH);
     connect(this, &MainWindow::settingsChanged, ui->logbookWidget, &LogbookWidget::reloadSetting);
     connect(this, &MainWindow::settingsChanged, ui->dxWidget, &DxWidget::reloadSetting);
-
     connect(this, &MainWindow::layoutChanged, ui->newContactWidget, &NewContactWidget::setupCustomUi);
-    connect(this, &MainWindow::alertRulesChanged, &alertEvaluator, &AlertEvaluator::loadRules);
     connect(this, &MainWindow::altBackslash, Rig::instance(), &Rig::setPTT);
     connect(this, &MainWindow::manualMode, ui->newContactWidget, &NewContactWidget::setManualMode);
 
@@ -182,6 +183,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLog::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactDeleted, clublogRT, &ClubLog::deleteQSOImmediately);
+    connect(ui->logbookWidget, &LogbookWidget::sendDXSpotContactReq, ui->dxWidget, &DxWidget::prepareQSOSpot);
 
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->logbookWidget, &LogbookWidget::updateTable);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, &networknotification, &NetworkNotification::QSOInserted);
@@ -230,9 +232,10 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->onlineMapWidget, &OnlineMapWidget::chatCallsignPressed, ui->chatWidget, &ChatWidget::setChatCallsign);
     connect(ui->onlineMapWidget, &OnlineMapWidget::wsjtxCallsignPressed, ui->wsjtxWidget, &WsjtxWidget::callsignClicked);
 
-    connect(alertWidget, &AlertWidget::alertsCleared, this, &MainWindow::clearAlertEvent);
-    connect(alertWidget, &AlertWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
-    connect(alertWidget, &AlertWidget::tuneWsjtx, wsjtx, &Wsjtx::startReply);
+    connect(ui->alertsWidget, &AlertWidget::rulesChanged, &alertEvaluator, &AlertEvaluator::loadRules);
+    connect(ui->alertsWidget, &AlertWidget::alertsCleared, this, &MainWindow::clearAlertEvent);
+    connect(ui->alertsWidget, &AlertWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
+    connect(ui->alertsWidget, &AlertWidget::tuneWsjtx, wsjtx, &Wsjtx::startReply);
 
     conditions = new PropConditions();
 
@@ -310,12 +313,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
         stats->close();
         stats->deleteLater();
         stats = nullptr;
-    }
-
-    if ( alertWidget )
-    {
-        alertWidget->close();
-        alertWidget->deleteLater();
     }
 
     QMainWindow::closeEvent(event);
@@ -489,8 +486,8 @@ void MainWindow::processSpotAlert(SpotAlert alert)
 {
     FCT_IDENTIFICATION;
 
-    alertWidget->addAlert(alert);
-    alertButton->setText(QString::number(alertWidget->alertCount()));
+    ui->alertsWidget->addAlert(alert);
+    alertButton->setText(QString::number(ui->alertsWidget->alertCount()));
     alertTextButton->setText(alert.ruleName.join(", ") + ": " + alert.callsign + ", " + alert.band + ", " + alert.modeGroupString);
     alertTextButton->disconnect();
 
@@ -514,7 +511,7 @@ void MainWindow::clearAlertEvent()
 {
     FCT_IDENTIFICATION;
 
-    int newCount = alertWidget->alertCount();
+    int newCount = ui->alertsWidget->alertCount();
 
     alertButton->setText(QString::number(newCount));
 
@@ -1112,14 +1109,14 @@ void MainWindow::showAlerts()
 {
     FCT_IDENTIFICATION;
 
-    alertWidget->show();
+    ui->alertDockWidget->show();
 }
 
 void MainWindow::clearAlerts()
 {
     FCT_IDENTIFICATION;
 
-    alertWidget->clearAllAlerts();
+    ui->alertsWidget->clearAllAlerts();
 }
 
 void MainWindow::conditionsUpdated() {
@@ -1203,10 +1200,7 @@ void MainWindow::QSOFilterSetting()
 void MainWindow::alertRuleSetting()
 {
     FCT_IDENTIFICATION;
-
-    AlertSettingDialog dialog(this);
-    dialog.exec();
-    emit alertRulesChanged();
+    ui->alertsWidget->showEditRules();
 }
 
 MainWindow::~MainWindow()

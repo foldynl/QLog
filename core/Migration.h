@@ -39,10 +39,12 @@ private:
     bool importQSLCards2DB();
     bool fillCQITUZStationProfiles();
     bool resetConfigs();
+    bool profiles2DB();
+    bool setSelectedProfile(const QString &tablename, const QString &profileName);
     QString fixIntlField(QSqlQuery &query, const QString &columName, const QString &columnNameIntl);
     bool refreshUploadStatusTrigger();
 
-    static const int latestVersion = 28;
+    static const int latestVersion = 29;
 };
 
 #endif // QLOG_CORE_MIGRATION_H

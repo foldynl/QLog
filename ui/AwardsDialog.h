@@ -25,18 +25,16 @@ public slots:
 signals:
     void AwardConditionSelected(QString, QString, QString);
 
-private slots:
-    void on_stationComboBox_currentIndexChanged(int index);
-
 private:
     Ui::AwardsDialog *ui;
     AwardsTableModel *detailedViewModel;
     SqlListModel* entityCallsignModel;
-    SqlListModel* stationCallsignModel;
+    QString selectedAward;
 
-    QString getSelectedEntity();
-    QString getSelectedAward();
-    QString getSelectedCallsign();
+    const QString getSelectedEntity() const;
+    const QString getSelectedAward() const;
+    void setEntityInputEnabled(bool);
+    void setNotWorkedEnabled(bool);
 };
 
 #endif // QLOG_UI_AWARDSDIALOG_H

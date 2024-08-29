@@ -12,6 +12,7 @@ class HamlibRigDrv : public GenericRigDrv
 {
 public:
     static QList<QPair<int, QString>> getModelList();
+    static QList<QPair<QString, QString> > getPTTTypeList();
     static RigCaps getCaps(int model);
     explicit HamlibRigDrv(const RigProfile &profile,
                           QObject *parent = nullptr);

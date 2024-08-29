@@ -43,7 +43,7 @@ QDataStream& operator>>(QDataStream& in, RotUsrButtonsProfile& v)
 
 RotUsrButtonsProfilesManager::RotUsrButtonsProfilesManager(QObject *parent) :
     QObject(parent),
-    ProfileManager<RotUsrButtonsProfile>("equipment/rotusrbuttons")
+    ProfileManagerSQL<RotUsrButtonsProfile>("rot_user_buttons_profiles")
 {
     FCT_IDENTIFICATION;
 

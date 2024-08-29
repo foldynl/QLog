@@ -32,7 +32,7 @@ private:
 
 Q_DECLARE_METATYPE(CWShortcutProfile);
 
-class CWShortcutProfilesManager : QObject, public ProfileManager<CWShortcutProfile>
+class CWShortcutProfilesManager : QObject, public ProfileManagerSQL<CWShortcutProfile>
 {
     Q_OBJECT
 
