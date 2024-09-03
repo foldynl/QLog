@@ -640,7 +640,7 @@ void LogFormat::runQSLImport(QSLFrom fromService)
                 if ( QSLRecord.value("qsl_rcvd") != originalRecord.value("lotw_qsl_rcvd")
                      && QSLRecord.value("qsl_rcvd").toString() == 'Y' )
                 {
-                    DxccStatus status = Data::dxccStatus(QSLRecord.value("dxcc").toInt(), QSLRecord.value("band").toString(), QSLRecord.value("mode").toString());
+                    DxccStatus status = Data::dxccStatus(QSLRecord.value("dxcc").toInt(), band.toString(), mode.toString());
                     QString DxccStatusStr = "";
                     if (status == DxccStatus::NewEntity )
                     {
@@ -648,15 +648,15 @@ void LogFormat::runQSLImport(QSLFrom fromService)
                     }
                     if (status == DxccStatus::NewMode )
                     {
-                        DxccStatusStr = "(New Mode " + QSLRecord.value("mode").toString() +")";
+                        DxccStatusStr = "(New Mode " + mode.toString() +")";
                     }
                     if (status == DxccStatus::NewBandMode )
                     {
-                        DxccStatusStr = "(New Band/Mode " + QSLRecord.value("band").toString() + " " + QSLRecord.value("mode").toString() + ")";
+                        DxccStatusStr = "(New Band/Mode " + band.toString() + " " + mode.toString() + ")";
                     }
                     if (status == DxccStatus::NewSlot )
                     {
-                        DxccStatusStr = "(New Slot " + QSLRecord.value("band").toString() + " " + QSLRecord.value("mode").toString() + ")";
+                        DxccStatusStr = "(New Slot " + band.toString() + " " + mode.toString() + ")";
                     }
 
                     originalRecord.setValue("lotw_qsl_rcvd", QSLRecord.value("qsl_rcvd"));
