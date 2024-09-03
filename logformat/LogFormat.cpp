@@ -640,6 +640,25 @@ void LogFormat::runQSLImport(QSLFrom fromService)
                 if ( QSLRecord.value("qsl_rcvd") != originalRecord.value("lotw_qsl_rcvd")
                      && QSLRecord.value("qsl_rcvd").toString() == 'Y' )
                 {
+                    DxccStatus status = Data::dxccStatus(QSLRecord.value("dxcc").toInt(), QSLRecord.value("band").toString(), QSLRecord.value("mode").toString());
+                    QString DxccStatusStr = "";
+                    if (status == DxccStatus::NewEntity )
+                    {
+                        DxccStatusStr = "New Entity";
+                    }
+                    if (status == DxccStatus::NewMode )
+                    {
+                        DxccStatusStr = "New Mode";
+                    }
+                    if (status == DxccStatus::NewBandMode )
+                    {
+                        DxccStatusStr = "New Band/Mode";
+                    }
+                    if (status == DxccStatus::NewSlot )
+                    {
+                        DxccStatusStr = "New Slot";
+                    }
+
                     originalRecord.setValue("lotw_qsl_rcvd", QSLRecord.value("qsl_rcvd"));
 
                     originalRecord.setValue("lotw_qslrdate", QSLRecord.value("qsl_rdate"));
@@ -711,8 +730,9 @@ void LogFormat::runQSLImport(QSLFrom fromService)
                     {
                         qWarning() << "Cannot commit changes to Contact Table - " << model.lastError();
                     }
+
                     stats.qsos_updated++;
-                    stats.newQSLs.append(call.toString());
+                    stats.newQSLs.append(call.toString() + " " + DxccStatusStr);
                 }
             }
             else
