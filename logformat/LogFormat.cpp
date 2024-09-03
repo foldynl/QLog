@@ -644,19 +644,19 @@ void LogFormat::runQSLImport(QSLFrom fromService)
                     QString DxccStatusStr = "";
                     if (status == DxccStatus::NewEntity )
                     {
-                        DxccStatusStr = "New Entity";
+                        DxccStatusStr = "(New Entity)";
                     }
                     if (status == DxccStatus::NewMode )
                     {
-                        DxccStatusStr = "New Mode";
+                        DxccStatusStr = "(New Mode " + QSLRecord.value("mode").toString() +")";
                     }
                     if (status == DxccStatus::NewBandMode )
                     {
-                        DxccStatusStr = "New Band/Mode";
+                        DxccStatusStr = "(New Band/Mode " + QSLRecord.value("band").toString() + " " + QSLRecord.value("mode").toString() + ")";
                     }
                     if (status == DxccStatus::NewSlot )
                     {
-                        DxccStatusStr = "New Slot";
+                        DxccStatusStr = "(New Slot " + QSLRecord.value("band").toString() + " " + QSLRecord.value("mode").toString() + ")";
                     }
 
                     originalRecord.setValue("lotw_qsl_rcvd", QSLRecord.value("qsl_rcvd"));
