@@ -19,6 +19,7 @@
 #include "rotator/Rotator.h"
 #include "rig/Rig.h"
 #include "data/BandPlan.h"
+#include "rig/macros.h"
 
 MODULE_IDENTIFICATION("qlog.ui.onlinemapwidget");
 

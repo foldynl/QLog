@@ -21,7 +21,6 @@
 #include "ui/ExportDialog.h"
 #include "core/Eqsl.h"
 #include "ui/PaperQSLDialog.h"
-#include "core/NetworkNotification.h"
 #include "ui/QSODetailDialog.h"
 #include "core/MembershipQE.h"
 #include "core/GenericCallbook.h"

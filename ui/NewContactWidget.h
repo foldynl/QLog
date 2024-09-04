@@ -11,8 +11,6 @@
 #include <QHash>
 #include <QFormLayout>
 
-#include "data/Data.h"
-#include "core/Gridsquare.h"
 #include "data/DxSpot.h"
 #include "rig/Rig.h"
 #include "core/CallbookManager.h"
@@ -23,6 +21,9 @@
 #include "ui/EditLine.h"
 #include "data/BandPlan.h"
 #include "core/MultiselectCompleter.h"
+#include "data/POTAEntity.h"
+#include "data/SOTAEntity.h"
+#include "data/WWFFEntity.h"
 
 namespace Ui {
 class NewContactWidget;

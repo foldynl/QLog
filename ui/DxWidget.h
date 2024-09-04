@@ -7,12 +7,10 @@
 #include <QRegularExpression>
 #include <QSqlRecord>
 
-#include "data/Data.h"
 #include "data/DxSpot.h"
 #include "data/WCYSpot.h"
 #include "data/WWVSpot.h"
 #include "data/ToAllSpot.h"
-#include "ui/SwitchButton.h"
 #include "core/LogLocale.h"
 #include "core/DxServerString.h"
 

@@ -12,13 +12,13 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #endif
+#include <QMenu>
 
 #include "DxWidget.h"
 #include "ui_DxWidget.h"
 #include "data/Data.h"
 #include "DxFilterDialog.h"
 #include "models/SqlListModel.h"
-#include "ui/StyleItemDelegate.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
 #include "data/WCYSpot.h"

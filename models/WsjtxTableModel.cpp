@@ -1,8 +1,6 @@
 #include <QColor>
 #include "WsjtxTableModel.h"
-#include "core/debug.h"
-#include "data/StationProfile.h"
-#include "core/Gridsquare.h"
+#include "data/Data.h"
 
 bool operator==(const WsjtxEntry& a, const WsjtxEntry& b)
 {

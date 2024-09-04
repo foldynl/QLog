@@ -22,12 +22,11 @@
 #include "cwkey/CWKeyer.h"
 #include "AppGuard.h"
 #include "logformat/AdxFormat.h"
-#include "ui/SettingsDialog.h"
-#include "data/StationProfile.h"
 #include "core/zonedetect.h"
 #include "ui/SplashScreen.h"
 #include "core/MembershipQE.h"
 #include "core/KSTChat.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.core.main");
 

@@ -1,6 +1,5 @@
 #include <QColor>
 #include "AlertTableModel.h"
-#include "core/debug.h"
 #include "data/Data.h"
 #include "rig/macros.h"
 

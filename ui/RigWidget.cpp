@@ -8,7 +8,6 @@
 #include "ui_RigWidget.h"
 #include "rig/macros.h"
 #include "core/debug.h"
-#include "models/SqlListModel.h"
 #include "data/Data.h"
 #include "core/HRDLog.h"
 #include "data/BandPlan.h"

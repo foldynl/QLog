@@ -1,5 +1,4 @@
 #include "ShortcutEditorModel.h"
-#include "core/debug.h"
 
 ShortcutEditorModel::ShortcutEditorModel(const QList<QAction *> &actions,
                                          const QStringList &builtInStaticActions,

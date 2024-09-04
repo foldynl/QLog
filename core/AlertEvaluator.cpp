@@ -6,7 +6,6 @@
 #include "debug.h"
 #include "data/DxSpot.h"
 #include "data/WsjtxEntry.h"
-#include "data/StationProfile.h"
 #include "data/SpotAlert.h"
 #include "data/BandPlan.h"
 

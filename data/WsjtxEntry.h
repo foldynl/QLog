@@ -2,8 +2,8 @@
 #define QLOG_DATA_WSJTXENTRY_H
 
 #include "core/Wsjtx.h"
-#include "data/Data.h"
 #include "core/MembershipQE.h"
+#include "data/Dxcc.h"
 
 struct WsjtxEntry {
     WsjtxDecode decode;

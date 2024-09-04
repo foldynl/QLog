@@ -5,7 +5,6 @@
 #include "models/SqlListModel.h"
 #include "core/debug.h"
 #include "data/Band.h"
-#include "data/Data.h"
 #include "data/BandPlan.h"
 #include <QSqlError>
 MODULE_IDENTIFICATION("qlog.ui.awardsdialog");

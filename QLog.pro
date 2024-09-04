@@ -90,7 +90,6 @@ SOURCES += \
         data/CWKeyProfile.cpp \
         data/CWShortcutProfile.cpp \
         data/Data.cpp \
-        data/Dxcc.cpp \
         data/MainLayoutProfile.cpp \
         data/RigProfile.cpp \
         data/RotProfile.cpp \

@@ -4,8 +4,6 @@
 #include <QDialog>
 #include <QPointer>
 #include <QStringListModel>
-#include "models/LogbookModel.h"
-#include "core/debug.h"
 #include "ui/NewContactWidget.h"
 #include "data/MainLayoutProfile.h"
 

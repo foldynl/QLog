@@ -2,7 +2,6 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlTableModel>
-#include "models/SqlListModel.h"
 #include "QSOFilterDialog.h"
 #include "ui_QSOFilterDialog.h"
 #include "core/debug.h"

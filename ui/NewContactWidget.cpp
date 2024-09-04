@@ -16,8 +16,6 @@
 #include "core/debug.h"
 #include "core/Gridsquare.h"
 #include "data/StationProfile.h"
-#include "core/HamQTH.h"
-#include "core/QRZ.h"
 #include "data/RigProfile.h"
 #include "data/AntProfile.h"
 #include "data/CWKeyProfile.h"

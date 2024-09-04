@@ -5,7 +5,6 @@
 #include "logformat/LogFormat.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
-#include "core/Gridsquare.h"
 #include "data/RigProfile.h"
 #include "data/Data.h"
 

@@ -7,7 +7,6 @@
 #include "SOTAEntity.h"
 #include "WWFFEntity.h"
 #include "POTAEntity.h"
-#include "Band.h"
 #include "core/zonedetect.h"
 
 class Data : public QObject

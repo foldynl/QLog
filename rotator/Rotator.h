@@ -3,7 +3,6 @@
 #include <QTimer>
 
 #include "data/RotProfile.h"
-#include "core/SerialPort.h"
 #include "rotator/drivers/GenericRotDrv.h"
 #include "RotCaps.h"
 

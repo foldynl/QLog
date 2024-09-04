@@ -7,7 +7,6 @@
 #include "HRDLogDialog.h"
 #include "ui_HRDLogDialog.h"
 #include "models/SqlListModel.h"
-#include "logformat/AdiFormat.h"
 #include "core/debug.h"
 #include "ui/ShowUploadDialog.h"
 #include "core/HRDLog.h"
