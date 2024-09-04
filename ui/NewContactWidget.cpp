@@ -3397,6 +3397,9 @@ QWidget *NewContactDynamicWidgets::getEditor(int index)
 {
     FCT_IDENTIFICATION;
 
+    if ( !widgetMapping.contains(index) )
+        return nullptr;
+
     widgetMapping.value(index).editor->setHidden(false);
     widgetMapping.value(index).editor->setFocusPolicy(Qt::ClickFocus);
     return widgetMapping.value(index).editor;
@@ -3433,6 +3436,9 @@ int NewContactDynamicWidgets::getIndex4FieldLabelName(const QString &value) cons
 QString NewContactDynamicWidgets::getFieldLabelName4Index(int i) const
 {
     FCT_IDENTIFICATION;
+
+    if ( !widgetMapping.contains(i) )
+        return QString();
 
     return widgetMapping.value(i).fieldLabelName;
 }
