@@ -31,11 +31,6 @@ CWConsoleWidget::CWConsoleWidget(QWidget *parent) :
     refreshKeyProfileCombo();
     refreshShortcutProfileCombo();
 
-    connect(CWKeyer::instance(), &CWKeyer::cwKeyConnected, this, &CWConsoleWidget::cwKeyConnected);
-    connect(CWKeyer::instance(), &CWKeyer::cwKeyDisconnected, this, &CWConsoleWidget::cwKeyDisconnected);
-    connect(Rig::instance(), &Rig::rigConnected, this, &CWConsoleWidget::rigConnectHandler);
-    connect(Rig::instance(), &Rig::rigDisconnected, this, &CWConsoleWidget::rigDisconnectHandler);
-
     connect(ui->modeSwitch, &SwitchButton::stateChanged, this, &CWConsoleWidget::sendWordSwitched);
 
     sendWord = getSendWordConfig();

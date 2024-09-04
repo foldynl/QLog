@@ -40,10 +40,6 @@ RotatorWidget::RotatorWidget(QWidget *parent) :
     ui->userButtonsProfileCombo->setModel(userButtonModel);
     refreshRotUserButtonProfileCombo();
 
-    connect(Rotator::instance(), &Rotator::positionChanged, this, &RotatorWidget::positionChanged);
-    connect(Rotator::instance(), &Rotator::rotConnected, this, &RotatorWidget::rotConnected);
-    connect(Rotator::instance(), &Rotator::rotDisconnected, this, &RotatorWidget::rotDisconnected);
-
     QMenu *qsoBearingMenu = new QMenu(this);
     qsoBearingMenu->addAction(ui->actionQSO_SP);
     qsoBearingMenu->addAction(ui->actionQSO_LP);

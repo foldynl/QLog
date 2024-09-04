@@ -184,21 +184,6 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     /**************/
     /* CONNECTs   */
     /**************/
-    connect(rig, &Rig::frequencyChanged,
-            this, &NewContactWidget::changeFrequency);
-
-    connect(rig, &Rig::modeChanged,
-            this, &NewContactWidget::changeModefromRig);
-
-    connect(rig, &Rig::powerChanged,
-            this, &NewContactWidget::changePower);
-
-    connect(rig, &Rig::rigConnected,
-            this, &NewContactWidget::rigConnected);
-
-    connect(rig, &Rig::rigDisconnected,
-            this, &NewContactWidget::rigDisconnected);
-
     connect(&callbookManager, &CallbookManager::callsignResult,
             this, &NewContactWidget::callsignResult);
 

@@ -137,16 +137,37 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(Rig::instance(), &Rig::rigCWKeyCloseRequest, this, &MainWindow::cwKeyerDisconnectProfile);
     connect(Rig::instance(), &Rig::frequencyChanged, ui->onlineMapWidget, &OnlineMapWidget::setIBPBand);
     connect(Rig::instance(), &Rig::frequencyChanged, ui->bandmapWidget , &BandmapWidget::updateTunedFrequency);
+    connect(Rig::instance(), &Rig::frequencyChanged, ui->newContactWidget, &NewContactWidget::changeFrequency);
+    connect(Rig::instance(), &Rig::frequencyChanged, ui->rigWidget, &RigWidget::updateFrequency);
     connect(Rig::instance(), &Rig::modeChanged, ui->bandmapWidget, &BandmapWidget::updateMode);
+    connect(Rig::instance(), &Rig::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
+    connect(Rig::instance(), &Rig::modeChanged, ui->rigWidget, &RigWidget::updateMode);
+    connect(Rig::instance(), &Rig::powerChanged, ui->newContactWidget, &NewContactWidget::changePower);
+    connect(Rig::instance(), &Rig::powerChanged, ui->rigWidget, &RigWidget::updatePWR);
+    connect(Rig::instance(), &Rig::rigConnected, ui->newContactWidget, &NewContactWidget::rigConnected);
+    connect(Rig::instance(), &Rig::rigConnected, ui->rigWidget, &RigWidget::rigConnected);
+    connect(Rig::instance(), &Rig::rigConnected, ui->cwconsoleWidget, &CWConsoleWidget::rigConnectHandler);
+    connect(Rig::instance(), &Rig::rigDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::rigDisconnectHandler);
+    connect(Rig::instance(), &Rig::rigDisconnected, ui->newContactWidget, &NewContactWidget::rigDisconnected);
+    connect(Rig::instance(), &Rig::rigDisconnected, ui->rigWidget, &RigWidget::rigDisconnected);
+    connect(Rig::instance(), &Rig::vfoChanged, ui->rigWidget, &RigWidget::updateVFO);
+    connect(Rig::instance(), &Rig::xitChanged, ui->rigWidget, &RigWidget::updateXIT);
+    connect(Rig::instance(), &Rig::ritChanged, ui->rigWidget, &RigWidget::updateRIT);
+    connect(Rig::instance(), &Rig::pttChanged, ui->rigWidget, &RigWidget::updatePTT);
 
     connect(Rotator::instance(), &Rotator::rotErrorPresent, this, &MainWindow::rotErrorHandler);
     connect(Rotator::instance(), &Rotator::positionChanged, ui->onlineMapWidget, &OnlineMapWidget::antPositionChanged);
     connect(Rotator::instance(), &Rotator::rotConnected, ui->onlineMapWidget, &OnlineMapWidget::rotConnected);
     connect(Rotator::instance(), &Rotator::rotDisconnected, ui->onlineMapWidget, &OnlineMapWidget::rotDisconnected);
+    connect(Rotator::instance(), &Rotator::positionChanged, ui->rotatorWidget, &RotatorWidget::positionChanged);
+    connect(Rotator::instance(), &Rotator::rotConnected, ui->rotatorWidget, &RotatorWidget::rotConnected);
+    connect(Rotator::instance(), &Rotator::rotDisconnected, ui->rotatorWidget, &RotatorWidget::rotDisconnected);
 
     connect(CWKeyer::instance(), &CWKeyer::cwKeyerError, this, &MainWindow::cwKeyerErrorHandler);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyWPMChanged, ui->cwconsoleWidget, &CWConsoleWidget::setWPM);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyEchoText, ui->cwconsoleWidget, &CWConsoleWidget::appendCWEchoText);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyConnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyConnected);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyDisconnected);
 
     Fldigi* fldigi = new Fldigi(this);
     connect(fldigi, &Fldigi::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);

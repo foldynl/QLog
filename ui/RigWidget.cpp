@@ -47,17 +47,6 @@ RigWidget::RigWidget(QWidget *parent) :
     refreshBandCombo();
     refreshModeCombo();
 
-    Rig* rig = Rig::instance();
-    connect(rig, &Rig::frequencyChanged, this, &RigWidget::updateFrequency);
-    connect(rig, &Rig::modeChanged, this, &RigWidget::updateMode);
-    connect(rig, &Rig::vfoChanged, this, &RigWidget::updateVFO);
-    connect(rig, &Rig::powerChanged, this, &RigWidget::updatePWR);
-    connect(rig, &Rig::rigConnected, this, &RigWidget::rigConnected);
-    connect(rig, &Rig::rigDisconnected, this, &RigWidget::rigDisconnected);
-    connect(rig, &Rig::xitChanged, this, &RigWidget::updateXIT);
-    connect(rig, &Rig::ritChanged, this, &RigWidget::updateRIT);
-    connect(rig, &Rig::pttChanged, this, &RigWidget::updatePTT);
-
     QTimer *onAirTimer = new QTimer(this);
     connect(onAirTimer, &QTimer::timeout, this, &RigWidget::sendOnAirState);
     onAirTimer->start(ONAIR_INTERVAL * 1000);
