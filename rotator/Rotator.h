@@ -19,7 +19,11 @@ public:
         PSTROTATOR_DRIVER = 2
     };
 
-    static Rotator* instance();
+    static Rotator* instance()
+    {
+        static Rotator instance;
+        return &instance;
+    };
     double getAzimuth();
     double getElevation();
     bool isRotConnected();

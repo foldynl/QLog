@@ -74,14 +74,6 @@ MainLayoutProfilesManager::MainLayoutProfilesManager(QObject *parent) :
     }
 }
 
-MainLayoutProfilesManager *MainLayoutProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static MainLayoutProfilesManager instance;
-    return &instance;
-}
-
 void MainLayoutProfilesManager::save()
 {
     FCT_IDENTIFICATION;

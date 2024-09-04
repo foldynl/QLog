@@ -81,14 +81,6 @@ RotUsrButtonsProfilesManager::RotUsrButtonsProfilesManager(QObject *parent) :
 
 }
 
-RotUsrButtonsProfilesManager *RotUsrButtonsProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static RotUsrButtonsProfilesManager instance;
-    return &instance;
-}
-
 void RotUsrButtonsProfilesManager::save()
 {
     FCT_IDENTIFICATION;

@@ -129,13 +129,6 @@ Data::~Data()
     }
 }
 
-Data* Data::instance() {
-    FCT_IDENTIFICATION;
-
-    static Data instance;
-    return &instance;
-}
-
 DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 {
     FCT_IDENTIFICATION;

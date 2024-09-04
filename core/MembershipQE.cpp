@@ -93,14 +93,6 @@ void MembershipQE::statusQueryFinished(const QString &callsign,
     emit clubStatusResult(callsign, statuses);
 }
 
-MembershipQE *MembershipQE::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static MembershipQE instance;
-    return &instance;
-}
-
 void MembershipQE::saveEnabledClubLists(const QStringList &enabledLists)
 {
     QSettings settings;

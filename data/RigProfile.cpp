@@ -129,14 +129,6 @@ RigProfilesManager::RigProfilesManager(QObject *parent) :
     }
 }
 
-RigProfilesManager *RigProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static RigProfilesManager instance;
-    return &instance;
-}
-
 void RigProfilesManager::save()
 {
     FCT_IDENTIFICATION;

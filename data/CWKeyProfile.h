@@ -54,7 +54,11 @@ public:
     explicit CWKeyProfilesManager(QObject *parent = nullptr);
     ~CWKeyProfilesManager() { };
 
-    static CWKeyProfilesManager* instance();
+    static CWKeyProfilesManager* instance()
+    {
+        static CWKeyProfilesManager instance;
+        return &instance;
+    };
     void save();
 
 };

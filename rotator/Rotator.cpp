@@ -42,13 +42,6 @@ Rotator::~Rotator()
     __closeRot();
 }
 
-Rotator* Rotator::instance() {
-    FCT_IDENTIFICATION;
-
-    static Rotator instance;
-    return &instance;
-}
-
 double Rotator::getAzimuth()
 {
     FCT_IDENTIFICATION;

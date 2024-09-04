@@ -80,14 +80,6 @@ CWShortcutProfilesManager::CWShortcutProfilesManager(QObject *parent) :
     }
 }
 
-CWShortcutProfilesManager *CWShortcutProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static CWShortcutProfilesManager instance;
-    return &instance;
-}
-
 void CWShortcutProfilesManager::save()
 {
     FCT_IDENTIFICATION;

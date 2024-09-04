@@ -41,7 +41,11 @@ public:
     explicit CWShortcutProfilesManager(QObject *parent = nullptr);
     ~CWShortcutProfilesManager() { };
 
-    static CWShortcutProfilesManager* instance();
+    static CWShortcutProfilesManager* instance()
+    {
+        static CWShortcutProfilesManager instance;
+        return &instance;
+    };
     void save();
 
 };

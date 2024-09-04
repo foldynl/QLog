@@ -71,14 +71,6 @@ CWKeyProfilesManager::CWKeyProfilesManager(QObject *parent) :
     }
 }
 
-CWKeyProfilesManager *CWKeyProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static CWKeyProfilesManager instance;
-    return &instance;
-}
-
 void CWKeyProfilesManager::save()
 {
     FCT_IDENTIFICATION;

@@ -57,15 +57,6 @@ AntProfilesManager::AntProfilesManager(QObject *parent) :
     }
 }
 
-AntProfilesManager *AntProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static AntProfilesManager instance;
-    return &instance;
-
-}
-
 void AntProfilesManager::save()
 {
     FCT_IDENTIFICATION;
