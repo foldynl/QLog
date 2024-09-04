@@ -14,7 +14,7 @@ public:
                 const CWKey::CWKeyModeID mode,
                 const qint32 defaultSpeed,
                 QObject *parent = nullptr);
-    ~CWFldigiKey(){ nam->deleteLater();};
+    virtual ~CWFldigiKey(){ nam->deleteLater();};
 
     virtual bool open() override;
     virtual bool close() override;

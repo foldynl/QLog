@@ -15,7 +15,7 @@ public:
     explicit CWCatKey(const CWKey::CWKeyModeID mode,
                       const qint32 defaultSpeed,
                       QObject *parent = nullptr);
-    ~CWCatKey();
+    virtual ~CWCatKey();
 
     virtual bool open() override;
     virtual bool close() override;
