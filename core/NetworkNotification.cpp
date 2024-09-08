@@ -505,14 +505,13 @@ void NetworkNotification::updateFrequency(VFOID, double vfoFreq, double ritFreq,
     }
 }
 
-FreqNotificationMsg::FreqNotificationMsg(const double &rx_freq, QObject *parent) :
+FreqNotificationMsg::FreqNotificationMsg(const double &vfo_freq, QObject *parent) :
     GenericNotificationMsg(parent)
 {
     FCT_IDENTIFICATION;
 
     QJsonObject freqData;
-    freqData["Frequency"] = rx_freq;
-
+    freqData["Frequency"] = vfo_freq;
 
     msg["msgtype"] = "freq";
     msg["data"] = freqData;
