@@ -14,6 +14,7 @@
 #include "data/WCYSpot.h"
 #include "data/WWVSpot.h"
 #include "data/ToAllSpot.h"
+#include "rig/rig.h"
 
 class GenericNotificationMsg : public QObject
 {
@@ -116,6 +117,14 @@ public:
 
 };
 
+class FreqNotificationMsg : public GenericNotificationMsg
+{
+
+public:
+    explicit FreqNotificationMsg(const double&, QObject *parent = nullptr);
+
+};
+
 class NetworkNotification : public QObject
 {
     Q_OBJECT
@@ -130,6 +139,8 @@ public:
     static void saveNotifWSJTXCQSpotAddrs(const QString &);
     static QString getNotifSpotAlertAddrs();
     static void saveNotifSpotAlertAddrs(const QString &);
+    static QString getNotifFreqAlertAddrs();
+    static void saveNotifFreqAlertAddrs(const QString &);
 
 public slots:
     void QSOInserted(const QSqlRecord &);
@@ -141,6 +152,7 @@ public slots:
     void toAllSpot(const ToAllSpot&);
     void WSJTXCQSpot(const WsjtxEntry&);
     void spotAlert(const SpotAlert&);
+    void updateFrequency(VFOID, double, double, double);
 
 private:
 
@@ -150,6 +162,7 @@ private:
     static QString CONFIG_NOTIF_DXSPOT_ADDRS_KEY;
     static QString CONFIG_NOTIF_WSJTXCQSPOT_ADDRS_KEY;
     static QString CONFIG_NOTIF_SPOTALERT_ADDRS_KEY;
+    static QString CONFIG_NOTIF_FREQ_ADDRS_KEY;
 
 };
 

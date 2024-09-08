@@ -84,6 +84,25 @@ void NetworkNotification::saveNotifSpotAlertAddrs(const QString &addresses)
 
 }
 
+QString NetworkNotification::getNotifFreqAlertAddrs()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    return settings.value(NetworkNotification::CONFIG_NOTIF_FREQ_ADDRS_KEY).toString();
+}
+
+void NetworkNotification::saveNotifFreqAlertAddrs(const QString &addresses)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    settings.setValue(NetworkNotification::CONFIG_NOTIF_FREQ_ADDRS_KEY, addresses);
+
+}
+
 void NetworkNotification::QSOInserted(const QSqlRecord &record)
 {
     FCT_IDENTIFICATION;
@@ -240,6 +259,7 @@ QString NetworkNotification::CONFIG_NOTIF_QSO_ADI_ADDRS_KEY = "network/notificat
 QString NetworkNotification::CONFIG_NOTIF_DXSPOT_ADDRS_KEY = "network/notification/dxspot/addrs";
 QString NetworkNotification::CONFIG_NOTIF_WSJTXCQSPOT_ADDRS_KEY = "network/notification/wsjtx/cqspot/addrs";
 QString NetworkNotification::CONFIG_NOTIF_SPOTALERT_ADDRS_KEY = "network/notification/alerts/spot/addrs";
+QString NetworkNotification::CONFIG_NOTIF_FREQ_ADDRS_KEY = "network/notification/alerts/freq/addrs";
 
 GenericNotificationMsg::GenericNotificationMsg(QObject *parent) :
     QObject(parent)
@@ -468,4 +488,31 @@ ToAllSpotNotificationMsg::ToAllSpotNotificationMsg(const ToAllSpot &spot, QObjec
 
     msg["msgtype"] = "toallspot";
     msg["data"] = spotData;
+}
+
+void NetworkNotification::updateFrequency(VFOID, double vfoFreq, double ritFreq, double xitFreq)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << vfoFreq << ritFreq << xitFreq;
+
+    HostsPortString destList(getNotifFreqAlertAddrs());
+
+    if ( destList.getAddrList().size() > 0 )
+    {
+        FreqNotificationMsg freqAlertMsg(vfoFreq);
+        send(freqAlertMsg.getJson(), destList);
+    }
+}
+
+FreqNotificationMsg::FreqNotificationMsg(const double &vfo_freq, QObject *parent) :
+    GenericNotificationMsg(parent)
+{
+    FCT_IDENTIFICATION;
+
+    QJsonObject freqData;
+    freqData["Frequency"] = vfo_freq;
+
+    msg["msgtype"] = "freq";
+    msg["data"] = freqData;
 }
