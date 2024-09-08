@@ -141,6 +141,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(Rig::instance(), &Rig::frequencyChanged, ui->onlineMapWidget, &OnlineMapWidget::setIBPBand);
     connect(Rig::instance(), &Rig::frequencyChanged, ui->bandmapWidget , &BandmapWidget::updateTunedFrequency);
     connect(Rig::instance(), &Rig::modeChanged, ui->bandmapWidget, &BandmapWidget::updateMode);
+    connect(Rig::instance(), &Rig::frequencyChanged, &networknotification, &NetworkNotification::updateFrequency);
 
     connect(Rotator::instance(), &Rotator::rotErrorPresent, this, &MainWindow::rotErrorHandler);
     connect(Rotator::instance(), &Rotator::positionChanged, ui->onlineMapWidget, &OnlineMapWidget::antPositionChanged);

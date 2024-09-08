@@ -35,7 +35,7 @@
    <item row="2" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Save</set>
      </property>
     </widget>
    </item>
@@ -186,16 +186,16 @@
           <item row="0" column="0" rowspan="13">
            <widget class="QListView" name="stationProfilesListView">
             <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
+             <enum>Qt::FocusPolicy::NoFocus</enum>
             </property>
             <property name="contextMenuPolicy">
-             <enum>Qt::NoContextMenu</enum>
+             <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
             </property>
             <property name="toolTip">
              <string>List of all available Station Profiles</string>
             </property>
             <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
             </property>
            </widget>
           </item>
@@ -256,7 +256,7 @@
             <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -398,7 +398,7 @@
        <item row="1" column="0">
         <spacer name="verticalSpacer_4">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -555,16 +555,16 @@
               <item row="0" column="0" rowspan="2" colspan="4">
                <widget class="QListView" name="antProfilesListView">
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>List of all available Antennas</string>
                 </property>
                 <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                 </property>
                </widget>
               </item>
@@ -574,7 +574,7 @@
            <item>
             <spacer name="verticalSpacer_6">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -606,16 +606,16 @@
               <item row="0" column="0" rowspan="3">
                <widget class="QListView" name="cwProfilesListView">
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>List of all available CW Keyers</string>
                 </property>
                 <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                 </property>
                </widget>
               </item>
@@ -722,7 +722,7 @@
                     </sizepolicy>
                    </property>
                    <property name="frameShape">
-                    <enum>QFrame::NoFrame</enum>
+                    <enum>QFrame::Shape::NoFrame</enum>
                    </property>
                    <property name="currentIndex">
                     <number>0</number>
@@ -862,7 +862,7 @@
                  <item row="4" column="1">
                   <spacer name="verticalSpacer_5">
                    <property name="orientation">
-                    <enum>Qt::Vertical</enum>
+                    <enum>Qt::Orientation::Vertical</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
@@ -915,16 +915,16 @@
               <item row="0" column="0" rowspan="2" colspan="4">
                <widget class="QListView" name="cwShortcutListView">
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>List of all available CW Shortcuts Profiles</string>
                 </property>
                 <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                 </property>
                </widget>
               </item>
@@ -1438,16 +1438,16 @@
               <item row="0" column="0" rowspan="2">
                <widget class="QListView" name="rigProfilesListView">
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>List of all available Rigs</string>
                 </property>
                 <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                 </property>
                </widget>
               </item>
@@ -1568,7 +1568,7 @@
                       <string>-</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignCenter</set>
+                      <set>Qt::AlignmentFlag::AlignCenter</set>
                      </property>
                     </widget>
                    </item>
@@ -1890,7 +1890,7 @@
                     </sizepolicy>
                    </property>
                    <property name="frameShape">
-                    <enum>QFrame::NoFrame</enum>
+                    <enum>QFrame::Shape::NoFrame</enum>
                    </property>
                    <property name="currentIndex">
                     <number>0</number>
@@ -1898,7 +1898,7 @@
                    <widget class="QWidget" name="rigSerialPage">
                     <layout class="QFormLayout" name="formLayout_9">
                      <property name="formAlignment">
-                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
                      </property>
                      <property name="horizontalSpacing">
                       <number>6</number>
@@ -1963,7 +1963,7 @@
                         </sizepolicy>
                        </property>
                        <property name="focusPolicy">
-                        <enum>Qt::StrongFocus</enum>
+                        <enum>Qt::FocusPolicy::StrongFocus</enum>
                        </property>
                        <item>
                         <property name="text">
@@ -2060,7 +2060,7 @@
                           <string>Parity</string>
                          </property>
                          <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                          </property>
                         </widget>
                        </item>
@@ -2117,7 +2117,7 @@
                           <string>Stop Bits</string>
                          </property>
                          <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                          </property>
                         </widget>
                        </item>
@@ -2287,16 +2287,16 @@
               <item row="0" column="0" rowspan="2">
                <widget class="QListView" name="rotProfilesListView">
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>List of all available Rigs</string>
                 </property>
                 <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                 </property>
                </widget>
               </item>
@@ -2378,7 +2378,7 @@
                     </sizepolicy>
                    </property>
                    <property name="frameShape">
-                    <enum>QFrame::NoFrame</enum>
+                    <enum>QFrame::Shape::NoFrame</enum>
                    </property>
                    <property name="currentIndex">
                     <number>0</number>
@@ -2514,7 +2514,7 @@
                           <string>Stop Bits</string>
                          </property>
                          <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                          </property>
                         </widget>
                        </item>
@@ -2548,7 +2548,7 @@
                           <string>Parity</string>
                          </property>
                          <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                          </property>
                         </widget>
                        </item>
@@ -2597,7 +2597,7 @@
                           <string>Port</string>
                          </property>
                          <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                          </property>
                         </widget>
                        </item>
@@ -2648,16 +2648,16 @@
               <item row="0" column="0" rowspan="2">
                <widget class="QListView" name="rotUsrButtonListView">
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>List of all available CW Shortcuts Profiles</string>
                 </property>
                 <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                 </property>
                </widget>
               </item>
@@ -2975,7 +2975,7 @@
            <item>
             <spacer name="verticalSpacer_7">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3062,7 +3062,7 @@
              <bool>true</bool>
             </property>
             <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
+             <enum>QLineEdit::EchoMode::Password</enum>
             </property>
            </widget>
           </item>
@@ -3102,7 +3102,7 @@
              <bool>true</bool>
             </property>
             <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
+             <enum>QLineEdit::EchoMode::Password</enum>
             </property>
            </widget>
           </item>
@@ -3149,7 +3149,7 @@
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -3181,7 +3181,7 @@
        <item>
         <spacer name="verticalSpacer_10">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -3201,7 +3201,7 @@
        <item row="1" column="0">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -3220,7 +3220,7 @@
           </sizepolicy>
          </property>
          <property name="tabShape">
-          <enum>QTabWidget::Rounded</enum>
+          <enum>QTabWidget::TabShape::Rounded</enum>
          </property>
          <property name="currentIndex">
           <number>0</number>
@@ -3236,10 +3236,10 @@
            <item row="0" column="1">
             <spacer name="verticalSpacer_12">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Policy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3269,14 +3269,14 @@
            <item row="2" column="1">
             <widget class="QLineEdit" name="clublogPasswordEdit">
              <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
+              <enum>QLineEdit::EchoMode::Password</enum>
              </property>
             </widget>
            </item>
            <item row="4" column="1">
             <spacer name="verticalSpacer_13">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3316,10 +3316,10 @@
            <item row="0" column="1">
             <spacer name="verticalSpacer_14">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Policy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3349,14 +3349,14 @@
            <item row="2" column="1">
             <widget class="QLineEdit" name="eqslPasswordEdit">
              <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
+              <enum>QLineEdit::EchoMode::Password</enum>
              </property>
             </widget>
            </item>
            <item row="3" column="1">
             <spacer name="verticalSpacer_15">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3399,7 +3399,7 @@
               <string>It is not a password. It is the upload code received via email after the registration to HRDLOG..net</string>
              </property>
              <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
+              <enum>QLineEdit::EchoMode::Password</enum>
              </property>
             </widget>
            </item>
@@ -3429,10 +3429,10 @@
            <item row="0" column="1">
             <spacer name="verticalSpacer_16">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Policy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3445,7 +3445,7 @@
            <item row="4" column="1">
             <spacer name="verticalSpacer_17">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3482,7 +3482,7 @@
            <item row="2" column="1">
             <widget class="QLineEdit" name="lotwPasswordEdit">
              <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
+              <enum>QLineEdit::EchoMode::Password</enum>
              </property>
             </widget>
            </item>
@@ -3511,8 +3511,7 @@
                 <string>Browse</string>
                </property>
                <property name="icon">
-                <iconset theme="folder-open">
-                 <normaloff>.</normaloff>.</iconset>
+                <iconset theme="folder-open"/>
                </property>
               </widget>
              </item>
@@ -3521,10 +3520,10 @@
            <item row="0" column="1">
             <spacer name="verticalSpacer_18">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Policy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3537,7 +3536,7 @@
            <item row="5" column="1">
             <spacer name="verticalSpacer_19">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3571,17 +3570,17 @@
            <item row="1" column="1">
             <widget class="QLineEdit" name="qrzApiKeyEdit">
              <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
+              <enum>QLineEdit::EchoMode::Password</enum>
              </property>
             </widget>
            </item>
            <item row="0" column="1">
             <spacer name="verticalSpacer_9">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Policy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3594,7 +3593,7 @@
            <item row="2" column="1">
             <spacer name="verticalSpacer_11">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3631,10 +3630,10 @@
            <item row="0" column="1">
             <spacer name="verticalSpacer_23">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Policy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3664,14 +3663,14 @@
            <item row="2" column="1">
             <widget class="QLineEdit" name="kstPasswordEdit">
              <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
+              <enum>QLineEdit::EchoMode::Password</enum>
              </property>
             </widget>
            </item>
            <item row="4" column="1">
             <spacer name="verticalSpacer_24">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3698,7 +3697,7 @@
        <item>
         <spacer name="verticalSpacer_22">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -3721,10 +3720,10 @@
           <bool>true</bool>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
@@ -3750,10 +3749,10 @@
           <bool>true</bool>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
@@ -4001,13 +4000,30 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="notifFreqLabel">
+            <property name="text">
+             <string>Frequency Info</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="notifFreqEdit">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;List of IP addresses to which QLog sends UDP notification packets with current Radio Frequency.&lt;/p&gt;&lt;p&gt;The IP addresses are separated by a space and have the form IP:PORT&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="placeholderText">
+             <string>ex. 192.168.1.1:1234 192.168.2.1:1234</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
        <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -4037,13 +4053,13 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>300</number>
