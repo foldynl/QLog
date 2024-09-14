@@ -1706,6 +1706,8 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
 
     if ( savedCallsign.isEmpty() ) return;
 
+    changeCallsignManually(savedCallsign);
+
     QSqlTableModel model;
 
     model.setTable("contacts");
@@ -1758,6 +1760,10 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
         if ( record.value("darc_dok").toString().isEmpty()
              && !uiDynamic->dokEdit->text().isEmpty() )
             record.setValue("darc_dok", uiDynamic->dokEdit->text());
+
+        if ( record.value("pota_ref").toString().isEmpty()
+            && !uiDynamic->potaEdit->text().isEmpty())
+            record.setValue("pota_ref", uiDynamic->potaEdit->text());
 
         // information depending on QTH (Grid)
         const QString &savedGrid = record.value("gridsquare").toString();
