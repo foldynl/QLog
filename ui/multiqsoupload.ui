@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MultiQSOUpload</class>
+ <widget class="QDialog" name="MultiQSOUpload">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>299</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QLabel" name="MyCallsignLabel">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>33</y>
+     <width>160</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>My Callsign</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="MyGridsquareLabel">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>69</y>
+     <width>160</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>My Gridsquare</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="myCallsignCombo">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>31</y>
+     <width>191</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="myGridCombo">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>67</y>
+     <width>191</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="ClubLogcheckBox">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>130</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ClubLog</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="eQSLcheckBox">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>155</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>eQSL</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="HRDLogcheckBox">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>180</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>HRD Log</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="QRZcheckBox">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>230</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>QRZ</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="LoTWcheckBox">
+   <property name="geometry">
+    <rect>
+     <x>15</x>
+     <y>205</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>LOTW</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="uploadButton">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>250</y>
+     <width>100</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Upload</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancelButton">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>250</y>
+     <width>100</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>341</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Select which Services to Upload to.</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
