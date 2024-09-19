@@ -53,6 +53,7 @@ private slots:
     void importLog();
     void exportLog();
     void showLotw();
+    void showMultiQSOUpload();
     void showeQSL();
     void showClublog();
     void showHRDLog();

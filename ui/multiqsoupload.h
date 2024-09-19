@@ -2,6 +2,7 @@
 #define MULTIQSOUPLOAD_H
 
 #include <QDialog>
+#include "core/LogLocale.h"
 
 namespace Ui {
 class MultiQSOUpload;
@@ -15,15 +16,18 @@ public:
     explicit MultiQSOUpload(QWidget *parent = nullptr);
     ~MultiQSOUpload();
 
-private slots:
-    void on_uploadButton_clicked();
-
-    void on_cancelButton_clicked();
+public slots:
+    void upload();
 
 private:
     Ui::MultiQSOUpload *ui;
     void saveDialogState();
     void loadDialogState();
+    void LoTWUpload();
+    void EQSLupload();
+    void ClubLogUpload();
+    void HRDLogUpload();
+    void QRZUpload();
 
     LogLocale locale;
 };

@@ -21,6 +21,7 @@
 #include "ui/ClublogDialog.h"
 #include "ui/QrzDialog.h"
 #include "ui/AwardsDialog.h"
+#include "ui/multiqsoupload.h"
 #include "core/Lotw.h"
 #include "core/Eqsl.h"
 #include "core/QRZ.h"
@@ -969,6 +970,17 @@ void MainWindow::showLotw()
     {
         QMessageBox::warning(this, tr("QLog Warning"), tr("LoTW is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
     }
+}
+
+void MainWindow::showMultiQSOUpload()
+{
+    FCT_IDENTIFICATION;
+
+
+        MultiQSOUpload dialog;
+        dialog.exec();
+        ui->logbookWidget->updateTable();
+
 }
 
 void MainWindow::showeQSL()
