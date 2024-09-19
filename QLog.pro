@@ -168,7 +168,8 @@ SOURCES += \
         ui/SwitchButton.cpp \
         ui/WebEnginePage.cpp \
         ui/WsjtxFilterDialog.cpp \
-        ui/WsjtxWidget.cpp
+        ui/WsjtxWidget.cpp \
+        ui/multiqsoupload.cpp
 
 HEADERS += \
         core/AlertEvaluator.h \
@@ -309,7 +310,8 @@ HEADERS += \
         ui/WsjtxFilterDialog.h \
         ui/WsjtxWidget.h \
         i18n/dbstrings.tri \
-        i18n/datastrings.tri
+        i18n/datastrings.tri \
+        ui/multiqsoupload.h
 
 FORMS += \
         ui/AlertRuleDetail.ui \
@@ -352,7 +354,8 @@ FORMS += \
         ui/ShowUploadDialog.ui \
         ui/StatisticsWidget.ui \
         ui/WsjtxFilterDialog.ui \
-        ui/WsjtxWidget.ui
+        ui/WsjtxWidget.ui \
+        ui/multiqsoupload.ui
 
 RESOURCES += \
     i18n/i18n.qrc \

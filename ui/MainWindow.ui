@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>913</width>
-    <height>558</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::GroupedDragging</set>
+   <set>QMainWindow::DockOption::AllowNestedDocks|QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks|QMainWindow::DockOption::GroupedDragging</set>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -40,7 +40,7 @@
        </sizepolicy>
       </property>
       <property name="focusPolicy">
-       <enum>Qt::ClickFocus</enum>
+       <enum>Qt::FocusPolicy::ClickFocus</enum>
       </property>
      </widget>
     </item>
@@ -52,7 +52,7 @@
      <x>0</x>
      <y>0</y>
      <width>913</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -122,6 +122,7 @@
     <addaction name="actionHRDLog"/>
     <addaction name="actionLotw"/>
     <addaction name="actionQRZ_com"/>
+    <addaction name="actionMulti_QSO_Upload"/>
    </widget>
    <widget class="QMenu" name="menuLayout">
     <property name="title">
@@ -157,7 +158,7 @@
     <bool>false</bool>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonIconOnly</enum>
+    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
    </property>
    <property name="floatable">
     <bool>false</bool>
@@ -195,7 +196,7 @@
    </attribute>
    <widget class="MapWidget" name="mapWidget">
     <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
+     <enum>Qt::FocusPolicy::ClickFocus</enum>
     </property>
    </widget>
   </widget>
@@ -291,8 +292,7 @@
   </widget>
   <action name="actionQuit">
    <property name="icon">
-    <iconset theme="application-exit">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="application-exit"/>
    </property>
    <property name="text">
     <string>Quit</string>
@@ -304,7 +304,7 @@
     <string notr="true">Ctrl+Q</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::QuitRole</enum>
+    <enum>QAction::MenuRole::QuitRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -312,20 +312,18 @@
   </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset theme="document-properties">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="document-properties"/>
    </property>
    <property name="text">
     <string>&amp;Settings</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
+    <enum>QAction::MenuRole::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionNewContact">
    <property name="icon">
-    <iconset theme="document-new">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="document-new"/>
    </property>
    <property name="text">
     <string>New QSO - Clear</string>
@@ -342,8 +340,7 @@
   </action>
   <action name="actionImport">
    <property name="icon">
-    <iconset theme="document-import">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="document-import"/>
    </property>
    <property name="text">
     <string>&amp;Import</string>
@@ -351,8 +348,7 @@
   </action>
   <action name="actionExport">
    <property name="icon">
-    <iconset theme="document-export">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="document-export"/>
    </property>
    <property name="text">
     <string>&amp;Export</string>
@@ -371,20 +367,18 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="help-about"/>
    </property>
    <property name="text">
     <string>&amp;About</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::MenuRole::AboutRole</enum>
    </property>
   </action>
   <action name="actionSaveContact">
    <property name="icon">
-    <iconset theme="document-save">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="document-save"/>
    </property>
    <property name="text">
     <string>New QSO - Save</string>
@@ -419,8 +413,7 @@
   </action>
   <action name="actionStatistics">
    <property name="icon">
-    <iconset theme="x-office-spreadsheet">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="x-office-spreadsheet"/>
    </property>
    <property name="text">
     <string>S&amp;tatistics</string>
@@ -485,8 +478,7 @@
   </action>
   <action name="actionAwards">
    <property name="icon">
-    <iconset theme="application-certificate">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="application-certificate"/>
    </property>
    <property name="text">
     <string>&amp;Awards</string>
@@ -530,8 +522,7 @@
   </action>
   <action name="actionWikiHelp">
    <property name="icon">
-    <iconset theme="help">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="help"/>
    </property>
    <property name="text">
     <string>&amp;Wiki</string>
@@ -608,10 +599,10 @@
     <string notr="true">Ctrl+F</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -628,10 +619,10 @@
     <string notr="true">Ctrl+M</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -645,10 +636,10 @@
     <string notr="true">Ctrl+PgDown</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -662,10 +653,10 @@
     <string notr="true">Ctrl+PgUp</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -679,10 +670,10 @@
     <string notr="true">Alt+Return</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -696,10 +687,10 @@
     <string notr="true">Alt+Up</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -713,10 +704,10 @@
     <string notr="true">Alt+Down</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -730,10 +721,10 @@
     <string notr="true">Alt+Right</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -747,10 +738,10 @@
     <string notr="true">Alt+Left</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -764,13 +755,13 @@
     <string notr="true">Alt+\</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -789,6 +780,11 @@
   <action name="actionShowAlerts">
    <property name="text">
     <string>Show Alerts</string>
+   </property>
+  </action>
+  <action name="actionMulti_QSO_Upload">
+   <property name="text">
+    <string>Multi QSO Upload</string>
    </property>
   </action>
  </widget>
@@ -1569,6 +1565,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionMulti_QSO_Upload</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showMultiQSOUpload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>settingsChanged()</signal>
@@ -1600,5 +1612,6 @@
   <slot>showHRDLog()</slot>
   <slot>saveProfileLayoutGeometry()</slot>
   <slot>setEquipmentKeepOptions(bool)</slot>
+  <slot>showMultiQSOUpload()</slot>
  </slots>
 </ui>

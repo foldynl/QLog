@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MultiQSOUpload</class>
+ <widget class="QDialog" name="MultiQSOUpload">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>528</width>
+    <height>531</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MultiQSO Uploader</string>
+  </property>
+  <widget class="QWidget" name="gridLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>511</width>
+     <height>468</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="10" column="1">
+     <widget class="QLabel" name="addlUploadStatusLabel_2">
+      <property name="text">
+       <string>Include QSOs with Upload Status</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="clearReuploadLabel">
+      <property name="text">
+       <string>Clear Clublog and reupload QSOs</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="ClubLogcheckBox">
+      <property name="text">
+       <string>ClubLog</string>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="1">
+     <widget class="QLabel" name="addlSentStatusLabel">
+      <property name="text">
+       <string>Include QSOs with Sent Status</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QLineEdit" name="qthProfileUploadEdit"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="MyGridsquareLabel">
+      <property name="text">
+       <string>My Gridsquare</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="addlUploadStatusLabel">
+      <property name="text">
+       <string>Include QSOs with Upload Status</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="2">
+     <widget class="QCheckBox" name="addlUploadStatusN_QRZ">
+      <property name="toolTip">
+       <string>Under normal circumstances this status means &lt;b&gt;&quot;do not upload&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when uploading a QSL.</string>
+      </property>
+      <property name="text">
+       <string>No</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLabel" name="addlSentStatusLabel_2">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Include QSOs with Sent Status&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QCheckBox" name="HRDLogcheckBox">
+      <property name="text">
+       <string>HRD Log</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QCheckBox" name="QRZcheckBox">
+      <property name="text">
+       <string>QRZ</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="MyCallsignLabel">
+      <property name="text">
+       <string>My Callsign</string>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="addlSentStatusI_Lotw">
+        <property name="toolTip">
+         <string>Under normal circumstances this status means &lt;b&gt;&quot;Ignore/Invalid&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when sending a QSL.</string>
+        </property>
+        <property name="text">
+         <string>Ignore</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="addlSentStatusN_Lotw">
+        <property name="toolTip">
+         <string>Under normal circumstances this status means &lt;b&gt;&quot;do not send&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when sending a QSL.</string>
+        </property>
+        <property name="text">
+         <string>No</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="eQSLcheckBox">
+      <property name="text">
+       <string>eQSL</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QCheckBox" name="clearReuploadCheckbox_ClubLog">
+      <property name="toolTip">
+       <string>This option deletes all QSOs in the Clublog&lt;br&gt;and based on filter, it uploads all QSOs regardless of their status.</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QCheckBox" name="LoTWcheckBox">
+      <property name="text">
+       <string>LOTW</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QCheckBox" name="addlUploadStatusN_ClubLog">
+      <property name="toolTip">
+       <string>Under normal circumstances this status means &lt;b&gt;&quot;do not upload&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when uploading a QSL.</string>
+      </property>
+      <property name="text">
+       <string>No</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QCheckBox" name="addlSentStatusI_eQSL">
+        <property name="toolTip">
+         <string>Under normal circumstances this status means &lt;b&gt;&quot;Ignore/Invalid&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when sending a QSL.</string>
+        </property>
+        <property name="text">
+         <string>Ignore</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="addlSentStatusN_eQSL">
+        <property name="toolTip">
+         <string>Under normal circumstances this status means &lt;b&gt;&quot;do not send&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when sending a QSL.</string>
+        </property>
+        <property name="text">
+         <string>No</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="8" column="1">
+     <widget class="QLabel" name="qthProfileUploadLabel">
+      <property name="text">
+       <string>eQSL QTH Profile</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="myGridCombo"/>
+    </item>
+    <item row="14" column="1">
+     <widget class="QLabel" name="addlUploadStatusLabel_3">
+      <property name="text">
+       <string>Include QSOs with Upload Status</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="myCallsignCombo"/>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLabel" name="uploadcommentLabel">
+      <property name="text">
+       <string>Use Comment as a QSL Message</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QCheckBox" name="uploadcommentCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="2">
+     <widget class="QCheckBox" name="addlUploadStatusN_HRD">
+      <property name="toolTip">
+       <string>Under normal circumstances this status means &lt;b&gt;&quot;do not upload&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when uploading a QSL.</string>
+      </property>
+      <property name="text">
+       <string>No</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>99</x>
+     <y>490</y>
+     <width>261</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QPushButton" name="cancelButton">
+      <property name="text">
+       <string>Close</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="uploadButton">
+      <property name="text">
+       <string>Upload</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>uploadButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MultiQSOUpload</receiver>
+   <slot>upload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MultiQSOUpload</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>239</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>180</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>upload()</slot>
+ </slots>
+</ui>
