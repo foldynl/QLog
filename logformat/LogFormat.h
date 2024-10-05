@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 
 #include "core/LogLocale.h"
+#include "data/StationProfile.h"
 
 class QSqlRecord;
 
@@ -52,6 +53,7 @@ public:
     static LogFormat* open(Type type, QTextStream& stream);
 
     unsigned long runImport(QTextStream& errorLogStream,
+                            const StationProfile *defaultStationProfile,
                             unsigned long *warnings,
                             unsigned long *errors);
     void runQSLImport(QSLFrom fromService);
@@ -105,6 +107,8 @@ private:
                         const QString &msg);
     void writeImportLog(QTextStream& errorLogStream,
                         ImportLogSeverity severity,
+                        unsigned long *error,
+                        unsigned long *warning,
                         const unsigned long recordNo,
                         const QSqlRecord &record,
                         const QString &msg);

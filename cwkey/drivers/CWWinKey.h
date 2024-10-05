@@ -15,7 +15,7 @@ public:
                        const CWKey::CWKeyModeID mode,
                        const qint32 defaultSpeed,
                        QObject *parent = nullptr);
-    ~CWWinKey2();
+    virtual ~CWWinKey2();
 
     virtual bool open() override;
     virtual bool close() override;

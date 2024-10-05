@@ -9,7 +9,11 @@ class CredentialStore : public QObject
     Q_OBJECT
 public:
     explicit CredentialStore(QObject *parent = nullptr);
-    static CredentialStore* instance();
+    static CredentialStore* instance()
+    {
+        static CredentialStore instance;
+        return &instance;
+    };
 
     int savePassword(const QString &storage_key, const QString &user, const QString &pass);
     QString getPassword(const QString &storage_key, const QString &user);

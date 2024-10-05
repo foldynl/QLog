@@ -1,6 +1,5 @@
 #include <QColor>
 #include "AlertTableModel.h"
-#include "core/debug.h"
 #include "data/Data.h"
 #include "rig/macros.h"
 
@@ -14,7 +13,7 @@ int AlertTableModel::rowCount(const QModelIndex&) const
 
 int AlertTableModel::columnCount(const QModelIndex&) const
 {
-    return 7;
+    return 8;
 }
 
 QVariant AlertTableModel::data(const QModelIndex& index, int role) const
@@ -32,6 +31,7 @@ QVariant AlertTableModel::data(const QModelIndex& index, int role) const
         case COLUMN_UPDATED: return selectedRecord.counter;
         case COLUMN_LAST_UPDATE: return selectedRecord.alert.dateTime.toString(locale.formatTimeLongWithoutTZ());
         case COLUMN_LAST_COMMENT: return selectedRecord.alert.comment;
+        case COLUMN_MEMBER: return selectedRecord.alert.memberList2StringList().join(",");
         default: return QVariant();
         }
     }
@@ -66,6 +66,7 @@ QVariant AlertTableModel::headerData(int section, Qt::Orientation orientation, i
     case COLUMN_UPDATED: return tr("Updated");
     case COLUMN_LAST_UPDATE: return tr("Last Update");
     case COLUMN_LAST_COMMENT: return tr("Last Comment");
+    case COLUMN_MEMBER: return tr("Member");
     default: return QVariant();
     }
 }

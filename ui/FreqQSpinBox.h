@@ -1,5 +1,5 @@
-#ifndef FREQQSPINBOX_H
-#define FREQQSPINBOX_H
+#ifndef QLOG_UI_FREQQSPINBOX_H
+#define QLOG_UI_FREQQSPINBOX_H
 
 #include <QSpinBox>
 #include <data/Band.h>
@@ -23,4 +23,4 @@ private:
     QList<Band> enabledBands;
 };
 
-#endif // FREQQSPINBOX_H
+#endif // QLOG_UI_FREQQSPINBOX_H

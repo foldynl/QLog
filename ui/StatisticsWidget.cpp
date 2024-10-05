@@ -10,6 +10,7 @@
 #include <QComboBox>
 #include <QStringListModel>
 #include <QGraphicsLayout>
+#include <QMessageBox>
 #include "StatisticsWidget.h"
 #include "ui_StatisticsWidget.h"
 #include "core/debug.h"
@@ -27,146 +28,66 @@ void StatisticsWidget::mainStatChanged(int idx)
 
      qCDebug(function_parameters) << idx;
 
-     ui->statTypeSecCombo->blockSignals(true);
-
-     ui->statTypeSecCombo->clear();
-
-     switch ( idx )
-     {
-     /* QSOs per */
-     case 0:
-     {
-         ui->statTypeSecCombo->addItem(tr("Year"));
-         ui->statTypeSecCombo->addItem(tr("Month"));
-         ui->statTypeSecCombo->addItem(tr("Day in Week"));
-         ui->statTypeSecCombo->addItem(tr("Hour"));
-         ui->statTypeSecCombo->addItem(tr("Mode"));
-         ui->statTypeSecCombo->addItem(tr("Band"));
-         ui->statTypeSecCombo->addItem(tr("Continent"));
-         ui->statTypeSecCombo->addItem(tr("Propagation Mode"));
-     }
-     break;
-
-     /* Percents */
-     case 1:
-     {
-         ui->statTypeSecCombo->addItem(tr("Confirmed / Not Confirmed"));
-     }
-     break;
-
-     /* TOP 10 */
-     case 2:
-     {
-         ui->statTypeSecCombo->addItem(tr("Countries"));
-         ui->statTypeSecCombo->addItem(tr("Big Gridsquares"));
-     }
-     break;
-
-     /* Histogram */
-     case 3:
-     {
-         QString unit;
-         Gridsquare::distance2localeUnitDistance(0, unit);
-         ui->statTypeSecCombo->addItem(tr("Distance") + QString(" [%1]").arg(unit));
-     }
-     break;
-
-     /* Show on Map */
-     case 4:
-     {
-         ui->statTypeSecCombo->addItem(tr("QSOs"));
-         ui->statTypeSecCombo->addItem(tr("Confirmed/Worked Grids"));
-         ui->statTypeSecCombo->addItem(tr("ODX"));
-     }
-     break;
-     }
-
-     if ( idx == 4 )
-     {
-         ui->lotwCheckBox->setEnabled(true);
-         ui->eqslCheckBox->setEnabled(true);
-         ui->paperCheckBox->setEnabled(true);
-     }
-     else
-     {
-         ui->lotwCheckBox->setEnabled(false);
-         ui->eqslCheckBox->setEnabled(false);
-         ui->paperCheckBox->setEnabled(false);
-     }
-
-     ui->statTypeSecCombo->blockSignals(false);
-
+     setSubTypesCombo(idx);
      refreshGraph();
+}
+
+
+void StatisticsWidget::refreshWidget()
+{
+    FCT_IDENTIFICATION;
+
+    if ( !isVisible() )
+        return;
+
+    refreshCombos();
+    refreshGraph();
 }
 
 void StatisticsWidget::refreshGraph()
 {
      FCT_IDENTIFICATION;
 
+     if ( !isVisible() )
+         return;
+
      QStringList genericFilter;
 
      genericFilter << " 1 = 1 "; //just initialization - use only in case of empty Options
 
-     refreshCallCombo();
-     refreshRigCombo();
-     refreshAntCombo();
-     refreshBandCombo();
-     refreshGridCombo();
-
      if ( ui->myCallCombo->currentIndex() != 0 )
-     {
          genericFilter << " (station_callsign = '" + ui->myCallCombo->currentText() + "') ";
-     }
 
      if ( ui->myGridCombo->currentIndex() != 0 )
      {
          if ( ui->myGridCombo->currentText().isEmpty() )
-         {
              genericFilter << " (my_gridsquare is NULL) ";
-         }
          else
-         {
              genericFilter << " (my_gridsquare = '" + ui->myGridCombo->currentText() + "') ";
-         }
      }
 
      if ( ui->myRigCombo->currentIndex() != 0 )
      {
          if ( ui->myRigCombo->currentText().isEmpty() )
-         {
              genericFilter << " (my_rig is NULL) ";
-         }
          else
-         {
              genericFilter << " (my_rig = '" + ui->myRigCombo->currentText() + "') ";
-         }
      }
 
      if ( ui->myAntennaCombo->currentIndex() != 0 )
      {
          if ( ui->myAntennaCombo->currentText().isEmpty() )
-         {
              genericFilter << " (my_antenna is NULL) ";
-         }
          else
-         {
              genericFilter << " (my_antenna = '" + ui->myAntennaCombo->currentText() + "') ";
-         }
      }
 
-     if ( ui->bandCombo->currentIndex() != 0 )
-     {
-         if ( ! ui->bandCombo->currentText().isEmpty() )
-         {
-             genericFilter << " (band = '" + ui->bandCombo->currentText() + "') ";
-         }
-     }
+     if ( ui->bandCombo->currentIndex() != 0 &&  ! ui->bandCombo->currentText().isEmpty() )
+         genericFilter << " (band = '" + ui->bandCombo->currentText() + "') ";
 
      if ( ui->useDateRangeCheckBox->isChecked() )
-     {
          genericFilter << " (date(start_time) BETWEEN date('" + ui->startDateEdit->date().toString("yyyy-MM-dd")
                           + " 00:00:00') AND date('" + ui->endDateEdit->date().toString("yyyy-MM-dd") + " 23:59:59') ) ";
-     }
 
      qCDebug(runtime) << "main " << ui->statTypeMainCombo->currentIndex()
                       << " secondary " << ui->statTypeSecCombo->currentIndex();
@@ -373,25 +294,18 @@ void StatisticsWidget::refreshGraph()
          QStringList confirmed("1=2 ");
 
          if ( ui->eqslCheckBox->isChecked() )
-         {
              confirmed << " eqsl_qsl_rcvd = 'Y' ";
-         }
 
          if ( ui->lotwCheckBox->isChecked() )
-         {
              confirmed << " lotw_qsl_rcvd = 'Y' ";
-         }
 
          if ( ui->paperCheckBox->isChecked() )
-         {
              confirmed << " qsl_rcvd = 'Y' ";
-         }
 
          QString innerCase = " CASE WHEN (" + confirmed.join("or") + ") THEN 1 ELSE 0 END ";
-
-
          QString stmtMyLocations = "SELECT DISTINCT my_gridsquare FROM contacts WHERE " + genericFilter.join(" AND ");
          QSqlQuery myLocations(stmtMyLocations);
+
          qCDebug(runtime) << stmtMyLocations;
 
          drawMyLocationsOnMap(myLocations);
@@ -477,22 +391,14 @@ void StatisticsWidget::changeTheme(int theme)
     QString themeJavaScript;
 
     if ( theme == 1 ) /* dark mode */
-    {
         themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
-    }
     else
-    {
         themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"\";";
-    }
 
     if ( !isMainPageLoaded )
-    {
         postponedScripts.append(themeJavaScript);
-    }
     else
-    {
         main_page->runJavaScript(themeJavaScript);
-    }
 }
 
 StatisticsWidget::StatisticsWidget(QWidget *parent) :
@@ -507,21 +413,10 @@ StatisticsWidget::StatisticsWidget(QWidget *parent) :
     ui->setupUi(this);
 
     ui->myCallCombo->setModel(new QStringListModel(this));
-    refreshCallCombo();
-
     ui->myGridCombo->setModel(new QStringListModel(this));
-    refreshGridCombo();
-
     ui->myRigCombo->setModel(new QStringListModel(this));
-    refreshRigCombo();
-    ui->myRigCombo->setCurrentIndex(0);
-
     ui->myAntennaCombo->setModel(new QStringListModel(this));
-    refreshAntCombo();
-    ui->myAntennaCombo->setCurrentIndex(0);
-
     ui->bandCombo->setModel(new QStringListModel(this));
-    refreshBandCombo();
 
     ui->startDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->startDateEdit->setDate(QDate::currentDate().addDays(DEFAULT_STAT_RANGE));
@@ -533,12 +428,10 @@ StatisticsWidget::StatisticsWidget(QWidget *parent) :
 
     main_page->setWebChannel(&channel);
     ui->mapView->setPage(main_page);
+    connect(ui->mapView, &QWebEngineView::loadFinished, this, &StatisticsWidget::mapLoaded);
     main_page->load(QUrl(QStringLiteral("qrc:/res/map/onlinemap.html")));
     ui->mapView->setFocusPolicy(Qt::ClickFocus);
-    connect(ui->mapView, &QWebEngineView::loadFinished, this, &StatisticsWidget::mapLoaded);
     channel.registerObject("layerControlHandler", &layerControlHandler);
-
-    mainStatChanged(0);
 }
 
 StatisticsWidget::~StatisticsWidget()
@@ -546,6 +439,30 @@ StatisticsWidget::~StatisticsWidget()
     FCT_IDENTIFICATION;
     main_page->deleteLater();
     delete ui;
+}
+
+bool StatisticsWidget::event(QEvent *event)
+{
+    if (event->type() == QEvent::Show)
+    {
+        // We will not use refreshWidget here, even though at first glance it appears
+        // to do the same thing. The difference is that we want class constructor to be as fast as possible.
+        // Therefore, in the constructor, we do not populate the combo boxes. As a result, they are empty
+        // when first displayed and need to be loaded and then combos for Rig, Ant, etc., can be set.
+        refreshCombos();
+        ui->statTypeMainCombo->blockSignals(true);
+        ui->statTypeMainCombo->setCurrentIndex(0);
+        ui->statTypeMainCombo->blockSignals(false);
+        setSubTypesCombo(ui->statTypeMainCombo->currentIndex());
+        ui->myRigCombo->blockSignals(true);
+        ui->myRigCombo->setCurrentIndex(0);
+        ui->myRigCombo->blockSignals(false);
+        ui->myAntennaCombo->blockSignals(true);
+        ui->myAntennaCombo->setCurrentIndex(0);
+        ui->myAntennaCombo->blockSignals(false);
+        refreshGraph();
+    }
+    return QWidget::event(event);  // Propagate the event further
 }
 
 void StatisticsWidget::drawBarGraphs(const QString &title, QSqlQuery &query)
@@ -561,9 +478,7 @@ void StatisticsWidget::drawBarGraphs(const QString &title, QSqlQuery &query)
     QValueAxis *axisY = new QValueAxis();
 
     if ( chart != nullptr )
-    {
         chart->deleteLater();
-    }
 
     chart = new QChart();
 
@@ -604,10 +519,7 @@ void StatisticsWidget::drawPieGraph(const QString &title, QPieSeries *series)
     QChart *chart = ui->graphView->chart();
 
     if ( chart != nullptr )
-    {
         chart->deleteLater();
-    }
-
 
     chart = new QChart();
 
@@ -624,15 +536,15 @@ void StatisticsWidget::drawMyLocationsOnMap(QSqlQuery &query)
 {
     FCT_IDENTIFICATION;
 
-
-    if ( query.lastQuery().isEmpty() ) return;
+    if ( query.lastQuery().isEmpty() )
+        return;
 
     QList<QString> locations;
 
     while ( query.next() )
     {
-        QString loc = query.value(0).toString();
-        Gridsquare stationGrid(loc);
+        const QString &loc = query.value(0).toString();
+        const Gridsquare stationGrid(loc);
 
         if ( stationGrid.isValid() )
         {
@@ -650,30 +562,29 @@ void StatisticsWidget::drawMyLocationsOnMap(QSqlQuery &query)
     qCDebug(runtime) << javaScript;
 
     if ( !isMainPageLoaded )
-    {
         postponedScripts.append(javaScript);
-    }
     else
-    {
         main_page->runJavaScript(javaScript);
-    }
 }
 
 void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
 {
     FCT_IDENTIFICATION;
 
-
-    if ( query.lastQuery().isEmpty() ) return;
+    if ( query.lastQuery().isEmpty() )
+        return;
 
     QList<QString> stations;
 
+    qulonglong count = 0;
+
     while ( query.next() )
     {
-        Gridsquare stationGrid(query.value(1).toString());
+        const Gridsquare stationGrid(query.value(1).toString());
 
         if ( stationGrid.isValid() )
         {
+            count++;
             double lat = stationGrid.getLatitude();
             double lon = stationGrid.getLongitude();
             stations.append(QString("[\"%1\", %2, %3, %4]").arg(query.value(0).toString())
@@ -681,6 +592,16 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
                                                            .arg(lon)
                                                            .arg((query.value(2).toInt()) > 0 ? "greenIcon" : "yellowIcon"));
         }
+    }
+
+    if ( count > 50000 )
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, tr("Statistics"), tr("Over 50000 QSOs. Display them?"),
+                                      QMessageBox::Yes|QMessageBox::No);
+
+        if ( reply != QMessageBox::Yes )
+            stations.clear();
     }
 
     QString javaScript = QString("grids_confirmed = [];"
@@ -691,13 +612,9 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
     qCDebug(runtime) << javaScript;
 
     if ( !isMainPageLoaded )
-    {
         postponedScripts.append(javaScript);
-    }
     else
-    {
         main_page->runJavaScript(javaScript);
-    }
 }
 
 void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
@@ -713,13 +630,9 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
     while ( query.next() )
     {
         if ( query.value(2).toInt() > 0 && ! confirmedGrids.contains(query.value(1).toString()) )
-        {
             confirmedGrids << QString("\"" + query.value(1).toString() + "\"");
-        }
         else
-        {
             workedGrids << QString("\"" + query.value(1).toString() + "\"");
-        }
     }
 
     QString javaScript = QString("grids_confirmed = [ %1 ]; "
@@ -731,62 +644,99 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
     qCDebug(runtime) << javaScript;
 
     if ( !isMainPageLoaded )
-    {
         postponedScripts.append(javaScript);
-    }
     else
-    {
         main_page->runJavaScript(javaScript);
+}
+
+void StatisticsWidget::refreshCombos()
+{
+    FCT_IDENTIFICATION;
+
+    refreshCombo(ui->myCallCombo, QLatin1String("SELECT DISTINCT UPPER(station_callsign) FROM contacts ORDER BY station_callsign"));
+    refreshCombo(ui->myRigCombo, QLatin1String("SELECT DISTINCT my_rig FROM contacts ORDER BY my_rig"));
+    refreshCombo(ui->myAntennaCombo, QLatin1String("SELECT DISTINCT my_antenna FROM contacts ORDER BY my_antenna"));
+    refreshCombo(ui->bandCombo, QLatin1String("SELECT DISTINCT band FROM contacts c, bands b WHERE c.band = b.name ORDER BY b.start_freq;"));
+    refreshCombo(ui->myGridCombo, QLatin1String("SELECT DISTINCT UPPER(my_gridsquare) FROM contacts ORDER BY my_gridsquare"));
+}
+
+void StatisticsWidget::setSubTypesCombo(int mainTypeIdx)
+{
+    FCT_IDENTIFICATION;
+
+    ui->statTypeSecCombo->blockSignals(true);
+
+    ui->statTypeSecCombo->clear();
+
+    ui->lotwCheckBox->setEnabled(false);
+    ui->eqslCheckBox->setEnabled(false);
+    ui->paperCheckBox->setEnabled(false);
+
+    switch ( mainTypeIdx )
+    {
+    /* QSOs per */
+    case 0:
+    {
+        ui->statTypeSecCombo->addItem(tr("Year"));
+        ui->statTypeSecCombo->addItem(tr("Month"));
+        ui->statTypeSecCombo->addItem(tr("Day in Week"));
+        ui->statTypeSecCombo->addItem(tr("Hour"));
+        ui->statTypeSecCombo->addItem(tr("Mode"));
+        ui->statTypeSecCombo->addItem(tr("Band"));
+        ui->statTypeSecCombo->addItem(tr("Continent"));
+        ui->statTypeSecCombo->addItem(tr("Propagation Mode"));
     }
+    break;
+
+    /* Percents */
+    case 1:
+    {
+        ui->statTypeSecCombo->addItem(tr("Confirmed / Not Confirmed"));
+    }
+    break;
+
+    /* TOP 10 */
+    case 2:
+    {
+        ui->statTypeSecCombo->addItem(tr("Countries"));
+        ui->statTypeSecCombo->addItem(tr("Big Gridsquares"));
+    }
+    break;
+
+    /* Histogram */
+    case 3:
+    {
+        QString unit;
+        Gridsquare::distance2localeUnitDistance(0, unit);
+        ui->statTypeSecCombo->addItem(tr("Distance") + QString(" [%1]").arg(unit));
+    }
+    break;
+
+    /* Show on Map */
+    case 4:
+    {
+        ui->statTypeSecCombo->addItem(tr("QSOs"));
+        ui->statTypeSecCombo->addItem(tr("Confirmed/Worked Grids"));
+        ui->statTypeSecCombo->addItem(tr("ODX"));
+        ui->lotwCheckBox->setEnabled(true);
+        ui->eqslCheckBox->setEnabled(true);
+        ui->paperCheckBox->setEnabled(true);
+    }
+    break;
+    }
+
+    ui->statTypeSecCombo->blockSignals(false);
 }
 
-void StatisticsWidget::refreshCallCombo()
-{
-    FCT_IDENTIFICATION;
-
-    refreshCombo(ui->myCallCombo, "SELECT DISTINCT UPPER(station_callsign) FROM contacts ORDER BY station_callsign");
-}
-
-void StatisticsWidget::refreshRigCombo()
-{
-    FCT_IDENTIFICATION;
-
-    refreshCombo(ui->myRigCombo, "SELECT DISTINCT my_rig FROM contacts ORDER BY my_rig");
-}
-
-void StatisticsWidget::refreshAntCombo()
-{
-    FCT_IDENTIFICATION;
-
-    refreshCombo(ui->myAntennaCombo, "SELECT DISTINCT my_antenna FROM contacts ORDER BY my_antenna");
-}
-
-void StatisticsWidget::refreshBandCombo()
-{
-    FCT_IDENTIFICATION;
-
-    refreshCombo(ui->bandCombo, "SELECT DISTINCT band FROM contacts c, bands b WHERE c.band = b.name ORDER BY b.start_freq;");
-}
-
-void StatisticsWidget::refreshGridCombo()
-{
-    FCT_IDENTIFICATION;
-
-    refreshCombo(ui->myGridCombo, "SELECT DISTINCT UPPER(my_gridsquare) FROM contacts ORDER BY my_gridsquare");
-}
-
-void StatisticsWidget::refreshCombo(QComboBox * combo, QString sqlQeury)
+void StatisticsWidget::refreshCombo(QComboBox * combo,
+                                    const QString &sqlQeury)
 {
     FCT_IDENTIFICATION;
 
     QString currSelection = combo->currentText();
 
     combo->blockSignals(true);
-    //combo->clear();
-
     combo->setModel(new SqlListModel(sqlQeury,tr("All"), this));
-
     combo->setCurrentText(currSelection);
     combo->blockSignals(false);
-
 }

@@ -106,10 +106,10 @@ void RotProfilesManager::save()
 
     if ( deleteQuery.exec() )
     {
-        auto keys = profileNameList();
-        for ( auto &key: qAsConst(keys) )
+        const QStringList &keys = profileNameList();
+        for ( auto &key: keys )
         {
-            RotProfile rigProfile = getProfile(key);
+            const RotProfile &rigProfile = getProfile(key);
 
             insertQuery.bindValue(":profile_name", key);
             insertQuery.bindValue(":model", rigProfile.model);

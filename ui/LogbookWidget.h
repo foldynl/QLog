@@ -42,21 +42,12 @@ public slots:
     void lookupSelectedCallsign();
     void callsignFilterChanged();
     void bandFilterChanged();
-    void saveBandFilter();
-    void restoreBandFilter();
     void modeFilterChanged();
-    void saveModeFilter();
-    void restoreModeFilter();
     void countryFilterChanged();
-    void saveCountryFilter();
-    void restoreCountryFilter();
     void userFilterChanged();
-    void saveUserFilter();
-    void restoreUserFilter();
     void clubFilterChanged();
     void refreshClubFilter();
-    void saveClubFilter();
-    void restoreclubFilter();
+    void refreshUserFilter();
     void restoreFilters();
     void updateTable();
     void uploadClublog();
@@ -81,8 +72,22 @@ private:
     SqlListModel* userFilterModel;
     QString externalFilter;
     bool blockClublogSignals;
+    bool eventFilter(QObject *obj, QEvent *event);
 
     void colorsFilterWidget(QComboBox *widget);
+    void filterTable();
+    void saveBandFilter();
+    void restoreBandFilter();
+    void saveModeFilter();
+    void restoreModeFilter();
+    void saveCountryFilter();
+    void restoreCountryFilter();
+    void saveUserFilter();
+    void restoreUserFilter();
+    void saveClubFilter();
+    void restoreClubFilter();
+    void reselectModel();
+    void scrollToIndex(const QModelIndex& index, bool select = true);
 };
 
 /* https://forum.qt.io/topic/90403/show-tooltip-immediatly/7/ */

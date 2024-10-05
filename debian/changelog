@@ -1,3 +1,28 @@
+qlog (0.39.0-1) UNRELEASED; urgency=low
+  * [NEW] - DXC - Added Full-text search
+  * [NEW] - Select S in RST Edit when focused (issue #454)
+  * [NEW] - Alerts - Added Member Column
+  * [CHANGED] - HamlibDrv Rig/Rot- Added multiplatform reliable sleep
+  * [CHANGED] - Changed Backup policy
+  * [CHANGED] - Logbook page size - improved performance
+  * [CHANGED] - Logbook - CTRL-A (Select All) is disabled
+  * [CHANGED] - Awards - Bands are displayed based on the Settings (issue #452)
+  * [CHANGED] - WSJTX - More reliable detection of CQ stations (PR #471 @aa5sh)
+  * [CHANGED] - WSJTX - SOTA/POTA/WWFF/SIG are being added to the logged QSO (PR #463 @aa5sh)
+  * [CHANGED] - Stats - Add a confirmation dialog for displaying over 50k QSOs on the map
+  * [CHANGED] - New Contact - Starting QSO Timer when Rig online and WSJTX Update Callsign Status is received
+  * [CHANGED] - Added a postponed handling for Rig soft errors (issue #472)
+  * Fixed WSJT-X does not emit band change if rig is disconnected (issue #447)
+  * Fixed Wrong import of ADIF file of another log program (issue #455)
+  * Fixed WSJTX log record is stored incorrectly if it contains non-ASCII chars(issue #458)
+  * Fixed ADIF import does not import records with old DXCC Entities (issue #459)
+  * Fixed ADIF import incorrectly uses Station Profile parameters (issue #461)
+  * Fixed Logbook - QSO Table Column Width Does Not Stick (issue #464)
+  * Fixed Alerts Window displays OOB Spots (issue #469)
+  * Fixed Field values from past QSOs are used incorrectly in case of WSJTX QSOs (#issue 470)
+
+ -- foldynl <foldyna@gmail.com>  Sat, 5 Oct 2024 13:33:52 +0200
+
 qlog (0.38.0-1) UNRELEASED; urgency=low
   * [NEW] - Logbook - Added Send DX Spot to the QSO Context Menu
   * [NEW] - DX Filter - Added Dedup Time/Freq difference setting (@aa5sh)

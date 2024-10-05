@@ -2,6 +2,7 @@
 #include <QSqlError>
 
 #include "RotUsrButtonsProfile.h"
+#include "core/debug.h"
 
 MODULE_IDENTIFICATION("qlog.data.rotusrbuttonsprofile");
 
@@ -81,14 +82,6 @@ RotUsrButtonsProfilesManager::RotUsrButtonsProfilesManager(QObject *parent) :
 
 }
 
-RotUsrButtonsProfilesManager *RotUsrButtonsProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static RotUsrButtonsProfilesManager instance;
-    return &instance;
-}
-
 void RotUsrButtonsProfilesManager::save()
 {
     FCT_IDENTIFICATION;
@@ -113,10 +106,10 @@ void RotUsrButtonsProfilesManager::save()
 
     if ( deleteQuery.exec() )
     {
-        auto keys = profileNameList();
-        for ( auto &key: qAsConst(keys) )
+        const QStringList &keys = profileNameList();
+        for ( auto &key: keys )
         {
-            RotUsrButtonsProfile rotUsrButtonProfile = getProfile(key);
+            const RotUsrButtonsProfile &rotUsrButtonProfile = getProfile(key);
 
             insertQuery.bindValue(":profile_name", key);
             for ( int i = 0; i < rotUsrButtonProfile.shortDescs.size(); i++ )

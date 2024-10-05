@@ -9,7 +9,6 @@
 #include "DxccTableWidget.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
-#include "data/Data.h"
 #include "data/BandPlan.h"
 
 MODULE_IDENTIFICATION("qlog.ui.dxcctablewidget");

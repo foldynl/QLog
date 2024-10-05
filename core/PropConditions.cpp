@@ -140,8 +140,8 @@ void PropConditions::processReply(QNetworkReply* reply)
                 double skipElement = 0.0;
 
                 qCDebug(runtime) << "Aurora forecast Time:" << doc["Forecast Time"].toString();
-                QJsonArray jsonArray = doc["coordinates"].toArray();
-                for (const QJsonValue &value : qAsConst(jsonArray))
+                const QJsonArray &jsonArray = doc["coordinates"].toArray();
+                for (const QJsonValue &value : jsonArray)
                 {
                     QJsonArray obj = value.toArray();
                     if ( obj.size() == 3 )
@@ -166,8 +166,8 @@ void PropConditions::processReply(QNetworkReply* reply)
             {
                 double skipElement = 0.0;
 
-                QJsonArray jsonArray = doc.array();
-                for (const QJsonValue &value : qAsConst(jsonArray))
+                const QJsonArray &jsonArray = doc.array();
+                for (const QJsonValue &value : jsonArray)
                 {
                     QJsonObject obj = value.toObject();
                     QJsonObject station = obj["station"].toObject();

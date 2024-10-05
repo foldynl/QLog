@@ -1,6 +1,5 @@
 #include "CWDummyKey.h"
 #include "core/debug.h"
-#include "rig/Rig.h"
 
 MODULE_IDENTIFICATION("qlog.cwkey.driver.cwdummykey");
 

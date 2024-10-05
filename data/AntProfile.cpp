@@ -57,15 +57,6 @@ AntProfilesManager::AntProfilesManager(QObject *parent) :
     }
 }
 
-AntProfilesManager *AntProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static AntProfilesManager instance;
-    return &instance;
-
-}
-
 void AntProfilesManager::save()
 {
     FCT_IDENTIFICATION;
@@ -88,10 +79,10 @@ void AntProfilesManager::save()
 
     if ( deleteQuery.exec() )
     {
-        auto keys = profileNameList();
-        for ( auto &key: qAsConst(keys) )
+        const QStringList &keys = profileNameList();
+        for ( auto &key: keys )
         {
-            AntProfile antProfile = getProfile(key);
+            const AntProfile &antProfile = getProfile(key);
 
             insertQuery.bindValue(":profile_name", key);
             insertQuery.bindValue(":desc", antProfile.description);

@@ -203,7 +203,7 @@ void DxFilterDialog::accept()
     {
         memberList.append("DUMMYCLUB");
 
-        for ( QCheckBox* item: qAsConst(memberListCheckBoxes) )
+        for ( QCheckBox* item: static_cast<const QList<QCheckBox*>&>(memberListCheckBoxes) )
         {
             if ( item->isChecked() )
             {
@@ -244,7 +244,7 @@ void DxFilterDialog::generateMembershipCheckboxes()
     {
         int elementIndex = 0;
 
-        for ( QCheckBox* item: qAsConst(memberListCheckBoxes) )
+        for ( QCheckBox* item: static_cast<const QList<QCheckBox*>&>(memberListCheckBoxes) )
         {
             ui->dxMemberGrid->addWidget(item, elementIndex / 3, elementIndex % 3);
             elementIndex++;

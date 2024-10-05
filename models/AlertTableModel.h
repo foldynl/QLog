@@ -22,6 +22,7 @@ public:
         COLUMN_UPDATED = 4,
         COLUMN_LAST_UPDATE = 5,
         COLUMN_LAST_COMMENT = 6,
+        COLUMN_MEMBER = 7,
     };
 
     struct AlertTableRecord

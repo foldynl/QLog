@@ -3,7 +3,6 @@
 #include "logformat/AdxFormat.h"
 #include "logformat/AdiFormat.h"
 #include "core/debug.h"
-#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.logformat.adxformat");
 

@@ -42,7 +42,11 @@ public:
     explicit RotUsrButtonsProfilesManager(QObject *parent = nullptr);
     ~RotUsrButtonsProfilesManager() { };
 
-    static RotUsrButtonsProfilesManager* instance();
+    static RotUsrButtonsProfilesManager* instance()
+    {
+        static RotUsrButtonsProfilesManager instance;
+        return &instance;
+    };
     void save();
 
 };

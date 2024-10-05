@@ -225,9 +225,9 @@ void NetworkNotification::send(const QByteArray &data, const HostsPortString &de
         return;
     }
 
-    QList<HostPortAddress> addrList = dests.getAddrList();
+    const QList<HostPortAddress> &addrList = dests.getAddrList();
 
-    for ( const HostPortAddress &addr : qAsConst(addrList) )
+    for ( const HostPortAddress &addr : addrList )
     {
         QUdpSocket udpSocket;
 

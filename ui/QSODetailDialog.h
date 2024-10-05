@@ -1,5 +1,5 @@
-#ifndef QSODETAILDIALOG_H
-#define QSODETAILDIALOG_H
+#ifndef QLOG_UI_QSODETAILDIALOG_H
+#define QLOG_UI_QSODETAILDIALOG_H
 
 #include <QDialog>
 #include <QDataWidgetMapper>

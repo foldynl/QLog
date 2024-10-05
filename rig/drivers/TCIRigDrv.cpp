@@ -5,6 +5,7 @@
 #include "rig/macros.h"
 #include "data/Data.h"
 #include "data/BandPlan.h"
+#include "core/debug.h"
 
 MODULE_IDENTIFICATION("qlog.rig.driver.tcidrv");
 

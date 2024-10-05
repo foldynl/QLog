@@ -5,7 +5,6 @@
 #include "models/SqlListModel.h"
 #include "core/debug.h"
 #include "data/Band.h"
-#include "data/Data.h"
 #include "data/BandPlan.h"
 #include <QSqlError>
 MODULE_IDENTIFICATION("qlog.ui.awardsdialog");
@@ -63,7 +62,7 @@ void AwardsDialog::refreshTable(int)
 {
     FCT_IDENTIFICATION;
 
-    const QList<Band>& dxccBands = BandPlan::bandsList(true, true);
+    const QList<Band>& dxccBands = BandPlan::bandsList(false, true);
 
     if ( dxccBands.size() == 0 )
         return;

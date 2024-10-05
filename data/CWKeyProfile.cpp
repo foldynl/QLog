@@ -71,14 +71,6 @@ CWKeyProfilesManager::CWKeyProfilesManager(QObject *parent) :
     }
 }
 
-CWKeyProfilesManager *CWKeyProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static CWKeyProfilesManager instance;
-    return &instance;
-}
-
 void CWKeyProfilesManager::save()
 {
     FCT_IDENTIFICATION;
@@ -101,10 +93,10 @@ void CWKeyProfilesManager::save()
 
     if ( deleteQuery.exec() )
     {
-        auto keys = profileNameList();
-        for ( auto &key: qAsConst(keys) )
+        const QStringList &keys = profileNameList();
+        for ( auto &key: keys )
         {
-            CWKeyProfile cwKeyProfile = getProfile(key);
+            const CWKeyProfile &cwKeyProfile = getProfile(key);
 
             insertQuery.bindValue(":profile_name", key);
             insertQuery.bindValue(":model", cwKeyProfile.model);

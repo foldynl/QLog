@@ -106,9 +106,9 @@ void Wsjtx::forwardDatagram(const QNetworkDatagram &datagram)
 
     HostsPortString forwardAddresses(getConfigForwardAddresses());
 
-    QList<HostPortAddress> addrList = forwardAddresses.getAddrList();
+    const QList<HostPortAddress> &addrList = forwardAddresses.getAddrList();
 
-    for ( const HostPortAddress &addr : qAsConst(addrList) )
+    for ( const HostPortAddress &addr : addrList )
     {
         QUdpSocket udpSocket;
 

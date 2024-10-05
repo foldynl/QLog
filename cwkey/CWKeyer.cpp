@@ -7,19 +7,10 @@
 #include "cwkey/drivers/CWFldigiKey.h"
 #include "core/debug.h"
 #include "data/CWKeyProfile.h"
-#include "rig/Rig.h"
 
 MODULE_IDENTIFICATION("qlog.cwkey.cwkeyer");
 
 #define TIME_PERIOD 1000
-
-CWKeyer *CWKeyer::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static CWKeyer instance;
-    return &instance;
-}
 
 void CWKeyer::start()
 {

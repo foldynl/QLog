@@ -93,14 +93,6 @@ void MembershipQE::statusQueryFinished(const QString &callsign,
     emit clubStatusResult(callsign, statuses);
 }
 
-MembershipQE *MembershipQE::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static MembershipQE instance;
-    return &instance;
-}
-
 void MembershipQE::saveEnabledClubLists(const QStringList &enabledLists)
 {
     QSettings settings;
@@ -124,7 +116,7 @@ void MembershipQE::removeClubsFromEnabledClubLists(const QList<QPair<QString, QS
     qCDebug(runtime) << toRemove;
     QStringList current = getEnabledClubLists();
 
-    for (const QPair<QString, QString>& toRemoveClub: qAsConst(toRemove))
+    for ( const QPair<QString, QString>& toRemoveClub : toRemove )
     {
         current.removeAll(toRemoveClub.first);
     }
@@ -492,13 +484,6 @@ ClubStatusQuery::ClubStatusQuery(QObject *parent) :
 ClubStatusQuery::~ClubStatusQuery()
 {
     FCT_IDENTIFICATION;
-    {
-        qCDebug(runtime) << "Closing connection to DB";
-        QSqlDatabase db1 = QSqlDatabase::database(dbConnectionName);
-        db1.close();
-    }
-
-    QSqlDatabase::removeDatabase(dbConnectionName);
 }
 
 void ClubStatusQuery::getClubStatus(const QString &in_callsign,
@@ -562,25 +547,25 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
     while ( ++records && query.next() )
     {
         QString clubid = query.value(0).toString();
-        QVariant band = query.value(1);
-        QVariant mode = query.value(2);
+        QString band = query.value(1).toString();
+        QString mode = query.value(2).toString();
         QVariant confirmed = query.value(3);
-        QVariant current_mode = query.value(4);
+        QString current_mode = query.value(4).toString();
 
         qCDebug(runtime) << "Processing" << currentProcessedClub
                          << clubid
-                         << band.isNull() << band
-                         << mode.isNull() << mode
-                         << confirmed.isNull() << confirmed
-                         << current_mode.isNull();
+                         << band.isEmpty() << band
+                         << mode.isEmpty() << mode
+                         << confirmed.toString().isEmpty() << confirmed
+                         << current_mode.isEmpty();
 
         // the select generates starting line for a new club
         // Changing the club
         if ( currentProcessedClub != clubid
-             && band.isNull()
-             && mode.isNull()
-             && confirmed.isNull()
-             && current_mode.isNull()  )
+             && band.isEmpty()
+             && mode.isEmpty()
+             && confirmed.toString().isEmpty()
+             && current_mode.isEmpty()  )
         {
             if ( !currentProcessedClub.isEmpty() )
             {
@@ -599,10 +584,10 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
 
         if ( currentProcessedClub == clubid )
         {
-            if ( band.toString() == in_band )
+            if ( band == in_band )
             {
                 bandMatched = true;
-                if ( mode.toString() == current_mode.toString() )
+                if ( mode == current_mode )
                 {
                     bandModeMatched = true;
 
@@ -613,7 +598,7 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
                 }
             }
 
-            if ( mode.toString() == current_mode.toString() )
+            if ( mode == current_mode )
             {
                 modeMatched = true;
             }

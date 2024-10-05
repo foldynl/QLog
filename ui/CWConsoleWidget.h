@@ -30,18 +30,18 @@ public slots:
     void cwKeySpeedDecrease();
     void cwShortcutProfileIncrease();
     void cwShortcutProfileDecrease();
+    void rigDisconnectHandler();
+    void rigConnectHandler();
+    void cwKeyConnected(QString);
+    void cwKeyDisconnected();
 
 private slots:
     void cwKeyProfileComboChanged(QString);
     void cwShortcutProfileComboChanged(QString);
     void refreshKeyProfileCombo();
     void refreshShortcutProfileCombo();
-    void cwKeyConnected(QString);
-    void cwKeyDisconnected();
     void cwKeySpeedChanged(int);
     void cwSendButtonPressed(bool insertNewLine = true);
-    void rigDisconnectHandler();
-    void rigConnectHandler();
     void cwKeyMacroF1();
     void cwKeyMacroF2();
     void cwKeyMacroF3();

@@ -86,7 +86,11 @@ public:
     explicit RigProfilesManager(QObject *parent = nullptr);
     ~RigProfilesManager() { };
 
-    static RigProfilesManager* instance();
+    static RigProfilesManager* instance()
+    {
+        static RigProfilesManager instance;
+        return &instance;
+    };
     void save();
 
 };

@@ -225,6 +225,46 @@
          </attribute>
         </widget>
        </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="searchLayout">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLineEdit" name="searchEdit">
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Full-text search</string>
+           </property>
+           <property name="placeholderText">
+            <string>Search</string>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="searchCloseButton">
+           <property name="toolTip">
+            <string>Close Search</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/icons/icons.qrc">
+             <normaloff>:/icons/cancel-24px.svg</normaloff>:/icons/cancel-24px.svg</iconset>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="wcyPage">
@@ -587,6 +627,23 @@
     <string>Clear all data</string>
    </property>
   </action>
+  <action name="actionSearch">
+   <property name="text">
+    <string>Search...</string>
+   </property>
+   <property name="toolTip">
+    <string>DXC - Search</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+D</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+   <property name="changeableshortcut" stdset="0">
+    <bool>true</bool>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../res/icons/icons.qrc"/>
@@ -880,6 +937,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSearch</sender>
+   <signal>triggered()</signal>
+   <receiver>DxWidget</receiver>
+   <slot>setSearchVisible()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>170</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>searchCloseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DxWidget</receiver>
+   <slot>setSearchClosed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>462</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>170</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>searchEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>DxWidget</receiver>
+   <slot>setSearch(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>170</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>send()</slot>
@@ -903,5 +1008,8 @@
   <slot>actionForgetPassword()</slot>
   <slot>actionKeepSpots()</slot>
   <slot>actionClear()</slot>
+  <slot>setSearch(QString)</slot>
+  <slot>setSearchVisible()</slot>
+  <slot>setSearchClosed()</slot>
  </slots>
 </ui>

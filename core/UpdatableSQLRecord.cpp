@@ -50,8 +50,8 @@ void UpdatableSQLRecord::updateRecord(const QSqlRecord &record)
 
             if ( !internalRecord.contains(fieldName) )
                 internalRecord.append(record.field(i));
-            else if ( internalRecord.value(i).toString().isEmpty()
-                      && !record.value(i).toString().isEmpty() )
+            else if ( !record.value(i).toString().isEmpty()
+                      && internalRecord.value(fieldName).toString().isEmpty() )
                 internalRecord.setValue(fieldName, record.value(i));
         }
     }

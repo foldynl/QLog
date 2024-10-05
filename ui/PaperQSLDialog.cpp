@@ -90,9 +90,9 @@ void PaperQSLDialog::showAvailableFiles()
 {
     FCT_IDENTIFICATION;
 
-    QStringList files = qsl->getAvailableQSLNames(dialogQSORecord, QSLObject::QSLFILE);
+    const QStringList &files = qsl->getAvailableQSLNames(dialogQSORecord, QSLObject::QSLFILE);
 
-    for ( auto &file : qAsConst(files) )
+    for ( auto &file : files )
     {
         addFileToDialog(file);
     }

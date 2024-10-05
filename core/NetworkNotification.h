@@ -8,7 +8,6 @@
 #include "core/HostsPortString.h"
 #include "logformat/LogFormat.h"
 #include "data/DxSpot.h"
-#include "Wsjtx.h"
 #include "data/WsjtxEntry.h"
 #include "data/SpotAlert.h"
 #include "data/WCYSpot.h"

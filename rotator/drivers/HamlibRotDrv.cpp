@@ -19,6 +19,13 @@
 #define HAMLIB_FILPATHLEN FILPATHLEN
 #endif
 
+#ifndef RIG_IS_SOFT_ERRCODE
+#define RIG_IS_SOFT_ERRCODE(errcode) (errcode == RIG_EINVAL || errcode == RIG_ENIMPL || errcode == RIG_ERJCTED \
+    || errcode == RIG_ETRUNC || errcode == RIG_ENAVAIL || errcode == RIG_ENTARGET \
+    || errcode == RIG_EVFO || errcode == RIG_EDOM)
+
+#endif
+
 #define POOL_INTERVAL 500
 
 MODULE_IDENTIFICATION("qlog.rotator.driver.hamlibdrv");
@@ -84,6 +91,10 @@ HamlibRotDrv::HamlibRotDrv(const RotProfile &profile,
     }
 
     rig_set_debug(RIG_DEBUG_BUG);
+
+    connect(&errorTimer, &QTimer::timeout,
+            this, &HamlibRotDrv::checkErrorCounter);
+
 }
 
 HamlibRotDrv::~HamlibRotDrv()
@@ -147,16 +158,10 @@ bool HamlibRotDrv::open()
 
     int status = rot_open(rot);
 
-    if ( status != RIG_OK )
-    {
-        lastErrorText = hamlibErrorString(status);
-        qCDebug(runtime) << "Rot Open Error" << lastErrorText;
+    if ( !isRotRespOK(status, tr("Rot Open Error"), false) )
         return false;
-    }
-    else
-    {
-        qCDebug(runtime) << "Rot Open - OK";
-    }
+
+    qCDebug(runtime) << "Rot Open - OK";
 
     opened = true;
 
@@ -243,13 +248,7 @@ void HamlibRotDrv::setPosition(double in_azimuth, double in_elevation)
                                   static_cast<azimuth_t>(newAzimuth),
                                   static_cast<elevation_t>(newElevation));
 
-    if ( status != RIG_OK )
-    {
-        lastErrorText = hamlibErrorString(status);
-        qCWarning(runtime) << "Set Az/El error" << lastErrorText;
-        emit errorOccured(tr("Set Possition Error"),
-                          lastErrorText);
-    }
+    isRotRespOK(status, tr("Set Possition Error"), false);
 
     // wait a moment because Rotators are slow and they are not possible to set and get
     // mode so quickly (get mode is called in the main thread's update() function
@@ -261,6 +260,7 @@ void HamlibRotDrv::stopTimers()
     FCT_IDENTIFICATION;
 
     timer.stop();
+    errorTimer.stop();
 }
 
 void HamlibRotDrv::checkRotStateChange()
@@ -282,6 +282,21 @@ void HamlibRotDrv::checkRotStateChange()
     // restart timer
     timer.start(POOL_INTERVAL);
     drvLock.unlock();
+}
+
+void HamlibRotDrv::checkErrorCounter()
+{
+    FCT_IDENTIFICATION;
+
+    if ( postponedErrors.isEmpty() )
+       return;
+
+    qCDebug(runtime) << postponedErrors;
+
+     // emit only one error
+    auto it = postponedErrors.constBegin();
+    emit errorOccured(it.key(), it.value());
+    postponedErrors.clear();
 }
 
 void HamlibRotDrv::checkChanges()
@@ -307,7 +322,7 @@ void HamlibRotDrv::checkAzEl()
         elevation_t el;
 
         int status = rot_get_position(rot, &az, &el);
-        if ( status == RIG_OK )
+        if ( isRotRespOK(status, tr("Get Possition Error")) )
         {
             double newAzimuth = az;
             double newElevation = el;
@@ -328,18 +343,49 @@ void HamlibRotDrv::checkAzEl()
                 emit positioningChanged(azimuth, elevation);
             }
         }
-        else
-        {
-            lastErrorText = hamlibErrorString(status);
-            qCWarning(runtime) << "Get AZ/EL error" << lastErrorText;
-            emit errorOccured(tr("Get Possition Error"),
-                              lastErrorText);
-        }
     }
     else
-    {
         qCDebug(runtime) << "Get POSITION is disabled";
+}
+
+bool HamlibRotDrv::isRotRespOK(int errorStatus, const QString errorName, bool emitError)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << errorStatus << errorName << emitError;
+
+    if ( errorStatus == RIG_OK ) // there are no special codes for ROT, use RIG codes
+    {
+        if ( emitError )
+            postponedErrors.remove(errorName);
+        return true;
     }
+
+    lastErrorText = hamlibErrorString(errorStatus);
+
+    if ( emitError )
+    {
+        qCDebug(runtime) << "Emit Error detected";
+
+        if ( !RIG_IS_SOFT_ERRCODE(-errorStatus) )
+        {
+            // hard error, emit error now
+            qCDebug(runtime) << "Hard Error";
+            emit errorOccured(errorName, lastErrorText);
+        }
+        else
+        {
+            // soft error
+            postponedErrors[errorName] = lastErrorText;
+
+            if ( !errorTimer.isActive() )
+            {
+                qCDebug(runtime) << "Starting Error Timer";
+                errorTimer.start(15 * 1000); //15s
+            }
+        }
+    }
+    return false;
 }
 
 serial_handshake_e HamlibRotDrv::stringToHamlibFlowControl(const QString &in_flowcontrol)
@@ -384,28 +430,31 @@ QString HamlibRotDrv::hamlibErrorString(int errorCode)
 
     qCDebug(function_parameters) << errorCode;
 
-    static QRegularExpression re("[\r\n]");
-
-    const QStringList &errorList = QString(rigerror(errorCode)).split(re);
     QString ret;
+    QString detail(rigerror(errorCode));
+
+#if ( HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+    // The rigerror has different behavior since 4.5. It contains the stack trace in the first part
+    // Need to use rigerror2
+    ret = QString(rigerror2(errorCode));
+#else
+    static QRegularExpression re("[\r\n]");
+    QStringList errorList = detail.split(re);
 
     if ( errorList.size() >= 1 )
-    {
         ret = errorList.at(0);
-    }
-
-    qCDebug(runtime) << ret;
+#endif
+    qWarning() << "Detail" << detail;
+    qCWarning(runtime) << ret;
 
     return ret;
 }
 
 void HamlibRotDrv::commandSleep()
 {
-#ifdef Q_OS_WIN
-        Sleep(100);
-#else
-        usleep(100000);
-#endif
+    FCT_IDENTIFICATION;
+
+    QThread::msleep(100);
 }
 
 #undef MUTEXLOCKER

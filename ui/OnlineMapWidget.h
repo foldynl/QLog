@@ -11,7 +11,6 @@
 #include "ui/NewContactWidget.h"
 #include "core/KSTChat.h"
 #include "data/WsjtxEntry.h"
-#include "core/Wsjtx.h"
 
 namespace Ui {
 class OnlineMapWidget;

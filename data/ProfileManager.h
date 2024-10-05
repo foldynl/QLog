@@ -6,11 +6,7 @@
 #include <QMutex>
 #include <QSettings>
 #include <QLoggingCategory>
-#include "core/debug.h"
 #include <QtSql>
-
-#define MOD_NAME "qlog.data.profilemanager"
-
 
 /* the header file contains function implementation because
  * https://stackoverflow.com/questions/8752837/undefined-reference-to-template-class-constructor
@@ -98,9 +94,6 @@ public:
     explicit ProfileManagerSQL(const QString &tableName)
         : tableName(tableName)
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         QSqlQuery query(QString("SELECT profile_name FROM %1 WHERE IFNULL(selected, 0) = 1").arg(tableName));
         currentProfile1 = query.first() ? query.value(0).toString() : QString();
 
@@ -111,9 +104,6 @@ public:
 
     const T getCurProfile1()
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         return ( ! currentProfile1.isEmpty() ) ? getProfile(currentProfile1)
                                                : T();
     };
@@ -153,9 +143,6 @@ public:
 
     void setCurProfile1(const QString &profileName)
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         currProfMutex.lock();
         __setCurProfile1(profileName);
         currProfMutex.unlock();
@@ -163,9 +150,6 @@ public:
 
     void saveCurProfile1()
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         currProfMutex.lock();
         __setCurProfile1(currentProfile1);
         currProfMutex.unlock();
@@ -173,9 +157,6 @@ public:
 
     const T getProfile(const QString &profileName)
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         if ( profiles.contains(profileName) )
         {
             profilesMutex.lock();
@@ -193,9 +174,6 @@ public:
 
     void addProfile(const QString &profileName, T profile)
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         profilesMutex.lock();
         profiles.insert(profileName, QVariant::fromValue(profile));
         profilesMutex.unlock();
@@ -203,9 +181,6 @@ public:
 
     int removeProfile(const QString &profileName)
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         currProfMutex.lock();
         if ( currentProfile1 == profileName )
         {
@@ -222,9 +197,6 @@ public:
 
     const QStringList profileNameList()
     {
-        QString logging_cat(MOD_NAME); logging_cat.append(".function.entered");
-        qCDebug(QLoggingCategory(logging_cat.toLatin1().constData()));
-
         profilesMutex.lock();
         QStringList ret(profiles.keys());
         profilesMutex.unlock();

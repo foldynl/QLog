@@ -25,28 +25,31 @@ class StatisticsWidget : public QWidget
 
 public slots:
     void mainStatChanged(int);
-    void refreshGraph();
     void dateRangeCheckBoxChanged(int);
     void mapLoaded(bool);
     void changeTheme(int);
+    void refreshWidget();
 
+private slots:
+    void refreshGraph();
 
 public:
     explicit StatisticsWidget(QWidget *parent = nullptr);
     ~StatisticsWidget();
 
+protected:
+    bool event(QEvent *event) override;
+
 private:
+
     void drawBarGraphs(const QString &title, QSqlQuery &query);
     void drawPieGraph(const QString &title, QPieSeries* series);
     void drawMyLocationsOnMap(QSqlQuery &);
     void drawPointsOnMap(QSqlQuery&);
     void drawFilledGridsOnMap(QSqlQuery&);
-    void refreshCallCombo();
-    void refreshRigCombo();
-    void refreshAntCombo();
-    void refreshBandCombo();
-    void refreshGridCombo();
-    void refreshCombo(QComboBox * combo, QString sqlQeury);
+    void refreshCombos();
+    void setSubTypesCombo(int mainTypeIdx);
+    void refreshCombo(QComboBox * combo, const QString &sqlQeury);
 
 private:
     Ui::StatisticsWidget *ui;

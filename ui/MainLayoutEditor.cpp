@@ -369,7 +369,7 @@ QList<int> MainLayoutEditor::getFieldIndexes(StringListModel *model)
     const QStringList &list = model->stringList();
     QList<int> ret;
 
-    for ( const QString &fieldName : qAsConst(list) )
+    for ( const QString &fieldName : list )
     {
         int index = dynamicWidgets->getIndex4FieldLabelName(fieldName);
         if ( index >= 0 )
@@ -383,35 +383,35 @@ void MainLayoutEditor::fillWidgets(const MainLayoutProfile &profile)
 {
     FCT_IDENTIFICATION;
 
-    for ( int fieldIndex : qAsConst(profile.rowA) )
+    for ( int fieldIndex : static_cast<const QList<int>&>(profile.rowA) )
     {
         QString fieldName = dynamicWidgets->getFieldLabelName4Index(fieldIndex);
         qsoRowAFieldsModel->append(fieldName);
         availableFieldsModel->deleteItem(fieldName);
     }
 
-    for ( int fieldIndex : qAsConst(profile.rowB) )
+    for ( int fieldIndex : static_cast<const QList<int>&>(profile.rowB) )
     {
         QString fieldName = dynamicWidgets->getFieldLabelName4Index(fieldIndex);
         qsoRowBFieldsModel->append(fieldName);
         availableFieldsModel->deleteItem(fieldName);
     }
 
-    for ( int fieldIndex : qAsConst(profile.detailColA) )
+    for ( int fieldIndex : static_cast<const QList<int>&>(profile.detailColA) )
     {
         QString fieldName = dynamicWidgets->getFieldLabelName4Index(fieldIndex);
         detailColAFieldsModel->append(fieldName);
         availableFieldsModel->deleteItem(fieldName);
     }
 
-    for ( int fieldIndex : qAsConst(profile.detailColB) )
+    for ( int fieldIndex : static_cast<const QList<int>&>(profile.detailColB) )
     {
         QString fieldName = dynamicWidgets->getFieldLabelName4Index(fieldIndex);
         detailColBFieldsModel->append(fieldName);
         availableFieldsModel->deleteItem(fieldName);
     }
 
-    for ( int fieldIndex : qAsConst(profile.detailColC) )
+    for ( int fieldIndex : static_cast<const QList<int>&>(profile.detailColC) )
     {
         QString fieldName = dynamicWidgets->getFieldLabelName4Index(fieldIndex);
         detailColCFieldsModel->append(fieldName);

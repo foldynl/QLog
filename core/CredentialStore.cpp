@@ -16,14 +16,6 @@ CredentialStore::CredentialStore(QObject *parent) : QObject(parent)
     FCT_IDENTIFICATION;
 }
 
-CredentialStore* CredentialStore::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static CredentialStore instance;
-    return &instance;
-}
-
 int CredentialStore::savePassword(const QString &storage_key, const QString &user, const QString &pass)
 {
     FCT_IDENTIFICATION;

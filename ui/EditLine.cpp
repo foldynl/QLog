@@ -60,3 +60,22 @@ void NewContactEditLine::spaceForbidden(bool inSpaceForbidden)
 {
     spaceForbiddenFlag = inSpaceForbidden;
 }
+
+NewContactRSTEditLine::NewContactRSTEditLine(QWidget *parent) :
+    NewContactEditLine(parent),
+    focusInSelectionBackwardOffset(1)
+{
+}
+
+void NewContactRSTEditLine::setSelectionBackwardOffset(int offset)
+{
+    focusInSelectionBackwardOffset = offset;
+}
+
+void NewContactRSTEditLine::focusInEvent(QFocusEvent *event)
+{
+    NewContactEditLine::focusInEvent(event);
+
+    if ( event->reason() != Qt::PopupFocusReason && !text().isEmpty() && text().length() >= focusInSelectionBackwardOffset )
+        setSelection(text().length() - focusInSelectionBackwardOffset, 1);
+}

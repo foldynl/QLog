@@ -36,7 +36,7 @@ struct SpotAlert
     QStringList memberList2StringList() const
     {
         QStringList ret;
-        for ( const ClubInfo &member : qAsConst(callsign_member) )
+        for ( const ClubInfo &member : static_cast<const QList<ClubInfo>&>(callsign_member) )
         {
             ret << member.getClubInfo();
         }

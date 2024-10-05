@@ -152,8 +152,8 @@ void KSTHighlightRuleDetail::save()
     rule.enabled = ui->enabledCheckbox->isChecked();
     rule.interConditionOperand = static_cast<chatHighlightRule::InterConditionOperand>(ui->matchCombo->currentIndex());
 
-    QList<QHBoxLayout *> conditionLayouts = ui->conditionsLayout->findChildren<QHBoxLayout *>();
-    for (auto &conditionLine: qAsConst(conditionLayouts) )
+    const QList<QHBoxLayout *> &conditionLayouts = ui->conditionsLayout->findChildren<QHBoxLayout *>();
+    for (auto &conditionLine: conditionLayouts )
     {
         chatHighlightRule::Condition condition;
         for ( int i = 0; i < 3; i++ )
@@ -217,7 +217,7 @@ void KSTHighlightRuleDetail::loadRule(const QString &ruleName)
     ui->enabledCheckbox->setChecked(rule.enabled);
     ui->matchCombo->setCurrentIndex(rule.interConditionOperand);
 
-    for ( const chatHighlightRule::Condition &condition : qAsConst(rule.conditions))
+    for ( const chatHighlightRule::Condition &condition : static_cast<const QList<chatHighlightRule::Condition>&>(rule.conditions))
     {
         addCondition(condition.source,
                      condition.operatorID,

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>357</width>
-    <height>620</height>
+    <width>511</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -317,17 +317,10 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <layout class="QGridLayout" name="cont_group">
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="nacheckbox">
+            <item row="0" column="3">
+             <widget class="QCheckBox" name="sacheckbox">
               <property name="text">
-               <string>North America</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="afcheckbox">
-              <property name="text">
-               <string>Africa</string>
+               <string>South America</string>
               </property>
              </widget>
             </item>
@@ -338,10 +331,17 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QCheckBox" name="sacheckbox">
+            <item row="0" column="2">
+             <widget class="QCheckBox" name="nacheckbox">
               <property name="text">
-               <string>South America</string>
+               <string>North America</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QCheckBox" name="occheckbox">
+              <property name="text">
+               <string>Oceania</string>
               </property>
              </widget>
             </item>
@@ -359,10 +359,10 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QCheckBox" name="occheckbox">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="afcheckbox">
               <property name="text">
-               <string>Oceania</string>
+               <string>Africa</string>
               </property>
              </widget>
             </item>
@@ -424,40 +424,10 @@
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
            <layout class="QGridLayout" name="cont_group_spotter">
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="nacheckbox_spotter">
-              <property name="text">
-               <string>North America</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="afcheckbox_spotter">
-              <property name="text">
-               <string>Africa</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
              <widget class="QCheckBox" name="ancheckbox_spotter">
               <property name="text">
                <string>Antarctica</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QCheckBox" name="sacheckbox_spotter">
-              <property name="text">
-               <string>South America</string>
               </property>
               <property name="checked">
                <bool>false</bool>
@@ -484,10 +454,40 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="afcheckbox_spotter">
+              <property name="text">
+               <string>Africa</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QCheckBox" name="nacheckbox_spotter">
+              <property name="text">
+               <string>North America</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
              <widget class="QCheckBox" name="occheckbox_spotter">
               <property name="text">
                <string>Oceania</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QCheckBox" name="sacheckbox_spotter">
+              <property name="text">
+               <string>South America</string>
               </property>
               <property name="checked">
                <bool>false</bool>
@@ -547,19 +547,20 @@
   <tabstop>continent</tabstop>
   <tabstop>afcheckbox</tabstop>
   <tabstop>ascheckbox</tabstop>
-  <tabstop>nacheckbox</tabstop>
-  <tabstop>occheckbox</tabstop>
   <tabstop>ancheckbox</tabstop>
   <tabstop>eucheckbox</tabstop>
+  <tabstop>nacheckbox</tabstop>
+  <tabstop>occheckbox</tabstop>
   <tabstop>sacheckbox</tabstop>
+  <tabstop>memberGroupBox</tabstop>
   <tabstop>spotterCountryCombo</tabstop>
   <tabstop>continent_spotter</tabstop>
   <tabstop>afcheckbox_spotter</tabstop>
   <tabstop>ascheckbox_spotter</tabstop>
-  <tabstop>nacheckbox_spotter</tabstop>
-  <tabstop>occheckbox_spotter</tabstop>
   <tabstop>ancheckbox_spotter</tabstop>
   <tabstop>eucheckbox_spotter</tabstop>
+  <tabstop>nacheckbox_spotter</tabstop>
+  <tabstop>occheckbox_spotter</tabstop>
   <tabstop>sacheckbox_spotter</tabstop>
  </tabstops>
  <resources/>

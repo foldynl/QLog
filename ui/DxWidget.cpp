@@ -12,13 +12,13 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #endif
+#include <QMenu>
 
 #include "DxWidget.h"
 #include "ui_DxWidget.h"
 #include "data/Data.h"
 #include "DxFilterDialog.h"
 #include "models/SqlListModel.h"
-#include "ui/StyleItemDelegate.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
 #include "data/WCYSpot.h"
@@ -122,7 +122,7 @@ bool DxTableModel::addEntry(DxSpot entry, bool deduplicate,
     bool shouldInsert = true;
     if ( deduplicate )
     {
-        for (const DxSpot &record : qAsConst(dxData))
+        for (const DxSpot &record : static_cast<const QList<DxSpot>&>(dxData))
         {
             if ( record.time.secsTo(entry.time) > dedup_interval )
                 break;
@@ -403,18 +403,24 @@ DxWidget::DxWidget(QWidget *parent) :
 
     ui->setupUi(this);
 
+    setSearchClosed();
+
     ui->serverSelect->setStyleSheet(QStringLiteral("QComboBox {color: red}"));
 
-    dxTableModel = new DxTableModel(this);
     wcyTableModel = new WCYTableModel(this);
     wwvTableModel = new WWVTableModel(this);
     toAllTableModel = new ToAllTableModel(this);
 
+    dxTableProxyModel = new SearchFilterProxyModel(ui->dxTable);
+    dxTableModel = new DxTableModel(dxTableProxyModel);
+    dxTableProxyModel->setSourceModel(dxTableModel);
+
     QAction *separator = new QAction(this);
     separator->setSeparator(true);
 
-    ui->dxTable->setModel(dxTableModel);
+    ui->dxTable->setModel(dxTableProxyModel);
     ui->dxTable->addAction(ui->actionFilter);
+    ui->dxTable->addAction(ui->actionSearch);
     ui->dxTable->addAction(ui->actionDisplayedColumns);
     ui->dxTable->addAction(ui->actionClear);
     ui->dxTable->addAction(separator);
@@ -475,6 +481,7 @@ DxWidget::DxWidget(QWidget *parent) :
 
     ui->actionConnectOnStartup->setChecked(getAutoconnectServer());
     ui->actionKeepSpots->setChecked(getKeepQSOs());
+    dxTableProxyModel->setSearchSkippedCols(dxcListHiddenCols());
 }
 
 void DxWidget::toggleConnect()
@@ -787,31 +794,32 @@ void DxWidget::restoreWidgetSetting()
     FCT_IDENTIFICATION;
 
     QSettings settings;
-    QVariant state = settings.value("dxc/dxtablestate");
+    QByteArray state = settings.value("dxc/dxtablestate").toByteArray();
 
-    if (!state.isNull())
+    if (!state.isEmpty())
     {
-        ui->dxTable->horizontalHeader()->restoreState(state.toByteArray());
+        ui->dxTable->horizontalHeader()->restoreState(state);
     }
 
-    state = settings.value("dxc/wcytablestate");
+    state = settings.value("dxc/wcytablestate").toByteArray();
 
-    if (!state.isNull())
+    if (!state.isEmpty())
     {
-        ui->wcyTable->horizontalHeader()->restoreState(state.toByteArray());
+        ui->wcyTable->horizontalHeader()->restoreState(state);
     }
 
-    state = settings.value("dxc/wwvtablestate");
+    state = settings.value("dxc/wwvtablestate").toByteArray();
 
-    if (!state.isNull())
+    if (!state.isEmpty())
     {
-        ui->wwvTable->horizontalHeader()->restoreState(state.toByteArray());
+        ui->wwvTable->horizontalHeader()->restoreState(state);
     }
-    state = settings.value("dxc/toalltablestate");
 
-    if (!state.isNull())
+    state = settings.value("dxc/toalltablestate").toByteArray();
+
+    if (!state.isEmpty())
     {
-        ui->toAllTable->horizontalHeader()->restoreState(state.toByteArray());
+        ui->toAllTable->horizontalHeader()->restoreState(state);
     }
 
     int fontsize = settings.value("dxc/consolefontsize", -1).toInt();
@@ -1181,7 +1189,7 @@ void DxWidget::connected()
     ui->commandEdit->setEnabled(true);
     ui->connectButton->setEnabled(true);
     ui->connectButton->setText(tr("Disconnect"));
-    ui->commandEdit->setPlaceholderText("");
+    ui->commandEdit->setPlaceholderText(tr("DX Cluster Command"));
     ui->serverSelect->setStyleSheet("QComboBox {color: green}");
     connectionState = CONNECTED;
     saveDXCServers();
@@ -1198,9 +1206,11 @@ void DxWidget::entryDoubleClicked(QModelIndex index)
 {
     FCT_IDENTIFICATION;
 
-    emit tuneDx(dxTableModel->getCallsign(index),
-                dxTableModel->getFrequency(index),
-                dxTableModel->getBandPlanode(index));
+    const QModelIndex &source_index = dxTableProxyModel->mapToSource(index);
+
+    emit tuneDx(dxTableModel->getCallsign(source_index),
+                dxTableModel->getFrequency(source_index),
+                dxTableModel->getBandPlanode(source_index));
 }
 
 void DxWidget::actionFilter()
@@ -1298,6 +1308,37 @@ void DxWidget::prepareQSOSpot(QSqlRecord qso)
             ui->commandEdit->setFocus();
         }
     }
+}
+
+void DxWidget::setSearch(const QString &text)
+{
+    FCT_IDENTIFICATION;
+
+    dxTableProxyModel->setSearchString(text);
+}
+
+void DxWidget::setSearchStatus(bool visible)
+{
+    FCT_IDENTIFICATION;
+
+    ui->searchEdit->setVisible(visible);
+    ui->searchEdit->setFocus();
+    ui->searchCloseButton->setVisible(visible);
+
+    if (!visible)
+        ui->searchEdit->clear();
+}
+
+void DxWidget::setSearchVisible()
+{
+    FCT_IDENTIFICATION;
+    setSearchStatus(!ui->searchEdit->isVisible());
+}
+
+void DxWidget::setSearchClosed()
+{
+    FCT_IDENTIFICATION;
+    setSearchStatus(false);
 }
 
 void DxWidget::actionCommandSpotQSO()
@@ -1433,6 +1474,8 @@ void DxWidget::displayedColumns()
         ColumnSettingSimpleDialog dialog(view);
         dialog.exec();
         saveWidgetSetting();
+        if ( view == ui->dxTable )
+            dxTableProxyModel->setSearchSkippedCols(dxcListHiddenCols());
     }
 }
 
@@ -1502,7 +1545,7 @@ void DxWidget::processDxSpot(const QString &spotter,
 
     DxSpot spot;
 
-    spot.time = (dateTime.isNull()) ? QDateTime::currentDateTime().toTimeSpec(Qt::UTC)
+    spot.time = (!dateTime.isValid()) ? QDateTime::currentDateTime().toTimeSpec(Qt::UTC)
                                     : dateTime;
     spot.callsign = call;
     spot.freq = freq.toDouble() / 1000;
@@ -1539,6 +1582,20 @@ void DxWidget::processDxSpot(const QString &spotter,
         if ( dxTableModel->addEntry(spot, deduplicateSpots, deduplicatetime, deduplicatefreq) )
             emit newFilteredSpot(spot);
     }
+}
+
+QVector<int> DxWidget::dxcListHiddenCols() const
+{
+    QVector<int> ret;
+    ret.reserve(dxTableModel->columnCount());
+
+    for ( int i = 0; i < dxTableModel->columnCount(); ++i )
+    {
+        if (ui->dxTable->isColumnHidden(i))
+            ret.append(i);
+    }
+
+    return ret;
 }
 
 BandPlan::BandPlanMode DxWidget::modeGroupFromComment(const QString &comment) const

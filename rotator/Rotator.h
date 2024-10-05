@@ -3,7 +3,6 @@
 #include <QTimer>
 
 #include "data/RotProfile.h"
-#include "core/SerialPort.h"
 #include "rotator/drivers/GenericRotDrv.h"
 #include "RotCaps.h"
 
@@ -20,7 +19,11 @@ public:
         PSTROTATOR_DRIVER = 2
     };
 
-    static Rotator* instance();
+    static Rotator* instance()
+    {
+        static Rotator instance;
+        return &instance;
+    };
     double getAzimuth();
     double getElevation();
     bool isRotConnected();

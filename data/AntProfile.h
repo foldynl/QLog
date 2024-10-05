@@ -38,7 +38,11 @@ public:
     explicit AntProfilesManager(QObject *parent = nullptr);
     ~AntProfilesManager() { };
 
-    static AntProfilesManager *instance();
+    static AntProfilesManager *instance()
+    {
+        static AntProfilesManager instance;
+        return &instance;
+    };
     void save();
 
 };

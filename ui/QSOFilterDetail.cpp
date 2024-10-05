@@ -511,9 +511,9 @@ void QSOFilterDetail::save()
     {
         if ( deleteFilterStmt.exec() )
         {
-            QList<QHBoxLayout *> conditionLayouts = ui->conditionsLayout->findChildren<QHBoxLayout *>();
+            const QList<QHBoxLayout *> &conditionLayouts = ui->conditionsLayout->findChildren<QHBoxLayout *>();
 
-            for (auto &condition: qAsConst(conditionLayouts) )
+            for (auto &condition: conditionLayouts )
             {
                 int fieldNameIdx = 0;
                 int conditionIdx = 0;

@@ -265,7 +265,7 @@ bool CWFldigiKey::sendXMLRPCCall(const QString & methodName,
     {
         writer.writeStartElement("params");
 
-        for( const QPair<QString, QString>& param : qAsConst(*params) )
+        for( const QPair<QString, QString>& param : static_cast<const QList<QPair<QString, QString>>&>(*params) )
         {
             writer.writeStartElement("param");
             writer.writeStartElement("value");

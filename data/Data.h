@@ -7,7 +7,6 @@
 #include "SOTAEntity.h"
 #include "WWFFEntity.h"
 #include "POTAEntity.h"
-#include "Band.h"
 #include "core/zonedetect.h"
 
 class Data : public QObject
@@ -63,7 +62,11 @@ public:
 
     explicit Data(QObject *parent = nullptr);
     ~Data();
-    static Data* instance();
+    static Data* instance()
+    {
+        static Data instance;
+        return &instance;
+    };
 
     static DxccStatus dxccStatus(int dxcc, const QString &band, const QString &mode);
     static DxccStatus dxccFutureStatus(const DxccStatus &oldStatus,

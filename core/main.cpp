@@ -21,13 +21,11 @@
 #include "rotator/Rotator.h"
 #include "cwkey/CWKeyer.h"
 #include "AppGuard.h"
-#include "logformat/AdxFormat.h"
-#include "ui/SettingsDialog.h"
-#include "data/StationProfile.h"
 #include "core/zonedetect.h"
 #include "ui/SplashScreen.h"
 #include "core/MembershipQE.h"
 #include "core/KSTChat.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.core.main");
 
@@ -105,7 +103,7 @@ static void setupTranslator(QApplication* app,
     translationFolders  << qApp->applicationDirPath()
                         << QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
 
-    for ( const QString& folder : qAsConst(translationFolders) )
+    for ( const QString& folder : static_cast<const QStringList&>(translationFolders) )
     {
         qCDebug(runtime) << "Looking for a translation in" << folder << QString("i18n%1qlog_%2").arg(QDir::separator(), localeLang);
         QTranslator* translator = new QTranslator(app);
@@ -221,8 +219,8 @@ static bool createSQLFunctions()
                                      SQLITE_UTF16,
                                      nullptr,
                                      [](void *, int ll, const void * l, int rl, const void * r) {
-                                        const QString &left = QString::fromUtf16((const ushort *)l, ll/2);
-                                        const QString &right = QString::fromUtf16((const ushort *)r, rl/2);
+                                        const QString &left = QString::fromUtf16(reinterpret_cast<const char16_t *>(l), ll/2);
+                                        const QString &right = QString::fromUtf16(reinterpret_cast<const char16_t *>(r), rl/2);
                                         return QString::localeAwareCompare(left, right); // controlled by LC_COLLATE
                                      });
         }
@@ -236,65 +234,6 @@ static bool createSQLFunctions()
     return true;
 }
 
-static bool backupDatabase()
-{
-    FCT_IDENTIFICATION;
-    /* remove old backups */
-    /* retention time is 30 days but a minimum number of backup files is 5 */
-    const int retention_time = 30;
-    const int min_backout_count = 5;
-
-    QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
-    QString path = dir.filePath("qlog_backup_" + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + ".adx");
-    QString filter("qlog_backup_%1%1%1%1%1%1%1%1%1%1%1%1%1%1.adx");
-    filter = filter.arg("[0123456789]");
-
-    QFileInfoList file_list = QDir(dir).entryInfoList(QStringList(filter), QDir::Files, QDir::Name);
-
-    qCDebug(runtime) << file_list;
-
-    /* Keep the minimum number of backups */
-    /* If a number of backup is greater than min_backout_count then remove files older 30 days but always
-       protect a minimum number of backup file files */
-    for (int i = 0; i < qMin(min_backout_count, file_list.size()); i++)
-    {
-        file_list.takeLast();  // remove last 5 files from sorted list by name to protect them from removing.
-    }
-
-    /* remove those older than 30 days from the remaining files. */
-    Q_FOREACH (auto fileInfo, file_list)
-    {
-        if (fileInfo.lastModified().date().daysTo(QDate::currentDate()) > retention_time)
-        {
-            QString filepath = fileInfo.absoluteFilePath();
-            QDir deletefile;
-            deletefile.setPath(filepath);
-            deletefile.remove(filepath);
-            qCDebug(runtime) << "Removing file: " << filepath;
-        }
-    }
-
-    /* make a backup file */
-    QFile backup_file(path);
-
-    if ( !backup_file.open(QFile::ReadWrite | QIODevice::Text))
-    {
-        qWarning()<<"Cannot open backup file " << path << "for writing";
-        return false;
-    }
-
-    qCDebug(runtime)<<"Exporting a Database backup to " << path;
-
-    QTextStream stream(&backup_file);
-    AdxFormat adx(stream);
-
-    adx.runExport();
-    stream.flush();
-    backup_file.close();
-
-    qCDebug(runtime)<<"Database backup finished";
-    return true;
-}
 static bool migrateDatabase() {
     FCT_IDENTIFICATION;
 
@@ -469,7 +408,7 @@ int main(int argc, char* argv[])
     QString lang = parser.value(forceLanguage);
 
     app.setOrganizationName("hamradio");
-    app.setApplicationName("QLog" + ((environment.isNull()) ? "" : environment.prepend("-")));
+    app.setApplicationName("QLog" + ((environment.isEmpty()) ? "" : environment.prepend("-")));
 
     /* If the Style parameter is not present then use a default - Fusion style */
     if ( !stylePresent )
@@ -529,7 +468,7 @@ int main(int argc, char* argv[])
     splash.showMessage(QObject::tr("Backuping Database"), Qt::AlignBottom|Qt::AlignCenter);
 
     /* a migration can break a database therefore a backup is call before it */
-    if (!backupDatabase())
+    if (!Migration::backupDatabase())
     {
         QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
                               QMessageBox::tr("Could not export a QLog database to ADIF as a backup.<p>Try to export your log to ADIF manually"));

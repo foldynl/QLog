@@ -30,7 +30,12 @@ public:
         TCI_DRIVER = 4
     };
 
-    static Rig* instance();
+    static Rig* instance()
+    {
+        static Rig instance;
+        return &instance;
+    };
+
     static qint32 getNormalBandwidth(const QString &mode,
                                      const QString &subMode);
 

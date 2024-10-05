@@ -75,7 +75,7 @@ KSTUsersInfo KSTChat::getUserInfo(const QString &username) const
 
     qCDebug(function_parameters) << username;
 
-    for ( const KSTUsersInfo &info : qAsConst(userList) )
+    for ( const KSTUsersInfo &info : static_cast<const QList<KSTUsersInfo>&>(userList) )
     {
         if ( info.callsign == username )
             return info;
@@ -250,9 +250,9 @@ void KSTChat::receiveData()
     QRegularExpression chatCMDEndRE("([0-9]{4})Z " + userName.toUpper() + " " + QRegularExpression::escape(chatName) + " chat>(.*)");
     QRegularExpressionMatch chatCMDEndMatch;
 
-    QStringList lines = joinLines(socket->readAll());
+    const QStringList &lines = joinLines(socket->readAll());
 
-    for (const QString &line : qAsConst(lines) )
+    for (const QString &line : lines )
     {
         qCDebug(runtime) << "Processing Line" << line << "CMD" << currCommand;
         // Skip empty lines
@@ -461,7 +461,7 @@ void KSTChat::finalizeShowUsersCommand(const QStringList &buffer)
 
     userList.clear();
 
-    for ( const QString &record : qAsConst(buffer) )
+    for ( const QString &record : static_cast<const QList<QString>&>(buffer) )
     {
         QRegularExpressionMatch match = recordRE.match(record);
 
@@ -596,7 +596,7 @@ bool chatHighlightEvaluator::shouldHighlight(const KSTChatMsg &msg,
 {
     FCT_IDENTIFICATION;
 
-    for ( const chatHighlightRule *rule : qAsConst(ruleList) )
+    for ( const chatHighlightRule *rule : static_cast<const QList<chatHighlightRule *>&>(ruleList) )
     {
         qCDebug(runtime) << "Processing " << rule->ruleName;
         if ( rule->match(roomIndex, msg) )
@@ -696,7 +696,7 @@ QByteArray chatHighlightRule::toJson()
 
     QJsonArray conditionsArray;
 
-    for ( const Condition &condition : qAsConst(conditions) )
+    for ( const Condition &condition : static_cast<const QList<Condition>&>(conditions) )
     {
         QJsonObject conditionObject;
 
@@ -733,8 +733,8 @@ void chatHighlightRule::fromJson(const QJsonDocument &ruleDefinition)
     enabled = ruleDefinition["enabled"].toBool();
     ruleRoomIndex = ruleDefinition["roomId"].toInt();
     interConditionOperand = static_cast<InterConditionOperand>(ruleDefinition["operand"].toInt());
-    QJsonArray conditionArray = ruleDefinition["conditions"].toArray();
-    for ( const QJsonValue &value : qAsConst(conditionArray) )
+    const QJsonArray &conditionArray = ruleDefinition["conditions"].toArray();
+    for ( const QJsonValue &value : conditionArray )
     {
         QJsonObject obj = value.toObject();
         Condition condition;
@@ -779,7 +779,7 @@ bool chatHighlightRule::match(const int inRoomIndex,
     bool result = false;
     bool isFirstCondition = true;
 
-    for ( const Condition &condition : qAsConst(conditions) )
+    for ( const Condition &condition : static_cast<const QList<Condition>&>(conditions) )
     {
         QString columnValue;
 

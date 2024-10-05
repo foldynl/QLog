@@ -1,5 +1,5 @@
-#ifndef ROTATOR_DRIVERS_PSTROTDRV_H
-#define ROTATOR_DRIVERS_PSTROTDRV_H
+#ifndef QLOG_ROTATOR_DRIVERS_PSTROTDRV_H
+#define QLOG_ROTATOR_DRIVERS_PSTROTDRV_H
 
 #include <QUdpSocket>
 #include <QTimer>
@@ -41,4 +41,4 @@ private:
     QHostAddress rotatorAddress;
 };
 
-#endif // ROTATOR_DRIVERS_PSTROTDRV_H
+#endif // QLOG_ROTATOR_DRIVERS_PSTROTDRV_H

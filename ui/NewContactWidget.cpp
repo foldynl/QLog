@@ -16,8 +16,6 @@
 #include "core/debug.h"
 #include "core/Gridsquare.h"
 #include "data/StationProfile.h"
-#include "core/HamQTH.h"
-#include "core/QRZ.h"
 #include "data/RigProfile.h"
 #include "data/AntProfile.h"
 #include "data/CWKeyProfile.h"
@@ -186,23 +184,8 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     /**************/
     /* CONNECTs   */
     /**************/
-    connect(rig, &Rig::frequencyChanged,
-            this, &NewContactWidget::changeFrequency);
-
-    connect(rig, &Rig::modeChanged,
-            this, &NewContactWidget::changeModefromRig);
-
-    connect(rig, &Rig::powerChanged,
-            this, &NewContactWidget::changePower);
-
-    connect(rig, &Rig::rigConnected,
-            this, &NewContactWidget::rigConnected);
-
-    connect(rig, &Rig::rigDisconnected,
-            this, &NewContactWidget::rigDisconnected);
-
     connect(&callbookManager, &CallbookManager::callsignResult,
-            this, &NewContactWidget::callsignResult);
+            this, &NewContactWidget::setCallbookFields);
 
     connect(&callbookManager, &CallbookManager::loginFailed, this, [this](const QString &callbookString)
     {
@@ -212,7 +195,7 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
 
     connect(contactTimer, &QTimer::timeout, this, &NewContactWidget::updateTimeOff);
 
-    connect(MembershipQE::instance(), &MembershipQE::clubStatusResult, this, &NewContactWidget::clubQueryResult);
+    connect(MembershipQE::instance(), &MembershipQE::clubStatusResult, this, &NewContactWidget::setMembershipList);
 
     /******************************/
     /* CONNECTs  DYNAMIC WIDGETS  */
@@ -270,57 +253,42 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
 
     // SQL query returns two QSOs. The first one is the last QSO with Base Callsign
     // and the second one is the last QSO for the Callsign from a portable QTH.
-    isprevQSOQueryPrepared = prevQSOQuery.prepare(QLatin1String("SELECT callsign, "
-                                                                "       name_intl, "
-                                                                "       qth_intl, "
-                                                                "       gridsquare, "
-                                                                "       notes_intl, "
-                                                                "       email, "
-                                                                "       web , "
-                                                                "       darc_dok "
-                                                                "FROM ( "
-                                                                "  SELECT "
-                                                                "    callsign, "
-                                                                "    name_intl, "
-                                                                "    qth_intl, "
-                                                                "    gridsquare, "
-                                                                "    notes_intl, "
-                                                                "    email, "
-                                                                "    web , "
-                                                                "    darc_dok "
-                                                                "  FROM contacts "
-                                                                "  WHERE callsign = :exactCallsign "
-                                                                "  ORDER BY start_time DESC "
-                                                                "  LIMIT 1 "
-                                                                "  ) "
-                                                                "UNION ALL "
-                                                                "SELECT callsign, "
-                                                                "       name_intl, "
-                                                                "       qth_intl, "
-                                                                "       gridsquare, "
-                                                                "       notes_intl, "
-                                                                "       email, "
-                                                                "       web , "
-                                                                "       darc_dok "
-                                                                "FROM ( "
-                                                                "  SELECT "
-                                                                "     callsign, "
-                                                                "     name_intl, "
-                                                                "     qth_intl, "
-                                                                "     gridsquare, "
-                                                                "     notes_intl, "
-                                                                "     email, "
-                                                                "     web , "
-                                                                "     darc_dok "
-                                                                "  FROM contacts c, contacts_autovalue a "
-                                                                "  WHERE c.id = a.contactid "
-                                                                "        AND a.base_callsign = :partialCallsign "
-                                                                "  ORDER BY start_time DESC "
-                                                                "  LIMIT 1 "
-                                                                "  )"));
+    isPrevQSOExactMatchQuery = prevQSOExactMatchQuery.prepare(QLatin1String("SELECT "
+                                                                            "    callsign, "
+                                                                            "    name_intl, "
+                                                                            "    qth_intl, "
+                                                                            "    gridsquare, "
+                                                                            "    notes_intl, "
+                                                                            "    email, "
+                                                                            "    web , "
+                                                                            "    darc_dok "
+                                                                            "FROM contacts "
+                                                                            "WHERE callsign = :exactCallsign "
+                                                                            "      AND gridsquare LIKE :grid "
+                                                                            "ORDER BY start_time DESC "
+                                                                            "LIMIT 1 "));
 
-    if ( !isprevQSOQueryPrepared)
-        qWarning() << "Cannot prepare prevQSOquery statement";
+    if ( !isPrevQSOExactMatchQuery)
+        qWarning() << "Cannot prepare prevQSOExactMatchQuery statement";
+
+    isPrevQSOBaseCallMatchQuery = prevQSOBaseCallMatchQuery.prepare(QLatin1String("SELECT "
+                                                                                  "     callsign, "
+                                                                                  "     name_intl, "
+                                                                                  "     qth_intl, "
+                                                                                  "     gridsquare, "
+                                                                                  "     notes_intl, "
+                                                                                  "     email, "
+                                                                                  "     web , "
+                                                                                  "     darc_dok "
+                                                                                  "FROM contacts c "
+                                                                                  "  INNER JOIN contacts_autovalue a ON c.id = a.contactid "
+                                                                                  "WHERE a.base_callsign = :partialCallsign "
+                                                                                  "ORDER BY start_time DESC "
+                                                                                  "LIMIT 1"));
+
+    if ( !isPrevQSOBaseCallMatchQuery)
+        qWarning() << "Cannot prepare prevQSOBaseCallMatchQuery statement";
+
 }
 
 void NewContactWidget::setComboBaseData(QComboBox *combo, const QString &data)
@@ -408,14 +376,14 @@ void NewContactWidget::readGlobalSettings()
     refreshAntProfileCombo();
 
     // recalculate all stats
-    queryDxcc(ui->callsignEdit->text().toUpper());
+    setDxccInfo(ui->callsignEdit->text().toUpper());
 
     ui->freqRXEdit->loadBands();
     ui->freqTXEdit->loadBands();
 }
 
 /* function is called when an operator change Callsign Edit */
-void NewContactWidget::callsignChanged()
+void NewContactWidget::handleCallsignFromUser()
 {
     FCT_IDENTIFICATION;
 
@@ -456,16 +424,16 @@ void NewContactWidget::callsignChanged()
     }
     else
     {
-        queryDxcc(callsign);
+        setDxccInfo(callsign);
 
         if ( callsign.length() >= 3 )
-            fillFieldsFromLastQSO(callsign);
+            useFieldsFromPrevQSO(callsign);
     }
 }
 
 /* function is called when Callsign Edit is finished - example pressed enter */
 /* if callsign is entered then QLog call callbook query */
-void NewContactWidget::editCallsignFinished()
+void NewContactWidget::finalizeCallsignEdit()
 {
     FCT_IDENTIFICATION;
 
@@ -477,8 +445,7 @@ void NewContactWidget::editCallsignFinished()
     }
 }
 
-
-void NewContactWidget::setCurrentDxcc(const DxccEntity &curr)
+void NewContactWidget::setDxccInfo(const DxccEntity &curr)
 {
     FCT_IDENTIFICATION;
 
@@ -492,53 +459,41 @@ void NewContactWidget::setCurrentDxcc(const DxccEntity &curr)
         updateCoordinates(dxccEntity.latlon[0], dxccEntity.latlon[1], COORD_DXCC);
         ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, BandPlan::freq2Band(ui->freqTXEdit->value()));
         uiDynamic->contEdit->setCurrentText(dxccEntity.cont);
-
+        ui->flagView->setPixmap((!dxccEntity.flag.isEmpty() ) ? QPixmap(QString(":/flags/64/%1.png").arg(dxccEntity.flag))
+                                                              : QPixmap() );
         updateDxccStatus();
-
-        if ( !dxccEntity.flag.isEmpty() )
-        {
-            QPixmap flag(QString(":/flags/64/%1.png").arg(dxccEntity.flag));
-            ui->flagView->setPixmap(flag);
-        }
-        else
-            ui->flagView->setPixmap(QPixmap());
     }
     else
     {
-        ui->flagView->setPixmap(QPixmap());
-        ui->dxccTableWidget->clear();
-        ui->dxccStatus->clear();
-        ui->distanceInfo->clear();
-        dxDistance = qQNaN();
-        ui->bearingInfo->clear();
-        partnerTimeZone = QTimeZone();
-        ui->partnerLocTimeInfo->clear();
         ui->dxccInfo->setText(" ");
         uiDynamic->cqzEdit->clear();
         uiDynamic->ituEdit->clear();
+        clearCoordinates();
+        ui->dxccTableWidget->clear();
         uiDynamic->contEdit->setCurrentText("");
+        ui->flagView->setPixmap(QPixmap());
+        ui->dxccStatus->clear();
 
         emit newTarget(qQNaN(), qQNaN());
     }
 }
 
-/* Obtain DXCC info from local database */
-void NewContactWidget::queryDxcc(const QString &callsign)
+void NewContactWidget::setDxccInfo(const QString &callsign)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << callsign;
 
-    setCurrentDxcc(Data::instance()->lookupDxcc(callsign));
+    setDxccInfo(Data::instance()->lookupDxcc(callsign));
 }
 
-void NewContactWidget::fillFieldsFromLastQSO(const QString &callsign)
+void NewContactWidget::useFieldsFromPrevQSO(const QString &callsign, const QString &grid)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << callsign;
 
-    if ( !isprevQSOQueryPrepared )
+    if ( !isPrevQSOExactMatchQuery || !isPrevQSOBaseCallMatchQuery)
         return;
 
     const Callsign enteredCallsign(callsign);
@@ -551,50 +506,68 @@ void NewContactWidget::fillFieldsFromLastQSO(const QString &callsign)
 
     const QString &baseCallsign = enteredCallsign.getBase();
     // search the base_callsign
-    prevQSOQuery.bindValue(":exactCallsign",baseCallsign );
-    prevQSOQuery.bindValue(":partialCallsign", baseCallsign);
+    prevQSOExactMatchQuery.bindValue(":exactCallsign", baseCallsign);
+    prevQSOExactMatchQuery.bindValue(":grid", grid + "%");
 
-    if ( !prevQSOQuery.exec() )
+    if ( !prevQSOExactMatchQuery.exec() )
     {
-        qWarning() << "Cannot execute statement" << prevQSOQuery.lastError();
+        qWarning() << "Cannot execute statement" << prevQSOExactMatchQuery.lastError();
         emit filterCallsign(QString());
         return;
     }
 
-    if ( prevQSOQuery.next() )
+    if ( prevQSOExactMatchQuery.next() )
     {
-        // SQL query returns two QSOs. The first one is the last QSO with Base Callsign
-        // and the second one is the last QSO for callsign, which was made from a portable QTH.
-        // The recognition is possible because the record where Callsign == Based Callsign
-        // is a QSO with the given Callsign from the base QTH.
-        // Otherwise, it's a QSO with a given Callsign from a portable QTH.
-        if ( prevQSOQuery.value("callsign").toString() == baseCallsign
-             && enteredCallsign.getHostPrefix().isEmpty()
+        // callsign match the base callsign - full info available
+        if ( enteredCallsign.getHostPrefix().isEmpty()
              && enteredCallsign.getSuffix().isEmpty() )
         {
             // entered callsign is base callsign - no portable QTH. Get all fields from
             // previous QSO
-            uiDynamic->qthEdit->setText(prevQSOQuery.value("qth_intl").toString());
-            uiDynamic->gridEdit->setText(prevQSOQuery.value("gridsquare").toString());
-            uiDynamic->dokEdit->setText(prevQSOQuery.value("darc_dok").toString());
+            uiDynamic->qthEdit->setText(prevQSOExactMatchQuery.value("qth_intl").toString());
+            uiDynamic->gridEdit->setText(prevQSOExactMatchQuery.value("gridsquare").toString());
+            uiDynamic->dokEdit->setText(prevQSOExactMatchQuery.value("darc_dok").toString());
         }
-        uiDynamic->nameEdit->setText(prevQSOQuery.value("name_intl").toString());
-        ui->noteEdit->insertPlainText(prevQSOQuery.value("notes_intl").toString());
-        uiDynamic->emailEdit->setText(prevQSOQuery.value("email").toString());
-        uiDynamic->urlEdit->setText(prevQSOQuery.value("web").toString());
+        uiDynamic->nameEdit->setText(prevQSOExactMatchQuery.value("name_intl").toString());
+        ui->noteEdit->insertPlainText(prevQSOExactMatchQuery.value("notes_intl").toString());
+        uiDynamic->emailEdit->setText(prevQSOExactMatchQuery.value("email").toString());
+        uiDynamic->urlEdit->setText(prevQSOExactMatchQuery.value("web").toString());
 
         emit filterCallsign(baseCallsign);
     }
     else
     {
-        //callsign not found
-        qCDebug(runtime) << "Callsign not match in the Logbook";
-        emit filterCallsign(QString());
+        //exact match not found
+        prevQSOBaseCallMatchQuery.bindValue(":partialCallsign", baseCallsign);
+
+        if ( !prevQSOBaseCallMatchQuery.exec() )
+        {
+            qWarning() << "Cannot execute statement2" << prevQSOBaseCallMatchQuery.lastError();
+            emit filterCallsign(QString());
+            return;
+        }
+
+        if ( prevQSOBaseCallMatchQuery.next() )
+        {
+            // partial informaion available
+            uiDynamic->nameEdit->setText(prevQSOBaseCallMatchQuery.value("name_intl").toString());
+            ui->noteEdit->insertPlainText(prevQSOBaseCallMatchQuery.value("notes_intl").toString());
+            uiDynamic->emailEdit->setText(prevQSOBaseCallMatchQuery.value("email").toString());
+            uiDynamic->urlEdit->setText(prevQSOBaseCallMatchQuery.value("web").toString());
+
+            emit filterCallsign(baseCallsign);
+        }
+        else
+        {
+            //callsign not found
+            qCDebug(runtime) << "Callsign not match in the Logbook";
+            emit filterCallsign(QString());
+        }
     }
 }
 
 /* function handles a response from Callbook classes */
-void NewContactWidget::callsignResult(const QMap<QString, QString>& data)
+void NewContactWidget::setCallbookFields(const QMap<QString, QString>& data)
 {
     FCT_IDENTIFICATION;
 
@@ -682,7 +655,7 @@ void NewContactWidget::callsignResult(const QMap<QString, QString>& data)
         {
             qCDebug(runtime) << "Received different DXCC Info" << data.value("dxcc")
                              << dxccEntity.dxcc;
-            setCurrentDxcc(Data::instance()->lookupDxccID(callbookDXCC));
+            setDxccInfo(Data::instance()->lookupDxccID(callbookDXCC));
         }
     }
 
@@ -698,27 +671,23 @@ void NewContactWidget::callsignResult(const QMap<QString, QString>& data)
     lastCallbookQueryData = QMap<QString, QString>(data);
 }
 
-void NewContactWidget::clubQueryResult(const QString &in_callsign, QMap<QString, ClubStatusQuery::ClubStatus> data)
+void NewContactWidget::setMembershipList(const QString &in_callsign,
+                                         QMap<QString, ClubStatusQuery::ClubStatus> data)
 {
     FCT_IDENTIFICATION;
 
     if ( in_callsign != callsign )
-    {
-        // do not need this result
         return;
-    }
 
     QString memberText;
-
     QMapIterator<QString, ClubStatusQuery::ClubStatus> clubs(data);
-
     QPalette palette;
 
-    //"<font color='red'>Hello</font> <font color='green'>World</font>"
     while ( clubs.hasNext() )
     {
         clubs.next();
-        QColor color = Data::statusToColor(static_cast<DxccStatus>(clubs.value()), palette.color(QPalette::Text));
+        const QColor &color = Data::statusToColor(static_cast<DxccStatus>(clubs.value()), palette.color(QPalette::Text));
+        //"<font color='red'>Hello</font> <font color='green'>World</font>"
         memberText.append(QString("<font color='%1'>%2</font>&nbsp;&nbsp;&nbsp;").arg(Data::colorToHTMLColor(color), clubs.key()));
     }
     ui->memberListLabel->setText(memberText);
@@ -832,13 +801,15 @@ void NewContactWidget::__modeChanged()
     QStringListModel* model = dynamic_cast<QStringListModel*>(ui->submodeEdit->model());
     model->setStringList(submodeList);
 
-    if (!submodeList.isEmpty()) {
+    if (!submodeList.isEmpty())
+    {
         submodeList.prepend("");
         model->setStringList(submodeList);
         ui->submodeEdit->setVisible(true);
         ui->submodeEdit->setCurrentIndex(1);
     }
-    else {
+    else
+    {
         QStringList list;
         model->setStringList(list);
         ui->submodeEdit->setVisible(false);
@@ -964,7 +935,7 @@ void NewContactWidget::gridChanged()
     if (!newGrid.isValid())
     {
         coordPrec = COORD_NONE;
-        queryDxcc(ui->callsignEdit->text().toUpper());
+        setDxccInfo(ui->callsignEdit->text().toUpper());
         return;
     }
 
@@ -1049,7 +1020,6 @@ void NewContactWidget::resetContact()
 void NewContactWidget::addAddlFields(QSqlRecord &record, const StationProfile &profile)
 {
     FCT_IDENTIFICATION;
-
 
     if ( record.value("pfx").toString().isEmpty() )
     {
@@ -1712,13 +1682,17 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
     QSqlField idField = model.record().field(model.fieldIndex("id"));
     model.removeColumn(model.fieldIndex("id"));
 
-    const DxccEntity &dxcc = Data::instance()->lookupDxcc(savedCallsign);
+    // if DXCC field is present then it must be used as DXCC Entity
+    int recordDXCCId = record.value("dxcc").toInt(); // 0 = NAN or not present
+                                                     // otherwise = DXCC ID
+    const DxccEntity &dxcc = ( recordDXCCId ) ? Data::instance()->lookupDxccID(recordDXCCId)
+                                              : Data::instance()->lookupDxcc(savedCallsign);
 
     if ( dxcc.dxcc != 0 )
     {
-        if ( record.value("country_intl").toString().isEmpty()
-             && record.value("country").toString().isEmpty() )
-            record.setValue("country_intl", dxcc.country);
+        // force overwrite
+        record.setValue("dxcc", dxcc.dxcc);
+        record.setValue("country_intl", dxcc.country);
 
         if ( record.value("cqz").toString().isEmpty() )
             record.setValue("cqz", dxcc.cqz);
@@ -1728,15 +1702,14 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
 
         if ( record.value("cont").toString().isEmpty() )
             record.setValue("cont", dxcc.cont);
-
-        if ( record.value("dxcc").toString().isEmpty() )
-            record.setValue("dxcc", dxcc.dxcc);
     }
 
     // add information from callbook if it is a known callsign
     // based on the poll #420, QLog adds more information from callbook
     if ( savedCallsign == ui->callsignEdit->text() )
     {
+        stopContactTimer();
+        updateTime();
         // information independent of QTH
         if ( record.value("name_intl").toString().isEmpty()
              && record.value("name").toString().isEmpty()
@@ -1783,6 +1756,26 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
             if ( record.value("state").toString().isEmpty()
                  && !uiDynamic->stateEdit->text().isEmpty() )
                 record.setValue("state", uiDynamic->stateEdit->text());
+
+            if ( record.value("pota_ref").toString().isEmpty()
+                 && !uiDynamic->potaEdit->text().isEmpty())
+                record.setValue("pota_ref", uiDynamic->potaEdit->text());
+
+            if ( record.value("sota_ref").toString().isEmpty()
+                && !uiDynamic->sotaEdit->text().isEmpty())
+                record.setValue("sota_ref", uiDynamic->sotaEdit->text());
+
+            if ( record.value("sig_intl").toString().isEmpty()
+                && !uiDynamic->sigEdit->text().isEmpty())
+                record.setValue("sig_intl", uiDynamic->sigEdit->text());
+
+            if ( record.value("sig_info_intl").toString().isEmpty()
+                && !uiDynamic->sigInfoEdit->text().isEmpty())
+                record.setValue("sig_info_intl", uiDynamic->sigInfoEdit->text());
+
+            if ( record.value("wwff_ref").toString().isEmpty()
+                && !uiDynamic->wwffEdit->text().isEmpty())
+                record.setValue("wwff_ref", uiDynamic->wwffEdit->text());
 
             // fix ITUz and CQz from callbook, if necessary
             if ( record.value("ituz").toString() != uiDynamic->ituEdit->text() )
@@ -1967,7 +1960,17 @@ void NewContactWidget::updateCoordinates(double lat, double lon, CoordPrecision 
 
         emit newTarget(lat, lon);
     }
+}
 
+void NewContactWidget::clearCoordinates()
+{
+    FCT_IDENTIFICATION;
+
+    ui->distanceInfo->clear();
+    dxDistance = qQNaN();
+    ui->bearingInfo->clear();
+    partnerTimeZone = QTimeZone();
+    ui->partnerLocTimeInfo->clear();
 }
 
 void NewContactWidget::updateDxccStatus()
@@ -2361,8 +2364,8 @@ void NewContactWidget::setupCustomUi()
     FCT_IDENTIFICATION;
 
     // Clear Custom Lines
-    QList<QHBoxLayout *> customUiRows = ui->customLayout->findChildren<QHBoxLayout *>();
-    for ( auto &rowLayout : qAsConst(customUiRows) )
+    const QList<QHBoxLayout *> &customUiRows = ui->customLayout->findChildren<QHBoxLayout *>();
+    for ( auto &rowLayout : customUiRows )
     {        
         qCDebug(runtime) << "Removing objects from " << rowLayout->objectName();
 
@@ -2382,7 +2385,7 @@ void NewContactWidget::setupCustomUi()
     QList<QFormLayout *> detailColumns;
     detailColumns << ui->detailColA << ui->detailColB << ui->detailColC;
 
-    for ( QFormLayout * layout : qAsConst(detailColumns) )
+    for ( QFormLayout * layout : static_cast<const QList<QFormLayout*>&>(detailColumns) )
     {
         qCDebug(runtime) << "Removing" << layout->rowCount() <<"object(s) from" << layout->objectName();
 
@@ -2611,11 +2614,12 @@ void NewContactWidget::fillCallsignGrid(const QString &callsign, const QString &
     uiDynamic->gridEdit->setText(grid);
 }
 
-void NewContactWidget::showDx(const QString &callsign, const QString &grid)
+void NewContactWidget::prepareWSJTXQSO(const QString &receivedCallsign,
+                                       const QString &grid)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters)<<callsign<< " " << grid;
+    qCDebug(function_parameters) << receivedCallsign << grid;
 
     if ( isManualEnterMode )
     {
@@ -2624,19 +2628,45 @@ void NewContactWidget::showDx(const QString &callsign, const QString &grid)
     }
 
     resetContact();
-    changeCallsignManually(callsign);
+    if ( receivedCallsign.isEmpty() )
+        return;
+
+    QSOFreq = ui->freqRXEdit->value(); // Important !!! - to prevent QSY Contact Reset when the frequency is set
+    // QSY Wipe disabling - It is possible to have a RIG connected and run WSJTX.
+    // To prevent the QSY Wipe when WSJTX's Fake Split Mode is enabled, QLog starts the QSO Timer.
+    if ( rigOnline )
+        startContactTimer();
+
+    callsign = receivedCallsign;
+    ui->callsignEdit->setText(receivedCallsign);
     uiDynamic->gridEdit->setText(grid);
+    setDxccInfo(receivedCallsign);
+
+    // at the moment WSJTX sends several statuses about changing one callsign.
+    // In order to avoid multiple searches, we will search only when we have a grid - it was usually the last
+    // status message
+    // the current status message sequence is
+    // 1) prev Callsign empty grid
+    // 2) new Callsign empty grid
+    // 3) new Calllsign, new gris
+    if ( !grid.isEmpty() )
+    {
+        useFieldsFromPrevQSO(callsign, grid);
+        finalizeCallsignEdit();
+    }
 }
 
-void NewContactWidget::setDefaultReport() {
+void NewContactWidget::setDefaultReport()
+{
     FCT_IDENTIFICATION;
 
-    if (defaultReport.isEmpty()) {
+    if (defaultReport.isEmpty())
         defaultReport = "";
-    }
 
     ui->rstRcvdEdit->setText(defaultReport);
+    ui->rstRcvdEdit->setSelectionBackwardOffset(defaultReport.size() >= 3 ? 2 : 1 );
     ui->rstSentEdit->setText(defaultReport);
+    ui->rstSentEdit->setSelectionBackwardOffset(defaultReport.size() >= 3 ? 2 : 1 );
 }
 
 void NewContactWidget::webLookup()
@@ -2874,7 +2904,7 @@ void NewContactWidget::stationProfileComboChanged(const QString &profileName)
     emit stationProfileChanged();
 
     // recalculate all stats
-    queryDxcc(ui->callsignEdit->text().toUpper());
+    setDxccInfo(ui->callsignEdit->text().toUpper());
 }
 
 void NewContactWidget::rigProfileComboChanged(const QString &profileName)
@@ -3220,8 +3250,8 @@ void NewContactWidget::changeCallsignManually(const QString &callsign, double fr
     QSOFreq = freq; // Important !!! - to prevent QSY Contact Reset when the frequency is set
     ui->callsignEdit->setText(callsign);
     ui->callsignEdit->end(false);
-    callsignChanged();
-    editCallsignFinished();
+    handleCallsignFromUser();
+    finalizeCallsignEdit();
     stopContactTimer();
 }
 
@@ -3397,6 +3427,9 @@ QWidget *NewContactDynamicWidgets::getEditor(int index)
 {
     FCT_IDENTIFICATION;
 
+    if ( !widgetMapping.contains(index) )
+        return nullptr;
+
     widgetMapping.value(index).editor->setHidden(false);
     widgetMapping.value(index).editor->setFocusPolicy(Qt::ClickFocus);
     return widgetMapping.value(index).editor;
@@ -3409,7 +3442,7 @@ QStringList NewContactDynamicWidgets::getAllFieldLabelNames() const
     QStringList ret;
     const QList<DynamicWidget> &dynWidget = widgetMapping.values();
 
-    for (const DynamicWidget &widget : qAsConst(dynWidget))
+    for (const DynamicWidget &widget : dynWidget)
     {
         ret << widget.fieldLabelName;
     }
@@ -3433,6 +3466,9 @@ int NewContactDynamicWidgets::getIndex4FieldLabelName(const QString &value) cons
 QString NewContactDynamicWidgets::getFieldLabelName4Index(int i) const
 {
     FCT_IDENTIFICATION;
+
+    if ( !widgetMapping.contains(i) )
+        return QString();
 
     return widgetMapping.value(i).fieldLabelName;
 }

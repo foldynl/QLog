@@ -11,7 +11,11 @@ class CWKeyer : public QObject
     Q_OBJECT
 
 public:
-    static CWKeyer* instance();
+    static CWKeyer* instance()
+    {
+        static CWKeyer instance;
+        return &instance;
+    };
     void stopTimer();
 
 signals:

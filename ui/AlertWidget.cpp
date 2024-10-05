@@ -131,11 +131,11 @@ void AlertWidget::restoreTableHeaderState()
 {
     FCT_IDENTIFICATION;
 
-    const QVariant &state = settings.value("alert/state");
+    const QByteArray &state = settings.value("alert/state").toByteArray();
 
-    if (!state.isNull())
+    if (!state.isEmpty())
     {
-        ui->alertTableView->horizontalHeader()->restoreState(state.toByteArray());
+        ui->alertTableView->horizontalHeader()->restoreState(state);
     }
 }
 

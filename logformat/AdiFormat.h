@@ -8,7 +8,7 @@
 class AdiFormat : public LogFormat
 {
 public:
-    explicit AdiFormat(QTextStream& stream) : LogFormat(stream) {}
+    explicit AdiFormat(QTextStream& stream);
 
     virtual bool importNext(QSqlRecord& ) override;
 
@@ -22,11 +22,9 @@ public:
     static void preprocessINTLFields(T &contact)
     {
         {
-            QStringList fieldMappingList = fieldname2INTLNameMapping.keys();
-            for ( const QString& fieldName :  qAsConst(fieldMappingList) )
-            {
+            const QStringList &fieldMappingList = fieldname2INTLNameMapping.keys();
+            for ( const QString& fieldName :  fieldMappingList )
                 preprocessINTLField(fieldName, fieldname2INTLNameMapping.value(fieldName), contact);
-            }
         }
     }
 

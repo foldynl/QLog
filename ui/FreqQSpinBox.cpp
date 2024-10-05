@@ -50,7 +50,7 @@ void FreqQSpinBox::increaseByBand()
     if ( enabledBands.size() == 0 )
         return;
 
-    for ( const Band &band : qAsConst(enabledBands) )
+    for ( const Band &band : static_cast<const QList<Band>&>(enabledBands) )
     {
         if ( band.start > value() )
         {
@@ -68,7 +68,7 @@ void FreqQSpinBox::decreaseByBand()
 
     double result = enabledBands.at(0).start;
 
-    for ( const Band &band : qAsConst(enabledBands) )
+    for ( const Band &band : static_cast<const QList<Band>&>(enabledBands) )
     {
         if ( band.start < value() )
             result = band.start;

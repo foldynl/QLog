@@ -1,5 +1,5 @@
-#ifndef ROTATOR_ROTCAPS_H
-#define ROTATOR_ROTCAPS_H
+#ifndef QLOG_ROTATOR_ROTCAPS_H
+#define QLOG_ROTATOR_ROTCAPS_H
 
 
 class RotCaps
@@ -14,4 +14,4 @@ public:
     int serialStopBits;
 };
 
-#endif // ROTATOR_ROTCAPS_H
+#endif // QLOG_ROTATOR_ROTCAPS_H

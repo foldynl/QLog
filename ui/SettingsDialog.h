@@ -18,9 +18,9 @@
 #include "data/CWShortcutProfile.h"
 #include "data/RotUsrButtonsProfile.h"
 #include "core/LogLocale.h"
-#include "rig/Rig.h"
 #include "ui/MainWindow.h"
 #include "core/MultiselectCompleter.h"
+#include "rig/RigCaps.h"
 
 namespace Ui {
 class SettingsDialog;

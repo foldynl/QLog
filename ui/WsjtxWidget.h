@@ -32,7 +32,7 @@ private slots:
     void actionFilter();
 
 signals:
-    void showDxDetails(QString callsign, QString grid);
+    void callsignSelected(QString callsign, QString grid);
     void reply(WsjtxDecode);
     void CQSpot(WsjtxEntry);
     void filteredCQSpot(WsjtxEntry);

@@ -49,14 +49,6 @@ Rig::Rig(QObject *parent)
 
 }
 
-Rig* Rig::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static Rig instance;
-    return &instance;
-}
-
 qint32 Rig::getNormalBandwidth(const QString &mode, const QString &)
 {
     FCT_IDENTIFICATION;

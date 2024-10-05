@@ -239,6 +239,7 @@ void LogFormat::setDuplicateQSOCallback(duplicateQSOBehaviour (*func)(QSqlRecord
 #define RECORDIDX(a) ( (a) - 1 )
 
 unsigned long LogFormat::runImport(QTextStream& importLogStream,
+                                   const StationProfile *defaultStationProfile,
                                    unsigned long *warnings,
                                    unsigned long *errors)
 {
@@ -265,6 +266,7 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         return 0;
     }
 
+
     QSqlDatabase::database().transaction();
 
     QSqlTableModel model;
@@ -272,7 +274,68 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
     model.removeColumn(model.fieldIndex("id"));
     QSqlRecord record = model.record();
     duplicateQSOBehaviour dupSetting = LogFormat::ASK_NEXT;
-;
+
+    auto setIfEmpty = [&](int column, const QString &value)
+    {
+        if ( record.value(RECORDIDX(column)).toString().isEmpty() && !value.isEmpty() )
+            record.setValue(RECORDIDX(column), value);
+    };
+
+    auto setMyDefaultProfile = [&]()
+    {
+        setIfEmpty(LogbookModel::COLUMN_MY_DXCC, QString::number(defaultStationProfile->dxcc));
+        setIfEmpty(LogbookModel::COLUMN_STATION_CALLSIGN, defaultStationProfile->callsign);
+        setIfEmpty(LogbookModel::COLUMN_MY_GRIDSQUARE, defaultStationProfile->locator);
+        setIfEmpty(LogbookModel::COLUMN_MY_NAME, defaultStationProfile->operatorName);
+        setIfEmpty(LogbookModel::COLUMN_MY_CITY_INTL, defaultStationProfile->qthName);
+        setIfEmpty(LogbookModel::COLUMN_MY_CITY, Data::removeAccents(defaultStationProfile->qthName));
+        setIfEmpty(LogbookModel::COLUMN_MY_IOTA, defaultStationProfile->iota);
+        setIfEmpty(LogbookModel::COLUMN_MY_POTA_REF, defaultStationProfile->pota);
+        setIfEmpty(LogbookModel::COLUMN_MY_SOTA_REF, defaultStationProfile->sota);
+        setIfEmpty(LogbookModel::COLUMN_MY_SIG_INTL, defaultStationProfile->sig);
+        setIfEmpty(LogbookModel::COLUMN_MY_SIG, Data::removeAccents(defaultStationProfile->sig));
+        setIfEmpty(LogbookModel::COLUMN_MY_SIG_INFO_INTL, defaultStationProfile->sigInfo);
+        setIfEmpty(LogbookModel::COLUMN_MY_SIG_INFO, Data::removeAccents(defaultStationProfile->sigInfo));
+        setIfEmpty(LogbookModel::COLUMN_MY_VUCC_GRIDS, defaultStationProfile->vucc);
+        setIfEmpty(LogbookModel::COLUMN_MY_ITU_ZONE, QString::number(defaultStationProfile->ituz));
+        setIfEmpty(LogbookModel::COLUMN_MY_CQ_ZONE, QString::number(defaultStationProfile->cqz));
+        setIfEmpty(LogbookModel::COLUMN_MY_COUNTRY_INTL, defaultStationProfile->country);
+        setIfEmpty(LogbookModel::COLUMN_MY_COUNTRY, Data::removeAccents(defaultStationProfile->country));
+    };
+
+    auto setMyEntity = [&](const DxccEntity &myEntity)
+    {
+        // force overwrite
+        record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_DXCC), myEntity.dxcc);
+        record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_COUNTRY), Data::removeAccents(myEntity.country));
+        record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_COUNTRY_INTL), myEntity.country);
+
+        // other DXCC related values ​​are not closely related to DXCC value and could have been filled
+        // therefore check if it is present or not.
+        setIfEmpty(LogbookModel::COLUMN_MY_ITU_ZONE, QString::number(myEntity.ituz));
+        setIfEmpty(LogbookModel::COLUMN_MY_CQ_ZONE, QString::number(myEntity.cqz));
+    };
+
+    auto lookupAndSetMyEntityByCallsign = [&] (const QString& recordMyDXCC)
+    {
+        const DxccEntity &myEntity = Data::instance()->lookupDxcc(recordMyDXCC);
+
+        if ( myEntity.dxcc == 0 )  // My DXCC not found
+        {
+            writeImportLog(importLogStream,
+                           WARNING_SEVERITY,
+                           errors,
+                           warnings,
+                           processedRec,
+                           record,
+                           tr("Cannot find My DXCC Entity Info"));
+        }
+        else
+        {
+            setMyEntity(myEntity);
+        }
+    };
+
     if ( !insertQuery.prepare( QSqlDatabase::database().driver()->sqlStatement(QSqlDriver::InsertStatement,
                                                                                "contacts",
                                                                                record,
@@ -289,6 +352,10 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         if (!this->importNext(record)) break;
 
         processedRec++;
+
+        /* Compute the Band if missing
+         *   Band is one of the mandatory fields
+         */
 
         if ( record.value(RECORDIDX(LogbookModel::COLUMN_BAND)).toString().isEmpty()
              && !record.value(RECORDIDX(LogbookModel::COLUMN_FREQUENCY)).toString().isEmpty() )
@@ -311,17 +378,17 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         if ( !start_time.isValid()
              || call.toString().isEmpty()
              || band.toString().isEmpty()
-             || mode.toString().isEmpty()
-             || mycall.toString().isEmpty() )
+             || mode.toString().isEmpty())
         {
             writeImportLog(importLogStream,
                            ERROR_SEVERITY,
+                           errors,
+                           warnings,
                            processedRec,
                            record,
                            tr("A minimal set of fields not present (start_time, call, band, mode, station_callsign)"));
             qWarning() << "Import does not contain minimal set of fields (start_time, call, band, mode, station_callsign)";
             qCDebug(runtime) << record;
-            (*errors)++;
             continue;
         }
 
@@ -336,10 +403,11 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
             {
                 writeImportLog(importLogStream,
                                WARNING_SEVERITY,
+                               errors,
+                               warnings,
                                processedRec,
                                record,
                                tr("Outside the selected Date Range"));
-                (*warnings)++;
                 continue;
             }
         }
@@ -362,10 +430,11 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
                 {
                     writeImportLog(importLogStream,
                                    WARNING_SEVERITY,
+                                   errors,
+                                   warnings,
                                    processedRec,
                                    record,
                                    tr("Duplicate"));
-                    (*warnings)++;
                     continue;
                 }
 
@@ -388,54 +457,172 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
                 case SKIP_ALL:
                     writeImportLog(importLogStream,
                                    WARNING_SEVERITY,
+                                   errors,
+                                   warnings,
                                    processedRec,
                                    record,
                                    tr("Duplicate"));
-                    (*warnings)++;
                     continue;
                     break;
                 }
             }
         }
 
-        const DxccEntity &entity = Data::instance()->lookupDxcc(call.toString());
+        /* Adding information which are important for QLog or QLog knows/compute them */
+        /************************/
+        /* Add DXCC Entity Info */
+        /************************/
 
-        if ( entity.dxcc == 0 )
+        int recordDXCCId = record.value(RECORDIDX(LogbookModel::COLUMN_DXCC)).toInt(); // 0 = NAN or not present
+                                                                                       // otherwise = DXCC ID
+
+        if ( recordDXCCId != 0 || updateDxcc )
+        {
+            const DxccEntity &entity = ( updateDxcc ) ? Data::instance()->lookupDxcc(call.toString())
+                                                      : Data::instance()->lookupDxccID(recordDXCCId);
+
+            if ( entity.dxcc == 0 )  // DXCC not found
+            {
+                writeImportLog(importLogStream,
+                               (updateDxcc) ? ERROR_SEVERITY : WARNING_SEVERITY,
+                               errors,
+                               warnings,
+                               processedRec,
+                               record,
+                               tr("Cannot find DXCC Entity Info"));
+                if ( updateDxcc )
+                    continue;
+            }
+            else
+            {
+                // force overwrite
+                record.setValue(RECORDIDX(LogbookModel::COLUMN_DXCC), entity.dxcc);
+                record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY), Data::removeAccents(entity.country));
+                record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY_INTL), entity.country);
+
+                // other DXCC related values ​​are not closely related to DXCC value and could have been filled
+                // therefore check if it is present or not.
+                setIfEmpty(LogbookModel::COLUMN_CONTINENT, entity.cont);
+                setIfEmpty(LogbookModel::COLUMN_ITUZ, QString::number(entity.ituz));
+                setIfEmpty(LogbookModel::COLUMN_CQZ, QString::number(entity.cqz));
+            }
+        }
+        else
         {
             writeImportLog(importLogStream,
-                           ERROR_SEVERITY,
+                           WARNING_SEVERITY,
+                           errors,
+                           warnings,
                            processedRec,
                            record,
-                           tr("Cannot find DXCC Entity Info"));
-            (*errors)++;
-            continue;
+                           tr("DXCC Info is missing"));
         }
 
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_DXCC)).toString().isEmpty()
-             || updateDxcc )
+        /************************/
+        /* Add My Station Info  */
+        /************************/
+
+        int recordMyDXCCId = record.value(RECORDIDX(LogbookModel::COLUMN_MY_DXCC)).toInt(); // 0 = NAN or not present
+                                                                                            // otherwise = DXCC ID
+        const QString &myCallString = mycall.toString();
+
+        if ( defaultStationProfile )
         {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_DXCC), entity.dxcc);
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY), Data::removeAccents(entity.country));
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY_INTL), entity.country);
+            // default is enabled
+
+            // Case 1: Both recordMyDXCCId and myCallString are empty
+            if (  recordMyDXCCId == 0 && myCallString.isEmpty()  )
+            {
+                setMyDefaultProfile();
+            }
+            // Case 2: recordMyDXCCId is empty, myCallString is not
+            else if ( recordMyDXCCId == 0 )
+            {
+                if ( defaultStationProfile->callsign == myCallString )
+                    setMyDefaultProfile();
+                else
+                    lookupAndSetMyEntityByCallsign(myCallString);
+            }
+            // Case 3: myCallString is empty, recordMyDXCCId is not
+            else if ( myCallString.isEmpty() )
+            {
+                if ( defaultStationProfile->dxcc == recordMyDXCCId )
+                    setMyDefaultProfile();
+                else
+                {
+                    // no Station Callsign = ERROR
+                    writeImportLog(importLogStream,
+                                   ERROR_SEVERITY,
+                                   errors,
+                                   warnings,
+                                   processedRec,
+                                   record,
+                                   tr("no Station Callsign present"));
+                    continue;
+                }
+            }
+             // Case 4: Both recordMyDXCCId and myCallString are not empty
+            else
+            {
+                if ( defaultStationProfile->callsign == myCallString )
+                {
+                    if ( defaultStationProfile->dxcc == recordMyDXCCId )
+                        setMyDefaultProfile();
+                    else   
+                    {
+                        // no Station Callsign = ERROR
+                        writeImportLog(importLogStream,
+                                       ERROR_SEVERITY,
+                                       errors,
+                                       warnings,
+                                       processedRec,
+                                       record,
+                                       tr("no Station Callsign present"));
+                        continue;
+                    }
+                }
+                else
+                    lookupAndSetMyEntityByCallsign(myCallString);
+            }
+        }
+        else
+        {
+            // default is disabled
+            if ( myCallString.isEmpty() )
+            {
+                // no Station Callsign = ERROR
+                writeImportLog(importLogStream,
+                               ERROR_SEVERITY,
+                               errors,
+                               warnings,
+                               processedRec,
+                               record,
+                               tr("no Station Callsign present"));
+                continue;
+            }
+            else
+            {
+                const DxccEntity &myEntity = ( recordMyDXCCId != 0 ) ? Data::instance()->lookupDxccID(recordDXCCId)
+                                                                     : Data::instance()->lookupDxcc(myCallString);
+
+                if ( myEntity.dxcc == 0 )  // My DXCC not found
+                {
+                    writeImportLog(importLogStream,
+                                   WARNING_SEVERITY,
+                                   errors,
+                                   warnings,
+                                   processedRec,
+                                   record,
+                                   tr("Cannot find My DXCC Entity Info"));
+                }
+                else
+                    setMyEntity(myEntity);
+            }
         }
 
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_CONTINENT)).toString().isEmpty()
-             || updateDxcc )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_CONTINENT), entity.cont);
-        }
-
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_ITUZ)).toString().isEmpty()
-             || updateDxcc )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_ITUZ), QString::number(entity.ituz));
-        }
-
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_CQZ)).toString().isEmpty()
-             || updateDxcc )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_CQZ), QString::number(entity.cqz));
-        }
+        /***********/
+        /* Add PFX */
+        /***********/
 
         if ( record.value(RECORDIDX(LogbookModel::COLUMN_PREFIX)).toString().isEmpty() )
         {
@@ -447,6 +634,9 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
             }
         }
 
+        /********************/
+        /* Compute Distance */
+        /********************/
         const QString &gridsquare = record.value(RECORDIDX(LogbookModel::COLUMN_GRID)).toString();
         const QString &my_gridsquare = record.value(RECORDIDX(LogbookModel::COLUMN_MY_GRIDSQUARE)).toString();
 
@@ -454,8 +644,8 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
              && !my_gridsquare.isEmpty()
              && record.value(RECORDIDX(LogbookModel::COLUMN_DISTANCE)).toString().isEmpty() )
         {
-            Gridsquare grid(gridsquare);
-            Gridsquare my_grid(my_gridsquare);
+            const Gridsquare grid(gridsquare);
+            const Gridsquare my_grid(my_gridsquare);
             double distance;
 
             if ( my_grid.distanceTo(grid, distance) )
@@ -464,7 +654,9 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
             }
         }
 
-
+        /*************************/
+        /* Compute Alt from SOTA */
+        /*************************/
         if ( record.value(RECORDIDX(LogbookModel::COLUMN_ALTITUDE)).toString().isEmpty()
              && !sota.toString().isEmpty() )
         {
@@ -476,6 +668,9 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
             }
         }
 
+        /*******************************/
+        /* Compute My Alt from My SOTA */
+        /*******************************/
         if ( record.value(RECORDIDX(LogbookModel::COLUMN_MY_ALTITUDE)).toString().isEmpty()
              && !mysota.toString().isEmpty() )
         {
@@ -487,44 +682,9 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
             }
         }
 
-        const DxccEntity &dxccEntity = Data::instance()->lookupDxcc(mycall.toString());
-
-        if ( dxccEntity.dxcc == 0 )
-        {
-            writeImportLog(importLogStream,
-                           ERROR_SEVERITY,
-                           processedRec,
-                           record,
-                           tr("Cannot find own DXCC Entity Info"));
-            (*errors)++;
-            continue;
-        }
-
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_MY_DXCC)).toString().isEmpty() )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_DXCC), dxccEntity.dxcc);
-        }
-
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_MY_ITU_ZONE)).toString().isEmpty() )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_ITU_ZONE), dxccEntity.ituz);
-        }
-
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_MY_CQ_ZONE)).toString().isEmpty() )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_CQ_ZONE), dxccEntity.cqz);
-        }
-
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_MY_COUNTRY_INTL)).toString().isEmpty() )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_COUNTRY_INTL), dxccEntity.country);
-        }
-
-        if ( record.value(RECORDIDX(LogbookModel::COLUMN_MY_COUNTRY)).toString().isEmpty() )
-        {
-            record.setValue(RECORDIDX(LogbookModel::COLUMN_MY_COUNTRY), Data::removeAccents(dxccEntity.country));
-        }
-
+        /******************/
+        /* PREPARE INSERT */
+        /******************/
         // Bind all values
         for ( int i = 0; i < record.count(); i++ )
         {
@@ -535,17 +695,20 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         {
             writeImportLog(importLogStream,
                            ERROR_SEVERITY,
+                           errors,
+                           warnings,
                            processedRec,
                            record,
                            tr("Cannot insert to database") + " - " + insertQuery.lastError().text());
             qWarning() << "Cannot insert a record to Contact Table - " << insertQuery.lastError();
             qCDebug(runtime) << record;
-            (*errors)++;
         }
         else
         {
             writeImportLog(importLogStream,
                            INFO_SEVERITY,
+                           errors,
+                           warnings,
                            processedRec,
                            record,
                            tr("Imported"));
@@ -868,7 +1031,7 @@ long LogFormat::runExport(const QList<QSqlRecord> &selectedQSOs)
 
         if ( exportedFields.first() != "*" )
         {
-            for ( const QString& fieldName : qAsConst(exportedFields) )
+            for ( const QString& fieldName : static_cast<const QStringList&>(exportedFields) )
             {
                 contactRecord.append(qso.field(fieldName));
             }
@@ -930,7 +1093,10 @@ void LogFormat::writeImportLog(QTextStream &errorLogStream, ImportLogSeverity se
     errorLogStream << importLogSeverityToString(severity) << msg << "\n";
 }
 
-void LogFormat::writeImportLog(QTextStream& errorLogStream, ImportLogSeverity severity,
+void LogFormat::writeImportLog(QTextStream& errorLogStream,
+                               ImportLogSeverity severity,
+                               unsigned long *error,
+                               unsigned long *warning,
                                const unsigned long recordNo,
                                const QSqlRecord &record,
                                const QString &msg)
@@ -944,5 +1110,10 @@ void LogFormat::writeImportLog(QTextStream& errorLogStream, ImportLogSeverity se
                                                    record.value("callsign").toString(),
                                                    record.value("mode").toString())
                    << "\n";
+    switch (severity)
+    {
+    case WARNING_SEVERITY: (*warning)++; break;
+    case ERROR_SEVERITY: (*error)++; break;
+    case INFO_SEVERITY: break;
+    }
 }
-

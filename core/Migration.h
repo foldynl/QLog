@@ -16,17 +16,15 @@ public:
     Migration(QObject *parent = nullptr) : QObject(parent) {}
 
     bool run();
-    bool functionMigration(int version);
+    static bool backupDatabase(bool force = false);
+
 private:
+    bool functionMigration(int version);
     bool migrate(int toVersion);
     int getVersion();
     bool setVersion(int version);
-
     bool runSqlFile(QString filename);
-
-
     int tableRows(QString name);
-
     bool updateExternalResource();
     bool updateExternalResourceProgress(QProgressDialog&,
                                         LOVDownloader&,

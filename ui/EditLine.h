@@ -24,4 +24,17 @@ protected:
     bool spaceForbiddenFlag;
 };
 
+class NewContactRSTEditLine : public NewContactEditLine
+{
+    Q_OBJECT
+
+public:
+    explicit NewContactRSTEditLine(QWidget *parent = nullptr);
+    void setSelectionBackwardOffset(int offset);
+
+protected:
+    void focusInEvent(QFocusEvent* event) override;
+    int focusInSelectionBackwardOffset;
+};
+
 #endif // QLOG_UI_EDITLINE_H

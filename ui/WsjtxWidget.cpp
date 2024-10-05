@@ -21,7 +21,7 @@ MODULE_IDENTIFICATION("qlog.ui.wsjtxswidget");
 WsjtxWidget::WsjtxWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::WsjtxWidget),
-    cqRE("^CQ (DX |TEST |[A-Z]{0,2} )?([A-Z0-9\\/]+) ?([A-Z]{2}[0-9]{2})?.*")
+    cqRE("(^(?:(?P<word1>(?:CQ|DE|QRZ)(?:\\s?DX|\\s(?:[A-Z]{1,4}|\\d{3}))|[A-Z0-9\\/]+|\\.{3})\\s)(?:(?P<word2>[A-Z0-9\\/]+)(?:\\s(?P<word3>[-+A-Z0-9]+)(?:\\s(?P<word4>(?:OOO|(?!RR73)[A-R]{2}[0-9]{2})))?)?)?)")
 {
     FCT_IDENTIFICATION;
 
@@ -64,8 +64,8 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
             WsjtxEntry entry;
 
             entry.decode = decode;
-            entry.callsign = match.captured(2);
-            entry.grid = match.captured(3);
+            entry.callsign = match.captured(3);
+            entry.grid = match.captured(4);
             entry.dxcc = Data::instance()->lookupDxcc(entry.callsign);
             entry.status = Data::instance()->dxccStatus(entry.dxcc.dxcc, currBand, BandPlan::MODE_GROUP_STRING_DIGITAL);
             entry.receivedTime = QDateTime::currentDateTimeUtc();
@@ -176,7 +176,7 @@ void WsjtxWidget::statusReceived(WsjtxStatus newStatus)
     if ( this->status.dx_call != newStatus.dx_call
          || this->status.dx_grid != newStatus.dx_grid )
     {
-        emit showDxDetails(newStatus.dx_call, newStatus.dx_grid);
+        emit callsignSelected(newStatus.dx_call, newStatus.dx_grid);
     }
 
     if ( this->status.mode != newStatus.mode )
@@ -209,7 +209,7 @@ void WsjtxWidget::tableViewDoubleClicked(QModelIndex index)
     const QModelIndex &source_index = proxyModel->mapToSource(index);
 
     const WsjtxEntry &entry = wsjtxTableModel->getEntry(source_index);
-    emit showDxDetails(entry.callsign, entry.grid);
+    //emit callsignSelected(entry.callsign, entry.grid); // it is not needed to send this - Qlog receives the change via WSJTX
     emit reply(entry.decode);
 }
 
@@ -221,7 +221,7 @@ void WsjtxWidget::callsignClicked(QString callsign)
     if ( entry.callsign.isEmpty() )
         return;
 
-    emit showDxDetails(callsign, entry.grid);
+    emit callsignSelected(callsign, entry.grid);
     emit reply(entry.decode);
 }
 
@@ -335,11 +335,11 @@ void WsjtxWidget::restoreTableHeaderState()
     FCT_IDENTIFICATION;
 
     QSettings settings;
-    QVariant state = settings.value("wsjtx/state");
+    const QByteArray &state = settings.value("wsjtx/state").toByteArray();
 
-    if (!state.isNull())
+    if (!state.isEmpty())
     {
-        ui->tableView->horizontalHeader()->restoreState(state.toByteArray());
+        ui->tableView->horizontalHeader()->restoreState(state);
     }
 }
 

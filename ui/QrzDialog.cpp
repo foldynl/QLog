@@ -11,7 +11,6 @@
 #include "core/QRZ.h"
 #include "models/SqlListModel.h"
 #include "ui/ShowUploadDialog.h"
-#include "logformat/AdiFormat.h"
 #include "data/StationProfile.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qrzdialog");

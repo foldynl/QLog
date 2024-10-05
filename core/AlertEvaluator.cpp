@@ -6,7 +6,6 @@
 #include "debug.h"
 #include "data/DxSpot.h"
 #include "data/WsjtxEntry.h"
-#include "data/StationProfile.h"
 #include "data/SpotAlert.h"
 #include "data/BandPlan.h"
 
@@ -35,7 +34,7 @@ void AlertEvaluator::dxSpot(const DxSpot & spot)
 
     QStringList matchedRules;
 
-    for ( const AlertRule *rule : qAsConst(ruleList) )
+    for ( const AlertRule *rule : static_cast<const QList<AlertRule *>&>(ruleList) )
     {
         qCDebug(runtime) << "Processing " << *rule;
 
@@ -76,7 +75,7 @@ void AlertEvaluator::WSJTXCQSpot(const WsjtxEntry &wsjtx)
 
     QStringList matchedRules;
 
-    for ( const AlertRule *rule : qAsConst(ruleList) )
+    for ( const AlertRule *rule : static_cast<const QList<AlertRule *>&>(ruleList) )
     {
         qCDebug(runtime) << "Processing " << *rule;
         if ( rule->match(wsjtx) )
@@ -344,11 +343,11 @@ bool AlertRule::match(const DxSpot &spot) const
          && (sourceMap & SpotAlert::DXSPOT)
          && (dxCountry == 0 || dxCountry == spot.dxcc.dxcc)
          && (spot.status & dxLogStatusMap)
-         && (mode == "*" || mode.contains("|" + spot.modeGroupString))
-         && (band == "*" || band.contains("|" + spot.band))
+         && (mode == "*" || (!spot.modeGroupString.isEmpty() && mode.contains("|" + spot.modeGroupString)))
+         && (band == "*" || (!spot.band.isEmpty() && band.contains("|" + spot.band)))
          && (spotterCountry == 0 || spotterCountry == spot.dxcc_spotter.dxcc )
-         && (dxContinent == "*" || dxContinent.contains("|" + spot.dxcc.cont))
-         && (spotterContinent == "*" || spotterContinent.contains("|" + spot.dxcc_spotter.cont))
+         && (dxContinent == "*" || (!spot.dxcc.cont.isEmpty() && dxContinent.contains("|" + spot.dxcc.cont)))
+         && (spotterContinent == "*" || (!spot.dxcc_spotter.cont.isEmpty() && spotterContinent.contains("|" + spot.dxcc_spotter.cont)))
          && (dxMember == QStringList("*") || spot.memberList2Set().intersects(dxMemberSet))
        )
     {

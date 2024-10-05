@@ -1,5 +1,5 @@
-#ifndef SHORTCUTEDITORMODEL_H
-#define SHORTCUTEDITORMODEL_H
+#ifndef QLOG_MODELS_SHORTCUTEDITORMODEL_H
+#define QLOG_MODELS_SHORTCUTEDITORMODEL_H
 
 #include <QAbstractTableModel>
 #include <QAction>
@@ -36,4 +36,4 @@ private:
                                 const QString&) const;
 };
 
-#endif // SHORTCUTEDITORMODEL_H
+#endif // QLOG_MODELS_SHORTCUTEDITORMODEL_H

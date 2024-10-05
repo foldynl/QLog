@@ -5,9 +5,7 @@
 #include "logformat/LogFormat.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
-#include "core/Gridsquare.h"
 #include "data/RigProfile.h"
-#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.ui.importdialog");
 
@@ -232,7 +230,8 @@ void ImportDialog::saveImportDetails(const QString &importDetail, const QString 
     }
 }
 
-void ImportDialog::runImport() {
+void ImportDialog::runImport()
+{
     FCT_IDENTIFICATION;
 
     if ( ui->fileEdit->text().isEmpty() )
@@ -258,70 +257,6 @@ void ImportDialog::runImport() {
     if (ui->commentCheckBox->isChecked())
     {
         defaults["comment_intl"] = ui->commentEdit->text();
-    }
-
-    if ( ui->profileCheckBox->isChecked()
-         && selectedStationProfile != StationProfile() )
-    {
-        if ( !selectedStationProfile.callsign.isEmpty() )
-        {
-            defaults["station_callsign"] = selectedStationProfile.callsign.toUpper();
-        }
-
-        if ( !selectedStationProfile.locator.isEmpty() )
-        {
-            defaults["my_gridsquare"] = selectedStationProfile.locator.toUpper();
-        }
-
-        if ( !selectedStationProfile.operatorName.isEmpty() )
-        {
-            defaults["my_name_intl"] = selectedStationProfile.operatorName;
-        }
-
-        if ( !selectedStationProfile.qthName.isEmpty() )
-        {
-            defaults["my_city_intl"] = selectedStationProfile.qthName;
-        }
-
-        if ( !selectedStationProfile.iota.isEmpty() )
-        {
-            defaults["my_iota"] = Data::removeAccents(selectedStationProfile.iota.toUpper());
-        }
-
-        if ( !selectedStationProfile.sota.isEmpty() )
-        {
-            defaults["my_sota_ref"] = Data::removeAccents(selectedStationProfile.sota.toUpper());
-        }
-
-        if ( !selectedStationProfile.sig.isEmpty() )
-        {
-            defaults["my_sig_intl"] = Data::removeAccents(selectedStationProfile.sig);
-        }
-
-        if ( !selectedStationProfile.sigInfo.isEmpty() )
-        {
-            defaults["my_sig_info_intl"] = selectedStationProfile.sigInfo;
-        }
-
-        if ( !selectedStationProfile.vucc.isEmpty() )
-        {
-            defaults["my_vucc_grids"] = selectedStationProfile.vucc.toUpper();
-        }
-
-        if ( !selectedStationProfile.vucc.isEmpty() )
-        {
-            defaults["my_wwff_ref"] = Data::removeAccents(selectedStationProfile.vucc.toUpper());
-        }
-
-        if ( !selectedStationProfile.pota.isEmpty() )
-        {
-            defaults["my_pota_ref"] = Data::removeAccents(selectedStationProfile.pota.toUpper());
-        }
-
-        defaults["my_dxcc"] = QString::number(selectedStationProfile.dxcc);
-        defaults["my_itu_zone"] = QString::number(selectedStationProfile.ituz);
-        defaults["my_cq_zone"] = QString::number(selectedStationProfile.cqz);
-        defaults["my_country_intl"] = selectedStationProfile.country;
     }
 
     LogFormat* format = LogFormat::open(ui->typeSelect->currentText(), in);
@@ -362,7 +297,10 @@ void ImportDialog::runImport() {
     unsigned long errors = 0L;
     unsigned long warnings = 0L;
 
-    int count = format->runImport(out, &warnings, &errors);
+    int count = format->runImport(out,
+                                  ( ui->profileCheckBox->isChecked() && selectedStationProfile != StationProfile() ) ?&selectedStationProfile: nullptr,
+                                  &warnings,
+                                  &errors);
 
     QString report = QObject::tr("<b>Imported</b>: %n contact(s)", "", count) + "<br/>" +
                      QObject::tr("<b>Warning(s)</b>: %n", "", warnings) + "<br/>" +

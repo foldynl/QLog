@@ -232,7 +232,7 @@ void AlertRuleDetail::save()
 
     if ( ui->memberGroupBox->isChecked() )
     {
-        for ( QCheckBox* item: qAsConst(memberListCheckBoxes) )
+        for ( QCheckBox* item: static_cast<const QList<QCheckBox*>&>(memberListCheckBoxes) )
         {
             if ( item->isChecked() )
             {
@@ -674,7 +674,7 @@ void AlertRuleDetail::generateMembershipCheckboxes(const AlertRule * rule)
     {
         int elementIndex = 0;
 
-        for ( QCheckBox* item: qAsConst(memberListCheckBoxes) )
+        for ( QCheckBox* item: static_cast<const QList<QCheckBox*>&>(memberListCheckBoxes) )
         {
             ui->dxMemberGrid->addWidget(item, elementIndex / 6, elementIndex % 6);
             elementIndex++;

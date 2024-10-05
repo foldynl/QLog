@@ -7,7 +7,6 @@
 #include "Fldigi.h"
 #include "logformat/AdiFormat.h"
 #include "debug.h"
-#include "data/StationProfile.h"
 
 MODULE_IDENTIFICATION("qlog.core.fldigi");
 

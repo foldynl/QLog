@@ -129,14 +129,6 @@ RigProfilesManager::RigProfilesManager(QObject *parent) :
     }
 }
 
-RigProfilesManager *RigProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static RigProfilesManager instance;
-    return &instance;
-}
-
 void RigProfilesManager::save()
 {
     FCT_IDENTIFICATION;
@@ -167,10 +159,10 @@ void RigProfilesManager::save()
 
     if ( deleteQuery.exec() )
     {
-        auto keys = profileNameList();
-        for ( auto &key: qAsConst(keys) )
+        const QStringList &keys = profileNameList();
+        for ( auto &key: keys )
         {
-            RigProfile rigProfile = getProfile(key);
+            const RigProfile &rigProfile = getProfile(key);
 
             insertQuery.bindValue(":profile_name", key);
             insertQuery.bindValue(":model", rigProfile.model);

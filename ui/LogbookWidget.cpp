@@ -6,6 +6,8 @@
 #include <QNetworkReply>
 #include <QProgressDialog>
 #include <QShortcut>
+#include <QEvent>
+#include <QKeyEvent>
 
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
@@ -21,7 +23,6 @@
 #include "ui/ExportDialog.h"
 #include "core/Eqsl.h"
 #include "ui/PaperQSLDialog.h"
-#include "core/NetworkNotification.h"
 #include "ui/QSODetailDialog.h"
 #include "core/MembershipQE.h"
 #include "core/GenericCallbook.h"
@@ -41,6 +42,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     model = new LogbookModel(this);
     connect(model, &LogbookModel::beforeUpdate, this, &LogbookWidget::handleBeforeUpdate);
     connect(model, &LogbookModel::beforeDelete, this, &LogbookWidget::handleBeforeDelete);
+    connect(ui->contactTable, &QTableQSOView::dataCommitted, this, [this](){emit logbookUpdated();});
 
     ui->contactTable->setModel(model);
 
@@ -60,12 +62,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->addAction(separator1);
     ui->contactTable->addAction(ui->actionDeleteContact);
 
-    //ui->contactTable->sortByColumn(1, Qt::DescendingOrder);
-
     ui->contactTable->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->contactTable->horizontalHeader(), &QHeaderView::customContextMenuRequested,
             this, &LogbookWidget::showTableHeaderContextMenu);
-    connect(ui->contactTable, &QTableQSOView::dataCommitted, this, &LogbookWidget::updateTable);
 
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_TIME_ON, new TimestampFormatDelegate(ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_TIME_OFF, new TimestampFormatDelegate(ui->contactTable));
@@ -140,9 +139,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_UKSMG, new UnitFormatDelegate("", 0, 1, ui->contactTable));
 
     QSettings settings;
-    QVariant logbookState = settings.value("logbook/state");
-    if (!logbookState.isNull()) {
-        ui->contactTable->horizontalHeader()->restoreState(logbookState.toByteArray());
+    const QByteArray &logbookState = settings.value("logbook/state").toByteArray();
+    if (!logbookState.isEmpty()) {
+        ui->contactTable->horizontalHeader()->restoreState(logbookState);
     }
     else {
         /* Hide all */
@@ -164,6 +163,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     ui->contactTable->horizontalHeader()->setSectionsMovable(true);
     ui->contactTable->setStyle(new ProxyStyle(ui->contactTable->style()));
+    ui->contactTable->installEventFilter(this);
 
     ui->bandFilter->blockSignals(true);
     ui->bandFilter->setModel(new SqlListModel("SELECT name FROM bands ORDER BY start_freq", tr("Band"), this));
@@ -178,9 +178,8 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
                                     "FROM dxcc_entities WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
                                     "ORDER BY 2 COLLATE LOCALEAWARE ASC;", tr("Country"), this);
     while (countryModel->canFetchMore())
-    {
         countryModel->fetchMore();
-    }
+
     ui->countryFilter->setModel(countryModel);
     ui->countryFilter->setModelColumn(1);
     ui->countryFilter->blockSignals(false);
@@ -188,11 +187,11 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     refreshClubFilter();
 
     ui->userFilter->blockSignals(true);
-    userFilterModel = new SqlListModel("SELECT filter_name FROM qso_filters ORDER BY filter_name", tr("User Filter"), this);
+    userFilterModel = new SqlListModel("SELECT filter_name "
+                                       "FROM qso_filters "
+                                       "ORDER BY filter_name", tr("User Filter"), this);
     while (userFilterModel->canFetchMore())
-    {
         userFilterModel->fetchMore();
-    }
     ui->userFilter->setModel(userFilterModel);
     ui->userFilter->blockSignals(false);
 
@@ -226,22 +225,14 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     ui->clubFilter->blockSignals(true);
 
     if ( ! countryName.isEmpty() )
-    {
         ui->countryFilter->setCurrentText(countryName);
-    }
     else
-    {
         ui->countryFilter->setCurrentIndex(0);
-    }
 
     if ( !band.isEmpty() )
-    {
         ui->bandFilter->setCurrentText(band);
-    }
     else
-    {
         ui->bandFilter->setCurrentIndex(0);
-    }
 
     //user wants to see only selected band and country
     ui->userFilter->setCurrentIndex(0); //suppress user-defined filter
@@ -257,7 +248,7 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     ui->countryFilter->blockSignals(false);
     ui->bandFilter->blockSignals(false);
 
-    updateTable();
+    filterTable();
 }
 
 void LogbookWidget::lookupSelectedCallsign()
@@ -286,7 +277,7 @@ void LogbookWidget::callsignFilterChanged()
 {
     FCT_IDENTIFICATION;
 
-    updateTable();
+    filterTable();
 }
 
 void LogbookWidget::bandFilterChanged()
@@ -295,7 +286,7 @@ void LogbookWidget::bandFilterChanged()
 
     colorsFilterWidget(ui->bandFilter);
     saveBandFilter();
-    updateTable();
+    filterTable();;
 }
 
 void LogbookWidget::saveBandFilter()
@@ -314,13 +305,9 @@ void LogbookWidget::restoreBandFilter()
     ui->bandFilter->blockSignals(true);
     const QString &value = settings.value("logbook/filters/band").toString();
     if ( !value.isEmpty() )
-    {
         ui->bandFilter->setCurrentText(value);
-    }
     else
-    {
         ui->bandFilter->setCurrentIndex(0);
-    }
 
     colorsFilterWidget(ui->bandFilter);
     ui->bandFilter->blockSignals(false);
@@ -332,7 +319,7 @@ void LogbookWidget::modeFilterChanged()
 
     colorsFilterWidget(ui->modeFilter);
     saveModeFilter();
-    updateTable();
+    filterTable();
 }
 
 void LogbookWidget::saveModeFilter()
@@ -351,13 +338,10 @@ void LogbookWidget::restoreModeFilter()
     ui->modeFilter->blockSignals(true);
     const QString &value = settings.value("logbook/filters/mode").toString();
     if ( !value.isEmpty() )
-    {
         ui->modeFilter->setCurrentText(value);
-    }
     else
-    {
         ui->modeFilter->setCurrentIndex(0);
-    }
+
     colorsFilterWidget(ui->modeFilter);
     ui->modeFilter->blockSignals(false);
 }
@@ -368,7 +352,7 @@ void LogbookWidget::countryFilterChanged()
 
     colorsFilterWidget(ui->countryFilter);
     saveCountryFilter();
-    updateTable();
+    filterTable();
 }
 
 void LogbookWidget::saveCountryFilter()
@@ -387,13 +371,9 @@ void LogbookWidget::restoreCountryFilter()
     ui->countryFilter->blockSignals(true);
     const QString &value = settings.value("logbook/filters/country").toString();
     if ( !value.isEmpty() )
-    {
         ui->countryFilter->setCurrentText(value);
-    }
     else
-    {
         ui->countryFilter->setCurrentIndex(0);
-    }
     colorsFilterWidget(ui->countryFilter);
 
     ui->countryFilter->blockSignals(false);
@@ -405,7 +385,7 @@ void LogbookWidget::userFilterChanged()
 
     colorsFilterWidget(ui->userFilter);
     saveUserFilter();
-    updateTable();
+    filterTable();
 }
 
 void LogbookWidget::saveUserFilter()
@@ -424,13 +404,10 @@ void LogbookWidget::restoreUserFilter()
     ui->userFilter->blockSignals(true);
     const QString &value = settings.value("logbook/filters/user").toString();
     if ( !value.isEmpty() )
-    {
         ui->userFilter->setCurrentText(value);
-    }
     else
-    {
         ui->userFilter->setCurrentIndex(0);
-    }
+
     colorsFilterWidget(ui->userFilter);
     ui->userFilter->blockSignals(false);
 }
@@ -441,7 +418,7 @@ void LogbookWidget::clubFilterChanged()
 
     colorsFilterWidget(ui->clubFilter);
     saveClubFilter();
-    updateTable();
+    filterTable();
 }
 
 void LogbookWidget::refreshClubFilter()
@@ -454,6 +431,23 @@ void LogbookWidget::refreshClubFilter()
     ui->clubFilter->addItems(QStringList(tr("Club")) << MembershipQE::instance()->getEnabledClubLists());
     ui->clubFilter->setCurrentText(member);
     ui->clubFilter->blockSignals(false);
+    colorsFilterWidget(ui->clubFilter);
+}
+
+void LogbookWidget::refreshUserFilter()
+{
+    FCT_IDENTIFICATION;
+
+    /* Refresh dynamic User Filter selection combobox */
+    /* block the signals !!! */
+    ui->userFilter->blockSignals(true);
+    const QString &userFilterString = ui->userFilter->currentText();
+    userFilterModel->refresh();
+    ui->userFilter->setCurrentText(userFilterString);
+    ui->userFilter->blockSignals(false);
+    colorsFilterWidget(ui->userFilter);
+
+    filterTable();
 }
 
 void LogbookWidget::saveClubFilter()
@@ -462,19 +456,16 @@ void LogbookWidget::saveClubFilter()
     settings.setValue("logbook/filters/member", ui->clubFilter->currentText());
 }
 
-void LogbookWidget::restoreclubFilter()
+void LogbookWidget::restoreClubFilter()
 {
     QSettings settings;
     ui->clubFilter->blockSignals(true);
     const QString &value = settings.value("logbook/filters/member").toString();
     if ( !value.isEmpty() )
-    {
         ui->clubFilter->setCurrentText(value);
-    }
     else
-    {
         ui->clubFilter->setCurrentIndex(0);
-    }
+
     colorsFilterWidget(ui->clubFilter);
     ui->clubFilter->blockSignals(false);
 }
@@ -486,10 +477,10 @@ void LogbookWidget::restoreFilters()
     restoreModeFilter();
     restoreBandFilter();
     restoreCountryFilter();
-    restoreclubFilter();
+    restoreClubFilter();
     restoreUserFilter();
     externalFilter = QString();
-    updateTable();
+    filterTable();
 }
 
 void LogbookWidget::uploadClublog()
@@ -523,6 +514,13 @@ void LogbookWidget::deleteContact()
 
     QModelIndexList deletedRowIndexes = ui->contactTable->selectionModel()->selectedRows();
 
+    // Since deletedRowIndexes contains indexes for columns that might be invisible,
+    // and scrollToIndex needs an index with a visible column,
+    // we obtain the column index from the first record in the table."
+
+    int firstVisibleColumnIndex = ui->contactTable->indexAt(QPoint(0, 0)).column();
+    QModelIndex previousIndex = model->index(deletedRowIndexes.first().row()-1, firstVisibleColumnIndex);
+
     // Clublog does not accept batch DELETE operation
     // ask if an operator wants to continue
     if ( ClubLog::isUploadImmediatelyEnabled()
@@ -535,13 +533,9 @@ void LogbookWidget::deleteContact()
                                          "that the DELETE operation will not be sent to Clublog?"),
                                       QMessageBox::Yes|QMessageBox::No);
         if ( reply != QMessageBox::Yes )
-        {
             return;
-        }
         else
-        {
             blockClublogSignals = true;
-        }
     }
 
     std::sort(deletedRowIndexes.begin(),
@@ -573,7 +567,7 @@ void LogbookWidget::deleteContact()
 
     int cnt = 0;
 
-    for ( const QModelIndex &index : qAsConst(deletedRowIndexes) )
+    for ( const QModelIndex &index : static_cast<const QModelIndexList&>(deletedRowIndexes) )
     {
         cnt++;
         model->removeRow(index.row());
@@ -593,6 +587,7 @@ void LogbookWidget::deleteContact()
     ui->contactTable->setUpdatesEnabled(true);
     ui->contactTable->horizontalHeader()->restoreState(state);
     updateTable();
+    scrollToIndex(previousIndex);
     blockClublogSignals = false;
 }
 
@@ -642,118 +637,56 @@ void LogbookWidget::displayedColumns()
     saveTableHeaderState();
 }
 
+void LogbookWidget::reselectModel()
+{
+    FCT_IDENTIFICATION;
+
+    model->select();
+
+    // under normal conditions, only 256 records are loaded.
+    // This will increase the value of the loaded records.
+    while ( model->canFetchMore() && model->rowCount() < 5000 )
+        model->fetchMore();
+
+    // it is not possible to use mode->rowCount here because model contains only
+    // the first 5000 records (or more) and rowCount has a value 5000 here. Therefore, it is needed
+    // to run a QSL stateme with Count. Run it only in case when QTableview does not contain all
+    // records from model
+    int qsoCount = 0;
+    if ( model->canFetchMore() )
+    {
+        QString countRecordsStmt(QLatin1String("SELECT COUNT(1) FROM contacts"));
+
+        if ( !model->filter().isEmpty() )
+            countRecordsStmt.append(QString(" WHERE %1").arg(model->filter()));
+
+        QSqlQuery query(countRecordsStmt);
+
+        qsoCount = query.first() ? query.value(0).toInt() : 0;
+    }
+    else
+        qsoCount = model->rowCount();
+
+    ui->filteredQSOsLabel->setText(tr("Count: %n", "", qsoCount));
+}
+
 void LogbookWidget::updateTable()
 {
     FCT_IDENTIFICATION;
 
-    QStringList filterString;
+    reselectModel();
 
-    const QString &callsignFilterValue = ui->callsignFilter->text();
+    // it is called when QSO is inserted/updated/deleted
+    // therefore it is needed to refresh country select box
 
-    if ( !callsignFilterValue.isEmpty() )
-    {
-        filterString.append(QString("callsign LIKE '%%1%'").arg(callsignFilterValue.toUpper()));
-    }
-
-    const QString &bandFilterValue = ui->bandFilter->currentText();
-
-    if ( ui->bandFilter->currentIndex() != 0 && !bandFilterValue.isEmpty())
-    {
-        filterString.append(QString("band = '%1'").arg(bandFilterValue));
-    }
-
-    const QString &modeFilterValue = ui->modeFilter->currentText();
-
-    if ( ui->modeFilter->currentIndex() != 0 && !modeFilterValue.isEmpty() )
-    {
-        filterString.append(QString("mode = '%1'").arg(modeFilterValue));
-    }
-
-    /* Refresh dynamic Country selection combobox */
-    /* It is important to block its signals */
+    /* Refresh country selection combobox */
+    /* block the signals !!! */
     ui->countryFilter->blockSignals(true);
     const QString &country = ui->countryFilter->currentText();
     countryModel->refresh();
     ui->countryFilter->setCurrentText(country);
     ui->countryFilter->blockSignals(false);
-
-    int row = ui->countryFilter->currentIndex();
-    const QModelIndex &idx = ui->countryFilter->model()->index(row,0);
-    QVariant data = ui->countryFilter->model()->data(idx);
-
-    if ( ui->countryFilter->currentIndex() != 0 )
-    {
-        filterString.append(QString("dxcc = '%1'").arg(data.toInt()));
-    }
-
-    if ( ui->clubFilter->currentIndex() != 0 )
-    {
-        filterString.append(QString("id in (SELECT contactid FROM contact_clubs_view WHERE clubid = '%1')").arg(ui->clubFilter->currentText()));
-    }
-
-    /* Refresh dynamic User Filter selection combobox */
-    /* block the signals !!! */
-    ui->userFilter->blockSignals(true);
-    const QString &userFilterString = ui->userFilter->currentText();
-    userFilterModel->refresh();
-    ui->userFilter->setCurrentText(userFilterString);
-    ui->userFilter->blockSignals(false);
-
-    if ( ui->userFilter->currentIndex() != 0 )
-    {
-        QSqlQuery userFilterQuery;
-        if ( ! userFilterQuery.prepare("SELECT "
-                                "'(' || GROUP_CONCAT( ' ' || c.name || ' ' || CASE WHEN r.value IS NULL AND o.sql_operator IN ('=', 'like') THEN 'IS' "
-                                "                                                  WHEN r.value IS NULL and r.operator_id NOT IN ('=', 'like') THEN 'IS NOT' "
-                                "                                                  WHEN o.sql_operator = ('starts with') THEN 'like' "
-                                "                                                  ELSE o.sql_operator END || "
-                                "' (' || quote(CASE o.sql_operator WHEN 'like' THEN '%' || r.value || '%' "
-                                "                                  WHEN 'not like' THEN '%' || r.value || '%' "
-                                "                                  WHEN 'starts with' THEN r.value || '%' "
-                                "                                  ELSE r.value END)  || ') ', m.sql_operator) || ')' "
-                                "FROM qso_filters f, qso_filter_rules r, "
-                                "qso_filter_operators o, qso_filter_matching_types m, "
-                                "PRAGMA_TABLE_INFO('contacts') c "
-                                "WHERE f.filter_name = :filterName "
-                                "      AND f.filter_name = r.filter_name "
-                                "      AND o.operator_id = r.operator_id "
-                                "      AND m.matching_id = f.matching_type "
-                                "      AND c.cid = r.table_field_index") )
-        {
-            qWarning() << "Cannot prepare select statement";
-            return;
-        }
-
-        userFilterQuery.bindValue(":filterName", ui->userFilter->currentText());
-
-        qCDebug(runtime) << "User filter SQL: " << userFilterQuery.lastQuery();
-
-        if ( userFilterQuery.exec() )
-        {
-            userFilterQuery.next();
-            filterString.append(QString("( ") + userFilterQuery.value(0).toString() + ")");
-        }
-        else
-        {
-            qCDebug(runtime) << "User filter error - " << userFilterQuery.lastError().text();
-        }
-    }
-
-    if ( !externalFilter.isEmpty() )
-    {
-        filterString.append(QString("( ") + externalFilter + ")");
-    }
-
-    qCDebug(runtime) << "SQL filter summary: " << filterString.join(" AND ");
-    model->setFilter(filterString.join(" AND "));
-    qCDebug(runtime) << model->query().lastQuery();
-
-    model->select();
-    while (model->canFetchMore())
-        model->fetchMore();
-
-    ui->contactTable->resizeColumnsToContents();
-    ui->filteredQSOsLabel->setText(tr("Count: %n", "", model->rowCount()));
+    colorsFilterWidget(ui->countryFilter);
     emit logbookUpdated();
 }
 
@@ -854,6 +787,7 @@ void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)
         });
         dialog.exec();
         updateTable();
+        scrollToIndex(modelIndex);
     }
 }
 
@@ -901,6 +835,43 @@ void LogbookWidget::sendDXCSpot()
     emit sendDXSpotContactReq(model->record(selectedIndexes.at(0).row()));
 }
 
+void LogbookWidget::scrollToIndex(const QModelIndex &index, bool selectItem)
+{
+    FCT_IDENTIFICATION;
+
+    if ( index == QModelIndex() )
+        return;
+
+    // is index visible ?
+    if ( ui->contactTable->visualRect(index).isEmpty() )
+    {
+        while ( model->canFetchMore() && ui->contactTable->visualRect(index).isEmpty() )
+            model->fetchMore();
+
+        if ( model->canFetchMore() )
+            model->fetchMore(); // one more fetch
+    }
+
+    ui->contactTable->scrollTo(index, QAbstractItemView::PositionAtCenter);
+    if ( selectItem )
+        ui->contactTable->selectRow(index.row());
+}
+
+bool LogbookWidget::eventFilter(QObject *obj, QEvent *event)
+{
+    //FCT_IDENTIFICATION;
+
+    if ( event->type() == QEvent::KeyPress && obj == ui->contactTable )
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        // Block SelectAll
+        if ( QKeySequence(keyEvent->modifiers() | keyEvent->key()) == QKeySequence::SelectAll )
+            return true;
+    }
+
+    return QObject::eventFilter(obj, event);
+}
+
 void LogbookWidget::colorsFilterWidget(QComboBox *widget)
 {
     FCT_IDENTIFICATION;
@@ -909,7 +880,86 @@ void LogbookWidget::colorsFilterWidget(QComboBox *widget)
                                                         : "");
 }
 
-LogbookWidget::~LogbookWidget() {
+void LogbookWidget::filterTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStringList filterString;
+
+    const QString &callsignFilterValue = ui->callsignFilter->text();
+
+    if ( !callsignFilterValue.isEmpty() )
+        filterString.append(QString("callsign LIKE '%%1%'").arg(callsignFilterValue.toUpper()));
+
+    const QString &bandFilterValue = ui->bandFilter->currentText();
+
+    if ( ui->bandFilter->currentIndex() != 0 && !bandFilterValue.isEmpty())
+        filterString.append(QString("band = '%1'").arg(bandFilterValue));
+
+    const QString &modeFilterValue = ui->modeFilter->currentText();
+
+    if ( ui->modeFilter->currentIndex() != 0 && !modeFilterValue.isEmpty() )
+        filterString.append(QString("mode = '%1'").arg(modeFilterValue));
+
+    int row = ui->countryFilter->currentIndex();
+    const QModelIndex &idx = ui->countryFilter->model()->index(row,0);
+    const QVariant &data = ui->countryFilter->model()->data(idx);
+
+    if ( ui->countryFilter->currentIndex() != 0 )
+        filterString.append(QString("dxcc = '%1'").arg(data.toInt()));
+
+    if ( ui->clubFilter->currentIndex() != 0 )
+        filterString.append(QString("id in (SELECT contactid FROM contact_clubs_view WHERE clubid = '%1')").arg(ui->clubFilter->currentText()));
+
+    if ( ui->userFilter->currentIndex() != 0 )
+    {
+        QSqlQuery userFilterQuery;
+        if ( ! userFilterQuery.prepare("SELECT "
+                                     "'(' || GROUP_CONCAT( ' ' || c.name || ' ' || CASE WHEN r.value IS NULL AND o.sql_operator IN ('=', 'like') THEN 'IS' "
+                                     "                                                  WHEN r.value IS NULL and r.operator_id NOT IN ('=', 'like') THEN 'IS NOT' "
+                                     "                                                  WHEN o.sql_operator = ('starts with') THEN 'like' "
+                                     "                                                  ELSE o.sql_operator END || "
+                                     "' (' || quote(CASE o.sql_operator WHEN 'like' THEN '%' || r.value || '%' "
+                                     "                                  WHEN 'not like' THEN '%' || r.value || '%' "
+                                     "                                  WHEN 'starts with' THEN r.value || '%' "
+                                     "                                  ELSE r.value END)  || ') ', m.sql_operator) || ')' "
+                                     "FROM qso_filters f, qso_filter_rules r, "
+                                     "qso_filter_operators o, qso_filter_matching_types m, "
+                                     "PRAGMA_TABLE_INFO('contacts') c "
+                                     "WHERE f.filter_name = :filterName "
+                                     "      AND f.filter_name = r.filter_name "
+                                     "      AND o.operator_id = r.operator_id "
+                                     "      AND m.matching_id = f.matching_type "
+                                     "      AND c.cid = r.table_field_index") )
+        {
+            qWarning() << "Cannot prepare select statement";
+            return;
+        }
+
+        userFilterQuery.bindValue(":filterName", ui->userFilter->currentText());
+
+        qCDebug(runtime) << "User filter SQL: " << userFilterQuery.lastQuery();
+
+        if ( userFilterQuery.exec() )
+        {
+            userFilterQuery.next();
+            filterString.append(QString("( ") + userFilterQuery.value(0).toString() + ")");
+        }
+        else
+            qCDebug(runtime) << "User filter error - " << userFilterQuery.lastError().text();
+    }
+
+    if ( !externalFilter.isEmpty() )
+        filterString.append(QString("( ") + externalFilter + ")");
+
+    model->setFilter(filterString.join(" AND "));
+    qCDebug(runtime) << model->query().lastQuery();
+
+    reselectModel();
+}
+
+LogbookWidget::~LogbookWidget()
+{
     FCT_IDENTIFICATION;
 
     saveTableHeaderState();

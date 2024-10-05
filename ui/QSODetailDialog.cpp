@@ -265,7 +265,7 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     /* Country */
     SqlListModel* countryModel = new SqlListModel("SELECT id, translate_to_locale(name), name  "
                                                   "FROM dxcc_entities "
-                                                  "ORDER BY 2 COLLATE LOCALEAWARE ASC;", "", this);
+                                                  "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", this);
     while ( countryModel->canFetchMore() )
         countryModel->fetchMore();
 
@@ -845,9 +845,9 @@ bool QSODetailDialog::doValidation()
 
     bool allValid = true;
 
-    QList<QLabel *> list = findChildren<QLabel *>();
+    const QList<QLabel *> &list = findChildren<QLabel *>();
 
-    for ( QLabel *label : qAsConst(list) )
+    for ( QLabel *label : list )
     {
         if ( label ) label->setToolTip(QString());
     }
@@ -1685,11 +1685,7 @@ void QSOEditMapperDelegate::setEditorData(QWidget *editor,
             QModelIndexList countryIndex = combo->model()->match(combo->model()->index(0,0),
                                                                  Qt::DisplayRole, index.data(),
                                                                  1, Qt::MatchExactly);
-            if ( countryIndex.size() >= 1 )
-            {
-                combo->setCurrentIndex(countryIndex.at(0).row());
-            }
-
+            combo->setCurrentIndex(( countryIndex.size() >= 1 ) ? countryIndex.at(0).row() : -1);
         }
         return;
     }
@@ -1824,10 +1820,14 @@ void QSOEditMapperDelegate::setModelData(QWidget *editor,
         if ( combo )
         {
             int row = combo->currentIndex();
-            const QModelIndex &idxDXCC = combo->model()->index(row,0);
-            const QModelIndex &idxCountryEN = combo->model()->index(row,2);
-            QVariant dataDXCC = combo->model()->data(idxDXCC);
-            QVariant dataCountryEN = combo->model()->data(idxCountryEN);
+            QVariant dataDXCC;
+            QVariant dataCountryEN;
+
+            if ( row > 0 ) // the first line is an empty line
+            {
+                dataDXCC = combo->model()->data(combo->model()->index(row,0));
+                dataCountryEN = combo->model()->data(combo->model()->index(row,2));
+            }
 
             model->setData(index, dataDXCC);
             model->setData(model->index(index.row(),

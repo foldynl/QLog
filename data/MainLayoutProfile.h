@@ -43,7 +43,11 @@ public:
     explicit MainLayoutProfilesManager(QObject *parent = nullptr);
     ~MainLayoutProfilesManager() { };
 
-    static MainLayoutProfilesManager* instance();
+    static MainLayoutProfilesManager* instance()
+    {
+        static MainLayoutProfilesManager instance;
+        return &instance;
+    };
     void save();
 
     QString toDBStringList(const QList<int> &list) const;

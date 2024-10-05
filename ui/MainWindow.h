@@ -7,7 +7,6 @@
 #include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"
-#include "core/MembershipQE.h"
 #include "core/ClubLog.h"
 
 namespace Ui {

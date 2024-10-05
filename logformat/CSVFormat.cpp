@@ -32,10 +32,10 @@ void CSVFormat::exportEnd()
     FCT_IDENTIFICATION;
 
     // Print Header - QMap sorts keys automatically
-    QList<QString> headerKeys(header.keys());
+    const QList<QString> headerKeys(header.keys());
     QStringList row;
 
-    for ( const QString& headerField : qAsConst(headerKeys) )
+    for ( const QString& headerField : headerKeys )
     {
         row << headerField;
     }
@@ -43,11 +43,11 @@ void CSVFormat::exportEnd()
     stream << row.join(delimiter) << "\n";
 
     // Normalize and print exported records
-    for ( const QHash<QString, QString> &record : qAsConst(exportedRecords) )
+    for ( const QHash<QString, QString> &record : static_cast<const QList<QHash<QString, QString>>&>(exportedRecords) )
     {
         row.clear();
 
-        for ( const QString& headerField : qAsConst(headerKeys) )
+        for ( const QString& headerField : headerKeys )
         {
             row << record.value(headerField);
         }

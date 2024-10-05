@@ -1,5 +1,5 @@
-#ifndef GENERICROTDRV_H
-#define GENERICROTDRV_H
+#ifndef QLOG_ROTATOR_DRIVERS_GENERICROTDRV_H
+#define QLOG_ROTATOR_DRIVERS_GENERICROTDRV_H
 
 #include <QObject>
 #include "data/RotProfile.h"
@@ -36,4 +36,4 @@ protected:
     double elevation;
 };
 
-#endif // GENERICROTDRV_H
+#endif // QLOG_ROTATOR_DRIVERS_GENERICROTDRV_H

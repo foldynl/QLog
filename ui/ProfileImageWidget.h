@@ -1,5 +1,5 @@
-#ifndef PROFILEIMAGEWIDGET_H
-#define PROFILEIMAGEWIDGET_H
+#ifndef QLOG_UI_PROFILEIMAGEWIDGET_H
+#define QLOG_UI_PROFILEIMAGEWIDGET_H
 
 #include <QWidget>
 #include <QLabel>
@@ -56,4 +56,4 @@ private:
     QMimeType mimeType;
 };
 
-#endif // PROFILEIMAGEWIDGET_H
+#endif // QLOG_UI_PROFILEIMAGEWIDGET_H

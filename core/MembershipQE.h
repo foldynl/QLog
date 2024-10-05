@@ -75,7 +75,11 @@ class MembershipQE : public QObject
     Q_OBJECT
 
 public:
-    static MembershipQE *instance();
+    static MembershipQE *instance()
+    {
+        static MembershipQE instance;
+        return &instance;
+    };
     static void saveEnabledClubLists(const QStringList &enabledLists);
     static QStringList getEnabledClubLists();
 

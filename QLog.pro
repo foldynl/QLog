@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 TARGET = qlog
 TEMPLATE = app
-VERSION = 0.38.0
+VERSION = 0.39.0
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
@@ -90,7 +90,6 @@ SOURCES += \
         data/CWKeyProfile.cpp \
         data/CWShortcutProfile.cpp \
         data/Data.cpp \
-        data/Dxcc.cpp \
         data/MainLayoutProfile.cpp \
         data/RigProfile.cpp \
         data/RotProfile.cpp \
@@ -107,6 +106,7 @@ SOURCES += \
         models/LogbookModel.cpp \
         models/RigTypeModel.cpp \
         models/RotTypeModel.cpp \
+        models/SearchFilterProxyModel.cpp \
         models/ShortcutEditorModel.cpp \
         models/SqlListModel.cpp \
         models/WsjtxTableModel.cpp \
@@ -242,6 +242,7 @@ HEADERS += \
         models/LogbookModel.h \
         models/RigTypeModel.h \
         models/RotTypeModel.h \
+        models/SearchFilterProxyModel.h \
         models/ShortcutEditorModel.h \
         models/SqlListModel.h \
         models/WsjtxTableModel.h \

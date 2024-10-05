@@ -87,14 +87,6 @@ StationProfilesManager::StationProfilesManager(QObject *parent) :
     }
 }
 
-StationProfilesManager *StationProfilesManager::instance()
-{
-    FCT_IDENTIFICATION;
-
-    static StationProfilesManager instance;
-    return &instance;
-}
-
 void StationProfilesManager::save()
 {
     FCT_IDENTIFICATION;

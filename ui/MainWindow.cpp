@@ -13,7 +13,6 @@
 #include "rotator/Rotator.h"
 #include "cwkey/CWKeyer.h"
 #include "core/Wsjtx.h"
-#include "data/Data.h"
 #include "core/debug.h"
 #include "ui/NewContactWidget.h"
 #include "ui/QSOFilterDialog.h"
@@ -24,8 +23,6 @@
 #include "core/Lotw.h"
 #include "core/Eqsl.h"
 #include "core/QRZ.h"
-#include "core/CredentialStore.h"
-#include "AlertSettingDialog.h"
 #include "core/PropConditions.h"
 #include "data/MainLayoutProfile.h"
 #include "ui/EditLayoutDialog.h"
@@ -140,16 +137,37 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(Rig::instance(), &Rig::rigCWKeyCloseRequest, this, &MainWindow::cwKeyerDisconnectProfile);
     connect(Rig::instance(), &Rig::frequencyChanged, ui->onlineMapWidget, &OnlineMapWidget::setIBPBand);
     connect(Rig::instance(), &Rig::frequencyChanged, ui->bandmapWidget , &BandmapWidget::updateTunedFrequency);
+    connect(Rig::instance(), &Rig::frequencyChanged, ui->newContactWidget, &NewContactWidget::changeFrequency);
+    connect(Rig::instance(), &Rig::frequencyChanged, ui->rigWidget, &RigWidget::updateFrequency);
     connect(Rig::instance(), &Rig::modeChanged, ui->bandmapWidget, &BandmapWidget::updateMode);
+    connect(Rig::instance(), &Rig::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
+    connect(Rig::instance(), &Rig::modeChanged, ui->rigWidget, &RigWidget::updateMode);
+    connect(Rig::instance(), &Rig::powerChanged, ui->newContactWidget, &NewContactWidget::changePower);
+    connect(Rig::instance(), &Rig::powerChanged, ui->rigWidget, &RigWidget::updatePWR);
+    connect(Rig::instance(), &Rig::rigConnected, ui->newContactWidget, &NewContactWidget::rigConnected);
+    connect(Rig::instance(), &Rig::rigConnected, ui->rigWidget, &RigWidget::rigConnected);
+    connect(Rig::instance(), &Rig::rigConnected, ui->cwconsoleWidget, &CWConsoleWidget::rigConnectHandler);
+    connect(Rig::instance(), &Rig::rigDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::rigDisconnectHandler);
+    connect(Rig::instance(), &Rig::rigDisconnected, ui->newContactWidget, &NewContactWidget::rigDisconnected);
+    connect(Rig::instance(), &Rig::rigDisconnected, ui->rigWidget, &RigWidget::rigDisconnected);
+    connect(Rig::instance(), &Rig::vfoChanged, ui->rigWidget, &RigWidget::updateVFO);
+    connect(Rig::instance(), &Rig::xitChanged, ui->rigWidget, &RigWidget::updateXIT);
+    connect(Rig::instance(), &Rig::ritChanged, ui->rigWidget, &RigWidget::updateRIT);
+    connect(Rig::instance(), &Rig::pttChanged, ui->rigWidget, &RigWidget::updatePTT);
 
     connect(Rotator::instance(), &Rotator::rotErrorPresent, this, &MainWindow::rotErrorHandler);
     connect(Rotator::instance(), &Rotator::positionChanged, ui->onlineMapWidget, &OnlineMapWidget::antPositionChanged);
     connect(Rotator::instance(), &Rotator::rotConnected, ui->onlineMapWidget, &OnlineMapWidget::rotConnected);
     connect(Rotator::instance(), &Rotator::rotDisconnected, ui->onlineMapWidget, &OnlineMapWidget::rotDisconnected);
+    connect(Rotator::instance(), &Rotator::positionChanged, ui->rotatorWidget, &RotatorWidget::positionChanged);
+    connect(Rotator::instance(), &Rotator::rotConnected, ui->rotatorWidget, &RotatorWidget::rotConnected);
+    connect(Rotator::instance(), &Rotator::rotDisconnected, ui->rotatorWidget, &RotatorWidget::rotDisconnected);
 
     connect(CWKeyer::instance(), &CWKeyer::cwKeyerError, this, &MainWindow::cwKeyerErrorHandler);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyWPMChanged, ui->cwconsoleWidget, &CWConsoleWidget::setWPM);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyEchoText, ui->cwconsoleWidget, &CWConsoleWidget::appendCWEchoText);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyConnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyConnected);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyDisconnected);
 
     Fldigi* fldigi = new Fldigi(this);
     connect(fldigi, &Fldigi::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
@@ -164,6 +182,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->wsjtxWidget, &WsjtxWidget::spotsCleared, ui->onlineMapWidget, &OnlineMapWidget::clearWSJTXSpots);
     connect(ui->wsjtxWidget, &WsjtxWidget::reply, wsjtx, &Wsjtx::startReply);
     connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->newContactWidget, &NewContactWidget::changeFrequency);
+    connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->onlineMapWidget, &OnlineMapWidget::setIBPBand);
+    connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->bandmapWidget , &BandmapWidget::updateTunedFrequency);
     connect(ui->wsjtxWidget, &WsjtxWidget::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
 
     connect(this, &MainWindow::settingsChanged, wsjtx, &Wsjtx::reloadSetting);
@@ -178,7 +198,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::altBackslash, Rig::instance(), &Rig::setPTT);
     connect(this, &MainWindow::manualMode, ui->newContactWidget, &NewContactWidget::setManualMode);
 
-    connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshGraph);
+    connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshWidget);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLog::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
@@ -221,7 +241,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->bandmapWidget, &BandmapWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
     connect(ui->bandmapWidget, &BandmapWidget::nearestSpotFound, ui->newContactWidget, &NewContactWidget::nearestSpot);
 
-    connect(ui->wsjtxWidget, &WsjtxWidget::showDxDetails, ui->newContactWidget, &NewContactWidget::showDx);
+    connect(ui->wsjtxWidget, &WsjtxWidget::callsignSelected, ui->newContactWidget, &NewContactWidget::prepareWSJTXQSO);
 
     connect(ui->rigWidget, &RigWidget::rigProfileChanged, ui->newContactWidget, &NewContactWidget::refreshRigProfileCombo);
 
@@ -1194,7 +1214,7 @@ void MainWindow::QSOFilterSetting()
 
     QSOFilterDialog dialog(this);
     dialog.exec();
-    ui->logbookWidget->updateTable();
+    ui->logbookWidget->refreshUserFilter();
 }
 
 void MainWindow::alertRuleSetting()

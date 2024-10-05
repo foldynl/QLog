@@ -129,13 +129,6 @@ Data::~Data()
     }
 }
 
-Data* Data::instance() {
-    FCT_IDENTIFICATION;
-
-    static Data instance;
-    return &instance;
-}
-
 DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 {
     FCT_IDENTIFICATION;
@@ -191,24 +184,24 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 
     if ( query.next() )
     {
-        if ( query.value(0).isNull() )
+        if ( query.value(0).toString().isEmpty() )
             return DxccStatus::NewEntity;
 
-        if ( query.value(1).isNull() )
+        if ( query.value(1).toString().isEmpty() )
         {
-            if ( query.value(2).isNull() )
+            if ( query.value(2).toString().isEmpty() )
                 return DxccStatus::NewBandMode;
             else
                 return DxccStatus::NewBand;
         }
 
-        if ( query.value(2).isNull() )
+        if ( query.value(2).toString().isEmpty() )
             return DxccStatus::NewMode;
 
-        if ( query.value(3).isNull() )
+        if ( query.value(3).toString().isEmpty() )
             return DxccStatus::NewSlot;
 
-        if ( query.value(4).isNull() )
+        if ( query.value(4).toString().isEmpty() )
             return DxccStatus::Worked;
         else
             return DxccStatus::Confirmed;

@@ -18,14 +18,12 @@
 #include "../core/HRDLog.h"
 #include "../ui/StyleItemDelegate.h"
 #include "core/debug.h"
-#include "core/CredentialStore.h"
 #include "data/StationProfile.h"
 #include "data/RigProfile.h"
 #include "data/AntProfile.h"
 #include "data/Data.h"
 #include "core/Gridsquare.h"
 #include "core/Wsjtx.h"
-#include "core/QSLStorage.h"
 #include "core/NetworkNotification.h"
 #include "rig/Rig.h"
 #include "rig/RigCaps.h"
@@ -33,7 +31,6 @@
 #include "rotator/RotCaps.h"
 #include "core/LogParam.h"
 #include "core/Callsign.h"
-#include "cwkey/CWKeyer.h"
 #include "core/MembershipQE.h"
 #include "models/SqlListModel.h"
 #include "core/GenericCallbook.h"
@@ -41,6 +38,7 @@
 #include "core/HostsPortString.h"
 #include "models/ShortcutEditorModel.h"
 #include "ui/StyleItemDelegate.h"
+#include "core/SerialPort.h"
 
 #define STACKED_WIDGET_SERIAL_SETTING  0
 #define STACKED_WIDGET_NETWORK_SETTING 1
@@ -1239,10 +1237,10 @@ void SettingsDialog::delCWKeyProfile()
     {
         QStringList  dependentRigs;
         QString removedCWProfile = ui->cwProfilesListView->model()->data(index).toString();
-        QStringList availableRigProfileNames = rigProfManager->profileNameList();
+        const QStringList &availableRigProfileNames = rigProfManager->profileNameList();
 
         /* needed to verify whether removed Key is not used in Rig Profile as an assigned Key*/
-        for ( const QString &rigProfileName : qAsConst(availableRigProfileNames) )
+        for ( const QString &rigProfileName : availableRigProfileNames )
         {
             qCDebug(runtime) << "Checking Rig Profile" << rigProfileName;
             RigProfile testedRig = rigProfManager->getProfile(rigProfileName);
@@ -2408,7 +2406,7 @@ void SettingsDialog::writeSettings() {
 
     QStringList enabledLists;
 
-    for ( QCheckBox* item: qAsConst(memberListCheckBoxes) )
+    for ( QCheckBox* item: static_cast<const QList<QCheckBox *>&>(memberListCheckBoxes) )
     {
         if ( item->isChecked() )
         {
@@ -2648,7 +2646,7 @@ void SettingsDialog::generateMembershipCheckboxes()
     {
         int elementIndex = 0;
 
-        for ( QCheckBox* item: qAsConst(memberListCheckBoxes) )
+        for ( QCheckBox* item: static_cast<const QList<QCheckBox*>&>(memberListCheckBoxes) )
         {
             ui->clubListGrig->addWidget(item, elementIndex / 6, elementIndex % 6);
             elementIndex++;

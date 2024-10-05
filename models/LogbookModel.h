@@ -15,7 +15,6 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     void updateExternalServicesUploadStatus( const QModelIndex &index, int role, bool &updateResult );
     void updateUploadToModified( const QModelIndex &index, int role, int column, bool &updateResult );
-
     enum column_id
     {
         COLUMN_ID = 0,

@@ -8,7 +8,6 @@
 #include "ui_RigWidget.h"
 #include "rig/macros.h"
 #include "core/debug.h"
-#include "models/SqlListModel.h"
 #include "data/Data.h"
 #include "core/HRDLog.h"
 #include "data/BandPlan.h"
@@ -47,17 +46,6 @@ RigWidget::RigWidget(QWidget *parent) :
     refreshRigProfileCombo();
     refreshBandCombo();
     refreshModeCombo();
-
-    Rig* rig = Rig::instance();
-    connect(rig, &Rig::frequencyChanged, this, &RigWidget::updateFrequency);
-    connect(rig, &Rig::modeChanged, this, &RigWidget::updateMode);
-    connect(rig, &Rig::vfoChanged, this, &RigWidget::updateVFO);
-    connect(rig, &Rig::powerChanged, this, &RigWidget::updatePWR);
-    connect(rig, &Rig::rigConnected, this, &RigWidget::rigConnected);
-    connect(rig, &Rig::rigDisconnected, this, &RigWidget::rigDisconnected);
-    connect(rig, &Rig::xitChanged, this, &RigWidget::updateXIT);
-    connect(rig, &Rig::ritChanged, this, &RigWidget::updateRIT);
-    connect(rig, &Rig::pttChanged, this, &RigWidget::updatePTT);
 
     QTimer *onAirTimer = new QTimer(this);
     connect(onAirTimer, &QTimer::timeout, this, &RigWidget::sendOnAirState);
@@ -209,7 +197,7 @@ void RigWidget::bandComboChanged(const QString &newBand)
 
     double newFreq = record.value("start_freq").toDouble();
 
-    if ( ! record.value("last_seen_freq").isNull() )
+    if ( ! record.value("last_seen_freq").toString().isEmpty() )
     {
         newFreq = record.value("last_seen_freq").toDouble();
     }

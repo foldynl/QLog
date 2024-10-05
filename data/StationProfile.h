@@ -54,7 +54,11 @@ public:
     explicit StationProfilesManager(QObject *parent = nullptr);
     ~StationProfilesManager() {};
 
-    static StationProfilesManager* instance();
+    static StationProfilesManager* instance()
+    {
+        static StationProfilesManager instance;
+        return &instance;
+    };
     void save();
 };
 

@@ -1,5 +1,5 @@
-#ifndef MULTISELECTCOMPLETER_H
-#define MULTISELECTCOMPLETER_H
+#ifndef QLOG_CORE_MULTISELECTCOMPLETER_H
+#define QLOG_CORE_MULTISELECTCOMPLETER_H
 
 #include <QCompleter>
 
@@ -17,4 +17,4 @@ public:
     QStringList splitPath( const QString& path ) const;
 };
 
-#endif // MULTISELECTCOMPLETER_H
+#endif // QLOG_CORE_MULTISELECTCOMPLETER_H
