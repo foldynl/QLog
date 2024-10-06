@@ -65,12 +65,13 @@ public:
     void setFilterMyGridsquare(const QString &myGridsquare);
     void setFilterSentPaperQSL(bool includeNo, bool includeIgnore, bool includeAlreadySent);
     void setFilterSendVia(const QString &value);
+    bool setFilterQSOFilter;
     QString getWhereClause();
     void bindWhereClause(QSqlQuery &);
     void setExportedFields(const QStringList& fieldsList);
     void setUpdateDxcc(bool updateDxcc);
     void setDuplicateQSOCallback(duplicateQSOBehaviour (*func)(QSqlRecord *, QSqlRecord *));
-
+    QString getUserFilter();
     virtual void importStart() {}
     virtual void importEnd() {}
     virtual bool importNext(QSqlRecord&) { return false; }
