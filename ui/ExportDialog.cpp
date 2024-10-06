@@ -165,6 +165,8 @@ void ExportDialog::runExport()
                                       (ui->addlSentStatusCheckbox->isChecked()) ? ui->addlSentStatusAlreadySentCheckBox->isChecked() : false);
     }
 
+    format->setFilterQSOFilter = ui->applyQSOFilterCheckbox->isChecked();
+
     long count = 0L;
 
     connect(format, &LogFormat::exportProgress, this, &ExportDialog::setProgress);
@@ -190,6 +192,7 @@ void ExportDialog::runExport()
     ui->qslSendViaComboBox->setEnabled(false);
     ui->markAsSentCheckbox->setEnabled(false);
     ui->exportedColumnsCombo->setEnabled(false);
+    ui->applyQSOFilterCheckbox->setEnabled(false);
 
     if ( exportedColumns.count() > 0 )
     {

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>465</width>
-    <height>500</height>
+    <height>592</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -32,7 +32,7 @@
       <item row="0" column="0">
        <widget class="QLineEdit" name="fileEdit">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -45,8 +45,7 @@
          <string>Browse</string>
         </property>
         <property name="icon">
-         <iconset theme="folder-open">
-          <normaloff>.</normaloff>.</iconset>
+         <iconset theme="folder-open"/>
         </property>
        </widget>
       </item>
@@ -210,7 +209,7 @@
            </sizepolicy>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="toolTip">
            <string>Export only QSOs that match the selected date range</string>
@@ -232,7 +231,7 @@
            <string notr="true">-</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -248,7 +247,7 @@
            </sizepolicy>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="toolTip">
            <string>Export only QSOs that match the selected date range</string>
@@ -261,7 +260,7 @@
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -333,7 +332,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QCheckBox" name="addlSentStatusCheckbox">
         <property name="toolTip">
          <string>Include unusual QSO Sent statuses</string>
@@ -343,7 +342,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="5" column="1">
        <layout class="QHBoxLayout" name="sentStatusLayout">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -443,6 +442,16 @@
         </item>
        </layout>
       </item>
+      <item row="6" column="0">
+       <widget class="QCheckBox" name="applyQSOFilterCheckbox">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Export only QSOs that match the selected user QSO Filter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Apply QSO Filter to exported items</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -456,10 +465,10 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
