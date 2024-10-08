@@ -1730,7 +1730,7 @@
   <customwidget>
    <class>StationTableWidget</class>
    <extends>QTableView</extends>
-   <header location="global">StationTableWidget.h</header>
+   <header location="global">ui/StationTableWidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
