@@ -6,14 +6,15 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include "models/DxccTableModel.h"
-#include "DxccTableWidget.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
 #include "data/BandPlan.h"
+#include "StationTableWidget.h"
 
-MODULE_IDENTIFICATION("qlog.ui.dxcctablewidget");
+MODULE_IDENTIFICATION("qlog.ui.stationtablewidget");
 
-DxccTableWidget::DxccTableWidget(QWidget *parent) : QTableView(parent)
+StationTableWidget::StationTableWidget(QWidget *parent)
+    : QTableView{parent}
 {
     FCT_IDENTIFICATION;
 
@@ -24,7 +25,7 @@ DxccTableWidget::DxccTableWidget(QWidget *parent) : QTableView(parent)
     this->verticalHeader()->setVisible(false);
 }
 
-void DxccTableWidget::clear()
+void StationTableWidget::clear()
 {
     FCT_IDENTIFICATION;
 
@@ -33,13 +34,15 @@ void DxccTableWidget::clear()
     show();
 }
 
-void DxccTableWidget::setDxcc(int dxcc, Band highlightedBand)
+void StationTableWidget::setCallsign(QString callsign, Band highlightedBand)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << dxcc;
+    qWarning() << callsign;
 
-    if ( dxcc )
+    qCDebug(function_parameters) << callsign;
+
+    if ( ! callsign.isEmpty() )
     {
         const QList<Band>& dxccBands = BandPlan::bandsList(true, true);
 
@@ -63,9 +66,9 @@ void DxccTableWidget::setDxcc(int dxcc, Band highlightedBand)
             stmt_band_part1 << QString(" MAX(CASE WHEN band = '%1' THEN  CASE WHEN (eqsl_qsl_rcvd = 'Y') THEN 2 ELSE 1 END  ELSE 0 END) as '%2_eqsl',"
                                        " MAX(CASE WHEN band = '%3' THEN  CASE WHEN (lotw_qsl_rcvd = 'Y') THEN 2 ELSE 1 END  ELSE 0 END) as '%4_lotw',"
                                        " MAX(CASE WHEN band = '%5' THEN  CASE WHEN (qsl_rcvd = 'Y')      THEN 2 ELSE 1 END  ELSE 0 END) as '%6_paper' ")
-                                        .arg(dxccBands[i].name, dxccBands[i].name,
-                                             dxccBands[i].name, dxccBands[i].name,
-                                             dxccBands[i].name, dxccBands[i].name);
+                                   .arg(dxccBands[i].name, dxccBands[i].name,
+                                        dxccBands[i].name, dxccBands[i].name,
+                                        dxccBands[i].name, dxccBands[i].name);
             stmt_band_part2 << QString(" c.'%1_eqsl' || c.'%2_lotw'|| c.'%3_paper' as '%4'").arg(dxccBands[i].name, dxccBands[i].name,
                                                                                                  dxccBands[i].name, dxccBands[i].name);
         }
@@ -77,16 +80,16 @@ void DxccTableWidget::setDxcc(int dxcc, Band highlightedBand)
                                "		      %1 "
                                "		      FROM contacts c"
                                "		           LEFT OUTER JOIN modes m on c.mode = m.name"
-                               "		      WHERE %2 AND c.dxcc = %3 GROUP BY m.dxcc ) "
+                               "		      WHERE %2 AND c.callsign like '%3' GROUP BY m.dxcc ) "
                                " SELECT m.dxcc,"
                                "	   %4 "
                                " FROM (SELECT DISTINCT dxcc"
                                "	   FROM modes) m"
                                "        LEFT OUTER JOIN dxcc_summary c ON c.dxcc = m.dxcc "
                                " ORDER BY m.dxcc").arg(stmt_band_part1.join(","))
-                                                  .arg(filter)
-                                                  .arg(dxcc)
-                                                  .arg(stmt_band_part2.join(","));
+                           .arg(filter)
+                           .arg(callsign)
+                           .arg(stmt_band_part2.join(","));
 
         qCDebug(runtime) << stmt;
 
@@ -122,4 +125,5 @@ void DxccTableWidget::setDxcc(int dxcc, Band highlightedBand)
     }
 
     show();
+
 }
