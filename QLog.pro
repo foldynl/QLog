@@ -164,6 +164,7 @@ SOURCES += \
         ui/RotatorWidget.cpp \
         ui/SettingsDialog.cpp \
         ui/ShowUploadDialog.cpp \
+        ui/StationTableWidget.cpp \
         ui/StatisticsWidget.cpp \
         ui/SwitchButton.cpp \
         ui/WebEnginePage.cpp \
@@ -300,6 +301,7 @@ HEADERS += \
         ui/QrzDialog.h \
         ui/ShowUploadDialog.h \
         ui/SplashScreen.h \
+        ui/StationTableWidget.h \
         ui/StyleItemDelegate.h \
         ui/RigWidget.h \
         ui/RotatorWidget.h \
