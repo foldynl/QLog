@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QHash>
 #include <QFormLayout>
+#include <QToolButton>
 
 #include "data/DxSpot.h"
 #include "rig/Rig.h"
@@ -246,6 +247,7 @@ private slots:
     void antProfileComboChanged(const QString&);
     void webLookup();
     void refreshSIGCompleter();
+    void tabsExpandCollapse();
 
 private:
     void useFieldsFromPrevQSO(const QString &callsign,
@@ -326,6 +328,7 @@ private:
     QSqlQuery prevQSOBaseCallMatchQuery;
     bool isPrevQSOExactMatchQuery;
     bool isPrevQSOBaseCallMatchQuery;
+    QToolButton *tabCollapseBtn;
 };
 
 #endif // QLOG_UI_NEWCONTACTWIDGET_H
