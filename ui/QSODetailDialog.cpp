@@ -358,6 +358,8 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     mapper->addMapping(ui->myVUCCEdit, LogbookModel::COLUMN_MY_VUCC_GRIDS);
     mapper->addMapping(ui->myWWFFEdit, LogbookModel::COLUMN_MY_WWFF_REF);
     mapper->addMapping(ui->powerEdit, LogbookModel::COLUMN_TX_POWER);
+    mapper->addMapping(ui->myCountyEdit, LogbookModel::COLUMN_MY_CNTY);
+    mapper->addMapping(ui->myOperatorCallsignEdit, LogbookModel::COLUMN_OPERATOR);
 
     /* Notes */
     mapper->addMapping(ui->noteEdit, LogbookModel::COLUMN_NOTES_INTL);
@@ -2160,6 +2162,7 @@ bool QSODetailDialog::LogbookModelPrivate::setData(const QModelIndex &index, con
            case COLUMN_MY_WWFF_REF:
            case COLUMN_WWFF_REF:
            case COLUMN_STATION_CALLSIGN:
+           case COLUMN_OPERATOR:
                main_update_result = QSqlTableModel::setData(index, ( !value.toString().isEmpty() ) ? value.toString().toUpper() // clazy:exclude=skipped-base-method
                                                                                                    : QVariant(), role);
                break;

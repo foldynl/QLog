@@ -1292,92 +1292,17 @@
          <item row="1" column="1">
           <widget class="NewContactEditLine" name="myOperatorNameEdit"/>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="myGridLabel">
-           <property name="text">
-            <string>Gridsquare</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="NewContactEditLine" name="myGridEdit"/>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="myQTHLabel">
-           <property name="text">
-            <string>QTH</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="NewContactEditLine" name="myQTHEdit"/>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="myRigLabel">
-           <property name="text">
-            <string>Rig</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="NewContactEditLine" name="myRigEdit"/>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="myAntLabel">
-           <property name="text">
-            <string>Antenna</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="NewContactEditLine" name="myAntEdit"/>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="powerLabel">
-           <property name="text">
-            <string>Power</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="1">
-          <widget class="QDoubleSpinBox" name="powerEdit">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
-           </property>
-           <property name="specialValueText">
-            <string>Blank</string>
-           </property>
-           <property name="suffix">
-            <string> W</string>
-           </property>
-           <property name="decimals">
-            <number>3</number>
-           </property>
-           <property name="maximum">
-            <double>1000000.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="myCountryLabel">
            <property name="text">
             <string>Country</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QComboBox" name="myCountryCombo"/>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_15">
            <property name="spacing">
             <number>8</number>
@@ -1442,6 +1367,46 @@
             </spacer>
            </item>
           </layout>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="myGridLabel">
+           <property name="text">
+            <string>Gridsquare</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="NewContactEditLine" name="myGridEdit"/>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="myQTHLabel">
+           <property name="text">
+            <string>QTH</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="NewContactEditLine" name="myQTHEdit"/>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="myCountyLabel">
+           <property name="text">
+            <string>County</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="NewContactEditLine" name="myCountyEdit"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="myOperatorCallsignLabel">
+           <property name="text">
+            <string>Operator Callsign</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="NewContactEditLine" name="myOperatorCallsignEdit"/>
          </item>
         </layout>
        </item>
@@ -1526,17 +1491,66 @@
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <layout class="QFormLayout" name="formLayout_6">
+         <property name="verticalSpacing">
+          <number>4</number>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+         <item row="0" column="0">
+          <widget class="QLabel" name="myRigLabel">
+           <property name="text">
+            <string>Rig</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="NewContactEditLine" name="myRigEdit"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="myAntLabel">
+           <property name="text">
+            <string>Antenna</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="NewContactEditLine" name="myAntEdit"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="powerLabel">
+           <property name="text">
+            <string>Power</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="powerEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
+           </property>
+           <property name="specialValueText">
+            <string>Blank</string>
+           </property>
+           <property name="suffix">
+            <string> W</string>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="maximum">
+            <double>1000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -2224,11 +2238,13 @@
   <tabstop>dxccTableWidget</tabstop>
   <tabstop>myCallsignEdit</tabstop>
   <tabstop>myOperatorNameEdit</tabstop>
+  <tabstop>myOperatorCallsignEdit</tabstop>
+  <tabstop>myCountryCombo</tabstop>
+  <tabstop>myITUEdit</tabstop>
+  <tabstop>myCQEdit</tabstop>
   <tabstop>myGridEdit</tabstop>
   <tabstop>myQTHEdit</tabstop>
-  <tabstop>myRigEdit</tabstop>
-  <tabstop>myAntEdit</tabstop>
-  <tabstop>powerEdit</tabstop>
+  <tabstop>myCountyEdit</tabstop>
   <tabstop>myIOTAEdit</tabstop>
   <tabstop>myPOTAEdit</tabstop>
   <tabstop>mySOTAEdit</tabstop>
@@ -2236,6 +2252,9 @@
   <tabstop>mySIGEdit</tabstop>
   <tabstop>mySIGInfoEdit</tabstop>
   <tabstop>myVUCCEdit</tabstop>
+  <tabstop>myRigEdit</tabstop>
+  <tabstop>myAntEdit</tabstop>
+  <tabstop>powerEdit</tabstop>
   <tabstop>qslPaperReceiveDateEdit</tabstop>
   <tabstop>qslPaperReceiveStatusBox</tabstop>
   <tabstop>qslPaperSentDateEdit</tabstop>

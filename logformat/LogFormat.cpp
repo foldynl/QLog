@@ -287,6 +287,7 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         setIfEmpty(LogbookModel::COLUMN_STATION_CALLSIGN, defaultStationProfile->callsign);
         setIfEmpty(LogbookModel::COLUMN_MY_GRIDSQUARE, defaultStationProfile->locator);
         setIfEmpty(LogbookModel::COLUMN_MY_NAME, defaultStationProfile->operatorName);
+        setIfEmpty(LogbookModel::COLUMN_OPERATOR, defaultStationProfile->operatorCallsign);
         setIfEmpty(LogbookModel::COLUMN_MY_CITY_INTL, defaultStationProfile->qthName);
         setIfEmpty(LogbookModel::COLUMN_MY_CITY, Data::removeAccents(defaultStationProfile->qthName));
         setIfEmpty(LogbookModel::COLUMN_MY_IOTA, defaultStationProfile->iota);
@@ -301,6 +302,7 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         setIfEmpty(LogbookModel::COLUMN_MY_CQ_ZONE, QString::number(defaultStationProfile->cqz));
         setIfEmpty(LogbookModel::COLUMN_MY_COUNTRY_INTL, defaultStationProfile->country);
         setIfEmpty(LogbookModel::COLUMN_MY_COUNTRY, Data::removeAccents(defaultStationProfile->country));
+        setIfEmpty(LogbookModel::COLUMN_MY_CNTY, Data::removeAccents(defaultStationProfile->county));
     };
 
     auto setMyEntity = [&](const DxccEntity &myEntity)

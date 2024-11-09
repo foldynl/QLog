@@ -1178,6 +1178,21 @@ void NewContactWidget::addAddlFields(QSqlRecord &record, const StationProfile &p
         record.setValue("my_country_intl", profile.country);
     }
 
+    if ( record.value("my_cnty").toString().isEmpty()
+        && !profile.county.isEmpty() )
+    {
+        record.setValue("my_cnty", profile.county);
+    }
+
+    if ( record.value("operator").toString().isEmpty()
+        && !profile.operatorCallsign.isEmpty() )
+    {
+        record.setValue("operator", profile.operatorCallsign.toUpper());
+    } else if ( record.value("operator").toString().isEmpty()
+               && !profile.callsign.isEmpty() ) {
+        record.setValue("operator", profile.callsign.toUpper());
+    }
+
     if ( record.value("my_itu_zone").toString().isEmpty()
          && profile.ituz != 0 )
     {

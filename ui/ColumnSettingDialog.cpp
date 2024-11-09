@@ -184,6 +184,7 @@ void ColumnSettingDialog::setupDialog()
         case LogbookModel::COLUMN_LON:
         case LogbookModel::COLUMN_OWNER_CALLSIGN:
         case LogbookModel::COLUMN_CONTACTED_OP:
+        case LogbookModel::COLUMN_OPERATOR:
         case LogbookModel::COLUMN_STATION_CALLSIGN:
         case LogbookModel::COLUMN_COMMENT:
         case LogbookModel::COLUMN_COUNTRY:

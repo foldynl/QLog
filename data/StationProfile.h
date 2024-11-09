@@ -20,6 +20,7 @@ public:
     QString callsign;
     QString locator;
     QString operatorName;
+    QString operatorCallsign;
     QString qthName;
     QString iota;
     QString pota;
@@ -32,6 +33,7 @@ public:
     int cqz;
     int dxcc;
     QString country;
+    QString county;
 
     bool operator== (const StationProfile &profile);
     bool operator!= (const StationProfile &profile);

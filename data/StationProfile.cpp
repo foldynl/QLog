@@ -11,9 +11,9 @@ MODULE_IDENTIFICATION("qlog.data.stationprofile");
 QDataStream& operator<<(QDataStream& out, const StationProfile& v)
 {
     out << v.profileName << v.callsign << v.locator
-        << v.operatorName << v.qthName << v.iota
+        << v.operatorName << v.operatorCallsign << v.qthName << v.iota
         << v.sota << v.sig << v.sigInfo << v.vucc
-        << v.wwff << v.pota << v.ituz << v.cqz << v.dxcc << v.country;
+        << v.wwff << v.pota << v.ituz << v.cqz << v.dxcc << v.country << v.county;
     return out;
 }
 
@@ -23,6 +23,7 @@ QDataStream& operator>>(QDataStream& in, StationProfile& v)
     in >> v.callsign;
     in >> v.locator;
     in >> v.operatorName;
+    in >> v.operatorCallsign;
     in >> v.qthName;
     in >> v.iota;
     in >> v.sota;
@@ -35,6 +36,7 @@ QDataStream& operator>>(QDataStream& in, StationProfile& v)
     in >> v.cqz;
     in >> v.dxcc;
     in >> v.country;
+    in >> v.county;
 
     return in;
 }
@@ -51,7 +53,7 @@ StationProfilesManager::StationProfilesManager(QObject *parent) :
 
     if ( ! profileQuery.prepare("SELECT profile_name, callsign, locator, "
                                 "operator_name, qth_name, iota, sota, sig, sig_info, vucc, pota, "
-                                "ituz, cqz, dxcc, country "
+                                "ituz, cqz, dxcc, country, county, operator_callsign "
                                 "FROM station_profiles") )
     {
         qWarning()<< "Cannot prepare select";
@@ -77,6 +79,8 @@ StationProfilesManager::StationProfilesManager(QObject *parent) :
             profileDB.cqz = profileQuery.value(12).toInt();
             profileDB.dxcc = profileQuery.value(13).toInt();
             profileDB.country = profileQuery.value(14).toString();
+            profileDB.county = profileQuery.value(15).toString();
+            profileDB.operatorCallsign = profileQuery.value(16).toString();
 
             addProfile(profileDB.profileName, profileDB);
         }
@@ -101,8 +105,8 @@ void StationProfilesManager::save()
         return;
     }
 
-    if ( ! insertQuery.prepare("INSERT INTO station_profiles(profile_name, callsign, locator, operator_name, qth_name, iota, sota, sig, sig_info, vucc, wwff, pota, ituz, cqz, dxcc, country) "
-                        "VALUES (:profile_name, :callsign, :locator, :operator_name, :qth_name, :iota, :sota, :sig, :sig_info, :vucc, :wwff, :pota, :ituz, :cqz, :dxcc, :country)") )
+    if ( ! insertQuery.prepare("INSERT INTO station_profiles(profile_name, callsign, locator, operator_name, qth_name, iota, sota, sig, sig_info, vucc, wwff, pota, ituz, cqz, dxcc, country, county, operator_callsign) "
+                        "VALUES (:profile_name, :callsign, :locator, :operator_name, :qth_name, :iota, :sota, :sig, :sig_info, :vucc, :wwff, :pota, :ituz, :cqz, :dxcc, :country, :county, :operator_callsign)") )
     {
         qWarning() << "cannot prepare Insert statement";
         return;
@@ -131,6 +135,8 @@ void StationProfilesManager::save()
             insertQuery.bindValue(":cqz", stationProfile.cqz);
             insertQuery.bindValue(":dxcc", stationProfile.dxcc);
             insertQuery.bindValue(":country", stationProfile.country);
+            insertQuery.bindValue(":county", stationProfile.county);
+            insertQuery.bindValue(":operator_callsign", stationProfile.operatorCallsign);
 
             if ( ! insertQuery.exec() )
             {
@@ -163,7 +169,10 @@ bool StationProfile::operator==(const StationProfile &profile)
             && profile.ituz == this->ituz
             && profile.cqz == this->cqz
             && profile.dxcc == this->dxcc
-            && profile.country == this->country);
+            && profile.country == this->country
+            && profile.country == this->county
+            && profile.operatorCallsign == this->operatorCallsign
+            );
 }
 
 bool StationProfile::operator!=(const StationProfile &profile)
@@ -175,8 +184,11 @@ QString StationProfile::toHTMLString() const
 {
     QString ret = "<b>" + QObject::tr("Logging Station Callsign") + ":</b> " + callsign + "<br/>" +
                   ((!locator.isEmpty()) ? "<b>" + QObject::tr("My Gridsquare") + ":</b> " + locator + "<br/>" : "") +
-                  ((!operatorName.isEmpty()) ? "<b>" + QObject::tr("My Name") + ":</b> " + operatorName + "<br/>" : "") +
+                  ((!operatorName.isEmpty()) ? "<b>" + QObject::tr("Operator Name") + ":</b> " + operatorName + "<br/>" : "") +
+                  ((!operatorCallsign.isEmpty()) ? "<b>" + QObject::tr("Operator Callsign") + ":</b> " + operatorCallsign + "<br/>" : "") +
                   ((!qthName.isEmpty()) ? "<b>" + QObject::tr("My City") + ":</b> " + qthName + "<br/>" : "") +
+                  ((!country.isEmpty()) ? "<b>" + QObject::tr("My Country") + ":</b> " + country + "<br/>" : "") +
+                  ((!county.isEmpty()) ? "<b>" + QObject::tr("My County") + ":</b> " + county + "<br/>" : "") +
                   ((!iota.isEmpty()) ? "<b>" + QObject::tr("My IOTA") + ":</b> " + iota + "<br/>" : "") +
                   ((!sota.isEmpty()) ? "<b>" + QObject::tr("My SOTA") + ":</b> " + sota + "<br/>" : "" ) +
                   ((!sig.isEmpty()) ? "<b>" + QObject::tr("My Special Interest Activity") + ":</b> " + sig + "<br/>" : "" )+

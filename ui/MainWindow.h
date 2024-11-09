@@ -106,6 +106,7 @@ private:
 
     void restoreUserDefinedShortcuts();
     void saveUserDefinedShortcuts();
+    QString stationCallsignStatus(const StationProfile &profile);
 };
 
 #endif // QLOG_UI_MAINWINDOW_H

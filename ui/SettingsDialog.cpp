@@ -1555,6 +1555,7 @@ void SettingsDialog::addStationProfile()
     profile.callsign = ui->stationCallsignEdit->text().toUpper();
     profile.locator = ui->stationLocatorEdit->text().toUpper();
     profile.operatorName = ui->stationOperatorEdit->text();
+    profile.operatorCallsign = ui->stationOperatorCallsignEdit->text();
     profile.qthName = ui->stationQTHEdit->text();
     profile.iota = ui->stationIOTAEdit->text().toUpper();
     profile.sota = ui->stationSOTAEdit->text().toUpper();
@@ -1565,6 +1566,7 @@ void SettingsDialog::addStationProfile()
     profile.wwff = ui->stationWWFFEdit->text().toUpper();
     profile.cqz = ui->stationCQZEdit->text().toInt();
     profile.ituz = ui->stationITUEdit->text().toInt();
+    profile.county = ui->stationCountyEdit->text();
 
     int row = ui->stationCountryCombo->currentIndex();
     const QModelIndex &idxDXCC = ui->stationCountryCombo->model()->index(row,0);
@@ -1610,6 +1612,7 @@ void SettingsDialog::doubleClickStationProfile(QModelIndex i)
     ui->stationCallsignEdit->blockSignals(false);
     ui->stationLocatorEdit->setText(profile.locator);
     ui->stationOperatorEdit->setText(profile.operatorName);
+    ui->stationOperatorCallsignEdit->setText(profile.operatorCallsign);
     ui->stationQTHEdit->setText(profile.qthName);
     ui->stationIOTAEdit->setText(profile.iota);
     ui->stationSOTAEdit->blockSignals(true);
@@ -1626,6 +1629,7 @@ void SettingsDialog::doubleClickStationProfile(QModelIndex i)
     ui->stationWWFFEdit->blockSignals(false);
     ui->stationCQZEdit->setText(QString::number(profile.cqz));
     ui->stationITUEdit->setText(QString::number(profile.ituz));
+    ui->stationCountyEdit->setText(profile.county);
     const QModelIndexList &countryIndex = ui->stationCountryCombo->model()->match(ui->stationCountryCombo->model()->index(0,0),
                                                                            Qt::DisplayRole, profile.dxcc,
                                                                            1, Qt::MatchExactly);
@@ -1646,6 +1650,7 @@ void SettingsDialog::clearStationProfileForm()
     ui->stationLocatorEdit->clear();
     ui->stationLocatorEdit->setPlaceholderText(QString());
     ui->stationOperatorEdit->clear();
+    ui->stationOperatorCallsignEdit->clear();
     ui->stationQTHEdit->clear();
     ui->stationSOTAEdit->clear();
     ui->stationPOTAEdit->clear();
@@ -1657,6 +1662,7 @@ void SettingsDialog::clearStationProfileForm()
     ui->stationCQZEdit->clear();
     ui->stationITUEdit->clear();
     ui->stationCountryCombo->setCurrentIndex(0);
+    ui->stationCountyEdit->clear();
 
     ui->stationAddProfileButton->setText(tr("Add"));
 }
