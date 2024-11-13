@@ -89,6 +89,14 @@
       popupAnchor: [1, -34],
       shadowSize: [41, 41]
     });
+    const greenIconSmall = new L.Icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+      iconSize: [14, 23],
+      iconAnchor: [7, 23],
+      popupAnchor: [1, -18],
+      shadowSize: [23, 23]
+    });
 
     // yellow Icon definition. It is usually used for generic QSOs or generic point
     const yellowIcon = new L.Icon({
@@ -100,12 +108,21 @@
       shadowSize: [41, 41]
     });
 
+    const yellowIconSmall = new L.Icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+      iconSize: [14, 23],
+      iconAnchor: [7, 23],
+      popupAnchor: [1, -18],
+      shadowSize: [23, 23]
+    });
+
     // home Icon definition. It is usually used for own location
     const homeIcon = new L.Icon({
       iconUrl: 'https://img.icons8.com/officel/30/000000/radio-tower.png',
-      iconSize: [50, 50],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34]
+      iconSize: [30, 30],
+      iconAnchor: [15, 25],
+      popupAnchor: [1, -14]
     });
 
 
@@ -178,7 +195,15 @@
             return;
         geodesic.setLatLngs([points[0], points[1]]);
         map.fitBounds(geodesic.getBounds(), {animate:false});
-        //map.panTo(geodesic.getBounds().getCenter(), {animate:false});
+    }
+
+    function drawShortPaths(coords) {
+        pathLayer.clearLayers();
+        coords.forEach(function(coord) {
+            let geodesic = new L.Geodesic([],{ wrap: true, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
+            pathLayer.addLayer(geodesic);
+            geodesic.setLatLngs([{lat: coord[0], lng: coord[1]}, {lat: coord[2], lng: coord[3]}]);
+        });
     }
 
     // function computes a destination point based on distance and azimuth

@@ -35,7 +35,7 @@
       <string>Options</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
      </property>
      <property name="flat">
       <bool>false</bool>
@@ -68,7 +68,7 @@
          </sizepolicy>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
        </widget>
       </item>
@@ -84,7 +84,7 @@
          <string>My Antenna</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -94,14 +94,14 @@
          <string>My Gridsquare</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
       <item row="6" column="1">
        <widget class="QComboBox" name="myGridCombo">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
        </widget>
       </item>
@@ -114,13 +114,13 @@
          </sizepolicy>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
+         <enum>Qt::LayoutDirection::RightToLeft</enum>
         </property>
         <property name="insertPolicy">
-         <enum>QComboBox::NoInsert</enum>
+         <enum>QComboBox::InsertPolicy::NoInsert</enum>
         </property>
         <item>
          <property name="text">
@@ -158,14 +158,14 @@
          </sizepolicy>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
        </widget>
       </item>
       <item row="3" column="2">
        <widget class="QComboBox" name="statTypeSecCombo">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
        </widget>
       </item>
@@ -177,7 +177,7 @@
            <string>Graph Type</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -188,7 +188,7 @@
         <item>
          <widget class="QCheckBox" name="useDateRangeCheckBox">
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="text">
            <string/>
@@ -199,7 +199,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QDateEdit" name="startDateEdit">
+         <widget class="QDateTimeEdit" name="startDateEdit">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -210,10 +210,10 @@
            </sizepolicy>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::UpDownArrows</enum>
+           <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
           </property>
           <property name="specialValueText">
            <string/>
@@ -224,17 +224,20 @@
           <property name="showGroupSeparator" stdset="0">
            <bool>false</bool>
           </property>
+          <property name="displayFormat">
+           <string>yyyy-MM-dd HH:mm</string>
+          </property>
           <property name="calendarPopup">
            <bool>true</bool>
           </property>
           <property name="timeSpec">
-           <enum>Qt::UTC</enum>
+           <enum>Qt::TimeSpec::UTC</enum>
           </property>
           <property name="date">
            <date>
             <year>1999</year>
             <month>12</month>
-            <day>31</day>
+            <day>28</day>
            </date>
           </property>
          </widget>
@@ -253,7 +256,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QDateEdit" name="endDateEdit">
+         <widget class="QDateTimeEdit" name="endDateEdit">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -264,7 +267,7 @@
            </sizepolicy>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="wrapping">
            <bool>false</bool>
@@ -278,11 +281,14 @@
           <property name="showGroupSeparator" stdset="0">
            <bool>false</bool>
           </property>
+          <property name="displayFormat">
+           <string>yyyy-MM-dd HH:mm</string>
+          </property>
           <property name="calendarPopup">
            <bool>true</bool>
           </property>
           <property name="timeSpec">
-           <enum>Qt::UTC</enum>
+           <enum>Qt::TimeSpec::UTC</enum>
           </property>
          </widget>
         </item>
@@ -300,7 +306,7 @@
          <string>My Rig</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -310,7 +316,7 @@
          <string>My Callsign</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -320,7 +326,7 @@
          <string>Band</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -333,7 +339,7 @@
          </sizepolicy>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
        </widget>
       </item>
@@ -343,14 +349,14 @@
          <string>Date Range</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
       <item row="10" column="2">
        <widget class="QComboBox" name="bandCombo">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
        </widget>
       </item>
@@ -365,7 +371,7 @@
            <string>Confirmed by:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -375,7 +381,7 @@
            <bool>false</bool>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="text">
            <string>LoTW</string>
@@ -388,7 +394,7 @@
            <bool>false</bool>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="text">
            <string>eQSL</string>
@@ -401,7 +407,7 @@
            <bool>false</bool>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::ClickFocus</enum>
+           <enum>Qt::FocusPolicy::ClickFocus</enum>
           </property>
           <property name="text">
            <string>Paper</string>
@@ -458,11 +464,11 @@
         <number>2</number>
        </property>
        <item>
-        <widget class="QWebEngineView" name="mapView">
+        <widget class="QWebEngineView" name="mapView" native="true">
          <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
          </property>
-         <property name="url">
+         <property name="url" stdset="0">
           <url>
            <string>about:blank</string>
           </url>
@@ -603,7 +609,7 @@
   </connection>
   <connection>
    <sender>startDateEdit</sender>
-   <signal>userDateChanged(QDate)</signal>
+   <signal>dateTimeChanged(QDateTime)</signal>
    <receiver>StatisticsWidget</receiver>
    <slot>refreshGraph()</slot>
    <hints>

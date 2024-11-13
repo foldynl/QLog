@@ -18,7 +18,8 @@ public:
                               bool ibp = false,
                               bool antpath = false,
                               bool chatStations = false,
-                              bool wsjtxStations = false);
+                              bool wsjtxStations = false,
+                              bool paths = false);
 
 signals:
     void chatCallsignPressed(QString);

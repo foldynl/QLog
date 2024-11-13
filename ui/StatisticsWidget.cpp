@@ -86,8 +86,8 @@ void StatisticsWidget::refreshGraph()
          genericFilter << " (band = '" + ui->bandCombo->currentText() + "') ";
 
      if ( ui->useDateRangeCheckBox->isChecked() )
-         genericFilter << " (date(start_time) BETWEEN date('" + ui->startDateEdit->date().toString("yyyy-MM-dd")
-                          + " 00:00:00') AND date('" + ui->endDateEdit->date().toString("yyyy-MM-dd") + " 23:59:59') ) ";
+         genericFilter << " (datetime(start_time) BETWEEN datetime('" + ui->startDateEdit->dateTime().toString("yyyy-MM-dd HH:mm:ss")
+                          + "') AND datetime('" + ui->endDateEdit->dateTime().toString("yyyy-MM-dd HH:mm:ss") + "') ) ";
 
      qCDebug(runtime) << "main " << ui->statTypeMainCombo->currentIndex()
                       << " secondary " << ui->statTypeSecCombo->currentIndex();
@@ -316,15 +316,15 @@ void StatisticsWidget::refreshGraph()
          {
          case 0:
          case 1:
-             stmt = "SELECT callsign, gridsquare, SUM(confirmed) FROM (SELECT callsign, gridsquare, "
+             stmt = "SELECT callsign, gridsquare, my_gridsquare, SUM(confirmed) FROM (SELECT callsign, gridsquare, my_gridsquare,"
                         + innerCase +" AS confirmed FROM contacts WHERE gridsquare is not NULL AND "
-                        + genericFilter.join(" AND ") +" ) GROUP BY callsign, gridsquare";
+                        + genericFilter.join(" AND ") +" ) GROUP BY callsign, gridsquare, my_gridsquare";
              break;
          case 2:
              QString unit;
              Gridsquare::distance2localeUnitDistance(0, unit);
              QString distCoef = QString::number(Gridsquare::localeDistanceCoef());
-             QString sel = QString("SELECT callsign || '<br>' || CAST(ROUND(distance * %1,0) AS INT) || ' %2', gridsquare, ").arg(distCoef, unit);
+             QString sel = QString("SELECT callsign || '<br>' || CAST(ROUND(distance * %1,0) AS INT) || ' %2', gridsquare, my_gridsquare, ").arg(distCoef, unit);
 
              stmt = sel + innerCase + " AS confirmed FROM contacts WHERE "
                         + genericFilter.join(" AND ") + " AND distance = (SELECT MAX(distance) FROM contacts WHERE "
@@ -376,7 +376,7 @@ void StatisticsWidget::mapLoaded(bool)
     isMainPageLoaded = true;
 
     /* which layers will be active */
-    postponedScripts += layerControlHandler.generateMapMenuJS();
+    postponedScripts += layerControlHandler.generateMapMenuJS(true, false, false, false, false, false, false, false, true);
     main_page->runJavaScript(postponedScripts);
 
     layerControlHandler.restoreLayerControlStates(main_page);
@@ -418,10 +418,12 @@ StatisticsWidget::StatisticsWidget(QWidget *parent) :
     ui->myAntennaCombo->setModel(new QStringListModel(this));
     ui->bandCombo->setModel(new QStringListModel(this));
 
-    ui->startDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
+    ui->startDateEdit->setDisplayFormat(locale.formatDateTimeShortWithYYYY());
     ui->startDateEdit->setDate(QDate::currentDate().addDays(DEFAULT_STAT_RANGE));
-    ui->endDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
+    ui->startDateEdit->setTime(QTime::fromMSecsSinceStartOfDay(0));
+    ui->endDateEdit->setDisplayFormat(locale.formatDateTimeShortWithYYYY());
     ui->endDateEdit->setDate(QDate::currentDate());
+    ui->endDateEdit->setTime(QTime::fromMSecsSinceStartOfDay(86399999));
 
     ui->graphView->setRenderHint(QPainter::Antialiasing);
     ui->graphView->setChart(new QChart());
@@ -575,13 +577,14 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
         return;
 
     QList<QString> stations;
+    QList<QString> shortPaths;
 
     qulonglong count = 0;
 
     while ( query.next() )
     {
         const Gridsquare stationGrid(query.value(1).toString());
-
+        const Gridsquare myStationGrid(query.value(2).toString());
         if ( stationGrid.isValid() )
         {
             count++;
@@ -590,7 +593,12 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
             stations.append(QString("[\"%1\", %2, %3, %4]").arg(query.value(0).toString())
                                                            .arg(lat)
                                                            .arg(lon)
-                                                           .arg((query.value(2).toInt()) > 0 ? "greenIcon" : "yellowIcon"));
+                                                           .arg((query.value(3).toInt()) > 0 ? "greenIconSmall" : "yellowIconSmall"));
+            shortPaths.append(QString("[%1, %2, %3, %4]")
+                                  .arg(myStationGrid.getLatitude())
+                                  .arg(myStationGrid.getLongitude())
+                                  .arg(lat)
+                                  .arg(lon));
         }
     }
 
@@ -607,7 +615,8 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
     QString javaScript = QString("grids_confirmed = [];"
                                  "grids_worked = [];"
                                  "drawPoints([%1]);"
-                                 "maidenheadConfWorked.redraw();").arg(stations.join(","));
+                                 "drawShortPaths([%2]);"
+                                 "maidenheadConfWorked.redraw();").arg(stations.join(",")).arg(shortPaths.join(","));
 
     qCDebug(runtime) << javaScript;
 
@@ -639,6 +648,7 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
                                  "grids_worked = [ %2 ];"
                                  "mylocations = [];"
                                  "drawPoints([]);"
+                                 "drawShortPaths([]);"
                                  "maidenheadConfWorked.redraw();").arg(confirmedGrids.join(","), workedGrids.join(","));
 
     qCDebug(runtime) << javaScript;

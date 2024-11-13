@@ -58,6 +58,9 @@ void MapWebChannelHandler::connectWebChannel(QWebEnginePage *page)
           "     case '" + tr("WSJTX - CQ") + "': "
           "        foo.handleLayerSelectionChanged('wsjtxStationsLayer', 'on'); "
           "        break; "
+          "     case '" + tr("Paths") + "': "
+          "        foo.handleLayerSelectionChanged('pathLayer', 'on'); "
+          "        break; "
           "  } "
           "});"
           "map.on('overlayremove', function(e){ "
@@ -86,6 +89,9 @@ void MapWebChannelHandler::connectWebChannel(QWebEnginePage *page)
           "        break; "
           "     case '" + tr("WSJTX - CQ") + "': "
           "        foo.handleLayerSelectionChanged('wsjtxStationsLayer', 'off'); "
+          "        break; "
+          "     case '" + tr("Paths") + "': "
+          "        foo.handleLayerSelectionChanged('pathLayer', 'off'); "
           "        break; "
           "   } "
           "});";
@@ -124,7 +130,8 @@ QString MapWebChannelHandler::generateMapMenuJS(bool gridLayer,
                                                 bool ibp,
                                                 bool antpath,
                                                 bool chatStations,
-                                                bool wsjtxStations)
+                                                bool wsjtxStations,
+                                                bool paths)
 {
     FCT_IDENTIFICATION;
     QStringList options;
@@ -152,6 +159,9 @@ QString MapWebChannelHandler::generateMapMenuJS(bool gridLayer,
 
     if ( wsjtxStations )
         options << "\"" + tr("WSJTX - CQ") + "\": wsjtxStationsLayer";
+
+    if ( paths )
+        options << "\"" + tr("Paths") + "\": pathLayer";
 
     QString ret = QString("var layerControl = new L.Control.Layers(null,"
                           "{ %1 },{}).addTo(map);").arg(options.join(","));
