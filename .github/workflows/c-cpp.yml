@@ -95,6 +95,7 @@ jobs:
      - name: Build dmg
        run: |
          cd build
+         install_name_tool -add_rpath $(brew --prefix qt)/lib qlog.app/Contents/MacOS/qlog
          macdeployqt qlog.app
          cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
          cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib

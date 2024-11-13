@@ -50,6 +50,7 @@ jobs:
          make -j4
      - name: Build dmg
        run: |
+         install_name_tool -add_rpath $(brew --prefix qt)/lib qlog.app
          cd build
          macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
          cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
