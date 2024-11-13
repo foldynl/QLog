@@ -469,8 +469,15 @@ macx: {
       INSTALLS += target
    }
 
-   INCLUDEPATH += /usr/local/include /opt/homebrew/include
-   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3
+   # If the host is Apple Silicon, Homebrew will likely be installed
+   # within /opt/homebrew path
+   isEqual($$system(uname -m), "arm64") {
+      INCLUDEPATH += /usr/local/include /opt/homebrew/include
+      LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3
+   } else {
+      INCLUDEPATH += /usr/local/include
+      LIBS += -L/usr/local/lib -lhamlib -lsqlite3
+   }
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=
