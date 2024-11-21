@@ -1,3 +1,4 @@
+#include <QSettings>
 #include <QJsonDocument>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -132,8 +133,29 @@ Data::~Data()
 DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 {
     FCT_IDENTIFICATION;
+    QSettings settings;
 
     qCDebug(function_parameters) << dxcc << " " << band << " " << mode;
+    bool DXCCStatusLoTW = settings.value("DXCCStatusLoTW").toBool();
+    bool DXCCStatusPaper = settings.value("DXCCStatusPaper").toBool();
+
+    QString DXCCStatus;
+    if (DXCCStatusLoTW && DXCCStatusPaper)
+    {
+        DXCCStatus = "(all_dxcc_qsos.qsl_rcvd = 'Y' OR all_dxcc_qsos.lotw_qsl_rcvd = 'Y')";
+    }
+    else if(DXCCStatusLoTW)
+    {
+        DXCCStatus = "(all_dxcc_qsos.lotw_qsl_rcvd = 'Y')";
+    }
+    else if(DXCCStatusPaper)
+    {
+        DXCCStatus = "(all_dxcc_qsos.qsl_rcvd = 'Y')";
+    }
+    else
+    {
+        DXCCStatus = "(all_dxcc_qsos.qsl_rcvd = 'Y' OR all_dxcc_qsos.lotw_qsl_rcvd = 'Y')";
+    }
 
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
 
@@ -159,12 +181,13 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
                                          "          WHERE modes.dxcc = %3 AND all_dxcc_qsos.band = :band LIMIT 1) as slot, "
                                          "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) "
                                          "          WHERE modes.dxcc = %4 AND all_dxcc_qsos.band = :band "
-                                         "                AND (all_dxcc_qsos.qsl_rcvd = 'Y' OR all_dxcc_qsos.lotw_qsl_rcvd = 'Y') LIMIT 1) as confirmed")
+                                         "                AND (%5) LIMIT 1) as confirmed")
                                          .arg(( profile.dxcc != 0 ) ? QString(" AND my_dxcc = %1").arg(profile.dxcc)
                                                                     : "",
                                               sql_mode,
                                               sql_mode,
-                                              sql_mode);
+                                              sql_mode,
+                                              DXCCStatus);
 
     if ( ! query.prepare(sqlStatement) )
     {
