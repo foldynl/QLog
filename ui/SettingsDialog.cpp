@@ -2273,6 +2273,12 @@ void SettingsDialog::readSettings() {
     ui->lotwPasswordEdit->setText(Lotw::getPassword());
     ui->tqslPathEdit->setText(Lotw::getTQSLPath());
 
+    /***************/
+    /* DXCC Status */
+    /***************/
+    ui->DXCCStatusLoTWCheckBox->setChecked(settings.value("DXCCStatusLoTW").toBool());
+    ui->DXCCStatusPaperCheckBox->setChecked(settings.value("DXCCStatusPaper").toBool());
+
     /***********/
     /* ClubLog */
     /***********/
@@ -2366,6 +2372,12 @@ void SettingsDialog::writeSettings() {
     Lotw::saveUsernamePassword(ui->lotwUsernameEdit->text(),
                                ui->lotwPasswordEdit->text());
     Lotw::saveTQSLPath(ui->tqslPathEdit->text());
+
+    /***************/
+    /* DXCC Status */
+    /***************/
+    settings.setValue("DXCCStatusLoTW", ui->DXCCStatusLoTWCheckBox->isChecked());
+    settings.setValue("DXCCStatusPaper", ui->DXCCStatusPaperCheckBox->isChecked());
 
     /***********/
     /* ClubLog */
