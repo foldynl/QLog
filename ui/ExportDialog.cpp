@@ -1,9 +1,10 @@
-#include <QFileDialog>
+#include "ui/ExportDialog.h"
 #include <QDebug>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QSqlError>
-#include "ui/ExportDialog.h"
 #include "ui_ExportDialog.h"
+#include <logformat/PotaAdiFormat.h>
 
 #include "core/debug.h"
 #include "models/SqlListModel.h"
@@ -142,12 +143,16 @@ void ExportDialog::runExport()
 
     QTextStream out(&file);
 
-    LogFormat* format = LogFormat::open(ui->typeSelect->currentText(), out);
+    LogFormat *format = LogFormat::open(ui->typeSelect->currentText(), out);
 
     if (!format)
     {
         qCritical() << "unknown log format";
         return;
+    }
+
+    if (PotaAdiFormat *potaFormat = dynamic_cast<PotaAdiFormat *>(format)) {
+        potaFormat->setExportInfo(file);
     }
 
     if ( ui->dateRangeCheckBox->isChecked() )
@@ -334,6 +339,7 @@ void ExportDialog::fillExportedColumnsCombo()
 
     ui->exportedColumnsCombo->addItem(tr("All"), "all");
     ui->exportedColumnsCombo->addItem(tr("Minimal"), "min");
+    ui->exportedColumnsCombo->addItem(tr("POTA"), "pota");
     ui->exportedColumnsCombo->addItem(tr("QSL-specific"), "qsl");
     ui->exportedColumnsCombo->addItem(tr("Custom 1"), "c1");
     ui->exportedColumnsCombo->addItem(tr("Custom 2"), "c2");
@@ -402,6 +408,10 @@ void ExportDialog::exportedColumnsComboChanged(int index)
         {
             exportedColumns = settings.value("export/" + comboValue, QVariant::fromValue(qslColumns)).value<QSet<int>>();
         }
+        else if ( comboValue == "pota" )
+        {
+            exportedColumns = potaColumns;
+        }
     }
 }
 
@@ -418,12 +428,20 @@ void ExportDialog::fillQSLSendViaCombo()
     FCT_IDENTIFICATION;
 
     QMapIterator<QString, QString> iter(Data::instance()->qslSentViaEnum);
-    int iter_index = 0;
-    while ( iter.hasNext() )
-    {
+    while (iter.hasNext()) {
         iter.next();
         ui->qslSendViaComboBox->addItem(iter.value(), iter.key());
-        iter_index++;
+    }
+}
+
+void ExportDialog::exportFormatChanged(const QString &format)
+{
+    FCT_IDENTIFICATION;
+
+    if (format == "POTA") {
+        ui->exportedColumnsCombo->setCurrentIndex(ui->exportedColumnsCombo->findData("pota"));
+    } else {
+        ui->exportedColumnsCombo->setCurrentIndex(ui->exportedColumnsCombo->findData("all"));
     }
 }
 
