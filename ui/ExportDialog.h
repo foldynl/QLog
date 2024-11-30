@@ -38,7 +38,7 @@ public slots:
     void exportedColumnStateChanged(int index, bool state);
     void exportTypeChanged(int index);
     void exportedColumnsComboChanged(int);
-
+    void exportFormatChanged(const QString &format);
 private:
     Ui::ExportDialog *ui;
     LogLocale locale;
@@ -58,6 +58,23 @@ private:
         LogbookModel::COLUMN_SUBMODE,
         LogbookModel::COLUMN_RST_SENT,
         LogbookModel::COLUMN_RST_RCVD
+    };
+    const QSet<int> potaColumns{
+        LogbookModel::COLUMN_TIME_ON,
+        LogbookModel::COLUMN_CALL,
+        LogbookModel::COLUMN_OPERATOR,
+        LogbookModel::COLUMN_STATION_CALLSIGN,
+        LogbookModel::COLUMN_FREQUENCY,
+        LogbookModel::COLUMN_MODE,
+        LogbookModel::COLUMN_SUBMODE,
+        LogbookModel::COLUMN_MY_STATE,
+        LogbookModel::COLUMN_MY_COUNTRY,
+        LogbookModel::COLUMN_MY_POTA_REF,
+        LogbookModel::COLUMN_POTA_REF,
+        LogbookModel::COLUMN_MY_SIG,
+        LogbookModel::COLUMN_MY_SIG_INFO,
+        LogbookModel::COLUMN_SIG,
+        LogbookModel::COLUMN_SIG_INFO
     };
     LogbookModel logbookmodel;
     QSettings settings;

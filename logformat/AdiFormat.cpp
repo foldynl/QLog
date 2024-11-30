@@ -13,7 +13,6 @@ void AdiFormat::exportStart()
 {
     FCT_IDENTIFICATION;
 
-    stream << "### QLog ADIF Export\n";
     writeField("ADIF_VER", ALWAYS_PRESENT, ADIF_VERSION_STRING);
     writeField("PROGRAMID", ALWAYS_PRESENT, PROGRAMID_STRING);
     writeField("PROGRAMVERSION", ALWAYS_PRESENT, VERSION);

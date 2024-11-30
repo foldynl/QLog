@@ -28,7 +28,8 @@ public:
         ADX,
         CABRILLO,
         JSON,
-        CSV
+        CSV,
+        POTA
     };
 
     enum QSLFrom {

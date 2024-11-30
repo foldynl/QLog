@@ -102,6 +102,7 @@ SOURCES += \
         logformat/CSVFormat.cpp \
         logformat/JsonFormat.cpp \
         logformat/LogFormat.cpp \
+        logformat/PotaAdiFormat.cpp \
         models/AlertTableModel.cpp \
         models/AwardsTableModel.cpp \
         models/DxccTableModel.cpp \
@@ -241,6 +242,7 @@ HEADERS += \
         logformat/CSVFormat.h \
         logformat/JsonFormat.h \
         logformat/LogFormat.h \
+        logformat/PotaAdiFormat.h \
         models/AlertTableModel.h \
         models/AwardsTableModel.h \
         models/DxccTableModel.h \
