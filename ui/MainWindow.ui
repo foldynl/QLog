@@ -73,6 +73,9 @@
     <addaction name="actionImport"/>
     <addaction name="actionExport"/>
     <addaction name="separator"/>
+    <addaction name="actionServiceUpload"/>
+    <addaction name="actionServiceDownload"/>
+    <addaction name="separator"/>
     <addaction name="actionAwards"/>
     <addaction name="actionStatistics"/>
    </widget>
@@ -879,6 +882,19 @@
     <string>None</string>
    </property>
   </action>
+  <action name="actionServiceUpload">
+   <property name="icon">
+    <iconset theme="mail-send"/>
+   </property>
+   <property name="text">
+    <string>Upload</string>
+   </property>
+  </action>
+  <action name="actionServiceDownload">
+   <property name="text">
+    <string>Download QSLs</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1658,6 +1674,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionServiceUpload</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showServiceUpload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionServiceDownload</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showServiceDownloadQSL()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>settingsChanged()</signal>
@@ -1690,5 +1738,7 @@
   <slot>saveProfileLayoutGeometry()</slot>
   <slot>setEquipmentKeepOptions(bool)</slot>
   <slot>stopContest()</slot>
+  <slot>showServiceDownloadQSL()</slot>
+  <slot>showServiceUpload()</slot>
  </slots>
 </ui>

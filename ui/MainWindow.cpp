@@ -36,6 +36,7 @@
 #include "data/AntProfile.h"
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
+#include "ui/DownloadQSLDialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -829,6 +830,22 @@ void MainWindow::showEditLayout()
     EditActivitiesDialog dialog(this);
     dialog.exec();
     setupActivitiesMenu();
+}
+
+void MainWindow::showServiceUpload()
+{
+    FCT_IDENTIFICATION;
+
+
+}
+
+void MainWindow::showServiceDownloadQSL()
+{
+    FCT_IDENTIFICATION;
+
+    DownloadQSLDialog dialog(this);
+    dialog.exec();
+    ui->logbookWidget->updateTable();
 }
 
 void MainWindow::setLayoutGeometry()

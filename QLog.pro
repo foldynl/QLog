@@ -135,6 +135,7 @@ SOURCES += \
         ui/ClockWidget.cpp \
         ui/ClublogDialog.cpp \
         ui/ColumnSettingDialog.cpp \
+        ui/DownloadQSLDialog.cpp \
         ui/DxFilterDialog.cpp \
         ui/DxWidget.cpp \
         ui/DxccTableWidget.cpp \
@@ -278,6 +279,7 @@ HEADERS += \
         ui/ClockWidget.h \
         ui/ClublogDialog.h \
         ui/ColumnSettingDialog.h \
+        ui/DownloadQSLDialog.h \
         ui/DxFilterDialog.h \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
@@ -336,6 +338,7 @@ FORMS += \
         ui/ClublogDialog.ui \
         ui/ColumnSettingDialog.ui \
         ui/ColumnSettingSimpleDialog.ui \
+        ui/DownloadQSLDialog.ui \
         ui/DxFilterDialog.ui \
         ui/DxWidget.ui \
         ui/EditActivitiesDialog.ui \

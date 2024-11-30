@@ -75,6 +75,8 @@ private slots:
     void shortcutALTBackslash();
     void setManualContact(bool);
     void showEditLayout();
+    void showServiceUpload();
+    void showServiceDownloadQSL();
 
     void saveProfileLayoutGeometry();
     void setEquipmentKeepOptions(bool);
