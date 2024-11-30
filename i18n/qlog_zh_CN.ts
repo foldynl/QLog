@@ -6,47 +6,47 @@
     <message>
         <location filename="../ui/ActivityEditor.ui" line="14"/>
         <source>Activity Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>活动编辑器</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="39"/>
         <source>Activity Name</source>
-        <translation type="unfinished"></translation>
+        <translation>活动名称</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="73"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="90"/>
         <source>Window Arrangement:</source>
-        <translation type="unfinished">窗口排列:</translation>
+        <translation>窗口排列:</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="103"/>
         <source>Saved</source>
-        <translation type="unfinished">已保存</translation>
+        <translation>已保存</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="132"/>
         <source>Clear</source>
-        <translation type="unfinished">清除</translation>
+        <translation>清除</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="143"/>
         <source>Available Fields</source>
-        <translation type="unfinished">可用字段</translation>
+        <translation>可用字段</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="161"/>
         <source>List of fields that can be used</source>
-        <translation type="unfinished">可以使用的字段列表</translation>
+        <translation>可以使用的字段列表</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="213"/>
         <source>Row A</source>
-        <translation type="unfinished">行 A</translation>
+        <translation>行 A</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="258"/>
@@ -54,7 +54,7 @@
         <location filename="../ui/ActivityEditor.ui" line="892"/>
         <location filename="../ui/ActivityEditor.ui" line="1096"/>
         <source>Move selected fields from the Available Fields List to the Row A</source>
-        <translation type="unfinished">将选定的字段从“可用字段列表”移动到行A</translation>
+        <translation>将选定的字段从“可用字段列表”移动到行A</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="284"/>
@@ -62,12 +62,12 @@
         <location filename="../ui/ActivityEditor.ui" line="918"/>
         <location filename="../ui/ActivityEditor.ui" line="1122"/>
         <source>Remove selected field from the Row A</source>
-        <translation type="unfinished">从行A中删除选定的字段</translation>
+        <translation>从行A中删除选定的字段</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="313"/>
         <source>List of fields in the first variable row</source>
-        <translation type="unfinished">第一个变量行的字段列表</translation>
+        <translation>第一个变量行的字段列表</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="359"/>
@@ -76,7 +76,7 @@
         <location filename="../ui/ActivityEditor.ui" line="993"/>
         <location filename="../ui/ActivityEditor.ui" line="1197"/>
         <source>Change the order. Move selected field up</source>
-        <translation type="unfinished">改变顺序。上移所选字段</translation>
+        <translation>改变顺序。上移所选字段</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="385"/>
@@ -85,77 +85,77 @@
         <location filename="../ui/ActivityEditor.ui" line="1019"/>
         <location filename="../ui/ActivityEditor.ui" line="1223"/>
         <source>Change the order. Move selected field down</source>
-        <translation type="unfinished">改变顺序。下移所选字段</translation>
+        <translation>改变顺序。下移所选字段</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="417"/>
         <source>Row B</source>
-        <translation type="unfinished">行 B</translation>
+        <translation>行 B</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="465"/>
         <source>Move selected fields from the Available Fields List to the Row B</source>
-        <translation type="unfinished">将选定的字段从“可用字段列表”移动到行B</translation>
+        <translation>将选定的字段从“可用字段列表”移动到行B</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="491"/>
         <source>Remove selected field from the Row B</source>
-        <translation type="unfinished">从行B中删除选定的字段</translation>
+        <translation>从行B中删除选定的字段</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="520"/>
         <source>List of fields in the second variable row</source>
-        <translation type="unfinished">第二个变量行的字段列表</translation>
+        <translation>第二个变量行的字段列表</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="643"/>
         <source>Column A</source>
-        <translation type="unfinished">列 A</translation>
+        <translation>列 A</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="743"/>
         <source>List of fields in the first QSO Detail Column</source>
-        <translation type="unfinished">第一个 QSO 详细列中的字段列表</translation>
+        <translation>第一个 QSO 详细列中的字段列表</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="847"/>
         <source>Column B</source>
-        <translation type="unfinished">列 B</translation>
+        <translation>列 B</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="947"/>
         <source>List of fields in the second QSO Detail Column</source>
-        <translation type="unfinished">第二个 QSO 详细列中的字段列表</translation>
+        <translation>第二个 QSO 详细列中的字段列表</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1051"/>
         <source>Column C</source>
-        <translation type="unfinished">列 C</translation>
+        <translation>列 C</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1151"/>
         <source>List of fields in the third QSO Detail Column</source>
-        <translation type="unfinished">第三个QSO详细列中的字段列表</translation>
+        <translation>第三个QSO详细列中的字段列表</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1260"/>
         <source>New QSO Rows</source>
-        <translation type="unfinished">新 QSO 行</translation>
+        <translation>新 QSO 行</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1265"/>
         <source>New QSO Detail Columns</source>
-        <translation type="unfinished">新 QSO 详情列</translation>
+        <translation>新 QSO 详情列</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1278"/>
         <source>Values</source>
-        <translation type="unfinished"></translation>
+        <translation>配置</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1284"/>
         <source>Profiles</source>
-        <translation type="unfinished">配置文件</translation>
+        <translation>配置文件</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1290"/>
@@ -163,54 +163,54 @@
         <location filename="../ui/ActivityEditor.ui" line="1332"/>
         <location filename="../ui/ActivityEditor.ui" line="1375"/>
         <source>If unchecked, the profile does not change</source>
-        <translation type="unfinished"></translation>
+        <translation>如果不勾选，配置文件不会更改</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1293"/>
         <source>Station</source>
-        <translation type="unfinished">电台</translation>
+        <translation>电台</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1314"/>
         <source>Antenna</source>
-        <translation type="unfinished">天线</translation>
+        <translation>天线</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1335"/>
         <source>Rig</source>
-        <translation type="unfinished">设备</translation>
+        <translation>设备</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1360"/>
         <location filename="../ui/ActivityEditor.ui" line="1403"/>
         <source>Connect automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>自动连接</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1363"/>
         <location filename="../ui/ActivityEditor.ui" line="1406"/>
         <source>Connect</source>
-        <translation type="unfinished">连接</translation>
+        <translation>连接</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1378"/>
         <source>Rotator</source>
-        <translation type="unfinished">云台</translation>
+        <translation>云台</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1421"/>
         <source>Fields</source>
-        <translation type="unfinished"></translation>
+        <translation>字段</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.cpp" line="89"/>
         <source>Must not be empty</source>
-        <translation type="unfinished">不能为空</translation>
+        <translation>不能为空</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.h" line="115"/>
         <source>Unsaved</source>
-        <translation type="unfinished">未保存</translation>
+        <translation>未保存</translation>
     </message>
 </context>
 <context>
@@ -286,12 +286,12 @@
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="182"/>
         <source>ITU</source>
-        <translation type="unfinished">ITU</translation>
+        <translation>ITU</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="208"/>
         <source>CQZ</source>
-        <translation type="unfinished">CQ分区</translation>
+        <translation>CQ分区</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="263"/>
@@ -476,7 +476,7 @@
     <message>
         <location filename="../models/AlertTableModel.cpp" line="70"/>
         <source>Member</source>
-        <translation type="unfinished">成员</translation>
+        <translation>成员</translation>
     </message>
 </context>
 <context>
@@ -504,17 +504,17 @@
     <message>
         <location filename="../ui/AlertWidget.ui" line="121"/>
         <source>Edit Rules</source>
-        <translation type="unfinished">编辑规则</translation>
+        <translation>编辑规则</translation>
     </message>
     <message>
         <location filename="../ui/AlertWidget.ui" line="126"/>
         <source>Column Visibility...</source>
-        <translation type="unfinished">列可见性...</translation>
+        <translation>列可见性...</translation>
     </message>
     <message>
         <location filename="../ui/AlertWidget.ui" line="131"/>
         <source>Clear</source>
-        <translation type="unfinished">清除</translation>
+        <translation>清除</translation>
     </message>
 </context>
 <context>
@@ -582,12 +582,12 @@
     <message>
         <location filename="../ui/AwardsDialog.ui" line="224"/>
         <source>Not-Worked Only</source>
-        <translation type="unfinished"></translation>
+        <translation>未通联</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="231"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="33"/>
@@ -627,22 +627,22 @@
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="40"/>
         <source>POTA Hunter</source>
-        <translation type="unfinished"></translation>
+        <translation>POTA猎人</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="41"/>
         <source>POTA Activator</source>
-        <translation type="unfinished"></translation>
+        <translation>POTA激活者</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="42"/>
         <source>SOTA</source>
-        <translation type="unfinished">SOTA</translation>
+        <translation>SOTA</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="43"/>
         <source>WWFF</source>
-        <translation type="unfinished">WWFF</translation>
+        <translation>WWFF</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.cpp" line="45"/>
@@ -3460,7 +3460,7 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="336"/>
         <source>Do not show the following spots when they have the same Callsign and their time difference is lower than Time Diff and their frequency difference is lower than Freq Diff</source>
-        <translation type="unfinished"></translation>
+        <translation>当具有相同的呼号并且时间差低于 “时间偏差” 并且频差低于 “频率偏差” 时，不要显示DX动态</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="339"/>
@@ -3470,22 +3470,22 @@
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="366"/>
         <source>Time difference</source>
-        <translation type="unfinished"></translation>
+        <translation>时间偏差</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="373"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>秒</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="386"/>
         <source>Frequency difference</source>
-        <translation type="unfinished"></translation>
+        <translation>频率偏差</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="393"/>
         <source> kHz</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.ui" line="412"/>
@@ -3597,17 +3597,17 @@
     <message>
         <location filename="../ui/DxWidget.ui" line="239"/>
         <source>Full-text search</source>
-        <translation type="unfinished"></translation>
+        <translation>全文搜索</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="242"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="252"/>
         <source>Close Search</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭搜索</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="510"/>
@@ -3672,12 +3672,12 @@
     <message>
         <location filename="../ui/DxWidget.ui" line="632"/>
         <source>Search...</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索...</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="635"/>
         <source>DXC - Search</source>
-        <translation type="unfinished"></translation>
+        <translation>DXC - 搜索</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="548"/>
@@ -3772,7 +3772,7 @@
     <message>
         <location filename="../ui/DxWidget.cpp" line="1190"/>
         <source>DX Cluster Command</source>
-        <translation type="unfinished"></translation>
+        <translation>DX集群命令</translation>
     </message>
 </context>
 <context>
@@ -3849,27 +3849,27 @@
     <message>
         <location filename="../ui/EditActivitiesDialog.ui" line="14"/>
         <source>Edit Activities</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑活动</translation>
     </message>
     <message>
         <location filename="../ui/EditActivitiesDialog.ui" line="22"/>
         <source>Activities</source>
-        <translation type="unfinished"></translation>
+        <translation>活动</translation>
     </message>
     <message>
         <location filename="../ui/EditActivitiesDialog.ui" line="53"/>
         <source>Add</source>
-        <translation type="unfinished">添加</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../ui/EditActivitiesDialog.ui" line="60"/>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../ui/EditActivitiesDialog.ui" line="67"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>删除</translation>
     </message>
 </context>
 <context>
@@ -4180,12 +4180,12 @@
     <message>
         <location filename="../ui/ExportDialog.ui" line="449"/>
         <source>User Filter</source>
-        <translation type="unfinished">用户过滤器</translation>
+        <translation>用户过滤器</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="459"/>
         <source>Export QSOs that match the selected user QSO Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>导出匹配已选择的用户QSO过滤器的通联记录</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.cpp" line="21"/>
@@ -4350,22 +4350,22 @@
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="48"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="49"/>
         <source>CAT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="50"/>
         <source>DTR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="51"/>
         <source>RTS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="134"/>
@@ -4376,12 +4376,12 @@
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="205"/>
         <source>Cannot set PTT Type</source>
-        <translation type="unfinished"></translation>
+        <translation>无法设置PTT类型</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="212"/>
         <source>Cannot set PTT Share</source>
-        <translation type="unfinished"></translation>
+        <translation>无法设置共享PTT</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="219"/>
@@ -4391,7 +4391,7 @@
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="226"/>
         <source>Rig Open Error</source>
-        <translation type="unfinished"></translation>
+        <translation>打开电台出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="315"/>
@@ -4401,7 +4401,7 @@
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="357"/>
         <source>Set Mode Error</source>
-        <translation type="unfinished"></translation>
+        <translation>设置模式出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="380"/>
@@ -4411,17 +4411,17 @@
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="445"/>
         <source>Cannot sent Morse</source>
-        <translation type="unfinished"></translation>
+        <translation>无法发送摩尔斯</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="464"/>
         <source>Cannot stop Morse</source>
-        <translation type="unfinished"></translation>
+        <translation>无法停止摩尔斯</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="567"/>
         <source>Get PTT Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取PTT出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="602"/>
@@ -4436,47 +4436,47 @@
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="692"/>
         <source>Get VFO Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取VFO出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="730"/>
         <source>Get PWR Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取功率出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="734"/>
         <source>Get PWR (power2mw) Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取功率（power2mw）出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="772"/>
         <source>Get RIT Function Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取RIT功能出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="778"/>
         <source>Get RIT Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取RIT出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="829"/>
         <source>Get XIT Function Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取XIT功能出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="835"/>
         <source>Get XIT Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取XIT出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="884"/>
         <source>Get KeySpeed Error</source>
-        <translation type="unfinished"></translation>
+        <translation>获取电键速度出错</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="936"/>
         <source>Set KeySpeed Error</source>
-        <translation type="unfinished"></translation>
+        <translation>设置电键速度出错</translation>
     </message>
 </context>
 <context>
@@ -4495,7 +4495,7 @@
     <message>
         <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="161"/>
         <source>Rot Open Error</source>
-        <translation type="unfinished"></translation>
+        <translation>打开云台出错</translation>
     </message>
     <message>
         <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="251"/>
@@ -4944,7 +4944,7 @@
         <location filename="../logformat/LogFormat.cpp" line="333"/>
         <location filename="../logformat/LogFormat.cpp" line="618"/>
         <source>Cannot find My DXCC Entity Info</source>
-        <translation type="unfinished"></translation>
+        <translation>无法找到我的DXCC实体信息</translation>
     </message>
     <message>
         <location filename="../logformat/LogFormat.cpp" line="391"/>
@@ -4970,14 +4970,14 @@
     <message>
         <location filename="../logformat/LogFormat.cpp" line="520"/>
         <source>DXCC Info is missing</source>
-        <translation type="unfinished"></translation>
+        <translation>DXCC信息丢失</translation>
     </message>
     <message>
         <location filename="../logformat/LogFormat.cpp" line="562"/>
         <location filename="../logformat/LogFormat.cpp" line="582"/>
         <location filename="../logformat/LogFormat.cpp" line="602"/>
         <source>no Station Callsign present</source>
-        <translation type="unfinished"></translation>
+        <translation>未提供电台呼号</translation>
     </message>
     <message>
         <location filename="../logformat/LogFormat.cpp" line="704"/>
@@ -5269,7 +5269,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="634"/>
         <source>Contest ID</source>
-        <translation>比赛 ID</translation>
+        <translation>竞赛标识</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="54"/>
@@ -5597,27 +5597,27 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="722"/>
         <source>RcvPWR</source>
-        <translation type="unfinished"></translation>
+        <translation>接收功率</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="733"/>
         <source>RcvNr</source>
-        <translation type="unfinished">接收序号</translation>
+        <translation>接收序号</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="734"/>
         <source>RcvExch</source>
-        <translation type="unfinished">接收交换信息</translation>
+        <translation>接收交换信息</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="736"/>
         <source>SentNr</source>
-        <translation type="unfinished"></translation>
+        <translation>发送序号</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="737"/>
         <source>SentExch</source>
-        <translation type="unfinished"></translation>
+        <translation>发送交换信息</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="86"/>
@@ -5679,7 +5679,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="703"/>
         <source>Operator Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>操作员呼号</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="713"/>
@@ -5966,12 +5966,12 @@
     <message>
         <location filename="../ui/LogbookWidget.ui" line="312"/>
         <source>Send DX Spot</source>
-        <translation type="unfinished"></translation>
+        <translation>发送DX报告</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="315"/>
         <source>Logbook - Send DX Spot</source>
-        <translation type="unfinished"></translation>
+        <translation>Logbook - 发送DX报告</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="525"/>
@@ -6217,7 +6217,7 @@
     <message>
         <location filename="../ui/LotwDialog.cpp" line="168"/>
         <source>Processing LoTW</source>
-        <translation type="unfinished"></translation>
+        <translation>处理 LoTW</translation>
     </message>
     <message>
         <location filename="../ui/LotwDialog.cpp" line="184"/>
@@ -6235,12 +6235,12 @@
     <message>
         <location filename="../ui/LotwDialog.cpp" line="206"/>
         <source>QLog Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>QLog 告警</translation>
     </message>
     <message>
         <location filename="../ui/LotwDialog.cpp" line="207"/>
         <source>Cannot upload the QSO(s): </source>
-        <translation type="unfinished">无法上传该 QSO(s): </translation>
+        <translation>无法上传该 QSO(s): </translation>
     </message>
     <message>
         <location filename="../ui/LotwDialog.cpp" line="215"/>
@@ -6354,7 +6354,7 @@
         <location filename="../ui/MainWindow.ui" line="304"/>
         <location filename="../ui/MainWindow.ui" line="800"/>
         <source>Alerts</source>
-        <translation type="unfinished">警报</translation>
+        <translation>警报</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="338"/>
@@ -6456,7 +6456,7 @@
     <message>
         <location filename="../ui/MainWindow.ui" line="805"/>
         <source>Clear</source>
-        <translation type="unfinished">清除</translation>
+        <translation>清除</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="810"/>
@@ -6472,22 +6472,22 @@
         <location filename="../ui/MainWindow.ui" line="126"/>
         <location filename="../ui/MainWindow.cpp" line="1107"/>
         <source>Contest</source>
-        <translation type="unfinished"></translation>
+        <translation>比赛</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="130"/>
         <source>Dupe Check</source>
-        <translation type="unfinished"></translation>
+        <translation>查重</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="139"/>
         <source>Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>序列</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="148"/>
         <source>Linking Exchange With</source>
-        <translation type="unfinished"></translation>
+        <translation>链接交换信息至</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="542"/>
@@ -6533,7 +6533,7 @@
         <location filename="../ui/MainWindow.ui" line="597"/>
         <location filename="../ui/MainWindow.ui" line="600"/>
         <source>Save Arrangement</source>
-        <translation>保存布置图</translation>
+        <translation>保存布局</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="608"/>
@@ -6599,47 +6599,47 @@
     <message>
         <location filename="../ui/MainWindow.ui" line="818"/>
         <source>All Bands</source>
-        <translation type="unfinished"></translation>
+        <translation>全部波段</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="826"/>
         <source>Each Band</source>
-        <translation type="unfinished"></translation>
+        <translation>每个波段</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="834"/>
         <source>Each Band &amp;&amp; Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>每个波段 &amp;&amp; 模式</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="842"/>
         <source>No Check</source>
-        <translation type="unfinished"></translation>
+        <translation>不做检查</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="850"/>
         <source>Single</source>
-        <translation type="unfinished"></translation>
+        <translation>统一值</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="858"/>
         <source>Per Band</source>
-        <translation type="unfinished"></translation>
+        <translation>各波段独立</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="866"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="871"/>
         <source>Reset</source>
-        <translation type="unfinished">重置</translation>
+        <translation>重置</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="879"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="66"/>
@@ -6666,7 +6666,7 @@
     <message>
         <location filename="../ui/MainWindow.cpp" line="555"/>
         <source>op: </source>
-        <translation type="unfinished"></translation>
+        <translation>操作员: </translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="786"/>
@@ -6676,12 +6676,12 @@
     <message>
         <location filename="../ui/MainWindow.cpp" line="1108"/>
         <source>Do you want to remove the Contest filter %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>你要删除比赛过滤器 %1 吗？</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1139"/>
         <source>Contest: </source>
-        <translation type="unfinished"></translation>
+        <translation>比赛: </translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1302"/>
@@ -6796,7 +6796,7 @@
         <location filename="../ui/MapWebChannelHandler.cpp" line="93"/>
         <location filename="../ui/MapWebChannelHandler.cpp" line="164"/>
         <source>Paths</source>
-        <translation type="unfinished"></translation>
+        <translation>路径</translation>
     </message>
 </context>
 <context>
@@ -6927,17 +6927,17 @@
     <message>
         <location filename="../ui/NewContactWidget.ui" line="1375"/>
         <source>D&amp;X Stats</source>
-        <translation type="unfinished"></translation>
+        <translation>D&amp;X统计</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.ui" line="1396"/>
         <source>&lt;b&gt;DXCC Statistics&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;DXCC 统计&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.ui" line="1452"/>
         <source>&lt;b&gt;Station Statistics&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;电台统计&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.ui" line="536"/>
@@ -6957,7 +6957,7 @@
     <message>
         <location filename="../ui/NewContactWidget.ui" line="173"/>
         <source>&lt;b&gt;DUPE !!!&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;重复通联 !!!&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.ui" line="767"/>
@@ -7115,7 +7115,7 @@
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="2070"/>
         <source>LP</source>
-        <translation type="unfinished"></translation>
+        <translation>长路径</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="2121"/>
@@ -7180,12 +7180,12 @@
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="3655"/>
         <source>Contest ID must be filled in to activate</source>
-        <translation type="unfinished"></translation>
+        <translation>必须填写 竞赛标识 才能激活</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="3809"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
-        <translation type="unfinished"></translation>
+        <translation>这里要填的不是比赛名称，而是分配的竞赛标识&lt;br&gt;（例如CQ-WW-CW 代表CQ WW DX比赛(CW)） </translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="3577"/>
@@ -7195,7 +7195,7 @@
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="61"/>
         <source>Expand/Collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>展开/折叠</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="3750"/>
@@ -7537,7 +7537,7 @@
     <message>
         <location filename="../ui/ActivityEditor.cpp" line="96"/>
         <source>Activity name is already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>活动名称已存在。</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="157"/>
@@ -7657,7 +7657,7 @@
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="427"/>
         <source>Rig PTT port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
-        <translation type="unfinished"></translation>
+        <translation>电台PTT端口必须为可用的串口。&lt;br&gt;Windows是类似COMxx，类UNIX操作系统则为设备路径名</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="435"/>
@@ -7697,7 +7697,7 @@
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="1514"/>
         <source>Operator Callsign has an invalid format</source>
-        <translation type="unfinished"></translation>
+        <translation>操作员呼号格式无效</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="1521"/>
@@ -7727,7 +7727,7 @@
     <message>
         <location filename="../ui/QSOFilterDetail.cpp" line="468"/>
         <source>Cannot update QSO Filter Conditions</source>
-        <translation type="unfinished"></translation>
+        <translation>无法更新QSO过滤器条件</translation>
     </message>
 </context>
 <context>
@@ -7822,12 +7822,12 @@
     <message>
         <location filename="../data/StationProfile.cpp" line="186"/>
         <source>Operator Name</source>
-        <translation type="unfinished">操作员姓名</translation>
+        <translation>操作员姓名</translation>
     </message>
     <message>
         <location filename="../data/StationProfile.cpp" line="187"/>
         <source>Operator Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>操作员呼号</translation>
     </message>
     <message>
         <location filename="../data/StationProfile.cpp" line="188"/>
@@ -7837,12 +7837,12 @@
     <message>
         <location filename="../data/StationProfile.cpp" line="189"/>
         <source>My Country</source>
-        <translation type="unfinished">我的国家/地区</translation>
+        <translation>我的国家/地区</translation>
     </message>
     <message>
         <location filename="../data/StationProfile.cpp" line="190"/>
         <source>My County</source>
-        <translation type="unfinished">我的郡/县</translation>
+        <translation>我的郡/县</translation>
     </message>
     <message>
         <location filename="../data/StationProfile.cpp" line="191"/>
@@ -8345,7 +8345,7 @@
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1436"/>
         <source>Operator Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>操作员呼号</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1533"/>
@@ -8370,7 +8370,7 @@
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="2054"/>
         <source>Contest ID</source>
-        <translation type="unfinished">比赛 ID</translation>
+        <translation>竞赛标识</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1506"/>
@@ -8380,17 +8380,17 @@
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1240"/>
         <source>D&amp;X Stats</source>
-        <translation type="unfinished"></translation>
+        <translation>D&amp;X 统计</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1246"/>
         <source>&lt;b&gt;DXCC Statistics&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;DXCC 统计&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1272"/>
         <source>&lt;b&gt;Station Statistics&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;电台统计&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1591"/>
@@ -9702,12 +9702,12 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2205"/>
         <source>PTT Type</source>
-        <translation type="unfinished"></translation>
+        <translation>PTT类型</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2220"/>
         <source>PTT Port</source>
-        <translation type="unfinished"></translation>
+        <translation>PTT端口</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2304"/>
@@ -9751,27 +9751,27 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="188"/>
         <source>Operator Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>操作员呼号</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="233"/>
         <source>Station Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>电台呼号</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="377"/>
         <source>Callsign of operator (Optional parameter, if different from station callsign)</source>
-        <translation type="unfinished"></translation>
+        <translation>操作员的呼号（可选参数，如果操作员呼号与电台呼号不相同）</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="412"/>
         <source>County</source>
-        <translation type="unfinished">郡/县</translation>
+        <translation>郡/县</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="419"/>
         <source>Station County Location (Optional parameter)</source>
-        <translation type="unfinished"></translation>
+        <translation>电台地址（可选参数）</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1045"/>
@@ -9802,7 +9802,26 @@
 &lt;EXCHNR&gt; = Contest Exchange Serial Number
 &lt;EXCHNRN&gt; = Contest Exchange Serial Number (9→N, 0→T) 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;DXCALL&gt; = DX 呼号
+&lt;NAME&gt; = DX 操作员姓名
+&lt;RST&gt; = 报告 599
+&lt;RSTN&gt; = 报告 5NN
+&lt;GREETING&gt; = 打招呼 GM/GA/GE
+&lt;MYCALL&gt; = 我的呼号
+&lt;MYNAME&gt; = 我的姓名
+&lt;MYQTH&gt; = 我的 QTH
+&lt;MYLOCATOR&gt; = 我的定位
+&lt;MYGRID&gt; = 我的网格坐标
+&lt;MYSIG&gt; = 我的 SIG
+&lt;MYSIGINFO&gt; = 我的 SIG 信息
+&lt;MYIOTA&gt; = 我的 IOTA
+&lt;MYSOTA&gt; = 我的 SOTA
+&lt;MYWWFT&gt; = 我的 WWFT
+&lt;MYVUCC&gt; = 我的 VUCC
+&lt;MYPWR&gt; = 我的功率
+&lt;EXCHSTR&gt; = 竞赛交换信息字符串
+&lt;EXCHNR&gt; = 竞赛交换序列号
+&lt;EXCHNRN&gt; = 竞赛交换序列号 (9→N, 0→T) </translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1659"/>
@@ -10625,7 +10644,7 @@
     <message>
         <location filename="../ui/StatisticsWidget.cpp" line="608"/>
         <source>Over 50000 QSOs. Display them?</source>
-        <translation type="unfinished"></translation>
+        <translation>超过50000个QSO。显示全部吗？</translation>
     </message>
     <message>
         <location filename="../ui/StatisticsWidget.cpp" line="749"/>
