@@ -394,6 +394,19 @@ MainWindow::MainWindow(QWidget* parent) :
     //restoreConnectionStates();
 
     setupActivitiesMenu();
+
+    ui->clockDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->mapDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->dxDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->wsjtxDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->rotatorDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->bandmapDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->rigDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->onlineMapDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->cwConsoleDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->chatDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->profileImageDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
+    ui->alertDockWidget->setAttribute(Qt::WidgetAttribute::WA_MacAlwaysShowToolWindow, true);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
