@@ -134,13 +134,21 @@
       mapUrl = 'https://tile.openstreetmap.de/{z}/{x}/{y}.png';
     } else if (language === 'fr') {
       mapUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
+    } else if (language === 'zh') {
+      mapUrl = 'https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}'; // 高德地图
     } else {
       mapUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     }
 
-    L.tileLayer(mapUrl, {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-    }).addTo(map);
+    if (language === 'zh') {
+      L.tileLayer(mapUrl, {
+        attribution: '地图数据 &copy; <a href="https://ditu.amap.com/">高德地图</a>'
+      }).addTo(map);
+    } else {
+      L.tileLayer(mapUrl, {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+      }).addTo(map);
+    }
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
     var grayline = L.terminator({fillOpacity: 0.2})
