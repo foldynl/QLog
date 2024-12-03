@@ -161,7 +161,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
         ui->contactTable->showColumn(LogbookModel::COLUMN_QTH_INTL);
         ui->contactTable->showColumn(LogbookModel::COLUMN_COMMENT_INTL);
     }
-
+    ui->contactTable->setSortingEnabled(true);
     ui->contactTable->horizontalHeader()->setSectionsMovable(true);
     ui->contactTable->setStyle(new ProxyStyle(ui->contactTable->style()));
     ui->contactTable->installEventFilter(this);
