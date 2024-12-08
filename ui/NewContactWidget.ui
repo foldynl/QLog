@@ -1433,7 +1433,7 @@
           <number>20</number>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>65</number>
+          <number>45</number>
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>false</bool>
@@ -1480,7 +1480,7 @@
           <number>20</number>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>65</number>
+          <number>45</number>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
           <number>21</number>
