@@ -674,7 +674,7 @@ QString DxWidget::bandFilterRegExp()
         QString band_name = bands->data(bands->index(band_index,0)).toString();
         if ( settings.value("dxc/filter_band_" + band_name,true).toBool() )
         {
-            regexp.append("|" + band_name);
+            regexp.append("|^" + band_name);
         }
         band_index++;
     }
