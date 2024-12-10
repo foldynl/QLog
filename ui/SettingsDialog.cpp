@@ -2346,7 +2346,7 @@ void SettingsDialog::readSettings() {
     ui->notifDXSpotsEdit->setText(NetworkNotification::getNotifDXSpotAddrs());
     ui->notifWSJTXCQSpotsEdit->setText(NetworkNotification::getNotifWSJTXCQSpotAddrs());
     ui->notifSpotAlertEdit->setText(NetworkNotification::getNotifSpotAlertAddrs());
-
+    ui->notifRadioEdit->setText(NetworkNotification::getNotifRadioAlertAddrs());
     /******************/
     /* END OF Reading */
     /******************/
@@ -2450,6 +2450,7 @@ void SettingsDialog::writeSettings() {
     NetworkNotification::saveNotifDXSpotAddrs(ui->notifDXSpotsEdit->text());
     NetworkNotification::saveNotifWSJTXCQSpotAddrs(ui->notifWSJTXCQSpotsEdit->text());
     NetworkNotification::saveNotifSpotAlertAddrs(ui->notifSpotAlertEdit->text());
+    NetworkNotification::saveNotifRadioAlertAddrs(ui->notifRadioEdit->text());
 }
 
 /* this function is called when user modify rig progile

@@ -215,6 +215,16 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(Rig::instance(), &Rig::ritChanged, ui->rigWidget, &RigWidget::updateRIT);
     connect(Rig::instance(), &Rig::pttChanged, ui->rigWidget, &RigWidget::updatePTT);
 
+    connect(Rig::instance(), &Rig::frequencyChanged,  &networknotification, &NetworkNotification::updateFrequency);
+    connect(Rig::instance(), &Rig::modeChanged,  &networknotification, &NetworkNotification::updateMode);
+    connect(Rig::instance(), &Rig::powerChanged,  &networknotification, &NetworkNotification::updatePWR);
+    connect(Rig::instance(), &Rig::rigConnected,  &networknotification, &NetworkNotification::rigConnected);
+    connect(Rig::instance(), &Rig::rigDisconnected,  &networknotification, &NetworkNotification::rigDisconnected);
+    connect(Rig::instance(), &Rig::vfoChanged,  &networknotification, &NetworkNotification::updateVFO);
+    connect(Rig::instance(), &Rig::xitChanged,  &networknotification, &NetworkNotification::updateXIT);
+    connect(Rig::instance(), &Rig::ritChanged,  &networknotification, &NetworkNotification::updateRIT);
+    connect(Rig::instance(), &Rig::pttChanged,  &networknotification, &NetworkNotification::updatePTT);
+
     connect(Rotator::instance(), &Rotator::rotErrorPresent, this, &MainWindow::rotErrorHandler);
     connect(Rotator::instance(), &Rotator::positionChanged, ui->onlineMapWidget, &OnlineMapWidget::antPositionChanged);
     connect(Rotator::instance(), &Rotator::rotConnected, ui->onlineMapWidget, &OnlineMapWidget::rotConnected);

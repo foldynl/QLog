@@ -4057,9 +4057,27 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="notifRadioLabel">
+            <property name="text">
+             <string>Radio Updates</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="notifRadioEdit">
+            <property name="toolTip">
+             <string>&lt;p&gt; List of IP addresses to which QLog sends  UDP notification packets with Radio Updates.&lt;/p&gt;The IP addresses are separated by a space and have the form IP:PORT</string>
+            </property>
+            <property name="placeholderText">
+             <string>ex. 192.168.1.1:12061 192.168.2.1:12061</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
+       
        <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
@@ -4262,6 +4280,7 @@
   <tabstop>notifSpotAlertEdit</tabstop>
   <tabstop>notifQSOEdit</tabstop>
   <tabstop>notifWSJTXCQSpotsEdit</tabstop>
+  <tabstop>notifRadioEdit</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>tabWidget_2</tabstop>
   <tabstop>cwHostNameEdit</tabstop>

@@ -4,6 +4,7 @@
 #include "NetworkNotification.h"
 #include "debug.h"
 #include "LogParam.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.ui.networknotification");
 
@@ -468,4 +469,206 @@ ToAllSpotNotificationMsg::ToAllSpotNotificationMsg(const ToAllSpot &spot, QObjec
 
     msg["msgtype"] = "toallspot";
     msg["data"] = spotData;
+}
+
+void NetworkNotification::rigConnected()
+{
+    FCT_IDENTIFICATION;
+    rigOnline = true;
+}
+
+void NetworkNotification::rigDisconnected()
+{
+    FCT_IDENTIFICATION;
+    rigOnline = false;
+    resetRigInfo();
+}
+
+void NetworkNotification::resetRigInfo()
+{
+    FCT_IDENTIFICATION;
+    lastSeenFreq = 0;
+    lastSeenMode = "";
+    lastSeenSubMode = 0;
+    lastSeenPWR = 0;
+    lastSeenRIT = 0;
+    lastSeenXIT = 0;
+    lastSeenPTT = "RX";
+    rigOnline = false;
+}
+
+void NetworkNotification::updateFrequency(VFOID vfoid, double vfoFreq, double ritFreq, double xitFreq)
+{
+    FCT_IDENTIFICATION;
+
+    Q_UNUSED(vfoid)
+
+    qCDebug(function_parameters) << vfoFreq << ritFreq << xitFreq;
+
+    const QString& bandName = BandPlan::freq2Band(vfoFreq).name;
+    lastSeenFreq = vfoFreq;
+    updateRadio();
+}
+
+void NetworkNotification::updateMode(VFOID vfoid, const QString &rawMode, const QString &mode,
+                           const QString &submode, qint32)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters)<<mode;
+
+    Q_UNUSED(submode)
+    Q_UNUSED(vfoid)
+
+    lastSeenMode = mode;
+    lastSeenSubMode = submode;
+    updateRadio();
+
+}
+
+void NetworkNotification::updatePWR(VFOID vfoid, double pwr)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters)<<pwr;
+
+    Q_UNUSED(vfoid)
+
+    lastSeenPWR = QString(tr("PWR: %1W")).arg(pwr);
+    updateRadio();
+
+}
+
+void NetworkNotification::updateXIT(VFOID, double xit)
+{
+    FCT_IDENTIFICATION;
+
+    if ( xit != 0.0 )
+    {
+        QString unit;
+        unsigned char decP;
+        double xitDisplay = Data::MHz2UserFriendlyFreq(xit, unit, decP);
+        lastSeenXIT = QString("XIT: %1 %2").arg(QString::number(xitDisplay, 'f', decP),
+                                                         unit);
+    }
+    else
+    {
+        lastSeenXIT = "0";
+    }
+    updateRadio();
+
+}
+
+void NetworkNotification::updateRIT(VFOID, double rit)
+{
+    FCT_IDENTIFICATION;
+
+    if ( rit != 0.0 )
+    {
+        QString unit;
+        unsigned char decP;
+        double ritDisplay = Data::MHz2UserFriendlyFreq(rit, unit, decP);
+        lastSeenRIT = QString("RIT: %1 %2").arg(QString::number(ritDisplay, 'f', decP),
+                                                         unit);
+    }
+    else
+    {
+        lastSeenRIT = "0";
+    }
+    updateRadio();
+
+}
+
+void NetworkNotification::updatePTT(VFOID, bool ptt)
+{
+    FCT_IDENTIFICATION;
+
+    lastSeenPTT = (ptt)? "TX" : "RX";
+    updateRadio();
+
+}
+
+void NetworkNotification::updateVFO(VFOID vfoid, const QString &vfo)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters)<<vfo;
+
+    Q_UNUSED(vfoid)
+
+    lastSeenVFO = vfo;
+    updateRadio();
+
+}
+
+void NetworkNotification::rigUpdated()
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << "Rig Updated";
+
+    HostsPortString destList(getNotifDXSpotAddrs());
+
+    if ( destList.getAddrList().size() > 0 )
+    {
+        GenericNotificationMsg RigNotificationMsg;
+        send(RigNotificationMsg.getJson(), destList);
+    }
+
+}
+
+
+QString NetworkNotification::getNotifRadioAlertAddrs()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    return settings.value(NetworkNotification::CONFIG_NOTIF_RADIO_ADDRS_KEY).toString();
+}
+
+void NetworkNotification::saveNotifRadioAlertAddrs(const QString &addresses)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    settings.setValue(NetworkNotification::CONFIG_NOTIF_RADIO_ADDRS_KEY, addresses);
+
+}
+
+QString NetworkNotification::CONFIG_NOTIF_RADIO_ADDRS_KEY = "network/notification/alerts/freq/addrs";
+
+void NetworkNotification::updateRadio()
+{
+    FCT_IDENTIFICATION;
+
+     HostsPortString destList(getNotifRadioAlertAddrs());
+
+    if ( destList.getAddrList().size() > 0 )
+    {
+        const QString& bandName = BandPlan::freq2Band(lastSeenFreq).name;
+         RadioNotificationMsg radioAlertMsg(lastSeenFreq, bandName, lastSeenMode,lastSeenSubMode, lastSeenPTT, lastSeenPWR, lastSeenRIT, lastSeenXIT,lastSeenVFO );
+        send(radioAlertMsg.getJson(), destList);
+    }
+}
+
+RadioNotificationMsg::RadioNotificationMsg(double lastSeenFreq, QString bandName,QString  lastSeenMode,QString lastSeenSubMode,QString  lastSeenPTT,QString  lastSeenPWR,QString  lastSeenRIT,QString  lastSeenXIT,QString lastSeenVFO,QObject *parent) :
+    GenericNotificationMsg(parent)
+{
+    FCT_IDENTIFICATION;
+
+    QJsonObject rigData;
+    rigData["freq"] = lastSeenFreq;
+    rigData["band"] = BandPlan::freq2Band(lastSeenFreq).name;
+    rigData["mode"] = lastSeenMode;
+    rigData["submode"] =lastSeenSubMode ;
+    rigData["ptt"] = lastSeenPTT;
+    rigData["power"] = lastSeenPWR;
+    rigData["RIT"] = lastSeenRIT;
+    rigData["XIT"] = lastSeenXIT;
+    rigData["VFO"] = lastSeenVFO;
+
+    msg["msgtype"] = "riginfo";
+    msg["data"] = rigData;
 }

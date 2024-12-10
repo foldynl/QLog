@@ -13,6 +13,7 @@
 #include "data/WCYSpot.h"
 #include "data/WWVSpot.h"
 #include "data/ToAllSpot.h"
+#include "rig/Rig.h"
 
 class GenericNotificationMsg : public QObject
 {
@@ -115,6 +116,14 @@ public:
 
 };
 
+class RadioNotificationMsg : public GenericNotificationMsg
+{
+
+public:
+    explicit RadioNotificationMsg(const double,const QString,const QString,const QString,const QString,const QString,const QString,const QString,const QString, QObject *parent = nullptr);
+
+};
+
 class NetworkNotification : public QObject
 {
     Q_OBJECT
@@ -129,6 +138,8 @@ public:
     static void saveNotifWSJTXCQSpotAddrs(const QString &);
     static QString getNotifSpotAlertAddrs();
     static void saveNotifSpotAlertAddrs(const QString &);
+    static QString getNotifRadioAlertAddrs();
+    static void saveNotifRadioAlertAddrs(const QString &);
 
 public slots:
     void QSOInserted(const QSqlRecord &);
@@ -140,6 +151,17 @@ public slots:
     void toAllSpot(const ToAllSpot&);
     void WSJTXCQSpot(const WsjtxEntry&);
     void spotAlert(const SpotAlert&);
+    // to receive RIG instructions
+    void updateFrequency(VFOID, double, double, double);
+    void updateMode(VFOID, const QString&, const QString&,
+                    const QString&, qint32);
+    void updatePWR(VFOID, double);
+    void updateVFO(VFOID, const QString&);
+    void updateXIT(VFOID, double);
+    void updateRIT(VFOID, double);
+    void updatePTT(VFOID, bool);
+    void rigConnected();
+    void rigDisconnected();
 
 private:
 
@@ -149,7 +171,20 @@ private:
     static QString CONFIG_NOTIF_DXSPOT_ADDRS_KEY;
     static QString CONFIG_NOTIF_WSJTXCQSPOT_ADDRS_KEY;
     static QString CONFIG_NOTIF_SPOTALERT_ADDRS_KEY;
-
+    static QString CONFIG_NOTIF_RADIO_ADDRS_KEY;
+    double lastSeenFreq;
+    QString lastSeenMode;
+    QString lastSeenSubMode;
+    QString lastSeenPWR;
+    QString lastSeenRIT;
+    QString lastSeenXIT;
+    QString lastSeenPTT;
+    QString lastSeenVFO;
+    bool rigOnline;
+    void resetRigInfo();
+    void rigUpdated();
+    GenericNotificationMsg RigNotificationMsg();
+    void updateRadio();
 };
 
 #endif // QLOG_CORE_NETWORKNOTIFICATION_H
