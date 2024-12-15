@@ -33,6 +33,11 @@ LotwDialog::LotwDialog(QWidget *parent) :
     ui->myGridCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) FROM contacts WHERE station_callsign ='"
                                                 + ui->myCallsignCombo->currentText()
                                                 + "' ORDER BY my_gridsquare", ""));
+
+    ui->myStationCombo->setModel(new SqlListModel("SELECT profile_name FROM station_profiles WHERE callsign ='"
+                                                + ui->myCallsignCombo->currentText()
+                                                +"' ORDER BY profile_name", ""));
+
     /* Download */
     ui->qslRadioButton->setChecked(true);
     ui->qsoRadioButton->setChecked(false);
@@ -114,14 +119,20 @@ void LotwDialog::upload() {
         qslSentStatuses << "'N'";
     }
 
-    QString query_string = "SELECT callsign, freq, band, freq_rx, "
+    QString query_string = "SELECT contacts.callsign, freq, band, freq_rx, "
                            "       mode, submode, start_time, prop_mode, "
                            "       sat_name, station_callsign, operator, "
                            "       rst_sent, rst_rcvd, my_state, my_cnty, "
                            "       my_vucc_grids "
-                           "FROM contacts ";
+                           "FROM contacts inner join station_profiles on contacts.station_callsign = station_profiles.callsign "
+                           "and (contacts.my_cnty = station_profiles.county or contacts.my_cnty is null) "
+                           "and (contacts.my_pota_ref = station_profiles.pota or contacts.my_pota_ref is null) "
+                           "and (contacts.my_itu_zone = station_profiles.ituz or contacts.my_itu_zone is null) "
+                           "and (contacts.my_cq_zone = station_profiles.cqz or contacts.my_cq_zone is null) "
+                           "and (contacts.my_iota = station_profiles.iota or contacts.my_iota is null)";
     QString query_where =  QString("WHERE (upper(lotw_qsl_sent) in (%1) OR lotw_qsl_sent is NULL) "
-                           "               AND (upper(prop_mode) NOT IN ('INTERNET', 'RPT', 'ECH', 'IRL') OR prop_mode IS NULL) ").arg(qslSentStatuses.join(","));
+                           "               AND (upper(prop_mode) NOT IN ('INTERNET', 'RPT', 'ECH', 'IRL') OR prop_mode IS NULL) ").arg(qslSentStatuses.join(",")) + " "
+                           "               AND station_profiles.profile_name = '" + ui->myStationCombo->currentText() + "'";
     QString query_order = " ORDER BY start_time ";
 
     saveDialogState();
@@ -219,6 +230,10 @@ void LotwDialog::upload() {
 void LotwDialog::uploadCallsignChanged(const QString &my_callsign)
 {
     ui->myGridCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) FROM contacts WHERE station_callsign ='" + my_callsign + "' ORDER BY my_gridsquare", ""));
+
+    ui->myStationCombo->setModel(new SqlListModel("SELECT profile_name FROM station_profiles WHERE callsign ='"
+                                                      + ui->myCallsignCombo->currentText()
+                                                      +"' ORDER BY profile_name", ""));
 }
 
 void LotwDialog::saveDialogState()
