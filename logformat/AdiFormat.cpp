@@ -83,9 +83,9 @@ void AdiFormat::writeSQLRecord(const QSqlRecord &record,
     {
         const QDateTime &time_start = startVariant.toDateTime().toTimeSpec(Qt::UTC);
         writeField("qso_date", startVariant.isValid(),
-                   time_start.toString("yyyyMMdd"), "D");
+                   time_start.toString("yyyyMMdd"));
         writeField("time_on", startVariant.isValid(),
-                   time_start.toString("hhmmss"), "T");
+                   time_start.toString("hhmmss"));
     }
 
     const QVariant &endVariant = record.value("end_time");
@@ -94,9 +94,9 @@ void AdiFormat::writeSQLRecord(const QSqlRecord &record,
     {
         const QDateTime &time_end = record.value("end_time").toDateTime().toTimeSpec(Qt::UTC);
         writeField("qso_date_off", endVariant.isValid(),
-                   time_end.toString("yyyyMMdd"), "D");
+                   time_end.toString("yyyyMMdd"));
         writeField("time_off", endVariant.isValid(),
-                   time_end.toString("hhmmss"), "T");
+                   time_end.toString("hhmmss"));
     }
 
     const QJsonObject &fields = QJsonDocument::fromJson(record.value("fields").toByteArray()).object();
@@ -763,7 +763,7 @@ QHash<QString, AdiFormat::ExportParams> AdiFormat::DB2ADIFExportParams =
     { "gridsquare", ExportParams("gridsquare")},
     { "cqz", ExportParams("cqz")},
     { "ituz", ExportParams("ituz")},
-    { "freq", ExportParams("freq", &AdiFormat::toString, "N")},
+    { "freq", ExportParams("freq", &AdiFormat::toString)},
     { "band", ExportParams("band", &AdiFormat::toLower)},
     { "mode", ExportParams("mode")},
     { "submode", ExportParams("submode")},
