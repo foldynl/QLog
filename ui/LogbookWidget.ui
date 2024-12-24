@@ -270,6 +270,18 @@
     <string>Lookup on Web</string>
    </property>
   </action>
+  <action name="actionCallbookLookup">
+   <property name="icon">
+    <iconset resource="../res/icons/icons.qrc">
+     <normaloff>:/icons/cloud_download-24px.svg</normaloff>:/icons/cloud_download-24px.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add Missing Callbook Info</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Missing Callbook Info</string>
+   </property>
+  </action>
   <action name="actionFilter">
    <property name="icon">
     <iconset resource="../res/icons/icons.qrc">
@@ -412,6 +424,22 @@
    <signal>triggered()</signal>
    <receiver>LogbookWidget</receiver>
    <slot>lookupSelectedCallsign()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCallbookLookup</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>actionCallbookLookup()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -575,6 +603,7 @@
   <slot>uploadClublog()</slot>
   <slot>filterSelectedCallsign()</slot>
   <slot>lookupSelectedCallsign()</slot>
+  <slot>actionCallbookLookup()</slot>
   <slot>modeFilterChanged()</slot>
   <slot>countryFilterChanged()</slot>
   <slot>editContact()</slot>

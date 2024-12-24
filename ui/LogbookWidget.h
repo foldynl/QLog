@@ -5,6 +5,8 @@
 #include <QProxyStyle>
 #include <QComboBox>
 #include "models/SqlListModel.h"
+#include "core/CallbookManager.h"
+#include <QSqlRecord>
 
 namespace Ui {
 class LogbookWidget;
@@ -65,6 +67,13 @@ public slots:
     void focusSearchCallsign();
     void reloadSetting();
     void sendDXCSpot();
+    void actionCallbookLookup();
+    void callsignFound(const QMap<QString, QString>& data);
+    void callsignNotFound(const QString&);
+    void callbookLoginFailed(const QString&);
+    void callbookError(const QString&);
+    void updateQSOsCallbook(QList<QSqlRecord> qsos);
+    void updateQSOCallbook(QSqlRecord qso);
 
 private:
     ClubLog* clublog;
@@ -91,6 +100,10 @@ private:
     void reselectModel();
     void scrollToIndex(const QModelIndex& index, bool select = true);
     void adjusteComboMinSize(QComboBox * combo);
+    void UpdateQSORecordFromCallbook(QSqlRecord qso, const QMap<QString, QString>& data);
+    QList<QSqlRecord> TempQSOsCallbookLookup;
+    QSqlRecord TempQSOCallbookLookup;
+    CallbookManager callbookManager;
 };
 
 /* https://forum.qt.io/topic/90403/show-tooltip-immediatly/7/ */

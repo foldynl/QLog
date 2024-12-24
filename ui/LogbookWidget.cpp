@@ -45,6 +45,19 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     connect(model, &LogbookModel::beforeDelete, this, &LogbookWidget::handleBeforeDelete);
     connect(ui->contactTable, &QTableQSOView::dataCommitted, this, [this](){emit logbookUpdated();});
 
+    /* Callbook Signals registration */
+    connect(&callbookManager, &CallbookManager::callsignResult,
+            this, &LogbookWidget::callsignFound);
+
+    connect(&callbookManager, &CallbookManager::callsignNotFound,
+            this, &LogbookWidget::callsignNotFound);
+
+    connect(&callbookManager, &CallbookManager::loginFailed,
+            this, &LogbookWidget::callbookLoginFailed);
+
+    connect(&callbookManager, &CallbookManager::lookupError,
+            this, &LogbookWidget::callbookError);
+
     ui->contactTable->setModel(model);
 
     QAction *separator = new QAction(this);
@@ -58,6 +71,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->addAction(ui->actionLookup);
     ui->contactTable->addAction(ui->actionSendDXCSpot);
     ui->contactTable->addAction(ui->actionExportAs);
+    ui->contactTable->addAction(ui->actionCallbookLookup);
     ui->contactTable->addAction(separator);
     ui->contactTable->addAction(ui->actionDisplayedColumns);
     ui->contactTable->addAction(separator1);
@@ -266,6 +280,300 @@ void LogbookWidget::lookupSelectedCallsign()
         const QSqlRecord &record = model->record(modeList.first().row());
         QDesktopServices::openUrl(GenericCallbook::getWebLookupURL(record.value("callsign").toString()));
     }
+}
+
+void LogbookWidget::actionCallbookLookup()
+{
+    FCT_IDENTIFICATION;
+
+    int count = 0;
+    QList<QSqlRecord>QSOs;
+
+    const QModelIndexList &selectedIndexes = ui->contactTable->selectionModel()->selectedRows();
+    count = selectedIndexes.count();
+    ui->contactTable->clearSelection();
+
+    if (count>=100)
+    {
+        QMessageBox::critical(this, tr("QLog Warning"), tr("Recommended to select less than 100 QSOs!"));
+        return;
+    }
+
+
+    if ( selectedIndexes.count() > 0 )
+    {
+        for ( const QModelIndex &index : selectedIndexes )
+            QSOs << model->record(index.row());
+
+        updateQSOsCallbook(QSOs);
+    }
+    else
+    {
+        qWarning() << "Nothing Selected";
+        return;
+    }
+}
+
+void LogbookWidget::updateQSOsCallbook(QList<QSqlRecord> qsos)
+{
+    FCT_IDENTIFICATION;
+
+    if(qsos.isEmpty())
+    {
+        QMessageBox::information(this, tr("QLog Information"), tr("Callbook lookups have completed."));
+
+        TempQSOsCallbookLookup.clear();
+        return;
+    }
+
+    if(qsos.count()>0)
+    {
+        TempQSOsCallbookLookup.clear();
+        TempQSOsCallbookLookup = qsos;
+        updateQSOCallbook(TempQSOsCallbookLookup.first());
+        TempQSOsCallbookLookup.removeFirst();
+    }
+}
+
+void LogbookWidget::updateQSOCallbook(QSqlRecord qso)
+{
+    FCT_IDENTIFICATION;
+    TempQSOCallbookLookup = qso;
+    callbookManager.queryCallsign(qso.value("callsign").toString());
+}
+
+void LogbookWidget::UpdateQSORecordFromCallbook(QSqlRecord qso, const QMap<QString, QString>& data)
+{
+    FCT_IDENTIFICATION;
+    if (qso.value("callsign") != data.value("call"))
+    {
+        qWarning() << "Callsigns don't match - skipping. qso " << qso.value("callsign") << " data " << data.value("call");
+        return;
+    }
+
+
+    const QString fnamelname = QString("%1 %2").arg(data.value("fname"),
+                                                    data.value("lname"));
+    QString Sqlstring = "update contacts set ";
+    QString WhereString = " where id = :id ";
+    QString UpdateString = "";
+    QString name = data.value("name_fmt");
+    QStringList updateStr;
+
+    if ( name.isEmpty() )
+        name = ( data.value("fname").isEmpty() && data.value("lname").isEmpty() ) ? data.value("nick")
+                                                                                : fnamelname;
+
+    if (  qso.value("name").toString().isEmpty()
+        && !name.isEmpty())
+    {
+        updateStr << "name = :name";
+        updateStr << "name_intl = :name_intl";
+    }
+
+    if ( qso.value("gridsquare").toString().isEmpty()
+        && !data.value("gridsquare").isEmpty())
+    {
+        updateStr << "gridsquare = :gridsquare";
+    }
+
+    if ( qso.value("qth").toString().isEmpty()
+        && !data.value("qth").isEmpty())
+    {
+        updateStr << "qth = :qth";
+        updateStr << "qth_intl = :qth_intl";
+    }
+
+    if ( qso.value("dok").toString().isEmpty()
+        && !data.value("dok").isEmpty())
+    {
+        updateStr << "darc_dok = :darc_dok";
+    }
+
+    if ( qso.value("iota").toString().isEmpty()
+        && !data.value("iota").isEmpty())
+    {
+        updateStr << "iota = :iota";
+    }
+
+    if ( qso.value("email").toString().isEmpty()
+        && !data.value("email").isEmpty())
+    {
+        updateStr << "email = :email";
+    }
+
+    if ( qso.value("county").toString().isEmpty()
+        && !data.value("county").isEmpty())
+    {
+        updateStr << "cnty = :cnty";
+    }
+
+    if ( qso.value("qsl_via").toString().isEmpty()
+        && !data.value("qsl_via").isEmpty())
+    {
+        updateStr << "qsl_via = :qsl_via";
+    }
+
+    if ( qso.value("url").toString().isEmpty()
+        && !data.value("url").isEmpty())
+    {
+        updateStr << "web = :web";
+    }
+
+    if ( qso.value("state").toString().isEmpty()
+        && !data.value("state").isEmpty())
+    {
+        updateStr << "state = :state";
+    }
+
+    if ( qso.value("itu").toString().isEmpty()
+        && !data.value("itu").isEmpty())
+    {
+        updateStr << "ituz = :ituz";
+    }
+
+    if ( qso.value("cq").toString().isEmpty()
+        &&  !data.value("cq").isEmpty())
+    {
+        updateStr << "cqz = :cqz";
+    }
+
+    UpdateString = updateStr.join(" , ");
+
+    if (UpdateString.length() < 5)
+    {
+        return;
+    }
+
+    QString updateQuery = Sqlstring + UpdateString + WhereString;
+
+    QSqlQuery query_update;
+
+    if (!query_update.prepare(updateQuery))
+    {
+        qWarning() << "Cannot create query callbook data! " << query_update.lastError().text();
+    }
+
+    if (  qso.value("name").toString().isEmpty()
+        && !name.isEmpty())
+    {
+        query_update.bindValue(":name",name);
+        query_update.bindValue(":name_intl",name);
+    }
+
+    if ( qso.value("gridsquare").toString().isEmpty()
+        && !data.value("gridsquare").isEmpty())
+    {
+        query_update.bindValue(":gridsquare",data.value("gridsquare"));
+    }
+
+    if ( qso.value("qth").toString().isEmpty()
+        && !data.value("qth").isEmpty())
+    {
+        query_update.bindValue(":qth",data.value("qth"));
+        query_update.bindValue(":qth_intl",data.value("qth"));
+    }
+
+    if ( qso.value("dok").toString().isEmpty()
+        && !data.value("dok").isEmpty())
+    {
+        query_update.bindValue(":darc_dok",data.value("dok"));
+    }
+
+    if ( qso.value("iota").toString().isEmpty()
+        && !data.value("iota").isEmpty())
+    {
+        query_update.bindValue(":iota",data.value("iota"));
+    }
+
+    if ( qso.value("email").toString().isEmpty()
+        && !data.value("email").isEmpty())
+    {
+        query_update.bindValue(":email",data.value("email"));
+    }
+
+    if ( qso.value("county").toString().isEmpty()
+        && !data.value("county").isEmpty())
+    {
+        query_update.bindValue(":cnty",data.value("county"));
+    }
+
+    if ( qso.value("qsl_via").toString().isEmpty()
+        && !data.value("qsl_via").isEmpty())
+    {
+        query_update.bindValue(":qsl_via",data.value("qsl_via"));
+    }
+
+    if ( qso.value("url").toString().isEmpty()
+        && !data.value("url").isEmpty())
+    {
+        query_update.bindValue(":web",data.value("url"));
+    }
+
+    if ( qso.value("state").toString().isEmpty()
+        && !data.value("state").isEmpty())
+    {
+        query_update.bindValue(":state",data.value("state"));
+    }
+
+    if ( qso.value("itu").toString().isEmpty()
+        && !data.value("itu").isEmpty())
+    {
+        query_update.bindValue(":ituz",data.value("itu"));
+    }
+
+    if ( qso.value("cq").toString().isEmpty()
+        &&  !data.value("cq").isEmpty())
+    {
+        query_update.bindValue(":cqz",data.value("cq"));
+    }
+
+    query_update.bindValue(":id",qso.value("id").toString());
+
+    if ( !query_update.exec() )
+    {
+        qWarning() << "Cannot update callbook data! " << query_update.lastError().text();
+    }
+
+    if(TempQSOsCallbookLookup.count()==0)
+    {
+        updateTable();
+    }
+
+}
+
+
+void LogbookWidget::callsignFound(const QMap<QString, QString> &data)
+{
+    FCT_IDENTIFICATION;
+
+    UpdateQSORecordFromCallbook(TempQSOCallbookLookup, data);
+
+    updateQSOsCallbook(TempQSOsCallbookLookup);
+}
+
+void LogbookWidget::callsignNotFound(const QString &)
+{
+    FCT_IDENTIFICATION;
+
+    qWarning() << "callsignNotFound ";
+    updateQSOsCallbook(TempQSOsCallbookLookup);
+}
+
+void LogbookWidget::callbookLoginFailed(const QString&)
+{
+    FCT_IDENTIFICATION;
+
+    TempQSOsCallbookLookup.clear();
+    QMessageBox::critical(this, tr("QLog Error"), tr("Callbook login failed"));
+}
+
+void LogbookWidget::callbookError(const QString &error)
+{
+    FCT_IDENTIFICATION;
+
+    TempQSOsCallbookLookup.clear();
+    QMessageBox::critical(this, tr("QLog Error"), tr("Callbook error: ") + error);
 }
 
 void LogbookWidget::filterCallsign(const QString &call)
