@@ -134,7 +134,9 @@ void QRZ::actionInsert(QByteArray& data, const QString &insertPolicy)
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QString rheader = QString("QLog/version %1 <OK1MLG>").arg(VERSION);
 
+    request.setRawHeader("User-Agent",rheader.toUtf8() );
     qCDebug(runtime) << url;
 
     if ( currentReply )
