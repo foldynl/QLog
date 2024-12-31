@@ -802,12 +802,23 @@ void LogFormat::runQSLImport(QSLFrom fromService)
             /* https://lotw.arrl.org/lotw-help/developer-query-qsos-qsls/?lang=en */
             if ( !QSLRecord.value("lotw_qsl_rcvd").toString().isEmpty() )
             {
-                if ( QSLRecord.value("qsl_rcvd") != originalRecord.value("lotw_qsl_rcvd")
-                     && QSLRecord.value("qsl_rcvd").toString() == 'Y' )
+                if ( //QSLRecord.value("qsl_rcvd") != originalRecord.value("lotw_qsl_rcvd")
+                     //&& QSLRecord.value("qsl_rcvd").toString() == 'Y'
+                    true)
                 {
-                    originalRecord.setValue("lotw_qsl_rcvd", QSLRecord.value("qsl_rcvd"));
+                    QString updated;
 
-                    originalRecord.setValue("lotw_qslrdate", QSLRecord.value("qsl_rdate"));
+                    if (originalRecord.value("lotw_qsl_rcvd").toString().isEmpty())
+                    {
+                        originalRecord.setValue("lotw_qsl_rcvd", QSLRecord.value("qsl_rcvd"));
+                        updated.append("lotw_qsl_recvd:" + QSLRecord.value("qsl_rcvd").toString());
+                    }
+
+                    if (originalRecord.value("lotw_qslrdate").toString().isEmpty())
+                    {
+                        originalRecord.setValue("lotw_qslrdate", QSLRecord.value("qsl_rdate"));
+                        updated.append("lotw_qslrdate:" + QSLRecord.value("qsl_rdate").toString()+";");
+                    }
 
                     Gridsquare dxNewGrid(QSLRecord.value("gridsquare").toString());
 
@@ -817,67 +828,95 @@ void LogFormat::runQSLImport(QSLFrom fromService)
                               dxNewGrid.getGrid().contains(originalRecord.value("gridsquare").toString()))
                        )
                     {
-                        Gridsquare myGrid(originalRecord.value("my_gridsquare").toString());
-
-                        originalRecord.setValue("gridsquare", dxNewGrid.getGrid());
-
+                        Gridsquare myGrid(originalRecord.value("gridsquare").toString());
+                        if(originalRecord.value("gridsquare").toString().isEmpty())
+                        {
+                            originalRecord.setValue("gridsquare", dxNewGrid.getGrid());
+                            updated.append("gridsquare:"+QSLRecord.value("gridsquare").toString()+";");
+                        }
                         double distance;
 
                         if ( myGrid.distanceTo(dxNewGrid, distance) )
                         {
-                            originalRecord.setValue("distance", QVariant(distance));
+                            if(originalRecord.value("distance").toString().isEmpty())
+                            {
+                                originalRecord.setValue("distance", QVariant(distance));
+                                updated.append("distance:;");
+                            }
                         }
                     }
 
-                    if ( !QSLRecord.value("credit_granted").toString().isEmpty() )
+                    if ( !QSLRecord.value("credit_granted").toString().isEmpty() &&
+                        originalRecord.value("credit_granted").toString().isEmpty())
                     {
                         originalRecord.setValue("credit_granted", QSLRecord.value("credit_granted"));
+                        updated.append("credit_granted:"+QSLRecord.value("credit_granted").toString()+";");
                     }
 
-                    if ( !QSLRecord.value("credit_submitted").toString().isEmpty() )
+                    if ( !QSLRecord.value("credit_submitted").toString().isEmpty()  &&
+                        originalRecord.value("credit_submitted").toString().isEmpty())
                     {
                         originalRecord.setValue("credit_submitted", QSLRecord.value("credit_submitted"));
+                        updated.append("credit_submitted:"+QSLRecord.value("credit_submitted").toString()+";");
                     }
 
-                    if ( !QSLRecord.value("pfx").toString().isEmpty() )
+                    if ( !QSLRecord.value("pfx").toString().isEmpty()   &&
+                        originalRecord.value("pfx").toString().isEmpty())
                     {
                         originalRecord.setValue("pfx", QSLRecord.value("pfx"));
+                        updated.append("pfx:"+QSLRecord.value("pfx").toString()+";");
                     }
 
-                    if ( !QSLRecord.value("iota").toString().isEmpty() )
+                    if ( !QSLRecord.value("iota").toString().isEmpty()   &&
+                        originalRecord.value("iota").toString().isEmpty())
                     {
                         originalRecord.setValue("iota", QSLRecord.value("iota"));
+                        updated.append("iota:"+QSLRecord.value("iota").toString()+";");
                     }
 
-                    if ( !QSLRecord.value("vucc_grids").toString().isEmpty() )
+                    if ( !QSLRecord.value("vucc_grids").toString().isEmpty()   &&
+                        originalRecord.value("vucc_grids").toString().isEmpty())
                     {
                         originalRecord.setValue("vucc_grids", QSLRecord.value("vucc_grids"));
+                        updated.append("vucc_grids:"+QSLRecord.value("vucc_grids").toString()+";");
                     }
 
-                    if ( !QSLRecord.value("state").toString().isEmpty() )
+                    if ( !QSLRecord.value("state").toString().isEmpty()   &&
+                        originalRecord.value("state").toString().isEmpty())
                     {
                         originalRecord.setValue("state", QSLRecord.value("state"));
+                        updated.append("state:"+QSLRecord.value("state").toString()+";");
                     }
 
-                    if ( !QSLRecord.value("cnty").toString().isEmpty() )
+                    if ( !QSLRecord.value("cnty").toString().isEmpty()   &&
+                        originalRecord.value("cnty").toString().isEmpty())
                     {
                         originalRecord.setValue("cnty", QSLRecord.value("cnty"));
+                        updated.append("cnty:"+QSLRecord.value("cnty").toString()+";");
                     }
 
-                    originalRecord.setValue("qsl_rcvd_via", "E");
-
-                    if ( !model.setRecord(0, originalRecord) )
+                    if (originalRecord.value("qsl_rcvd_via").toString().isEmpty() )
                     {
-                        qWarning() << "Cannot update a Contact record - " << model.lastError();
-                        qCDebug(runtime) << originalRecord;
+                        originalRecord.setValue("qsl_rcvd_via", "E");
+                        updated.append("qsl_rcvd_via:E;");
                     }
 
-                    if ( !model.submitAll() )
+                    if (!updated.isEmpty())
                     {
-                        qWarning() << "Cannot commit changes to Contact Table - " << model.lastError();
+                        if ( !model.setRecord(0, originalRecord) )
+                        {
+                            qWarning() << "Cannot update a Contact record - " << model.lastError();
+                            qCDebug(runtime) << originalRecord;
+                        }
+
+                        if ( !model.submitAll() )
+                        {
+                            qWarning() << "Cannot commit changes to Contact Table - " << model.lastError();
+                        }
+                        stats.qsos_updated++;
+                        stats.newQSLs.append(call.toString());
+                        qCDebug(runtime) << QSLRecord.value("callsign") << " " << updated;
                     }
-                    stats.qsos_updated++;
-                    stats.newQSLs.append(call.toString());
                 }
             }
             else
