@@ -41,6 +41,9 @@ AwardsDialog::AwardsDialog(QWidget *parent) :
     ui->awardComboBox->addItem(tr("POTA Activator"), QVariant("potaa"));
     ui->awardComboBox->addItem(tr("SOTA"), QVariant("sota"));
     ui->awardComboBox->addItem(tr("WWFF"), QVariant("wwff"));
+    ui->awardComboBox->addItem(tr("Gridsquare 2-Digit"), QVariant("grid2"));
+    ui->awardComboBox->addItem(tr("Gridsquare 4-Digit"), QVariant("grid4"));
+    ui->awardComboBox->addItem(tr("Gridsquare 6-Digit"), QVariant("grid6"));
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Done"));
     ui->awardTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -245,6 +248,47 @@ void AwardsDialog::refreshTable(int)
                              "      INNER JOIN modes m ON c.mode = m.name"
                              " WHERE c.my_dxcc = '" + entitySelected + "' ";
         addWherePart = " AND c.iota is not NULL"
+                       " AND c.my_dxcc = '" + entitySelected + "' ";
+    }
+    else if ( awardSelected == "grid2" )
+    {
+        setEntityInputEnabled(true);
+        setNotWorkedEnabled(false);
+        const QString &entitySelected = getSelectedEntity();
+        headersColumns = "substr(c.gridsquare,1,2) col1, NULL col2 ";
+        uniqColumns = "substr(c.gridsquare,1,2)";
+        sqlPartDetailTable = " FROM source_contacts c"
+                             "      INNER JOIN modes m ON c.mode = m.name"
+                             " WHERE c.my_dxcc = '" + entitySelected + "' ";
+        addWherePart = " AND c.gridsquare is not NULL"
+                       " AND c.my_dxcc = '" + entitySelected + "' ";
+    }
+    else if ( awardSelected == "grid4" )
+    {
+        setEntityInputEnabled(true);
+        setNotWorkedEnabled(false);
+        const QString &entitySelected = getSelectedEntity();
+        headersColumns = "substr(c.gridsquare,1,4) col1, NULL col2 ";
+        uniqColumns = "substr(c.gridsquare,1,4)";
+        sqlPartDetailTable = " FROM source_contacts c"
+                             "      INNER JOIN modes m ON c.mode = m.name"
+                             " WHERE c.my_dxcc = '" + entitySelected + "' ";
+        addWherePart = " AND c.gridsquare is not NULL"
+                       " AND length(c.gridsquare) >= 4 "
+                       " AND c.my_dxcc = '" + entitySelected + "' ";
+    }
+    else if ( awardSelected == "grid6" )
+    {
+        setEntityInputEnabled(true);
+        setNotWorkedEnabled(false);
+        const QString &entitySelected = getSelectedEntity();
+        headersColumns = "substr(c.gridsquare,1,6) col1, NULL col2 ";
+        uniqColumns = "substr(c.gridsquare,1,6)";
+        sqlPartDetailTable = " FROM source_contacts c"
+                             "      INNER JOIN modes m ON c.mode = m.name"
+                             " WHERE c.my_dxcc = '" + entitySelected + "' ";
+        addWherePart = " AND c.gridsquare is not NULL"
+                       " AND length(c.gridsquare) >= 6 "
                        " AND c.my_dxcc = '" + entitySelected + "' ";
     }
     else if ( awardSelected == "potah" )
