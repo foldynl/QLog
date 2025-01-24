@@ -296,27 +296,27 @@
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="269"/>
         <source>IOTA</source>
-        <translation type="unfinished">IOTA</translation>
+        <translation>IOTA</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="276"/>
         <source>SOTA</source>
-        <translation type="unfinished">SOTA</translation>
+        <translation>SOTA</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="283"/>
         <source>POTA</source>
-        <translation type="unfinished">POTA</translation>
+        <translation>POTA</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="290"/>
         <source>WWFF</source>
-        <translation type="unfinished">WWFF</translation>
+        <translation>WWFF</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="312"/>
         <source>Special Programs</source>
-        <translation type="unfinished"></translation>
+        <translation>特别活动</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="333"/>
@@ -945,12 +945,12 @@
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="387"/>
         <source>Halt</source>
-        <translation type="unfinished"></translation>
+        <translation>终止</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="444"/>
         <source>CW Console - Halt Sending</source>
-        <translation type="unfinished"></translation>
+        <translation>CW控制台 - 终止发送</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="413"/>
@@ -3251,37 +3251,37 @@
     <message>
         <location filename="../data/Data.h" line="77"/>
         <source>Straight Key</source>
-        <translation type="unfinished"></translation>
+        <translation>直键</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="78"/>
         <source>Sideswiper</source>
-        <translation type="unfinished"></translation>
+        <translation>扫拨键</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="79"/>
         <source>Mechanical semi-automatic keyer or Bug</source>
-        <translation type="unfinished"></translation>
+        <translation>机械半自动或臭虫键</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="80"/>
         <source>Mechanical fully-automatic keyer or Bug</source>
-        <translation type="unfinished"></translation>
+        <translation>机械全自动或臭虫键</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="81"/>
         <source>Single Paddle</source>
-        <translation type="unfinished">单桨电键</translation>
+        <translation>单桨键</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="82"/>
         <source>Dual Paddle</source>
-        <translation type="unfinished"></translation>
+        <translation>双桨键</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="83"/>
         <source>Computer Driven</source>
-        <translation type="unfinished"></translation>
+        <translation>电脑驱动</translation>
     </message>
     <message>
         <location filename="datastrings.tri" line="1"/>
@@ -4126,7 +4126,7 @@
         <location filename="../ui/ExportDialog.ui" line="83"/>
         <location filename="../ui/ExportDialog.cpp" line="351"/>
         <source>POTA</source>
-        <translation type="unfinished">POTA</translation>
+        <translation>POTA</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="106"/>
@@ -5376,22 +5376,22 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="641"/>
         <source>DCLr Date</source>
-        <translation type="unfinished"></translation>
+        <translation>DCLr 日期</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="642"/>
         <source>DCLs Date</source>
-        <translation type="unfinished"></translation>
+        <translation>DCLs 日期</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="643"/>
         <source>DCLr</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="644"/>
         <source>DCLs</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="645"/>
@@ -5567,7 +5567,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="681"/>
         <source>My DARC DOK</source>
-        <translation type="unfinished"></translation>
+        <translation>我的DARC DOK</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="682"/>
@@ -5708,27 +5708,27 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="721"/>
         <source>QRZ Download Date</source>
-        <translation type="unfinished"></translation>
+        <translation>QRZ下载数据</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="722"/>
         <source>QRZ Download Status</source>
-        <translation type="unfinished"></translation>
+        <translation>QRZ下载状态</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="725"/>
         <source>QSLs Message (ASCII)</source>
-        <translation type="unfinished"></translation>
+        <translation>QSLs 信息 (ASCII)</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="726"/>
         <source>QSLs Message</source>
-        <translation type="unfinished"></translation>
+        <translation>QSLs 信息</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="727"/>
         <source>QSLr Message</source>
-        <translation type="unfinished"></translation>
+        <translation>QSLr 信息</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="737"/>
@@ -5809,22 +5809,22 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="668"/>
         <source>CW Key Info</source>
-        <translation type="unfinished"></translation>
+        <translation>CW电键信息</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="669"/>
         <source>CW Key Type</source>
-        <translation type="unfinished"></translation>
+        <translation>CW电键类型</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="691"/>
         <source>My CW Key Info</source>
-        <translation type="unfinished"></translation>
+        <translation>我的CW电键信息</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="692"/>
         <source>My CW Key Type</source>
-        <translation type="unfinished"></translation>
+        <translation>我的CW电键类型</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="715"/>
@@ -6081,12 +6081,12 @@
     <message>
         <location filename="../ui/LogbookWidget.ui" line="279"/>
         <source>Update from Callbook</source>
-        <translation type="unfinished"></translation>
+        <translation>从电台黄页更新</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="282"/>
         <source>Add Missing Info</source>
-        <translation type="unfinished"></translation>
+        <translation>添加丢失的信息</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="291"/>
@@ -6180,17 +6180,17 @@
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="310"/>
         <source>QLog Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>QLog警告</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="310"/>
         <source>Each batch supports up to 100 QSOs.</source>
-        <translation type="unfinished"></translation>
+        <translation>每个批次最多支持 100 个 QSO。</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="314"/>
         <source>QSOs Update Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>QSO更新进度</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="474"/>
@@ -6202,12 +6202,12 @@
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="474"/>
         <source>Callbook login failed</source>
-        <translation type="unfinished">电台黄页登陆失败</translation>
+        <translation>电台黄页登陆失败</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="482"/>
         <source>Callbook error: </source>
-        <translation type="unfinished">电台黄页错误: </translation>
+        <translation>电台黄页错误: </translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="990"/>
@@ -6908,7 +6908,7 @@
     <message>
         <location filename="../ui/MainWindow.cpp" line="1414"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
-        <translation type="unfinished">&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2024 Ladislav Foldyna OK1MLG&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt; {1&gt;?} {1&lt;?} {1&gt;?} {2019 ?} {2I?} {2021-2025 ?} {1M?} {2&lt;?} {3&lt;?} {4&lt;?} {5&lt;?}</translation>
+        <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;/p&gt;&lt;p&gt;基于 Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;图标来自 &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;卫星图像来自 &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;时区检测来自 &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;时区数据库来自 &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1443"/>
@@ -7792,7 +7792,7 @@
     <message>
         <location filename="../ui/ExportDialog.cpp" line="251"/>
         <source>Exported.</source>
-        <translation type="unfinished"></translation>
+        <translation>已导出。</translation>
     </message>
     <message numerus="yes">
         <location filename="../ui/ExportDialog.cpp" line="254"/>
@@ -8076,7 +8076,7 @@
     <message>
         <location filename="../data/StationProfile.cpp" line="202"/>
         <source>My DARC DOK</source>
-        <translation type="unfinished"></translation>
+        <translation>我的DARC DOK</translation>
     </message>
     <message>
         <location filename="../data/StationProfile.cpp" line="203"/>
@@ -9440,7 +9440,7 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="426"/>
         <source>DOK</source>
-        <translation type="unfinished">DOK</translation>
+        <translation>DOK</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="453"/>
@@ -9927,27 +9927,27 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3694"/>
         <source>Others</source>
-        <translation type="unfinished">其他</translation>
+        <translation>其他</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3712"/>
         <source>Status Confirmed By</source>
-        <translation type="unfinished"></translation>
+        <translation>确认自</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3734"/>
         <source>Paper</source>
-        <translation type="unfinished"></translation>
+        <translation>纸质卡片</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4176"/>
         <source>Rig Status</source>
-        <translation type="unfinished"></translation>
+        <translation>设备状态</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4183"/>
         <source>&lt;p&gt; List of IP addresses to which QLog sends UDP notification packets when Rig State changes.&lt;/p&gt;The IP addresses are separated by a space and have the form IP:PORT</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;当设备状态发生变化时，QLog向其发送 UDP 通知数据包的 IP 地址列表。&lt;/p&gt;IP地址用空格分隔，形式为IP:PORT</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4210"/>
@@ -10051,7 +10051,8 @@
 &lt;MYPWR&gt; = 我的功率
 &lt;EXCHSTR&gt; = 竞赛交换信息字符串
 &lt;EXCHNR&gt; = 竞赛交换序列号
-&lt;EXCHNRN&gt; = 竞赛交换序列号 (9→N, 0→T) </translation>
+&lt;EXCHNRN&gt; = 竞赛交换序列号 (9→N, 0→T) 
+</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1669"/>
@@ -10155,7 +10156,7 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3178"/>
         <source>&lt;b&gt;Notice:&lt;/b&gt; At least a QRZ XML Subscription is recommended to access detailed information. Without a subscription, you will obtain limited data from QRZ, such as missing grid and other fields.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;注意：&lt;/b&gt;建议使用 QRZ XML 订阅来获取详细信息。如果没有订阅，您只能从 QRZ 获取有限的数据，例如缺少网格和其他字段。</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3198"/>
@@ -11283,7 +11284,7 @@
     <message>
         <location filename="../core/main.cpp" line="415"/>
         <source>Writes debug messages to the debug file</source>
-        <translation type="unfinished"></translation>
+        <translation>将调试信息写入debug文件</translation>
     </message>
 </context>
 </TS>
