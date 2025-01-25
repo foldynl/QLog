@@ -6,6 +6,9 @@
   <project_license>GPL-3.0-or-later</project_license>
   <name>QLog</name>
   <developer_name>Ladislav Foldyna</developer_name>
+  <developer id="io.github.foldynl">
+    <name>Ladislav Foldyna</name>
+  </developer>
   <summary>Amateur radio logbook</summary>
   <description>
     <p>
