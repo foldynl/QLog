@@ -97,8 +97,6 @@ MainWindow::MainWindow(QWidget* parent) :
             dockWidget->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
     }
 
-    setLayoutGeometry();
-
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
 
     activityButton = new QPushButton("", ui->statusBar);
@@ -152,7 +150,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(seqGroup, &QActionGroup::triggered, this, &MainWindow::saveContestMenuSeqnoType);
     connect(dupeGroup, &QActionGroup::triggered, this, &MainWindow::saveContestMenuDupeType);
     connect(linkExchangeGroup, &QActionGroup::triggered, this, &MainWindow::saveContestMenuLinkExchangeType);
-    
+
     connect(ActivityProfilesManager::instance(), &ActivityProfilesManager::changeFinished,
             this, &MainWindow::handleActivityChange);
     connect(ActivityProfilesManager::instance(), &ActivityProfilesManager::changeFinished,
@@ -171,8 +169,6 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(RigProfilesManager::instance(), &RigProfilesManager::profileChanged,
             ui->rigWidget, &RigWidget::refreshRigProfileCombo);
 
-    connect(MainLayoutProfilesManager::instance(), &MainLayoutProfilesManager::profileChanged,
-            this, &MainWindow::setSimplyLayoutGeometry);
     connect(MainLayoutProfilesManager::instance(), &MainLayoutProfilesManager::profileChanged,
             ui->newContactWidget, &NewContactWidget::setupCustomUi);
 
@@ -405,6 +401,16 @@ MainWindow::MainWindow(QWidget* parent) :
     //restoreConnectionStates();
 
     setupActivitiesMenu();
+
+    //next workaround for QTBUG-46620
+    //from QTBUG-16252
+    QTimer* nt = new QTimer(this);
+    nt->setSingleShot(true);
+    nt->setInterval(200);
+    connect(nt, &QTimer::timeout, this, &MainWindow::setLayoutGeometry);
+    nt->connect(nt, &QTimer::timeout, nt, &QTimer::deleteLater);
+    nt->start();
+    //END of workaround
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -685,8 +691,7 @@ void MainWindow::setLayoutGeometry()
         // workaround for QTBUG-46620
         if ( isMaximized() )
         {
-            const QList<QScreen *> &screens = QGuiApplication::screens();
-            setGeometry( screens[0]->availableGeometry() );
+            setGeometry(screen()->availableGeometry());
         }
 #endif
         restoreState(layoutProfile.mainState);
@@ -699,13 +704,14 @@ void MainWindow::setLayoutGeometry()
         // workaround for QTBUG-46620
         if ( isMaximized() )
         {
-            const QList<QScreen *> &screens = QGuiApplication::screens();
-            setGeometry( screens[0]->availableGeometry() );
+            setGeometry(screen()->availableGeometry());
         }
 #endif
         restoreState(settings.value("windowState").toByteArray());
         // leave dark mode as is
     }
+    connect(MainLayoutProfilesManager::instance(), &MainLayoutProfilesManager::profileChanged,
+            this, &MainWindow::setSimplyLayoutGeometry);
 }
 
 void MainWindow::setSimplyLayoutGeometry()
@@ -719,7 +725,9 @@ void MainWindow::setSimplyLayoutGeometry()
     if ( layoutProfile.mainGeometry != QByteArray()
         || layoutProfile.mainState != QByteArray() )
     {
+        QApplication::processEvents();
         restoreGeometry(layoutProfile.mainGeometry);
+        QApplication::processEvents();
         restoreState(layoutProfile.mainState);
         darkLightModeSwith->setChecked(isFusionStyle && layoutProfile.darkMode);
     }
@@ -738,7 +746,9 @@ void MainWindow::saveProfileLayoutGeometry()
         layoutProfile.darkMode = darkLightModeSwith->isChecked();
         layoutProfile.tabsexpanded =  ui->newContactWidget->getTabCollapseState();
         MainLayoutProfilesManager::instance()->addProfile(layoutProfile.profileName, layoutProfile);
+        MainLayoutProfilesManager::instance()->blockSignals(true);
         MainLayoutProfilesManager::instance()->save();
+        MainLayoutProfilesManager::instance()->blockSignals(false);
     }
 }
 
