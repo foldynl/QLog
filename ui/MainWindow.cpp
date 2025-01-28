@@ -687,24 +687,28 @@ void MainWindow::setLayoutGeometry()
          || layoutProfile.mainState != QByteArray() )
     {
         restoreGeometry(layoutProfile.mainGeometry);
+#ifdef Q_OS_LINUX
         // workaround for QTBUG-46620
         // it seems that it must be present also for qt 6.8
         if ( isMaximized() )
         {
             setGeometry(screen()->availableGeometry());
         }
+#endif
         restoreState(layoutProfile.mainState);
         darkLightModeSwith->setChecked(layoutProfile.darkMode);
     }
     else
     {
         restoreGeometry(settings.value("geometry").toByteArray());
+#ifdef Q_OS_LINUX
         // workaround for QTBUG-46620
         // it seems that it must be present also for qt 6.8
         if ( isMaximized() )
         {
             setGeometry(screen()->availableGeometry());
         }
+#endif
         restoreState(settings.value("windowState").toByteArray());
         // leave dark mode as is
     }
@@ -725,6 +729,7 @@ void MainWindow::setSimplyLayoutGeometry()
     {
         QApplication::processEvents();
         restoreGeometry(layoutProfile.mainGeometry);
+#ifdef Q_OS_LINUX
         // workaround for QTBUG-46620 and many other related issue in QT
         // but in general maximize mode should be set rarely, because maximized is supressed in saveProfileLayoutGeometry.
         if ( isMaximized() )
@@ -732,6 +737,7 @@ void MainWindow::setSimplyLayoutGeometry()
            QApplication::processEvents(); showNormal(); QApplication::processEvents(); showMaximized();
         }
         QApplication::processEvents();
+#endif
         restoreState(layoutProfile.mainState);
         darkLightModeSwith->setChecked(isFusionStyle && layoutProfile.darkMode);
     }
@@ -745,6 +751,7 @@ void MainWindow::saveProfileLayoutGeometry()
 
     if ( layoutProfile != MainLayoutProfile() )
     {
+#ifdef Q_OS_LINUX
         if ( isMaximized() )
         {
             // workaround for QTBUG-46620 and many other related issue in QT
@@ -760,7 +767,7 @@ void MainWindow::saveProfileLayoutGeometry()
             QApplication::processEvents();
             setVisible(true);
         }
-
+#endif
         layoutProfile.mainGeometry = saveGeometry();
         layoutProfile.mainState = saveState();
         layoutProfile.darkMode = darkLightModeSwith->isChecked();
