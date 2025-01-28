@@ -688,6 +688,7 @@ void MainWindow::setLayoutGeometry()
     {
         restoreGeometry(layoutProfile.mainGeometry);
         // workaround for QTBUG-46620
+        // it seems that it must be present also for qt 6.8
         if ( isMaximized() )
         {
             setGeometry(screen()->availableGeometry());
@@ -699,6 +700,7 @@ void MainWindow::setLayoutGeometry()
     {
         restoreGeometry(settings.value("geometry").toByteArray());
         // workaround for QTBUG-46620
+        // it seems that it must be present also for qt 6.8
         if ( isMaximized() )
         {
             setGeometry(screen()->availableGeometry());
@@ -723,6 +725,12 @@ void MainWindow::setSimplyLayoutGeometry()
     {
         QApplication::processEvents();
         restoreGeometry(layoutProfile.mainGeometry);
+        // workaround for QTBUG-46620 and many other related issue in QT
+        // but in general maximize mode should be set rarely, because maximized is supressed in saveProfileLayoutGeometry.
+        if ( isMaximized() )
+        {
+           QApplication::processEvents(); showNormal(); QApplication::processEvents(); showMaximized();
+        }
         QApplication::processEvents();
         restoreState(layoutProfile.mainState);
         darkLightModeSwith->setChecked(isFusionStyle && layoutProfile.darkMode);
@@ -737,6 +745,22 @@ void MainWindow::saveProfileLayoutGeometry()
 
     if ( layoutProfile != MainLayoutProfile() )
     {
+        if ( isMaximized() )
+        {
+            // workaround for QTBUG-46620 and many other related issue in QT
+            // Qt has an issue when performing saveGeometry in the case of a maximized window.
+            // There are many workarounds, but none of them fully resolve the problem.
+            // Therefore, a hack below is used. If QLog detects a maximized window, it "changes" it as "normal" and
+            // then resizes it to its original size. The user should not notice any difference in terms of size, but saveGeometry
+            // works more reliably in this mode.
+            setVisible(false);
+            QSize maxSize = size();
+            showNormal();
+            resize(maxSize);
+            QApplication::processEvents();
+            setVisible(true);
+        }
+
         layoutProfile.mainGeometry = saveGeometry();
         layoutProfile.mainState = saveState();
         layoutProfile.darkMode = darkLightModeSwith->isChecked();
