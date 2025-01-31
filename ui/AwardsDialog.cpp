@@ -323,6 +323,17 @@ void AwardsDialog::refreshTable(int)
 
     addlCTEs.append(sourceContactsTable);
 
+    QString totalTable;
+
+    if (awardSelected == "dxcc")
+    {
+        totalTable = "dxcc_entities d   LEFT OUTER JOIN source_contacts c ON d.id = c.dxcc";
+    }
+    else
+    {
+        totalTable = "source_contacts c";
+    }
+
     QString finalSQL(QString(
               "WITH "
               "   %1, "
@@ -333,12 +344,12 @@ void AwardsDialog::refreshTable(int)
               "     GROUP BY  1,2) "
               "SELECT * FROM ( "
               "     SELECT 0 column_idx, '%6', COUNT(DISTINCT %7), %8"
-              "     FROM source_contacts c INNER JOIN modes m ON c.mode = m.name"
+              "     FROM %23 INNER JOIN modes m ON c.mode = m.name"
               "     WHERE m.dxcc IN (%9)"
               "           %10"
               "   UNION ALL "
               "     SELECT 0 column_idx, '%11', COUNT(DISTINCT %12), %13"
-              "     FROM source_contacts c INNER JOIN modes m ON c.mode = m.name "
+              "     FROM %23 INNER JOIN modes m ON c.mode = m.name "
               "     WHERE (%14)"
               "           AND m.dxcc IN (%15)"
               "           %16"
@@ -387,7 +398,7 @@ void AwardsDialog::refreshTable(int)
                                                            tr("Worked")).arg(
                                                            stmt_sum_worked.join(","),
                                                            stmt_sum_total.join(","),
-                                                           ui->notWorkedCheckBox->isChecked() ? QString("HAVING %1").arg(stmt_having.join(" AND ")) : QString() ));
+                                                           ui->notWorkedCheckBox->isChecked() ? QString("HAVING %1").arg(stmt_having.join(" AND ")) : QString(),totalTable ));
     qDebug(runtime) << finalSQL;
 
     detailedViewModel->setQuery(finalSQL);
