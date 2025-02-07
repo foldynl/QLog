@@ -519,7 +519,7 @@ int main(int argc, char* argv[])
     QIcon icon(":/res/qlog.png");
     splash.finish(&w);
     w.setWindowIcon(icon);
-
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, &w, &MainWindow::aboutToQuit);
     w.show();
 #ifdef Q_OS_OSX
     w.setLayoutGeometry();

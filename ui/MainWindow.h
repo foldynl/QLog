@@ -42,6 +42,7 @@ public slots:
     void stationProfileChanged();
     void setLayoutGeometry();
     void setSimplyLayoutGeometry();
+    void aboutToQuit();
 
 private slots:
     void rigConnect();
@@ -88,6 +89,10 @@ private slots:
 
     void handleActivityChange(const QString name);
 
+    void openNonVfoBandmap();
+
+    void visibilityNonVfoBandmap(bool, QDockWidget *);
+
 private:
     Ui::MainWindow* ui;
     QLabel* conditionsLabel;
@@ -111,6 +116,7 @@ private:
     QActionGroup *dupeGroup;
     QActionGroup *linkExchangeGroup;
     QPushButton *activityButton;
+    bool aboutToQuitFlag;
 
     void setDarkMode();
     void setLightMode();
@@ -126,8 +132,11 @@ private:
     void restoreContestMenuSeqnoType();
     void restoreContestMenuDupeType();
     void restoreContestMenuLinkExchange();
+    void restoreNonVfoBandmaps();
 
     QString stationCallsignStatus(const StationProfile &profile) const;
+
+    void initializeNonVfoBandmap(const QString dockId);
 };
 
 #endif // QLOG_UI_MAINWINDOW_H

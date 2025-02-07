@@ -1,41 +1,41 @@
-#include <QMessageBox>
-#include <QLabel>
-#include <QColor>
-#include <QSpacerItem>
 #include "MainWindow.h"
-#include "ui_MainWindow.h"
-#include "ui/SettingsDialog.h"
-#include "ui/ImportDialog.h"
-#include "ui/ExportDialog.h"
-#include "ui/LotwDialog.h"
+#include <QColor>
+#include <QLabel>
+#include <QMessageBox>
+#include <QSpacerItem>
+#include "core/Eqsl.h"
 #include "core/Fldigi.h"
-#include "rig/Rig.h"
-#include "rotator/Rotator.h"
-#include "cwkey/CWKeyer.h"
+#include "core/HRDLog.h"
+#include "core/LogParam.h"
+#include "core/Lotw.h"
+#include "core/PropConditions.h"
+#include "core/QRZ.h"
+#include "core/QSOFilterManager.h"
 #include "core/Wsjtx.h"
 #include "core/debug.h"
-#include "ui/NewContactWidget.h"
-#include "ui/QSOFilterDialog.h"
-#include "ui/Eqsldialog.h"
-#include "ui/ClublogDialog.h"
-#include "ui/QrzDialog.h"
-#include "ui/AwardsDialog.h"
-#include "core/Lotw.h"
-#include "core/Eqsl.h"
-#include "core/QRZ.h"
-#include "core/PropConditions.h"
-#include "data/MainLayoutProfile.h"
-#include "ui/EditActivitiesDialog.h"
-#include "core/HRDLog.h"
-#include "ui/HRDLogDialog.h"
-#include "ui/ProfileImageWidget.h"
-#include "core/LogParam.h"
-#include "core/QSOFilterManager.h"
-#include "data/Data.h"
+#include "cwkey/CWKeyer.h"
 #include "data/ActivityProfile.h"
 #include "data/AntProfile.h"
+#include "data/Data.h"
+#include "data/MainLayoutProfile.h"
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
+#include "rig/Rig.h"
+#include "rotator/Rotator.h"
+#include "ui/AwardsDialog.h"
+#include "ui/ClublogDialog.h"
+#include "ui/EditActivitiesDialog.h"
+#include "ui/Eqsldialog.h"
+#include "ui/ExportDialog.h"
+#include "ui/HRDLogDialog.h"
+#include "ui/ImportDialog.h"
+#include "ui/LotwDialog.h"
+#include "ui/NewContactWidget.h"
+#include "ui/ProfileImageWidget.h"
+#include "ui/QSOFilterDialog.h"
+#include "ui/QrzDialog.h"
+#include "ui/SettingsDialog.h"
+#include "ui_MainWindow.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget* parent) :
     restoreContestMenuSeqnoType();
     restoreContestMenuDupeType();
     restoreContestMenuLinkExchange();
+    restoreNonVfoBandmaps();
 
     darkLightModeSwith = new SwitchButton("", ui->statusBar);
     darkIconLabel = new QLabel("<html><img src=':/icons/light-dark-24px.svg'></html>",ui->statusBar);
@@ -65,7 +66,6 @@ MainWindow::MainWindow(QWidget* parent) :
         darkIconLabel->setEnabled(false);
         darkLightModeSwith->setToolTip(tr("Not enabled for non-Fusion style"));
         darkModeToggle(Qt::Unchecked);
-
     }
     else
     {
@@ -93,6 +93,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     const QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
     for (QDockWidget *dockWidget : dockWidgets) {
+        qCDebug(runtime) << "setting always show tool window for " << dockWidget->objectName();
         if (dockWidget)
             dockWidget->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
     }
@@ -362,7 +363,12 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(clublogRT, &ClubLog::QSOUploaded, ui->logbookWidget, &LogbookWidget::updateTable);
 
-    if ( StationProfilesManager::instance()->profileNameList().isEmpty() )
+    connect(ui->bandmapWidget,
+            &BandmapWidget::requestNewNonVfoBandmapWindow,
+            this,
+            &MainWindow::openNonVfoBandmap);
+
+    if (StationProfilesManager::instance()->profileNameList().isEmpty())
         showSettings();
     else
         MembershipQE::instance()->updateLists();
@@ -1557,6 +1563,110 @@ void MainWindow::alertRuleSetting()
 {
     FCT_IDENTIFICATION;
     ui->alertsWidget->showEditRules();
+}
+
+void MainWindow::openNonVfoBandmap()
+{
+    FCT_IDENTIFICATION;
+    int newWindowNumber = 0;
+    for (int i = 1; i <= 10; i++) {
+        if (settings.value(QString("bandmapNonVFO-%1").arg(i), false) == false) {
+            newWindowNumber = i;
+            break;
+        }
+    }
+    if (newWindowNumber == 0) {
+        return; // limit to 10 bandmap windows
+    }
+    initializeNonVfoBandmap(QString("bandmapNonVFO-%1").arg(newWindowNumber));
+}
+
+void MainWindow::restoreNonVfoBandmaps()
+{
+    for (int i = 1; i <= 10; i++) {
+        if (settings.value(QString("bandmapNonVFO-%1").arg(i), false) != false) {
+            //settings.remove(QString("bandmapNonVFO-%1").arg(i));
+            initializeNonVfoBandmap(QString("bandmapNonVFO-%1").arg(i));
+        }
+    }
+}
+
+void MainWindow::initializeNonVfoBandmap(const QString bandmapId)
+{
+    QDockWidget *dock = new QDockWidget("Bandmap", this);
+    dock->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
+    dock->setObjectName(bandmapId + "-dock");
+
+    BandmapWidget *bandmap = new BandmapWidget(nullptr, bandmapId);
+    bandmap->setObjectName(bandmapId);
+    dock->setWidget(bandmap);
+    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, dock);
+    dock->setFloating(true);
+
+    // the vfo bandmap takes care of managing the spot map, which is shared with the non vfo bandmaps. spotsUpdated
+    // is triggered when spot map is dirty and the bandmaps should re-render.
+    connect(ui->bandmapWidget,
+            &BandmapWidget::spotsUpdated,
+            bandmap,
+            &BandmapWidget::updateStations);
+    connect(this, &MainWindow::themeChanged, bandmap, &BandmapWidget::update);
+    connect(Rig::instance(), &Rig::frequencyChanged, bandmap, &BandmapWidget::updateTunedFrequency);
+    connect(Rig::instance(), &Rig::modeChanged, bandmap, &BandmapWidget::updateMode);
+    connect(ui->wsjtxWidget,
+            &WsjtxWidget::frequencyChanged,
+            bandmap,
+            &BandmapWidget::updateTunedFrequency);
+    connect(ui->newContactWidget,
+            &NewContactWidget::userFrequencyChanged,
+            bandmap,
+            &BandmapWidget::updateTunedFrequency);
+    connect(ui->newContactWidget,
+            &NewContactWidget::userModeChanged,
+            bandmap,
+            &BandmapWidget::updateMode);
+
+    connect(bandmap, &BandmapWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
+
+    connect(dock->toggleViewAction(), &QAction::toggled, this, [this, dock](bool visible) {
+        visibilityNonVfoBandmap(visible, dock);
+    });
+}
+
+/* Responsible for deleting non-vfo bandmaps that the user closes.
+ * The default behaviour is to only hide dock widgets, not delete them.
+ * The built in attribute WA_DeleteOnClose to auto-delete dock widgets is not reliable. There are some situations
+ * where floating docked widgets docked together have incorrect close behaviour. In this code, the visbility
+ * actions are monitored and the bandmap widgets are deleted when the user has closed them. Closing them
+ * also results in the removal of their state (active band).
+ */
+void MainWindow::visibilityNonVfoBandmap(bool visible, QDockWidget *bandmapDock)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(runtime) << "visibilityNonVfoBandmap visible = " << visible
+                     << bandmapDock->objectName();
+    if (!visible) {
+        // debounce visible = false. There are some dockwidget movement / docking actions which trigger visible = false then back to true
+        // in quick succession. Also this prevents state removal if the user has closed the app (the visibilty signals fire before the
+        // about to quit signal
+        QTimer::singleShot(1000, this, [this, bandmapDock]() {
+            qCDebug(runtime) << "visibilityNonVfoBandmap visible debounce, dock is visible?"
+                             << bandmapDock->isVisible() << bandmapDock->objectName();
+            if (!aboutToQuitFlag && !bandmapDock->isVisible()) {
+                // do not clear state if the user is exiting the app
+                qCDebug(runtime) << "visibilityNonVfoBandmap debounce, will delete dock widget"
+                                 << bandmapDock->objectName();
+                settings.remove(bandmapDock->widget()->objectName());
+                this->removeDockWidget(bandmapDock);
+                bandmapDock->deleteLater();
+            }
+        });
+    }
+}
+void MainWindow::aboutToQuit()
+{
+    // this is here to be comprehensive. In testing, this signal is not received before any window closing signals
+    FCT_IDENTIFICATION;
+    aboutToQuitFlag = true;
 }
 
 MainWindow::~MainWindow()

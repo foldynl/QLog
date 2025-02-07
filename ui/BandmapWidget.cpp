@@ -1,12 +1,12 @@
 #include <QGraphicsScene>
-#include <QGraphicsTextItem>
-#include <QMutableMapIterator>
-#include <QMenu>
-#include <QTextDocument>
-#include <QScrollBar>
 #include <QGraphicsSceneMouseEvent>
-#include <algorithm>
+#include <QGraphicsTextItem>
+#include <QMenu>
+#include <QMutableMapIterator>
+#include <QScrollBar>
+#include <QTextDocument>
 #include <QWheelEvent>
+#include <algorithm>
 
 #include "BandmapWidget.h"
 #include "ui_BandmapWidget.h"
@@ -28,15 +28,18 @@ MODULE_IDENTIFICATION("qlog.ui.bandmapwidget");
 
 #define WIDGET_CENTER ( height()/2 - 50 )
 
-BandmapWidget::BandmapWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::BandmapWidget),
-    rxMark(nullptr),
-    txMark(nullptr),
-    keepRXCenter(true),
-    pendingSpots(0),
-    lastStationUpdate(0),
-    bandmapAnimation(true)
+QMap<double, DxSpot> BandmapWidget::spots;
+
+BandmapWidget::BandmapWidget(QWidget *parent, QString nonVfoWidgetId)
+    : QWidget(parent)
+    , ui(new Ui::BandmapWidget)
+    , rxMark(nullptr)
+    , txMark(nullptr)
+    , keepRXCenter(true)
+    , pendingSpots(0)
+    , lastStationUpdate(0)
+    , bandmapAnimation(true)
+    , isNonVfo(nonVfoWidgetId != nullptr)
 {
     FCT_IDENTIFICATION;
 
@@ -49,7 +52,29 @@ BandmapWidget::BandmapWidget(QWidget *parent) :
     const QString &submode = settings.value("newcontact/submode").toString();
     keepRXCenter = settings.value("bandmap/centerrx", true).toBool();
 
-    setBand(BandPlan::freq2Band(ritFreq), false);
+    if (isNonVfo) {
+        setObjectName(nonVfoWidgetId);
+        ui->bottomRow->setVisible(false);
+        ui->clearButton->setVisible(false);
+        // read the band for this window from persisted state (settings) or a new
+        // bandmap should start at the currently active vfo
+        Band startingBand = BandPlan::freq2Band(ritFreq);
+        QString nonVfoBandName = settings.value(nonVfoWidgetId).toString();
+        qCDebug(runtime) << nonVfoWidgetId << "band from settings" << nonVfoBandName;
+
+        for (const Band &enabledBand : BandPlan::bandsList(false, true)) {
+            qCDebug(runtime) << nonVfoWidgetId << "band from list" << enabledBand.name;
+
+            if (enabledBand.name == nonVfoBandName) {
+                startingBand = enabledBand;
+                break;
+            }
+        }
+        setBand(startingBand);
+    } else {
+        ui->clearSpotOlderSpin->setValue(settings.value("bandmap/spot_aging", 0).toInt());
+        setBand(BandPlan::freq2Band(ritFreq), false);
+    }
 
     bandmapScene = new GraphicsScene(this);
     bandmapScene->setFocusOnTouch(false);
@@ -62,8 +87,6 @@ BandmapWidget::BandmapWidget(QWidget *parent) :
     ui->graphicsView->setScene(bandmapScene);
     ui->graphicsView->installEventFilter(this);
     //ui->scrollArea->verticalScrollBar()->setSingleStep(5);
-
-    ui->clearSpotOlderSpin->setValue(settings.value("bandmap/spot_aging", 0).toInt());
 
     update_timer = new QTimer;
     connect(update_timer, &QTimer::timeout, this, &BandmapWidget::updateStationTimer);
@@ -191,7 +214,9 @@ void BandmapWidget::updateStations()
 
     clearAllCallsignFromScene();
 
-    spotAging();
+    if (!isNonVfo) {
+        spotAging();
+    }
 
     // do not show bandmap for submm bands
     if ( rx_freq > 250000.0 || currentBand.start >= 300000.0 )
@@ -251,6 +276,10 @@ void BandmapWidget::updateStations()
 
     pendingSpots = 0;
     lastStationUpdate = QDateTime::currentMSecsSinceEpoch();
+    if (!isNonVfo) {
+        // signal to the non-vfo bandmaps that the spots should be redrawn
+        emit spotsUpdated();
+    }
 }
 
 void BandmapWidget::determineStepDigits(double &step, int &digits) const
@@ -378,9 +407,7 @@ void BandmapWidget::drawTXRXMarks(double step)
          && tx_freq != rx_freq )
     {
         drawFreqMark(tx_freq, step, QColor(255, 0, 0), &txMark);
-    }
-    else
-    {
+    } else {
         clearFreqMark(&txMark);
     }
 }
@@ -523,6 +550,10 @@ void BandmapWidget::setBand(const Band &newBand, bool savePrevBandZoom)
     zoom = getSavedZoom(newBand);
     zoomFreq = getSavedScrollFreq(newBand);
     zoomWidgetYOffset = WIDGET_CENTER;
+    if (isNonVfo) {
+        qCDebug(runtime) << objectName() << "set band" << newBand.name;
+        settings.setValue(objectName(), newBand.name);
+    }
 }
 
 void BandmapWidget::saveCurrentZoom()
@@ -831,11 +862,15 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     contextMenu.exec(ui->graphicsView->mapToGlobal(point));
 }
 
-void BandmapWidget::updateTunedFrequency(VFOID, double vfoFreq, double ritFreq, double xitFreq)
+void BandmapWidget::updateTunedFrequency(VFOID vfo, double vfoFreq, double ritFreq, double xitFreq)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << vfoFreq << ritFreq << xitFreq;
+    if (isNonVfo) {
+        updateTunedFrequencyNonVfo(vfo, vfoFreq, ritFreq, xitFreq);
+        return;
+    }
 
     /* always show the bandmap for RIT Freq */
     rx_freq = ritFreq;
@@ -870,6 +905,34 @@ void BandmapWidget::updateTunedFrequency(VFOID, double vfoFreq, double ritFreq, 
     }
 
     updateNearestSpot();
+}
+
+void BandmapWidget::updateTunedFrequencyNonVfo(VFOID, double vfoFreq, double ritFreq, double xitFreq)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << vfoFreq << ritFreq << xitFreq;
+
+    /* always show the bandmap for RIT Freq */
+    rx_freq = ritFreq;
+    tx_freq = xitFreq;
+
+    if (rx_freq >= currentBand.start && rx_freq <= currentBand.end) {
+        // bandmap is showing the tuned frequency, so show the marker
+        double step;
+        int digits;
+
+        determineStepDigits(step, digits);
+
+        /************************/
+        /* Draw TX and RX Marks */
+        /************************/
+        drawTXRXMarks(step);
+        scrollToFreq(rx_freq);
+    } else {
+        clearFreqMark(&txMark);
+        clearFreqMark(&rxMark);
+    }
 }
 
 void BandmapWidget::updateMode(VFOID, const QString &, const QString &mode,
@@ -986,13 +1049,10 @@ void BandmapWidget::scrollToFreq(double freq)
         if ( freqScenePos < sliderSceneMin )
         {
             anim->setEndValue(sliderSceneMin - (sliderSceneMin - freqScenePos) - 40);
-        }
-        else if ( freqScenePos > sliderSceneMax - 20 ) //asymetric becuase possible slider below
+        } else if (freqScenePos > sliderSceneMax - 20) //asymetric becuase possible slider below
         {
             anim->setEndValue(sliderSceneMin + (freqScenePos - sliderSceneMax) + 60);
-        }
-        else
-        {
+        } else {
             anim->setEndValue(ui->scrollArea->verticalScrollBar()->value());
         }
     }
@@ -1060,6 +1120,22 @@ void BandmapWidget::centerRXActionChecked(bool state)
 
     if ( keepRXCenter )
         scrollToFreq(rx_freq);
+}
+
+void BandmapWidget::clickNewBandmapWindow()
+{
+    FCT_IDENTIFICATION;
+    emit requestNewNonVfoBandmapWindow();
+}
+Band *BandmapWidget::getBand()
+{
+    return &currentBand;
+}
+
+void BandmapWidget::closeEvent(QCloseEvent *event)
+{
+    event->isInputEvent();
+    qCDebug(runtime) << "close event is input event " << event->isInputEvent();
 }
 
 void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *evt)

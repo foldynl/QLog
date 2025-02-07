@@ -41,7 +41,7 @@ class BandmapWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit BandmapWidget(QWidget *parent = nullptr);
+    explicit BandmapWidget(QWidget *parent = nullptr, QString nonVfoWidgetId = nullptr);
     ~BandmapWidget();
 
     enum BandmapZoom {
@@ -54,6 +54,7 @@ public:
         ZOOM_10KHZ
     };
 
+    Band *getBand();
 public slots:
     void update();
     void updateTunedFrequency(VFOID, double, double, double);
@@ -71,15 +72,18 @@ public slots:
     void recalculateDxccStatus();
     void resetDupe();
     void recalculateDupe();
+    void clickNewBandmapWindow();
+    void updateStations();
 
 signals:
     void tuneDx(DxSpot);
     void nearestSpotFound(const DxSpot &);
+    void requestNewNonVfoBandmapWindow();
+    void spotsUpdated();
 
 private:
     void removeDuplicates(DxSpot &spot);
     void spotAging();
-    void updateStations();
     void determineStepDigits(double &steps, int &digits) const;
     void clearAllCallsignFromScene();
     void clearFreqMark(QGraphicsPolygonItem **);
@@ -99,6 +103,7 @@ private:
     void saveCurrentScrollFreq();
     double getSavedScrollFreq(Band);
     double visibleCentreFreq() const;
+    void updateTunedFrequencyNonVfo(VFOID, double, double, double);
 
 private slots:
     void centerRXActionChecked(bool);
@@ -106,6 +111,9 @@ private slots:
     void showContextMenu(const QPoint&);
     void updateStationTimer();
     void focusZoomFreq(int, int);
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     Ui::BandmapWidget *ui;
@@ -115,7 +123,6 @@ private:
     Band currentBand;
     BandmapZoom zoom;
     GraphicsScene* bandmapScene;
-    QMap<double, DxSpot> spots;
     QTimer *update_timer;
     QList<QGraphicsLineItem *> lineItemList;
     QList<QGraphicsTextItem *> textItemList;
@@ -138,6 +145,8 @@ private:
     };
     LastTuneDx lastTunedDX;
     DxSpot lastNearestSpot;
+    bool isNonVfo;
+    static QMap<double, DxSpot> spots;
 };
 
 Q_DECLARE_METATYPE(BandmapWidget::BandmapZoom)
