@@ -841,7 +841,7 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     for ( const Band &enabledBand : BandPlan::bandsList(false, true))
     {
         QAction* action = new QAction(enabledBand.name);
-        connect(action, &QAction::triggered, this, [this, enabledBand, action]() {
+        connect(action, &QAction::triggered, this, [this, enabledBand]() {
             setBand(enabledBand);
             update();
         });

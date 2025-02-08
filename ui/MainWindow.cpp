@@ -1594,9 +1594,9 @@ void MainWindow::openNonVfoBandmap()
 {
     FCT_IDENTIFICATION;
     int newWindowNumber = 0;
-    for (int i = 1; i <= NONVFO_BANDMAP_MAX_INSTANCES;
-         i++) { // limit nonvfo bandmap windows to a maximum number of instances
-        if (settings.value(QString(NONVFO_BANDMAP_OBJECT_FORMATTER).arg(i)).isValid()) {
+    for (int i = 1; i <= NONVFO_BANDMAP_MAX_INSTANCES; i++) {
+        // limit nonvfo bandmap windows to a maximum number of instances
+        if (!settings.value(QString(NONVFO_BANDMAP_OBJECT_FORMATTER).arg(i)).isValid()) {
             newWindowNumber = i;
             break;
         }
