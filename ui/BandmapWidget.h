@@ -112,9 +112,6 @@ private slots:
     void updateStationTimer();
     void focusZoomFreq(int, int);
 
-protected:
-    void closeEvent(QCloseEvent *event) override;
-
 private:
     Ui::BandmapWidget *ui;
 

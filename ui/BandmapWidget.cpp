@@ -63,8 +63,6 @@ BandmapWidget::BandmapWidget(QWidget *parent, QString nonVfoWidgetId)
         qCDebug(runtime) << nonVfoWidgetId << "band from settings" << nonVfoBandName;
 
         for (const Band &enabledBand : BandPlan::bandsList(false, true)) {
-            qCDebug(runtime) << nonVfoWidgetId << "band from list" << enabledBand.name;
-
             if (enabledBand.name == nonVfoBandName) {
                 startingBand = enabledBand;
                 break;
@@ -843,11 +841,14 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     for ( const Band &enabledBand : BandPlan::bandsList(false, true))
     {
         QAction* action = new QAction(enabledBand.name);
-        connect(action, &QAction::triggered, this, [this, enabledBand]()
-        {
+        connect(action, &QAction::triggered, this, [this, enabledBand, action]() {
             setBand(enabledBand);
             update();
         });
+        if (enabledBand == currentBand) {
+            action->setCheckable(true);
+            action->setChecked(true);
+        }
         bandsMenu.addAction(action);
     }
 
@@ -1130,12 +1131,6 @@ void BandmapWidget::clickNewBandmapWindow()
 Band *BandmapWidget::getBand()
 {
     return &currentBand;
-}
-
-void BandmapWidget::closeEvent(QCloseEvent *event)
-{
-    event->isInputEvent();
-    qCDebug(runtime) << "close event is input event " << event->isInputEvent();
 }
 
 void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *evt)

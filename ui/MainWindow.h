@@ -43,6 +43,7 @@ public slots:
     void setLayoutGeometry();
     void setSimplyLayoutGeometry();
     void aboutToQuit();
+    void checkBandmapWidgets();
 
 private slots:
     void rigConnect();
@@ -116,7 +117,7 @@ private:
     QActionGroup *dupeGroup;
     QActionGroup *linkExchangeGroup;
     QPushButton *activityButton;
-    bool aboutToQuitFlag;
+    bool ignoreBandmapVisibility;
 
     void setDarkMode();
     void setLightMode();
