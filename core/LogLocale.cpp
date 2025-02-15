@@ -4,7 +4,7 @@
 MODULE_IDENTIFICATION("qlog.core.loglocale");
 
 LogLocale::LogLocale() :
-    regexp(QRegularExpression(R"(, tttt|\(t\)|\bt\b)")),
+    regexp(QRegularExpression(R"(, tttt|\(t\)|\bt\b|\btt\b)")),
     is24hUsed(!timeFormat(QLocale::ShortFormat).contains("ap", Qt::CaseInsensitive))
 {
     FCT_IDENTIFICATION;
