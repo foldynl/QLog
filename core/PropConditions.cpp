@@ -288,10 +288,13 @@ void PropConditions::dxTrendTimeout()
 {
     FCT_IDENTIFICATION;
 
-    for ( auto it = dxTrendPendingConnections.begin(); it != dxTrendPendingConnections.end(); ++it )
+    if (!dxTrendPendingConnections.isEmpty())
     {
-        (*it)->abort();
-        (*it)->deleteLater();
+        for ( auto it = dxTrendPendingConnections.begin(); it != dxTrendPendingConnections.end(); ++it )
+        {
+            (*it)->abort();
+            (*it)->deleteLater();
+        }
     }
     dxTrendResult.clear();
     emit dxTrendFinalized(dxTrendResult); // emit empty result
