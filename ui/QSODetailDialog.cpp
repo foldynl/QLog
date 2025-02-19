@@ -1586,7 +1586,8 @@ void QSODetailDialog::refreshDXStatTabs()
     FCT_IDENTIFICATION;
 
     const QString &currCallsign = ui->callsignEdit->text();
-    const DxccEntity &dxccEntity = Data::instance()->lookupDxcc(currCallsign);
+    const DxccEntity &dxccEntity = Data::instance()->lookupDxccID(editedRecord->field("dxcc").value().toInt());
+   // const DxccEntity &dxccEntity = Data::instance()->lookupDxcc(currCallsign);
     const Band &currBand = BandPlan::freq2Band(ui->freqTXEdit->value());
 
     ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, currBand);
