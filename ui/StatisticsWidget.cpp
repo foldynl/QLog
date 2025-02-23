@@ -181,7 +181,7 @@ void StatisticsWidget::refreshGraph()
                     + " AND c.band = b.name GROUP BY band, start_freq) ORDER BY start_freq";
              break;
          case 6:
-             stmt = "SELECT cont, COUNT(1) FROM contacts WHERE "
+             stmt = "SELECT IFNULL(cont, '" + tr("Not specified") + "'), COUNT(1) FROM contacts WHERE "
                     + genericFilter.join(" AND ")
                     + " GROUP BY cont ORDER BY cont";
              break;
