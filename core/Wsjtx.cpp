@@ -382,8 +382,6 @@ void Wsjtx::readPendingDatagrams()
             QByteArray id, adif_text;
             WsjtxLogADIF log;
 
-            QByteArray t = datagram.data();
-
             bool IsCSNSat = datagram.data().contains("<programid:6>CSN Sat");
 
             if(IsCSNSat)
