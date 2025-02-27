@@ -260,8 +260,6 @@ void Wsjtx::readPendingDatagrams()
 
         QDataStream stream(datagram.data());
 
-        bool IsCSNSat = datagram.data().contains("CSN Sat");
-
         quint32 magic, schema, mtype;
         stream >> magic;
         stream >> schema;
@@ -385,6 +383,8 @@ void Wsjtx::readPendingDatagrams()
             WsjtxLogADIF log;
 
             QByteArray t = datagram.data();
+
+            bool IsCSNSat = datagram.data().contains("<programid:6>CSN Sat");
 
             if(IsCSNSat)
             {
