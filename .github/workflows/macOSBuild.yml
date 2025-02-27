@@ -13,7 +13,7 @@ jobs:
      name: MacOS Build
      strategy:
        matrix:
-         os: [macos-12, macos-13]
+         os: [macos-15]
 
      runs-on: ${{ matrix.os }}
 
@@ -32,11 +32,31 @@ jobs:
          brew install brotli
          brew install icu4c
          brew install pkg-config
+         brew install automake
+         brew install autoconf
+         brew install libtool
+         brew install libusb-compat
+         
      - name: Checkout Code
        uses: actions/checkout@v4
        with:
          fetch-depth: 0
          submodules: recursive
+     - name: Checkout Code
+       uses: actions/checkout@v4
+       with:
+         repository: hamlib/hamlib
+         path: ./hamlib
+         ref: Hamlib-4.6.2
+         
+     - name: Configure and compile
+       run: |
+         cd ./hamlib
+         ./bootstrap
+         ./configure --prefix=/Users/runner/work/QLog/QLog/hamlib
+         make -j 4
+         make check
+         make install
      - name: Get version from tag
        run : |
          TAGVERSION=$(git describe --tags)
@@ -46,26 +66,118 @@ jobs:
        run: |
          mkdir build
          cd build
-         qmake -config release ..
+         qmake "HAMLIBINCLUDEPATH = /Users/runner/work/QLog/QLog/hamlib/include" "HAMLIBLIBPATH = /Users/runner/work/QLog/QLog/hamlib/lib" "HAMLIBVERSION_MAJOR = 4" "HAMLIBVERSION_MINOR = 6" "HAMLIBVERSION_PATCH = 0" -config release ..
          make -j4
      - name: Build dmg
        run: |
          cd build
-         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog
-         cp `brew --prefix`/lib/libhamlib.dylib qlog.app/Contents/Frameworks/libhamlib.dylib
-         cp `brew --prefix`/lib/libqt6keychain.dylib qlog.app/Contents/Frameworks/libqt6keychain.dylib
-         cp `brew --prefix`/lib/libdbus-1.dylib qlog.app/Contents/Frameworks/libdbus-1.dylib
-         cp `brew --prefix brotli`/lib/libbrotlicommon.1.dylib qlog.app/Contents/Frameworks/libbrotlicommon.1.dylib
-         cp `brew --prefix`/opt/icu4c/lib/libicui18n.74.dylib qlog.app/Contents/Frameworks/libicui18n.74.dylib
-         install_name_tool -change `brew --prefix`/lib/libhamlib.dylib @executable_path/../Frameworks/libhamlib.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change `brew --prefix`/lib/libqt6keychain.dylib @executable_path/../Frameworks/libqt6keychain.dylib qlog.app/Contents/MacOS/qlog
-         install_name_tool -change @loader_path/libbrotlicommon.1.dylib @executable_path/../Frameworks/libbrotlicommon.1.dylib qlog.app/Contents/MacOS/qlog 
-         install_name_tool -change /usr/local/opt/icu4c/lib/libicui18n.74.dylib @executable_path/../Frameworks/libicui18n.74.dylib qlog.app/Contents/MacOS/qlog
-         otool -L qlog.app/Contents/MacOS/qlog
-         macdeployqt qlog.app -dmg
+         macdeployqt qlog.app -executable=./qlog.app/Contents/MacOS/qlog 
+         macdeployqt qlog.app
+     - name: Codesign app bundle
+         # Extract the secrets we defined earlier as environment variables
+       env: 
+           MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
+           MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}
+           MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
+           MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
+       run: |
+           # Turn our base64-encoded certificate back to a regular .p12 file
+           echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+           # We need to create a new keychain, otherwise using the certificate will prompt
+           # with a UI dialog asking for the certificate password, which we can't
+           # use in a headless CI environment
+           security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
+           security default-keychain -s build.keychain
+           security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+           security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+           # We finally codesign our app bundle, specifying the Hardened runtime option
+           sudo codesign --deep --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --options runtime /Users/runner/work/QLog/QLog/build/qlog.app
+           sudo codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --entitlements /Users/runner/work/QLog/QLog/entitlements.xml --options runtime /Users/runner/work/QLog/QLog/build/qlog.app/Contents/Frameworks/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+           sudo codesign --force --verify --verbose --sign "$MACOS_CERTIFICATE_NAME" --options runtime /Users/runner/work/QLog/QLog/build/qlog.app/Contents/MacOS/qlog
+     - name: "Notarize app bundle"
+         # Extract the secrets we defined earlier as environment variables
+       env:
+           PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
+           PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
+           PROD_MACOS_NOTARIZATION_PWD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
+       run: |
+           # Store the notarization credentials so that we can prevent a UI password dialog
+           # from blocking the CI
+
+           echo "Create keychain profile"
+           xcrun notarytool store-credentials "notarytool-profile" --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" --team-id "$PROD_MACOS_NOTARIZATION_TEAM_ID" --password "$PROD_MACOS_NOTARIZATION_PWD"
+           
+           echo "Creating temp notarization archive"
+           ditto -c -k --keepParent "/Users/runner/work/QLog/QLog/build/qlog.app" "notarization.zip"
+
+           # Here we send the notarization request to the Apple's Notarization service, waiting for the result.
+           # This typically takes a few seconds inside a CI environment, but it might take more depending on the App
+           # characteristics. Visit the Notarization docs for more information and strategies on how to optimize it if
+           # you're curious
+
+           echo "Notarize app"
+           xcrun notarytool submit "notarization.zip" --keychain-profile "notarytool-profile" --wait
+
+           echo "Attach staple"
+           xcrun stapler staple "/Users/runner/work/QLog/QLog/build/qlog.app"   
+     - name: make dmg
+       run: |
+         mkdir out
+         cp -R "/Users/runner/work/QLog/QLog/build/qlog.app" out
+         cd out
+         ln -s /Applications/ Applications
+         cd ..
+         hdiutil create -volname "QLog Installer" -srcfolder out -ov -format UDZO "/Users/runner/work/QLog/QLog/build/qlog.dmg"
+     - name: Codesign dmg bundle
+         # Extract the secrets we defined earlier as environment variables
+       env: 
+           MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
+           MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}
+           MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
+           MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
+       run: |
+           # Turn our base64-encoded certificate back to a regular .p12 file
+           ##echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+           # We need to create a new keychain, otherwise using the certificate will prompt
+           # with a UI dialog asking for the certificate password, which we can't
+           # use in a headless CI environment
+           ##security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
+           ##security default-keychain -s build.keychain
+           ##security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+           ##security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+           ##security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+           # We finally codesign our app bundle, specifying the Hardened runtime option
+           /usr/bin/codesign --timestamp -s "$MACOS_CERTIFICATE_NAME" --options runtime --deep -f /Users/runner/work/QLog/QLog/build/qlog.dmg
+     - name: "Notarize app bundle"
+         # Extract the secrets we defined earlier as environment variables
+       env:
+           PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
+           PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
+           PROD_MACOS_NOTARIZATION_PWD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
+       run: |
+           # Store the notarization credentials so that we can prevent a UI password dialog
+           # from blocking the CI
+
+           echo "Create keychain profile"
+           xcrun notarytool store-credentials "notarytool-profile" --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" --team-id "$PROD_MACOS_NOTARIZATION_TEAM_ID" --password "$PROD_MACOS_NOTARIZATION_PWD"
+           
+           echo "Creating temp notarization archive"
+           ditto -c -k --keepParent "/Users/runner/work/QLog/QLog/build/qlog.dmg" "notarization.zip"
+
+           # Here we send the notarization request to the Apple's Notarization service, waiting for the result.
+           # This typically takes a few seconds inside a CI environment, but it might take more depending on the App
+           # characteristics. Visit the Notarization docs for more information and strategies on how to optimize it if
+           # you're curious
+
+           echo "Notarize app"
+           xcrun notarytool submit "notarization.zip" --keychain-profile "notarytool-profile" --wait
+
+           echo "Attach staple"
+           xcrun stapler staple "/Users/runner/work/QLog/QLog/build/qlog.dmg"           
+         
      - name: Copy artifact
        uses: actions/upload-artifact@v4
        with:
          name: QLog-${{ env.TAGVERSION }}-${{ matrix.os }}
          path: /Users/runner/work/QLog/QLog/build/qlog.dmg
-
