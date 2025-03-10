@@ -35,13 +35,13 @@
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="focusPolicy">
-      <enum>Qt::ClickFocus</enum>
+      <enum>Qt::FocusPolicy::ClickFocus</enum>
      </property>
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
+      <enum>QFrame::Shadow::Plain</enum>
      </property>
      <property name="midLineWidth">
       <number>-3</number>
@@ -55,7 +55,7 @@
         <x>0</x>
         <y>0</y>
         <width>451</width>
-        <height>595</height>
+        <height>577</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -89,25 +89,25 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+          <enum>Qt::FocusPolicy::ClickFocus</enum>
          </property>
          <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
          </property>
          <property name="styleSheet">
           <string notr="true">QWidget{background: transparent}</string>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
+          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
          </property>
          <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
+          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
          </property>
          <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+          <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
          </property>
         </widget>
        </item>
@@ -120,7 +120,7 @@
      <item>
       <widget class="QPushButton" name="clearButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="text">
         <string>Clear All</string>
@@ -130,7 +130,7 @@
      <item>
       <widget class="QPushButton" name="zoomInButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="text">
         <string>In</string>
@@ -144,7 +144,7 @@
      <item>
       <widget class="QPushButton" name="zoomOutButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="text">
         <string>Out</string>
@@ -158,47 +158,101 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="clearSpotOlderLabel">
-       <property name="text">
-        <string>Clear older than</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="clearSpotOlderSpin">
-       <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="specialValueText">
-        <string>Never</string>
-       </property>
-       <property name="suffix">
-        <string> min(s)</string>
-       </property>
-       <property name="maximum">
-        <number>9999</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <widget class="QWidget" name="bottomRow" native="true">
+     <layout class="QHBoxLayout" name="layoutBottomRow">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="clearSpotOlderLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Clear older than</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="clearSpotOlderSpin">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="specialValueText">
+         <string>Never</string>
+        </property>
+        <property name="suffix">
+         <string> min(s)</string>
+        </property>
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Policy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>100</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnNewBandmap">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Create an additional user-controlled Bandmap Window</string>
+        </property>
+        <property name="text">
+         <string comment="Create an additional user-controlled Bandmap Window">+</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -213,8 +267,8 @@
    <slot>clearSpots()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>617</y>
+     <x>140</x>
+     <y>613</y>
     </hint>
     <hint type="destinationlabel">
      <x>155</x>
@@ -229,8 +283,8 @@
    <slot>zoomIn()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>294</x>
-     <y>617</y>
+     <x>295</x>
+     <y>613</y>
     </hint>
     <hint type="destinationlabel">
      <x>155</x>
@@ -245,28 +299,12 @@
    <slot>zoomOut()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>440</x>
-     <y>617</y>
+     <x>449</x>
+     <y>613</y>
     </hint>
     <hint type="destinationlabel">
      <x>155</x>
      <y>281</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clearSpotOlderSpin</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>BandmapWidget</receiver>
-   <slot>spotAgingChanged(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>333</x>
-     <y>632</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>225</x>
-     <y>330</y>
     </hint>
    </hints>
   </connection>
@@ -286,6 +324,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnNewBandmap</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapWidget</receiver>
+   <slot>clickNewBandmapWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>442</x>
+     <y>647</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>624</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearSpots()</slot>
@@ -293,5 +347,7 @@
   <slot>zoomOut()</slot>
   <slot>spotAgingChanged(int)</slot>
   <slot>showContextMenu(QPoint)</slot>
+  <slot>clickNewBandmapWindow()</slot>
+  <slot>bandComboChanged(QString)</slot>
  </slots>
 </ui>
