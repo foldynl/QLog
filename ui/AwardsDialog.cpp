@@ -144,8 +144,15 @@ void AwardsDialog::refreshTable(int)
                           "  SELECT * "
                           "  FROM contacts )";
 
+
     if ( awardSelected == "dxcc" )
     {
+        sourceContactsTable = " source_contacts AS ("
+                              "  SELECT * "
+                              "  FROM contacts c "
+                              "  inner join "
+                              "  dxcc_entities d on "
+                              "  c.dxcc =d.id )";
         setEntityInputEnabled(true);
         setNotWorkedEnabled(true);
         const QString &entitySelected = getSelectedEntity();
