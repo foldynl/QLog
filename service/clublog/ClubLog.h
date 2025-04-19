@@ -35,6 +35,10 @@ class ClubLogUploader : public GenericQSOUploader, private ClubLogBase
 
 public:
     static QStringList uploadedFields;
+    static QVariantMap generateUploadConfigMap(const QString uploadCallsign, bool clearFlag)
+    {
+        return QVariantMap({{"uploadCallsign", uploadCallsign}, {"clearFlag", clearFlag}});
+    }
 
     enum OnlineUploadCommand
     {

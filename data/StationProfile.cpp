@@ -205,3 +205,38 @@ QString StationProfile::toHTMLString() const
                   ((dxcc != 0) ? "<b>" + QObject::tr("My DXCC") + ":</b> " + QString::number(dxcc) : "");
     return ret;
 }
+
+QString StationProfile::getContactInnerJoin() const
+{
+    QStringList ret({"contacts.station_callsign = station_profiles.callsign",
+                     "contacts.my_gridsquare = station_profiles.locator"});
+
+    auto addIfNoEmpty = [&](const QString &field, const QString& contact, const QString &profile)
+    {
+        if ( ! field.isEmpty() ) ret << "contacts." + contact + " = station_profiles." + profile;
+    };
+
+    auto addIfNoEmptyNumber = [&](int field, const QString& contact, const QString &profile)
+    {
+        if ( field ) ret << "contacts." + contact + " = station_profiles." + profile;
+    };
+
+    addIfNoEmpty(operatorName, "my_name_intl", "operator_name");
+    addIfNoEmpty(qthName, "my_city_intl", "qth_name");
+    addIfNoEmpty(iota, "my_iota", "iota");
+    addIfNoEmpty(sota, "my_sota", "sota");
+    addIfNoEmpty(sig, "my_sig_intl", "sig");
+    addIfNoEmpty(sigInfo, "my_sig_info_intl", "sig_info");
+    addIfNoEmpty(vucc, "my_vucc_grids", "vucc");
+    addIfNoEmpty(wwff, "my_wwff_ref", "wwff");
+    addIfNoEmpty(pota, "my_pota_ref", "pota");
+    addIfNoEmptyNumber(ituz, "my_itu_zone", "ituz");
+    addIfNoEmptyNumber(cqz, "my_cq_zone", "cqz");
+    addIfNoEmptyNumber(dxcc, "my_dxcc", "dxcc");
+    // skipping Country - depends on dxcc
+    addIfNoEmpty(county, "my_cnty", "county");
+    addIfNoEmpty(operatorCallsign, "operator", "operator_callsign");
+    addIfNoEmpty(darcDOK, "my_darc_dok", "darc_doc");
+
+    return "(" + ret.join(" AND ") + ")";
+}

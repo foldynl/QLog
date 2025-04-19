@@ -19,6 +19,38 @@ const QString HRDLogBase::CONFIG_ONAIR_ENABLED_KEY = "hrdlog/onair";
 
 // http://www.iw1qlh.net/projects/hrdlog/HRDLognet_4.pdf
 
+QStringList HRDLogUploader::uploadedFields =
+{
+    "start_time",
+    "freq",
+    "band",
+    "callsign",
+    "mode",
+    "submode",
+    "rst_rcvd",
+    "rst_sent",
+    "qsl_sent",
+    "qsl_rcvd",
+    "qsl_via",
+    "eqsl_qslrdate",
+    "eqsl_qsl_rcvd",
+    "eqsl_qslsdate",
+    "eqsl_qsl_sent",
+    "lotw_qsl_rcvd",
+    "lotw_qslrdate",
+    "lotw_qsl_sent",
+    "lotw_qslsdate",
+    "gridsquare",
+    "dxcc",
+    "qslmsg",
+    "comment"
+    "distance",
+    "operator",
+    "sat_mode",
+    "sat_name",
+    "prop_mode"
+};
+
 const QString HRDLogBase::getRegisteredCallsign()
 {
     FCT_IDENTIFICATION;
@@ -77,7 +109,7 @@ void HRDLogBase::saveOnAirEnabled(bool state)
 // send all ADIF-fields
 
 HRDLogUploader::HRDLogUploader(QObject *parent)
-    : GenericQSOUploader(QStringList(), parent),
+    : GenericQSOUploader(uploadedFields, parent),
       HRDLogBase(),
       currentReply(nullptr),
       cancelUpload(false)

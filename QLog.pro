@@ -168,6 +168,7 @@ SOURCES += \
         ui/SettingsDialog.cpp \
         ui/ShowUploadDialog.cpp \
         ui/StatisticsWidget.cpp \
+        ui/UploadQSODialog.cpp \
         ui/WebEnginePage.cpp \
         ui/WsjtxFilterDialog.cpp \
         ui/WsjtxWidget.cpp \
@@ -313,6 +314,7 @@ HEADERS += \
         ui/RotatorWidget.h \
         ui/SettingsDialog.h \
         ui/StatisticsWidget.h \
+        ui/UploadQSODialog.h \
         ui/WebEnginePage.h \
         ui/WsjtxFilterDialog.h \
         ui/WsjtxWidget.h \
@@ -366,6 +368,7 @@ FORMS += \
         ui/SettingsDialog.ui \
         ui/ShowUploadDialog.ui \
         ui/StatisticsWidget.ui \
+        ui/UploadQSODialog.ui \
         ui/WsjtxFilterDialog.ui \
         ui/WsjtxWidget.ui
 

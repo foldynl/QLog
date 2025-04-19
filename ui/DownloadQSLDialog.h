@@ -2,7 +2,6 @@
 #define DOWNLOADQSLDIALOG_H
 
 #include <QDialog>
-#include <QProgressDialog>
 #include "core/LogLocale.h"
 #include "logformat/LogFormat.h"
 #include "service/GenericQSLDownloader.h"
@@ -10,8 +9,6 @@
 namespace Ui {
 class DownloadQSLDialog;
 }
-
-class QComboBox;
 
 class DownloadQSLDialog : public QDialog
 {

@@ -166,8 +166,8 @@ void ClublogDialog::uploadCallsignChanged(const QString &my_callsign)
 {
     FCT_IDENTIFICATION;
 
-    ui->myGridCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) FROM contacts WHERE station_callsign ='" + my_callsign + "' ORDER BY my_gridsquare", ""));
 
+    ui->myGridCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) FROM contacts WHERE station_callsign ='" + my_callsign + "' ORDER BY my_gridsquare", ""));
 }
 
 void ClublogDialog::saveDialogState()

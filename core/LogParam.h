@@ -194,6 +194,65 @@ public:
         return getParam("bandmap/" + widgetID + "/centerrx", true).toBool();
     }
 
+    static QString getUploadQSOLastCall()
+    {
+        return getParam("uploadqso/lastcall").toString();
+    }
+
+    static void setUploadQSOLastCall(const QString &call)
+    {
+        setParam("uploadqso/lastcall", call);
+    }
+
+    static bool getUploadeqslQSLComment()
+    {
+        return getParam("uploadqso/eqsl/last_checkcomment", false).toBool();
+    }
+
+    static void setUploadeqslQSLComment(const bool state)
+    {
+        setParam("uploadqso/eqsl/last_checkcomment", state);
+    }
+
+    static bool getUploadeqslQSLMessage()
+    {
+        return getParam("uploadqso/eqsl/last_checkqslsmsg", false).toBool();
+    }
+
+    static QString getUploadeqslQTHProfile()
+    {
+        return getParam("uploadqso/eqsl/last_QTHProfile").toString();
+    }
+
+    static void setUploadeqslQTHProfile(const QString &qthProfile)
+    {
+        setParam("uploadqso/eqsl/last_QTHProfile", qthProfile);
+    }
+
+    static void setUploadeqslQSLMessage(const bool state)
+    {
+        setParam("uploadqso/eqsl/last_checkqslsmsg", state);
+    }
+
+    static bool getUploadServiceState(const QString& name)
+    {
+        return getParam("uploadqso/" + name + "/enabled", false).toBool();
+    }
+
+    static void setUploadServiceState(const QString& name, bool state)
+    {
+        setParam("uploadqso/" + name + "/enabled", state);
+    }
+
+    static int getUploadQSOFilterType()
+    {
+        return getParam("uploadqso/filtertype").toInt();
+    }
+
+    static void setUploadQSOFilterType(int filterID)
+    {
+        setParam("uploadqso/filtertype", filterID);
+    }
 
 private:
     static QCache<QString, QVariant> localCache;

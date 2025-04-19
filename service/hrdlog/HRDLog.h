@@ -32,6 +32,8 @@ class HRDLogUploader : public GenericQSOUploader, private HRDLogBase
     Q_OBJECT
 
 public:
+    static QStringList uploadedFields;
+
     explicit HRDLogUploader(QObject *parent = nullptr);
     virtual ~HRDLogUploader();
 

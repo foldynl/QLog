@@ -37,6 +37,7 @@
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
 #include "ui/DownloadQSLDialog.h"
+#include "ui/UploadQSODialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -837,6 +838,9 @@ void MainWindow::showServiceUpload()
     FCT_IDENTIFICATION;
 
 
+    UploadQSODialog dialog(this);
+    dialog.exec();
+    ui->logbookWidget->updateTable();
 }
 
 void MainWindow::showServiceDownloadQSL()

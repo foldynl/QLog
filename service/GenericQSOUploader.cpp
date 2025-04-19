@@ -12,7 +12,7 @@ GenericQSOUploader::GenericQSOUploader(const QStringList &uploadedFields, QObjec
     connect(nam, &QNetworkAccessManager::finished, this, &GenericQSOUploader::onNetworkReply);
 }
 
-const QByteArray GenericQSOUploader::generateADIF(const QList<QSqlRecord> &qsos)
+const QByteArray GenericQSOUploader::generateADIF(const QList<QSqlRecord> &qsos, QMap<QString, QString> *applTags)
 {
     QByteArray data;
     QTextStream stream(&data, QIODevice::ReadWrite);
@@ -21,7 +21,7 @@ const QByteArray GenericQSOUploader::generateADIF(const QList<QSqlRecord> &qsos)
     adi.exportStart();
 
     for ( const QSqlRecord &qso : qsos )
-        adi.exportContact(stripRecord(qso));
+        adi.exportContact(stripRecord(qso), applTags);
 
     adi.exportEnd();
     stream.flush();

@@ -78,7 +78,9 @@ void EQSLBase::saveUsernamePassword(const QString &newUsername, const QString &n
 
 EQSLUploader::EQSLUploader( QObject *parent ):
    GenericQSOUploader(uploadedFields, parent),
-   currentReply(nullptr)
+   currentReply(nullptr),
+   commentAsQSLMSG(false),
+   disableqslmsg(true)
 {
     FCT_IDENTIFICATION;
 }
@@ -142,11 +144,43 @@ void EQSLUploader::uploadAdif(const QByteArray &data)
     currentReply->setProperty("messageType", QVariant("uploadADIFFile"));
 }
 
-void EQSLUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &)
+const QSqlRecord EQSLUploader::stripRecord(const QSqlRecord &record)
 {
     FCT_IDENTIFICATION;
 
-    QByteArray data = generateADIF(qsos);
+    QSqlRecord newRecord(GenericQSOUploader::stripRecord(record));
+
+    if ( disableqslmsg )
+        newRecord.remove(newRecord.indexOf("qslmsg"));
+    else if ( commentAsQSLMSG )
+        newRecord.setValue("qslmsg", record.value("comment"));
+
+    int commentIndex = newRecord.indexOf("comment");
+    if (commentIndex != -1) newRecord.remove(commentIndex);
+
+    return newRecord;
+}
+
+void EQSLUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &addlParams)
+{
+    FCT_IDENTIFICATION;
+
+    QString qthProfile = addlParams["qthprofile"].toString();
+    commentAsQSLMSG = addlParams["commentasqslmsg"].toBool();
+    disableqslmsg = addlParams["disableqslmsg"].toBool();
+
+    QMap<QString, QString> *applTags = nullptr;
+    if ( !qthProfile.isEmpty() )
+    {
+        applTags = new QMap<QString, QString>;
+        applTags->insert("app_eqsl_qth_nickname", qthProfile);
+    }
+
+    QByteArray data = generateADIF(qsos, applTags);
+
+    if ( applTags )
+        delete applTags;
+
     uploadAdif(data);
 }
 

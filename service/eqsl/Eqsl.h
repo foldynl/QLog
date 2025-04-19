@@ -31,6 +31,12 @@ class EQSLUploader : public GenericQSOUploader, private EQSLBase
     Q_OBJECT
 public:
     static QStringList uploadedFields;
+    static QVariantMap generateUploadConfigMap(const QString qthProfile, bool disableQSLMSG, bool commentAsQSLMSG)
+    {
+        return QVariantMap({{"qthprofile", qthProfile},
+                            {"disableqslmsg", disableQSLMSG},
+                            {"commentasqslmsg", commentAsQSLMSG}});
+    }
 
     explicit EQSLUploader(QObject *parent = nullptr);
     virtual ~EQSLUploader();
@@ -41,10 +47,14 @@ public:
 public slots:
     virtual void abortRequest() override;
 
+protected:
+    virtual const QSqlRecord stripRecord(const QSqlRecord &record) override;
+
 private:
     const QString UPLOAD_ADIF_PAGE = "https://www.eQSL.cc/qslcard/ImportADIF.cfm";
     QNetworkReply *currentReply;
-
+    bool commentAsQSLMSG;
+    bool disableqslmsg;
     virtual void processReply(QNetworkReply*) override;
 };
 
