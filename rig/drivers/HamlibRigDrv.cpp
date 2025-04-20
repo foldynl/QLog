@@ -314,9 +314,6 @@ void HamlibRigDrv::setFrequency(double newFreq)
     if ( !rigProfile.getFreqInfo )
         return;
 
-    if ( newFreq == currFreq )
-        return;
-
     MUTEXLOCKER;
 
     if ( !rig )
@@ -325,10 +322,35 @@ void HamlibRigDrv::setFrequency(double newFreq)
         return;
     }
 
-    int status = rig_set_freq(rig, RIG_VFO_CURR, newFreq);
-    isRigRespOK(status, tr("Set Frequency Error"), false);
+    for ( int i = 1; i <= 2; i++ )
+    {
+        qCDebug(runtime) << "Attempt:" << i;
+        int status = rig_set_freq(rig, RIG_VFO_CURR, newFreq);
+        isRigRespOK(status, tr("Set Frequency Error"), false);
 
-    commandSleep();
+        if ( rigProfile.getModeInfo && rig->caps->get_mode )
+        {
+            pbwidth_t rigPBWidth;
+            rmode_t rigModeId;
+
+            status = rig_get_mode(rig, RIG_VFO_CURR, &rigModeId, &rigPBWidth);
+            if ( isRigRespOK(status, tr("Get Mode Error"), false))
+            {
+                qCDebug(runtime) << "Rig Mode: "<< rigModeId << "Rig Filter: "<< rigPBWidth;
+                qCDebug(runtime) << "Object Mode: "<< currModeId << "Object Filter:" << currPBWidth;
+
+                if ( rigModeId != currModeId
+                     || ( rigPBWidth != RIG_PASSBAND_NOCHANGE && rigPBWidth != currPBWidth ) )
+                {
+                    qCDebug(runtime) << "Changing the frequency caused the mode to change - Mode correction";
+                    // do not use __setMode here because pbwidth can be different and do not call command sleep and cann filter change
+                    status = rig_set_mode(rig, RIG_VFO_CURR, currModeId, currPBWidth);
+                    isRigRespOK(status, tr("Set Mode Error"), false);
+                }
+            }
+        }
+        commandSleep(100);
+    }
 }
 
 void HamlibRigDrv::setRawMode(const QString &rawMode)
