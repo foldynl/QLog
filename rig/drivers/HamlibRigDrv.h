@@ -64,7 +64,7 @@ private:
 
     void __setKeySpeed(qint16 wpm);
     void __setMode(rmode_t newModeID);
-    void commandSleep();
+    void commandSleep(unsigned long delay = 200);
     bool isRigRespOK(int errorStatus,
                      const QString errorName,
                      bool emitError = true);

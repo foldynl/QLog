@@ -958,11 +958,12 @@ void HamlibRigDrv::__setKeySpeed(qint16 wpm)
     commandSleep();
 }
 
-void HamlibRigDrv::commandSleep()
+void HamlibRigDrv::commandSleep(unsigned long delay)
 {
     FCT_IDENTIFICATION;
 
-    QThread::msleep(200);
+    qCDebug(function_parameters) << delay;
+    QThread::msleep(delay);
 }
 
 bool HamlibRigDrv::isRigRespOK(int errorStatus,
