@@ -370,8 +370,7 @@ void HamlibRigDrv::__setMode(rmode_t newModeID)
 {
     FCT_IDENTIFICATION;
 
-    if ( newModeID != RIG_MODE_NONE
-         && newModeID != currModeId )
+    if ( newModeID != RIG_MODE_NONE)
     {
         int status = rig_set_mode(rig, RIG_VFO_CURR, newModeID, RIG_PASSBAND_NOCHANGE);
         isRigRespOK(status, tr("Set Mode Error"), false);
