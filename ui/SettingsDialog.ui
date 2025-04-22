@@ -4410,7 +4410,7 @@
   <customwidget>
    <class>SerialPortEditLine</class>
    <extends>QLineEdit</extends>
-   <header>ui/EditLine.h</header>
+   <header>ui/component/EditLine.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

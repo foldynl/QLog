@@ -1,5 +1,5 @@
-#ifndef QLOG_UI_EDITLINE_H
-#define QLOG_UI_EDITLINE_H
+#ifndef QLOG_UI_COMPONENT_EDITLINE_H
+#define QLOG_UI_COMPONENT_EDITLINE_H
 
 #include <QObject>
 #include <QLineEdit>
@@ -48,4 +48,4 @@ protected:
     void focusInEvent(QFocusEvent* event) override;
 };
 
-#endif // QLOG_UI_EDITLINE_H
+#endif // QLOG_UI_COMPONENT_EDITLINE_H

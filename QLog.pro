@@ -137,7 +137,6 @@ SOURCES += \
         ui/DxWidget.cpp \
         ui/DxccTableWidget.cpp \
         ui/EditActivitiesDialog.cpp \
-        ui/EditLine.cpp \
         ui/Eqsldialog.cpp \
         ui/ExportDialog.cpp \
         ui/FreqQSpinBox.cpp \
@@ -170,6 +169,7 @@ SOURCES += \
         ui/WebEnginePage.cpp \
         ui/WsjtxFilterDialog.cpp \
         ui/WsjtxWidget.cpp \
+        ui/component/EditLine.cpp \
         ui/component/MultiselectCompleter.cpp \
         ui/component/SwitchButton.cpp
 
@@ -278,7 +278,6 @@ HEADERS += \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
         ui/EditActivitiesDialog.h \
-        ui/EditLine.h \
         ui/Eqsldialog.h \
         ui/ExportDialog.h \
         ui/FreqQSpinBox.h \
@@ -316,6 +315,7 @@ HEADERS += \
         i18n/dbstrings.tri \
         i18n/datastrings.tri \
         ui/component/ButtonStyle.h \
+        ui/component/EditLine.h \
         ui/component/MultiselectCompleter.h \
         ui/component/SwitchButton.h
 

@@ -1674,7 +1674,7 @@
   <customwidget>
    <class>NewContactEditLine</class>
    <extends>QLineEdit</extends>
-   <header>ui/EditLine.h</header>
+   <header>ui/component/EditLine.h</header>
   </customwidget>
   <customwidget>
    <class>DxccTableWidget</class>
@@ -1689,7 +1689,7 @@
   <customwidget>
    <class>NewContactRSTEditLine</class>
    <extends>QLineEdit</extends>
-   <header>ui/EditLine.h</header>
+   <header>ui/component/EditLine.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -20,7 +20,7 @@
 #include "core/PropConditions.h"
 #include "core/LogLocale.h"
 #include "models/LogbookModel.h"
-#include "ui/EditLine.h"
+#include "ui/component/EditLine.h"
 #include "data/DxSpot.h"
 #include "ui/component/MultiselectCompleter.h"
 #include "data/POTAEntity.h"
