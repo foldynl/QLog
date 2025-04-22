@@ -34,7 +34,7 @@
 #include "core/MembershipQE.h"
 #include "models/SqlListModel.h"
 #include "service/kstchat/KSTChat.h"
-#include "core/HostsPortString.h"
+#include "data/HostsPortString.h"
 #include "models/ShortcutEditorModel.h"
 #include "ui/StyleItemDelegate.h"
 #include "core/SerialPort.h"

@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_HOSTSPORTSTRING_H
-#define QLOG_CORE_HOSTSPORTSTRING_H
+#ifndef QLOG_DATA_HOSTSPORTSTRING_H
+#define QLOG_DATA_HOSTSPORTSTRING_H
 
 #include <QObject>
 #include <QHostAddress>
@@ -31,4 +31,4 @@ private:
 
 };
 
-#endif // QLOG_CORE_HOSTSPORTSTRING_H
+#endif // QLOG_DATA_HOSTSPORTSTRING_H

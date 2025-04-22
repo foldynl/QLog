@@ -51,7 +51,6 @@ SOURCES += \
         core/CallbookManager.cpp \
         core/CredentialStore.cpp \
         core/FldigiTCPServer.cpp \
-        core/HostsPortString.cpp \
         core/LOVDownloader.cpp \
         core/LogLocale.cpp \
         core/LogParam.cpp \
@@ -84,6 +83,7 @@ SOURCES += \
         data/Data.cpp \
         data/DxServerString.cpp \
         data/Gridsquare.cpp \
+        data/HostsPortString.cpp \
         data/MainLayoutProfile.cpp \
         data/RigProfile.cpp \
         data/RotProfile.cpp \
@@ -179,7 +179,6 @@ HEADERS += \
         core/CallbookManager.h \
         core/CredentialStore.h \
         core/FldigiTCPServer.h \
-        core/HostsPortString.h \
         core/LOVDownloader.h \
         core/LogLocale.h \
         core/LogParam.h \
@@ -215,6 +214,7 @@ HEADERS += \
         data/DxSpot.h \
         data/Dxcc.h \
         data/Gridsquare.h \
+        data/HostsPortString.h \
         data/MainLayoutProfile.h \
         data/POTAEntity.h \
         data/ProfileManager.h \

@@ -1,6 +1,6 @@
 #include <QRegularExpression>
 #include "HostsPortString.h"
-#include "debug.h"
+#include "core/debug.h"
 
 MODULE_IDENTIFICATION("qlog.core.hostsportstring");
 

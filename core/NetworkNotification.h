@@ -7,7 +7,7 @@
 #include <QJsonDocument>
 #include <QUdpSocket>
 
-#include "core/HostsPortString.h"
+#include "data/HostsPortString.h"
 #include "logformat/LogFormat.h"
 #include "data/DxSpot.h"
 #include "data/WsjtxEntry.h"

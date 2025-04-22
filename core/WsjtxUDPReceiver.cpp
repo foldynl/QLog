@@ -12,7 +12,7 @@
 #include "WsjtxUDPReceiver.h"
 #include "data/Data.h"
 #include "debug.h"
-#include "core/HostsPortString.h"
+#include "data/HostsPortString.h"
 #include "rig/macros.h"
 #include "data/BandPlan.h"
 #include "logformat/AdiFormat.h"
