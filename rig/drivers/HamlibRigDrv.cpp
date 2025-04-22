@@ -4,7 +4,7 @@
 #include "HamlibRigDrv.h"
 #include "core/debug.h"
 #include "rig/macros.h"
-#include "core/SerialPort.h"
+#include "data/SerialPort.h"
 
 #ifndef HAMLIB_FILPATHLEN
 #define HAMLIB_FILPATHLEN FILPATHLEN

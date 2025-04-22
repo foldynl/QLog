@@ -37,7 +37,7 @@
 #include "data/HostsPortString.h"
 #include "models/ShortcutEditorModel.h"
 #include "ui/StyleItemDelegate.h"
-#include "core/SerialPort.h"
+#include "data/SerialPort.h"
 
 #define STACKED_WIDGET_SERIAL_SETTING  0
 #define STACKED_WIDGET_NETWORK_SETTING 1

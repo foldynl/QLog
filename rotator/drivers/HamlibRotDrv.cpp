@@ -3,7 +3,7 @@
 
 #include "HamlibRotDrv.h"
 #include "core/debug.h"
-#include "core/SerialPort.h"
+#include "data/SerialPort.h"
 #include "data/AntProfile.h"
 
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Rot Drv mutex"; \

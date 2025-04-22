@@ -61,7 +61,6 @@ SOURCES += \
         core/PropConditions.cpp \
         core/QSLStorage.cpp \
         core/QSOFilterManager.cpp \
-        core/SerialPort.cpp \
         core/UpdatableSQLRecord.cpp \
         core/WsjtxUDPReceiver.cpp \
         core/debug.cpp \
@@ -88,6 +87,7 @@ SOURCES += \
         data/RigProfile.cpp \
         data/RotProfile.cpp \
         data/RotUsrButtonsProfile.cpp \
+        data/SerialPort.cpp \
         data/StationProfile.cpp \
         logformat/AdiFormat.cpp \
         logformat/AdxFormat.cpp \
@@ -190,7 +190,6 @@ HEADERS += \
         core/QSLStorage.h \
         core/QSOFilterManager.h \
         core/QuadKeyCache.h \
-        core/SerialPort.h \
         core/UpdatableSQLRecord.h \
         core/WsjtxUDPReceiver.h \
         core/debug.h \
@@ -222,6 +221,7 @@ HEADERS += \
         data/RotProfile.h \
         data/RotUsrButtonsProfile.h \
         data/SOTAEntity.h \
+        data/SerialPort.h \
         data/SpotAlert.h \
         data/StationProfile.h \
         data/ToAllSpot.h \

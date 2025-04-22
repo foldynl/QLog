@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_SERIALPORT_H
-#define QLOG_CORE_SERIALPORT_H
+#ifndef QLOG_DATA_SERIALPORT_H
+#define QLOG_DATA_SERIALPORT_H
 
 #include <QObject>
 #include <hamlib/rig.h>
@@ -20,4 +20,4 @@ public:
     static const QString SERIAL_PARITY_NO;
 };
 
-#endif // QLOG_CORE_SERIALPORT_H
+#endif // QLOG_DATA_SERIALPORT_H
