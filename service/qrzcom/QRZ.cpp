@@ -11,7 +11,7 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "logformat/AdiFormat.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 
 #define API_URL "https://xmldata.qrz.com/xml/current/"
 #define API_LOGBOOK_URL "https://logbook.qrz.com/api"

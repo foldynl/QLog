@@ -32,7 +32,7 @@
 #include "data/BandPlan.h"
 #include "core/DxServerString.h"
 #include "rig/macros.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "core/LogParam.h"
 
 #define CONSOLE_VIEW 4

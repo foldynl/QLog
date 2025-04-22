@@ -22,7 +22,7 @@
 #include "data/AntProfile.h"
 #include "data/CWKeyProfile.h"
 #include "data/Data.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "core/PropConditions.h"
 #include "core/MembershipQE.h"
 #include "logformat/AdiFormat.h"

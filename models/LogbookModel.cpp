@@ -2,7 +2,7 @@
 #include "data/Data.h"
 #include "data/Dxcc.h"
 #include "core/Gridsquare.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "data/BandPlan.h"
 
 #include <QIcon>

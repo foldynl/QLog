@@ -13,7 +13,7 @@
 #include "MembershipQE.h"
 #include "core/debug.h"
 #include "data/Data.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.membershipqe");

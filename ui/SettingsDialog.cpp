@@ -30,7 +30,7 @@
 #include "rotator/Rotator.h"
 #include "rotator/RotCaps.h"
 #include "core/LogParam.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "core/MembershipQE.h"
 #include "models/SqlListModel.h"
 #include "service/kstchat/KSTChat.h"

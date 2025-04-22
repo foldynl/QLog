@@ -3,7 +3,7 @@
 #include <QSqlError>
 #include <QColor>
 #include "Data.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "core/debug.h"
 #include "BandPlan.h"
 #include "data/StationProfile.h"

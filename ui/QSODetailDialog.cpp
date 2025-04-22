@@ -15,7 +15,7 @@
 #include "service/eqsl/Eqsl.h"
 #include "models/SqlListModel.h"
 #include "core/Gridsquare.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "data/BandPlan.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qsodetaildialog");

@@ -4,7 +4,7 @@
 #include "core/debug.h"
 #include "service/hamqth/HamQTH.h"
 #include "service/qrzcom/QRZ.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 
 MODULE_IDENTIFICATION("qlog.ui.callbookmanager");
 

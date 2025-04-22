@@ -49,7 +49,6 @@ SOURCES += \
         core/AlertEvaluator.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
-        core/Callsign.cpp \
         core/CredentialStore.cpp \
         core/DxServerString.cpp \
         core/FldigiTCPServer.cpp \
@@ -83,6 +82,7 @@ SOURCES += \
         data/BandPlan.cpp \
         data/CWKeyProfile.cpp \
         data/CWShortcutProfile.cpp \
+        data/Callsign.cpp \
         data/Data.cpp \
         data/MainLayoutProfile.cpp \
         data/RigProfile.cpp \
@@ -177,7 +177,6 @@ HEADERS += \
         core/AlertEvaluator.h \
         core/AppGuard.h \
         core/CallbookManager.h \
-        core/Callsign.h \
         core/CredentialStore.h \
         core/DxServerString.h \
         core/FldigiTCPServer.h \
@@ -212,6 +211,7 @@ HEADERS += \
         data/BandPlan.h \
         data/CWKeyProfile.h \
         data/CWShortcutProfile.h \
+        data/Callsign.h \
         data/Data.h \
         data/DxSpot.h \
         data/Dxcc.h \
