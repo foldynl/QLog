@@ -56,7 +56,6 @@ SOURCES += \
         core/LogParam.cpp \
         core/MembershipQE.cpp \
         core/Migration.cpp \
-        core/MultiselectCompleter.cpp \
         core/NetworkNotification.cpp \
         core/PropConditions.cpp \
         core/QSLStorage.cpp \
@@ -171,7 +170,8 @@ SOURCES += \
         ui/SwitchButton.cpp \
         ui/WebEnginePage.cpp \
         ui/WsjtxFilterDialog.cpp \
-        ui/WsjtxWidget.cpp
+        ui/WsjtxWidget.cpp \
+        ui/component/MultiselectCompleter.cpp
 
 HEADERS += \
         core/AlertEvaluator.h \
@@ -184,7 +184,6 @@ HEADERS += \
         core/LogParam.h \
         core/MembershipQE.h \
         core/Migration.h \
-        core/MultiselectCompleter.h \
         core/NetworkNotification.h \
         core/PropConditions.h \
         core/QSLStorage.h \
@@ -317,7 +316,8 @@ HEADERS += \
         ui/WsjtxFilterDialog.h \
         ui/WsjtxWidget.h \
         i18n/dbstrings.tri \
-        i18n/datastrings.tri
+        i18n/datastrings.tri \
+        ui/component/MultiselectCompleter.h
 
 FORMS += \
         ui/ActivityEditor.ui \

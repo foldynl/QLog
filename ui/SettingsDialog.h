@@ -19,7 +19,7 @@
 #include "data/RotUsrButtonsProfile.h"
 #include "core/LogLocale.h"
 #include "ui/MainWindow.h"
-#include "core/MultiselectCompleter.h"
+#include "ui/component/MultiselectCompleter.h"
 #include "rig/RigCaps.h"
 
 namespace Ui {

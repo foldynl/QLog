@@ -1,5 +1,5 @@
 #include <QLineEdit>
-#include "MultiselectCompleter.h"
+#include "ui/component/MultiselectCompleter.h"
 
 MultiselectCompleter::MultiselectCompleter(const QStringList& items, QObject* parent)
     : QCompleter(items, parent)

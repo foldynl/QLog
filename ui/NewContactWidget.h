@@ -22,7 +22,7 @@
 #include "models/LogbookModel.h"
 #include "ui/EditLine.h"
 #include "data/DxSpot.h"
-#include "core/MultiselectCompleter.h"
+#include "ui/component/MultiselectCompleter.h"
 #include "data/POTAEntity.h"
 #include "data/SOTAEntity.h"
 #include "data/WWFFEntity.h"

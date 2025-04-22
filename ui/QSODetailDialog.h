@@ -16,7 +16,7 @@
 #include "ui/WebEnginePage.h"
 #include "core/MembershipQE.h"
 #include "core/LogLocale.h"
-#include "core/MultiselectCompleter.h"
+#include "ui/component/MultiselectCompleter.h"
 
 namespace Ui {
 class QSODetailDialog;
