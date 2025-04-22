@@ -16,7 +16,7 @@
 #include "NewContactWidget.h"
 #include "ui_NewContactWidget.h"
 #include "core/debug.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/StationProfile.h"
 #include "data/RigProfile.h"
 #include "data/AntProfile.h"

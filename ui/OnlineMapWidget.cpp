@@ -9,7 +9,7 @@
 #include <QSettings>
 #include "OnlineMapWidget.h"
 #include "core/debug.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/StationProfile.h"
 #include "data/AntProfile.h"
 #include "core/debug.h"

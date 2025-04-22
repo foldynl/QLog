@@ -15,7 +15,7 @@
 #include "ui_StatisticsWidget.h"
 #include "core/debug.h"
 #include "models/SqlListModel.h"
-#include <core/Gridsquare.h>
+#include "data/Gridsquare.h"
 
 MODULE_IDENTIFICATION("qlog.ui.statisticswidget");
 

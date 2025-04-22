@@ -8,7 +8,7 @@
 #include "CSVFormat.h"
 #include "data/Data.h"
 #include "core/debug.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/Callsign.h"
 #include "data/BandPlan.h"
 #include "models/LogbookModel.h"

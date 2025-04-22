@@ -52,7 +52,6 @@ SOURCES += \
         core/CredentialStore.cpp \
         core/DxServerString.cpp \
         core/FldigiTCPServer.cpp \
-        core/Gridsquare.cpp \
         core/HostsPortString.cpp \
         core/LOVDownloader.cpp \
         core/LogLocale.cpp \
@@ -84,6 +83,7 @@ SOURCES += \
         data/CWShortcutProfile.cpp \
         data/Callsign.cpp \
         data/Data.cpp \
+        data/Gridsquare.cpp \
         data/MainLayoutProfile.cpp \
         data/RigProfile.cpp \
         data/RotProfile.cpp \
@@ -180,7 +180,6 @@ HEADERS += \
         core/CredentialStore.h \
         core/DxServerString.h \
         core/FldigiTCPServer.h \
-        core/Gridsquare.h \
         core/HostsPortString.h \
         core/LOVDownloader.h \
         core/LogLocale.h \
@@ -215,6 +214,7 @@ HEADERS += \
         data/Data.h \
         data/DxSpot.h \
         data/Dxcc.h \
+        data/Gridsquare.h \
         data/MainLayoutProfile.h \
         data/POTAEntity.h \
         data/ProfileManager.h \

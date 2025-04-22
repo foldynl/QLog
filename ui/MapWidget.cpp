@@ -7,7 +7,7 @@
 #include <QtMath>
 #include "MapWidget.h"
 #include "core/debug.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/StationProfile.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mapwidget");

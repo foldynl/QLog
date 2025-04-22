@@ -14,7 +14,7 @@
 #include "PaperQSLDialog.h"
 #include "service/eqsl/Eqsl.h"
 #include "models/SqlListModel.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/Callsign.h"
 #include "data/BandPlan.h"
 

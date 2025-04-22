@@ -20,7 +20,7 @@
 #include <QTimeZone>
 
 #include "core/LogLocale.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 
 class CallsignDelegate : public QStyledItemDelegate {
 public:

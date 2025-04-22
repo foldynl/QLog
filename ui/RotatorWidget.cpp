@@ -7,7 +7,7 @@
 #include "RotatorWidget.h"
 #include "ui_RotatorWidget.h"
 #include "core/debug.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/StationProfile.h"
 #include "data/RotUsrButtonsProfile.h"
 

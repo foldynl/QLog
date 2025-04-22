@@ -22,7 +22,7 @@
 #include "data/RigProfile.h"
 #include "data/AntProfile.h"
 #include "data/Data.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "core/WsjtxUDPReceiver.h"
 #include "core/NetworkNotification.h"
 #include "rig/Rig.h"

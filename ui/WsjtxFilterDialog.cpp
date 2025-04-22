@@ -3,7 +3,7 @@
 #include "core/debug.h"
 #include "data/Dxcc.h"
 #include "core/MembershipQE.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 
 MODULE_IDENTIFICATION("qlog.ui.wsjtxfilterdialog");
 

@@ -11,7 +11,7 @@
 #include "data/StationProfile.h"
 #include "ui/ColumnSettingDialog.h"
 #include "ui/WsjtxFilterDialog.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "ui/StyleItemDelegate.h"
 #include "data/BandPlan.h"
 

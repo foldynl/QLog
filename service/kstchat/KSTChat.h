@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/Dxcc.h"
 #include "ui/NewContactWidget.h"
 

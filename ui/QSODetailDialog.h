@@ -10,7 +10,7 @@
 #include <QWebChannel>
 
 #include "models/LogbookModel.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "core/CallbookManager.h"
 #include "ui/MapWebChannelHandler.h"
 #include "ui/WebEnginePage.h"
