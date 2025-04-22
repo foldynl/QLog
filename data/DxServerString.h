@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_DXSERVERSTRING_H
-#define QLOG_CORE_DXSERVERSTRING_H
+#ifndef QLOG_DATA_DXSERVERSTRING_H
+#define QLOG_DATA_DXSERVERSTRING_H
 
 #include <QString>
 
@@ -24,4 +24,4 @@ private:
     bool valid;
 };
 
-#endif // QLOG_CORE_DXSERVERSTRING_H
+#endif // QLOG_DATA_DXSERVERSTRING_H

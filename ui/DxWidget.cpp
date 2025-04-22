@@ -30,7 +30,6 @@
 #include "core/CredentialStore.h"
 #include "ui/InputPasswordDialog.h"
 #include "data/BandPlan.h"
-#include "core/DxServerString.h"
 #include "rig/macros.h"
 #include "data/Callsign.h"
 #include "core/LogParam.h"

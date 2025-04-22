@@ -50,7 +50,6 @@ SOURCES += \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
         core/CredentialStore.cpp \
-        core/DxServerString.cpp \
         core/FldigiTCPServer.cpp \
         core/HostsPortString.cpp \
         core/LOVDownloader.cpp \
@@ -83,6 +82,7 @@ SOURCES += \
         data/CWShortcutProfile.cpp \
         data/Callsign.cpp \
         data/Data.cpp \
+        data/DxServerString.cpp \
         data/Gridsquare.cpp \
         data/MainLayoutProfile.cpp \
         data/RigProfile.cpp \
@@ -178,7 +178,6 @@ HEADERS += \
         core/AppGuard.h \
         core/CallbookManager.h \
         core/CredentialStore.h \
-        core/DxServerString.h \
         core/FldigiTCPServer.h \
         core/HostsPortString.h \
         core/LOVDownloader.h \
@@ -212,6 +211,7 @@ HEADERS += \
         data/CWShortcutProfile.h \
         data/Callsign.h \
         data/Data.h \
+        data/DxServerString.h \
         data/DxSpot.h \
         data/Dxcc.h \
         data/Gridsquare.h \

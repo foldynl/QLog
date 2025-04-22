@@ -13,7 +13,7 @@
 #include "data/WWVSpot.h"
 #include "data/ToAllSpot.h"
 #include "core/LogLocale.h"
-#include "core/DxServerString.h"
+#include "data/DxServerString.h"
 #include "models/SearchFilterProxyModel.h"
 #include "rig/Rig.h"
 
