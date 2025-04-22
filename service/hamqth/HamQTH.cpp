@@ -7,7 +7,7 @@
 #include <QtXml>
 #include <QDebug>
 #include "HamQTH.h"
-#include "debug.h"
+#include "core/debug.h"
 #include "core/CredentialStore.h"
 
 #define API_URL "http://www.hamqth.com/xml.php"

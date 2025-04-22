@@ -9,7 +9,7 @@
 #include <QSqlField>
 #include "logformat/AdiFormat.h"
 #include "ClubLog.h"
-#include "debug.h"
+#include "core/debug.h"
 #include "core/CredentialStore.h"
 
 #define API_KEY "21507885dece41ca049fec7fe02a813f2105aff2"

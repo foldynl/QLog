@@ -8,7 +8,7 @@
 #include "Eqsldialog.h"
 #include "ui_Eqsldialog.h"
 #include "core/debug.h"
-#include "core/Eqsl.h"
+#include "service/eqsl/Eqsl.h"
 #include "models/SqlListModel.h"
 #include "logformat/AdiFormat.h"
 #include "ui/ShowUploadDialog.h"

@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_CLUBLOG_H
-#define QLOG_CORE_CLUBLOG_H
+#ifndef QLOG_SERVICE_CLUBLOG_CLUBLOG_H
+#define QLOG_SERVICE_CLUBLOG_CLUBLOG_H
 
 #include <QObject>
 #include <QSqlRecord>
@@ -63,4 +63,4 @@ private:
     const static QString CONFIG_UPLOAD_IMMEDIATELY_KEY;
 };
 
-#endif // QLOG_CORE_CLUBLOG_H
+#endif // QLOG_SERVICE_CLUBLOG_CLUBLOG_H

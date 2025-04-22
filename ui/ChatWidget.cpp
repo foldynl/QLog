@@ -6,7 +6,7 @@
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
 #include "core/debug.h"
-#include "core/KSTChat.h"
+#include "service/kstchat/KSTChat.h"
 #include "ui/KSTChatWidget.h"
 
 MODULE_IDENTIFICATION("qlog.ui.chatwidget");

@@ -9,7 +9,7 @@
 #include "models/SqlListModel.h"
 #include "core/debug.h"
 #include "ui/ShowUploadDialog.h"
-#include "core/HRDLog.h"
+#include "service/hrdlog/HRDLog.h"
 #include "data/StationProfile.h"
 
 MODULE_IDENTIFICATION("qlog.ui.hrdlogdialog");

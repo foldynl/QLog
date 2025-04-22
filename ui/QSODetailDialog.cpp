@@ -12,7 +12,7 @@
 #include "core/debug.h"
 #include "data/Data.h"
 #include "PaperQSLDialog.h"
-#include "core/Eqsl.h"
+#include "service/eqsl/Eqsl.h"
 #include "models/SqlListModel.h"
 #include "core/Gridsquare.h"
 #include "core/Callsign.h"

@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_HRDLOG_H
-#define QLOG_CORE_HRDLOG_H
+#ifndef QLOG_SERVICE_HRDLOG_HRDLOG_H
+#define QLOG_SERVICE_HRDLOG_HRDLOG_H
 
 #include <QObject>
 #include <QSqlRecord>
@@ -52,4 +52,4 @@ private:
     const static QString CONFIG_ONAIR_ENABLED_KEY;
 };
 
-#endif // QLOG_CORE_HRDLOG_H
+#endif // QLOG_SERVICE_HRDLOG_HRDLOG_H

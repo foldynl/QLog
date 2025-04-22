@@ -18,7 +18,7 @@
 #include <QMargins>
 #include <QPainter>
 
-#include "core/KSTChat.h"
+#include "service/kstchat/KSTChat.h"
 #include "ui/NewContactWidget.h"
 
 namespace Ui {

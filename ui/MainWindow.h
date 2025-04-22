@@ -7,7 +7,7 @@
 #include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"
-#include "core/ClubLog.h"
+#include "service/clublog/ClubLog.h"
 
 namespace Ui {
 class MainWindow;

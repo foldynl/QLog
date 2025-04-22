@@ -6,7 +6,7 @@
 #include "KSTHighlightRuleDetail.h"
 #include "ui_KSTHighlightRuleDetail.h"
 #include "core/debug.h"
-#include "core/KSTChat.h"
+#include "service/kstchat/KSTChat.h"
 
 MODULE_IDENTIFICATION("qlog.ui.ksthightlightruledetail");
 

@@ -50,27 +50,19 @@ SOURCES += \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
         core/Callsign.cpp \
-        core/ClubLog.cpp \
         core/CredentialStore.cpp \
         core/DxServerString.cpp \
-        core/Eqsl.cpp \
         core/Fldigi.cpp \
-        core/GenericCallbook.cpp \
         core/Gridsquare.cpp \
-        core/HRDLog.cpp \
-        core/HamQTH.cpp \
         core/HostsPortString.cpp \
-        core/KSTChat.cpp \
         core/LOVDownloader.cpp \
         core/LogLocale.cpp \
         core/LogParam.cpp \
-        core/Lotw.cpp \
         core/MembershipQE.cpp \
         core/Migration.cpp \
         core/MultiselectCompleter.cpp \
         core/NetworkNotification.cpp \
         core/PropConditions.cpp \
-        core/QRZ.cpp \
         core/QSLStorage.cpp \
         core/QSOFilterManager.cpp \
         core/SerialPort.cpp \
@@ -123,6 +115,14 @@ SOURCES += \
         rotator/drivers/GenericRotDrv.cpp \
         rotator/drivers/HamlibRotDrv.cpp \
         rotator/drivers/PSTRotDrv.cpp \
+        service/GenericCallbook.cpp \
+        service/clublog/ClubLog.cpp \
+        service/eqsl/Eqsl.cpp \
+        service/hamqth/HamQTH.cpp \
+        service/hrdlog/HRDLog.cpp \
+        service/kstchat/KSTChat.cpp \
+        service/lotw/Lotw.cpp \
+        service/qrzcom/QRZ.cpp \
         ui/ActivityEditor.cpp \
         ui/AlertRuleDetail.cpp \
         ui/AlertSettingDialog.cpp \
@@ -178,27 +178,19 @@ HEADERS += \
         core/AppGuard.h \
         core/CallbookManager.h \
         core/Callsign.h \
-        core/ClubLog.h \
         core/CredentialStore.h \
         core/DxServerString.h \
-        core/Eqsl.h \
         core/Fldigi.h \
-        core/GenericCallbook.h \
         core/Gridsquare.h \
-        core/HRDLog.h \
-        core/HamQTH.h \
         core/HostsPortString.h \
-        core/KSTChat.h \
         core/LOVDownloader.h \
         core/LogLocale.h \
         core/LogParam.h \
-        core/Lotw.h \
         core/MembershipQE.h \
         core/Migration.h \
         core/MultiselectCompleter.h \
         core/NetworkNotification.h \
         core/PropConditions.h \
-        core/QRZ.h \
         core/QSLStorage.h \
         core/QSOFilterManager.h \
         core/QuadKeyCache.h \
@@ -264,6 +256,14 @@ HEADERS += \
         rotator/drivers/GenericRotDrv.h \
         rotator/drivers/HamlibRotDrv.h \
         rotator/drivers/PSTRotDrv.h \
+        service/GenericCallbook.h \
+        service/clublog/ClubLog.h \
+        service/eqsl/Eqsl.h \
+        service/hamqth/HamQTH.h \
+        service/hrdlog/HRDLog.h \
+        service/kstchat/KSTChat.h \
+        service/lotw/Lotw.h \
+        service/qrzcom/QRZ.h \
         ui/ActivityEditor.h \
         ui/AlertRuleDetail.h \
         ui/AlertSettingDialog.h \

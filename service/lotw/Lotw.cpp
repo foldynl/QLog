@@ -10,7 +10,7 @@
 #include <QMessageBox>
 #include "Lotw.h"
 #include "logformat/AdiFormat.h"
-#include "debug.h"
+#include "core/debug.h"
 #include "core/CredentialStore.h"
 
 #define ADIF_API "https://lotw.arrl.org/lotwuser/lotwreport.adi"

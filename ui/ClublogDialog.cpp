@@ -6,9 +6,8 @@
 
 #include "ClublogDialog.h"
 #include "ui_ClublogDialog.h"
-#include "core/ClubLog.h"
+#include "service/clublog/ClubLog.h"
 #include "core/debug.h"
-#include "core/ClubLog.h"
 #include "models/SqlListModel.h"
 #include "logformat/AdiFormat.h"
 #include "ui/ShowUploadDialog.h"

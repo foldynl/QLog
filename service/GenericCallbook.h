@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_GENERICCALLBOOK_H
-#define QLOG_CORE_GENERICCALLBOOK_H
+#ifndef QLOG_SERVICE_GENERICCALLBOOK_H
+#define QLOG_SERVICE_GENERICCALLBOOK_H
 
 #include <QObject>
 #include <QNetworkReply>
@@ -9,7 +9,8 @@ class GenericCallbook : public QObject
     Q_OBJECT
 public:
     explicit GenericCallbook(QObject *parent = nullptr);
-    ~GenericCallbook() {};
+    virtual ~GenericCallbook() {};
+
     const static QString SECURE_STORAGE_KEY;
     const static QString CONFIG_USERNAME_KEY;
     const static QString CONFIG_PRIMARY_CALLBOOK_KEY;
@@ -33,4 +34,4 @@ public slots:
     virtual void abortQuery() = 0;
 
 };
-#endif // QLOG_CORE_GENERICCALLBOOK_H
+#endif // QLOG_SERVICE_GENERICCALLBOOK_H

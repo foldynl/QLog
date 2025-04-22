@@ -8,7 +8,7 @@
 #include "data/Data.h"
 #include "LogParam.h"
 #include "LOVDownloader.h"
-#include "ClubLog.h"
+#include "service/clublog/ClubLog.h"
 #include "logformat/AdxFormat.h"
 
 MODULE_IDENTIFICATION("qlog.core.migration");

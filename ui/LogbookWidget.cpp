@@ -13,7 +13,7 @@
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
 #include "models/SqlListModel.h"
-#include "core/ClubLog.h"
+#include "service/clublog/ClubLog.h"
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"
 #include "ui/StyleItemDelegate.h"
@@ -22,12 +22,11 @@
 #include "ui/ColumnSettingDialog.h"
 #include "data/Data.h"
 #include "ui/ExportDialog.h"
-#include "core/Eqsl.h"
+#include "service/eqsl/Eqsl.h"
 #include "ui/PaperQSLDialog.h"
 #include "ui/QSODetailDialog.h"
 #include "core/MembershipQE.h"
-#include "core/GenericCallbook.h"
-#include "core/ClubLog.h"
+#include "service/GenericCallbook.h"
 #include "core/QSOFilterManager.h"
 
 MODULE_IDENTIFICATION("qlog.ui.logbookwidget");

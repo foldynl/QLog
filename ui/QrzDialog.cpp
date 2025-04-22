@@ -8,7 +8,7 @@
 #include "QrzDialog.h"
 #include "ui_QrzDialog.h"
 #include "core/debug.h"
-#include "core/QRZ.h"
+#include "service/qrzcom/QRZ.h"
 #include "models/SqlListModel.h"
 #include "ui/ShowUploadDialog.h"
 #include "data/StationProfile.h"

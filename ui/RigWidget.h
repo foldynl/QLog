@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "rig/Rig.h"
-#include "core/HRDLog.h"
+#include "service/hrdlog/HRDLog.h"
 
 namespace Ui {
 class RigWidget;

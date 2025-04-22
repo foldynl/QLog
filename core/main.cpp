@@ -24,7 +24,7 @@
 #include "core/zonedetect.h"
 #include "ui/SplashScreen.h"
 #include "core/MembershipQE.h"
-#include "core/KSTChat.h"
+#include "service/kstchat/KSTChat.h"
 #include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.core.main");

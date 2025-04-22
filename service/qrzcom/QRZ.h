@@ -1,10 +1,10 @@
-#ifndef QLOG_CORE_QRZ_H
-#define QLOG_CORE_QRZ_H
+#ifndef QLOG_SERVICE_QRZ_QRZ_H
+#define QLOG_SERVICE_QRZ_QRZ_H
 
 #include <QObject>
 #include <QString>
 #include <QSqlRecord>
-#include "core/GenericCallbook.h"
+#include "service/GenericCallbook.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -15,7 +15,7 @@ class QRZ : public GenericCallbook
 
 public:
     explicit QRZ(QObject *parent = nullptr);
-    ~QRZ();
+    virtual ~QRZ();
 
     void uploadContact(const QSqlRecord &record);
     void uploadContacts(const QList<QSqlRecord>&);
@@ -65,4 +65,4 @@ private:
 
 };
 
-#endif // QLOG_CORE_QRZ_H
+#endif // QLOG_SERVICE_QRZ_QRZ_H

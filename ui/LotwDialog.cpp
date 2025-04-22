@@ -10,7 +10,7 @@
 #include "LotwDialog.h"
 #include "ui_LotwDialog.h"
 #include "logformat/AdiFormat.h"
-#include "core/Lotw.h"
+#include "service/lotw/Lotw.h"
 #include "core/debug.h"
 #include "ui/QSLImportStatDialog.h"
 #include "models/SqlListModel.h"

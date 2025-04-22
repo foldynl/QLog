@@ -2,8 +2,8 @@
 #include <QCache>
 #include "CallbookManager.h"
 #include "core/debug.h"
-#include "core/HamQTH.h"
-#include "core/QRZ.h"
+#include "service/hamqth/HamQTH.h"
+#include "service/qrzcom/QRZ.h"
 #include "core/Callsign.h"
 
 MODULE_IDENTIFICATION("qlog.ui.callbookmanager");

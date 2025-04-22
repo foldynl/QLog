@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_KSTCHAT_H
-#define QLOG_CORE_KSTCHAT_H
+#ifndef QLOG_SERVICE_KSTCHAT_KSTCHAT_H
+#define QLOG_SERVICE_KSTCHAT_KSTCHAT_H
 
 #include <QObject>
 #include <QTcpSocket>
@@ -181,4 +181,4 @@ private:
     static const QString CONFIG_USERNAME_KEY;
 };
 
-#endif // QLOG_CORE_KSTCHAT_H
+#endif // QLOG_SERVICE_KSTCHAT_KSTCHAT_H

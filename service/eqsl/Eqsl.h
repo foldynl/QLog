@@ -1,10 +1,10 @@
-#ifndef QLOG_CORE_EQSL_H
-#define QLOG_CORE_EQSL_H
+#ifndef QLOG_SERVICE_EQSL_EQSL_H
+#define QLOG_SERVICE_EQSL_EQSL_H
 
 #include <QObject>
 #include <logformat/LogFormat.h>
 
-#include "QSLStorage.h"
+#include "core/QSLStorage.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -54,4 +54,4 @@ private:
 
 };
 
-#endif // QLOG_CORE_EQSL_H
+#endif // QLOG_SERVICE_EQSL_EQSL_H

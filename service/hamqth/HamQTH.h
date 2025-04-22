@@ -1,9 +1,9 @@
-#ifndef QLOG_CORE_HAMQTH_H
-#define QLOG_CORE_HAMQTH_H
+#ifndef QLOG_SERVICE_HAMQTH_HAMQTH_H
+#define QLOG_SERVICE_HAMQTH_HAMQTH_H
 
 #include <QObject>
 #include <QString>
-#include "core/GenericCallbook.h"
+#include "service/GenericCallbook.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -14,7 +14,7 @@ class HamQTH : public GenericCallbook
 
 public:
     explicit HamQTH(QObject *parent = nullptr);
-    ~HamQTH();
+    virtual ~HamQTH();
 
     const static QString CALLBOOK_NAME;
     static const QString getUsername();
@@ -45,4 +45,4 @@ private:
     const static QString CONFIG_USERNAME_KEY;
 };
 
-#endif // QLOG_CORE_HAMQTH_H
+#endif // QLOG_SERVICE_HAMQTH_HAMQTH_H

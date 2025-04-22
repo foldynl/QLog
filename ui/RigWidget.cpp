@@ -9,7 +9,7 @@
 #include "rig/macros.h"
 #include "core/debug.h"
 #include "data/Data.h"
-#include "core/HRDLog.h"
+#include "service/hrdlog/HRDLog.h"
 #include "data/BandPlan.h"
 
 // On AIR pinging to HRDLog [in sec]

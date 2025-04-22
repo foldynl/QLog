@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QPointer>
-#include "core/GenericCallbook.h"
+#include "service/GenericCallbook.h"
 
 class CallbookManager : public QObject
 {

@@ -8,7 +8,7 @@
 #include <QDebug>
 #include "QRZ.h"
 #include <QMessageBox>
-#include "debug.h"
+#include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "logformat/AdiFormat.h"
 #include "core/Callsign.h"

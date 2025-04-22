@@ -7,7 +7,7 @@
 #include <QDomDocument>
 
 #include "HRDLog.h"
-#include "debug.h"
+#include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "logformat/AdiFormat.h"
 #include "rig/macros.h"
