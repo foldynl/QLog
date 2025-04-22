@@ -304,7 +304,6 @@ HEADERS += \
         ui/QrzDialog.h \
         ui/ShowUploadDialog.h \
         ui/SplashScreen.h \
-        ui/StyleItemDelegate.h \
         ui/RigWidget.h \
         ui/RotatorWidget.h \
         ui/SettingsDialog.h \
@@ -317,6 +316,7 @@ HEADERS += \
         ui/component/ButtonStyle.h \
         ui/component/EditLine.h \
         ui/component/MultiselectCompleter.h \
+        ui/component/StyleItemDelegate.h \
         ui/component/SwitchButton.h
 
 FORMS += \

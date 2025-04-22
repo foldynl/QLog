@@ -12,7 +12,7 @@
 #include "ui/ColumnSettingDialog.h"
 #include "ui/WsjtxFilterDialog.h"
 #include "data/Gridsquare.h"
-#include "ui/StyleItemDelegate.h"
+#include "ui/component/StyleItemDelegate.h"
 #include "data/BandPlan.h"
 
 MODULE_IDENTIFICATION("qlog.ui.wsjtxswidget");

@@ -1,7 +1,7 @@
 #include "KSTHighlighterSettingDialog.h"
 #include "ui_KSTHighlighterSettingDialog.h"
 #include "core/debug.h"
-#include "ui/StyleItemDelegate.h"
+#include "ui/component/StyleItemDelegate.h"
 #include "ui/KSTHighlightRuleDetail.h"
 
 MODULE_IDENTIFICATION("qlog.ui.ksthighlightersettingdialog");

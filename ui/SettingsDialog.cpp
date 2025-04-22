@@ -16,7 +16,7 @@
 #include "service/clublog/ClubLog.h"
 #include "service/eqsl/Eqsl.h"
 #include "service/hrdlog/HRDLog.h"
-#include "../ui/StyleItemDelegate.h"
+#include "ui/component/StyleItemDelegate.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
 #include "data/RigProfile.h"
@@ -36,7 +36,7 @@
 #include "service/kstchat/KSTChat.h"
 #include "data/HostsPortString.h"
 #include "models/ShortcutEditorModel.h"
-#include "ui/StyleItemDelegate.h"
+#include "ui/component/StyleItemDelegate.h"
 #include "data/SerialPort.h"
 
 #define STACKED_WIDGET_SERIAL_SETTING  0
