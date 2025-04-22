@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_WSJTX_H
-#define QLOG_CORE_WSJTX_H
+#ifndef QLOG_CORE_WSJTXUDPRECEIVER_H
+#define QLOG_CORE_WSJTXUDPRECEIVER_H
 
 #include <QObject>
 #include <QDateTime>
@@ -121,11 +121,11 @@ public:
                  + ")";}
 };
 
-class Wsjtx : public QObject
+class WsjtxUDPReceiver : public QObject
 {
     Q_OBJECT
 public:
-    explicit Wsjtx(QObject *parent = nullptr);
+    explicit WsjtxUDPReceiver(QObject *parent = nullptr);
     static float modePeriodLenght(const QString &);
 
     static quint16 getConfigPort();
@@ -172,4 +172,4 @@ private:
     void forwardDatagram(const QNetworkDatagram &);
 };
 
-#endif // QLOG_CORE_WSJTX_H
+#endif // QLOG_CORE_WSJTXUDPRECEIVER_H

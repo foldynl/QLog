@@ -9,7 +9,7 @@
 #include <QNetworkInterface>
 #include <QSqlField>
 
-#include "Wsjtx.h"
+#include "WsjtxUDPReceiver.h"
 #include "data/Data.h"
 #include "debug.h"
 #include "core/HostsPortString.h"
@@ -19,18 +19,18 @@
 
 MODULE_IDENTIFICATION("qlog.core.wsjtx");
 
-Wsjtx::Wsjtx(QObject *parent) :
+WsjtxUDPReceiver::WsjtxUDPReceiver(QObject *parent) :
     QObject(parent),
     socket(nullptr)
 {
     FCT_IDENTIFICATION;
     socket = new QUdpSocket(this);
     openPort();
-    connect(socket, &QUdpSocket::readyRead, this, &Wsjtx::readPendingDatagrams);
-    connect(&wsjtSQLRecord, &UpdatableSQLRecord::recordReady, this, &Wsjtx::contactReady);
+    connect(socket, &QUdpSocket::readyRead, this, &WsjtxUDPReceiver::readPendingDatagrams);
+    connect(&wsjtSQLRecord, &UpdatableSQLRecord::recordReady, this, &WsjtxUDPReceiver::contactReady);
 }
 
-void Wsjtx::openPort()
+void WsjtxUDPReceiver::openPort()
 {
     FCT_IDENTIFICATION;
 
@@ -46,7 +46,7 @@ void Wsjtx::openPort()
         socket->close();
     }
 
-    int newPort = settings.value(Wsjtx::CONFIG_PORT,Wsjtx::DEFAULT_PORT).toInt();
+    int newPort = settings.value(WsjtxUDPReceiver::CONFIG_PORT,WsjtxUDPReceiver::DEFAULT_PORT).toInt();
 
     qCDebug(runtime) << "Listen port"<< newPort;
 
@@ -100,7 +100,7 @@ void Wsjtx::openPort()
     }
 }
 
-void Wsjtx::forwardDatagram(const QNetworkDatagram &datagram)
+void WsjtxUDPReceiver::forwardDatagram(const QNetworkDatagram &datagram)
 {
     FCT_IDENTIFICATION;
 
@@ -117,7 +117,7 @@ void Wsjtx::forwardDatagram(const QNetworkDatagram &datagram)
     }
 }
 
-float Wsjtx::modePeriodLenght(const QString &mode)
+float WsjtxUDPReceiver::modePeriodLenght(const QString &mode)
 {
     FCT_IDENTIFICATION;
 
@@ -154,97 +154,97 @@ float Wsjtx::modePeriodLenght(const QString &mode)
     return ret;
 }
 
-quint16 Wsjtx::getConfigPort()
+quint16 WsjtxUDPReceiver::getConfigPort()
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    return settings.value(Wsjtx::CONFIG_PORT, Wsjtx::DEFAULT_PORT).toInt();
+    return settings.value(WsjtxUDPReceiver::CONFIG_PORT, WsjtxUDPReceiver::DEFAULT_PORT).toInt();
 }
 
-void Wsjtx::saveConfigPort(quint16 port)
+void WsjtxUDPReceiver::saveConfigPort(quint16 port)
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    settings.setValue(Wsjtx::CONFIG_PORT, port);
+    settings.setValue(WsjtxUDPReceiver::CONFIG_PORT, port);
 }
 
-QString Wsjtx::getConfigForwardAddresses()
+QString WsjtxUDPReceiver::getConfigForwardAddresses()
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    return settings.value(Wsjtx::CONFIG_FORWARD_ADDRESSES).toString();
+    return settings.value(WsjtxUDPReceiver::CONFIG_FORWARD_ADDRESSES).toString();
 }
 
-void Wsjtx::saveConfigForwardAddresses(const QString &addresses)
+void WsjtxUDPReceiver::saveConfigForwardAddresses(const QString &addresses)
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    settings.setValue(Wsjtx::CONFIG_FORWARD_ADDRESSES, addresses);
+    settings.setValue(WsjtxUDPReceiver::CONFIG_FORWARD_ADDRESSES, addresses);
 }
 
-void Wsjtx::saveConfigMulticastJoin(bool state)
+void WsjtxUDPReceiver::saveConfigMulticastJoin(bool state)
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    settings.setValue(Wsjtx::CONFIG_MULTICAST_JOIN, state);
+    settings.setValue(WsjtxUDPReceiver::CONFIG_MULTICAST_JOIN, state);
 }
 
-bool Wsjtx::getConfigMulticastJoin()
+bool WsjtxUDPReceiver::getConfigMulticastJoin()
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    return settings.value(Wsjtx::CONFIG_MULTICAST_JOIN).toBool();
+    return settings.value(WsjtxUDPReceiver::CONFIG_MULTICAST_JOIN).toBool();
 }
 
-void Wsjtx::saveConfigMulticastAddress(QString addr)
+void WsjtxUDPReceiver::saveConfigMulticastAddress(QString addr)
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    settings.setValue(Wsjtx::CONFIG_MULTICAST_ADDRESS, addr);
+    settings.setValue(WsjtxUDPReceiver::CONFIG_MULTICAST_ADDRESS, addr);
 }
 
-QString Wsjtx::getConfigMulticastAddress()
+QString WsjtxUDPReceiver::getConfigMulticastAddress()
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    return settings.value(Wsjtx::CONFIG_MULTICAST_ADDRESS).toString();
+    return settings.value(WsjtxUDPReceiver::CONFIG_MULTICAST_ADDRESS).toString();
 }
 
-void Wsjtx::saveConfigMulticastTTL(int ttl)
+void WsjtxUDPReceiver::saveConfigMulticastTTL(int ttl)
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    settings.setValue(Wsjtx::CONFIG_MULTICAST_TTL, ttl);
+    settings.setValue(WsjtxUDPReceiver::CONFIG_MULTICAST_TTL, ttl);
 }
 
-int Wsjtx::getConfigMulticastTTL()
+int WsjtxUDPReceiver::getConfigMulticastTTL()
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    return settings.value(Wsjtx::CONFIG_MULTICAST_TTL).toInt();
+    return settings.value(WsjtxUDPReceiver::CONFIG_MULTICAST_TTL).toInt();
 }
 
-void Wsjtx::readPendingDatagrams()
+void WsjtxUDPReceiver::readPendingDatagrams()
 {
     FCT_IDENTIFICATION;
 
@@ -407,7 +407,7 @@ void Wsjtx::readPendingDatagrams()
     }
 }
 
-void Wsjtx::insertContact(WsjtxLog log)
+void WsjtxUDPReceiver::insertContact(WsjtxLog log)
 {
     FCT_IDENTIFICATION;
 
@@ -528,14 +528,14 @@ void Wsjtx::insertContact(WsjtxLog log)
     //emit addContact(record);
 }
 
-void Wsjtx::contactReady(QSqlRecord record)
+void WsjtxUDPReceiver::contactReady(QSqlRecord record)
 {
     FCT_IDENTIFICATION;
 
     emit addContact(record);
 }
 
-void Wsjtx::insertContact(WsjtxLogADIF log)
+void WsjtxUDPReceiver::insertContact(WsjtxLogADIF log)
 {
     FCT_IDENTIFICATION;
 
@@ -571,7 +571,7 @@ void Wsjtx::insertContact(WsjtxLogADIF log)
     //emit addContact(record);
 }
 
-void Wsjtx::startReply(WsjtxDecode decode)
+void WsjtxUDPReceiver::startReply(WsjtxDecode decode)
 {
     FCT_IDENTIFICATION;
 
@@ -599,15 +599,15 @@ void Wsjtx::startReply(WsjtxDecode decode)
     socket->writeDatagram(data, wsjtxAddress, wsjtxPort);
 }
 
-void Wsjtx::reloadSetting()
+void WsjtxUDPReceiver::reloadSetting()
 {
     FCT_IDENTIFICATION;
     openPort();
 }
 
-QString Wsjtx::CONFIG_PORT = "network/wsjtx_port";
-int     Wsjtx::DEFAULT_PORT = 2237;
-QString Wsjtx::CONFIG_FORWARD_ADDRESSES = "network/wsjtx_forward";
-QString Wsjtx::CONFIG_MULTICAST_JOIN = "network/wsjtx_multicast";
-QString Wsjtx::CONFIG_MULTICAST_ADDRESS = "network/wsjtx_multicast_addr";
-QString Wsjtx::CONFIG_MULTICAST_TTL = "network/wsjtx_multicast_ttl";
+QString WsjtxUDPReceiver::CONFIG_PORT = "network/wsjtx_port";
+int     WsjtxUDPReceiver::DEFAULT_PORT = 2237;
+QString WsjtxUDPReceiver::CONFIG_FORWARD_ADDRESSES = "network/wsjtx_forward";
+QString WsjtxUDPReceiver::CONFIG_MULTICAST_JOIN = "network/wsjtx_multicast";
+QString WsjtxUDPReceiver::CONFIG_MULTICAST_ADDRESS = "network/wsjtx_multicast_addr";
+QString WsjtxUDPReceiver::CONFIG_MULTICAST_TTL = "network/wsjtx_multicast_ttl";

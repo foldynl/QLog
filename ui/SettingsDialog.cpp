@@ -23,7 +23,7 @@
 #include "data/AntProfile.h"
 #include "data/Data.h"
 #include "core/Gridsquare.h"
-#include "core/Wsjtx.h"
+#include "core/WsjtxUDPReceiver.h"
 #include "core/NetworkNotification.h"
 #include "rig/Rig.h"
 #include "rig/RigCaps.h"
@@ -2345,11 +2345,11 @@ void SettingsDialog::readSettings() {
     /* NETWORK */
     /***********/
 
-    ui->wsjtPortSpin->setValue(Wsjtx::getConfigPort());
-    ui->wsjtForwardEdit->setText(Wsjtx::getConfigForwardAddresses());
-    ui->wsjtMulticastCheckbox->setChecked(Wsjtx::getConfigMulticastJoin());
-    ui->wsjtMulticastAddressEdit->setText(Wsjtx::getConfigMulticastAddress());
-    ui->wsjtMulticastTTLSpin->setValue(Wsjtx::getConfigMulticastTTL());
+    ui->wsjtPortSpin->setValue(WsjtxUDPReceiver::getConfigPort());
+    ui->wsjtForwardEdit->setText(WsjtxUDPReceiver::getConfigForwardAddresses());
+    ui->wsjtMulticastCheckbox->setChecked(WsjtxUDPReceiver::getConfigMulticastJoin());
+    ui->wsjtMulticastAddressEdit->setText(WsjtxUDPReceiver::getConfigMulticastAddress());
+    ui->wsjtMulticastTTLSpin->setValue(WsjtxUDPReceiver::getConfigMulticastTTL());
 
     ui->notifLogIDEdit->setText(LogParam::getLogID());
     ui->notifQSOEdit->setText(NetworkNotification::getNotifQSOAdiAddrs());
@@ -2470,11 +2470,11 @@ void SettingsDialog::writeSettings() {
     /***********/
     /* NETWORK */
     /***********/
-    Wsjtx::saveConfigPort(ui->wsjtPortSpin->value());
-    Wsjtx::saveConfigForwardAddresses(ui->wsjtForwardEdit->text());
-    Wsjtx::saveConfigMulticastJoin(ui->wsjtMulticastCheckbox->isChecked());
-    Wsjtx::saveConfigMulticastAddress(ui->wsjtMulticastAddressEdit->text());
-    Wsjtx::saveConfigMulticastTTL(ui->wsjtMulticastTTLSpin->value());
+    WsjtxUDPReceiver::saveConfigPort(ui->wsjtPortSpin->value());
+    WsjtxUDPReceiver::saveConfigForwardAddresses(ui->wsjtForwardEdit->text());
+    WsjtxUDPReceiver::saveConfigMulticastJoin(ui->wsjtMulticastCheckbox->isChecked());
+    WsjtxUDPReceiver::saveConfigMulticastAddress(ui->wsjtMulticastAddressEdit->text());
+    WsjtxUDPReceiver::saveConfigMulticastTTL(ui->wsjtMulticastTTLSpin->value());
 
     NetworkNotification::saveNotifQSOAdiAddrs(ui->notifQSOEdit->text());
     NetworkNotification::saveNotifDXSpotAddrs(ui->notifDXSpotsEdit->text());

@@ -108,7 +108,7 @@ private:
     QSettings settings;
     bool isFusionStyle;
     ClubLog* clublogRT;
-    Wsjtx* wsjtx;
+    WsjtxUDPReceiver* wsjtx;
     QActionGroup *seqGroup;
     QActionGroup *dupeGroup;
     QActionGroup *linkExchangeGroup;

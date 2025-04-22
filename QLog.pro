@@ -67,7 +67,7 @@ SOURCES += \
         core/QSOFilterManager.cpp \
         core/SerialPort.cpp \
         core/UpdatableSQLRecord.cpp \
-        core/Wsjtx.cpp \
+        core/WsjtxUDPReceiver.cpp \
         core/debug.cpp \
         core/main.cpp \
         core/zonedetect.c \
@@ -196,7 +196,7 @@ HEADERS += \
         core/QuadKeyCache.h \
         core/SerialPort.h \
         core/UpdatableSQLRecord.h \
-        core/Wsjtx.h \
+        core/WsjtxUDPReceiver.h \
         core/debug.h \
         core/zonedetect.h \
         cwkey/CWKeyer.h \
