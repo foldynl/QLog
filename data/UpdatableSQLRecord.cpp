@@ -1,7 +1,7 @@
 #include <QSqlField>
 
 #include "UpdatableSQLRecord.h"
-#include "debug.h"
+#include "core/debug.h"
 
 MODULE_IDENTIFICATION("qlog.core.updatableqslrecord");
 

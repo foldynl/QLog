@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_UPDATABLESQLRECORD_H
-#define QLOG_CORE_UPDATABLESQLRECORD_H
+#ifndef QLOG_DATA_UPDATABLESQLRECORD_H
+#define QLOG_DATA_UPDATABLESQLRECORD_H
 
 #include <QObject>
 #include <QSqlRecord>
@@ -42,4 +42,4 @@ private:
     int interval;
 };
 
-#endif // QLOG_CORE_UPDATABLESQLRECORD_H
+#endif // QLOG_DATA_UPDATABLESQLRECORD_H

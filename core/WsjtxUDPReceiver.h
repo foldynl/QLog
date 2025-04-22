@@ -7,7 +7,7 @@
 #include <QSqlRecord>
 #include <QNetworkDatagram>
 
-#include "core/UpdatableSQLRecord.h"
+#include "data/UpdatableSQLRecord.h"
 
 class Data;
 class QUdpSocket;
