@@ -8,7 +8,7 @@
 #include "ui/ImportDialog.h"
 #include "ui/ExportDialog.h"
 #include "ui/LotwDialog.h"
-#include "core/Fldigi.h"
+#include "core/FldigiTCPServer.h"
 #include "rig/Rig.h"
 #include "rotator/Rotator.h"
 #include "cwkey/CWKeyer.h"
@@ -235,8 +235,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(CWKeyer::instance(), &CWKeyer::cwKeyConnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyConnected);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyDisconnected);
 
-    Fldigi* fldigi = new Fldigi(this);
-    connect(fldigi, &Fldigi::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
+    FldigiTCPServer* fldigi = new FldigiTCPServer(this);
+    connect(fldigi, &FldigiTCPServer::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
 
     wsjtx = new Wsjtx(this);
     connect(wsjtx, &Wsjtx::statusReceived, ui->wsjtxWidget, &WsjtxWidget::statusReceived);

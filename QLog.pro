@@ -52,7 +52,7 @@ SOURCES += \
         core/Callsign.cpp \
         core/CredentialStore.cpp \
         core/DxServerString.cpp \
-        core/Fldigi.cpp \
+        core/FldigiTCPServer.cpp \
         core/Gridsquare.cpp \
         core/HostsPortString.cpp \
         core/LOVDownloader.cpp \
@@ -180,7 +180,7 @@ HEADERS += \
         core/Callsign.h \
         core/CredentialStore.h \
         core/DxServerString.h \
-        core/Fldigi.h \
+        core/FldigiTCPServer.h \
         core/Gridsquare.h \
         core/HostsPortString.h \
         core/LOVDownloader.h \

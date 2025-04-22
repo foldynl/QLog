@@ -6,11 +6,11 @@
 
 class QXmlStreamReader;
 
-class Fldigi : public QTcpServer {
+class FldigiTCPServer : public QTcpServer {
     Q_OBJECT
 
 public:
-    explicit Fldigi(QObject *parent = nullptr);
+    explicit FldigiTCPServer(QObject *parent = nullptr);
 
 signals:
     void addContact(QSqlRecord);

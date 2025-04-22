@@ -4,13 +4,13 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 
-#include "Fldigi.h"
+#include "FldigiTCPServer.h"
 #include "logformat/AdiFormat.h"
 #include "debug.h"
 
 MODULE_IDENTIFICATION("qlog.core.fldigi");
 
-Fldigi::Fldigi(QObject *parent) :
+FldigiTCPServer::FldigiTCPServer(QObject *parent) :
     QTcpServer(parent)
 {
     FCT_IDENTIFICATION;
@@ -18,17 +18,17 @@ Fldigi::Fldigi(QObject *parent) :
     listen(QHostAddress::Any, 8421);
 }
 
-void Fldigi::incomingConnection(qintptr socket)
+void FldigiTCPServer::incomingConnection(qintptr socket)
 {
     FCT_IDENTIFICATION;
 
     QTcpSocket* sock = new QTcpSocket(this);
-    connect(sock, &QTcpSocket::readyRead, this, &Fldigi::readClient);
-    connect(sock, &QTcpSocket::disconnected, this, &Fldigi::discardClient);
+    connect(sock, &QTcpSocket::readyRead, this, &FldigiTCPServer::readClient);
+    connect(sock, &QTcpSocket::disconnected, this, &FldigiTCPServer::discardClient);
     sock->setSocketDescriptor(socket);
 }
 
-void Fldigi::readClient() {
+void FldigiTCPServer::readClient() {
     FCT_IDENTIFICATION;
 
     QTcpSocket* sock = (QTcpSocket*)sender();
@@ -53,14 +53,14 @@ void Fldigi::readClient() {
     }
 }
 
-void Fldigi::discardClient() {
+void FldigiTCPServer::discardClient() {
     FCT_IDENTIFICATION;
 
     QTcpSocket* sock = (QTcpSocket*)sender();
     sock->deleteLater();
 }
 
-void Fldigi::processMethodCall(QTcpSocket* sock, QXmlStreamReader& xml) {
+void FldigiTCPServer::processMethodCall(QTcpSocket* sock, QXmlStreamReader& xml) {
     FCT_IDENTIFICATION;
 
     QByteArray response;
@@ -107,7 +107,7 @@ void Fldigi::processMethodCall(QTcpSocket* sock, QXmlStreamReader& xml) {
     }
 }
 
-QString Fldigi::parseParam(QXmlStreamReader& xml) {
+QString FldigiTCPServer::parseParam(QXmlStreamReader& xml) {
     FCT_IDENTIFICATION;
 
     while (!xml.atEnd() && !xml.hasError()) {
@@ -121,7 +121,7 @@ QString Fldigi::parseParam(QXmlStreamReader& xml) {
     return QString();
 }
 
-QByteArray Fldigi::listMethods() {
+QByteArray FldigiTCPServer::listMethods() {
     FCT_IDENTIFICATION;
 
     QByteArray out;
@@ -143,7 +143,7 @@ QByteArray Fldigi::listMethods() {
     return out;
 }
 
-QByteArray Fldigi::addRecord(QString data) {
+QByteArray FldigiTCPServer::addRecord(QString data) {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << data;
