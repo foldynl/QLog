@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "ui/StatisticsWidget.h"
-#include "ui/SwitchButton.h"
+#include "ui/component/SwitchButton.h"
 #include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"

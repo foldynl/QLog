@@ -167,11 +167,11 @@ SOURCES += \
         ui/SettingsDialog.cpp \
         ui/ShowUploadDialog.cpp \
         ui/StatisticsWidget.cpp \
-        ui/SwitchButton.cpp \
         ui/WebEnginePage.cpp \
         ui/WsjtxFilterDialog.cpp \
         ui/WsjtxWidget.cpp \
-        ui/component/MultiselectCompleter.cpp
+        ui/component/MultiselectCompleter.cpp \
+        ui/component/SwitchButton.cpp
 
 HEADERS += \
         core/AlertEvaluator.h \
@@ -269,7 +269,6 @@ HEADERS += \
         ui/AlertWidget.h \
         ui/AwardsDialog.h \
         ui/BandmapWidget.h \
-        ui/ButtonStyle.h \
         ui/CWConsoleWidget.h \
         ui/ChatWidget.h \
         ui/ClockWidget.h \
@@ -311,13 +310,14 @@ HEADERS += \
         ui/RotatorWidget.h \
         ui/SettingsDialog.h \
         ui/StatisticsWidget.h \
-        ui/SwitchButton.h \
         ui/WebEnginePage.h \
         ui/WsjtxFilterDialog.h \
         ui/WsjtxWidget.h \
         i18n/dbstrings.tri \
         i18n/datastrings.tri \
-        ui/component/MultiselectCompleter.h
+        ui/component/ButtonStyle.h \
+        ui/component/MultiselectCompleter.h \
+        ui/component/SwitchButton.h
 
 FORMS += \
         ui/ActivityEditor.ui \
