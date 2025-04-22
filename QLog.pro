@@ -139,7 +139,6 @@ SOURCES += \
         ui/EditActivitiesDialog.cpp \
         ui/Eqsldialog.cpp \
         ui/ExportDialog.cpp \
-        ui/FreqQSpinBox.cpp \
         ui/HRDLogDialog.cpp \
         ui/ImportDialog.cpp \
         ui/InputPasswordDialog.cpp \
@@ -170,6 +169,7 @@ SOURCES += \
         ui/WsjtxFilterDialog.cpp \
         ui/WsjtxWidget.cpp \
         ui/component/EditLine.cpp \
+        ui/component/FreqQSpinBox.cpp \
         ui/component/MultiselectCompleter.cpp \
         ui/component/SwitchButton.cpp
 
@@ -280,7 +280,6 @@ HEADERS += \
         ui/EditActivitiesDialog.h \
         ui/Eqsldialog.h \
         ui/ExportDialog.h \
-        ui/FreqQSpinBox.h \
         ui/HRDLogDialog.h \
         ui/ImportDialog.h \
         ui/InputPasswordDialog.h \
@@ -315,6 +314,7 @@ HEADERS += \
         i18n/datastrings.tri \
         ui/component/ButtonStyle.h \
         ui/component/EditLine.h \
+        ui/component/FreqQSpinBox.h \
         ui/component/MultiselectCompleter.h \
         ui/component/StyleItemDelegate.h \
         ui/component/SwitchButton.h

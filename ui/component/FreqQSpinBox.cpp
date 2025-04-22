@@ -1,4 +1,4 @@
-#include "FreqQSpinBox.h"
+#include "ui/component/FreqQSpinBox.h"
 #include <QKeyEvent>
 #include "data/BandPlan.h"
 

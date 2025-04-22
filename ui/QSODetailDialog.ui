@@ -2278,7 +2278,7 @@
   <customwidget>
    <class>FreqQSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>ui/FreqQSpinBox.h</header>
+   <header>ui/component/FreqQSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
