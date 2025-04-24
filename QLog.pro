@@ -115,6 +115,7 @@ SOURCES += \
         rotator/drivers/HamlibRotDrv.cpp \
         rotator/drivers/PSTRotDrv.cpp \
         service/GenericCallbook.cpp \
+        service/GenericQSOUploader.cpp \
         service/clublog/ClubLog.cpp \
         service/eqsl/Eqsl.cpp \
         service/hamqth/HamQTH.cpp \
@@ -256,6 +257,7 @@ HEADERS += \
         rotator/drivers/HamlibRotDrv.h \
         rotator/drivers/PSTRotDrv.h \
         service/GenericCallbook.h \
+        service/GenericQSOUploader.h \
         service/clublog/ClubLog.h \
         service/eqsl/Eqsl.h \
         service/hamqth/HamQTH.h \
