@@ -864,7 +864,7 @@ bool Migration::refreshUploadStatusTrigger()
 
     QStringList clublogSupportedColumns;
 
-    for ( const QString &clublogColumn : static_cast<const QStringList&>(ClubLog::supportedDBFields) )
+    for ( const QString &clublogColumn : static_cast<const QStringList&>(ClubLogUploader::uploadedFields) )
         clublogSupportedColumns << QString("old.%1 != new.%2").arg(clublogColumn, clublogColumn);
 
     if ( !stmt.exec(QString("CREATE TRIGGER update_contacts_upload_status "

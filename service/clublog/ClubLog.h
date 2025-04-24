@@ -5,62 +5,76 @@
 #include <QSqlRecord>
 #include <QSqlQuery>
 #include <QHash>
+#include <QRegularExpression>
+#include "service/GenericQSOUploader.h"
 
 class QNetworkReply;
 class QNetworkAccessManager;
 
-class ClubLog : public QObject
+class ClubLogBase
+{
+public:
+    explicit ClubLogBase() {};
+    virtual ~ClubLogBase() {} ;
+
+    static const QString getEmail();
+    static bool isUploadImmediatelyEnabled();
+    static const QString getPassword();
+    static void saveUsernamePassword(const QString &, const QString &);
+    static void saveUploadImmediatelyConfig(bool value);
+
+protected:
+    const static QString SECURE_STORAGE_KEY;
+    const static QString CONFIG_EMAIL_KEY;
+    const static QString CONFIG_UPLOAD_IMMEDIATELY_KEY;
+};
+
+class ClubLogUploader : public GenericQSOUploader, private ClubLogBase
 {
     Q_OBJECT
+
 public:
-    enum OnlineCommand
+    static QStringList uploadedFields;
+
+    enum OnlineUploadCommand
     {
       INSERT_QSO,
       UPDATE_QSO,
       DELETE_QSO
     };
-    explicit ClubLog(QObject *parent = nullptr);
-    ~ClubLog();
 
-    static const QString getEmail();
-    static bool isUploadImmediatelyEnabled();
-    static const QString getPassword();
+    explicit ClubLogUploader(QObject *parent = nullptr);
+    virtual ~ClubLogUploader();
 
-    static void saveUsernamePassword(const QString &, const QString &);
-    static void saveUploadImmediatelyConfig(bool value);
-
-    static QStringList supportedDBFields;
-
-    void uploadAdif(QByteArray &data,
+    void uploadAdif(const QByteArray &data,
                     const QString &uploadCallsign,
                     bool clearFlag = false);
-    void sendRealtimeRequest(const OnlineCommand command,
+    void sendRealtimeRequest(const OnlineUploadCommand command,
                              const QSqlRecord &record,
                              const QString &uploadCallsign);
-
-signals:
-    void uploadFileOK(QString);
-    void QSOUploaded();
-    void uploadError(QString);
+    virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
 
 public slots:
-    void processReply(QNetworkReply* reply);
-    void abortRequest();
+    virtual void abortRequest() override;
     void insertQSOImmediately(const QSqlRecord &record);
     void updateQSOImmediately(const QSqlRecord &record);
     void deleteQSOImmediately(const QSqlRecord &record);
 
-private:
-    QNetworkAccessManager* nam;
-    QList<QNetworkReply*> activeReplies;
-    const QString generateUploadCallsign(const QSqlRecord &record) const;
-    QSqlRecord stripRecord(const QSqlRecord&);
-    QSqlQuery query_updateRT;
-    QHash<unsigned long long, QSqlRecord> RTupdatesInProgress;
+protected:
+    virtual void processReply(QNetworkReply *reply) override;
 
-    const static QString SECURE_STORAGE_KEY;
-    const static QString CONFIG_EMAIL_KEY;
-    const static QString CONFIG_UPLOAD_IMMEDIATELY_KEY;
+private:
+    const QString API_KEY = "21507885dece41ca049fec7fe02a813f2105aff2";
+    const QString API_LIVE_UPLOAD_URL = "https://clublog.org/realtime.php";
+    const QString API_LIVE_DELETE_URL = "https://clublog.org/delete.php";
+    const QString API_LOG_UPLOAD_URL = "https://clublog.org/putlogs.php";
+
+    QList<QNetworkReply*> activeReplies;
+    QSqlQuery query_updateRT;
+    QHash<qulonglong, QSqlRecord> RTupdatesInProgress;
+    QRegularExpression rx;
+
+    const QString generateUploadCallsign(const QSqlRecord &record) const;
 };
 
 #endif // QLOG_SERVICE_CLUBLOG_CLUBLOG_H

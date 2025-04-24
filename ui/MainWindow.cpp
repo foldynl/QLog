@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     stats(new StatisticsWidget),
-    clublogRT(new ClubLog(this))
+    clublogRT(new ClubLogUploader(this))
 {
     FCT_IDENTIFICATION;
 
@@ -284,7 +284,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, Data::instance(), &Data::invalidateSetOfDXCCStatusCache); // must be the first delete signal
     connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshWidget);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
-    connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLog::updateQSOImmediately);
+    connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->bandmapWidget, &BandmapWidget::updateSpotsDupeWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->bandmapWidget, &BandmapWidget::updateSpotsDxccStatusWhenQSODeleted);
@@ -293,7 +293,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->chatWidget, &ChatWidget::updateSpotsDupeWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->chatWidget, &ChatWidget::updateSpotsDxccStatusWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->newContactWidget, &NewContactWidget::refreshCallsignsColors);
-    connect(ui->logbookWidget, &LogbookWidget::clublogContactDeleted, clublogRT, &ClubLog::deleteQSOImmediately);
+    connect(ui->logbookWidget, &LogbookWidget::clublogContactDeleted, clublogRT, &ClubLogUploader::deleteQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::sendDXSpotContactReq, ui->dxWidget, &DxWidget::prepareQSOSpot);
 
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, Data::instance(), &Data::invalidateDXCCStatusCache); // must be the first delete signal
@@ -305,7 +305,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->chatWidget, &ChatWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->wsjtxWidget, &WsjtxWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->dxWidget, &DxWidget::setLastQSO);
-    connect(ui->newContactWidget, &NewContactWidget::contactAdded, clublogRT, &ClubLog::insertQSOImmediately);
+    connect(ui->newContactWidget, &NewContactWidget::contactAdded, clublogRT, &ClubLogUploader::insertQSOImmediately);
     connect(ui->newContactWidget, &NewContactWidget::contestStarted, this, &MainWindow::startContest);
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->mapWidget, &MapWidget::setTarget);
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->onlineMapWidget, &OnlineMapWidget::setTarget);
@@ -360,13 +360,13 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->onlineMapWidget->assignPropConditions(conditions);
     ui->newContactWidget->assignPropConditions(conditions);
 
-    connect(clublogRT, &ClubLog::uploadError, this, [this](const QString &msg)
+    connect(clublogRT, &ClubLogUploader::uploadError, this, [this](const QString &msg)
     {
         qCInfo(runtime) << "Clublog RT Upload Error: " << msg;
         QMessageBox::warning(this, tr("Clublog Immediately Upload Error"), msg);
     });
 
-    connect(clublogRT, &ClubLog::QSOUploaded, ui->logbookWidget, &LogbookWidget::updateTable);
+    connect(clublogRT, &ClubLogUploader::uploadedQSO, ui->logbookWidget, &LogbookWidget::updateTable);
 
     if ( StationProfilesManager::instance()->profileNameList().isEmpty() )
         showSettings();
@@ -1550,7 +1550,7 @@ void MainWindow::showClublog()
 {
     FCT_IDENTIFICATION;
 
-    if ( ! ClubLog::getEmail().isEmpty() )
+    if ( ! ClubLogBase::getEmail().isEmpty() )
     {
         ClublogDialog dialog;
         dialog.exec();

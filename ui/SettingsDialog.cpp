@@ -2301,9 +2301,9 @@ void SettingsDialog::readSettings() {
     /***********/
     /* ClubLog */
     /***********/
-    ui->clublogEmailEdit->setText(ClubLog::getEmail());
-    ui->clublogPasswordEdit->setText(ClubLog::getPassword());
-    ui->clublogUploadImmediatelyCheckbox->setChecked(ClubLog::isUploadImmediatelyEnabled());
+    ui->clublogEmailEdit->setText(ClubLogBase::getEmail());
+    ui->clublogPasswordEdit->setText(ClubLogBase::getPassword());
+    ui->clublogUploadImmediatelyCheckbox->setChecked(ClubLogBase::isUploadImmediatelyEnabled());
 
     /********/
     /* eQSL */
@@ -2415,10 +2415,10 @@ void SettingsDialog::writeSettings() {
     /***********/
     /* ClubLog */
     /***********/
-    ClubLog::saveUsernamePassword(ui->clublogEmailEdit->text(),
+    ClubLogBase::saveUsernamePassword(ui->clublogEmailEdit->text(),
                                   ui->clublogPasswordEdit->text());
 
-    ClubLog::saveUploadImmediatelyConfig(ui->clublogUploadImmediatelyCheckbox->isChecked());
+    ClubLogBase::saveUploadImmediatelyConfig(ui->clublogUploadImmediatelyCheckbox->isChecked());
 
     /********/
     /* eQSL */

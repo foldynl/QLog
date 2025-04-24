@@ -228,7 +228,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     adjusteComboMinSize(ui->userFilter);
     ui->userFilter->blockSignals(false);
 
-    clublog = new ClubLog(this);
+    clublog = new ClubLogUploader(this);
 
     restoreFilters();
 }
@@ -751,7 +751,7 @@ void LogbookWidget::deleteContact()
 
     // Clublog does not accept batch DELETE operation
     // ask if an operator wants to continue
-    if ( ClubLog::isUploadImmediatelyEnabled()
+    if ( ClubLogBase::isUploadImmediatelyEnabled()
          && deletedRowIndexes.count() > 5 )
     {
         reply = QMessageBox::question(this,

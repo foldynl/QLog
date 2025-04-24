@@ -107,7 +107,7 @@ private:
     PropConditions *conditions;
     QSettings settings;
     bool isFusionStyle;
-    ClubLog* clublogRT;
+    ClubLogUploader* clublogRT;
     WsjtxUDPReceiver* wsjtx;
     QActionGroup *seqGroup;
     QActionGroup *dupeGroup;

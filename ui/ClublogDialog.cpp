@@ -65,7 +65,7 @@ void ClublogDialog::upload()
 
     /* https://clublog.freshdesk.com/support/solutions/articles/54905-how-to-upload-logs-directly-into-club-log */
     /* https://clublog.freshdesk.com/support/solutions/articles/53202-which-adif-fields-does-club-log-use- */
-    QString query_string = QString("SELECT %1 FROM contacts ").arg(ClubLog::supportedDBFields.join(" , "));
+    QString query_string = QString("SELECT %1 FROM contacts ").arg(ClubLogUploader::uploadedFields.join(" , "));
     QString query_where =  QString("WHERE (upper(clublog_qso_upload_status) in (%1) OR clublog_qso_upload_status is NULL) ").arg(qslUploadStatuses.join(","));
     QString query_order = " ORDER BY start_time ";
 
@@ -117,12 +117,11 @@ void ClublogDialog::upload()
             dialog->setAttribute(Qt::WA_DeleteOnClose, true);
             dialog->show();
 
-            ClubLog *clublog = new ClubLog(dialog);
+            ClubLogUploader *clublog = new ClubLogUploader(dialog);
 
-            connect(clublog, &ClubLog::uploadFileOK, this, [this, dialog, query_where, count, clublog](const QString &msg)
+            connect(clublog, &ClubLogUploader::uploadFinished, this, [this, dialog, query_where, count, clublog]()
             {
                 dialog->done(QDialog::Accepted);
-                qCDebug(runtime) << "Clublog Upload OK: " << msg;
                 QMessageBox::information(this, tr("QLog Information"), tr("%n QSO(s) uploaded.", "", count));
                 QString query_string = "UPDATE contacts "
                                        "SET clublog_qso_upload_status='Y', clublog_qso_upload_date = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
@@ -135,7 +134,7 @@ void ClublogDialog::upload()
                 clublog->deleteLater();
             });
 
-            connect(clublog, &ClubLog::uploadError, this, [this, dialog, clublog](const QString &msg)
+            connect(clublog, &ClubLogUploader::uploadError, this, [this, dialog, clublog](const QString &msg)
             {
                 dialog->done(QDialog::Accepted);
                 qCInfo(runtime) << "Clublog Upload Error: " << msg;

@@ -12,7 +12,7 @@ namespace Ui {
 class LogbookWidget;
 }
 
-class ClubLog;
+class ClubLogUploader;
 class LogbookModel;
 class QProgressDialog;
 
@@ -76,7 +76,7 @@ public slots:
     void callbookError(const QString&);
 
 private:
-    ClubLog* clublog;
+    ClubLogUploader* clublog;
     LogbookModel* model;
     Ui::LogbookWidget *ui;
     SqlListModel* countryModel;
