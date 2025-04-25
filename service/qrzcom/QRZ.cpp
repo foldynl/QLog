@@ -10,11 +10,7 @@
 #include <QMessageBox>
 #include "core/debug.h"
 #include "core/CredentialStore.h"
-#include "logformat/AdiFormat.h"
 #include "data/Callsign.h"
-
-#define API_URL "https://xmldata.qrz.com/xml/current/"
-#define API_LOGBOOK_URL "https://logbook.qrz.com/api"
 
 //https://www.qrz.com/docs/logbook/QRZLogbookAPI.html
 
@@ -100,7 +96,6 @@ QRZCallbook::QRZCallbook(QObject* parent) :
     QRZBase(),
     incorrectLogin(false),
     lastSeenPassword(QString()),
-    cancelUpload(false),
     currentReply(nullptr)
 {
     FCT_IDENTIFICATION;
@@ -169,7 +164,6 @@ void QRZCallbook::abortQuery()
 {
     FCT_IDENTIFICATION;
 
-    cancelUpload = true;
     if ( currentReply )
     {
         currentReply->abort();
@@ -219,74 +213,6 @@ void QRZCallbook::authenticate()
     }
 }
 
-void QRZCallbook::uploadContact(const QSqlRecord &record)
-{
-    FCT_IDENTIFICATION;
-
-    //qCDebug(function_parameters) << record;
-
-    QByteArray data;
-    QTextStream stream(&data, QIODevice::ReadWrite);
-
-    AdiFormat adi(stream);
-    adi.exportContact(record);
-    stream.flush();
-
-    cancelUpload = false;
-    actionInsert(data, "REPLACE");
-    currentReply->setProperty("contactID", record.value("id"));
-}
-
-void QRZCallbook::actionInsert(QByteArray& data, const QString &insertPolicy)
-{
-    FCT_IDENTIFICATION;
-
-    const QString &logbookAPIKey = getLogbookAPIKey();
-
-    QUrlQuery params;
-    params.addQueryItem("KEY", logbookAPIKey);
-    params.addQueryItem("ACTION", "INSERT");
-    params.addQueryItem("OPTION", insertPolicy);
-    params.addQueryItem("ADIF", data.trimmed().toPercentEncoding());
-
-    QUrl url(API_LOGBOOK_URL);
-
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    QString rheader = QString("QLog/%1").arg(VERSION);
-    request.setRawHeader("User-Agent", rheader.toUtf8());
-
-    qCDebug(runtime) << url;
-
-    if ( currentReply )
-        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
-
-    currentReply = getNetworkAccessManager()->post(request, params.query(QUrl::FullyEncoded).toUtf8());
-
-    currentReply->setProperty("messageType", QVariant("actionsInsert"));
-}
-
-
-void QRZCallbook::uploadContacts(const QList<QSqlRecord> &qsos)
-{
-    FCT_IDENTIFICATION;
-
-    //qCDebug(function_parameters) << qsos;
-
-    if ( qsos.isEmpty() )
-    {
-        /* Nothing to do */
-        emit uploadFinished(false);
-        return;
-    }
-
-    cancelUpload = false;
-    queuedContacts4Upload = qsos;
-
-    uploadContact(queuedContacts4Upload.first());
-    queuedContacts4Upload.removeFirst();
-}
-
 void QRZCallbook::processReply(QNetworkReply* reply)
 {
     FCT_IDENTIFICATION;
@@ -306,12 +232,9 @@ void QRZCallbook::processReply(QNetworkReply* reply)
 
         if ( reply->error() != QNetworkReply::OperationCanceledError )
         {
-            emit uploadError(reply->errorString());
             emit lookupError(reply->errorString());
             reply->deleteLater();
         }
-
-        cancelUpload = true;
         return;
     }
 
@@ -411,48 +334,177 @@ void QRZCallbook::processReply(QNetworkReply* reply)
         if (!queuedCallsign.isEmpty())
             queryCallsign(queuedCallsign);
     }
-    /*****************/
-    /* actionsInsert */
-    /*****************/
-    else if ( messageType == "actionsInsert")
-    {
-         const QString replayString(reply->readAll());
-         qCDebug(runtime) << replayString;
 
-         const QMap<QString, QString> &data = parseActionResponse(replayString);
-
-         const QString &status = data.value("RESULT", "FAILED");
-
-         if ( status == "OK" || status == "REPLACE" )
-         {
-             qCDebug(runtime) << "Confirmed Upload for QSO Id " << reply->property("contactID").toInt();
-             emit uploadedQSO(reply->property("contactID").toInt());
-
-             if ( queuedContacts4Upload.isEmpty() )
-             {
-                 cancelUpload = false;
-                 emit uploadFinished(true);
-             }
-             else
-             {
-                 if ( ! cancelUpload )
-                 {
-                     uploadContact(queuedContacts4Upload.first());
-                     queuedContacts4Upload.removeFirst();
-                 }
-             }
-         }
-         else
-         {
-             emit uploadError(data.value("REASON", tr("General Error")));
-             cancelUpload = false;
-         }
-    }
+    else
 
     reply->deleteLater();
 }
 
-QMap<QString, QString> QRZCallbook::parseActionResponse(const QString &reponseString) const
+/* https://www.qrz.com/docs/logbook/QRZLogbookAPI.html */
+/* ??? QRZ Support all ADIF Fields ??? */
+
+QRZUploader::QRZUploader(QObject *parent) :
+    GenericQSOUploader(QStringList(), parent),
+    QRZBase(),
+    currentReply(nullptr),
+    cancelUpload(false)
+{
+    FCT_IDENTIFICATION;
+}
+
+QRZUploader::~QRZUploader()
+{
+    FCT_IDENTIFICATION;
+
+    if ( currentReply )
+    {
+        currentReply->abort();
+        currentReply->deleteLater();
+    }
+}
+
+void QRZUploader::uploadContact(const QSqlRecord &record)
+{
+    FCT_IDENTIFICATION;
+
+    //qCDebug(function_parameters) << record;
+
+    QByteArray data = generateADIF({record});
+    cancelUpload = false;
+    actionInsert(data, "REPLACE");
+    currentReply->setProperty("contactID", record.value("id"));
+}
+
+void QRZUploader::uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &)
+{
+    FCT_IDENTIFICATION;
+
+    if ( qsos.isEmpty() )
+    {
+        /* Nothing to do */
+        emit uploadFinished();
+        return;
+    }
+
+    cancelUpload = false;
+    queuedContacts4Upload = qsos;
+
+    uploadContact(queuedContacts4Upload.first());
+    queuedContacts4Upload.removeFirst();
+}
+
+void QRZUploader::actionInsert(QByteArray& data, const QString &insertPolicy)
+{
+    FCT_IDENTIFICATION;
+
+    const QString &logbookAPIKey = getLogbookAPIKey();
+
+    QUrlQuery params;
+    params.addQueryItem("KEY", logbookAPIKey);
+    params.addQueryItem("ACTION", "INSERT");
+    params.addQueryItem("OPTION", insertPolicy);
+    params.addQueryItem("ADIF", data.trimmed().toPercentEncoding());
+
+    QUrl url(API_LOGBOOK_URL);
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QString rheader = QString("QLog/%1").arg(VERSION);
+    request.setRawHeader("User-Agent", rheader.toUtf8());
+
+    qCDebug(runtime) << url;
+
+    if ( currentReply )
+        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
+
+    currentReply = getNetworkAccessManager()->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+
+    currentReply->setProperty("messageType", QVariant("actionsInsert"));
+}
+
+void QRZUploader::abortRequest()
+{
+    FCT_IDENTIFICATION;
+
+    cancelUpload = true;
+    if ( currentReply )
+    {
+        currentReply->abort();
+        currentReply = nullptr;
+    }
+}
+
+void QRZUploader::processReply(QNetworkReply *reply)
+{
+    FCT_IDENTIFICATION;
+
+    /* always process one requests per class */
+    currentReply = nullptr;
+
+    int replyStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if ( reply->error() != QNetworkReply::NoError
+         || replyStatusCode < 200
+         || replyStatusCode >= 300)
+    {
+        qCDebug(runtime) << "QRZ.com error URL " << reply->request().url().toString();
+        qCDebug(runtime) << "QRZ.com error" << reply->errorString();
+        qCDebug(runtime) << "HTTP Status Code" << replyStatusCode;
+
+        if ( reply->error() != QNetworkReply::OperationCanceledError )
+        {
+            emit uploadError(reply->errorString());
+            reply->deleteLater();
+        }
+
+        cancelUpload = true;
+        return;
+    }
+
+    const QString &messageType = reply->property("messageType").toString();
+
+    qCDebug(runtime) << "Received Message Type: " << messageType;
+
+    /*****************/
+    /* actionsInsert */
+    /*****************/
+    if ( messageType == "actionsInsert")
+    {
+        const QString replayString(reply->readAll());
+        qCDebug(runtime) << replayString;
+
+        const QMap<QString, QString> &data = parseActionResponse(replayString);
+        const QString &status = data.value("RESULT", "FAILED");
+
+        if ( status == "OK" || status == "REPLACE" )
+        {
+            qCDebug(runtime) << "Confirmed Upload for QSO Id " << reply->property("contactID").toULongLong();
+            emit uploadedQSO(reply->property("contactID").toULongLong());
+
+            if ( queuedContacts4Upload.isEmpty() )
+            {
+                cancelUpload = false;
+                emit uploadFinished();
+            }
+            else
+            {
+                if ( ! cancelUpload )
+                {
+                    uploadContact(queuedContacts4Upload.first());
+                    queuedContacts4Upload.removeFirst();
+                }
+            }
+        }
+        else
+        {
+            emit uploadError(data.value("REASON", tr("General Error")));
+            cancelUpload = false;
+        }
+    }
+    reply->deleteLater();
+}
+
+QMap<QString, QString> QRZUploader::parseActionResponse(const QString &reponseString) const
 {
     FCT_IDENTIFICATION;
 
@@ -467,16 +519,10 @@ QMap<QString, QString> QRZCallbook::parseActionResponse(const QString &reponseSt
         parsedParams << param.split("=");
 
         if ( parsedParams.count() == 1 )
-        {
             data[parsedParams.at(0)] = QString();
-        }
         else if ( parsedParams.count() >= 2 )
-        {
             data[parsedParams.at(0)] = parsedParams.at(1);
-        }
     }
 
     return data;
 }
-
-

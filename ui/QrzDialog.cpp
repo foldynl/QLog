@@ -103,9 +103,9 @@ void QRZDialog::upload()
             dialog->setAttribute(Qt::WA_DeleteOnClose, true);
             dialog->show();
 
-            QRZCallbook *qrz = new QRZCallbook(dialog);
+            QRZUploader *qrz = new QRZUploader(dialog);
 
-            connect(qrz, &QRZCallbook::uploadedQSO, this, [qrz, dialog](int qsoID)
+            connect(qrz, &QRZUploader::uploadedQSO, this, [qrz, dialog](qulonglong qsoID)
             {
                 QString query_string = "UPDATE contacts "
                                        "SET qrzcom_qso_upload_status='Y', qrzcom_qso_upload_date = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
@@ -121,13 +121,13 @@ void QRZDialog::upload()
                 if ( ! query_update.exec() )
                 {
                     qInfo() << "Cannot Update QRZCOM status for QSO number " << qsoID << " " << query_update.lastError().text();
-                    qrz->abortQuery();
+                    qrz->abortRequest();
                     qrz->deleteLater();
                 }
                 dialog->setValue(dialog->value() + 1);
             });
 
-            connect(qrz, &QRZCallbook::uploadFinished, this, [this, qrz, dialog, count](bool)
+            connect(qrz, &QRZUploader::uploadFinished, this, [this, qrz, dialog, count]()
             {
                 dialog->done(QDialog::Accepted);
                 QMessageBox::information(this, tr("QLog Information"),
@@ -135,7 +135,7 @@ void QRZDialog::upload()
                 qrz->deleteLater();
             });
 
-            connect(qrz, &QRZCallbook::uploadError, this, [this, qrz, dialog](const QString &msg)
+            connect(qrz, &QRZUploader::uploadError, this, [this, qrz, dialog](const QString &msg)
             {
                 dialog->done(QDialog::Accepted);
                 qCInfo(runtime) << "QRZ.com Upload Error: " << msg;
@@ -144,9 +144,9 @@ void QRZDialog::upload()
                 qrz->deleteLater();
             });
 
-            connect(dialog, &QProgressDialog::canceled, qrz, &QRZCallbook::abortQuery);
+            connect(dialog, &QProgressDialog::canceled, qrz, &QRZUploader::abortRequest);
 
-            qrz->uploadContacts(qsos);
+            qrz->uploadQSOList(qsos, QVariantMap());
         }
     }
     else

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QSqlRecord>
 #include "service/GenericCallbook.h"
+#include "service/GenericQSOUploader.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -39,15 +40,7 @@ public:
     explicit QRZCallbook(QObject *parent = nullptr);
     virtual ~QRZCallbook();
 
-    void uploadContact(const QSqlRecord &record);
-    void uploadContacts(const QList<QSqlRecord>&);
-
     QString getDisplayName() override;
-
-signals:
-    void uploadFinished(bool result);
-    void uploadedQSO(int);
-    void uploadError(QString);
 
 public slots:
     virtual void queryCallsign(const QString &callsign) override;
@@ -61,11 +54,35 @@ private:
     QString queuedCallsign;
     bool incorrectLogin;
     QString lastSeenPassword;
-    QList<QSqlRecord> queuedContacts4Upload;
-    bool cancelUpload;
     QNetworkReply *currentReply;
+    const QString API_URL = "https://xmldata.qrz.com/xml/current/";
 
     void authenticate();
+};
+
+class QRZUploader : public GenericQSOUploader, private QRZBase
+{
+    Q_OBJECT
+
+public:
+    explicit QRZUploader(QObject *parent = nullptr);
+    virtual ~QRZUploader();
+
+    void uploadContact(const QSqlRecord &record);
+    virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
+
+public slots:
+    virtual void abortRequest() override;
+
+protected:
+    virtual void processReply(QNetworkReply* reply) override;
+
+private:
+    QNetworkReply *currentReply;
+    QList<QSqlRecord> queuedContacts4Upload;
+    bool cancelUpload;
+    const QString API_LOGBOOK_URL = "https://logbook.qrz.com/api";
+
     void actionInsert(QByteArray& data, const QString &insertPolicy);
     QMap<QString, QString> parseActionResponse(const QString&) const;
 };
