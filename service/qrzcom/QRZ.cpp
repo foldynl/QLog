@@ -19,25 +19,95 @@
 //https://www.qrz.com/docs/logbook/QRZLogbookAPI.html
 
 MODULE_IDENTIFICATION("qlog.core.qrz");
+const QString QRZBase::SECURE_STORAGE_KEY = "QRZCOM";
+const QString QRZBase::SECURE_STORAGE_API_KEY = "QRZCOMAPI";
+const QString QRZBase::CONFIG_USERNAME_KEY = "qrzcom/username";
+const QString QRZBase::CONFIG_USERNAME_API_KEY = "qrzcom/usernameapi";
+const QString QRZBase::CONFIG_USERNAME_API_CONST = "logbookapi";
+const QString QRZCallbook::CALLBOOK_NAME = "qrzcom";
 
-QRZ::QRZ(QObject* parent) :
+const QString QRZBase::getUsername()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    return settings.value(QRZBase::CONFIG_USERNAME_KEY).toString().trimmed();
+}
+
+const QString QRZBase::getPassword()
+{
+    FCT_IDENTIFICATION;
+
+    return CredentialStore::instance()->getPassword(QRZBase::SECURE_STORAGE_KEY,
+                                                    getUsername());
+
+}
+
+const QString QRZBase::getLogbookAPIKey()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    return CredentialStore::instance()->getPassword(QRZBase::SECURE_STORAGE_API_KEY,
+                                        settings.value(QRZBase::CONFIG_USERNAME_API_KEY,
+                                                       QRZBase::CONFIG_USERNAME_API_CONST).toString());
+}
+
+void QRZBase::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    const QString &oldUsername = getUsername();
+    if ( oldUsername != newUsername )
+    {
+        CredentialStore::instance()->deletePassword(QRZBase::SECURE_STORAGE_KEY,
+                                                    oldUsername);
+    }
+
+    settings.setValue(QRZBase::CONFIG_USERNAME_KEY, newUsername);
+
+    CredentialStore::instance()->savePassword(QRZBase::SECURE_STORAGE_KEY,
+                                              newUsername,
+                                              newPassword);
+}
+
+void QRZBase::saveLogbookAPI(const QString &newKey)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    settings.setValue(QRZBase::CONFIG_USERNAME_API_KEY, QRZBase::CONFIG_USERNAME_API_CONST);
+
+    CredentialStore::instance()->deletePassword(QRZBase::SECURE_STORAGE_API_KEY,
+                                                QRZBase::CONFIG_USERNAME_API_CONST);
+
+    if ( ! newKey.isEmpty() )
+    {
+        CredentialStore::instance()->savePassword(QRZBase::SECURE_STORAGE_API_KEY,
+                                                  QRZBase::CONFIG_USERNAME_API_CONST,
+                                                  newKey);
+    }
+
+}
+
+QRZCallbook::QRZCallbook(QObject* parent) :
     GenericCallbook(parent),
+    QRZBase(),
     incorrectLogin(false),
     lastSeenPassword(QString()),
     cancelUpload(false),
     currentReply(nullptr)
 {
     FCT_IDENTIFICATION;
-
-    nam = new QNetworkAccessManager(this);
-    connect(nam, &QNetworkAccessManager::finished,
-            this, &QRZ::processReply);
 }
 
-QRZ::~QRZ()
+QRZCallbook::~QRZCallbook()
 {
-    nam->deleteLater();
-
     if ( currentReply )
     {
         currentReply->abort();
@@ -45,13 +115,21 @@ QRZ::~QRZ()
     }
 }
 
-void QRZ::queryCallsign(const QString &callsign)
+QString QRZCallbook::getDisplayName()
+{
+    FCT_IDENTIFICATION;
+
+    return QString(tr("QRZ.com"));
+}
+
+void QRZCallbook::queryCallsign(const QString &callsign)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters)<< callsign;
 
-    if (sessionId.isEmpty()) {
+    if (sessionId.isEmpty())
+    {
         queuedCallsign = callsign;
         authenticate();
         return;
@@ -77,7 +155,7 @@ void QRZ::queryCallsign(const QString &callsign)
 
     qCDebug(runtime) << url;
 
-    currentReply = nam->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+    currentReply = getNetworkAccessManager()->post(request, params.query(QUrl::FullyEncoded).toUtf8());
 
     currentReply->setProperty("queryCallsign", QVariant(callsign));
     currentReply->setProperty("messageType", QVariant("callsignInfoQuery"));
@@ -87,7 +165,7 @@ void QRZ::queryCallsign(const QString &callsign)
     queuedCallsign = QString();
 }
 
-void QRZ::abortQuery()
+void QRZCallbook::abortQuery()
 {
     FCT_IDENTIFICATION;
 
@@ -100,151 +178,7 @@ void QRZ::abortQuery()
     }
 }
 
-void QRZ::uploadContact(const QSqlRecord &record)
-{
-    FCT_IDENTIFICATION;
-
-    //qCDebug(function_parameters) << record;
-
-    QByteArray data;
-    QTextStream stream(&data, QIODevice::ReadWrite);
-
-    AdiFormat adi(stream);
-    adi.exportContact(record);
-    stream.flush();
-
-    cancelUpload = false;
-    actionInsert(data, "REPLACE");
-    currentReply->setProperty("contactID", record.value("id"));
-}
-
-void QRZ::actionInsert(QByteArray& data, const QString &insertPolicy)
-{
-    FCT_IDENTIFICATION;
-
-    const QString &logbookAPIKey = getLogbookAPIKey();
-
-    QUrlQuery params;
-    params.addQueryItem("KEY", logbookAPIKey);
-    params.addQueryItem("ACTION", "INSERT");
-    params.addQueryItem("OPTION", insertPolicy);
-    params.addQueryItem("ADIF", data.trimmed().toPercentEncoding());
-
-    QUrl url(API_LOGBOOK_URL);
-
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    QString rheader = QString("QLog/%1").arg(VERSION);
-    request.setRawHeader("User-Agent", rheader.toUtf8());
-
-    qCDebug(runtime) << url;
-
-    if ( currentReply )
-        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
-
-    currentReply = nam->post(request, params.query(QUrl::FullyEncoded).toUtf8());
-
-    currentReply->setProperty("messageType", QVariant("actionsInsert"));
-}
-
-
-void QRZ::uploadContacts(const QList<QSqlRecord> &qsos)
-{
-    FCT_IDENTIFICATION;
-
-    //qCDebug(function_parameters) << qsos;
-
-    if ( qsos.isEmpty() )
-    {
-        /* Nothing to do */
-        emit uploadFinished(false);
-        return;
-    }
-
-    cancelUpload = false;
-    queuedContacts4Upload = qsos;
-
-    uploadContact(queuedContacts4Upload.first());
-    queuedContacts4Upload.removeFirst();
-}
-
-const QString QRZ::getUsername()
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-    return settings.value(QRZ::CONFIG_USERNAME_KEY).toString().trimmed();
-}
-
-const QString QRZ::getPassword()
-{
-    FCT_IDENTIFICATION;
-
-    return CredentialStore::instance()->getPassword(QRZ::SECURE_STORAGE_KEY,
-                                                    getUsername());
-
-}
-
-const QString QRZ::getLogbookAPIKey()
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-    return CredentialStore::instance()->getPassword(QRZ::SECURE_STORAGE_API_KEY,
-                                        settings.value(QRZ::CONFIG_USERNAME_API_KEY,
-                                                       QRZ::CONFIG_USERNAME_API_CONST).toString());
-}
-
-void QRZ::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-    const QString &oldUsername = getUsername();
-    if ( oldUsername != newUsername )
-    {
-        CredentialStore::instance()->deletePassword(QRZ::SECURE_STORAGE_KEY,
-                                                    oldUsername);
-    }
-
-    settings.setValue(QRZ::CONFIG_USERNAME_KEY, newUsername);
-
-    CredentialStore::instance()->savePassword(QRZ::SECURE_STORAGE_KEY,
-                                              newUsername,
-                                              newPassword);
-}
-
-void QRZ::saveLogbookAPI(const QString &newKey)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-    settings.setValue(QRZ::CONFIG_USERNAME_API_KEY, QRZ::CONFIG_USERNAME_API_CONST);
-
-    CredentialStore::instance()->deletePassword(QRZ::SECURE_STORAGE_API_KEY,
-                                                QRZ::CONFIG_USERNAME_API_CONST);
-
-    if ( ! newKey.isEmpty() )
-    {
-        CredentialStore::instance()->savePassword(QRZ::SECURE_STORAGE_API_KEY,
-                                                  QRZ::CONFIG_USERNAME_API_CONST,
-                                                  newKey);
-    }
-
-}
-
-QString QRZ::getDisplayName()
-{
-    FCT_IDENTIFICATION;
-
-    return QString(tr("QRZ.com"));
-}
-
-void QRZ::authenticate()
+void QRZCallbook::authenticate()
 {
     FCT_IDENTIFICATION;
 
@@ -274,7 +208,7 @@ void QRZ::authenticate()
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-        currentReply = nam->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+        currentReply = getNetworkAccessManager()->post(request, params.query(QUrl::FullyEncoded).toUtf8());
         currentReply->setProperty("messageType", QVariant("authenticate"));
         lastSeenPassword = password;
     }
@@ -285,7 +219,75 @@ void QRZ::authenticate()
     }
 }
 
-void QRZ::processReply(QNetworkReply* reply)
+void QRZCallbook::uploadContact(const QSqlRecord &record)
+{
+    FCT_IDENTIFICATION;
+
+    //qCDebug(function_parameters) << record;
+
+    QByteArray data;
+    QTextStream stream(&data, QIODevice::ReadWrite);
+
+    AdiFormat adi(stream);
+    adi.exportContact(record);
+    stream.flush();
+
+    cancelUpload = false;
+    actionInsert(data, "REPLACE");
+    currentReply->setProperty("contactID", record.value("id"));
+}
+
+void QRZCallbook::actionInsert(QByteArray& data, const QString &insertPolicy)
+{
+    FCT_IDENTIFICATION;
+
+    const QString &logbookAPIKey = getLogbookAPIKey();
+
+    QUrlQuery params;
+    params.addQueryItem("KEY", logbookAPIKey);
+    params.addQueryItem("ACTION", "INSERT");
+    params.addQueryItem("OPTION", insertPolicy);
+    params.addQueryItem("ADIF", data.trimmed().toPercentEncoding());
+
+    QUrl url(API_LOGBOOK_URL);
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QString rheader = QString("QLog/%1").arg(VERSION);
+    request.setRawHeader("User-Agent", rheader.toUtf8());
+
+    qCDebug(runtime) << url;
+
+    if ( currentReply )
+        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
+
+    currentReply = getNetworkAccessManager()->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+
+    currentReply->setProperty("messageType", QVariant("actionsInsert"));
+}
+
+
+void QRZCallbook::uploadContacts(const QList<QSqlRecord> &qsos)
+{
+    FCT_IDENTIFICATION;
+
+    //qCDebug(function_parameters) << qsos;
+
+    if ( qsos.isEmpty() )
+    {
+        /* Nothing to do */
+        emit uploadFinished(false);
+        return;
+    }
+
+    cancelUpload = false;
+    queuedContacts4Upload = qsos;
+
+    uploadContact(queuedContacts4Upload.first());
+    queuedContacts4Upload.removeFirst();
+}
+
+void QRZCallbook::processReply(QNetworkReply* reply)
 {
     FCT_IDENTIFICATION;
 
@@ -326,6 +328,7 @@ void QRZ::processReply(QNetworkReply* reply)
         const QByteArray &response = reply->readAll();
         qCDebug(runtime) << response;
         QXmlStreamReader xml(response);
+        CallbookResponseData resposeData;
 
         /* Reset Session Key */
         /* Every response contains a valid key. If the key is not present */
@@ -333,17 +336,16 @@ void QRZ::processReply(QNetworkReply* reply)
 
         sessionId = QString();
 
-        QMap<QString, QString> data;
-
         while ( !xml.atEnd() && !xml.hasError() )
         {
             QXmlStreamReader::TokenType token = xml.readNext();
 
-            if (token != QXmlStreamReader::StartElement) {
+            if (token != QXmlStreamReader::StartElement)
                 continue;
-            }
 
-            if (xml.name() == QString("Error") )
+            const QString elementName = xml.name().toString();
+
+            if ( elementName == "Error" )
             {
                 queuedCallsign = QString();
                 QString errorString = xml.readElementText();
@@ -370,137 +372,44 @@ void QRZ::processReply(QNetworkReply* reply)
                 // do not call return here, we need to obtain Key from error message (if present)
             }
             else
-            {
                 incorrectLogin = false;
-            }
 
-            if (xml.name() == QString("Key") )
-            {
-                sessionId = xml.readElementText();
-            }
-            else if (xml.name() == QString("call") )
-            {
-                data["call"] = xml.readElementText().toUpper();
-            }
-            else if (xml.name() == QString("dxcc") )
-            {
-                data["dxcc"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("fname") )
-            {
-                data["fname"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("name") )
-            {
-                data["lname"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("addr1") )
-            {
-                data["addr1"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("addr2") )
-            {
-                data["qth"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("state") )
-            {
-                data["us_state"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("zip") )
-            {
-                data["zipcode"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("country") )
-            {
-                data["country"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("lat") )
-            {
-                data["latitude"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("lon") )
-            {
-                data["longitude"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("county") )
-            {
-                data["county"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("grid") )
-            {
-                data["gridsquare"] = xml.readElementText().toUpper();
-            }
-            else if (xml.name() == QString("efdate") )
-            {
-                data["lic_year"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("qslmgr") )
-            {
-                data["qsl_via"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("email") )
-            {
-                data["email"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("GMTOffset") )
-            {
-                data["utc_offset"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("eqsl") )
-            {
-                data["eqsl"] = ( xml.readElementText() == "1" ) ? "Y" : "N";
-            }
-            else if (xml.name() == QString("mqsl") )
-            {
-                data["pqsl"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("cqzone") )
-            {
-                data["cqz"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("ituzone") )
-            {
-                data["ituz"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("born") )
-            {
-                data["born"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("lotw") )
-            {
-                data["lotw"] =  ( xml.readElementText() == "1" ) ? "Y" : "N";
-            }
-            else if (xml.name() == QString("iota") )
-            {
-                data["iota"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("nickname") )
-            {
-                data["nick"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("url") )
-            {
-                data["url"] = xml.readElementText();
-            }
-            else if (xml.name() ==  QString("name_fmt"))
-            {
-                data["name_fmt"] = xml.readElementText();
-            }
-            else if (xml.name() == QString("image"))
-            {
-                data["image_url"] = xml.readElementText();
-            }
+            if      (elementName == "Key")       sessionId = xml.readElementText();
+            else if (elementName == "call")      resposeData.call = xml.readElementText().toUpper();
+            else if (elementName == "dxcc")      resposeData.dxcc = xml.readElementText();
+            else if (elementName == "fname")     resposeData.fname = xml.readElementText();
+            else if (elementName == "name")      resposeData.lname = xml.readElementText();
+            else if (elementName == "addr1")     resposeData.addr1 = xml.readElementText();
+            else if (elementName == "addr2")     resposeData.qth = xml.readElementText();
+            else if (elementName == "state")     resposeData.us_state = xml.readElementText();
+            else if (elementName == "zip")       resposeData.zipcode = xml.readElementText();
+            else if (elementName == "country")   resposeData.country = xml.readElementText();
+            else if (elementName == "lat")       resposeData.latitude = xml.readElementText();
+            else if (elementName == "lon")       resposeData.longitude = xml.readElementText();
+            else if (elementName == "county")    resposeData.county = xml.readElementText();
+            else if (elementName == "grid")      resposeData.gridsquare = xml.readElementText().toUpper();
+            else if (elementName == "efdate")    resposeData.lic_year = xml.readElementText();
+            else if (elementName == "qslmgr")    resposeData.qsl_via = xml.readElementText();
+            else if (elementName == "email")     resposeData.email = xml.readElementText();
+            else if (elementName == "GMTOffset") resposeData.utc_offset = xml.readElementText();
+            else if (elementName == "eqsl")      resposeData.eqsl = (xml.readElementText() == "1") ? "Y" : "N";
+            else if (elementName == "mqsl")      resposeData.pqsl = xml.readElementText();
+            else if (elementName == "cqzone")    resposeData.cqz = xml.readElementText();
+            else if (elementName == "ituzone")   resposeData.ituz = xml.readElementText();
+            else if (elementName == "born")      resposeData.born = xml.readElementText();
+            else if (elementName == "lotw")      resposeData.lotw = (xml.readElementText() == "1") ? "Y" : "N";
+            else if (elementName == "iota")      resposeData.iota = xml.readElementText();
+            else if (elementName == "nickname")  resposeData.nick = xml.readElementText();
+            else if (elementName == "url")       resposeData.url = xml.readElementText();
+            else if (elementName == "name_fmt")  resposeData.name_fmt = xml.readElementText();
+            else if (elementName == "image")     resposeData.image_url = xml.readElementText();
         }
 
-        if (data.size())
-        {
-            emit callsignResult(data);
-        }
+        if (!resposeData.call.isEmpty())
+            emit callsignResult(resposeData);
 
         if (!queuedCallsign.isEmpty())
-        {
             queryCallsign(queuedCallsign);
-        }
     }
     /*****************/
     /* actionsInsert */
@@ -543,7 +452,7 @@ void QRZ::processReply(QNetworkReply* reply)
     reply->deleteLater();
 }
 
-QMap<QString, QString> QRZ::parseActionResponse(const QString &reponseString) const
+QMap<QString, QString> QRZCallbook::parseActionResponse(const QString &reponseString) const
 {
     FCT_IDENTIFICATION;
 
@@ -570,9 +479,4 @@ QMap<QString, QString> QRZ::parseActionResponse(const QString &reponseString) co
     return data;
 }
 
-const QString QRZ::SECURE_STORAGE_KEY = "QRZCOM";
-const QString QRZ::SECURE_STORAGE_API_KEY = "QRZCOMAPI";
-const QString QRZ::CONFIG_USERNAME_KEY = "qrzcom/username";
-const QString QRZ::CONFIG_USERNAME_API_KEY = "qrzcom/usernameapi";
-const QString QRZ::CONFIG_USERNAME_API_CONST = "logbookapi";
-const QString QRZ::CALLBOOK_NAME = "qrzcom";
+

@@ -79,7 +79,7 @@ private slots:
     void mapLoaded(bool);
     void myGridChanged(const QString&);
     void DXGridChanged(const QString&);
-    void callsignFound(const QMap<QString, QString>& data);
+    void callsignFound(const CallbookResponseData &data);
     void callsignNotFound(const QString&);
     void callbookLoginFailed(const QString&);
     void callbookError(const QString&);

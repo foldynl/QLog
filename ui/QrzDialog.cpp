@@ -103,9 +103,9 @@ void QRZDialog::upload()
             dialog->setAttribute(Qt::WA_DeleteOnClose, true);
             dialog->show();
 
-            QRZ *qrz = new QRZ(dialog);
+            QRZCallbook *qrz = new QRZCallbook(dialog);
 
-            connect(qrz, &QRZ::uploadedQSO, this, [qrz, dialog](int qsoID)
+            connect(qrz, &QRZCallbook::uploadedQSO, this, [qrz, dialog](int qsoID)
             {
                 QString query_string = "UPDATE contacts "
                                        "SET qrzcom_qso_upload_status='Y', qrzcom_qso_upload_date = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
@@ -127,7 +127,7 @@ void QRZDialog::upload()
                 dialog->setValue(dialog->value() + 1);
             });
 
-            connect(qrz, &QRZ::uploadFinished, this, [this, qrz, dialog, count](bool)
+            connect(qrz, &QRZCallbook::uploadFinished, this, [this, qrz, dialog, count](bool)
             {
                 dialog->done(QDialog::Accepted);
                 QMessageBox::information(this, tr("QLog Information"),
@@ -135,7 +135,7 @@ void QRZDialog::upload()
                 qrz->deleteLater();
             });
 
-            connect(qrz, &QRZ::uploadError, this, [this, qrz, dialog](const QString &msg)
+            connect(qrz, &QRZCallbook::uploadError, this, [this, qrz, dialog](const QString &msg)
             {
                 dialog->done(QDialog::Accepted);
                 qCInfo(runtime) << "QRZ.com Upload Error: " << msg;
@@ -144,7 +144,7 @@ void QRZDialog::upload()
                 qrz->deleteLater();
             });
 
-            connect(dialog, &QProgressDialog::canceled, qrz, &QRZ::abortQuery);
+            connect(dialog, &QProgressDialog::canceled, qrz, &QRZCallbook::abortQuery);
 
             qrz->uploadContacts(qsos);
         }

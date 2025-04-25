@@ -1582,7 +1582,7 @@ void MainWindow::showQRZ()
 {
     FCT_IDENTIFICATION;
 
-    QString logbookAPIKey = QRZ::getLogbookAPIKey();
+    QString logbookAPIKey = QRZBase::getLogbookAPIKey();
 
     if ( !logbookAPIKey.isEmpty() )
     {

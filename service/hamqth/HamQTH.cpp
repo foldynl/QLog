@@ -10,54 +10,29 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 
-#define API_URL "http://www.hamqth.com/xml.php"
-
 MODULE_IDENTIFICATION("qlog.core.hamqth");
 
-HamQTH::HamQTH(QObject* parent) :
-    GenericCallbook(parent),
-    currentReply(nullptr)
-{
-    FCT_IDENTIFICATION;
+const QString HamQTHBase::SECURE_STORAGE_KEY = "HamQTH";
+const QString HamQTHBase::CONFIG_USERNAME_KEY = "hamqth/username";
+const QString HamQTHCallbook::CALLBOOK_NAME = "hamqth";
 
-    nam = new QNetworkAccessManager(this);
-    connect(nam, &QNetworkAccessManager::finished,
-            this, &HamQTH::processReply);
-
-    incorrectLogin = false;
-    lastSeenPassword = "";
-}
-
-HamQTH::~HamQTH()
-{
-    if ( currentReply )
-    {
-        currentReply->abort();
-        currentReply->deleteLater();
-    }
-
-    nam->deleteLater();
-}
-
-const QString HamQTH::getUsername()
+const QString HamQTHBase::getUsername()
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
-
-    return settings.value(HamQTH::CONFIG_USERNAME_KEY).toString();
-
+    return settings.value(HamQTHBase::CONFIG_USERNAME_KEY).toString();
 }
 
-const QString HamQTH::getPassword()
+const QString HamQTHBase::getPassword()
 {
     FCT_IDENTIFICATION;
 
-    return CredentialStore::instance()->getPassword(HamQTH::SECURE_STORAGE_KEY,
+    return CredentialStore::instance()->getPassword(HamQTHBase::SECURE_STORAGE_KEY,
                                                    getUsername());
 }
 
-void HamQTH::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
+void HamQTHBase::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
 {
     FCT_IDENTIFICATION;
 
@@ -66,25 +41,44 @@ void HamQTH::saveUsernamePassword(const QString &newUsername, const QString &new
     QString oldUsername = getUsername();
     if ( oldUsername != newUsername )
     {
-        CredentialStore::instance()->deletePassword(HamQTH::SECURE_STORAGE_KEY,
+        CredentialStore::instance()->deletePassword(HamQTHBase::SECURE_STORAGE_KEY,
                                                     oldUsername);
     }
 
-    settings.setValue(HamQTH::CONFIG_USERNAME_KEY, newUsername);
+    settings.setValue(HamQTHBase::CONFIG_USERNAME_KEY, newUsername);
 
-    CredentialStore::instance()->savePassword(HamQTH::SECURE_STORAGE_KEY,
+    CredentialStore::instance()->savePassword(HamQTHBase::SECURE_STORAGE_KEY,
                                               newUsername,
                                               newPassword);
 
 }
 
-QString HamQTH::getDisplayName()
+HamQTHCallbook::HamQTHCallbook(QObject* parent) :
+    GenericCallbook(parent),
+    HamQTHBase(),
+    currentReply(nullptr)
+{
+    FCT_IDENTIFICATION;
+
+    incorrectLogin = false;
+}
+
+HamQTHCallbook::~HamQTHCallbook()
+{
+    if ( currentReply )
+    {
+        currentReply->abort();
+        currentReply->deleteLater();
+    }
+}
+
+QString HamQTHCallbook::getDisplayName()
 {
     FCT_IDENTIFICATION;
     return QString(tr("HamQTH"));
 }
 
-void HamQTH::queryCallsign(const QString &callsign)
+void HamQTHCallbook::queryCallsign(const QString &callsign)
 {
     FCT_IDENTIFICATION;
 
@@ -106,11 +100,9 @@ void HamQTH::queryCallsign(const QString &callsign)
     url.setQuery(query);
 
     if ( currentReply )
-    {
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
-    }
 
-    currentReply = nam->get(QNetworkRequest(url));
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
     currentReply->setProperty("queryCallsign", callsign);
 
     // Attention, variable callsign and queuedCallsign point to the same object
@@ -118,7 +110,7 @@ void HamQTH::queryCallsign(const QString &callsign)
     queuedCallsign = QString();
 }
 
-void HamQTH::abortQuery()
+void HamQTHCallbook::abortQuery()
 {
     FCT_IDENTIFICATION;
 
@@ -128,16 +120,14 @@ void HamQTH::abortQuery()
         //currentReply->deleteLater(); // pointer is deleted later in processReply
         currentReply = nullptr;
     }
-
 }
 
-void HamQTH::authenticate() {
+void HamQTHCallbook::authenticate()
+{
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    const QString &username = settings.value(HamQTH::CONFIG_USERNAME_KEY).toString();
-    const QString &password = CredentialStore::instance()->getPassword(HamQTH::SECURE_STORAGE_KEY,
-                                                                       username);
+    const QString &username = getUsername();
+    const QString &password = getPassword();
 
     if ( incorrectLogin && password == lastSeenPassword)
     {
@@ -157,11 +147,9 @@ void HamQTH::authenticate() {
         url.setQuery(query);
 
         if ( currentReply )
-        {
             qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
-        }
 
-        currentReply = nam->get(QNetworkRequest(url));
+        currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
         lastSeenPassword = password;
         qCDebug(runtime) << "Sent Auth message";
     }
@@ -172,7 +160,8 @@ void HamQTH::authenticate() {
     }
 }
 
-void HamQTH::processReply(QNetworkReply* reply) {
+void HamQTHCallbook::processReply(QNetworkReply* reply)
+{
     FCT_IDENTIFICATION;
 
     /* always process one requests per class */
@@ -194,19 +183,18 @@ void HamQTH::processReply(QNetworkReply* reply) {
     const QByteArray &response = reply->readAll();
     qCDebug(runtime) << response;
     QXmlStreamReader xml(response);
-
-
-    QMap<QString, QString> data;
+    CallbookResponseData resposeData;
 
     while (!xml.atEnd() && !xml.hasError())
     {
         QXmlStreamReader::TokenType token = xml.readNext();
 
-        if (token != QXmlStreamReader::StartElement) {
+        if (token != QXmlStreamReader::StartElement)
             continue;
-        }
 
-        if ( xml.name() == QString("error") )
+        const QString &elementName = xml.name().toString();
+
+        if ( elementName == "error" )
         {
             queuedCallsign = QString();
             QString errorString = xml.readElementText();
@@ -223,153 +211,55 @@ void HamQTH::processReply(QNetworkReply* reply) {
                 return;
             }
             else
-            {
-                qInfo() << "HamQTH Error - " << errorString;
-            }
+                qWarning() << "HamQTH Error - " << errorString;
+
             sessionId = QString();
             emit lookupError(errorString);
             return;
         }
         else
-        {
             incorrectLogin = false;
-        }
 
-        if (xml.name() == QString("session_id") )
-        {
-            sessionId = xml.readElementText();
-        }
-        else if (xml.name() == QString("callsign") )
-        {
-            data["call"] = xml.readElementText().toUpper();
-        }
-        else if (xml.name() == QString("nick") )
-        {
-            data["nick"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("qth") )
-        {
-            data["qth"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("grid") )
-        {
-            data["gridsquare"] = xml.readElementText().toUpper();
-        }
-        else if (xml.name() == QString("qsl_via") )
-        {
-            data["qsl_via"] = xml.readElementText().toUpper();
-        }
-        else if (xml.name() == QString("cq") )
-        {
-            data["cqz"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("itu") )
-        {
-            data["ituz"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("dok") )
-        {
-            data["dok"] = xml.readElementText().toUpper();
-        }
-        else if (xml.name() == QString("iota") )
-        {
-            data["iota"] = xml.readElementText().toUpper();
-        }
-        else if (xml.name() == QString("email") )
-        {
-            data["email"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("adif") )
-        {
-            data["dxcc"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("adr_name") )
-        {
-            data["name_fmt"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("adr_street1") )
-        {
-            data["addr1"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("us_state") )
-        {
-            data["us_state"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("adr_zip") )
-        {
-            data["zipcode"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("country") )
-        {
-            data["country"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("latitude") )
-        {
-            data["latitude"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("longitude") )
-        {
-            data["longitude"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("county") )
-        {
-            data["county"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("lic_year") )
-        {
-            data["lic_year"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("utc_offset") )
-        {
-            data["utc_offset"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("eqsl") )
-        {
-            data["eqsl"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("qsl") )
-        {
-            data["pqsl"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("birth_year") )
-        {
-            data["born"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("lotw") )
-        {
-            data["lotw"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("lotw") )
-        {
-            data["lotw"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("web") )
-        {
-            data["url"] = xml.readElementText();
-        }
-        else if (xml.name() == QString("picture"))
-        {
-            data["image_url"] = xml.readElementText();
+        if      (elementName == "session_id")  sessionId = xml.readElementText();
+        else if (elementName == "callsign")    resposeData.call = xml.readElementText().toUpper();
+        else if (elementName == "nick")        resposeData.nick = xml.readElementText();
+        else if (elementName == "qth")         resposeData.qth = xml.readElementText();
+        else if (elementName == "grid")        resposeData.gridsquare = xml.readElementText().toUpper();
+        else if (elementName == "qsl_via")     resposeData.qsl_via = xml.readElementText().toUpper();
+        else if (elementName == "cq")          resposeData.cqz = xml.readElementText();
+        else if (elementName == "itu")         resposeData.ituz = xml.readElementText();
+        else if (elementName == "dok")         resposeData.dok = xml.readElementText().toUpper();
+        else if (elementName == "iota")        resposeData.iota = xml.readElementText().toUpper();
+        else if (elementName == "email")       resposeData.email = xml.readElementText();
+        else if (elementName == "adif")        resposeData.dxcc = xml.readElementText();
+        else if (elementName == "adr_name")    resposeData.name_fmt = xml.readElementText();
+        else if (elementName == "adr_street1") resposeData.addr1 = xml.readElementText();
+        else if (elementName == "us_state")    resposeData.us_state = xml.readElementText();
+        else if (elementName == "adr_zip")     resposeData.zipcode = xml.readElementText();
+        else if (elementName == "country")     resposeData.country = xml.readElementText();
+        else if (elementName == "latitude")    resposeData.latitude = xml.readElementText();
+        else if (elementName == "longitude")   resposeData.longitude = xml.readElementText();
+        else if (elementName == "county")      resposeData.county = xml.readElementText();
+        else if (elementName == "lic_year")    resposeData.lic_year = xml.readElementText();
+        else if (elementName == "utc_offset")  resposeData.utc_offset = xml.readElementText();
+        else if (elementName == "eqsl")        resposeData.eqsl = xml.readElementText();
+        else if (elementName == "qsl")         resposeData.pqsl = xml.readElementText();
+        else if (elementName == "birth_year")  resposeData.born = xml.readElementText();
+        else if (elementName == "lotw")        resposeData.lotw = xml.readElementText();
+        else if (elementName == "web")         resposeData.url = xml.readElementText();
+        else if (elementName == "picture")     resposeData.image_url = xml.readElementText();
 
-            // HamQTH sends "http" URLs, which are redirected automatically
-            // to their "https" variants. It's pointless to implement redirection
-            // so let's replace http with https
-            if ( !data["image_url"].contains("https"))
-               data["image_url"].replace("http", "https");
-        }
+        // HamQTH sends "http" URLs, which are redirected automatically
+        // to their "https" variants. It's pointless to implement redirection
+        // so let's replace http with https
+        if ( !resposeData.image_url.contains("https")) resposeData.image_url.replace("http", "https");
     }
 
     reply->deleteLater();
 
-    if (data.size()) {
-        emit callsignResult(data);
-    }
+    if ( !resposeData.call.isEmpty() )
+        emit callsignResult(resposeData);
 
-    if (!queuedCallsign.isEmpty()) {
+    if (!queuedCallsign.isEmpty())
         queryCallsign(queuedCallsign);
-    }
 }
-
-const QString HamQTH::SECURE_STORAGE_KEY = "HamQTH";
-const QString HamQTH::CONFIG_USERNAME_KEY = "hamqth/username";
-const QString HamQTH::CALLBOOK_NAME = "hamqth";

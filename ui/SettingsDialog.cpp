@@ -257,8 +257,8 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->stationSIGEdit->setCompleter(sigCompleter);
 
     ui->primaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
-    ui->primaryCallbookCombo->addItem(tr("HamQTH"),   QVariant(HamQTH::CALLBOOK_NAME));
-    ui->primaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZ::CALLBOOK_NAME));
+    ui->primaryCallbookCombo->addItem(tr("HamQTH"),   QVariant(HamQTHCallbook::CALLBOOK_NAME));
+    ui->primaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZCallbook::CALLBOOK_NAME));
 
     ui->rigFlowControlSelect->addItem(tr("None"), SerialPort::SERIAL_FLOWCONTROL_NONE);
     ui->rigFlowControlSelect->addItem(tr("Hardware"), SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
@@ -2147,19 +2147,19 @@ void SettingsDialog::primaryCallbookChanged(int index)
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->setEnabled(false);
     }
-    else if ( primaryCallbookSelection == HamQTH::CALLBOOK_NAME )
+    else if ( primaryCallbookSelection == HamQTHCallbook::CALLBOOK_NAME )
     {
         ui->secondaryCallbookCombo->setEnabled(true);
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
-        ui->secondaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZ::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZCallbook::CALLBOOK_NAME));
     }
-    else if ( primaryCallbookSelection == QRZ::CALLBOOK_NAME )
+    else if ( primaryCallbookSelection == QRZCallbook::CALLBOOK_NAME )
     {
         ui->secondaryCallbookCombo->setEnabled(true);
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
-        ui->secondaryCallbookCombo->addItem(tr("HamQTH"),  QVariant(HamQTH::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("HamQTH"),  QVariant(HamQTHCallbook::CALLBOOK_NAME));
     }
 }
 
@@ -2283,11 +2283,11 @@ void SettingsDialog::readSettings() {
 
     ui->secondaryCallbookCombo->setCurrentIndex(secondaryCallbookIndex);
 
-    ui->hamQthUsernameEdit->setText(HamQTH::getUsername());
-    ui->hamQthPasswordEdit->setText(HamQTH::getPassword());
+    ui->hamQthUsernameEdit->setText(HamQTHBase::getUsername());
+    ui->hamQthPasswordEdit->setText(HamQTHBase::getPassword());
 
-    ui->qrzUsernameEdit->setText(QRZ::getUsername());
-    ui->qrzPasswordEdit->setText(QRZ::getPassword());
+    ui->qrzUsernameEdit->setText(QRZBase::getUsername());
+    ui->qrzPasswordEdit->setText(QRZBase::getPassword());
 
     ui->webLookupURLEdit->setText(GenericCallbook::getWebLookupURL("", QString(), false));
 
@@ -2321,7 +2321,7 @@ void SettingsDialog::readSettings() {
     /***********/
     /* QRZ.COM */
     /***********/
-    ui->qrzApiKeyEdit->setText(QRZ::getLogbookAPIKey());
+    ui->qrzApiKeyEdit->setText(QRZBase::getLogbookAPIKey());
 
     /***********************/
     /* Others - DXCC Group */
@@ -2391,10 +2391,10 @@ void SettingsDialog::writeSettings() {
     /************/
     /* Callbook */
     /************/
-    HamQTH::saveUsernamePassword(ui->hamQthUsernameEdit->text(),
+    HamQTHBase::saveUsernamePassword(ui->hamQthUsernameEdit->text(),
                                  ui->hamQthPasswordEdit->text());
 
-    QRZ::saveUsernamePassword(ui->qrzUsernameEdit->text(),
+    QRZBase::saveUsernamePassword(ui->qrzUsernameEdit->text(),
                               ui->qrzPasswordEdit->text());
 
     settings.setValue(GenericCallbook::CONFIG_PRIMARY_CALLBOOK_KEY,
@@ -2437,7 +2437,7 @@ void SettingsDialog::writeSettings() {
     /***********/
     /* QRZ.COM */
     /***********/
-    QRZ::saveLogbookAPI(ui->qrzApiKeyEdit->text());
+    QRZBase::saveLogbookAPI(ui->qrzApiKeyEdit->text());
 
     /***********************/
     /* Others - DXCC Group */

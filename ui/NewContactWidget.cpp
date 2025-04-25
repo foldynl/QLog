@@ -607,108 +607,64 @@ void NewContactWidget::useFieldsFromPrevQSO(const QString &callsign, const QStri
 }
 
 /* function handles a response from Callbook classes */
-void NewContactWidget::setCallbookFields(const QMap<QString, QString>& data)
+void NewContactWidget::setCallbookFields(const CallbookResponseData& data)
 {
     FCT_IDENTIFICATION;
 
-    if ( data.value("call") != callsign )
+    if ( data.call != callsign )
         return;
 
     /* not filled or not fully filled then update it */
-    const QString fnamelname = QString("%1 %2").arg(data.value("fname"),
-                                                    data.value("lname"));
+    const QString fnamelname = QString("%1 %2").arg(data.fname, data.lname);
+
     if ( uiDynamic->nameEdit->text().isEmpty()
-         || data.value("name_fmt").contains(uiDynamic->nameEdit->text())
+         || data.name_fmt.contains(uiDynamic->nameEdit->text())
          || fnamelname.contains(uiDynamic->nameEdit->text())
-         || data.value("nick").contains(uiDynamic->nameEdit->text()) )
+         || data.nick.contains(uiDynamic->nameEdit->text()) )
     {
-        QString name = data.value("name_fmt");
+        QString name = data.name_fmt;
 
         if ( name.isEmpty() )
-            name = ( data.value("fname").isEmpty() && data.value("lname").isEmpty() ) ? data.value("nick")
-                                                                                      : fnamelname;
+            name = ( data.fname.isEmpty() && data.lname.isEmpty() ) ? data.nick
+                                                                    : fnamelname;
         uiDynamic->nameEdit->setText(name);
     }
 
     if ( uiDynamic->gridEdit->text().isEmpty()
-         || data.value("gridsquare").contains(uiDynamic->gridEdit->text()) )
-    {
-        uiDynamic->gridEdit->setText(data.value("gridsquare"));
-    }
+         || data.gridsquare.contains(uiDynamic->gridEdit->text()) )
+        uiDynamic->gridEdit->setText(data.gridsquare);
 
     if ( uiDynamic->qthEdit->text().isEmpty()
-         || data.value("qth").contains(uiDynamic->qthEdit->text()))
-    {
-        uiDynamic->qthEdit->setText(data.value("qth"));
-    }
+         || data.qth.contains(uiDynamic->qthEdit->text()))
+        uiDynamic->qthEdit->setText(data.qth);
 
-    if ( uiDynamic->dokEdit->text().isEmpty() )
+    if ( uiDynamic->dokEdit->text().isEmpty() )    uiDynamic->dokEdit->setText(data.dok);
+    if ( uiDynamic->iotaEdit->text().isEmpty() )   uiDynamic->iotaEdit->setText(data.iota);
+    if ( uiDynamic->emailEdit->text().isEmpty() )  uiDynamic->emailEdit->setText(data.email);
+    if ( uiDynamic->countyEdit->text().isEmpty() ) uiDynamic->countyEdit->setText(data.county);
+    if ( ui->qslViaEdit->text().isEmpty() )        ui->qslViaEdit->setText(data.qsl_via);
+    if ( uiDynamic->urlEdit->text().isEmpty() )    uiDynamic->urlEdit->setText(data.url);
+    if ( uiDynamic->stateEdit->text().isEmpty() )  uiDynamic->stateEdit->setText(data.us_state);
+    if ( data.eqsl == "Y" )                        ui->eqslLabel->setText("eQSL");
+    if ( data.lotw == "Y" )                        ui->lotwLabel->setText("LoTW");
+    if ( !data.dxcc.isEmpty() )
     {
-        uiDynamic->dokEdit->setText(data.value("dok"));
-    }
-
-    if ( uiDynamic->iotaEdit->text().isEmpty() )
-    {
-        uiDynamic->iotaEdit->setText(data.value("iota"));
-    }
-
-    if ( uiDynamic->emailEdit->text().isEmpty() )
-    {
-        uiDynamic->emailEdit->setText(data.value("email"));
-    }
-
-    if ( uiDynamic->countyEdit->text().isEmpty() )
-    {
-        uiDynamic->countyEdit->setText(data.value("county"));
-    }
-
-    if ( ui->qslViaEdit->text().isEmpty() )
-    {
-        ui->qslViaEdit->setText(data.value("qsl_via"));
-    }
-
-    if ( uiDynamic->urlEdit->text().isEmpty() )
-    {
-        uiDynamic->urlEdit->setText(data.value("url"));
-    }
-
-    if ( uiDynamic->stateEdit->text().isEmpty() )
-    {
-        uiDynamic->stateEdit->setText(data.value("us_state"));
-    }
-
-    if ( data.value("eqsl") == "Y" )
-    {
-        ui->eqslLabel->setText("eQSL");
-    }
-
-    if ( data.value("lotw") == "Y" )
-    {
-        ui->lotwLabel->setText("LoTW");
-    }
-
-    if ( !data.value("dxcc").isEmpty() )
-    {
-        int callbookDXCC = data.value("dxcc").toInt();
+        int callbookDXCC = data.dxcc.toInt();
 
         if ( callbookDXCC != 0 && callbookDXCC != dxccEntity.dxcc )
         {
-            qCDebug(runtime) << "Received different DXCC Info" << data.value("dxcc")
+            qCDebug(runtime) << "Received different DXCC Info" << data.dxcc
                              << dxccEntity.dxcc;
             setDxccInfo(Data::instance()->lookupDxccID(callbookDXCC));
         }
     }
 
     // always replace cqz/itu
-    if ( !data.value("ituz").isEmpty() )
-        uiDynamic->ituEdit->setText(data.value("ituz"));
+    if ( !data.ituz.isEmpty() ) uiDynamic->ituEdit->setText(data.ituz);
+    if ( !data.cqz.isEmpty() )  uiDynamic->cqzEdit->setText(data.cqz);
 
-    if ( !data.value("cqz").isEmpty() )
-        uiDynamic->cqzEdit->setText(data.value("cqz"));
-
-    emit callboolImageUrl(data.value("image_url"));
-
-    lastCallbookQueryData = QMap<QString, QString>(data);
+    emit callboolImageUrl(data.image_url);
+    lastCallbookQueryData = data;
 }
 
 void NewContactWidget::setMembershipList(const QString &in_callsign,

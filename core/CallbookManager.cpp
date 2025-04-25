@@ -26,14 +26,14 @@ void CallbookManager::queryCallsign(const QString &callsign)
 
     if ( queryCache.contains(callsign) )
     {
-        emit callsignResult(QMap<QString, QString>(*queryCache.object(callsign)));
+        emit callsignResult(CallbookResponseData(*queryCache.object(callsign)));
         return;
     }
 
     // create an empty object in cache
     // if there is the second query for the same call immediatelly after
     // the first query, then it returns a result of empty object
-    queryCache.insert(callsign, new QMap<QString, QString>());
+    queryCache.insert(callsign, new CallbookResponseData);
 
     if ( !primaryCallbook.isNull() )
     {
@@ -62,13 +62,13 @@ GenericCallbook *CallbookManager::createCallbook(const QString &callbookID)
 
     GenericCallbook *ret = nullptr;
 
-    if (callbookID == HamQTH::CALLBOOK_NAME )
+    if (callbookID == HamQTHCallbook::CALLBOOK_NAME )
     {
-        ret = new HamQTH(this);
+        ret = new HamQTHCallbook(this);
     }
-    else if ( callbookID == QRZ::CALLBOOK_NAME )
+    else if ( callbookID == QRZCallbook::CALLBOOK_NAME )
     {
-        ret = new QRZ(this);
+        ret = new QRZCallbook(this);
     }
 
     if ( ret )
@@ -177,14 +177,16 @@ void CallbookManager::secondaryCallbookCallsignNotFound(const QString &notFoundC
     emit callsignNotFound(notFoundCallsign);
 }
 
-void CallbookManager::processCallsignResult(const QMap<QString, QString> &data)
+void CallbookManager::processCallsignResult(const CallbookResponseData &data)
 {
     FCT_IDENTIFICATION;
 
-    queryCache.insert(data["call"], new QMap<QString, QString>(data));
+    CallbookResponseData *cacheData = new CallbookResponseData;
+    *cacheData = data;
+    queryCache.insert(data.call, cacheData);
 
     // Callbook returned queried callsign
-    if ( data["call"] == currentQueryCallsign )
+    if ( data.call == currentQueryCallsign )
     {
         emit callsignResult(data);
         return;
@@ -202,28 +204,30 @@ void CallbookManager::processCallsignResult(const QMap<QString, QString> &data)
     // then callbooks return a partial result (usually base callsign) OK1xxx. In this case, QLog
     // takes only selected fields from the callbook response.
 
-    if ( queryCall.getBase() == data["call"] )
+    if ( queryCall.getBase() == data.call )
     {
         qCDebug(runtime) << "Partial match for result - forwarding limited set of information";
 
-        QMap<QString, QString> newdata;
+        CallbookResponseData newData;
 
-        newdata["call"] = currentQueryCallsign;
-        newdata["fname"] = data["fname"];
-        newdata["lname"] = data["lname"];
-        newdata["lic_year"] = data["lic_year"];
-        newdata["qsl_via"] = data["qsl_via"];
-        newdata["email"] = data["email"];
-        newdata["born"] = data["born"];
-        newdata["name"] = data["name"];
-        newdata["url"] = data["url"];
-        newdata["name_fmt"] = data["name_fmt"];
-        newdata["nick"] = data["nick"];
-        newdata["image_url"] = data["image_url"];
+        newData.call = currentQueryCallsign;
+        newData.fname = data.fname;
+        newData.lname = data.lname;
+        newData.lic_year = data.lic_year;
+        newData.qsl_via = data.qsl_via;
+        newData.email = data.email;
+        newData.born = data.born;
+        newData.url = data.url;
+        newData.name_fmt = data.name_fmt;
+        newData.nick = data.nick;
+        newData.image_url = data.image_url;
 
-        queryCache.insert(currentQueryCallsign, new QMap<QString, QString>(newdata));
-        emit callsignResult(newdata);
+        CallbookResponseData *cdata = new CallbookResponseData;
+        *cdata = newData;
+
+        queryCache.insert(currentQueryCallsign, cdata);
+        emit callsignResult(newData);
     }
 }
 
-QCache<QString, QMap<QString, QString>> CallbookManager::queryCache(100);
+QCache<QString, CallbookResponseData> CallbookManager::queryCache(100);

@@ -357,11 +357,9 @@ void LogbookWidget::finishQSOLookupBatch()
     }
 }
 
-void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& data)
+void LogbookWidget::updateQSORecordFromCallbook(const CallbookResponseData& data)
 {
     FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << data;
 
     auto getCurrIndexColumnValue = [&](const LogbookModel::ColumnID id)
     {
@@ -373,42 +371,38 @@ void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& da
         return model->setData(model->index(currLookupIndex.row(), id), value, Qt::EditRole);
     };
 
-    if ( getCurrIndexColumnValue(LogbookModel::COLUMN_CALL) != data.value("call"))
+    if ( getCurrIndexColumnValue(LogbookModel::COLUMN_CALL) != data.call)
     {
         qWarning() << "Callsigns don't match - skipping. QSO " << model->data(model->index(currLookupIndex.row(), LogbookModel::COLUMN_CALL), Qt::DisplayRole).toString()
-                   << "data " << data.value("call");
+                   << "data " << data.call;
         return;
     }
 
-    const QString fnamelname = QString("%1 %2").arg(data.value("fname"),
-                                                    data.value("lname"));
-
+    const QString fnamelname = QString("%1 %2").arg(data.fname, data.lname);
     const QString &nameValue = getCurrIndexColumnValue(LogbookModel::COLUMN_NAME_INTL);
+
     const LogbookModel::EditStrategy originEditStrategy = model->editStrategy();
 
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     if ( nameValue.isEmpty()
-         || data.value("name_fmt").contains(nameValue)
+         || data.name_fmt.contains(nameValue)
          || fnamelname.contains(nameValue)
-         || data.value("nick").contains(nameValue) )
+         || data.nick.contains(nameValue) )
     {
-        QString name = data.value("name_fmt");
+        QString name = data.name_fmt;
         if ( name.isEmpty() )
-            name = ( data.value("fname").isEmpty() && data.value("lname").isEmpty() ) ? data.value("nick")
-                                                                                    : fnamelname;
+            name = ( data.fname.isEmpty() && data.lname.isEmpty() ) ? data.nick
+                                                                    : fnamelname;
         setModelData(LogbookModel::COLUMN_NAME_INTL, name);
     }
 
     auto setIfEmpty = [&](const LogbookModel::ColumnID id,
-                          const QString &dataFieldID,
+                          const QString &callbookValue,
                           bool containsEnabled = false,
                           bool forceReplace = false)
     {
-        const QString &callbookValue = data.value(dataFieldID);
-
-        if ( callbookValue.isEmpty() )
-            return;
+        if ( callbookValue.isEmpty() ) return;
 
         const QString &columnValue = getCurrIndexColumnValue(id);
 
@@ -421,7 +415,7 @@ void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& da
             bool ret = setModelData(id, callbookValue);
 
             qCDebug(runtime) << "Changing"
-                             << dataFieldID << callbookValue
+                             << LogbookModel::getFieldNameTranslation(id) << callbookValue
                              << ret;
         }
     };
@@ -442,7 +436,7 @@ void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& da
     model->setEditStrategy(originEditStrategy);
 }
 
-void LogbookWidget::callsignFound(const QMap<QString, QString> &data)
+void LogbookWidget::callsignFound(const CallbookResponseData &data)
 {
     FCT_IDENTIFICATION;
 

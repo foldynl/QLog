@@ -8,31 +8,42 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 
-class HamQTH : public GenericCallbook
+class HamQTHBase
+{
+public:
+    explicit HamQTHBase() {};
+    virtual ~HamQTHBase() {};
+
+    static const QString getUsername();
+    static const QString getPassword();
+    static void saveUsernamePassword(const QString&, const QString&);
+
+protected:
+    const static QString SECURE_STORAGE_KEY;
+    const static QString CONFIG_USERNAME_KEY;
+};
+
+class HamQTHCallbook : public GenericCallbook, private HamQTHBase
 {
     Q_OBJECT
 
 public:
-    explicit HamQTH(QObject *parent = nullptr);
-    virtual ~HamQTH();
-
     const static QString CALLBOOK_NAME;
-    static const QString getUsername();
-    static const QString getPassword();
 
-    static void saveUsernamePassword(const QString&, const QString&);
+    explicit HamQTHCallbook(QObject *parent = nullptr);
+    virtual ~HamQTHCallbook();
 
     QString getDisplayName() override;
 
 public slots:
-    void queryCallsign(const QString &callsign) override;
-    void abortQuery() override;
+    virtual void queryCallsign(const QString &callsign) override;
+    virtual void abortQuery() override;
 
-private slots:
-    void processReply(QNetworkReply* reply);
+protected:
+    void processReply(QNetworkReply* reply) override;
 
 private:
-    QNetworkAccessManager* nam;
+    const QString API_URL = "http://www.hamqth.com/xml.php";
     QString sessionId;
     QString queuedCallsign;
     bool incorrectLogin;
@@ -40,9 +51,6 @@ private:
     QNetworkReply *currentReply;
 
     void authenticate();
-
-    const static QString SECURE_STORAGE_KEY;
-    const static QString CONFIG_USERNAME_KEY;
 };
 
 #endif // QLOG_SERVICE_HAMQTH_HAMQTH_H

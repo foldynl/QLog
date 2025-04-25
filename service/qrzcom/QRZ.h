@@ -9,27 +9,40 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 
-class QRZ : public GenericCallbook
+class QRZBase
 {
-    Q_OBJECT
-
 public:
-    explicit QRZ(QObject *parent = nullptr);
-    virtual ~QRZ();
-
-    void uploadContact(const QSqlRecord &record);
-    void uploadContacts(const QList<QSqlRecord>&);
+    explicit QRZBase() {};
+    virtual ~QRZBase() {};
 
     static const QString getUsername();
     static const QString getPassword();
     static const QString getLogbookAPIKey();
-
     static void saveUsernamePassword(const QString&, const QString&);
     static void saveLogbookAPI(const QString&);
 
-    QString getDisplayName() override;
+protected:
+    const static QString SECURE_STORAGE_KEY;
+    const static QString SECURE_STORAGE_API_KEY;
+    const static QString CONFIG_USERNAME_KEY;
+    const static QString CONFIG_USERNAME_API_KEY;
+    const static QString CONFIG_USERNAME_API_CONST;
+};
 
+class QRZCallbook : public GenericCallbook, private QRZBase
+{
+    Q_OBJECT
+
+public:
     const static QString CALLBOOK_NAME;
+
+    explicit QRZCallbook(QObject *parent = nullptr);
+    virtual ~QRZCallbook();
+
+    void uploadContact(const QSqlRecord &record);
+    void uploadContacts(const QList<QSqlRecord>&);
+
+    QString getDisplayName() override;
 
 signals:
     void uploadFinished(bool result);
@@ -37,14 +50,13 @@ signals:
     void uploadError(QString);
 
 public slots:
-    void queryCallsign(const QString &callsign) override;
-    void abortQuery() override;
+    virtual void queryCallsign(const QString &callsign) override;
+    virtual void abortQuery() override;
 
-private slots:
-    void processReply(QNetworkReply* reply);
+protected:
+    virtual void processReply(QNetworkReply* reply) override;
 
 private:
-    QNetworkAccessManager* nam;
     QString sessionId;
     QString queuedCallsign;
     bool incorrectLogin;
@@ -56,13 +68,6 @@ private:
     void authenticate();
     void actionInsert(QByteArray& data, const QString &insertPolicy);
     QMap<QString, QString> parseActionResponse(const QString&) const;
-
-    const static QString SECURE_STORAGE_KEY;
-    const static QString SECURE_STORAGE_API_KEY;
-    const static QString CONFIG_USERNAME_KEY;
-    const static QString CONFIG_USERNAME_API_KEY;
-    const static QString CONFIG_USERNAME_API_CONST;
-
 };
 
 #endif // QLOG_SERVICE_QRZ_QRZ_H

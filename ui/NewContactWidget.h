@@ -276,8 +276,8 @@ private slots:
     void startContactTimer();
     void stopContactTimer();
     void finalizeCallsignEdit();
-    void setCallbookFields(const QMap<QString, QString>& data);
     void setMembershipList(const QString&, QMap<QString, ClubStatusQuery::ClubInfo>);
+    void setCallbookFields(const CallbookResponseData &data);
     void propModeChanged(const QString&);
     void sotaChanged(const QString&);
     void sotaEditFinished();
@@ -368,7 +368,7 @@ private:
     double QSOFreq;
     qint32 bandwidthFilter;
     bool rigOnline;
-    QMap<QString, QString> lastCallbookQueryData;
+    CallbookResponseData lastCallbookQueryData;
     SOTAEntity lastSOTA;
     POTAEntity lastPOTA;
     WWFFEntity lastWWFF;

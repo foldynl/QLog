@@ -70,7 +70,7 @@ public slots:
     void sendDXCSpot();
     void setDefaultSort();
     void actionCallbookLookup();
-    void callsignFound(const QMap<QString, QString>& data);
+    void callsignFound(const CallbookResponseData &data);
     void callsignNotFound(const QString&);
     void callbookLoginFailed(const QString&);
     void callbookError(const QString&);
@@ -100,7 +100,7 @@ private:
     void reselectModel();
     void scrollToIndex(const QModelIndex& index, bool select = true);
     void adjusteComboMinSize(QComboBox * combo);
-    void updateQSORecordFromCallbook(const QMap<QString, QString>& data);
+    void updateQSORecordFromCallbook(const CallbookResponseData &data);
     void queryNextQSOLookupBatch();
     void finishQSOLookupBatch();
     QModelIndexList callbookLookupBatch;

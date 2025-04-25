@@ -1148,63 +1148,45 @@ void QSODetailDialog::DXGridChanged(const QString &newGrid)
     return;
 }
 
-void QSODetailDialog::callsignFound(const QMap<QString, QString> &data)
+void QSODetailDialog::callsignFound(const CallbookResponseData &data)
 {
     FCT_IDENTIFICATION;
 
     callbookLookupFinished();
 
     /* blank or not fully filled then update it */
-    const QString fnamelname = QString("%1 %2").arg(data.value("fname"),
-                                                    data.value("lname"));
+    const QString fnamelname = QString("%1 %2").arg(data.fname, data.lname);
 
     if (  ui->nameEdit->text().isEmpty()
-          || data.value("name_fmt").contains(ui->nameEdit->text())
+          || data.name_fmt.contains(ui->nameEdit->text())
           || fnamelname.contains(ui->nameEdit->text())
-          || data.value("nick").contains(ui->nameEdit->text()) )
+          || data.nick.contains(ui->nameEdit->text()) )
     {
-        QString name = data.value("name_fmt");
+        QString name = data.name_fmt;
 
         if ( name.isEmpty() )
-            name = ( data.value("fname").isEmpty() && data.value("lname").isEmpty() ) ? data.value("nick")
-                                                                                      : fnamelname;
+            name = ( data.fname.isEmpty() && data.lname.isEmpty() ) ? data.nick
+                                                                    : fnamelname;
         ui->nameEdit->setText(name);
     }
 
     if ( ui->gridEdit->text().isEmpty()
-         || data.value("gridsquare").contains(ui->gridEdit->text()) )
-        ui->gridEdit->setText(data.value("gridsquare"));
+         || data.gridsquare.contains(ui->gridEdit->text()) )
+        ui->gridEdit->setText(data.gridsquare);
 
     if ( ui->qthEdit->text().isEmpty()
-         || data.value("qth").contains(ui->qthEdit->text()))
-        ui->qthEdit->setText(data.value("qth"));
+         || data.qth.contains(ui->qthEdit->text()))
+        ui->qthEdit->setText(data.qth);
 
-    if ( ui->dokEdit->text().isEmpty() )
-        ui->dokEdit->setText(data.value("dok"));
-
-    if ( ui->iotaEdit->text().isEmpty() )
-        ui->iotaEdit->setText(data.value("iota"));
-
-    if ( ui->emailEdit->text().isEmpty() )
-        ui->emailEdit->setText(data.value("email"));
-
-    if ( ui->countyEdit->text().isEmpty() )
-        ui->countyEdit->setText(data.value("county"));
-
-    if ( ui->qslViaEdit->text().isEmpty() )
-        ui->qslViaEdit->setText(data.value("qsl_via"));
-
-    if ( ui->urlEdit->text().isEmpty() )
-        ui->urlEdit->setText(data.value("url"));
-
-    if ( ui->stateEdit->text().isEmpty() )
-        ui->stateEdit->setText(data.value("us_state"));
-
-    if ( ui->ituEdit->text().isEmpty() )
-        ui->ituEdit->setText(data.value("ituz"));
-
-    if ( ui->cqEdit->text().isEmpty() )
-        ui->cqEdit->setText(data.value("cqz"));
+    if ( ui->dokEdit->text().isEmpty() )    ui->dokEdit->setText(data.dok);
+    if ( ui->iotaEdit->text().isEmpty() )   ui->iotaEdit->setText(data.iota);
+    if ( ui->emailEdit->text().isEmpty() )  ui->emailEdit->setText(data.email);
+    if ( ui->countyEdit->text().isEmpty() ) ui->countyEdit->setText(data.county);
+    if ( ui->qslViaEdit->text().isEmpty() ) ui->qslViaEdit->setText(data.qsl_via);
+    if ( ui->urlEdit->text().isEmpty() )    ui->urlEdit->setText(data.url);
+    if ( ui->stateEdit->text().isEmpty() )  ui->stateEdit->setText(data.us_state);
+    if ( ui->ituEdit->text().isEmpty() )    ui->ituEdit->setText(data.ituz);
+    if ( ui->cqEdit->text().isEmpty() )     ui->cqEdit->setText(data.cqz);
 }
 
 void QSODetailDialog::callsignNotFound(const QString &)
