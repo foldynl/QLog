@@ -54,7 +54,7 @@ private:
     bool rigOnline;
 
     Ui::RigWidget *ui;
-    HRDLog *hrdlog;
+    HRDLogUploader *hrdlog;
 };
 
 #endif // QLOG_UI_RIGWIDGET_H

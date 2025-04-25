@@ -102,9 +102,9 @@ void HRDLogDialog::upload()
             dialog->setAttribute(Qt::WA_DeleteOnClose, true);
             dialog->show();
 
-            HRDLog *hrdlog = new HRDLog(dialog);
+            HRDLogUploader *hrdlog = new HRDLogUploader(dialog);
 
-            connect(hrdlog, &HRDLog::uploadedQSO, this, [hrdlog, dialog](int qsoID)
+            connect(hrdlog, &HRDLogUploader::uploadedQSO, this, [hrdlog, dialog](qulonglong qsoID)
             {
                 QString query_string = "UPDATE contacts "
                                        "SET hrdlog_qso_upload_status='Y', hrdlog_qso_upload_date = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
@@ -126,7 +126,7 @@ void HRDLogDialog::upload()
                 dialog->setValue(dialog->value() + 1);
             });
 
-            connect(hrdlog, &HRDLog::uploadFinished, this, [this, hrdlog, dialog, count](bool)
+            connect(hrdlog, &HRDLogUploader::uploadFinished, this, [this, hrdlog, dialog, count]()
             {
                 dialog->done(QDialog::Accepted);
                 QMessageBox::information(this, tr("QLog Information"),
@@ -134,7 +134,7 @@ void HRDLogDialog::upload()
                 hrdlog->deleteLater();
             });
 
-            connect(hrdlog, &HRDLog::uploadError, this, [this, hrdlog, dialog](const QString &msg)
+            connect(hrdlog, &HRDLogUploader::uploadError, this, [this, hrdlog, dialog](const QString &msg)
             {
                 dialog->done(QDialog::Accepted);
                 qCInfo(runtime) << "HRDLog.com Upload Error: " << msg;
@@ -143,9 +143,9 @@ void HRDLogDialog::upload()
                 hrdlog->deleteLater();
             });
 
-            connect(dialog, &QProgressDialog::canceled, hrdlog, &HRDLog::abortRequest);
+            connect(dialog, &QProgressDialog::canceled, hrdlog, &HRDLogUploader::abortRequest);
 
-            hrdlog->uploadContacts(qsos);
+            hrdlog->uploadQSOList(qsos, QVariantMap());
         }
     }
     else

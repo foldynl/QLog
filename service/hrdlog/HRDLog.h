@@ -3,53 +3,58 @@
 
 #include <QObject>
 #include <QSqlRecord>
+#include "service/GenericQSOUploader.h"
 
 class QNetworkReply;
 class QNetworkAccessManager;
 
 
-class HRDLog : public QObject
+class HRDLogBase
 {
-    Q_OBJECT
 public:
-    explicit HRDLog(QObject *parent = nullptr);
-    ~HRDLog();
+    explicit HRDLogBase() {};
+    virtual ~HRDLogBase() {};
 
     static const QString getRegisteredCallsign();
     static const QString getUploadCode();
     static bool getOnAirEnabled();
-
     static void saveUploadCode(const QString &newUsername, const QString &newPassword);
     static void saveOnAirEnabled(bool state);
+
+protected:
+    const static QString SECURE_STORAGE_KEY;
+    const static QString CONFIG_CALLSIGN_KEY;
+    const static QString CONFIG_ONAIR_ENABLED_KEY;
+};
+
+class HRDLogUploader : public GenericQSOUploader, private HRDLogBase
+{
+    Q_OBJECT
+
+public:
+    explicit HRDLogUploader(QObject *parent = nullptr);
+    virtual ~HRDLogUploader();
 
     void uploadAdif(const QByteArray &data,
                     const QVariant &contactID,
                     bool update = false);
-    void uploadContact(QSqlRecord record);
-    void uploadContacts(const QList<QSqlRecord>&);
+    void uploadContact(const QSqlRecord &record);
+    virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
     void sendOnAir(double freq, const QString &mode);
 
 public slots:
-    void abortRequest();
+    virtual void abortRequest() override;
 
-signals:
-    void uploadFinished(bool result);
-    void uploadedQSO(int);
-    void uploadError(QString);
-
-private slots:
-    void processReply(QNetworkReply* reply);
-
+protected:
+    virtual void processReply(QNetworkReply* reply) override;
 
 private:
-    QNetworkAccessManager* nam;
     QNetworkReply *currentReply;
     QList<QSqlRecord> queuedContacts4Upload;
     bool cancelUpload;
 
-    const static QString SECURE_STORAGE_KEY;
-    const static QString CONFIG_CALLSIGN_KEY;
-    const static QString CONFIG_ONAIR_ENABLED_KEY;
+    const QString API_LOG_UPLOAD_URL = "https://robot.hrdlog.net/NewEntry.aspx";
+    const QString API_ONAIR_URL = "https://robot.hrdlog.net/OnAir.aspx";
 };
 
 #endif // QLOG_SERVICE_HRDLOG_HRDLOG_H

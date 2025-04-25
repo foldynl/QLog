@@ -1566,7 +1566,7 @@ void MainWindow::showHRDLog()
 {
     FCT_IDENTIFICATION;
 
-    if ( ! HRDLog::getRegisteredCallsign().isEmpty() )
+    if ( ! HRDLogBase::getRegisteredCallsign().isEmpty() )
     {
         HRDLogDialog dialog;
         dialog.exec();

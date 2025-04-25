@@ -2314,9 +2314,9 @@ void SettingsDialog::readSettings() {
     /**********/
     /* HRDLog */
     /**********/
-    ui->hrdlogCallsignEdit->setText(HRDLog::getRegisteredCallsign());
-    ui->hrdlogUploadCodeEdit->setText(HRDLog::getUploadCode());
-    ui->hrdlogOnAirCheckBox->setChecked(HRDLog::getOnAirEnabled());
+    ui->hrdlogCallsignEdit->setText(HRDLogBase::getRegisteredCallsign());
+    ui->hrdlogUploadCodeEdit->setText(HRDLogBase::getUploadCode());
+    ui->hrdlogOnAirCheckBox->setChecked(HRDLogBase::getOnAirEnabled());
 
     /***********/
     /* QRZ.COM */
@@ -2430,9 +2430,9 @@ void SettingsDialog::writeSettings() {
     /**********/
     /* HRDLog */
     /**********/
-    HRDLog::saveUploadCode(ui->hrdlogCallsignEdit->text(),
+    HRDLogBase::saveUploadCode(ui->hrdlogCallsignEdit->text(),
                            ui->hrdlogUploadCodeEdit->text());
-    HRDLog::saveOnAirEnabled(ui->hrdlogOnAirCheckBox->isChecked());
+    HRDLogBase::saveOnAirEnabled(ui->hrdlogOnAirCheckBox->isChecked());
 
     /***********/
     /* QRZ.COM */

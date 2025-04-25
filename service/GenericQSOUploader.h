@@ -22,7 +22,7 @@ public slots:
     virtual void abortRequest() = 0;
 
 protected:
-    virtual const QByteArray generateADIF(const QList<QSqlRecord> qsos);
+    virtual const QByteArray generateADIF(const QList<QSqlRecord> &qsos);
     virtual const QSqlRecord stripRecord(const QSqlRecord &record);
     virtual void processReply(QNetworkReply *reply) = 0;
     QNetworkAccessManager* getNetworkAccessManager() {return nam;};

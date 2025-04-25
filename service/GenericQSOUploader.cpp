@@ -12,7 +12,7 @@ GenericQSOUploader::GenericQSOUploader(const QStringList &uploadedFields, QObjec
     connect(nam, &QNetworkAccessManager::finished, this, &GenericQSOUploader::onNetworkReply);
 }
 
-const QByteArray GenericQSOUploader::generateADIF(const QList<QSqlRecord> qsos)
+const QByteArray GenericQSOUploader::generateADIF(const QList<QSqlRecord> &qsos)
 {
     QByteArray data;
     QTextStream stream(&data, QIODevice::ReadWrite);

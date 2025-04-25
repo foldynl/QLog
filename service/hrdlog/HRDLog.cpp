@@ -9,33 +9,85 @@
 #include "HRDLog.h"
 #include "core/debug.h"
 #include "core/CredentialStore.h"
-#include "logformat/AdiFormat.h"
 #include "rig/macros.h"
 
 MODULE_IDENTIFICATION("qlog.core.hrdlog");
 
-#define API_LOG_UPLOAD_URL "https://robot.hrdlog.net/NewEntry.aspx"
-#define API_ONAIR_URL "https://robot.hrdlog.net/OnAir.aspx"
+const QString HRDLogBase::SECURE_STORAGE_KEY = "HRDLog";
+const QString HRDLogBase::CONFIG_CALLSIGN_KEY = "hrdlog/callsign";
+const QString HRDLogBase::CONFIG_ONAIR_ENABLED_KEY = "hrdlog/onair";
 
 // http://www.iw1qlh.net/projects/hrdlog/HRDLognet_4.pdf
 
-HRDLog::HRDLog(QObject *parent)
-    : QObject(parent),
+const QString HRDLogBase::getRegisteredCallsign()
+{
+    FCT_IDENTIFICATION;
+    QSettings settings;
+
+    return settings.value(HRDLogBase::CONFIG_CALLSIGN_KEY).toString().trimmed();
+}
+
+const QString HRDLogBase::getUploadCode()
+{
+    FCT_IDENTIFICATION;
+    QSettings settings;
+
+    return CredentialStore::instance()->getPassword(HRDLogBase::SECURE_STORAGE_KEY,
+                                                    getRegisteredCallsign());
+}
+
+bool HRDLogBase::getOnAirEnabled()
+{
+    FCT_IDENTIFICATION;
+    QSettings settings;
+
+    return settings.value(HRDLogBase::CONFIG_ONAIR_ENABLED_KEY, false).toBool();
+}
+
+void HRDLogBase::saveUploadCode(const QString &newUsername, const QString &newPassword)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    QString oldUsername = getRegisteredCallsign();
+    if ( oldUsername != newUsername )
+    {
+        CredentialStore::instance()->deletePassword(HRDLogBase::SECURE_STORAGE_KEY,
+                                                    oldUsername);
+    }
+
+    settings.setValue(HRDLogBase::CONFIG_CALLSIGN_KEY, newUsername);
+
+    CredentialStore::instance()->savePassword(HRDLogBase::SECURE_STORAGE_KEY,
+                                              newUsername,
+                                              newPassword);
+}
+
+void HRDLogBase::saveOnAirEnabled(bool state)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+    settings.setValue(HRDLogBase::CONFIG_ONAIR_ENABLED_KEY, state);
+}
+
+// http://www.iw1qlh.net/projects/hrdlog/HRDLognet_4.pdf
+// It is not clear what QLog should send to HRDLog. Therefore it will
+// send all ADIF-fields
+
+HRDLogUploader::HRDLogUploader(QObject *parent)
+    : GenericQSOUploader(QStringList(), parent),
+      HRDLogBase(),
       currentReply(nullptr),
       cancelUpload(false)
 {
     FCT_IDENTIFICATION;
-
-    nam = new QNetworkAccessManager(this);
-    connect(nam, &QNetworkAccessManager::finished,
-            this, &HRDLog::processReply);
 }
 
-HRDLog::~HRDLog()
+HRDLogUploader::~HRDLogUploader()
 {
     FCT_IDENTIFICATION;
-
-    nam->deleteLater();
 
     if ( currentReply )
     {
@@ -44,7 +96,7 @@ HRDLog::~HRDLog()
     }
 }
 
-void HRDLog::abortRequest()
+void HRDLogUploader::abortRequest()
 {
     FCT_IDENTIFICATION;
 
@@ -58,62 +110,9 @@ void HRDLog::abortRequest()
     }
 }
 
-const QString HRDLog::getRegisteredCallsign()
-{
-    FCT_IDENTIFICATION;
-    QSettings settings;
-
-    return settings.value(HRDLog::CONFIG_CALLSIGN_KEY).toString().trimmed();
-}
-
-const QString HRDLog::getUploadCode()
-{
-    FCT_IDENTIFICATION;
-    QSettings settings;
-
-    return CredentialStore::instance()->getPassword(HRDLog::SECURE_STORAGE_KEY,
-                                                    getRegisteredCallsign());
-}
-
-bool HRDLog::getOnAirEnabled()
-{
-    FCT_IDENTIFICATION;
-    QSettings settings;
-
-    return settings.value(HRDLog::CONFIG_ONAIR_ENABLED_KEY, false).toBool();
-}
-
-void HRDLog::saveUploadCode(const QString &newUsername, const QString &newPassword)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-    QString oldUsername = getRegisteredCallsign();
-    if ( oldUsername != newUsername )
-    {
-        CredentialStore::instance()->deletePassword(HRDLog::SECURE_STORAGE_KEY,
-                                                    oldUsername);
-    }
-
-    settings.setValue(HRDLog::CONFIG_CALLSIGN_KEY, newUsername);
-
-    CredentialStore::instance()->savePassword(HRDLog::SECURE_STORAGE_KEY,
-                                              newUsername,
-                                              newPassword);
-}
-
-void HRDLog::saveOnAirEnabled(bool state)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-    settings.setValue(HRDLog::CONFIG_ONAIR_ENABLED_KEY, state);
-}
-
-void HRDLog::uploadAdif(const QByteArray &data,
-                        const QVariant &contactID,
-                        bool update)
+void HRDLogUploader::uploadAdif(const QByteArray &data,
+                                const QVariant &contactID,
+                                bool update)
 {
     FCT_IDENTIFICATION;
 
@@ -141,41 +140,33 @@ void HRDLog::uploadAdif(const QByteArray &data,
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
     }
 
-    currentReply = nam->post(request, params.query(QUrl::FullyEncoded).toUtf8());
-    currentReply->setProperty("messageType", QVariant("uploadQSO"));
+    currentReply = getNetworkAccessManager()->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+    currentReply->setProperty("messageType", "uploadQSO");
     currentReply->setProperty("ADIFData", data);
     currentReply->setProperty("contactID", contactID);
 }
 
-void HRDLog::uploadContact(QSqlRecord record)
+void HRDLogUploader::uploadContact(const QSqlRecord &record)
 {
     FCT_IDENTIFICATION;
 
-    QByteArray data;
-    QTextStream stream(&data, QIODevice::ReadWrite);
-
-    AdiFormat adi(stream);
-    adi.exportContact(record);
-    stream.flush();
-
+    QByteArray data = generateADIF({record});
     cancelUpload = false;
     uploadAdif(data.trimmed(),
                record.value("id"),
                (record.value("hrdlog_qso_upload_status").toString() == "M"));
 }
 
-void HRDLog::uploadContacts(const QList<QSqlRecord> &qsos)
+void HRDLogUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &)
 {
     FCT_IDENTIFICATION;
-
-    //qCDebug(function_parameters) << qsos;
 
     /* always process one requests per class */
 
     if ( qsos.isEmpty() )
     {
         /* Nothing to do */
-        emit uploadFinished(false);
+        emit uploadFinished();
         return;
     }
 
@@ -186,7 +177,7 @@ void HRDLog::uploadContacts(const QList<QSqlRecord> &qsos)
     queuedContacts4Upload.removeFirst();
 }
 
-void HRDLog::sendOnAir(double freq, const QString &mode)
+void HRDLogUploader::sendOnAir(double freq, const QString &mode)
 {
     FCT_IDENTIFICATION;
 
@@ -209,15 +200,13 @@ void HRDLog::sendOnAir(double freq, const QString &mode)
     qCDebug(runtime) << url;
 
     if ( currentReply )
-    {
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
-    }
 
-    currentReply = nam->post(request, params.query(QUrl::FullyEncoded).toUtf8());
+    currentReply = getNetworkAccessManager()->post(request, params.query(QUrl::FullyEncoded).toUtf8());
     currentReply->setProperty("messageType", QVariant("onAir"));
 }
 
-void HRDLog::processReply(QNetworkReply *reply)
+void HRDLogUploader::processReply(QNetworkReply *reply)
 {
     FCT_IDENTIFICATION;
 
@@ -288,12 +277,12 @@ void HRDLog::processReply(QNetworkReply *reply)
             else
             {
                 qCDebug(runtime) << "Confirmed Upload for QSO Id " << reply->property("contactID").toInt();
-                emit uploadedQSO(reply->property("contactID").toInt());
+                emit uploadedQSO(reply->property("contactID").toULongLong());
 
                 if ( queuedContacts4Upload.isEmpty() )
                 {
                     cancelUpload = false;
-                    emit uploadFinished(true);
+                    emit uploadFinished();
                 }
                 else if ( ! cancelUpload )
                 {
@@ -311,6 +300,3 @@ void HRDLog::processReply(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-const QString HRDLog::SECURE_STORAGE_KEY = "HRDLog";
-const QString HRDLog::CONFIG_CALLSIGN_KEY = "hrdlog/callsign";
-const QString HRDLog::CONFIG_ONAIR_ENABLED_KEY = "hrdlog/onair";
