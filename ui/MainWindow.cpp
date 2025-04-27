@@ -1518,7 +1518,7 @@ void MainWindow::showLotw()
 {
     FCT_IDENTIFICATION;
 
-    if ( ! Lotw::getUsername().isEmpty() )
+    if ( ! LotwBase::getUsername().isEmpty() )
     {
         LotwDialog dialog;
         dialog.exec();

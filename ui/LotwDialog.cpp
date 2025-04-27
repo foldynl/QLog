@@ -54,15 +54,15 @@ void LotwDialog::download() {
 
     bool qsl = ui->qslRadioButton->isChecked();
 
-    Lotw* lotw = new Lotw(dialog);
-    connect(lotw, &Lotw::updateProgress, dialog, &QProgressDialog::setValue);
+    LotwUploader* lotw = new LotwUploader(dialog);
+    connect(lotw, &LotwUploader::updateProgress, dialog, &QProgressDialog::setValue);
 
-    connect(lotw, &Lotw::updateStarted, this, [dialog] {
+    connect(lotw, &LotwUploader::updateStarted, this, [dialog] {
         dialog->setLabelText(tr("Processing LotW QSLs"));
         dialog->setRange(0, 100);
     });
 
-    connect(lotw, &Lotw::updateComplete, this, [dialog, qsl, lotw](QSLMergeStat stats) {
+    connect(lotw, &LotwUploader::updateComplete, this, [dialog, qsl, lotw](QSLMergeStat stats) {
         if (qsl) {
             QSettings settings;
             settings.setValue("lotw/last_update", QDateTime::currentDateTimeUtc().date());
@@ -74,7 +74,7 @@ void LotwDialog::download() {
         lotw->deleteLater();
     });
 
-    connect(lotw, &Lotw::updateFailed, this, [this, dialog, lotw](const QString &error) {
+    connect(lotw, &LotwUploader::updateFailed, this, [this, dialog, lotw](const QString &error) {
         dialog->done(QDialog::Accepted);
         QMessageBox::critical(this, tr("QLog Error"), tr("LoTW Update failed: ") + error);
         lotw->deleteLater();
@@ -175,9 +175,9 @@ void LotwDialog::upload() {
             dialog->setMinimumDuration(0);
             dialog->show();
 
-            Lotw *lotw = new Lotw(dialog);
+            LotwUploader *lotw = new LotwUploader(dialog);
 
-            connect(lotw, &Lotw::uploadFinished, this, [this, lotw, dialog, query_where, count]()
+            connect(lotw, &LotwUploader::uploadFinished, this, [this, lotw, dialog, query_where, count]()
             {
                 dialog->done(QDialog::Accepted);
 
@@ -198,7 +198,7 @@ void LotwDialog::upload() {
                 lotw->deleteLater();
             });
 
-            connect(lotw, &Lotw::uploadError, this, [this, lotw, dialog](const QString &errorString)
+            connect(lotw, &LotwUploader::uploadError, this, [this, lotw, dialog](const QString &errorString)
             {
                 qInfo() << "Error" << errorString;
                 dialog->done(QDialog::Accepted);

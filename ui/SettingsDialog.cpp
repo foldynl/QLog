@@ -2294,9 +2294,9 @@ void SettingsDialog::readSettings() {
     /********/
     /* LoTW */
     /********/
-    ui->lotwUsernameEdit->setText(Lotw::getUsername());
-    ui->lotwPasswordEdit->setText(Lotw::getPassword());
-    ui->tqslPathEdit->setText(Lotw::getTQSLPath());
+    ui->lotwUsernameEdit->setText(LotwBase::getUsername());
+    ui->lotwPasswordEdit->setText(LotwBase::getPassword());
+    ui->tqslPathEdit->setText(LotwBase::getTQSLPath());
 
     /***********/
     /* ClubLog */
@@ -2408,9 +2408,9 @@ void SettingsDialog::writeSettings() {
     /* LoTW */
     /********/
 
-    Lotw::saveUsernamePassword(ui->lotwUsernameEdit->text(),
+    LotwBase::saveUsernamePassword(ui->lotwUsernameEdit->text(),
                                ui->lotwPasswordEdit->text());
-    Lotw::saveTQSLPath(ui->tqslPathEdit->text());
+    LotwBase::saveTQSLPath(ui->tqslPathEdit->text());
 
     /***********/
     /* ClubLog */

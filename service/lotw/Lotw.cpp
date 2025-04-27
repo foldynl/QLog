@@ -13,26 +13,106 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 
-#define ADIF_API "https://lotw.arrl.org/lotwuser/lotwreport.adi"
-
 MODULE_IDENTIFICATION("qlog.core.lotw");
 
-Lotw::Lotw(QObject *parent) :
-    QObject(parent),
+QStringList LotwUploader::uploadedFields =
+{
+    "callsign",
+    "freq",
+    "band",
+    "freq_rx",
+    "mode",
+    "submode",
+    "start_time",
+    "prop_mode",
+    "sat_name",
+    "station_callsign",
+    "operator",
+    "rst_sent",
+    "rst_rcvd",
+    "my_state",
+    "my_cnty",
+    "my_vucc_grids"
+};
+
+const QString LotwBase::SECURE_STORAGE_KEY = "LoTW";
+const QString LotwBase::CONFIG_USERNAME_KEY = "lotw/username";
+
+const QString LotwBase::getUsername()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+    return settings.value(LotwBase::CONFIG_USERNAME_KEY).toString().trimmed();
+}
+
+const QString LotwBase::getPassword()
+{
+    FCT_IDENTIFICATION;
+
+    return CredentialStore::instance()->getPassword(LotwBase::SECURE_STORAGE_KEY,
+                                                    getUsername());
+}
+
+const QString LotwBase::getTQSLPath(const QString &defaultPath)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+#ifdef QLOG_FLATPAK
+    // flatpak package contain an internal tqsl that is always on the same path
+    Q_UNUSED(defaultPath);
+    return QString("/app/bin/tqsl");
+#else
+    return settings.value("lotw/tqsl", defaultPath).toString();
+#endif
+}
+
+void LotwBase::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    const QString &oldUsername = getUsername();
+    if ( oldUsername != newUsername )
+    {
+        CredentialStore::instance()->deletePassword(LotwBase::SECURE_STORAGE_KEY,
+                                                    oldUsername);
+    }
+    settings.setValue(LotwBase::CONFIG_USERNAME_KEY, newUsername);
+    CredentialStore::instance()->savePassword(LotwBase::SECURE_STORAGE_KEY,
+                                              newUsername,
+                                              newPassword);
+
+}
+
+void LotwBase::saveTQSLPath(const QString &newPath)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+#ifdef QLOG_FLATPAK
+    // do not save path for Flatpak version - an internal tqsl instance is present in the package
+    Q_UNUSED(newPath);
+#else
+    settings.setValue("lotw/tqsl", newPath);
+#endif
+}
+
+LotwUploader::LotwUploader(QObject *parent) :
+    GenericQSOUploader(uploadedFields, parent),
+    LotwBase(),
     currentReply(nullptr)
 {
     FCT_IDENTIFICATION;
-
-    nam = new QNetworkAccessManager(this);
-    connect(nam, &QNetworkAccessManager::finished,
-            this, &Lotw::processReply);
 }
 
-Lotw::~Lotw()
+LotwUploader::~LotwUploader()
 {
     FCT_IDENTIFICATION;
-
-    nam->deleteLater();
 
     if ( currentReply )
     {
@@ -41,7 +121,7 @@ Lotw::~Lotw()
     }
 }
 
-void Lotw::update(const QDate &start_date, bool qso_since, const QString &station_callsign)
+void LotwUploader::update(const QDate &start_date, bool qso_since, const QString &station_callsign)
 {
     FCT_IDENTIFICATION;
     qCDebug(function_parameters) << start_date << " " << qso_since;
@@ -67,7 +147,7 @@ void Lotw::update(const QDate &start_date, bool qso_since, const QString &statio
     get(params);
 }
 
-void Lotw::uploadAdif(const QByteArray &data)
+void LotwUploader::uploadAdif(const QByteArray &data)
 {
     FCT_IDENTIFICATION;
 
@@ -174,73 +254,16 @@ void Lotw::uploadAdif(const QByteArray &data)
     tqslProcess->start(getTQSLPath("tqsl"),args);
 }
 
-const QString Lotw::getUsername()
+void LotwUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &addlParams)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(Lotw::CONFIG_USERNAME_KEY).toString().trimmed();
-
+    QByteArray data = generateADIF(qsos);
+    uploadAdif(data);
 }
 
-const QString Lotw::getPassword()
-{
-    FCT_IDENTIFICATION;
 
-    return CredentialStore::instance()->getPassword(Lotw::SECURE_STORAGE_KEY,
-                                                    getUsername());
-}
-
-const QString Lotw::getTQSLPath(const QString &defaultPath)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-#ifdef QLOG_FLATPAK
-    // flatpak package contain an internal tqsl that is always on the same path
-    Q_UNUSED(defaultPath);
-    return QString("/app/bin/tqsl");
-#else
-    return settings.value("lotw/tqsl", defaultPath).toString();
-#endif
-}
-
-void Lotw::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-    const QString &oldUsername = getUsername();
-    if ( oldUsername != newUsername )
-    {
-        CredentialStore::instance()->deletePassword(Lotw::SECURE_STORAGE_KEY,
-                                                    oldUsername);
-    }
-    settings.setValue(Lotw::CONFIG_USERNAME_KEY, newUsername);
-    CredentialStore::instance()->savePassword(Lotw::SECURE_STORAGE_KEY,
-                                              newUsername,
-                                              newPassword);
-
-}
-
-void Lotw::saveTQSLPath(const QString &newPath)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-#ifdef QLOG_FLATPAK
-    // do not save path for Flatpak version - an internal tqsl instance is present in the package
-    Q_UNUSED(newPath);
-#else
-    settings.setValue("lotw/tqsl", newPath);
-#endif
-}
-
-void Lotw::get(QList<QPair<QString, QString>> params)
+void LotwUploader::get(QList<QPair<QString, QString>> params)
 {
     FCT_IDENTIFICATION;
 
@@ -262,10 +285,10 @@ void Lotw::get(QList<QPair<QString, QString>> params)
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
     }
 
-    currentReply = nam->get(QNetworkRequest(url));
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
 }
 
-void Lotw::processReply(QNetworkReply* reply)
+void LotwUploader::processReply(QNetworkReply* reply)
 {
     FCT_IDENTIFICATION;
 
@@ -347,7 +370,7 @@ void Lotw::processReply(QNetworkReply* reply)
     reply->deleteLater();
 }
 
-void Lotw::abortRequest()
+void LotwUploader::abortRequest()
 {
     FCT_IDENTIFICATION;
 
@@ -359,5 +382,4 @@ void Lotw::abortRequest()
     }
 }
 
-const QString Lotw::SECURE_STORAGE_KEY = "LoTW";
-const QString Lotw::CONFIG_USERNAME_KEY = "lotw/username";
+
