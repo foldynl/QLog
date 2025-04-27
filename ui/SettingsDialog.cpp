@@ -2308,8 +2308,8 @@ void SettingsDialog::readSettings() {
     /********/
     /* eQSL */
     /********/
-    ui->eqslUsernameEdit->setText(EQSL::getUsername());
-    ui->eqslPasswordEdit->setText(EQSL::getPassword());
+    ui->eqslUsernameEdit->setText(EQSLBase::getUsername());
+    ui->eqslPasswordEdit->setText(EQSLBase::getPassword());
 
     /**********/
     /* HRDLog */
@@ -2424,7 +2424,7 @@ void SettingsDialog::writeSettings() {
     /* eQSL */
     /********/
 
-    EQSL::saveUsernamePassword(ui->eqslUsernameEdit->text(),
+    EQSLBase::saveUsernamePassword(ui->eqslUsernameEdit->text(),
                                ui->eqslPasswordEdit->text());
 
     /**********/

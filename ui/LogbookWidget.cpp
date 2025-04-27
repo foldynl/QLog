@@ -968,16 +968,16 @@ void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)
         dialog->setAutoClose(true);
         dialog->show();
 
-        EQSL *eQSL = new EQSL(dialog);
+        EQSLUploader *eQSL = new EQSLUploader(dialog);
 
-        connect(eQSL, &EQSL::QSLImageFound, this, [dialog, eQSL](QString imgFile)
+        connect(eQSL, &EQSLUploader::QSLImageFound, this, [dialog, eQSL](QString imgFile)
         {
             dialog->done(0);
             QDesktopServices::openUrl(QUrl::fromLocalFile(imgFile));
             eQSL->deleteLater();
         });
 
-        connect(eQSL, &EQSL::QSLImageError, this, [this, dialog, eQSL](const QString &error)
+        connect(eQSL, &EQSLUploader::QSLImageError, this, [this, dialog, eQSL](const QString &error)
         {
             dialog->done(1);
             QMessageBox::critical(this, tr("QLog Error"), tr("eQSL Download Image failed: ") + error);

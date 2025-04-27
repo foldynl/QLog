@@ -1534,7 +1534,7 @@ void MainWindow::showeQSL()
 {
     FCT_IDENTIFICATION;
 
-    if ( ! EQSL::getUsername().isEmpty() )
+    if ( ! EQSLBase::getUsername().isEmpty() )
     {
         EqslDialog dialog;
         dialog.exec();

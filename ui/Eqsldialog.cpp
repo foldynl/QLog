@@ -53,17 +53,17 @@ void EqslDialog::download()
 
     bool qsl = ui->qslRadioButton->isChecked();
 
-    EQSL *eQSL = new EQSL(dialog);
+    EQSLUploader *eQSL = new EQSLUploader(dialog);
 
-    connect(eQSL, &EQSL::updateProgress, dialog, &QProgressDialog::setValue);
+    connect(eQSL, &EQSLUploader::updateProgress, dialog, &QProgressDialog::setValue);
 
-    connect(eQSL, &EQSL::updateStarted, this, [dialog]
+    connect(eQSL, &EQSLUploader::updateStarted, this, [dialog]
     {
         dialog->setLabelText(tr("Processing eQSL QSLs"));
         dialog->setRange(0, 100);
     });
 
-    connect(eQSL, &EQSL::updateComplete, this, [eQSL, dialog, qsl](QSLMergeStat stats)
+    connect(eQSL, &EQSLUploader::updateComplete, this, [eQSL, dialog, qsl](QSLMergeStat stats)
     {
         if ( qsl )
         {
@@ -80,7 +80,7 @@ void EqslDialog::download()
         eQSL->deleteLater();
     });
 
-    connect(eQSL, &EQSL::updateFailed, this, [this, eQSL, dialog](const QString &error)
+    connect(eQSL, &EQSLUploader::updateFailed, this, [this, eQSL, dialog](const QString &error)
     {
         dialog->done(1);
         QMessageBox::critical(this, tr("QLog Error"), tr("eQSL update failed: ") + error);
@@ -206,12 +206,11 @@ void EqslDialog::upload()
             dialog->setRange(0, 0);
             dialog->show();
 
-            EQSL *eQSL = new EQSL(dialog);
+            EQSLUploader *eQSL = new EQSLUploader(dialog);
 
-            connect(eQSL, &EQSL::uploadOK, this, [this, eQSL, dialog, query_where, count](const QString &msg)
+            connect(eQSL, &EQSLUploader::uploadFinished, this, [this, eQSL, dialog, query_where, count]()
             {
                 dialog->done(QDialog::Accepted);
-                qCDebug(runtime) << "eQSL Upload OK: " << msg;
                 QMessageBox::information(this, tr("QLog Information"), tr("%n QSO(s) uploaded.", "", count));
                 QString query_string = "UPDATE contacts "
                                        "SET eqsl_qsl_sent='Y', eqsl_qslsdate = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
@@ -224,7 +223,7 @@ void EqslDialog::upload()
                 eQSL->deleteLater();
             });
 
-            connect(eQSL, &EQSL::uploadError, this, [this, eQSL, dialog](const QString &msg)
+            connect(eQSL, &EQSLUploader::uploadError, this, [this, eQSL, dialog](const QString &msg)
             {
                 dialog->done(QDialog::Accepted);
                 qCInfo(runtime) << "eQSL Upload Error: " << msg;

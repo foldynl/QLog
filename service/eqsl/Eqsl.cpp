@@ -14,29 +14,78 @@
 #include "core/CredentialStore.h"
 #include "logformat/AdiFormat.h"
 
-#define DOWNLOAD_1ST_PAGE "https://www.eQSL.cc/qslcard/DownloadInBox.cfm"
-#define DOWNLOAD_2ND_PAGE "https://www.eQSL.cc/downloadedfiles/"
-#define UPLOAD_ADIF_PAGE "https://www.eQSL.cc/qslcard/ImportADIF.cfm"
-#define QSL_IMAGE_FILENAME_PAGE "https://www.eQSL.cc/qslcard/GeteQSL.cfm"
-#define QSL_IMAGE_DOWNLOAD_PAGE "https://www.eQSL.cc"
-
 MODULE_IDENTIFICATION("qlog.core.eqsl");
 
 extern QTemporaryDir tempDir;
 
-EQSL::EQSL( QObject *parent ):
-   QObject(parent),
+/* http://www.eqsl.cc/qslcard/ADIFContentSpecs.cfm */
+QStringList EQSLUploader::uploadedFields =
+{
+    "start_time",
+    "callsign",
+    "mode",
+    "freq",
+    "band",
+    "prop_mode",
+    "rst_sent",
+    "submode",
+    "sat_mode",
+    "sat_name",
+    "my_cnty",
+    "my_gridsquare",
+    "qslmsg",
+    "comment"
+};
+
+const QString EQSLBase::SECURE_STORAGE_KEY = "eQSL";
+const QString EQSLBase::CONFIG_USERNAME_KEY = "eqsl/username";
+
+const QString EQSLBase::getUsername()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    return settings.value(EQSLBase::CONFIG_USERNAME_KEY).toString().trimmed();
+}
+
+const QString EQSLBase::getPassword()
+{
+    FCT_IDENTIFICATION;
+
+    return CredentialStore::instance()->getPassword(EQSLBase::SECURE_STORAGE_KEY,
+                                                    getUsername());
+}
+
+
+void EQSLBase::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    const QString &oldUsername = getUsername();
+
+    if ( oldUsername != newUsername )
+    {
+        CredentialStore::instance()->deletePassword(EQSLBase::SECURE_STORAGE_KEY,
+                                                    oldUsername);
+    }
+    settings.setValue(EQSLBase::CONFIG_USERNAME_KEY, newUsername);
+    CredentialStore::instance()->savePassword(EQSLBase::SECURE_STORAGE_KEY,
+                                              newUsername,
+                                              newPassword);
+}
+
+EQSLUploader::EQSLUploader( QObject *parent ):
+   GenericQSOUploader(uploadedFields, parent),
    qslStorage(new QSLStorage(this)),
    currentReply(nullptr)
 {
     FCT_IDENTIFICATION;
-
-    nam = new QNetworkAccessManager(this);
-    connect(nam, &QNetworkAccessManager::finished,
-            this, &EQSL::processReply);
 }
 
-EQSL::~EQSL()
+EQSLUploader::~EQSLUploader()
 {
     FCT_IDENTIFICATION;
 
@@ -46,11 +95,10 @@ EQSL::~EQSL()
         currentReply->deleteLater();
     }
 
-    nam->deleteLater();
     qslStorage->deleteLater();
 }
 
-void EQSL::update(const QDate &start_date, bool qso_since, const QString &qthNick)
+void EQSLUploader::update(const QDate &start_date, bool qso_since, const QString &qthNick)
 {
     FCT_IDENTIFICATION;
 
@@ -83,13 +131,13 @@ void EQSL::update(const QDate &start_date, bool qso_since, const QString &qthNic
     get(params);
 }
 
-void EQSL::uploadAdif(const QByteArray &data)
+void EQSLUploader::uploadAdif(const QByteArray &data)
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
-    QString username = settings.value(EQSL::CONFIG_USERNAME_KEY).toString();
-    QString password = CredentialStore::instance()->getPassword(EQSL::SECURE_STORAGE_KEY,
+    QString username = settings.value(EQSLUploader::CONFIG_USERNAME_KEY).toString();
+    QString password = CredentialStore::instance()->getPassword(EQSLUploader::SECURE_STORAGE_KEY,
                                                                 username);
 
     /* http://www.eqsl.cc/qslcard/ImportADIF.txt */
@@ -123,18 +171,17 @@ void EQSL::uploadAdif(const QByteArray &data)
     multiPart->append(passPart);
     multiPart->append(filePart);
 
-    QNetworkRequest request(QUrl(UPLOAD_ADIF_PAGE));
+    QUrl url(UPLOAD_ADIF_PAGE);
+    QNetworkRequest request(url);
 
     if ( currentReply )
-    {
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
-    }
 
-    currentReply = nam->post(request, multiPart);
+    currentReply = getNetworkAccessManager()->post(request, multiPart);
     currentReply->setProperty("messageType", QVariant("uploadADIFFile"));
 }
 
-void EQSL::getQSLImage(const QSqlRecord &qso)
+void EQSLUploader::getQSLImage(const QSqlRecord &qso)
 {
     FCT_IDENTIFICATION;
 
@@ -176,50 +223,21 @@ void EQSL::getQSLImage(const QSqlRecord &qso)
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
     }
 
-    currentReply = nam->get(QNetworkRequest(url));
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
     currentReply->setProperty("messageType", QVariant("getQSLImageFileName"));
     currentReply->setProperty("onDiskFilename", QVariant(inCacheFilename));
     currentReply->setProperty("QSORecordID", QVariant(qso.value("id")));
 }
 
-const QString EQSL::getUsername()
+void EQSLUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(EQSL::CONFIG_USERNAME_KEY).toString().trimmed();
+    QByteArray data = generateADIF(qsos);
+    uploadAdif(data);
 }
 
-const QString EQSL::getPassword()
-{
-    FCT_IDENTIFICATION;
-
-    return CredentialStore::instance()->getPassword(EQSL::SECURE_STORAGE_KEY,
-                                                    getUsername());
-}
-
-
-void EQSL::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-    const QString &oldUsername = getUsername();
-
-    if ( oldUsername != newUsername )
-    {
-        CredentialStore::instance()->deletePassword(EQSL::SECURE_STORAGE_KEY,
-                                                    oldUsername);
-    }
-    settings.setValue(EQSL::CONFIG_USERNAME_KEY, newUsername);
-    CredentialStore::instance()->savePassword(EQSL::SECURE_STORAGE_KEY,
-                                              newUsername,
-                                              newPassword);
-}
-
-void EQSL::get(const QList<QPair<QString, QString>> &params)
+void EQSLUploader::get(const QList<QPair<QString, QString>> &params)
 {
     FCT_IDENTIFICATION;
 
@@ -242,11 +260,11 @@ void EQSL::get(const QList<QPair<QString, QString>> &params)
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
     }
 
-    currentReply = nam->get(QNetworkRequest(url));
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
     currentReply->setProperty("messageType", QVariant("getADIFFileName"));
 }
 
-void EQSL::downloadADIF(const QString &filename)
+void EQSLUploader::downloadADIF(const QString &filename)
 {
     FCT_IDENTIFICATION;
 
@@ -263,11 +281,11 @@ void EQSL::downloadADIF(const QString &filename)
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
     }
 
-    currentReply = nam->get(QNetworkRequest(url));
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
     currentReply->setProperty("messageType", QVariant("getADIF"));
 }
 
-void EQSL::downloadImage(const QString &URLFilename,
+void EQSLUploader::downloadImage(const QString &URLFilename,
                          const QString &onDiskFilename,
                          const qulonglong qsoid)
 {
@@ -281,13 +299,13 @@ void EQSL::downloadImage(const QString &URLFilename,
 
     qCDebug(runtime) << url.toString();
 
-    currentReply = nam->get(QNetworkRequest(url));
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
     currentReply->setProperty("messageType", QVariant("downloadQSLImage"));
     currentReply->setProperty("onDiskFilename", QVariant(onDiskFilename));
     currentReply->setProperty("QSORecordID", qsoid);
 }
 
-QString EQSL::QSLImageFilename(const QSqlRecord &qso)
+QString EQSLUploader::QSLImageFilename(const QSqlRecord &qso)
 {
     FCT_IDENTIFICATION;
 
@@ -302,7 +320,7 @@ QString EQSL::QSLImageFilename(const QSqlRecord &qso)
     return ret;
 }
 
-bool EQSL::isQSLImageInCache(const QSqlRecord &qso, QString &fullPath)
+bool EQSLUploader::isQSLImageInCache(const QSqlRecord &qso, QString &fullPath)
 {
     FCT_IDENTIFICATION;
 
@@ -328,7 +346,7 @@ bool EQSL::isQSLImageInCache(const QSqlRecord &qso, QString &fullPath)
     return isFileExists;
 }
 
-void EQSL::processReply(QNetworkReply* reply)
+void EQSLUploader::processReply(QNetworkReply* reply)
 {
     FCT_IDENTIFICATION;
 
@@ -559,7 +577,7 @@ void EQSL::processReply(QNetworkReply* reply)
         if ( matchOK.hasMatch() )
         {
             msg = matchOK.captured(1);
-            emit uploadOK(msg);
+            emit uploadFinished();
         }
         else if (matchError.hasMatch() )
         {
@@ -569,7 +587,7 @@ void EQSL::processReply(QNetworkReply* reply)
         else if (matchWarning.hasMatch() )
         {
             msg = matchWarning.captured(1);
-            emit uploadOK(msg);
+            emit uploadFinished();
         }
         else if (matchCaution.hasMatch() )
         {
@@ -587,7 +605,7 @@ void EQSL::processReply(QNetworkReply* reply)
     reply->deleteLater();
 }
 
-void EQSL::abortRequest()
+void EQSLUploader::abortRequest()
 {
     FCT_IDENTIFICATION;
 
@@ -598,6 +616,3 @@ void EQSL::abortRequest()
         currentReply = nullptr;
     }
 }
-
-const QString EQSL::SECURE_STORAGE_KEY = "eQSL";
-const QString EQSL::CONFIG_USERNAME_KEY = "eqsl/username";
