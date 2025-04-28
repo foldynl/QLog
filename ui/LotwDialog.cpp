@@ -54,16 +54,17 @@ void LotwDialog::download() {
 
     bool qsl = ui->qslRadioButton->isChecked();
 
-    LotwUploader* lotw = new LotwUploader(dialog);
-    connect(lotw, &LotwUploader::updateProgress, dialog, &QProgressDialog::setValue);
+    LotwQSLDownloader* lotw = new LotwQSLDownloader(dialog);
+    connect(lotw, &LotwQSLDownloader::receiveQSLProgress, dialog, &QProgressDialog::setValue);
 
-    connect(lotw, &LotwUploader::updateStarted, this, [dialog] {
+    connect(lotw, &LotwQSLDownloader::receiveQSLStarted, this, [dialog] {
         dialog->setLabelText(tr("Processing LotW QSLs"));
         dialog->setRange(0, 100);
     });
 
-    connect(lotw, &LotwUploader::updateComplete, this, [dialog, qsl, lotw](QSLMergeStat stats) {
-        if (qsl) {
+    connect(lotw, &LotwQSLDownloader::receiveQSLComplete, this, [dialog, qsl, lotw](QSLMergeStat stats) {
+        if (qsl)
+        {
             QSettings settings;
             settings.setValue("lotw/last_update", QDateTime::currentDateTimeUtc().date());
         }
@@ -74,7 +75,7 @@ void LotwDialog::download() {
         lotw->deleteLater();
     });
 
-    connect(lotw, &LotwUploader::updateFailed, this, [this, dialog, lotw](const QString &error) {
+    connect(lotw, &LotwQSLDownloader::receiveQSLFailed, this, [this, dialog, lotw](const QString &error) {
         dialog->done(QDialog::Accepted);
         QMessageBox::critical(this, tr("QLog Error"), tr("LoTW Update failed: ") + error);
         lotw->deleteLater();
@@ -83,13 +84,13 @@ void LotwDialog::download() {
     connect(dialog, &QProgressDialog::canceled, this, [lotw]()
     {
         qCDebug(runtime)<< "Operation canceled";
-        lotw->abortRequest();
+        lotw->abortDownload();
         lotw->deleteLater();
     });
 
     saveDialogState();
 
-    lotw->update(ui->dateEdit->date(), ui->qsoRadioButton->isChecked(), ui->stationCombo->currentText().toUpper());
+    lotw->receiveQSL(ui->dateEdit->date(), ui->qsoRadioButton->isChecked(), ui->stationCombo->currentText().toUpper());
 }
 
 void LotwDialog::upload() {

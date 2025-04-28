@@ -104,8 +104,7 @@ void LotwBase::saveTQSLPath(const QString &newPath)
 
 LotwUploader::LotwUploader(QObject *parent) :
     GenericQSOUploader(uploadedFields, parent),
-    LotwBase(),
-    currentReply(nullptr)
+    LotwBase()
 {
     FCT_IDENTIFICATION;
 }
@@ -113,38 +112,6 @@ LotwUploader::LotwUploader(QObject *parent) :
 LotwUploader::~LotwUploader()
 {
     FCT_IDENTIFICATION;
-
-    if ( currentReply )
-    {
-        currentReply->abort();
-        currentReply->deleteLater();
-    }
-}
-
-void LotwUploader::update(const QDate &start_date, bool qso_since, const QString &station_callsign)
-{
-    FCT_IDENTIFICATION;
-    qCDebug(function_parameters) << start_date << " " << qso_since;
-
-    QList<QPair<QString, QString>> params;
-    params.append(qMakePair(QString("qso_query"), QString("1")));
-    params.append(qMakePair(QString("qso_qsldetail"), QString("yes")));
-    params.append(qMakePair(QString("qso_owncall"), station_callsign));
-
-    const QString &start = start_date.toString("yyyy-MM-dd");
-
-    if (qso_since)
-    {
-        params.append(qMakePair(QString("qso_qsl"), QString("no")));
-        params.append(qMakePair(QString("qso_qsorxsince"), start));
-    }
-    else
-    {
-        params.append(qMakePair(QString("qso_qsl"), QString("yes")));
-        params.append(qMakePair(QString("qso_qslsince"), start));
-    }
-
-    get(params);
 }
 
 void LotwUploader::uploadAdif(const QByteArray &data)
@@ -254,7 +221,7 @@ void LotwUploader::uploadAdif(const QByteArray &data)
     tqslProcess->start(getTQSLPath("tqsl"),args);
 }
 
-void LotwUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &addlParams)
+void LotwUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &)
 {
     FCT_IDENTIFICATION;
 
@@ -262,33 +229,52 @@ void LotwUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMa
     uploadAdif(data);
 }
 
+LotwQSLDownloader::LotwQSLDownloader(QObject *parent) :
+    GenericQSLDownloader(parent),
+    LotwBase(),
+    currentReply(nullptr)
+{
+    FCT_IDENTIFICATION;
+}
 
-void LotwUploader::get(QList<QPair<QString, QString>> params)
+void LotwQSLDownloader::receiveQSL(const QDate &start_date, bool qso_since, const QString &station_callsign)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << start_date << " " << qso_since;
+
+    QList<QPair<QString, QString>> params;
+    params.append(qMakePair(QString("qso_query"), QString("1")));
+    params.append(qMakePair(QString("qso_qsldetail"), QString("yes")));
+    params.append(qMakePair(QString("qso_owncall"), station_callsign));
+
+    const QString &start = start_date.toString("yyyy-MM-dd");
+
+    if (qso_since)
+    {
+        params.append(qMakePair(QString("qso_qsl"), QString("no")));
+        params.append(qMakePair(QString("qso_qsorxsince"), start));
+    }
+    else
+    {
+        params.append(qMakePair(QString("qso_qsl"), QString("yes")));
+        params.append(qMakePair(QString("qso_qslsince"), start));
+    }
+
+    get(params);
+}
+
+void LotwQSLDownloader::abortDownload()
 {
     FCT_IDENTIFICATION;
 
-    const QString &username = getUsername();
-    const QString &password = getPassword();
-
-    QUrlQuery query;
-    query.setQueryItems(params);
-    query.addQueryItem("login", username.toUtf8().toPercentEncoding());
-    query.addQueryItem("password", password.toUtf8().toPercentEncoding());
-
-    QUrl url(ADIF_API);
-    url.setQuery(query);
-
-    qCDebug(runtime) << url.toString();
-
     if ( currentReply )
     {
-        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
+        currentReply->abort();
+        currentReply = nullptr;
     }
-
-    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
 }
 
-void LotwUploader::processReply(QNetworkReply* reply)
+void LotwQSLDownloader::processReply(QNetworkReply *reply)
 {
     FCT_IDENTIFICATION;
 
@@ -305,7 +291,7 @@ void LotwUploader::processReply(QNetworkReply* reply)
         qCDebug(runtime) << "HTTP Status Code" << replyStatusCode;
         if ( reply->error() != QNetworkReply::OperationCanceledError )
         {
-           emit updateFailed(reply->errorString());
+           emit receiveQSLFailed(reply->errorString());
            reply->deleteLater();
         }
         return;
@@ -323,7 +309,7 @@ void LotwUploader::processReply(QNetworkReply* reply)
     if ( ! tempFile.open() )
     {
         qCDebug(runtime) << "Cannot open temp file";
-        emit updateFailed(tr("Cannot open temporary file"));
+        emit receiveQSLFailed(tr("Cannot open temporary file"));
         return;
     }
 
@@ -335,7 +321,7 @@ void LotwUploader::processReply(QNetworkReply* reply)
      * otherwise, it is a long ADIF and it is not necessary to verify login status */
     if ( size < 10000 && data.contains("Username/password incorrect") )
     {
-        emit updateFailed(tr("Incorrect Loging or password"));
+        emit receiveQSLFailed(tr("Incorrect Loging or password"));
         return;
     }
 
@@ -343,7 +329,7 @@ void LotwUploader::processReply(QNetworkReply* reply)
     tempFile.flush();
     tempFile.seek(0);
 
-    emit updateStarted();
+    emit receiveQSLStarted();
 
     /* see above why QLog uses a temp file */
     QTextStream stream(&tempFile);
@@ -354,13 +340,13 @@ void LotwUploader::processReply(QNetworkReply* reply)
         if ( size > 0 )
         {
             double progress = position * 100.0 / size;
-            emit updateProgress(static_cast<int>(progress));
+            emit receiveQSLProgress(static_cast<qulonglong>(progress));
         }
     });
 
     connect(&adi, &AdiFormat::QSLMergeFinished, this, [this](QSLMergeStat stats)
     {
-        emit updateComplete(stats);
+        emit receiveQSLComplete(stats);
     });
 
     adi.runQSLImport(adi.LOTW);
@@ -370,16 +356,36 @@ void LotwUploader::processReply(QNetworkReply* reply)
     reply->deleteLater();
 }
 
-void LotwUploader::abortRequest()
+void LotwQSLDownloader::get(QList<QPair<QString, QString>> params)
+{
+    FCT_IDENTIFICATION;
+
+    const QString &username = getUsername();
+    const QString &password = getPassword();
+
+    QUrlQuery query;
+    query.setQueryItems(params);
+    query.addQueryItem("login", username.toUtf8().toPercentEncoding());
+    query.addQueryItem("password", password.toUtf8().toPercentEncoding());
+
+    QUrl url(ADIF_API);
+    url.setQuery(query);
+
+    qCDebug(runtime) << url.toString();
+
+    if ( currentReply )
+        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
+
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
+}
+
+LotwQSLDownloader::~LotwQSLDownloader()
 {
     FCT_IDENTIFICATION;
 
     if ( currentReply )
     {
         currentReply->abort();
-        //currentReply->deleteLater(); // pointer is deleted later in processReply
-        currentReply = nullptr;
+        currentReply->deleteLater();
     }
 }
-
-

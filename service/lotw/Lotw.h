@@ -5,6 +5,7 @@
 #include <QNetworkReply>
 #include <logformat/LogFormat.h>
 #include "service/GenericQSOUploader.h"
+#include "service/GenericQSLDownloader.h"
 
 class QNetworkAccessManager;
 
@@ -36,22 +37,32 @@ public:
     explicit LotwUploader(QObject *parent = nullptr);
     virtual ~LotwUploader();
 
-    void update(const QDate &, bool, const QString &);
     void uploadAdif(const QByteArray &);
     virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
 
-signals:
-    void updateProgress(int value);
-    void updateStarted();
-    void updateComplete(QSLMergeStat update);
-    void updateFailed(QString);
+public slots:
+    virtual void abortRequest() override {};
+
+private:
+    QTemporaryFile file;
+    virtual void processReply(QNetworkReply*) override {};
+};
+
+class LotwQSLDownloader : public GenericQSLDownloader, private LotwBase
+{
+    Q_OBJECT
+
+public:
+    explicit LotwQSLDownloader(QObject *parent = nullptr);
+    virtual ~LotwQSLDownloader();
+
+    virtual void receiveQSL(const QDate &, bool, const QString &) override;
 
 public slots:
-    virtual void abortRequest() override;
+    virtual void abortDownload() override;
 
 private:
     QNetworkReply *currentReply;
-    QTemporaryFile file;
     const QString ADIF_API = "https://lotw.arrl.org/lotwuser/lotwreport.adi";
 
     virtual void processReply(QNetworkReply* reply) override;
