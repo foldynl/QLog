@@ -251,8 +251,7 @@
   </action>
   <action name="actionUploadClublog">
    <property name="icon">
-    <iconset resource="../res/icons/icons.qrc">
-     <normaloff>:/icons/cloud_upload-24px.svg</normaloff>:/icons/cloud_upload-24px.svg</iconset>
+    <iconset theme="cloud_upload"/>
    </property>
    <property name="text">
     <string>Upload to Clublog</string>
@@ -260,8 +259,7 @@
   </action>
   <action name="actionLookup">
    <property name="icon">
-    <iconset resource="../res/icons/icons.qrc">
-     <normaloff>:/icons/baseline-search-24px.svg</normaloff>:/icons/baseline-search-24px.svg</iconset>
+    <iconset theme="baseline-search" />
    </property>
    <property name="text">
     <string>Lookup on Web</string>
@@ -272,8 +270,7 @@
   </action>
   <action name="actionCallbookLookup">
    <property name="icon">
-    <iconset resource="../res/icons/icons.qrc">
-     <normaloff>:/icons/cloud_download-24px.svg</normaloff>:/icons/cloud_download-24px.svg</iconset>
+    <iconset theme="cloud_download"/>
    </property>
    <property name="text">
     <string>Update from Callbook</string>
@@ -284,8 +281,7 @@
   </action>
   <action name="actionFilter">
    <property name="icon">
-    <iconset resource="../res/icons/icons.qrc">
-     <normaloff>:/icons/filter_list-24px.svg</normaloff>:/icons/filter_list-24px.svg</iconset>
+    <iconset theme="filter_list"/>
    </property>
    <property name="text">
     <string>Filter Callsign</string>
@@ -335,9 +331,6 @@
    <header>ui/QTableQSOView.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../res/icons/icons.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>actionDeleteContact</sender>

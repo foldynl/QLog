@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>971</width>
-    <height>378</height>
+    <height>423</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="focusPolicy">
-   <enum>Qt::TabFocus</enum>
+   <enum>Qt::FocusPolicy::TabFocus</enum>
   </property>
   <property name="windowTitle">
    <string notr="true">Form</string>
@@ -52,7 +52,7 @@
         <number>0</number>
        </property>
        <property name="sizeConstraint">
-        <enum>QLayout::SetMinimumSize</enum>
+        <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
        </property>
        <property name="topMargin">
         <number>0</number>
@@ -107,7 +107,7 @@
             <string>Frequency</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -157,10 +157,10 @@
               <string/>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
              <property name="textInteractionFlags">
-              <set>Qt::NoTextInteraction</set>
+              <set>Qt::TextInteractionFlag::NoTextInteraction</set>
              </property>
             </widget>
            </item>
@@ -173,7 +173,7 @@
               <string>&lt;b&gt;DUPE !!!&lt;/b&gt;</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -211,7 +211,7 @@
                 </sizepolicy>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::ClickFocus</enum>
+                <enum>Qt::FocusPolicy::ClickFocus</enum>
                </property>
                <property name="keyboardTracking">
                 <bool>false</bool>
@@ -262,7 +262,7 @@
                 </sizepolicy>
                </property>
                <property name="focusPolicy">
-                <enum>Qt::ClickFocus</enum>
+                <enum>Qt::FocusPolicy::ClickFocus</enum>
                </property>
                <property name="keyboardTracking">
                 <bool>false</bool>
@@ -405,10 +405,10 @@
               </sizepolicy>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::FocusPolicy::ClickFocus</enum>
              </property>
              <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
+              <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
              </property>
             </widget>
            </item>
@@ -421,10 +421,10 @@
               </sizepolicy>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::FocusPolicy::ClickFocus</enum>
              </property>
              <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
+              <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
              </property>
             </widget>
            </item>
@@ -436,7 +436,7 @@
             <string>Mode</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -504,14 +504,13 @@
              <bool>true</bool>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
+             <enum>Qt::FocusPolicy::NoFocus</enum>
             </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../res/icons/icons.qrc">
-              <normaloff>:/icons/baseline-stop-24px.svg</normaloff>:/icons/baseline-stop-24px.svg</iconset>
+             <iconset theme="baseline-stop"/>
             </property>
             <property name="iconSize">
              <size>
@@ -530,21 +529,20 @@
              </sizepolicy>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
+             <enum>Qt::FocusPolicy::NoFocus</enum>
             </property>
             <property name="text">
              <string>Save</string>
             </property>
             <property name="icon">
-             <iconset theme="document-save">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="download"/>
             </property>
            </widget>
           </item>
           <item row="1" column="11">
            <spacer name="horizontalSpacer_7">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -557,10 +555,10 @@
           <item row="1" column="5">
            <spacer name="horizontalSpacer_4">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Maximum</enum>
+             <enum>QSizePolicy::Policy::Maximum</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -573,7 +571,7 @@
           <item row="1" column="10">
            <widget class="QPushButton" name="webLookupButton">
             <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
+             <enum>Qt::FocusPolicy::NoFocus</enum>
             </property>
             <property name="toolTip">
              <string>Lookup the call on the web. The query URL can be changed in Settings -&gt; Callbook</string>
@@ -582,18 +580,17 @@
              <string>Web</string>
             </property>
             <property name="icon">
-             <iconset resource="../res/icons/icons.qrc">
-              <normaloff>:/icons/baseline-search-24px.svg</normaloff>:/icons/baseline-search-24px.svg</iconset>
+             <iconset theme="baseline-search" />
             </property>
            </widget>
           </item>
           <item row="1" column="9">
            <spacer name="horizontalSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Maximum</enum>
+             <enum>QSizePolicy::Policy::Maximum</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -612,7 +609,7 @@
              </size>
             </property>
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::FocusPolicy::ClickFocus</enum>
             </property>
             <property name="readOnly">
              <bool>true</bool>
@@ -621,14 +618,14 @@
              <bool>true</bool>
             </property>
             <property name="timeSpec">
-             <enum>Qt::UTC</enum>
+             <enum>Qt::TimeSpec::UTC</enum>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QTimeEdit" name="timeOnEdit">
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::FocusPolicy::ClickFocus</enum>
             </property>
             <property name="readOnly">
              <bool>true</bool>
@@ -640,7 +637,7 @@
              <bool>true</bool>
             </property>
             <property name="timeSpec">
-             <enum>Qt::UTC</enum>
+             <enum>Qt::TimeSpec::UTC</enum>
             </property>
            </widget>
           </item>
@@ -660,28 +657,26 @@
           <item row="1" column="8">
            <widget class="QPushButton" name="resetButton">
             <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
+             <enum>Qt::FocusPolicy::NoFocus</enum>
             </property>
             <property name="text">
              <string>Reset</string>
             </property>
             <property name="icon">
-             <iconset theme="document-revert">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="arrow-undo"/>
             </property>
            </widget>
           </item>
           <item row="1" column="2">
            <widget class="QPushButton" name="startTimerButton">
             <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
+             <enum>Qt::FocusPolicy::NoFocus</enum>
             </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../res/icons/icons.qrc">
-              <normaloff>:/icons/baseline-play_arrow-24px.svg</normaloff>:/icons/baseline-play_arrow-24px.svg</iconset>
+             <iconset theme="baseline-play_arrow"/>
             </property>
             <property name="iconSize">
              <size>
@@ -714,7 +709,7 @@
           <item row="1" column="3">
            <widget class="QTimeEdit" name="qsoDurationEdit">
             <property name="focusPolicy">
-             <enum>Qt::ClickFocus</enum>
+             <enum>Qt::FocusPolicy::ClickFocus</enum>
             </property>
             <property name="readOnly">
              <bool>true</bool>
@@ -734,13 +729,13 @@
              </date>
             </property>
             <property name="currentSection">
-             <enum>QDateTimeEdit::HourSection</enum>
+             <enum>QDateTimeEdit::Section::HourSection</enum>
             </property>
             <property name="displayFormat">
              <string notr="true">HH:mm:ss</string>
             </property>
             <property name="timeSpec">
-             <enum>Qt::UTC</enum>
+             <enum>Qt::TimeSpec::UTC</enum>
             </property>
            </widget>
           </item>
@@ -806,7 +801,7 @@
            <string notr="true"/>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -842,7 +837,7 @@
              <string/>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -875,7 +870,7 @@
                <string notr="true"/>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignmentFlag::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -903,7 +898,7 @@
                <string notr="true"/>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignmentFlag::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -918,7 +913,7 @@
                <string/>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignmentFlag::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -933,7 +928,7 @@
                <string/>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignmentFlag::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -952,7 +947,7 @@
            <string/>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -967,10 +962,10 @@
    <item>
     <spacer name="verticalSpacer_3">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
      <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
+      <enum>QSizePolicy::Policy::Fixed</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
@@ -989,7 +984,7 @@
       </sizepolicy>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
+      <enum>Qt::FocusPolicy::NoFocus</enum>
      </property>
      <property name="currentIndex">
       <number>0</number>
@@ -1008,21 +1003,21 @@
        <item>
         <layout class="QFormLayout" name="detailColA">
          <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
          </property>
         </layout>
        </item>
        <item>
         <layout class="QFormLayout" name="detailColB">
          <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
          </property>
         </layout>
        </item>
        <item>
         <layout class="QFormLayout" name="detailColC">
          <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="qslSentLabel">
@@ -1061,13 +1056,13 @@
               </size>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::FocusPolicy::ClickFocus</enum>
              </property>
              <property name="toolTip">
               <string>&lt;b&gt;Yes&lt;/b&gt; - an outgoing QSL card has been sent; the QSO has been uploaded to, and accepted by, the online service&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - do not send an outgoing QSL card; do not upload the QSO to the online service&lt;br/&gt;&lt;b&gt;Requested&lt;/b&gt; - the contacted station has requested a QSL card; the contacted station has requested the QSO be uploaded to the online service&lt;br/&gt;&lt;b&gt;Queued&lt;/b&gt; - an outgoing QSL card has been selected to be sent; a QSO has been selected to be uploaded to the online service&lt;br/&gt;</string>
              </property>
              <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
+              <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
              </property>
             </widget>
            </item>
@@ -1099,13 +1094,13 @@
               </size>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::FocusPolicy::ClickFocus</enum>
              </property>
              <property name="toolTip">
               <string>&lt;b&gt;Yes&lt;/b&gt; - an outgoing QSL card has been sent; the QSO has been uploaded to, and accepted by, the online service&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - do not send an outgoing QSL card; do not upload the QSO to the online service&lt;br/&gt;&lt;b&gt;Requested&lt;/b&gt; - the contacted station has requested a QSL card; the contacted station has requested the QSO be uploaded to the online service&lt;br/&gt;&lt;b&gt;Queued&lt;/b&gt; - an outgoing QSL card has been selected to be sent; a QSO has been selected to be uploaded to the online service&lt;br/&gt;</string>
              </property>
              <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
+              <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
              </property>
             </widget>
            </item>
@@ -1137,20 +1132,20 @@
               </size>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::FocusPolicy::ClickFocus</enum>
              </property>
              <property name="toolTip">
               <string>&lt;b&gt;Yes&lt;/b&gt; - an outgoing QSL card has been sent; the QSO has been uploaded to, and accepted by, the online service&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - do not send an outgoing QSL card; do not upload the QSO to the online service&lt;br/&gt;&lt;b&gt;Requested&lt;/b&gt; - the contacted station has requested a QSL card; the contacted station has requested the QSO be uploaded to the online service&lt;br/&gt;&lt;b&gt;Queued&lt;/b&gt; - an outgoing QSL card has been selected to be sent; a QSO has been selected to be uploaded to the online service&lt;br/&gt;</string>
              </property>
              <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
+              <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
              </property>
             </widget>
            </item>
            <item>
             <spacer name="horizontalSpacer_9">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -1199,17 +1194,17 @@
               </size>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::FocusPolicy::ClickFocus</enum>
              </property>
              <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
+              <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
              </property>
             </widget>
            </item>
            <item>
             <spacer name="horizontalSpacer_10">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -1248,7 +1243,7 @@
               </size>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::ClickFocus</enum>
+              <enum>Qt::FocusPolicy::ClickFocus</enum>
              </property>
              <property name="maxLength">
               <number>25</number>
@@ -1258,10 +1253,10 @@
            <item>
             <spacer name="horizontalSpacer_8">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
+              <enum>QSizePolicy::Policy::Minimum</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -1285,7 +1280,7 @@
               <string/>
              </property>
              <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
              <property name="margin">
               <number>0</number>
@@ -1309,7 +1304,7 @@
               <string/>
              </property>
              <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
              </property>
              <property name="margin">
               <number>5</number>
@@ -1322,7 +1317,7 @@
            <item>
             <spacer name="horizontalSpacer_6">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -1356,7 +1351,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::FocusPolicy::ClickFocus</enum>
            </property>
           </widget>
          </item>
@@ -1406,13 +1401,13 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::FocusPolicy::NoFocus</enum>
          </property>
          <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustToContents</enum>
+          <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="tabKeyNavigation">
           <bool>true</bool>
@@ -1421,13 +1416,13 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectItems</enum>
+          <enum>QAbstractItemView::SelectionBehavior::SelectItems</enum>
          </property>
          <property name="gridStyle">
-          <enum>Qt::SolidLine</enum>
+          <enum>Qt::PenStyle::SolidLine</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>20</number>
@@ -1462,19 +1457,19 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::FocusPolicy::NoFocus</enum>
          </property>
          <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustToContents</enum>
+          <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>20</number>
@@ -1515,10 +1510,10 @@
          <item row="0" column="1">
           <widget class="QComboBox" name="stationProfileCombo">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::FocusPolicy::ClickFocus</enum>
            </property>
            <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToContents</enum>
+            <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
            </property>
           </widget>
          </item>
@@ -1538,10 +1533,10 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::FocusPolicy::ClickFocus</enum>
            </property>
            <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToContents</enum>
+            <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
            </property>
           </widget>
          </item>
@@ -1561,10 +1556,10 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::FocusPolicy::ClickFocus</enum>
            </property>
            <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToContents</enum>
+            <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
            </property>
           </widget>
          </item>
@@ -1573,7 +1568,7 @@
        <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -1605,16 +1600,16 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+          <enum>Qt::FocusPolicy::ClickFocus</enum>
          </property>
          <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustToContents</enum>
+          <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
          </property>
          <property name="acceptRichText">
           <bool>false</bool>
          </property>
          <property name="textInteractionFlags">
-          <set>Qt::TextEditorInteraction</set>
+          <set>Qt::TextInteractionFlag::TextEditorInteraction</set>
          </property>
         </widget>
        </item>
@@ -1656,7 +1651,7 @@
      <item>
       <spacer name="horizontalSpacer_11">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -1698,9 +1693,7 @@
   <tabstop>rstRcvdEdit</tabstop>
   <tabstop>noteEdit</tabstop>
  </tabstops>
- <resources>
-  <include location="../res/icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>callsignEdit</sender>

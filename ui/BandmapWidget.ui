@@ -56,15 +56,14 @@
          <string notr="true"/>
         </property>
         <property name="icon">
-         <iconset resource="../res/icons/icons.qrc">
-          <normaloff>:/icons/new-window.svg</normaloff>:/icons/new-window.svg</iconset>
+         <iconset theme="new-window"/>
         </property>
        </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -84,7 +83,7 @@
       <item>
        <widget class="QSpinBox" name="clearSpotOlderSpin">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
         <property name="toolTip">
          <string/>
@@ -103,7 +102,7 @@
       <item>
        <widget class="QPushButton" name="clearAllButton">
         <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
+         <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
         <property name="text">
          <string>Clear All</string>
@@ -116,13 +115,13 @@
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="focusPolicy">
-      <enum>Qt::ClickFocus</enum>
+      <enum>Qt::FocusPolicy::ClickFocus</enum>
      </property>
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
+      <enum>QFrame::Shadow::Plain</enum>
      </property>
      <property name="midLineWidth">
       <number>-3</number>
@@ -136,7 +135,7 @@
         <x>0</x>
         <y>0</y>
         <width>451</width>
-        <height>591</height>
+        <height>573</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -170,25 +169,25 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+          <enum>Qt::FocusPolicy::ClickFocus</enum>
          </property>
          <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
          </property>
          <property name="styleSheet">
           <string notr="true">QWidget{background: transparent}</string>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
+          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
          </property>
          <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
+          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
          </property>
          <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+          <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
          </property>
         </widget>
        </item>
@@ -201,7 +200,7 @@
      <item>
       <widget class="QPushButton" name="clearBandButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="toolTip">
         <string>Clear the current band</string>
@@ -210,8 +209,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/icons/icons.qrc">
-         <normaloff>:/icons/clear-button.svg</normaloff>:/icons/clear-button.svg</iconset>
+        <iconset theme="clear-button"/>
        </property>
        <property name="iconSize">
         <size>
@@ -224,7 +222,7 @@
      <item>
       <spacer name="horizontalSpacer_4">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -243,7 +241,10 @@
         </sizepolicy>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>Zoom Level</string>
        </property>
        <property name="minimum">
         <number>0</number>
@@ -255,7 +256,7 @@
         <number>1</number>
        </property>
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="invertedAppearance">
         <bool>false</bool>
@@ -264,26 +265,29 @@
         <bool>false</bool>
        </property>
        <property name="tickPosition">
-        <enum>QSlider::TicksAbove</enum>
+        <enum>QSlider::TickPosition::TicksAbove</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="zoomLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="QToolButton" name="toolButton">
+       <property name="enabled">
+        <bool>false</bool>
        </property>
-       <property name="text">
+       <property name="focusPolicy">
+        <enum>Qt::FocusPolicy::NoFocus</enum>
+       </property>
+       <property name="toolTip">
         <string notr="true"/>
        </property>
-       <property name="pixmap">
-        <pixmap resource="../res/icons/icons.qrc">:/icons/zoom_in-24px.svg</pixmap>
+       <property name="styleSheet">
+        <string notr="true">border:0;</string>
        </property>
-       <property name="textInteractionFlags">
-        <set>Qt::NoTextInteraction</set>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="zoom_in"/>
        </property>
       </widget>
      </item>
@@ -291,9 +295,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../res/icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>graphicsView</sender>

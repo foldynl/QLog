@@ -54,7 +54,8 @@ MainWindow::MainWindow(QWidget* parent) :
     restoreContestMenuLinkExchange();
 
     darkLightModeSwith = new SwitchButton("", ui->statusBar);
-    darkIconLabel = new QLabel("<html><img src=':/icons/light-dark-24px.svg'></html>",ui->statusBar);
+    darkIconLabel = new QLabel(ui->statusBar);
+    darkIconLabel->setPixmap(QIcon::fromTheme("light-dark").pixmap(24));
 
     /* Dark Mode is supported only in case of Fusion Style */
     if ( QApplication::style()->objectName().compare("fusion",
@@ -115,7 +116,7 @@ MainWindow::MainWindow(QWidget* parent) :
     contestLabel = new QLabel(ui->statusBar);
     contestLabel->setIndent(20);
     alertButton = new QPushButton("0", ui->statusBar);
-    alertButton->setIcon(QIcon(":/icons/alert.svg"));
+    alertButton->setIcon(QIcon::fromTheme("alert"));
     alertButton->setFlat(true);
     alertButton->setFocusPolicy(Qt::NoFocus);
     QMenu *menuAlert = new QMenu(this);
@@ -408,6 +409,8 @@ MainWindow::MainWindow(QWidget* parent) :
 
     //restoreEquipmentConnOptions();
     //restoreConnectionStates();
+
+    qCDebug(runtime) << "themeSearchPaths " << QIcon::themeSearchPaths();
 
     setupActivitiesMenu();
 }
@@ -752,7 +755,7 @@ void MainWindow::darkModeToggle(int mode)
     style.open(QFile::ReadOnly | QIODevice::Text);
     qApp->setStyleSheet(style.readAll());
     style.close();
-
+    darkIconLabel->setPixmap(QIcon::fromTheme("light-dark").pixmap(24));
     emit themeChanged(darkMode);
 
 }
@@ -763,6 +766,11 @@ void MainWindow::processSpotAlert(SpotAlert alert)
 
     ui->alertsWidget->addAlert(alert);
     alertButton->setText(QString::number(ui->alertsWidget->alertCount()));
+    if (ui->alertsWidget->alertCount() > 0) {
+        alertButton->setIcon(QIcon::fromTheme("alert-active"));
+    } else {
+        alertButton->setIcon(QIcon::fromTheme("alert"));
+    }
     alertTextButton->setText(alert.ruleNameList.join(", ") + ": " + alert.spot.callsign + ", " + alert.spot.band + ", " + alert.spot.modeGroupString);
     alertTextButton->disconnect();
 
@@ -978,6 +986,7 @@ void MainWindow::setDarkMode()
     darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledColor);
 
     qApp->setPalette(darkPalette);
+    QIcon::setThemeName("dark");
 }
 
 void MainWindow::setLightMode()
@@ -985,6 +994,7 @@ void MainWindow::setLightMode()
     FCT_IDENTIFICATION;
 
     qApp->setPalette(this->style()->standardPalette());
+    QIcon::setThemeName("light");
 }
 
 void MainWindow::setupActivitiesMenu()

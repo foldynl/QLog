@@ -1,0 +1,17 @@
+[Icon Theme]
+Name=dark
+Comment=dark theme icons
+
+#PanelDefault=22
+#PanelSizes=22
+
+#https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
+
+Directories=svg
+
+[svg]
+Size=24
+Context=Applications
+MinSize=16
+MaxSize=512
+Type=Scalable

@@ -261,8 +261,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_arrow-24px.svg</normaloff>:/icons/baseline-play_arrow-24px.svg</iconset>
+                       <iconset theme="baseline-play_arrow" />
                       </property>
                      </widget>
                     </item>
@@ -287,8 +286,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_back-24px.svg</normaloff>:/icons/baseline-play_back-24px.svg</iconset>
+                       <iconset theme="baseline-play_back"/>
                       </property>
                      </widget>
                     </item>
@@ -362,8 +360,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_up-24px.svg</normaloff>:/icons/baseline-play_up-24px.svg</iconset>
+                       <iconset theme="baseline-play_up" />
                       </property>
                      </widget>
                     </item>
@@ -388,8 +385,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_down-24px.svg</normaloff>:/icons/baseline-play_down-24px.svg</iconset>
+                       <iconset theme="baseline-play_down"/>
                       </property>
                      </widget>
                     </item>
@@ -468,8 +464,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_arrow-24px.svg</normaloff>:/icons/baseline-play_arrow-24px.svg</iconset>
+                       <iconset theme="baseline-play_arrow"/>
                       </property>
                      </widget>
                     </item>
@@ -494,8 +489,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_back-24px.svg</normaloff>:/icons/baseline-play_back-24px.svg</iconset>
+                       <iconset theme="baseline-play_back"/>
                       </property>
                      </widget>
                     </item>
@@ -572,8 +566,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_up-24px.svg</normaloff>:/icons/baseline-play_up-24px.svg</iconset>
+                       <iconset theme="baseline-play_up"/>
                       </property>
                      </widget>
                     </item>
@@ -598,8 +591,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_down-24px.svg</normaloff>:/icons/baseline-play_down-24px.svg</iconset>
+                       <iconset theme="baseline-play_down"/>
                       </property>
                      </widget>
                     </item>
@@ -691,8 +683,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_arrow-24px.svg</normaloff>:/icons/baseline-play_arrow-24px.svg</iconset>
+                       <iconset theme="baseline-play_arrow"/>
                       </property>
                      </widget>
                     </item>
@@ -717,8 +708,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_back-24px.svg</normaloff>:/icons/baseline-play_back-24px.svg</iconset>
+                       <iconset theme="baseline-play_back"/>
                       </property>
                      </widget>
                     </item>
@@ -792,8 +782,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_up-24px.svg</normaloff>:/icons/baseline-play_up-24px.svg</iconset>
+                       <iconset theme="baseline-play_up"/>
                       </property>
                      </widget>
                     </item>
@@ -818,8 +807,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_down-24px.svg</normaloff>:/icons/baseline-play_down-24px.svg</iconset>
+                       <iconset theme="baseline-play_down"/>
                       </property>
                      </widget>
                     </item>
@@ -895,8 +883,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_arrow-24px.svg</normaloff>:/icons/baseline-play_arrow-24px.svg</iconset>
+                       <iconset theme="baseline-play_arrow"/>
                       </property>
                      </widget>
                     </item>
@@ -921,8 +908,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_back-24px.svg</normaloff>:/icons/baseline-play_back-24px.svg</iconset>
+                       <iconset theme="baseline-play_back"/>
                       </property>
                      </widget>
                     </item>
@@ -996,8 +982,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_up-24px.svg</normaloff>:/icons/baseline-play_up-24px.svg</iconset>
+                       <iconset theme="baseline-play_up"/>
                       </property>
                      </widget>
                     </item>
@@ -1022,8 +1007,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_down-24px.svg</normaloff>:/icons/baseline-play_down-24px.svg</iconset>
+                       <iconset theme="baseline-play_down"/>
                       </property>
                      </widget>
                     </item>
@@ -1099,8 +1083,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_arrow-24px.svg</normaloff>:/icons/baseline-play_arrow-24px.svg</iconset>
+                       <iconset theme="baseline-play_arrow"/>
                       </property>
                      </widget>
                     </item>
@@ -1125,8 +1108,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_back-24px.svg</normaloff>:/icons/baseline-play_back-24px.svg</iconset>
+                       <iconset theme="baseline-play_back"/>
                       </property>
                      </widget>
                     </item>
@@ -1200,8 +1182,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_up-24px.svg</normaloff>:/icons/baseline-play_up-24px.svg</iconset>
+                       <iconset theme="baseline-play_up"/>
                       </property>
                      </widget>
                     </item>
@@ -1226,8 +1207,7 @@
                        <string notr="true"/>
                       </property>
                       <property name="icon">
-                       <iconset resource="../res/icons/icons.qrc">
-                        <normaloff>:/icons/baseline-play_down-24px.svg</normaloff>:/icons/baseline-play_down-24px.svg</iconset>
+                       <iconset theme="baseline-play_down"/>
                       </property>
                      </widget>
                     </item>
@@ -1575,9 +1555,6 @@
   <tabstop>satNameCheckbox</tabstop>
   <tabstop>satNameEdit</tabstop>
  </tabstops>
- <resources>
-  <include location="../res/icons/icons.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

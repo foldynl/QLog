@@ -365,7 +365,7 @@ FORMS += \
 RESOURCES += \
     i18n/i18n.qrc \
     res/flags/flags.qrc \
-    res/icons/icons.qrc \
+    res/icons.qrc \
     res/res.qrc
 
 OTHER_FILES += \

@@ -599,9 +599,13 @@ void QSODetailDialog::setReadOnlyMode(bool inReadOnly)
 
     editButton->setText((( inReadOnly) ? getButtonText(EDIT_BUTTON_TEXT)
                                        : getButtonText(SAVE_BUTTON_TEXT) ));
-
+    QIcon *toggleIcon = new QIcon();
+    toggleIcon->addPixmap(QIcon::fromTheme("connect").pixmap(24), QIcon::Normal, QIcon::On);
+    toggleIcon->addPixmap(QIcon::fromTheme("disconnect").pixmap(24), QIcon::Normal, QIcon::Off);
+    ui->timeLockButton->setIcon(*toggleIcon);
     ui->timeLockButton->setEnabled(!inReadOnly);
     ui->freqLockButton->setEnabled(!inReadOnly);
+    ui->freqLockButton->setIcon(*toggleIcon);
     resetButton->setEnabled(!inReadOnly);
 
     lookupButton->setEnabled(!inReadOnly && callbookManager.isActive());
@@ -1527,10 +1531,7 @@ void QSODetailDialog::lookupButtonWaitingStyle(bool isWaiting)
     else
     {
         lookupButtonMovie->stop();
-
-        QIcon icon;
-        icon.addFile(QString::fromUtf8(":/icons/baseline-search-24px.svg"));
-        lookupButton->setIcon(icon);
+        lookupButton->setIcon(QIcon::fromTheme("baseline-search"));
     }
 }
 
