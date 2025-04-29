@@ -485,8 +485,7 @@
   </action>
   <action name="actionQSOFilters">
    <property name="icon">
-    <iconset resource="../res/icons/icons.qrc">
-     <normaloff>:/icons/filter_list-24px.svg</normaloff>:/icons/filter_list-24px.svg</iconset>
+    <iconset theme="filter_list"/>
    </property>
    <property name="text">
     <string>QSO &amp;Filters</string>
@@ -982,9 +981,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../res/icons/icons.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>actionQuit</sender>

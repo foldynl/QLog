@@ -37,7 +37,7 @@ QVariant LogbookModel::data(const QModelIndex &index, int role) const
     {
         QVariant value = QSqlTableModel::data(index, Qt::DisplayRole);
         if (value.toString() == "Y") {
-            return QIcon(":/icons/done-24px.svg");
+            return QIcon::fromTheme("done");
         }
 //        else {
 //            return QIcon(":/icons/close-24px.svg");

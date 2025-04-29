@@ -45,16 +45,16 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
+          <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
          </property>
          <property name="displayFormat">
           <string>dd/MM/yyyy HH:mm:ss</string>
          </property>
          <property name="timeSpec">
-          <enum>Qt::UTC</enum>
+          <enum>Qt::TimeSpec::UTC</enum>
          </property>
         </widget>
        </item>
@@ -67,13 +67,13 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::FocusPolicy::StrongFocus</enum>
          </property>
          <property name="displayFormat">
           <string>dd/MM/yyyy HH:mm:ss</string>
          </property>
          <property name="timeSpec">
-          <enum>Qt::UTC</enum>
+          <enum>Qt::TimeSpec::UTC</enum>
          </property>
         </widget>
        </item>
@@ -114,9 +114,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/icons/icons.qrc">
-         <normaloff>:/icons/disconnect.svg</normaloff>
-         <normalon>:/icons/connect.svg</normalon>:/icons/disconnect.svg</iconset>
+        <iconset theme="connect"/>
        </property>
        <property name="iconSize">
         <size>
@@ -190,7 +188,7 @@
         <string>Mode</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -235,7 +233,7 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::WheelFocus</enum>
+          <enum>Qt::FocusPolicy::WheelFocus</enum>
          </property>
         </widget>
        </item>
@@ -248,7 +246,7 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::WheelFocus</enum>
+          <enum>Qt::FocusPolicy::WheelFocus</enum>
          </property>
         </widget>
        </item>
@@ -289,9 +287,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/icons/icons.qrc">
-         <normaloff>:/icons/disconnect.svg</normaloff>
-         <normalon>:/icons/connect.svg</normalon>:/icons/disconnect.svg</iconset>
+        <iconset theme="connect"/>
        </property>
        <property name="iconSize">
         <size>
@@ -404,7 +400,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="specialValueText">
             <string>Blank</string>
@@ -458,7 +454,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="specialValueText">
             <string>Blank</string>
@@ -504,14 +500,14 @@
           <string>Frequency</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer_6">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -669,12 +665,12 @@
           <bool>false</bool>
          </property>
          <property name="textInteractionFlags">
-          <set>Qt::TextEditorInteraction</set>
+          <set>Qt::TextInteractionFlag::TextEditorInteraction</set>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QWebEngineView" name="mapView">
+        <widget class="QWebEngineView" name="mapView" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -694,9 +690,9 @@
           </size>
          </property>
          <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
          </property>
-         <property name="url">
+         <property name="url" stdset="0">
           <url>
            <string>about:blank</string>
           </url>
@@ -716,10 +712,10 @@
       </sizepolicy>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
+      <enum>Qt::FocusPolicy::StrongFocus</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabDetails">
       <attribute name="title">
@@ -729,7 +725,7 @@
        <item>
         <layout class="QFormLayout" name="formLayout">
          <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
          </property>
          <property name="horizontalSpacing">
           <number>6</number>
@@ -776,7 +772,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="maxLength">
             <number>2</number>
@@ -805,7 +801,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="maxLength">
             <number>2</number>
@@ -834,7 +830,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -860,7 +856,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -886,7 +882,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -902,10 +898,10 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::WheelFocus</enum>
+            <enum>Qt::FocusPolicy::WheelFocus</enum>
            </property>
            <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToContents</enum>
+            <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
            </property>
            <item>
             <property name="text">
@@ -959,7 +955,7 @@
          <item row="7" column="1">
           <widget class="NewContactEditLine" name="vuccEdit">
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="toolTip">
             <string>two or four adjacent Gridsquares, each four characters long, (ex. EN98,FM08,EM97,FM07)</string>
@@ -971,10 +967,10 @@
        <item>
         <layout class="QFormLayout" name="formLayout_2">
          <property name="labelAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
          </property>
          <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
          </property>
          <property name="verticalSpacing">
           <number>4</number>
@@ -989,7 +985,7 @@
          <item row="0" column="1">
           <widget class="NewContactEditLine" name="dokEdit">
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="toolTip">
             <string>the contacted station's DARC DOK (District Location Code) (ex. A01)</string>
@@ -1018,7 +1014,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1048,7 +1044,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1072,7 +1068,7 @@
          <item row="5" column="1">
           <widget class="NewContactEditLine" name="sigEdit">
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1086,7 +1082,7 @@
          <item row="6" column="1">
           <widget class="NewContactEditLine" name="sigInfoEdit">
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1095,7 +1091,7 @@
        <item>
         <layout class="QFormLayout" name="formLayout_3">
          <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
          </property>
          <property name="verticalSpacing">
           <number>4</number>
@@ -1116,7 +1112,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1136,7 +1132,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1162,7 +1158,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::WheelFocus</enum>
+            <enum>Qt::FocusPolicy::WheelFocus</enum>
            </property>
           </widget>
          </item>
@@ -1185,7 +1181,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1214,7 +1210,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::WheelFocus</enum>
+            <enum>Qt::FocusPolicy::WheelFocus</enum>
            </property>
           </widget>
          </item>
@@ -1223,7 +1219,7 @@
        <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -1250,7 +1246,7 @@
        <item>
         <widget class="DxccTableWidget" name="dxccTableWidget">
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -1262,7 +1258,7 @@
           <number>45</number>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>22</number>
+          <number>24</number>
          </attribute>
         </widget>
        </item>
@@ -1276,7 +1272,7 @@
        <item>
         <widget class="DxccTableWidget" name="stationTableWidget">
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -1288,7 +1284,7 @@
           <number>45</number>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>22</number>
+          <number>24</number>
          </attribute>
         </widget>
        </item>
@@ -1388,7 +1384,7 @@
            <item>
             <spacer name="horizontalSpacer_7">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -1573,7 +1569,7 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::FocusPolicy::NoFocus</enum>
            </property>
            <property name="specialValueText">
             <string>Blank</string>
@@ -1609,10 +1605,10 @@
          <item row="1" column="2">
           <spacer name="horizontalSpacer_4">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Maximum</enum>
+            <enum>QSizePolicy::Policy::Maximum</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -1647,9 +1643,9 @@
              </property>
              <property name="dateTime">
               <datetime>
-               <hour>0</hour>
-               <minute>0</minute>
-               <second>0</second>
+               <hour>4</hour>
+               <minute>14</minute>
+               <second>24</second>
                <year>1900</year>
                <month>1</month>
                <day>1</day>
@@ -1725,7 +1721,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::WheelFocus</enum>
+            <enum>Qt::FocusPolicy::WheelFocus</enum>
            </property>
           </widget>
          </item>
@@ -1751,7 +1747,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="maxLength">
             <number>25</number>
@@ -1821,9 +1817,9 @@
              </property>
              <property name="dateTime">
               <datetime>
-               <hour>0</hour>
-               <minute>0</minute>
-               <second>0</second>
+               <hour>4</hour>
+               <minute>14</minute>
+               <second>24</second>
                <year>1900</year>
                <month>1</month>
                <day>1</day>
@@ -1853,7 +1849,7 @@
               </size>
              </property>
              <property name="focusPolicy">
-              <enum>Qt::WheelFocus</enum>
+              <enum>Qt::FocusPolicy::WheelFocus</enum>
              </property>
              <property name="toolTip">
               <string>&lt;b&gt;Yes&lt;/b&gt; - an outgoing QSL card has been sent; the QSO has been uploaded to, and accepted by, the online service&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - do not send an outgoing QSL card; do not upload the QSO to the online service&lt;br/&gt;&lt;b&gt;Requested&lt;/b&gt; - the contacted station has requested a QSL card; the contacted station has requested the QSO be uploaded to the online service&lt;br/&gt;&lt;b&gt;Queued&lt;/b&gt; - an outgoing QSL card has been selected to be sent; a QSO has been selected to be uploaded to the online service&lt;br/&gt;</string>
@@ -2135,10 +2131,10 @@
          <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
+            <enum>QSizePolicy::Policy::Expanding</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -2191,7 +2187,7 @@
      <item>
       <spacer name="horizontalSpacer_5">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -2206,10 +2202,10 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
      <property name="centerButtons">
       <bool>false</bool>
@@ -2219,11 +2215,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QWebEngineView</class>
-   <extends>QWidget</extends>
-   <header location="global">QtWebEngineWidgets/QWebEngineView</header>
-  </customwidget>
   <customwidget>
    <class>NewContactEditLine</class>
    <extends>QLineEdit</extends>
@@ -2238,6 +2229,11 @@
    <class>FreqQSpinBox</class>
    <extends>QDoubleSpinBox</extends>
    <header>ui/FreqQSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QWebEngineView</class>
+   <extends>QWidget</extends>
+   <header location="global">QtWebEngineWidgets/QWebEngineView</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -2319,9 +2315,7 @@
   <tabstop>stxStringEdit</tabstop>
   <tabstop>stationTableWidget</tabstop>
  </tabstops>
- <resources>
-  <include location="../res/icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

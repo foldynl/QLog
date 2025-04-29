@@ -53,13 +53,11 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     ui->setupUi(this);
     // tab pane with QSO fields - expand & collapse
     tabCollapseBtn = new QToolButton();
-    QIcon *toggleIcon = new QIcon();
-    toggleIcon->addPixmap(QPixmap(":/icons/baseline-play_down-24px.svg"), QIcon::Normal, QIcon::On);
-    toggleIcon->addPixmap(QPixmap(":/icons/baseline-play_arrow-24px.svg"), QIcon::Normal, QIcon::Off);
-    tabCollapseBtn->setIcon(*toggleIcon);
+    tabCollapseBtn->setIcon(QIcon::fromTheme("baseline-play_down"));
     tabCollapseBtn->setCheckable(true);
     tabCollapseBtn->setToolTip(tr("Expand/Collapse"));
     tabCollapseBtn->setFocusPolicy(Qt::NoFocus);
+
     ui->qsoTabs->setCornerWidget(tabCollapseBtn, Qt::TopLeftCorner);
     connect(tabCollapseBtn, &QAbstractButton::toggled, this, &NewContactWidget::tabsExpandCollapse);
     connect(ui->qsoTabs, &QTabWidget::tabBarClicked, this, [this](const int)
@@ -3612,13 +3610,13 @@ void NewContactWidget::setCallbookStatusEnabled(bool callbookEnabled)
 
     if ( callbookEnabled )
     {
-        ui->callbookStatusButton->setIcon((callbookSearchPaused) ? QIcon(":/icons/search-globe_orange.svg")
-                                                                 : QIcon(":/icons/search-globe_green.svg"));
+        ui->callbookStatusButton->setIcon((callbookSearchPaused) ? QIcon::fromTheme("search-globe_orange")
+                                                                 : QIcon::fromTheme("search-globe_green"));
     }
     else
     {
         callbookSearchPaused = false;
-        ui->callbookStatusButton->setIcon(QIcon(":/icons/search-globe_red.svg"));
+        ui->callbookStatusButton->setIcon(QIcon::fromTheme("search-globe_red"));
     }
 
     if ( !callbookEnabled || callbookSearchPaused )
@@ -3693,6 +3691,8 @@ void NewContactWidget::tabsExpandCollapse()
         maxSize = ui->qsoTabs->tabBar()->sizeHint().height();
     }
     ui->qsoTabs->setMaximumHeight(maxSize);
+    tabCollapseBtn->setIcon(tabCollapseBtn->isChecked() ? QIcon::fromTheme("baseline-play_down")
+                                                        : QIcon::fromTheme("baseline-play_arrow"));
 }
 
 void NewContactWidget::setContestFieldsState()

@@ -100,7 +100,7 @@ private:
     QPushButton* alertButton;
     QPushButton* alertTextButton;
     SwitchButton* darkLightModeSwith;
-    QLabel* darkIconLabel;
+    QLabel *darkIconLabel;
     StatisticsWidget* stats;
     NetworkNotification networknotification;
     AlertEvaluator alertEvaluator;
