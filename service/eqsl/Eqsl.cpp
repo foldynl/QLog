@@ -45,7 +45,6 @@ const QString EQSLBase::getUsername()
     FCT_IDENTIFICATION;
 
     QSettings settings;
-
     return settings.value(EQSLBase::CONFIG_USERNAME_KEY).toString().trimmed();
 }
 
@@ -79,7 +78,6 @@ void EQSLBase::saveUsernamePassword(const QString &newUsername, const QString &n
 
 EQSLUploader::EQSLUploader( QObject *parent ):
    GenericQSOUploader(uploadedFields, parent),
-   qslStorage(new QSLStorage(this)),
    currentReply(nullptr)
 {
     FCT_IDENTIFICATION;
@@ -94,41 +92,6 @@ EQSLUploader::~EQSLUploader()
         currentReply->abort();
         currentReply->deleteLater();
     }
-
-    qslStorage->deleteLater();
-}
-
-void EQSLUploader::update(const QDate &start_date, bool qso_since, const QString &qthNick)
-{
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << start_date << qso_since << qthNick;
-
-    QList<QPair<QString, QString>> params;
-
-    if ( !qthNick.isEmpty() )
-    {
-        params.append(qMakePair(QString("QTHNickname"), qthNick));
-    }
-
-    if ( start_date.isValid() )
-    {
-        if ( qso_since )
-        {
-            const QString &start = start_date.toString("MM/dd/yyyy");
-            const QString &stop = QDate::currentDate().addDays(1).toString("MM/dd/yyyy");
-            params.append(qMakePair(QString("LimitDateLo"), start));
-            params.append(qMakePair(QString("LimitDateHi"), stop));
-        }
-        else
-        {
-            //qsl_since
-            const QString &start = start_date.toString("yyyyMMdd");
-            params.append(qMakePair(QString("RcvdSince"), start));
-        }
-    }
-
-    get(params);
 }
 
 void EQSLUploader::uploadAdif(const QByteArray &data)
@@ -136,13 +99,11 @@ void EQSLUploader::uploadAdif(const QByteArray &data)
     FCT_IDENTIFICATION;
 
     QSettings settings;
-    QString username = settings.value(EQSLUploader::CONFIG_USERNAME_KEY).toString();
-    QString password = CredentialStore::instance()->getPassword(EQSLUploader::SECURE_STORAGE_KEY,
-                                                                username);
+    const QString &username = settings.value(EQSLUploader::CONFIG_USERNAME_KEY).toString();
+    const QString &password = CredentialStore::instance()->getPassword(EQSLUploader::SECURE_STORAGE_KEY,
+                                                                       username);
 
     /* http://www.eqsl.cc/qslcard/ImportADIF.txt */
-    //qInfo() << qPrintable(data);
-
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType, this);
 
     /* UserName */
@@ -181,7 +142,156 @@ void EQSLUploader::uploadAdif(const QByteArray &data)
     currentReply->setProperty("messageType", QVariant("uploadADIFFile"));
 }
 
-void EQSLUploader::getQSLImage(const QSqlRecord &qso)
+void EQSLUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &)
+{
+    FCT_IDENTIFICATION;
+
+    QByteArray data = generateADIF(qsos);
+    uploadAdif(data);
+}
+
+void EQSLUploader::processReply(QNetworkReply* reply)
+{
+    FCT_IDENTIFICATION;
+
+    /* always process one requests per class */
+    currentReply = nullptr;
+
+    int replyStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if ( reply->error() != QNetworkReply::NoError
+         || replyStatusCode < 200
+         || replyStatusCode >= 300)
+    {
+        qCDebug(runtime) << "eQSL error URL " << reply->request().url().toString();
+        qCDebug(runtime) << "eQSL error" << reply->errorString();
+        qCDebug(runtime) << "HTTP Status Code" << replyStatusCode;
+
+        if ( reply->error() != QNetworkReply::OperationCanceledError )
+        {
+            emit uploadError(reply->errorString());
+            reply->deleteLater();
+        }
+        return;
+    }
+
+    const QString &messageType = reply->property("messageType").toString();
+
+    qCDebug(runtime) << "Received Message Type: " << messageType;
+
+    /******************/
+    /* uploadADIFFile */
+    /******************/
+    if ( messageType == "uploadADIFFile" )
+    {
+        const QString replyString(reply->readAll());
+        qCDebug(runtime) << replyString;
+
+        static QRegularExpression rOK("Result: (.*)");
+        QRegularExpressionMatch matchOK = rOK.match(replyString);
+        static QRegularExpression rError("Error: (.*)");
+        QRegularExpressionMatch matchError = rError.match(replyString);
+        static QRegularExpression rWarning("Warning: (.*)");
+        QRegularExpressionMatch matchWarning = rWarning.match(replyString);
+        static QRegularExpression rCaution("Caution: (.*)");
+        QRegularExpressionMatch matchCaution = rCaution.match(replyString);
+        QString msg;
+
+        if ( matchOK.hasMatch() )
+        {
+            msg = matchOK.captured(1);
+            emit uploadFinished();
+        }
+        else if (matchError.hasMatch() )
+        {
+            msg = matchError.captured(1);
+            emit uploadError(msg);
+        }
+        else if (matchWarning.hasMatch() )
+        {
+            msg = matchWarning.captured(1);
+            emit uploadFinished();
+        }
+        else if (matchCaution.hasMatch() )
+        {
+            msg = matchCaution.captured(1);
+            emit uploadError(msg);
+        }
+        else
+        {
+            qCInfo(runtime) << "Unknown Reply ";
+            qCInfo(runtime) << replyString;
+            emit uploadError(tr("Unknown Reply from eQSL"));
+        }
+    }
+
+    reply->deleteLater();
+}
+
+void EQSLUploader::abortRequest()
+{
+    FCT_IDENTIFICATION;
+
+    if ( currentReply )
+    {
+        currentReply->abort();
+        currentReply = nullptr;
+    }
+}
+
+EQSLQSLDownloader::EQSLQSLDownloader(QObject *parent) :
+    GenericQSLDownloader(parent),
+    EQSLBase(),
+    currentReply(nullptr),
+    qslStorage(new QSLStorage(this))
+{
+    FCT_IDENTIFICATION;
+}
+
+EQSLQSLDownloader::~EQSLQSLDownloader()
+{
+    FCT_IDENTIFICATION;
+
+    if ( currentReply )
+    {
+        currentReply->abort();
+        currentReply->deleteLater();
+    }
+    qslStorage->deleteLater();
+}
+
+void EQSLQSLDownloader::receiveQSL(const QDate &start_date, bool qso_since, const QString &qthNick)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << start_date << qso_since << qthNick;
+
+    QList<QPair<QString, QString>> params;
+
+    if ( !qthNick.isEmpty() )
+        params.append(qMakePair(QString("QTHNickname"), qthNick));
+
+    if ( start_date.isValid() )
+    {
+        if ( qso_since )
+        {
+            const QString &start = start_date.toString("MM/dd/yyyy");
+            const QString &stop = QDate::currentDate().addDays(1).toString("MM/dd/yyyy");
+            params.append(qMakePair(QString("LimitDateLo"), start));
+            params.append(qMakePair(QString("LimitDateHi"), stop));
+        }
+        else
+        {
+            //qsl_since
+            const QString &start = start_date.toString("yyyyMMdd");
+            params.append(qMakePair(QString("RcvdSince"), start));
+        }
+    }
+
+    get(params);
+}
+
+void EQSLQSLDownloader::getQSLImage(const QSqlRecord &qso)
 {
     FCT_IDENTIFICATION;
 
@@ -229,124 +339,18 @@ void EQSLUploader::getQSLImage(const QSqlRecord &qso)
     currentReply->setProperty("QSORecordID", QVariant(qso.value("id")));
 }
 
-void EQSLUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMap &)
+void EQSLQSLDownloader::abortDownload()
 {
     FCT_IDENTIFICATION;
-
-    QByteArray data = generateADIF(qsos);
-    uploadAdif(data);
-}
-
-void EQSLUploader::get(const QList<QPair<QString, QString>> &params)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-    const QString &username = getUsername();
-    const QString &password = getPassword();
-
-    QUrlQuery query;
-    query.setQueryItems(params);
-    query.addQueryItem("UserName", username.toUtf8().toPercentEncoding());
-    query.addQueryItem("Password", password.toUtf8().toPercentEncoding());
-
-    QUrl url(DOWNLOAD_1ST_PAGE);
-    url.setQuery(query);
-
-    qCDebug(runtime) << url.toString();
 
     if ( currentReply )
     {
-        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
+        currentReply->abort();
+        currentReply->deleteLater();
     }
-
-    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
-    currentReply->setProperty("messageType", QVariant("getADIFFileName"));
 }
 
-void EQSLUploader::downloadADIF(const QString &filename)
-{
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << filename;
-
-    QUrlQuery query;
-    QUrl url(DOWNLOAD_2ND_PAGE + filename);
-    url.setQuery(query);
-
-    qCDebug(runtime) << url.toString();
-
-    if ( currentReply )
-    {
-        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
-    }
-
-    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
-    currentReply->setProperty("messageType", QVariant("getADIF"));
-}
-
-void EQSLUploader::downloadImage(const QString &URLFilename,
-                         const QString &onDiskFilename,
-                         const qulonglong qsoid)
-{
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << URLFilename << onDiskFilename << qsoid;
-
-    QUrlQuery query;
-    QUrl url(QSL_IMAGE_DOWNLOAD_PAGE + URLFilename);
-    url.setQuery(query);
-
-    qCDebug(runtime) << url.toString();
-
-    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
-    currentReply->setProperty("messageType", QVariant("downloadQSLImage"));
-    currentReply->setProperty("onDiskFilename", QVariant(onDiskFilename));
-    currentReply->setProperty("QSORecordID", qsoid);
-}
-
-QString EQSLUploader::QSLImageFilename(const QSqlRecord &qso)
-{
-    FCT_IDENTIFICATION;
-
-    /* QSL Fileformat YYYYMMDD_ID_Call_eqsl.jpg */
-
-    const QDateTime &time_start = qso.value("start_time").toDateTime().toTimeZone(QTimeZone::utc());
-
-    const QString &ret = QString("%1_%2_%3_eqsl.jpg").arg(time_start.toString("yyyyMMdd"),
-                                                   qso.value("id").toString(),
-                                                   qso.value("callsign").toString().replace(QRegularExpression(QString::fromUtf8("[-`~!@#$%^&*()_—+=|:;<>«»,.?/{}\'\"]")),"_"));
-    qCDebug(runtime) << "EQSL Image Filename: " << ret;
-    return ret;
-}
-
-bool EQSLUploader::isQSLImageInCache(const QSqlRecord &qso, QString &fullPath)
-{
-    FCT_IDENTIFICATION;
-
-    bool isFileExists = false;
-
-    const QString &expectingFilename = QSLImageFilename(qso);
-    const QSLObject &eqsl = qslStorage->getQSL(qso, QSLObject::EQSL, expectingFilename);
-    QFile f(tempDir.path() + QDir::separator() + eqsl.getQSLName());
-    qCDebug(runtime) << "Using temp file" << f.fileName();
-    fullPath = f.fileName();
-
-    if ( eqsl.getBLOB() != QByteArray()
-         && f.open(QFile::WriteOnly) )
-    {
-        f.write(eqsl.getBLOB());
-        f.flush();
-        f.close();
-        isFileExists = true;
-    }
-
-    qCDebug(runtime) << isFileExists << " " << fullPath;
-
-    return isFileExists;
-}
-
-void EQSLUploader::processReply(QNetworkReply* reply)
+void EQSLQSLDownloader::processReply(QNetworkReply *reply)
 {
     FCT_IDENTIFICATION;
 
@@ -365,9 +369,8 @@ void EQSLUploader::processReply(QNetworkReply* reply)
 
         if ( reply->error() != QNetworkReply::OperationCanceledError )
         {
-            emit updateFailed(reply->errorString());
+            emit receiveQSLFailed(reply->errorString());
             emit QSLImageError(reply->errorString());
-            emit uploadError(reply->errorString());
             reply->deleteLater();
         }
         return;
@@ -383,7 +386,6 @@ void EQSLUploader::processReply(QNetworkReply* reply)
     if ( messageType == "getADIFFileName" )
     {
         //getting the first page where a ADIF filename is present
-
         QString replyString(reply->readAll());
 
         qCDebug(runtime) << replyString;
@@ -392,7 +394,7 @@ void EQSLUploader::processReply(QNetworkReply* reply)
              || replyString.contains("No such Callsign found") )
         {
             qCDebug(runtime) << "Incorrect Password or QTHProfile Id";
-            emit updateFailed(tr("Incorrect Password or QTHProfile Id"));
+            emit receiveQSLFailed(tr("Incorrect Password or QTHProfile Id"));
         }
         else
         {
@@ -406,12 +408,12 @@ void EQSLUploader::processReply(QNetworkReply* reply)
             }
             else if ( replyString.contains("You have no log entries"))
             {
-                emit updateComplete(QSLMergeStat());
+                emit receiveQSLComplete(QSLMergeStat());
             }
             else
             {
                 qCInfo(runtime) << "File not found in HTTP reply ";
-                emit updateFailed(tr("ADIF file not found in eQSL response"));
+                emit receiveQSLFailed(tr("ADIF file not found in eQSL response"));
             }
         }
     }
@@ -427,9 +429,7 @@ void EQSLUploader::processReply(QNetworkReply* reply)
         qCDebug(runtime) << replyString;
 
         if ( replyString.contains("No such Username/Password found") )
-        {
             emit QSLImageError(tr("Incorrect Username or password"));
-        }
         else
         {
             static QRegularExpression re("<img src=\"(.*)\" alt");
@@ -489,7 +489,7 @@ void EQSLUploader::processReply(QNetworkReply* reply)
         if ( ! tempFile.open() )
         {
             qCDebug(runtime) << "Cannot open temp file";
-            emit updateFailed(tr("Cannot opet temporary file"));
+            emit receiveQSLFailed(tr("Cannot opet temporary file"));
             reply->deleteLater();
             return;
         }
@@ -500,7 +500,7 @@ void EQSLUploader::processReply(QNetworkReply* reply)
         tempFile.flush();
         tempFile.seek(0);
 
-        emit updateStarted();
+        emit receiveQSLStarted();
 
         /* see above why QLog uses a temp file */
         QTextStream stream(&tempFile);
@@ -511,13 +511,13 @@ void EQSLUploader::processReply(QNetworkReply* reply)
             if ( size > 0 )
             {
                 double progress = position * 100.0 / size;
-                emit updateProgress(static_cast<int>(progress));
+                emit receiveQSLProgress(static_cast<qulonglong>(progress));
             }
         });
 
         connect(&adi, &AdiFormat::QSLMergeFinished, this, [this](QSLMergeStat stats)
         {
-            emit updateComplete(stats);
+            emit receiveQSLComplete(stats);
         });
 
         adi.runQSLImport(adi.EQSL);
@@ -556,63 +556,113 @@ void EQSLUploader::processReply(QNetworkReply* reply)
         }
         emit QSLImageFound(onDiskFilename);
     }
-    /******************/
-    /* uploadADIFFile */
-    /******************/
-    else if ( messageType == "uploadADIFFile" )
-    {
-        QString replyString(reply->readAll());
-        qCDebug(runtime) << replyString;
-
-        static QRegularExpression rOK("Result: (.*)");
-        QRegularExpressionMatch matchOK = rOK.match(replyString);
-        static QRegularExpression rError("Error: (.*)");
-        QRegularExpressionMatch matchError = rError.match(replyString);
-        static QRegularExpression rWarning("Warning: (.*)");
-        QRegularExpressionMatch matchWarning = rWarning.match(replyString);
-        static QRegularExpression rCaution("Caution: (.*)");
-        QRegularExpressionMatch matchCaution = rCaution.match(replyString);
-        QString msg;
-
-        if ( matchOK.hasMatch() )
-        {
-            msg = matchOK.captured(1);
-            emit uploadFinished();
-        }
-        else if (matchError.hasMatch() )
-        {
-            msg = matchError.captured(1);
-            emit uploadError(msg);
-        }
-        else if (matchWarning.hasMatch() )
-        {
-            msg = matchWarning.captured(1);
-            emit uploadFinished();
-        }
-        else if (matchCaution.hasMatch() )
-        {
-            msg = matchCaution.captured(1);
-            emit uploadError(msg);
-        }
-        else
-        {
-            qCInfo(runtime) << "Unknown Reply ";
-            qCInfo(runtime) << replyString;
-            emit uploadError(tr("Unknown Reply from eQSL"));
-        }
-    }
 
     reply->deleteLater();
 }
 
-void EQSLUploader::abortRequest()
+void EQSLQSLDownloader::get(const QList<QPair<QString, QString>> &params)
 {
     FCT_IDENTIFICATION;
 
+    QSettings settings;
+    const QString &username = getUsername();
+    const QString &password = getPassword();
+
+    QUrlQuery query;
+    query.setQueryItems(params);
+    query.addQueryItem("UserName", username.toUtf8().toPercentEncoding());
+    query.addQueryItem("Password", password.toUtf8().toPercentEncoding());
+
+    QUrl url(DOWNLOAD_1ST_PAGE);
+    url.setQuery(query);
+
+    qCDebug(runtime) << url.toString();
+
+    if ( currentReply )
+        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
+
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
+    currentReply->setProperty("messageType", QVariant("getADIFFileName"));
+}
+
+void EQSLQSLDownloader::downloadADIF(const QString &filename)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << filename;
+
+    QUrlQuery query;
+    QUrl url(DOWNLOAD_2ND_PAGE + filename);
+    url.setQuery(query);
+
+    qCDebug(runtime) << url.toString();
+
     if ( currentReply )
     {
-        currentReply->abort();
-        //currentReply->deleteLater(); // pointer is deleted later in processReply
-        currentReply = nullptr;
+        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
     }
+
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
+    currentReply->setProperty("messageType", QVariant("getADIF"));
+}
+
+void EQSLQSLDownloader::downloadImage(const QString &URLFilename,
+                         const QString &onDiskFilename,
+                         const qulonglong qsoid)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << URLFilename << onDiskFilename << qsoid;
+
+    QUrlQuery query;
+    QUrl url(QSL_IMAGE_DOWNLOAD_PAGE + URLFilename);
+    url.setQuery(query);
+
+    qCDebug(runtime) << url.toString();
+
+    currentReply = getNetworkAccessManager()->get(QNetworkRequest(url));
+    currentReply->setProperty("messageType", QVariant("downloadQSLImage"));
+    currentReply->setProperty("onDiskFilename", QVariant(onDiskFilename));
+    currentReply->setProperty("QSORecordID", qsoid);
+}
+
+QString EQSLQSLDownloader::QSLImageFilename(const QSqlRecord &qso)
+{
+    FCT_IDENTIFICATION;
+
+    /* QSL Fileformat YYYYMMDD_ID_Call_eqsl.jpg */
+
+    const QDateTime &time_start = qso.value("start_time").toDateTime().toTimeZone(QTimeZone::utc());
+
+    const QString &ret = QString("%1_%2_%3_eqsl.jpg").arg(time_start.toString("yyyyMMdd"),
+                                                   qso.value("id").toString(),
+                                                   qso.value("callsign").toString().replace(QRegularExpression(QString::fromUtf8("[-`~!@#$%^&*()_—+=|:;<>«»,.?/{}\'\"]")),"_"));
+    qCDebug(runtime) << "EQSL Image Filename: " << ret;
+    return ret;
+}
+
+bool EQSLQSLDownloader::isQSLImageInCache(const QSqlRecord &qso, QString &fullPath)
+{
+    FCT_IDENTIFICATION;
+
+    bool isFileExists = false;
+
+    const QString &expectingFilename = QSLImageFilename(qso);
+    const QSLObject &eqsl = qslStorage->getQSL(qso, QSLObject::EQSL, expectingFilename);
+    QFile f(tempDir.path() + QDir::separator() + eqsl.getQSLName());
+    qCDebug(runtime) << "Using temp file" << f.fileName();
+    fullPath = f.fileName();
+
+    if ( eqsl.getBLOB() != QByteArray()
+         && f.open(QFile::WriteOnly) )
+    {
+        f.write(eqsl.getBLOB());
+        f.flush();
+        f.close();
+        isFileExists = true;
+    }
+
+    qCDebug(runtime) << isFileExists << " " << fullPath;
+
+    return isFileExists;
 }

@@ -53,17 +53,17 @@ void EqslDialog::download()
 
     bool qsl = ui->qslRadioButton->isChecked();
 
-    EQSLUploader *eQSL = new EQSLUploader(dialog);
+    EQSLQSLDownloader *eQSL = new EQSLQSLDownloader(dialog);
 
-    connect(eQSL, &EQSLUploader::updateProgress, dialog, &QProgressDialog::setValue);
+    connect(eQSL, &EQSLQSLDownloader::receiveQSLProgress, dialog, &QProgressDialog::setValue);
 
-    connect(eQSL, &EQSLUploader::updateStarted, this, [dialog]
+    connect(eQSL, &EQSLQSLDownloader::receiveQSLStarted, this, [dialog]
     {
         dialog->setLabelText(tr("Processing eQSL QSLs"));
         dialog->setRange(0, 100);
     });
 
-    connect(eQSL, &EQSLUploader::updateComplete, this, [eQSL, dialog, qsl](QSLMergeStat stats)
+    connect(eQSL, &EQSLQSLDownloader::receiveQSLComplete, this, [eQSL, dialog, qsl](QSLMergeStat stats)
     {
         if ( qsl )
         {
@@ -80,7 +80,7 @@ void EqslDialog::download()
         eQSL->deleteLater();
     });
 
-    connect(eQSL, &EQSLUploader::updateFailed, this, [this, eQSL, dialog](const QString &error)
+    connect(eQSL, &EQSLQSLDownloader::receiveQSLFailed, this, [this, eQSL, dialog](const QString &error)
     {
         dialog->done(1);
         QMessageBox::critical(this, tr("QLog Error"), tr("eQSL update failed: ") + error);
@@ -91,7 +91,7 @@ void EqslDialog::download()
     {
         qCDebug(runtime)<< "Operation canceled";
 
-        eQSL->abortRequest();
+        eQSL->abortDownload();
         eQSL->deleteLater();
     });
 
@@ -101,9 +101,9 @@ void EqslDialog::download()
     settings.setValue("eqsl/last_QTHProfile", ui->qthProfileEdit->text());
     settings.setValue("eqsl/last_qsoqsl", ui->qslRadioButton->isChecked());
 
-    eQSL->update(ui->dateEdit->date(),
-                 ui->qsoRadioButton->isChecked(),
-                 ui->qthProfileEdit->text());
+    eQSL->receiveQSL(ui->dateEdit->date(),
+                     ui->qsoRadioButton->isChecked(),
+                     ui->qthProfileEdit->text());
 }
 
 void EqslDialog::upload()

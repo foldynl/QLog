@@ -968,16 +968,16 @@ void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)
         dialog->setAutoClose(true);
         dialog->show();
 
-        EQSLUploader *eQSL = new EQSLUploader(dialog);
+        EQSLQSLDownloader *eQSL = new EQSLQSLDownloader(dialog);
 
-        connect(eQSL, &EQSLUploader::QSLImageFound, this, [dialog, eQSL](QString imgFile)
+        connect(eQSL, &EQSLQSLDownloader::QSLImageFound, this, [dialog, eQSL](QString imgFile)
         {
             dialog->done(0);
             QDesktopServices::openUrl(QUrl::fromLocalFile(imgFile));
             eQSL->deleteLater();
         });
 
-        connect(eQSL, &EQSLUploader::QSLImageError, this, [this, dialog, eQSL](const QString &error)
+        connect(eQSL, &EQSLQSLDownloader::QSLImageError, this, [this, dialog, eQSL](const QString &error)
         {
             dialog->done(1);
             QMessageBox::critical(this, tr("QLog Error"), tr("eQSL Download Image failed: ") + error);
@@ -987,7 +987,7 @@ void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)
         connect(dialog, &QProgressDialog::canceled, this, [eQSL]()
         {
             qCDebug(runtime)<< "Operation canceled";
-            eQSL->abortRequest();
+            eQSL->abortDownload();
             eQSL->deleteLater();
         });
 

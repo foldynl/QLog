@@ -6,6 +6,7 @@
 
 #include "core/QSLStorage.h"
 #include "service/GenericQSOUploader.h"
+#include "service/GenericQSLDownloader.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -34,38 +35,51 @@ public:
     explicit EQSLUploader(QObject *parent = nullptr);
     virtual ~EQSLUploader();
 
-    void update(const QDate&, bool, const QString&);
     void uploadAdif(const QByteArray&);
-    void getQSLImage(const QSqlRecord&);
     virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
-
-signals:
-    void updateProgress(int value);
-    void updateStarted();
-    void updateComplete(QSLMergeStat);
-    void updateFailed(QString);
-    void QSLImageFound(QString);
-    void QSLImageError(QString);
 
 public slots:
     virtual void abortRequest() override;
 
 private:
-    QSLStorage *qslStorage;
+    const QString UPLOAD_ADIF_PAGE = "https://www.eQSL.cc/qslcard/ImportADIF.cfm";
     QNetworkReply *currentReply;
 
+    virtual void processReply(QNetworkReply*) override;
+};
+
+class EQSLQSLDownloader : public GenericQSLDownloader, private EQSLBase
+{
+    Q_OBJECT
+
+public:
+    explicit EQSLQSLDownloader(QObject *parent = nullptr);
+    virtual ~EQSLQSLDownloader();
+
+    virtual void receiveQSL(const QDate &, bool, const QString &) override;
+    void getQSLImage(const QSqlRecord&);
+
+signals:
+    void QSLImageFound(QString);
+    void QSLImageError(QString);
+
+public slots:
+    virtual void abortDownload() override;
+
+private:
+    QNetworkReply *currentReply;
+    QSLStorage *qslStorage;
     const QString DOWNLOAD_1ST_PAGE = "https://www.eQSL.cc/qslcard/DownloadInBox.cfm";
     const QString DOWNLOAD_2ND_PAGE = "https://www.eQSL.cc/downloadedfiles/";
-    const QString UPLOAD_ADIF_PAGE = "https://www.eQSL.cc/qslcard/ImportADIF.cfm";
     const QString QSL_IMAGE_FILENAME_PAGE = "https://www.eQSL.cc/qslcard/GeteQSL.cfm";
     const QString QSL_IMAGE_DOWNLOAD_PAGE = "https://www.eQSL.cc";
 
+    virtual void processReply(QNetworkReply* reply) override;
     void get(const QList<QPair<QString, QString> > &);
     void downloadADIF(const QString &);
     void downloadImage(const QString &, const QString &, const qulonglong);
     QString QSLImageFilename(const QSqlRecord &);
     bool isQSLImageInCache(const QSqlRecord &, QString &);
-    virtual void processReply(QNetworkReply*) override;
 };
 
 #endif // QLOG_SERVICE_EQSL_EQSL_H
