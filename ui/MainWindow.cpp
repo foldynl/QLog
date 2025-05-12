@@ -1,41 +1,42 @@
-#include <QMessageBox>
-#include <QLabel>
-#include <QColor>
-#include <QSpacerItem>
 #include "MainWindow.h"
-#include "ui_MainWindow.h"
-#include "ui/SettingsDialog.h"
-#include "ui/ImportDialog.h"
-#include "ui/ExportDialog.h"
-#include "ui/LotwDialog.h"
+#include <QColor>
+#include <QLabel>
+#include <QMessageBox>
+#include <QSpacerItem>
+#include "core/Eqsl.h"
 #include "core/Fldigi.h"
-#include "rig/Rig.h"
-#include "rotator/Rotator.h"
-#include "cwkey/CWKeyer.h"
+#include "core/HRDLog.h"
+#include "core/LogParam.h"
+#include "core/Lotw.h"
+#include "core/PropConditions.h"
+#include "core/QRZ.h"
+#include "core/QSOFilterManager.h"
 #include "core/Wsjtx.h"
 #include "core/debug.h"
-#include "ui/NewContactWidget.h"
-#include "ui/QSOFilterDialog.h"
-#include "ui/Eqsldialog.h"
-#include "ui/ClublogDialog.h"
-#include "ui/QrzDialog.h"
-#include "ui/AwardsDialog.h"
-#include "core/Lotw.h"
-#include "core/Eqsl.h"
-#include "core/QRZ.h"
-#include "core/PropConditions.h"
-#include "data/MainLayoutProfile.h"
-#include "ui/EditActivitiesDialog.h"
-#include "core/HRDLog.h"
-#include "ui/HRDLogDialog.h"
-#include "ui/ProfileImageWidget.h"
-#include "core/LogParam.h"
-#include "core/QSOFilterManager.h"
-#include "data/Data.h"
+#include "cwkey/CWKeyer.h"
 #include "data/ActivityProfile.h"
 #include "data/AntProfile.h"
+#include "data/Data.h"
+#include "data/MainLayoutProfile.h"
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
+#include "rig/Rig.h"
+#include "rotator/Rotator.h"
+#include "ui/AwardsDialog.h"
+#include "ui/ClublogDialog.h"
+#include "ui/EditActivitiesDialog.h"
+#include "ui/Eqsldialog.h"
+#include "ui/ExportDialog.h"
+#include "ui/HRDLogDialog.h"
+#include "ui/ImportDialog.h"
+#include "ui/LotwDialog.h"
+#include "ui/NewContactWidget.h"
+#include "ui/ProfileImageWidget.h"
+#include "ui/QSOFilterDialog.h"
+#include "ui/QrzDialog.h"
+#include "ui/SettingsDialog.h"
+#include "ui_MainWindow.h"
+#include <sys/socket.h>
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -53,20 +54,24 @@ MainWindow::MainWindow(QWidget* parent) :
     restoreContestMenuDupeType();
     restoreContestMenuLinkExchange();
 
-    darkLightModeSwith = new SwitchButton("", ui->statusBar);
-    darkIconLabel = new QLabel(ui->statusBar);
-    darkIconLabel->setPixmap(QIcon::fromTheme("light-dark").pixmap(24));
+    themeButton = new QPushButton(this);
+    themeButton->setToolTip(tr("Color Theme"));
+    themeButton->setIcon(QIcon::fromTheme("color-palette"));
+    themeButton->setFlat(true);
+
+    QMenu *themeMenu = new QMenu(this);
+    themeMenu->addAction(ui->actionThemeNative);
+    themeMenu->addAction(ui->actionThemeLight);
+    themeMenu->addAction(ui->actionThemeDark);
+    themeButton->setMenu(themeMenu);
 
     /* Dark Mode is supported only in case of Fusion Style */
     if ( QApplication::style()->objectName().compare("fusion",
                                                      Qt::CaseSensitivity::CaseInsensitive) != 0)
     {
         isFusionStyle = false;
-        darkLightModeSwith->setEnabled(false);
-        darkIconLabel->setEnabled(false);
-        darkLightModeSwith->setToolTip(tr("Not enabled for non-Fusion style"));
-        darkModeToggle(Qt::Unchecked);
-
+        themeButton->setEnabled(false);
+        themeButton->setToolTip(tr("Not enabled for non-Fusion style"));
     }
     else
     {
@@ -143,8 +148,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     ui->statusBar->addPermanentWidget(alertTextButton);
     ui->statusBar->addPermanentWidget(alertButton);
-    ui->statusBar->addPermanentWidget(darkLightModeSwith);
-    ui->statusBar->addPermanentWidget(darkIconLabel);
+    ui->statusBar->addPermanentWidget(themeButton);
 
     setContestMode(LogParam::getContestID());
 
@@ -194,8 +198,15 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::themeChanged, ui->rotatorWidget, &RotatorWidget::redrawMap);
     connect(this, &MainWindow::themeChanged, stats, &StatisticsWidget::changeTheme);
 
-    connect(darkLightModeSwith, &SwitchButton::stateChanged, this, &MainWindow::darkModeToggle);
-    darkLightModeSwith->setChecked(settings.value("darkmode", false).toBool());
+    connect(ui->actionThemeNative, &QAction::triggered, this, [this](bool checked) {
+        this->themeInit(0);
+    });
+    connect(ui->actionThemeDark, &QAction::triggered, this, [this](bool checked) {
+        this->themeInit(1);
+    });
+    connect(ui->actionThemeLight, &QAction::triggered, this, [this](bool checked) {
+        this->themeInit(2);
+    });
 
     connect(Rig::instance(), &Rig::rigErrorPresent, this, &MainWindow::rigErrorHandler);
     connect(Rig::instance(), &Rig::rigCWKeyOpenRequest, this, &MainWindow::cwKeyerConnectProfile);
@@ -733,31 +744,121 @@ QList<QPair<QString, QString>> MainWindow::getNonVfoBandmapsParams() const
     return  bandmapList;
 }
 
-void MainWindow::darkModeToggle(int mode)
+void MainWindow::setDarkTheme()
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << mode;
+    QPalette darkPalette;
+    QColor darkColor = QColor(45, 45, 45);
+    QColor disabledColor = QColor(127, 127, 127);
+    darkPalette.setColor(QPalette::Window, darkColor);
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Base, QColor(18, 18, 18));
+    darkPalette.setColor(QPalette::AlternateBase, darkColor);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Disabled, QPalette::Text, disabledColor);
+    darkPalette.setColor(QPalette::Button, darkColor);
+    darkPalette.setColor(QPalette::ButtonText, Qt::white);
+    darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disabledColor);
+    darkPalette.setColor(QPalette::BrightText, Qt::red);
+    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+    darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledColor);
 
-    bool darkMode = (mode == Qt::Checked) ? true: false;
-    settings.setValue("darkmode", darkMode);
+    qApp->setPalette(darkPalette);
+    QIcon::setThemeName("dark");
+}
 
-    if ( mode == Qt::Checked)
-    {
-        setDarkMode();
-    }
-    else
-    {
-        setLightMode();
+void MainWindow::setLightTheme()
+{
+    FCT_IDENTIFICATION;
+
+    QPalette lightPalette;
+    QColor lightColor = QColor(239, 239, 239);
+    QColor disabledColor = QColor(190, 190, 190);
+    lightPalette.setColor(QPalette::Window, lightColor);
+    lightPalette.setColor(QPalette::WindowText, Qt::black);
+    lightPalette.setColor(QPalette::Base, Qt::white);
+    lightPalette.setColor(QPalette::AlternateBase, lightColor);
+    lightPalette.setColor(QPalette::Text, Qt::black);
+    lightPalette.setColor(QPalette::Disabled, QPalette::Text, disabledColor);
+    lightPalette.setColor(QPalette::Button, lightColor);
+    lightPalette.setColor(QPalette::ButtonText, Qt::black);
+    lightPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disabledColor);
+    lightPalette.setColor(QPalette::BrightText, Qt::white);
+    lightPalette.setColor(QPalette::Link, QColor(0, 0, 255));
+    lightPalette.setColor(QPalette::Highlight, QColor(48, 140, 198));
+    lightPalette.setColor(QPalette::HighlightedText, Qt::white);
+    lightPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, Qt::white);
+
+    qApp->setPalette(lightPalette);
+
+    QIcon::setThemeName("light");
+}
+
+bool MainWindow::setNativeTheme()
+{
+    FCT_IDENTIFICATION;
+
+    qApp->setPalette(this->style()->standardPalette());
+    bool isDark = false;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    const auto scheme = QGuiApplication::styleHints()->colorScheme();
+    isDark = scheme == Qt::ColorScheme::Dark;
+#else
+    const QPalette defaultPalette = this->style()->standardPalette();
+    const auto text = defaultPalette.color(QPalette::WindowText);
+    const auto window = defaultPalette.color(QPalette::Window);
+    isDark = return text.lightness() > window.lightness();
+#endif // QT_VERSION
+
+    QIcon::setThemeName(isDark ? "dark" : "light");
+    return isDark;
+}
+
+void MainWindow::themeInit(int mode)
+{
+    FCT_IDENTIFICATION;
+
+    settings.setValue("darkmode", mode);
+
+    ui->actionThemeNative->setChecked(false);
+    ui->actionThemeLight->setChecked(false);
+    ui->actionThemeDark->setChecked(false);
+    bool isDark = false;
+    switch (mode) {
+    case 0:
+        ui->actionThemeNative->setChecked(true);
+        isDark = this->setNativeTheme();
+        break;
+    case 1:
+        ui->actionThemeDark->setChecked(true);
+        this->setDarkTheme();
+        isDark = true;
+        break;
+    case 2:
+        ui->actionThemeLight->setChecked(true);
+        this->setLightTheme();
+        break;
     }
 
     QFile style(":/res/stylesheet.css");
     style.open(QFile::ReadOnly | QIODevice::Text);
     qApp->setStyleSheet(style.readAll());
     style.close();
-    darkIconLabel->setPixmap(QIcon::fromTheme("light-dark").pixmap(24));
-    emit themeChanged(darkMode);
+    emit themeChanged(mode, isDark);
+}
 
+void MainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::ThemeChange) {
+        if (ui->actionThemeNative->isChecked()) {
+            this->themeInit(0);
+        }
+    }
+    QMainWindow::changeEvent(event);
 }
 
 void MainWindow::processSpotAlert(SpotAlert alert)
@@ -847,7 +948,7 @@ void MainWindow::setLayoutGeometry()
 
     QByteArray newGeometry;
     QByteArray newState;
-    bool darkMode = false;
+    int darkMode = 0;
     QList<QPair<QString, QString>> bandmapWidgets;
 
     bandmapWidgets = (layoutProfile.profileName.isEmpty()) ? MainLayoutProfilesManager::toPairStringList(settings.value("bandmapwidgets").toString())
@@ -865,7 +966,7 @@ void MainWindow::setLayoutGeometry()
         // Classic Layout
         newGeometry = settings.value("geometry").toByteArray();
         newState = settings.value("windowState").toByteArray();
-        darkMode = settings.value("darkmode", false).toBool();
+        darkMode = settings.value("darkmode", 0).toInt();
     }
 
     openNonVfoBandmaps(bandmapWidgets);
@@ -884,7 +985,7 @@ void MainWindow::setLayoutGeometry()
     connect(nt, &QTimer::timeout, this, [this, darkMode, newState]()
     {
         restoreState(newState);
-        darkLightModeSwith->setChecked(isFusionStyle && darkMode);
+        this->themeInit(isFusionStyle ? darkMode : 0);
         connect(MainLayoutProfilesManager::instance(), &MainLayoutProfilesManager::profileChanged,
                 this, &MainWindow::setSimplyLayoutGeometry);
     });
@@ -925,7 +1026,7 @@ void MainWindow::setSimplyLayoutGeometry()
         connect(nt, &QTimer::timeout, this, [this, layoutProfile]()
         {
             restoreState(layoutProfile.mainState);
-            darkLightModeSwith->setChecked(isFusionStyle && layoutProfile.darkMode);
+            this->themeInit(isFusionStyle ? layoutProfile.darkMode : 0);            
         });
         nt->connect(nt, &QTimer::timeout, nt, &QTimer::deleteLater);
         nt->start();
@@ -943,8 +1044,13 @@ void MainWindow::saveProfileLayoutGeometry()
         layoutProfile.addlBandmaps = getNonVfoBandmapsParams();
         layoutProfile.mainGeometry = saveGeometry();
         layoutProfile.mainState = saveState();
-        layoutProfile.darkMode = darkLightModeSwith->isChecked();
-        layoutProfile.tabsexpanded =  ui->newContactWidget->getTabCollapseState();
+        layoutProfile.darkMode = 0;
+        if (ui->actionThemeDark->isChecked()) {
+            layoutProfile.darkMode = 1;
+        } else if (ui->actionThemeLight->isChecked()) {
+            layoutProfile.darkMode = 2;
+        }
+        layoutProfile.tabsexpanded = ui->newContactWidget->getTabCollapseState();
         MainLayoutProfilesManager::instance()->addProfile(layoutProfile.profileName, layoutProfile);
         MainLayoutProfilesManager::instance()->blockSignals(true); // prevent screen flashing
         MainLayoutProfilesManager::instance()->save();
@@ -959,42 +1065,6 @@ void MainWindow::setEquipmentKeepOptions(bool)
     // this is obsolete, use activities instead.
     // Left only because of possible problems and for quick activation of the function.
     //saveEquipmentConnOptions();
-}
-
-
-
-void MainWindow::setDarkMode()
-{
-    FCT_IDENTIFICATION;
-
-    QPalette darkPalette;
-    QColor darkColor = QColor(45,45,45);
-    QColor disabledColor = QColor(127,127,127);
-    darkPalette.setColor(QPalette::Window, darkColor);
-    darkPalette.setColor(QPalette::WindowText, Qt::white);
-    darkPalette.setColor(QPalette::Base, QColor(18,18,18));
-    darkPalette.setColor(QPalette::AlternateBase, darkColor);
-    darkPalette.setColor(QPalette::Text, Qt::white);
-    darkPalette.setColor(QPalette::Disabled, QPalette::Text, disabledColor);
-    darkPalette.setColor(QPalette::Button, darkColor);
-    darkPalette.setColor(QPalette::ButtonText, Qt::white);
-    darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disabledColor);
-    darkPalette.setColor(QPalette::BrightText, Qt::red);
-    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-    darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledColor);
-
-    qApp->setPalette(darkPalette);
-    QIcon::setThemeName("dark");
-}
-
-void MainWindow::setLightMode()
-{
-    FCT_IDENTIFICATION;
-
-    qApp->setPalette(this->style()->standardPalette());
-    QIcon::setThemeName("light");
 }
 
 void MainWindow::setupActivitiesMenu()

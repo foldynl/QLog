@@ -400,15 +400,15 @@ void StatisticsWidget::mapLoaded(bool)
     layerControlHandler.restoreLayerControlStates(main_page);
 }
 
-void StatisticsWidget::changeTheme(int theme)
+void StatisticsWidget::changeTheme(int theme, bool isDark)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << theme;
+    qCDebug(function_parameters) << theme << isDark;
 
     QString themeJavaScript;
 
-    if ( theme == 1 ) /* dark mode */
+    if (isDark) /* dark mode */
         themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
     else
         themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"\";";

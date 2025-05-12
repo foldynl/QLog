@@ -15,7 +15,6 @@
         <file>icons/light/svg/disconnect.svg</file>
         <file>icons/light/svg/done.svg</file>
         <file>icons/light/svg/filter_list.svg</file>
-        <file>icons/light/svg/light-dark.svg</file>
         <file>icons/light/svg/menu.svg</file>
         <file>icons/light/svg/new-window.svg</file>
         <file>icons/light/svg/password.svg</file>
@@ -35,7 +34,6 @@
         <file>icons/dark/svg/done.svg</file>
         <file>icons/dark/svg/download.svg</file>
         <file>icons/dark/svg/filter_list.svg</file>
-        <file>icons/dark/svg/light-dark.svg</file>
         <file>icons/dark/svg/menu.svg</file>
         <file>icons/dark/svg/new-window.svg</file>
         <file>icons/dark/svg/password.svg</file>
@@ -60,5 +58,7 @@
         <file>icons/dark/svg/connect.svg</file>
         <file>icons/dark/svg/disconnect.svg</file>
         <file>icons/dark/index.theme</file>
+        <file>icons/light/svg/color-palette.svg</file>
+        <file>icons/dark/svg/color-palette.svg</file>
     </qresource>
 </RCC>
