@@ -11,7 +11,11 @@ class MainLayoutProfile
 {
 
 public:
-    MainLayoutProfile(){darkMode = false; tabsexpanded = true;};
+    MainLayoutProfile()
+    {
+        darkMode = 0;
+        tabsexpanded = true;
+    };
 
     QString profileName;
     QList<int> rowA;
@@ -21,7 +25,7 @@ public:
     QList<int> detailColC;
     QByteArray mainGeometry;
     QByteArray mainState;
-    bool darkMode;
+    int darkMode;
     bool tabsexpanded;
     QList<QPair<QString, QString>> addlBandmaps;
 

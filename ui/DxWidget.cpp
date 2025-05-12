@@ -1695,7 +1695,7 @@ void DxWidget::activateCurrPasswordIcon()
 {
     FCT_IDENTIFICATION;
 
-    ui->serverSelect->setItemIcon(ui->serverSelect->currentIndex(), QIcon(":/icons/password.png"));
+    ui->serverSelect->setItemIcon(ui->serverSelect->currentIndex(), QIcon::fromTheme("password"));
 }
 
 void DxWidget::processDxSpot(const QString &spotter,

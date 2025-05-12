@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>341</width>
+    <width>412</width>
     <height>511</height>
    </rect>
   </property>
   <property name="focusPolicy">
-   <enum>Qt::NoFocus</enum>
+   <enum>Qt::FocusPolicy::NoFocus</enum>
   </property>
   <property name="windowTitle">
    <string notr="true">Form</string>
@@ -34,10 +34,10 @@
      <item>
       <widget class="QPushButton" name="menuButton">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="contextMenuPolicy">
-        <enum>Qt::ActionsContextMenu</enum>
+        <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
        </property>
        <property name="styleSheet">
         <string notr="true">::menu-indicator{ image: none; }</string>
@@ -46,24 +46,23 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../res/icons/icons.qrc">
-         <normaloff>:/icons/menu.svg</normaloff>:/icons/menu.svg</iconset>
+        <iconset theme="menu"/>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QComboBox" name="serverSelect">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="contextMenuPolicy">
-        <enum>Qt::DefaultContextMenu</enum>
+        <enum>Qt::ContextMenuPolicy::DefaultContextMenu</enum>
        </property>
        <property name="toolTip">
         <string>Insert a &lt;b&gt;hostname:port&lt;/b&gt; of DXC Server.</string>
        </property>
        <property name="inputMethodHints">
-        <set>Qt::ImhNone</set>
+        <set>Qt::InputMethodHint::ImhNone</set>
        </property>
        <property name="editable">
         <bool>true</bool>
@@ -72,10 +71,10 @@
         <string notr="true"/>
        </property>
        <property name="insertPolicy">
-        <enum>QComboBox::InsertAtTop</enum>
+        <enum>QComboBox::InsertPolicy::InsertAtTop</enum>
        </property>
        <property name="sizeAdjustPolicy">
-        <enum>QComboBox::AdjustToContents</enum>
+        <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
        </property>
       </widget>
      </item>
@@ -88,7 +87,7 @@
         </sizepolicy>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="text">
         <string>Connect</string>
@@ -98,7 +97,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -117,7 +116,7 @@
         </sizepolicy>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <item>
         <property name="text">
@@ -175,13 +174,13 @@
        <item row="0" column="0">
         <widget class="QTableView" name="dxTable">
          <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+          <enum>Qt::FocusPolicy::ClickFocus</enum>
          </property>
          <property name="contextMenuPolicy">
-          <enum>Qt::ActionsContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
+          <set>QAbstractItemView::EditTrigger::AnyKeyPressed|QAbstractItemView::EditTrigger::DoubleClicked</set>
          </property>
          <property name="tabKeyNavigation">
           <bool>false</bool>
@@ -196,16 +195,16 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>24</number>
@@ -238,7 +237,7 @@
          <item>
           <widget class="QLineEdit" name="searchEdit">
            <property name="focusPolicy">
-            <enum>Qt::ClickFocus</enum>
+            <enum>Qt::FocusPolicy::ClickFocus</enum>
            </property>
            <property name="toolTip">
             <string>Full-text search</string>
@@ -260,8 +259,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../res/icons/icons.qrc">
-             <normaloff>:/icons/cancel-24px.svg</normaloff>:/icons/cancel-24px.svg</iconset>
+            <iconset theme="cancel"/>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -289,10 +287,10 @@
        <item row="0" column="0">
         <widget class="QTableView" name="wcyTable">
          <property name="contextMenuPolicy">
-          <enum>Qt::ActionsContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="tabKeyNavigation">
           <bool>false</bool>
@@ -304,16 +302,16 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerItem</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerItem</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>40</number>
@@ -357,10 +355,10 @@
        <item row="0" column="0">
         <widget class="QTableView" name="wwvTable">
          <property name="contextMenuPolicy">
-          <enum>Qt::ActionsContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="tabKeyNavigation">
           <bool>false</bool>
@@ -375,16 +373,16 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <attribute name="horizontalHeaderDefaultSectionSize">
           <number>70</number>
@@ -416,10 +414,10 @@
        <item row="0" column="0">
         <widget class="QTableView" name="toAllTable">
          <property name="contextMenuPolicy">
-          <enum>Qt::ActionsContextMenu</enum>
+          <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="tabKeyNavigation">
           <bool>false</bool>
@@ -434,16 +432,16 @@
           <bool>true</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <attribute name="horizontalHeaderDefaultSectionSize">
           <number>70</number>
@@ -460,7 +458,7 @@
      </widget>
      <widget class="QWidget" name="consolePage">
       <property name="contextMenuPolicy">
-       <enum>Qt::ActionsContextMenu</enum>
+       <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -484,7 +482,7 @@
           </font>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+          <enum>Qt::FocusPolicy::ClickFocus</enum>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -513,10 +511,10 @@
        <item row="0" column="0">
         <widget class="QTableWidget" name="trendTable">
          <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::FocusPolicy::NoFocus</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="tabKeyNavigation">
           <bool>false</bool>
@@ -528,13 +526,13 @@
           <bool>false</bool>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::NoSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
          </property>
          <property name="verticalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
          <property name="horizontalScrollMode">
-          <enum>QAbstractItemView::ScrollPerPixel</enum>
+          <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
          </property>
         </widget>
        </item>
@@ -553,7 +551,7 @@
         <bool>false</bool>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::FocusPolicy::ClickFocus</enum>
        </property>
        <property name="toolTip">
         <string>Send DX Cluster Command</string>
@@ -569,16 +567,16 @@
         <bool>false</bool>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
+        <enum>Qt::FocusPolicy::NoFocus</enum>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="popupMode">
-        <enum>QToolButton::MenuButtonPopup</enum>
+        <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
        </property>
        <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextOnly</enum>
+        <enum>Qt::ToolButtonStyle::ToolButtonTextOnly</enum>
        </property>
       </widget>
      </item>
@@ -587,8 +585,7 @@
   </layout>
   <action name="actionFilter">
    <property name="icon">
-    <iconset resource="../res/icons/icons.qrc">
-     <normaloff>:/icons/filter_list-24px.svg</normaloff>:/icons/filter_list-24px.svg</iconset>
+    <iconset theme="filter_list"/>
    </property>
    <property name="text">
     <string>Filter...</string>
@@ -687,16 +684,14 @@
     <string notr="true">Ctrl+D</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
    </property>
   </action>
  </widget>
- <resources>
-  <include location="../res/icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>connectButton</sender>

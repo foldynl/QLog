@@ -33,7 +33,7 @@ signals:
 
 public slots:
     void setTarget(double lat, double lon);
-    void changeTheme(int);
+    void changeTheme(int, bool isDark);
     void auroraDataUpdate();
     void mufDataUpdate();
     void setIBPBand(VFOID, double, double, double);

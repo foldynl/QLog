@@ -27,7 +27,7 @@ public slots:
     void mainStatChanged(int);
     void dateRangeCheckBoxChanged(int);
     void mapLoaded(bool);
-    void changeTheme(int);
+    void changeTheme(int, bool isDark);
     void refreshWidget();
 
 private slots:
