@@ -531,6 +531,35 @@ int main(int argc, char* argv[])
 
     splash.showMessage(QObject::tr("Starting Application"), Qt::AlignBottom|Qt::AlignCenter);
 
+    QString repoName;
+#ifdef Q_OS_WIN
+    repoName = "foldynl/QLog";
+#elif defined(Q_OS_MAC)
+    repoName = "aa5sh/QLog";
+#elif defined(Q_OS_LINUX)
+    repoName = "foldynl/QLog";
+#else
+    repoName = "foldynl/QLog";
+#endif
+
+    Migration::checkForUpdatedApp(repoName, [&](const QString &tag, const QString &error) {
+        QString curVersion;
+
+        curVersion = VERSION;
+        curVersion = "v"+curVersion;
+
+        if (!error.isEmpty()) {
+            qCritical() << "Failed to check for update:" << error;
+        } else {
+            if(curVersion != tag)
+            {
+                QString message = "Newer Version of QLog Available " + tag;
+                QMessageBox::information(nullptr, "QLog", message);
+            }
+        }
+    });
+
+
     startRigThread();
     startRotThread();
     startCWKeyerThread();
@@ -542,6 +571,5 @@ int main(int argc, char* argv[])
 
     w.show();
     w.setLayoutGeometry();
-
     return app.exec();
 }
