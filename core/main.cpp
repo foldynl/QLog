@@ -553,7 +553,7 @@ int main(int argc, char* argv[])
         } else {
             if(curVersion != tag)
             {
-                QString message = "Newer Version of QLog Available " + tag;
+                QString message = "Version " + tag + " of QLog is now available for download at: <a href='https://www.github.com/" + repoName + "/releases/latest'>GitHub</a>";
                 QMessageBox::information(nullptr, "QLog", message);
             }
         }
