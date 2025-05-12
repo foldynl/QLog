@@ -72,6 +72,7 @@
     var grids_confirmed = []; //field of Grids used for rendering Confirmed Grids
     var mylocations = [];     //field of My Locations
     var locations = [];
+    var staticMapTime = null;
 
     var map = L.map('map', {center: [0,0], zoom: 2, minZoom: 1});
 
@@ -149,9 +150,10 @@
 
     function updateTerminator(grayline)
     {
-       let t2 = L.terminator({fillOpacity: 0.2});
-       grayline.setLatLngs(t2.getLatLngs());
-       grayline.redraw();
+      if (!staticMapTime) {
+        grayline.setTime();
+        grayline.redraw();
+      }
     }
 
     // Configuration for Aurora Heatmap
@@ -501,6 +503,11 @@
         wsjtxStationsLayer.clearLayers();
     }
 
+    function setStaticMapTime(newDate) {
+        staticMapTime = newDate;
+        grayline.setTime(staticMapTime);
+        grayline.redraw();
+    }
   </script>
 
 </body>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>451</width>
+    <width>283</width>
     <height>662</height>
    </rect>
   </property>
@@ -76,12 +76,18 @@
       <item>
        <widget class="QLabel" name="clearSpotOlderLabel">
         <property name="text">
-         <string>Clear older than</string>
+         <string>Clear older</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="clearSpotOlderSpin">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="focusPolicy">
          <enum>Qt::FocusPolicy::ClickFocus</enum>
         </property>
@@ -134,8 +140,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>451</width>
-        <height>573</height>
+        <width>283</width>
+        <height>591</height>
        </rect>
       </property>
       <property name="sizePolicy">

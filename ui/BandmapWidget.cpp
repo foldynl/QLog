@@ -140,7 +140,7 @@ void BandmapWidget::update()
 
     int steps = static_cast<int>(round((currentBand.end - currentBand.start) / step));
 
-    ui->graphicsView->setFixedSize(330, steps * PIXELSPERSTEP + 30);
+    ui->graphicsView->setFixedSize(270, steps * PIXELSPERSTEP + 30);
 
     /****************/
     /* Draw bandmap */
@@ -163,13 +163,13 @@ void BandmapWidget::update()
         if (i % 5 == 0)
         {
             QGraphicsTextItem* text = bandmapScene->addText(QString::number(plottedFreq, 'f', digits));
-            text->setPos(- (text->boundingRect().width()) - 10,
+            text->setPos(- (text->boundingRect().width()) - 5,
                          i * PIXELSPERSTEP - (text->boundingRect().height() / 2));
         }
     }
 
     const QString &endFreqDigits= QString::number(currentBand.end + step*steps, 'f', digits);
-    bandmapScene->setSceneRect(160 - (endFreqDigits.size() * PIXELSPERSTEP),
+    bandmapScene->setSceneRect(135 - (endFreqDigits.size() * PIXELSPERSTEP),
                                0,
                                0,
                                steps * PIXELSPERSTEP + 10);

@@ -42,6 +42,21 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_metainfodir}/*
 
 %changelog
+* Sun May 11 2025 Ladislav Foldyna - 0.44.1-1
+- Fixed Rotator Widget Seg Fault for new users (issue #666)
+
+* Fri May 9 2025 Ladislav Foldyna - 0.44.0-1
+- [NEW] - Activity Manager - Added SKCC, UKSMG and FISTS as Dynamic Fields
+- [NEW] - QSO - FISTS, SKCC, and UKSMG are auto-filled from MembershipQE (issue #628)
+- [NEW] - Rotator - Added QSO destination needle (issue #644)
+- [NEW] - QSO Detail - Adds grayline and short path (PR #653 @kyleboyle)
+- [CHANGED] - Rotator - Needle colors correspond to the online map (issue #644)
+- Fixed TCI cw_macros must contain RigID (issue #663)
+- Fixed TCI setKeySpeed sets keyer and macros speed (issue #663)
+- Fixed Data mode missing in rig control window - rigctld (issue #660 @aa5sh)
+- Improved DXC Mode detection
+- Updated Simplified Chinese translation
+
 * Sat Apr 19 2025 Ladislav Foldyna - 0.43.1-1
 - Fixed Click on PHONE DX Spots sets wrong mode (issue #453)
 - Fixed No freq via Omnirig for IC7400 (issue #639)

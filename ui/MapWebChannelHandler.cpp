@@ -58,7 +58,7 @@ void MapWebChannelHandler::connectWebChannel(QWebEnginePage *page)
           "     case '" + tr("WSJTX - CQ") + "': "
           "        foo.handleLayerSelectionChanged('wsjtxStationsLayer', 'on'); "
           "        break; "
-          "     case '" + tr("Paths") + "': "
+          "     case '" + tr("Path") + "': "
           "        foo.handleLayerSelectionChanged('pathLayer', 'on'); "
           "        break; "
           "  } "
@@ -90,7 +90,7 @@ void MapWebChannelHandler::connectWebChannel(QWebEnginePage *page)
           "     case '" + tr("WSJTX - CQ") + "': "
           "        foo.handleLayerSelectionChanged('wsjtxStationsLayer', 'off'); "
           "        break; "
-          "     case '" + tr("Paths") + "': "
+          "     case '" + tr("Path") + "': "
           "        foo.handleLayerSelectionChanged('pathLayer', 'off'); "
           "        break; "
           "   } "
@@ -161,7 +161,7 @@ QString MapWebChannelHandler::generateMapMenuJS(bool gridLayer,
         options << "\"" + tr("WSJTX - CQ") + "\": wsjtxStationsLayer";
 
     if ( paths )
-        options << "\"" + tr("Paths") + "\": pathLayer";
+        options << "\"" + tr("Path") + "\": pathLayer";
 
     QString ret = QString("var layerControl = new L.Control.Layers(null,"
                           "{ %1 },{}).addTo(map);").arg(options.join(","));

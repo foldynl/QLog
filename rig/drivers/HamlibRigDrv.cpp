@@ -159,31 +159,6 @@ HamlibRigDrv::HamlibRigDrv(const RigProfile &profile,
 
     rig_set_debug(RIG_DEBUG_BUG);
 
-    rmode_t localRigModes = RIG_MODE_NONE;
-
-    if ( rig->caps->rig_model == RIG_MODEL_NETRIGCTL )
-    {
-        /* Limit a set of modes for network rig */
-        localRigModes = static_cast<rmode_t>(RIG_MODE_CW|RIG_MODE_SSB|RIG_MODE_FM|RIG_MODE_AM);
-    }
-    else if ( rig->state.mode_list != RIG_MODE_NONE )
-        localRigModes = static_cast<rmode_t>(rig->state.mode_list);
-
-    /* hamlib 3.x and 4.x are very different - workaround */
-    for ( unsigned char i = 0; i < (sizeof(rmode_t)*8)-1; i++ )
-    {
-        /* hamlib 3.x and 4.x are very different - workaround */
-        const char *ms = rig_strrmode(static_cast<rmode_t>(localRigModes & rig_idx2setting(i)));
-
-        if (!ms || !ms[0])
-        {
-            continue;
-        }
-        qCDebug(runtime) << "Supported Mode :" << ms;
-
-        modeList.append(QString(ms));
-    }
-
     connect(&errorTimer, &QTimer::timeout,
             this, &HamlibRigDrv::checkErrorCounter);    
 }
@@ -280,6 +255,21 @@ bool HamlibRigDrv::open()
     currRIT = MHz(rigProfile.ritOffset);
     currXIT = MHz(rigProfile.xitOffset);
     morseOverCatSupported = ( rig->caps->send_morse != nullptr );
+
+    rmode_t localRigModes = RIG_MODE_NONE;
+    localRigModes = static_cast<rmode_t>(rig->state.mode_list); // static_cast is due to the old Hamlib versions
+                                                                // where mode_list is defined as INT
+    /* hamlib 3.x and 4.x are very different - workaround */
+    for ( unsigned char i = 0; i < (sizeof(rmode_t)*8)-1; i++ )
+    {
+        /* hamlib 3.x and 4.x are very different - workaround */
+        const char *ms = rig_strrmode(static_cast<rmode_t>(localRigModes & rig_idx2setting(i)));
+
+        if (!ms || !ms[0]) continue;
+
+        qCDebug(runtime) << "Supported Mode :" << ms;
+        modeList.append(QString(ms));
+    }
 
     connect(&timer, &QTimer::timeout, this, &HamlibRigDrv::checkRigStateChange);
     timer.start(rigProfile.pollInterval);

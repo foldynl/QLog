@@ -13,21 +13,22 @@
 
 MODULE_IDENTIFICATION("qlog.ui.rotatorwidget");
 
-#define MAP_RESOLUTION 1000
-#define GLOBE_RADIUS 100.0
-
 RotatorWidget::RotatorWidget(QWidget *parent) :
     QWidget(parent),
+    antennaNeedle(nullptr),
+    requestedAzimuthNeedle(nullptr),
+    QSOAzimuthNeedle(nullptr),
     waitingFirstValue(true),
     compassScene(nullptr),
     ui(new Ui::RotatorWidget),
+    antennaAzimuth(0.0),
+    requestedAzimuth(qQNaN()),
+    qsoAzimuth(qQNaN()),
     contact(nullptr)
 {
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
-
-    azimuth = 0.0;
 
     redrawMap();
 
@@ -94,10 +95,24 @@ void RotatorWidget::qsoBearingSP()
 
     ui->qsoBearingButton->setDefaultAction(ui->actionQSO_SP);
 
-    double qsoBearing = getQSOBearing();
+    setBearing(getQSOBearing());
+}
 
-    if ( !qIsNaN(qsoBearing) )
-        setBearing(qsoBearing);
+void RotatorWidget::setRequestedAz(double requestedAz)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << requestedAz;
+
+    if ( qIsNaN(requestedAz) )
+        return;
+
+    requestedAzimuth = requestedAz;
+    if ( requestedAzimuthNeedle )
+    {
+        requestedAzimuthNeedle->show();
+        requestedAzimuthNeedle->setRotation(requestedAz);
+    }
 }
 
 void RotatorWidget::setBearing(double in_azimuth)
@@ -106,39 +121,65 @@ void RotatorWidget::setBearing(double in_azimuth)
 
     qCDebug(function_parameters) << in_azimuth;
 
-    if ( !ui->gotoDoubleSpinBox->isEnabled() )
+    if ( qIsNaN(in_azimuth) || !ui->gotoDoubleSpinBox->isEnabled() )
         return;
 
-    azimuth = in_azimuth;
-    Rotator::instance()->setPosition(azimuth, 0);
-    destinationAzimuthNeedle->setRotation(in_azimuth);
+    setRequestedAz(in_azimuth);
+    Rotator::instance()->setPosition(in_azimuth, 0);
 }
 
 void RotatorWidget::positionChanged(double in_azimuth, double in_elevation)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters)<<in_azimuth<<" "<<in_elevation;
-    azimuth = (in_azimuth < 0.0 ) ? 360.0 + in_azimuth : in_azimuth;
-    compassNeedle->setRotation(azimuth);
+    qCDebug(function_parameters) << in_azimuth <<in_elevation;
+
+    antennaAzimuth = (in_azimuth < 0.0 ) ? 360.0 + in_azimuth : in_azimuth;
+    if ( antennaNeedle) antennaNeedle->setRotation(antennaAzimuth);
     if ( waitingFirstValue )
     {
         waitingFirstValue = false;
-        destinationAzimuthNeedle->setRotation(in_azimuth);
+        if ( requestedAzimuthNeedle) requestedAzimuthNeedle->setRotation(in_azimuth);
     }
     ui->gotoDoubleSpinBox->blockSignals(true);
-    ui->gotoDoubleSpinBox->setValue(azimuth);
+    ui->gotoDoubleSpinBox->setValue(antennaAzimuth);
     ui->gotoDoubleSpinBox->blockSignals(false);
+    if ( qAbs(qRound(requestedAzimuth) - qRound(in_azimuth)) <= AZIMUTH_DEAD_BAND
+         && requestedAzimuthNeedle )
+        requestedAzimuthNeedle->hide();
 }
 
-void RotatorWidget::showEvent(QShowEvent* event) {
+void RotatorWidget::setQSOBearing(double , double )
+{
+    FCT_IDENTIFICATION;
+
+    if ( !QSOAzimuthNeedle )
+        return;
+
+    qsoAzimuth = getQSOBearing();
+
+    qCDebug(runtime) << qsoAzimuth;
+
+    if ( !qIsNaN(qsoAzimuth) )
+    {
+        QSOAzimuthNeedle->show();
+        QSOAzimuthNeedle->setRotation(qsoAzimuth);
+    }
+    else
+        QSOAzimuthNeedle->hide();
+}
+
+
+void RotatorWidget::showEvent(QShowEvent* event)
+{
     FCT_IDENTIFICATION;
 
     ui->compassView->fitInView(compassScene->sceneRect(), Qt::KeepAspectRatio);
     QWidget::showEvent(event);
 }
 
-void RotatorWidget::resizeEvent(QResizeEvent* event) {
+void RotatorWidget::resizeEvent(QResizeEvent* event)
+{
     FCT_IDENTIFICATION;
 
     ui->compassView->fitInView(compassScene->sceneRect(), Qt::KeepAspectRatio);
@@ -297,26 +338,26 @@ void RotatorWidget::setUserButtonDesc(QPushButton *button,
         button->setEnabled(true);
     }
     else
-    {
         button->setText("");
-    }
 }
 
 void RotatorWidget::redrawMap()
 {
     FCT_IDENTIFICATION;
 
+    if ( !ui )
+        return;
+
     if ( compassScene )
-    {
         compassScene->deleteLater();
-    }
+
     compassScene = new QGraphicsScene(this);
     ui->compassView->setScene(compassScene);
     ui->compassView->setStyleSheet("background-color: transparent;");
 
     QImage source(":/res/map/nasabluemarble.jpg");
     QImage map(MAP_RESOLUTION, MAP_RESOLUTION, QImage::Format_ARGB32);
-    Gridsquare myGrid(StationProfilesManager::instance()->getCurProfile1().locator);
+    const Gridsquare myGrid(StationProfilesManager::instance()->getCurProfile1().locator);
 
     double lat = myGrid.getLatitude();
     double lon = myGrid.getLongitude();
@@ -328,21 +369,23 @@ void RotatorWidget::redrawMap()
     double lambda0 = (lon / 180.0) * M_PI;
     double phi1 = - (lat / 90.0) * (0.5 * M_PI);
 
-    for (int x = 0; x < map.width(); x++) {
+    for (int x = 0; x < map.width(); x++)
+    {
         double x2 = 2.0 * M_PI * (static_cast<double>(x) / static_cast<double>(map.width()) - 0.5);
-        for (int y = 0; y < map.height(); y++) {
+        for (int y = 0; y < map.height(); y++)
+        {
             double y2 = 2.0 * M_PI * (static_cast<double>(y) / static_cast<double>(map.height()) - 0.5);
             double c = sqrt(x2 * x2 + y2 * y2);
 
-            if (c < M_PI) {
+            if ( c < M_PI )
+            {
                 double phi = asin(cos(c) * sin(phi1) + y2 * sin(c) * cos(phi1) / c);
 
                 double lambda;
-                if (c != 0) {
+                if (c != 0)
                     lambda = lambda0 + atan2(x2 * sin(c), c * cos(phi1) * cos(c) - y2 * sin(phi1) * sin(c));
-                } else {
+                else
                     lambda = lambda0;
-                }
 
                 double s = (lambda / (2 * M_PI)) + 0.5;
                 double t = (phi / M_PI) + 0.5;
@@ -355,9 +398,8 @@ void RotatorWidget::redrawMap()
 
                 map.setPixelColor(x, y, source.pixelColor(x3, y3));
             }
-            else {
+            else
                 map.setPixelColor(x, y, QColor(0, 0, 0, 0));
-            }
         }
     }
 
@@ -368,12 +410,16 @@ void RotatorWidget::redrawMap()
     pixMapItem->setScale(GLOBE_RADIUS * 2/MAP_RESOLUTION);
 
     // circle around the globe - globe "antialiasing"
-    compassScene->addEllipse(-100, -100, GLOBE_RADIUS * 2, GLOBE_RADIUS * 2, QPen(QColor(100, 100, 100)),
-                                             QBrush(QColor(0, 0, 0), Qt::NoBrush));
+    compassScene->addEllipse(-100, -100, GLOBE_RADIUS * 2, GLOBE_RADIUS * 2,
+                             QPen(QColor(100, 100, 100)),
+                             QBrush(QColor(0, 0, 0),
+                             Qt::NoBrush));
 
     // point in the middle of globe
-    compassScene->addEllipse(-1, -1, 2, 2, QPen(Qt::NoPen),
-                                             QBrush(QColor(0, 0, 0), Qt::SolidPattern));
+    compassScene->addEllipse(-1, -1, 2, 2,
+                             QPen(Qt::NoPen),
+                             QBrush(QColor(0, 0, 0),
+                             Qt::SolidPattern));
 
     // draw needles
     QPainterPath path;
@@ -381,12 +427,36 @@ void RotatorWidget::redrawMap()
     path.lineTo(0, -90);
     path.lineTo(2, 0);
     path.closeSubpath();
-    compassNeedle = compassScene->addPath(path, QPen(Qt::NoPen),
-                    QBrush(QColor(255, 191, 0), Qt::SolidPattern));
-    compassNeedle->setRotation(azimuth);
-    destinationAzimuthNeedle = compassScene->addPath(QPainterPath(path), QPen(Qt::NoPen),
-                                                     QBrush(QColor(255,0,255), Qt::SolidPattern));
-    destinationAzimuthNeedle->setRotation(azimuth);
+
+    QPainterPath path2;
+    path2.lineTo(-1, 0);
+    path2.lineTo(0, -90);
+    path2.lineTo(1, 0);
+    path2.closeSubpath();
+
+    requestedAzimuthNeedle = compassScene->addPath(QPainterPath(path2),
+                                                   QPen(Qt::NoPen),
+                                                   QBrush(QColor(255,255,255),
+                                                          Qt::SolidPattern));
+    if ( !qIsNaN(requestedAzimuth) )
+        requestedAzimuthNeedle->setRotation(requestedAzimuth);
+    else
+        requestedAzimuthNeedle->hide();
+
+    antennaNeedle = compassScene->addPath(path,
+                                          QPen(QColor(0, 0, 0, 150)),
+                                          QBrush(QColor(255, 191, 0),
+                                          Qt::SolidPattern));
+    antennaNeedle->setRotation(antennaAzimuth);
+    if ( !ui->gotoButton->isEnabled() )
+        antennaNeedle->hide();
+
+    QSOAzimuthNeedle = compassScene->addPath(QPainterPath(path2),
+                                             QPen(Qt::NoPen),
+                                             QBrush(QColor(255,0,255),
+                                             Qt::SolidPattern));
+
+    setQSOBearing(qQNaN(), qQNaN()); // only call the function; input parameters are ignored
 }
 
 void RotatorWidget::rotProfileComboChanged(QString profileName)
@@ -432,6 +502,7 @@ void RotatorWidget::rotConnected()
     ui->userButtonsProfileCombo->setEnabled(true);
     refreshRotUserButtons();
     waitingFirstValue = true;
+    if ( antennaNeedle ) antennaNeedle->show();
 }
 
 void RotatorWidget::rotDisconnected()
@@ -447,6 +518,9 @@ void RotatorWidget::rotDisconnected()
     ui->userButton_2->setEnabled(false);
     ui->userButton_3->setEnabled(false);
     ui->userButton_4->setEnabled(false);
+    if ( antennaNeedle ) antennaNeedle->hide();
+    if ( requestedAzimuthNeedle) requestedAzimuthNeedle->hide();
+    requestedAzimuth = qQNaN();
 }
 
 RotatorWidget::~RotatorWidget()

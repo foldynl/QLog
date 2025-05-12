@@ -36,6 +36,7 @@ public slots:
     void rotConnected();
     void rotDisconnected();
     void refreshRotProfileCombo();
+    void setQSOBearing(double, double);
 
 protected:
     void showEvent(QShowEvent* event);
@@ -50,6 +51,7 @@ private slots:
     void gotoPosition();
     void qsoBearingLP();
     void qsoBearingSP();
+    void setRequestedAz(double);
 
 private:
 
@@ -58,13 +60,20 @@ private:
     void setUserButtonDesc(QPushButton *button, const QString&, const double);
     double getQSOBearing();
 
-    QGraphicsPathItem* compassNeedle;
-    QGraphicsPathItem* destinationAzimuthNeedle;
+    QGraphicsPathItem* antennaNeedle;
+    QGraphicsPathItem* requestedAzimuthNeedle;
+    QGraphicsPathItem* QSOAzimuthNeedle;
     bool waitingFirstValue;
     QGraphicsScene* compassScene;
     Ui::RotatorWidget *ui;
-    double azimuth;
+    double antennaAzimuth;
+    double requestedAzimuth;
+    double qsoAzimuth;
     const NewContactWidget *contact;
+
+    const int MAP_RESOLUTION = 1000;
+    const float GLOBE_RADIUS = 100.0;
+    const int AZIMUTH_DEAD_BAND = 2;
 };
 
 #endif // QLOG_UI_ROTATORWIDGET_H

@@ -787,26 +787,26 @@
     </message>
     <message>
         <location filename="../ui/BandmapWidget.ui" line="80"/>
-        <source>Clear older than</source>
-        <translation>Löschen älter als</translation>
+        <source>Clear older</source>
+        <translation>Löschen älter</translation>
     </message>
     <message>
-        <location filename="../ui/BandmapWidget.ui" line="93"/>
+        <location filename="../ui/BandmapWidget.ui" line="99"/>
         <source>Never</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="../ui/BandmapWidget.ui" line="109"/>
+        <location filename="../ui/BandmapWidget.ui" line="115"/>
         <source>Clear All</source>
         <translation>Alle Löschen</translation>
     </message>
     <message>
-        <location filename="../ui/BandmapWidget.ui" line="207"/>
+        <location filename="../ui/BandmapWidget.ui" line="213"/>
         <source>Clear the current band</source>
         <translation>Löschen das aktuelle Band</translation>
     </message>
     <message>
-        <location filename="../ui/BandmapWidget.ui" line="96"/>
+        <location filename="../ui/BandmapWidget.ui" line="102"/>
         <source> min(s)</source>
         <translation></translation>
     </message>
@@ -4503,122 +4503,122 @@
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="157"/>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="220"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="195"/>
         <source>Initialization Error</source>
         <translation>Initialisierungsfehler</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="253"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="228"/>
         <source>Cannot set PTT Type</source>
         <translation>PTT-Typ kann nicht eingestellt werden</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="260"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="235"/>
         <source>Cannot set PTT Share</source>
         <translation>PTT-Share kann nicht eingestellt werden</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="267"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="242"/>
         <source>Unsupported Rig Driver</source>
         <translation>Nicht unterstützter Rig-Treiber</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="274"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="249"/>
         <source>Rig Open Error</source>
         <translation>Verbindung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="329"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="319"/>
         <source>Set Frequency Error</source>
         <translation>Fehler bei der Frequenzeinstellung</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="377"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="367"/>
         <source>Set Mode Error</source>
         <translation>Fehler bei der Moduseinstellung</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="400"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="390"/>
         <source>Set PTT Error</source>
         <translation>Fehler beim Auslösen der PTT</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="465"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="455"/>
         <source>Cannot sent Morse</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="484"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="474"/>
         <source>Cannot stop Morse</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="587"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="577"/>
         <source>Get PTT Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="622"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="612"/>
         <source>Get Frequency Error</source>
         <translation>Fehler bei der Frequenzabfrage</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="663"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="653"/>
         <source>Get Mode Error</source>
         <translation>Fehler bei der Mode-Abfrage</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="712"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="702"/>
         <source>Get VFO Error</source>
         <translation>Fehler beim Abrufen des VFO</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="750"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="740"/>
         <source>Get PWR Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="754"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="744"/>
         <source>Get PWR (power2mw) Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="792"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="782"/>
         <source>Get RIT Function Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="798"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="788"/>
         <source>Get RIT Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="849"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="839"/>
         <source>Get XIT Function Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="855"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="845"/>
         <source>Get XIT Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="904"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="894"/>
         <source>Get KeySpeed Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="956"/>
+        <location filename="../rig/drivers/HamlibRigDrv.cpp" line="946"/>
         <source>Set KeySpeed Error</source>
         <translatorcomment>This cannot be displayed</translatorcomment>
         <translation type="unfinished"></translation>
@@ -6871,7 +6871,7 @@
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="126"/>
-        <location filename="../ui/MainWindow.cpp" line="1322"/>
+        <location filename="../ui/MainWindow.cpp" line="1323"/>
         <source>Contest</source>
         <translation>Contest</translation>
     </message>
@@ -6906,7 +6906,7 @@
         <translation>Alerts anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1646"/>
+        <location filename="../ui/MainWindow.cpp" line="1647"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
@@ -6927,78 +6927,78 @@
         <translation>Drücken zum Einstellen des Alarms</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="365"/>
+        <location filename="../ui/MainWindow.cpp" line="366"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Clublog-Sofort-Upload-Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="583"/>
-        <location filename="../ui/MainWindow.cpp" line="593"/>
-        <location filename="../ui/MainWindow.cpp" line="603"/>
+        <location filename="../ui/MainWindow.cpp" line="584"/>
+        <location filename="../ui/MainWindow.cpp" line="594"/>
+        <location filename="../ui/MainWindow.cpp" line="604"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Fehler-Detail:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="627"/>
+        <location filename="../ui/MainWindow.cpp" line="628"/>
         <source>op: </source>
         <translation>op: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1001"/>
+        <location filename="../ui/MainWindow.cpp" line="1002"/>
         <source>Classic</source>
         <translation>Klassisch</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1323"/>
+        <location filename="../ui/MainWindow.cpp" line="1324"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>Möchten Sie den Contest-Filter %1 entfernen?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1354"/>
+        <location filename="../ui/MainWindow.cpp" line="1355"/>
         <source>Contest: </source>
         <translation>Contest: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1528"/>
-        <location filename="../ui/MainWindow.cpp" line="1544"/>
-        <location filename="../ui/MainWindow.cpp" line="1560"/>
-        <location filename="../ui/MainWindow.cpp" line="1576"/>
-        <location filename="../ui/MainWindow.cpp" line="1594"/>
+        <location filename="../ui/MainWindow.cpp" line="1529"/>
+        <location filename="../ui/MainWindow.cpp" line="1545"/>
+        <location filename="../ui/MainWindow.cpp" line="1561"/>
+        <location filename="../ui/MainWindow.cpp" line="1577"/>
+        <location filename="../ui/MainWindow.cpp" line="1595"/>
         <source>QLog Warning</source>
         <translation>QLog Warnung</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1528"/>
+        <location filename="../ui/MainWindow.cpp" line="1529"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwende den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1544"/>
+        <location filename="../ui/MainWindow.cpp" line="1545"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>eQSL ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwende den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1560"/>
+        <location filename="../ui/MainWindow.cpp" line="1561"/>
         <source>Clublog is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>Clublog ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwende den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1576"/>
+        <location filename="../ui/MainWindow.cpp" line="1577"/>
         <source>HRDLog is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>HRDLog ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwende den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1594"/>
+        <location filename="../ui/MainWindow.cpp" line="1595"/>
         <source>QRZ.com is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>QRZ.com ist nicht richtig eingerichtet.&lt;p&gt; Bitte verwende den &lt;b&gt;Einstellungen&lt;/b&gt; Dialog, um es einzurichten.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1615"/>
+        <location filename="../ui/MainWindow.cpp" line="1616"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1690"/>
+        <location filename="../ui/MainWindow.cpp" line="1691"/>
         <source>N/A</source>
         <translation></translation>
     </message>
@@ -7065,7 +7065,7 @@
         <location filename="../ui/MapWebChannelHandler.cpp" line="61"/>
         <location filename="../ui/MapWebChannelHandler.cpp" line="93"/>
         <location filename="../ui/MapWebChannelHandler.cpp" line="164"/>
-        <source>Paths</source>
+        <source>Path</source>
         <translation>Weg</translation>
     </message>
 </context>
@@ -7140,7 +7140,7 @@
         <translation>Startzeit</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3867"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3931"/>
         <source> W</source>
         <translation></translation>
     </message>
@@ -7180,7 +7180,7 @@
         <translation>&amp;Details</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3798"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3862"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>DARC-DOK (Ortsverbandkenner) der kontaktierten Station (z.B. A01)</translation>
     </message>
@@ -7215,7 +7215,7 @@
         <translation>Dauer</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3818"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3882"/>
         <source>World Wide Flora &amp; Fauna</source>
         <translation></translation>
     </message>
@@ -7268,7 +7268,7 @@
         <translation>&lt;b&gt;Stationsstatistik&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3866"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3930"/>
         <source>Blank</source>
         <translation>Leer</translation>
     </message>
@@ -7393,87 +7393,87 @@
         <translation>Callbook-Anmeldung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2121"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2179"/>
         <source>LP</source>
         <translation>LP</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2173"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2231"/>
         <source>New Entity!</source>
         <translation>Neuer Eintrag!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2176"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2234"/>
         <source>New Band!</source>
         <translation>Neues Band!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2179"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2237"/>
         <source>New Mode!</source>
         <translation>Neue Betriebsart!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2182"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2240"/>
         <source>New Band &amp; Mode!</source>
         <translation>Neues Band &amp; Betriebsart!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2185"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2243"/>
         <source>New Slot!</source>
         <translation>Neuer Slot!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2188"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2246"/>
         <source>Worked</source>
         <translation>Gearbeitet</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2191"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2249"/>
         <source>Confirmed</source>
         <translation>Bestätigt</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2960"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3020"/>
         <source>GE</source>
         <translation>GA</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2970"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3030"/>
         <source>GM</source>
         <translation>GM</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2976"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3036"/>
         <source>GA</source>
         <translation>GT</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3287"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3347"/>
         <source> m</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3629"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3689"/>
         <source>Callbook search is active</source>
         <translation>Callbook-Suche ist aktiv</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3702"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3762"/>
         <source>Contest ID must be filled in to activate</source>
         <translation>Zur Aktivierung muss die Contest-ID ausgefüllt werden</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3854"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3918"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3869"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3933"/>
         <source>Description of the contacted station&apos;s equipment</source>
         <translation>Beschreibung der Ausrüstung der kontaktierten Station</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3624"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3684"/>
         <source>Callbook search is inactive</source>
         <translation>Callbook-Suche ist inaktiv</translation>
     </message>
@@ -7483,17 +7483,17 @@
         <translation>Erweitern/Zusammenklappen</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3795"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3859"/>
         <source>two or four adjacent Maidenhead grid locators, each four characters long, (ex. EN98,FM08,EM97,FM07)</source>
         <translation>zwei oder vier nebeneinander liegende, jeweils vier Zeichen lange Gitterfelder (z. B. EN98,FM08,EM97,FM07)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3822"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3886"/>
         <source>Special Activity Group</source>
         <translation>Spezielle Aktivitätsgruppe</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3826"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3890"/>
         <source>Special Activity Group Information</source>
         <translation></translation>
     </message>
@@ -7688,7 +7688,7 @@
         <location filename="../ui/AlertRuleDetail.cpp" line="406"/>
         <location filename="../ui/ExportDialog.cpp" line="139"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
-        <location filename="../ui/NewContactWidget.cpp" line="1622"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1660"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="522"/>
         <location filename="../ui/SettingsDialog.cpp" line="428"/>
         <location filename="../ui/SettingsDialog.cpp" line="436"/>
@@ -7728,10 +7728,10 @@
         <location filename="../core/Migration.cpp" line="412"/>
         <location filename="../ui/ExportDialog.cpp" line="130"/>
         <location filename="../ui/ImportDialog.cpp" line="240"/>
-        <location filename="../ui/MainWindow.cpp" line="581"/>
-        <location filename="../ui/MainWindow.cpp" line="591"/>
-        <location filename="../ui/MainWindow.cpp" line="601"/>
-        <location filename="../ui/NewContactWidget.cpp" line="1385"/>
+        <location filename="../ui/MainWindow.cpp" line="582"/>
+        <location filename="../ui/MainWindow.cpp" line="592"/>
+        <location filename="../ui/MainWindow.cpp" line="602"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1411"/>
         <location filename="../ui/SettingsDialog.cpp" line="310"/>
         <location filename="../ui/SettingsDialog.cpp" line="320"/>
         <location filename="../ui/SettingsDialog.cpp" line="328"/>
@@ -7826,12 +7826,12 @@
         <translation>DXC Server Verbindungsfehler</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="1386"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1412"/>
         <source>The fields &lt;b&gt;%0&lt;/b&gt; will not be saved because the &lt;b&gt;%1&lt;/b&gt; is not filled.</source>
         <translation>Die Felder &lt;b&gt;%0&lt;/b&gt; werden nicht gespeichert, da &lt;b&gt;%1&lt;/b&gt; nicht ausgefüllt ist.</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="1623"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1661"/>
         <source>Your callsign is empty. Please, set your Station Profile</source>
         <translation>Ihr Rufzeichen ist nicht angegeben. Bitte richten Sie Ihr Stationsprofil ein</translation>
     </message>
@@ -7993,17 +7993,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="582"/>
+        <location filename="../ui/MainWindow.cpp" line="583"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Rig Fehler:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="592"/>
+        <location filename="../ui/MainWindow.cpp" line="593"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Rotor Fehler:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="602"/>
+        <location filename="../ui/MainWindow.cpp" line="603"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;CW-Keyer Fehler:&lt;/b&gt; </translation>
     </message>
@@ -8027,42 +8027,42 @@
     </message>
     <message>
         <location filename="../core/KSTChat.cpp" line="549"/>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="320"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="321"/>
         <location filename="../ui/DxWidget.cpp" line="1121"/>
         <source>Connection Refused</source>
         <translation>Verbindung abgelehnt</translation>
     </message>
     <message>
         <location filename="../core/KSTChat.cpp" line="552"/>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="324"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="325"/>
         <location filename="../ui/DxWidget.cpp" line="1124"/>
         <source>Host closed the connection</source>
         <translation>Der Host hat die Verbindung beendet</translation>
     </message>
     <message>
         <location filename="../core/KSTChat.cpp" line="557"/>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="329"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="330"/>
         <location filename="../ui/DxWidget.cpp" line="1129"/>
         <source>Host not found</source>
         <translation>Host nicht gefunden</translation>
     </message>
     <message>
         <location filename="../core/KSTChat.cpp" line="560"/>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="332"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="333"/>
         <location filename="../ui/DxWidget.cpp" line="1132"/>
         <source>Timeout</source>
         <translation>Zeitüberschreitung</translation>
     </message>
     <message>
         <location filename="../core/KSTChat.cpp" line="565"/>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="336"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="337"/>
         <location filename="../ui/DxWidget.cpp" line="1136"/>
         <source>Network Error</source>
         <translation>Netzwerkfehler</translation>
     </message>
     <message>
         <location filename="../core/KSTChat.cpp" line="569"/>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="339"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="340"/>
         <location filename="../ui/DxWidget.cpp" line="1139"/>
         <source>Internal Error</source>
         <translation>Interner Fehler</translation>
@@ -8406,18 +8406,18 @@
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="410"/>
         <location filename="../ui/QSODetailDialog.ui" line="464"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1579"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1646"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1782"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1820"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1986"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1620"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1687"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1823"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1861"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2027"/>
         <location filename="../ui/QSODetailDialog.cpp" line="284"/>
         <source>Blank</source>
         <translation>Leer</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="374"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1310"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1351"/>
         <source>Callsign</source>
         <translation>Rufzeichen</translation>
     </message>
@@ -8443,7 +8443,7 @@
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="556"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1416"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1457"/>
         <source>QTH</source>
         <translation></translation>
     </message>
@@ -8474,7 +8474,7 @@
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="743"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1330"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1371"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
@@ -8485,13 +8485,13 @@
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="760"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1345"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1386"/>
         <source>ITU</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="789"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1368"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1409"/>
         <source>CQ</source>
         <translation></translation>
     </message>
@@ -8502,7 +8502,7 @@
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="844"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1426"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1467"/>
         <source>County</source>
         <translation>Landkreis</translation>
     </message>
@@ -8552,255 +8552,280 @@
         <translation>zwei oder vier nebeneinander liegende, jeweils vier Zeichen lange Gitterfelder (z. B. EN98,FM08,EM97,FM07)</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1002"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1456"/>
+        <location filename="../ui/QSODetailDialog.ui" line="985"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1497"/>
         <source>IOTA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1028"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1466"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1005"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1507"/>
         <source>POTA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1038"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1476"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1015"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1517"/>
         <source>SOTA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1068"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1496"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1045"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1537"/>
         <source>SIG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1082"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1059"/>
         <source>SIG Info</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1240"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1083"/>
+        <source>FISTS</source>
+        <translation>FISTS</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSODetailDialog.ui" line="1093"/>
+        <source>SKCC</source>
+        <translation>SKCC</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSODetailDialog.ui" line="1100"/>
+        <source>Ten-Ten</source>
+        <translation>Ten-Ten</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSODetailDialog.ui" line="1107"/>
+        <source>UKSMG</source>
+        <translation>UKSMG</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSODetailDialog.ui" line="1140"/>
+        <source>FISTS CC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/QSODetailDialog.ui" line="1281"/>
         <source>D&amp;X Stats</source>
         <translation>D&amp;X Stats</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1246"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1287"/>
         <source>&lt;b&gt;DXCC Statistics&lt;/b&gt;</source>
         <translation>&lt;b&gt;DXCC-Statistik&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1272"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1313"/>
         <source>&lt;b&gt;Station Statistics&lt;/b&gt;</source>
         <translation>&lt;b&gt;Stationsstatistik&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1436"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1477"/>
         <source>Operator Callsign</source>
         <translation>Operator Rufzeichen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2016"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2057"/>
         <source>QSLr Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2041"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2082"/>
         <source>QSLs Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2070"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2111"/>
         <source>Contest ID</source>
         <translation>Contest ID</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2174"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2215"/>
         <source>Member:</source>
         <translation>Mitglied:</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="985"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1526"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1123"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1567"/>
         <source>DOK</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="570"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1406"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1447"/>
         <source>Gridsquare</source>
         <translation>Gitterfeld</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="995"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1133"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>DARC-DOK (Ortsverbandkenner) der kontaktierten Station (z.B. A01)</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="955"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1519"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1560"/>
         <source>VUCC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1058"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1486"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1035"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1527"/>
         <source>WWFF</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1106"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1160"/>
         <source>E-Mail</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1126"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1180"/>
         <source>URL</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1146"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1200"/>
         <source>Propagation Mode</source>
         <translation>Ausbreitungsmodus</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1172"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1226"/>
         <source>Satellite Name</source>
         <translation>Satellit-Name</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1195"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1249"/>
         <source>Satellite Mode</source>
         <translation>Satellit-Betriebsart</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1299"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1340"/>
         <source>M&amp;y Station</source>
         <translation>&amp;Eigene Station</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1320"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1361"/>
         <source>Operator Name</source>
         <translation>Operator Name</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1543"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1584"/>
         <source>Rig</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1553"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1594"/>
         <source>Antenna</source>
         <translation>Antenne</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1563"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1604"/>
         <source>Power</source>
         <translation>Leistung</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1582"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1623"/>
         <source> W</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1506"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1547"/>
         <source>Sig Info</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1601"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1642"/>
         <source>&amp;QSL</source>
         <translation>&amp;QSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1700"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1707"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1911"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1918"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1741"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1748"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1952"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1959"/>
         <source>-</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1902"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1943"/>
         <source>Manage QSL Card</source>
         <translation>QSL-Karte verwalten</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1803"/>
-        <location filename="../ui/QSODetailDialog.ui" line="1859"/>
-        <location filename="../ui/QSODetailDialog.ui" line="2007"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1844"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1900"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2048"/>
         <source>&lt;b&gt;Yes&lt;/b&gt; - an outgoing QSL card has been sent; the QSO has been uploaded to, and accepted by, the online service&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - do not send an outgoing QSL card; do not upload the QSO to the online service&lt;br/&gt;&lt;b&gt;Requested&lt;/b&gt; - the contacted station has requested a QSL card; the contacted station has requested the QSO be uploaded to the online service&lt;br/&gt;&lt;b&gt;Queued&lt;/b&gt; - an outgoing QSL card has been selected to be sent; a QSO has been selected to be uploaded to the online service&lt;br/&gt;</source>
         <translation>&lt;b&gt;Ja&lt;/b&gt; - eine ausgehende QSL-Karte wurde gesendet; das QSO wurde in den Online-Dienst hochgeladen und von diesem akzeptiert.&lt;br/&gt;&lt;b&gt;Nein&lt;/b&gt; - keine ausgehende QSL-Karte senden; das QSO nicht in den Online-Dienst hochladen.&lt;br/&gt;&lt;b&gt;Angefordert&lt;/b&gt; - die kontaktierte Station hat eine QSL-Karte angefordert; die kontaktierte Station hat angefordert, dass das QSO in den Online-Dienst hochgeladen wird.&lt;br/&gt;&lt;b&gt;Wartend&lt;/b&gt; - eine ausgehende QSL-Karte wurde zum Senden ausgewählt; ein QSO wurde zum Hochladen in den Online-Dienst ausgewählt.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1735"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1776"/>
         <source>QSL Sent via</source>
         <translation>QSL Ausgang via</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1874"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1915"/>
         <source>Received</source>
         <translation>Eingang</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1945"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1986"/>
         <source>Paper</source>
         <translation>Papier</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2034"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2075"/>
         <source>LoTW</source>
         <translation>LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1892"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1933"/>
         <source>eQSL</source>
         <translation>eQSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1764"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1805"/>
         <source>QSL via</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1971"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2012"/>
         <source>Sent</source>
         <translation>Ausgang</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1631"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1672"/>
         <source>Show QSL Card</source>
         <translation>QSL-Karte ansehen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="1682"/>
+        <location filename="../ui/QSODetailDialog.ui" line="1723"/>
         <source>&lt;b&gt;Yes&lt;/b&gt; - an incoming QSL card has been received; the QSO has been confirmed by the online service&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - an incoming QSL card has not been received; the QSO has not been confirmed by the online service&lt;br/&gt;&lt;b&gt;Requested&lt;/b&gt; - the logging station has requested a QSL card; the logging station has requested the QSO be uploaded to the online service&lt;br/&gt;</source>
         <translation>&lt;b&gt;Ja&lt;/b&gt; - eine eingehende QSL-Karte wurde angenommen; das QSO wurde vom Online-Dienst bestätigt.&lt;br/&gt;&lt;b&gt;Nein&lt;/b&gt; - eine eingehende QSL-Karte wurde nicht angenommen; das QSO wurde vom Online-Dienst nicht bestätigt.&lt;br/&gt;&lt;b&gt;Angefordert&lt;/b&gt; - die loggende Station hat eine QSL-Karte angefordert; die loggende Station hat verlangt, dass das QSO in den Online-Dienst hochgeladen wird.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2054"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2095"/>
         <source>&amp;Contest</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2080"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2121"/>
         <source>RcvNr</source>
         <translation>Nr. erhalten</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2094"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2135"/>
         <source>RcvExch</source>
         <translation>Info erhalten</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2108"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2149"/>
         <source>SendNr</source>
         <translation>Nr. gesendet</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.ui" line="2122"/>
+        <location filename="../ui/QSODetailDialog.ui" line="2163"/>
         <source>SendExch</source>
         <translation>Info gesendet</translation>
     </message>
@@ -8865,258 +8890,258 @@
         <translation>Elektronisch</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="419"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="428"/>
         <source>Submit changes</source>
         <translation>Änderungen übermitteln</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="419"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="428"/>
         <source>Really submit all changes?</source>
         <translation>Wirklich alle Änderungen übermitteln?</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="428"/>
-        <location filename="../ui/QSODetailDialog.cpp" line="474"/>
-        <location filename="../ui/QSODetailDialog.cpp" line="674"/>
-        <location filename="../ui/QSODetailDialog.cpp" line="1214"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="437"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="483"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="683"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1231"/>
         <source>QLog Error</source>
         <translation>QLog Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="428"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="437"/>
         <source>Cannot save all changes - internal error</source>
         <translation>Es können nicht alle Änderungen gespeichert werden - interner Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="474"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="483"/>
         <source>Cannot save all changes - try to reset all changes</source>
         <translation>Es können nicht alle Änderungen gespeichert werden - versuchen Sie, alle Änderungen zurückzusetzen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="614"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="623"/>
         <source>QSO Detail</source>
         <translation>QSO Detail</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="614"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="623"/>
         <source>Edit QSO</source>
         <translation>QSO Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="656"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="665"/>
         <source>Downloading eQSL Image</source>
         <translation>eQSL-Bild herunterladen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="656"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="665"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="674"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="683"/>
         <source>eQSL Download Image failed: </source>
         <translation>eQSL-Bild download fehlgeschlagen: </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="859"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="868"/>
         <source>DX Callsign must not be empty</source>
         <translation>DX-Rufzeichen darf nicht leer sein</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="863"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="872"/>
         <source>DX callsign has an incorrect format</source>
         <translation>DX-Rufzeichen hat ein falsches Format</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="867"/>
-        <location filename="../ui/QSODetailDialog.cpp" line="878"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="876"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="887"/>
         <source>TX Frequency or Band must be filled</source>
         <translation>TX-Frequenz oder -Band muss ausgefüllt sein</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="889"/>
-        <location filename="../ui/QSODetailDialog.cpp" line="935"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="898"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="944"/>
         <source>DX Grid has an incorrect format</source>
         <translation>DX Gitterfeld hat ein fehlerhaftes Format</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="895"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="904"/>
         <source>Based on callsign, DXCC Country is different from the entered value - expecting </source>
         <translation>Aufgrund des Rufzeichens unterscheidet sich das DXCC-Land vom eingegebenen Wert - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="899"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="908"/>
         <source>Based on callsign, DXCC Continent is different from the entered value - expecting </source>
         <translation>Aufgrund des Rufzeichens unterscheidet sich der DXCC-Kontinent vom eingegebenen Wert - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="903"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="912"/>
         <source>Based on callsign, DXCC ITU is different from the entered value - expecting </source>
         <translation>Aufgrund des Rufzeichens unterscheidet sich das DXCC-ITU vom eingegebenen Wert - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="907"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="916"/>
         <source>Based on callsign, DXCC CQZ is different from the entered value - expecting </source>
         <translation>Aufgrund des Rufzeichens unterscheidet sich die DXCC-CQZ vom eingegebenen Wert - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="911"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="920"/>
         <source>VUCC has an incorrect format</source>
         <translation>VUCC hat ein fehlerhaftes Format</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="917"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="926"/>
         <source>Based on Frequencies, Sat Mode should be </source>
         <translation>Aufgrund der Frequenzen unterscheidet sich die Satellit-Betriebsart vom eingegebenen Wert - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="917"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="926"/>
         <source>blank</source>
         <translation>Leer</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="921"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="930"/>
         <source>Sat name must not be empty</source>
         <translation>Der Satellitenname darf nicht leer sein</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="927"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="936"/>
         <source>Own Callsign must not be empty</source>
         <translation>Eigenes Rufzeichen darf nicht leer sein</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="931"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="940"/>
         <source>Own callsign has an incorrect format</source>
         <translation>Eigenes Rufzeichen hat ein fehlerhaftes Format</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="939"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="948"/>
         <source>Own VUCC Grids have an incorrect format</source>
         <translation>Eigenes VUCC Gitterfeld hat ein fehlerhaftes Format</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="943"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="952"/>
         <source>Based on own callsign, own DXCC ITU is different from the entered value - expecting </source>
         <translation>Basierend auf dem eigenen Rufzeichen ist das eigene DXCC ITU unterschiedlich vom eingegebenen Wert - erwartet </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="947"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="956"/>
         <source>Based on own callsign, own DXCC CQZ is different from the entered value - expecting </source>
         <translation>Basierend auf dem eigenen Rufzeichen ist das eigene DXCC CQZ unterschiedlich vom eingegebenen Wert - erwartet </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="951"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="960"/>
         <source>Based on own callsign, own DXCC Country is different from the entered value - expecting </source>
         <translation>Basierend auf dem eigenen Rufzeichen ist das eigene DXCC-Land unterschiedlich vom eingegebenen Wert - erwartet </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1042"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1051"/>
         <source>LoTW Sent Status to &lt;b&gt;No&lt;/b&gt; does not make any sense if QSL Sent Date is set. Set Date to 1.1.1900 to leave the date field blank</source>
         <translation>LoTW Sent Status &lt;b&gt;Nein&lt;/b&gt; macht keinen Sinn, wenn ein QSL Sent Datum gesetzt ist. Setzen Sie das Datum auf 1.1.1900, um das Datumsfeld leer zu lassen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1050"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1059"/>
         <source>Date should be present for LoTW Sent Status &lt;b&gt;Yes&lt;/b&gt;</source>
         <translation>Ein Datum sollte für LoTW Sent Status &lt;b&gt;Ja&lt;/b&gt; angegeben werden</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1055"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1064"/>
         <source>eQSL Sent Status to &lt;b&gt;No&lt;/b&gt; does not make any sense if QSL Sent Date is set. Set Date to 1.1.1900 to leave the date field blank</source>
         <translation>eQSL Sent Status &lt;b&gt;Nein&lt;/b&gt; macht keinen Sinn, wenn ein QSL Sent Datum eingestellt ist. Setzen Sie Datum auf 1.1.1900, um das Datumsfeld leer zu lassen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1063"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1072"/>
         <source>Date should be present for eQSL Sent Status &lt;b&gt;Yes&lt;/b&gt;</source>
         <translation>Ein Datum sollte für eQSL Sent Status &lt;b&gt;Ja&lt;/b&gt; angegeben werden</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1068"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1077"/>
         <source>Paper Sent Status to &lt;b&gt;No&lt;/b&gt; does not make any sense if QSL Sent Date is set. Set Date to 1.1.1900 to leave the date field blank</source>
         <translation>Papier Sent Status &lt;b&gt;Nein&lt;/b&gt; macht keinen Sinn, wenn ein QSL Sent Datum gesetzt ist. Setzen Sie das Datum auf 1.1.1900, um das Datumsfeld leer zu lassen</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1076"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1085"/>
         <source>Date should be present for Paper Sent Status &lt;b&gt;Yes&lt;/b&gt;</source>
         <translation>Ein Datum sollte für Papier Sent Status &lt;b&gt;Ja&lt;/b&gt; angegeben werden</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="970"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="979"/>
         <source>Based on SOTA Summit, QTH does not match SOTA Summit Name - expecting </source>
         <translation>Auf Grundlage der SOTA-Daten stimmt das QTH nicht mit dem SOTA Gipfelname überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="874"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="883"/>
         <source>TX Band should be </source>
         <translation>TX-Band sollte sein </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="885"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="894"/>
         <source>RX Band should be </source>
         <translation>RX-Band sollte sein </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="979"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="988"/>
         <source>Based on SOTA Summit, Grid does not match SOTA Grid - expecting </source>
         <translation>Auf Grundlage der SOTA-Daten, stimmt das Gitterfeld nicht mit dem SOTA Gitterfeld überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="985"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="994"/>
         <source>Based on POTA record, QTH does not match POTA Name - expecting </source>
         <translation>Auf Grundlage der POTA Daten, stimmt das QTH nicht mit dem POTA-Namen überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="994"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1003"/>
         <source>Based on POTA record, Grid does not match POTA Grid - expecting </source>
         <translation>Auf Grundlage der POTA Daten, stimmt das Gitterfeld nicht mit dem POTA-Gitterfeld überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1013"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1022"/>
         <source>Based on SOTA Summit, my QTH does not match SOTA Summit Name - expecting </source>
         <translation>Auf Grundlage der SOTA-Daten stimmt das eigene QTH nicht mit dem SOTA Gipfelnamen überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1022"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1031"/>
         <source>Based on SOTA Summit, my Grid does not match SOTA Grid - expecting </source>
         <translation>Auf Grundlage der SOTA-Daten stimmt das eigene Gitterfeld nicht mit dem SOTA Gitterfeld überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1028"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1037"/>
         <source>Based on POTA record, my QTH does not match POTA Name - expecting </source>
         <translation>Auf Grundlage der POTA Daten, stimmt das eigene QTH nicht mit dem POTA-Namen überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1037"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1046"/>
         <source>Based on POTA record, my Grid does not match POTA Grid - expecting </source>
         <translation>Auf Grundlage der POTA Daten, stimmt das eigene Gitterfeld nicht mit dem POTA-Gitterfeld überein - erwartend </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1214"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1231"/>
         <source>Callbook error: </source>
         <translation>Callbook-Fehler: </translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1349"/>
-        <location filename="../ui/QSODetailDialog.cpp" line="1354"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1366"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1371"/>
         <source>&lt;b&gt;Warning: &lt;/b&gt;</source>
         <translation>&lt;b&gt;Warnung: &lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1544"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1586"/>
         <source>Validation</source>
         <translation>Überprüfung</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1544"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1586"/>
         <source>Yellow marked fields are invalid.&lt;p&gt;Nevertheless, save the changes?&lt;/p&gt;</source>
         <translation>Gelb markierte Felder sind ungültig.&lt;p&gt;Dennoch die Änderungen speichern?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1602"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1644"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../ui/QSODetailDialog.cpp" line="1603"/>
+        <location filename="../ui/QSODetailDialog.cpp" line="1645"/>
         <source>&amp;Edit</source>
         <translation>B&amp;earbeiten</translation>
     </message>
@@ -11061,17 +11086,17 @@
         <translation>Rig 3</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="342"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="343"/>
         <source>Error Occured</source>
         <translation>Fahler</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="558"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="559"/>
         <source>Rig status changed</source>
         <translation>Rig-Status geändert</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/TCIRigDrv.cpp" line="559"/>
+        <location filename="../rig/drivers/TCIRigDrv.cpp" line="560"/>
         <source>Rig is not connected</source>
         <translation>Rig nicht verbunden</translation>
     </message>

@@ -455,8 +455,8 @@ int main(int argc, char* argv[])
 
     qInstallMessageHandler(debugMessageOutput);
     qRegisterMetaType<VFOID>();
-    qRegisterMetaType<ClubStatusQuery::ClubStatus>();
-    qRegisterMetaType<QMap<QString, ClubStatusQuery::ClubStatus>>();
+    qRegisterMetaType<ClubStatusQuery::ClubInfo>();
+    qRegisterMetaType<QMap<QString, ClubStatusQuery::ClubInfo>>();
     qRegisterMetaType<KSTChatMsg>();
     qRegisterMetaType<KSTUsersInfo>();
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)

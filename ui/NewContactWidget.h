@@ -134,6 +134,18 @@ public:
     QLabel *qslMsgSLabel;
     NewContactEditLine *qslMsgSEdit;
 
+    QLabel *skccLabel;
+    NewContactEditLine *skccEdit;
+
+    QLabel *uksmgLabel;
+    NewContactEditLine *uksmgEdit;
+
+    QLabel *fistsLabel;
+    NewContactEditLine *fistsEdit;
+
+    QLabel *fistsCCLabel;
+    NewContactEditLine *fistsCCEdit;
+
     explicit NewContactDynamicWidgets(bool allocateWidgets,
                                       QWidget *parent);
     QWidget* getRowWidget(int index);
@@ -265,7 +277,7 @@ private slots:
     void stopContactTimer();
     void finalizeCallsignEdit();
     void setCallbookFields(const QMap<QString, QString>& data);
-    void setMembershipList(const QString&, QMap<QString, ClubStatusQuery::ClubStatus>);
+    void setMembershipList(const QString&, QMap<QString, ClubStatusQuery::ClubInfo>);
     void propModeChanged(const QString&);
     void sotaChanged(const QString&);
     void sotaEditFinished();

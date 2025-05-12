@@ -431,6 +431,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>gotoDoubleSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>RotatorWidget</receiver>
+   <slot>setRequestedAz(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>14</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>193</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>gotoPosition()</slot>
@@ -442,5 +458,6 @@
   <slot>rotUserButtonProfileComboChanged(QString)</slot>
   <slot>qsoBearingSP()</slot>
   <slot>qsoBearingLP()</slot>
+  <slot>setRequestedAz(double)</slot>
  </slots>
 </ui>

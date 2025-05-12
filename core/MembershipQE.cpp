@@ -87,7 +87,7 @@ MembershipQE::~MembershipQE()
 
 // this function is called when async club status returns a result
 void MembershipQE::statusQueryFinished(const QString &callsign,
-                                       QMap<QString, ClubStatusQuery::ClubStatus> statuses)
+                                       QMap<QString, ClubStatusQuery::ClubInfo> statuses)
 {
     FCT_IDENTIFICATION;
 
@@ -516,7 +516,7 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
         if ( ! dbConnected)
         {
             qWarning() << "Cannot open DB Connection for Update";
-            emit status(in_callsign, QMap<QString, ClubStatus>());
+            emit status(in_callsign, QMap<QString, ClubInfo>());
             return;
         }
     }
@@ -538,12 +538,13 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
         dxccConfirmedByCond << QLatin1String("c.eqsl_qsl_rcvd = 'Y'");
 
     if ( ! query.exec(QString("SELECT DISTINCT clubid, NULL band, NULL mode, "
-                              "        NULL confirmed, NULL current_mode "
+                              "        NULL confirmed, NULL current_mode, member_id "
                               "FROM membership  WHERE callsign = '%1' "
                               "UNION ALL "
                               "SELECT DISTINCT clubid, c.band, o.dxcc mode, "
                               "                CASE WHEN (%2) THEN 1 ELSE 0 END confirmed, "
-                              "               (SELECT modes.dxcc FROM modes WHERE modes.name = '%3' LIMIT 1) current_mode "
+                              "               (SELECT modes.dxcc FROM modes WHERE modes.name = '%3' LIMIT 1) current_mode, "
+                              "               NULL member_id "
                               "FROM contacts c, "
                               "    contact_clubs_view con2club, "
                               "    modes o "
@@ -555,12 +556,13 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
                                                                                                                                           callModified)))
     {
        qCWarning(runtime) << "Cannot Get club status" << query.lastError().text();
-       emit status(in_callsign, QMap<QString, ClubStatus>());
+       emit status(in_callsign, QMap<QString, ClubInfo>());
        return;
     }
 
-    QMap<QString, ClubStatus> retMap;
+    QMap<QString, ClubInfo> retMap;
     QString currentProcessedClub;
+    QString currentMemberID;
     bool bandMatched = false;
     bool bandModeMatched = false;
     bool bandModeConfirmedMatched = false;
@@ -574,6 +576,7 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
         const QString &mode = query.value(2).toString();
         const QVariant &confirmed = query.value(3);
         const QString &current_mode = query.value(4).toString();
+        const QString &memberID = query.value(5).toString();
 
         qCDebug(runtime) << "Processing" << currentProcessedClub
                          << clubid
@@ -592,14 +595,16 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
         {
             if ( !currentProcessedClub.isEmpty() )
             {
-                retMap[currentProcessedClub] = determineClubStatus(bandMatched,
-                                                                   bandModeMatched,
-                                                                   bandModeConfirmedMatched,
-                                                                   modeMatched,
-                                                                   records);
+                retMap[currentProcessedClub] = ClubInfo(determineClubStatus(bandMatched,
+                                                                            bandModeMatched,
+                                                                            bandModeConfirmedMatched,
+                                                                            modeMatched,
+                                                                            records),
+                                                        currentMemberID);
 
             }
             currentProcessedClub = clubid;
+            currentMemberID = memberID;
             bandMatched = bandModeMatched = bandModeConfirmedMatched = modeMatched = false;
             records = 0L;
             continue;
@@ -635,13 +640,12 @@ void ClubStatusQuery::getClubStatus(const QString &in_callsign,
     if ( !currentProcessedClub.isEmpty() )
     {
         qCDebug(runtime) << "Last Club processing" << currentProcessedClub;
-        retMap[currentProcessedClub] = determineClubStatus(bandMatched,
-                                                           bandModeMatched,
-                                                           bandModeConfirmedMatched,
-                                                           modeMatched, records);
+        retMap[currentProcessedClub] = ClubInfo(determineClubStatus(bandMatched,
+                                                                    bandModeMatched,
+                                                                    bandModeConfirmedMatched,
+                                                                    modeMatched, records),
+                                                currentMemberID);
     }
-
-    qCDebug(runtime) << retMap;
 
     qCDebug(runtime) << "DONE";
 

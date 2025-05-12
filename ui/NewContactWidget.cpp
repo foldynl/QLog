@@ -710,7 +710,7 @@ void NewContactWidget::setCallbookFields(const QMap<QString, QString>& data)
 }
 
 void NewContactWidget::setMembershipList(const QString &in_callsign,
-                                         QMap<QString, ClubStatusQuery::ClubStatus> data)
+                                         QMap<QString, ClubStatusQuery::ClubInfo> data)
 {
     FCT_IDENTIFICATION;
 
@@ -718,15 +718,37 @@ void NewContactWidget::setMembershipList(const QString &in_callsign,
         return;
 
     QString memberText;
-    QMapIterator<QString, ClubStatusQuery::ClubStatus> clubs(data);
+    QMapIterator<QString, ClubStatusQuery::ClubInfo> clubs(data);
     QPalette palette;
 
     while ( clubs.hasNext() )
     {
         clubs.next();
-        const QColor &color = Data::statusToColor(static_cast<DxccStatus>(clubs.value()), false, palette.color(QPalette::Text));
+        const QColor &color = Data::statusToColor(static_cast<DxccStatus>(clubs.value().status), false, palette.color(QPalette::Text));
         //"<font color='red'>Hello</font> <font color='green'>World</font>"
         memberText.append(QString("<font color='%1'>%2</font>&nbsp;&nbsp;&nbsp;").arg(Data::colorToHTMLColor(color), clubs.key()));
+
+        if ( clubs.key().toUpper() == "SKCC"
+             && uiDynamic->skccEdit->text().isEmpty()
+             && !clubs.value().membershipID.isEmpty() )
+        {
+            uiDynamic->skccEdit->setText(clubs.value().membershipID);
+        }
+
+        // Currently UKSMG does not provide Member# - I leave it - maybe UKSMG will start providing MemberIDs.
+        if ( clubs.key().toUpper() == "UKSMG"
+            && uiDynamic->uksmgEdit->text().isEmpty()
+            && !clubs.value().membershipID.isEmpty() )
+        {
+            uiDynamic->uksmgEdit->setText(clubs.value().membershipID);
+        }
+
+        if ( clubs.key().toUpper() == "FISTS"
+            && uiDynamic->fistsEdit->text().isEmpty()
+            && !clubs.value().membershipID.isEmpty() )
+        {
+            uiDynamic->fistsEdit->setText(clubs.value().membershipID);
+        }
     }
     ui->memberListLabel->setText(memberText);
 }
@@ -1043,6 +1065,10 @@ void NewContactWidget::resetContact()
     uiDynamic->rxPWREdit->clear();
     uiDynamic->rigEdit->clear();
     uiDynamic->qslMsgSEdit->clear();
+    uiDynamic->skccEdit->clear();
+    uiDynamic->uksmgEdit->clear();
+    uiDynamic->fistsEdit->clear();
+    uiDynamic->fistsCCEdit->clear();
     ui->dupeLabel->setVisible(false);
     clearCallbookQueryFields();
     clearMemberQueryFields();
@@ -1605,6 +1631,18 @@ void NewContactWidget::connectFieldChanged()
     connect(uiDynamic->qslMsgSEdit, &QLineEdit::textChanged,
             this, &NewContactWidget::formFieldChangedString);
 
+    connect(uiDynamic->skccEdit, &QLineEdit::textChanged,
+            this, &NewContactWidget::formFieldChangedString);
+
+    connect(uiDynamic->uksmgEdit, &QLineEdit::textChanged,
+            this, &NewContactWidget::formFieldChangedString);
+
+    connect(uiDynamic->fistsEdit, &QLineEdit::textChanged,
+            this, &NewContactWidget::formFieldChangedString);
+
+    connect(uiDynamic->fistsCCEdit, &QLineEdit::textChanged,
+            this, &NewContactWidget::formFieldChangedString);
+
     /* no other fields are currently considered
      * as an attempt to fill out the form */
 }
@@ -1803,6 +1841,26 @@ void NewContactWidget::saveContact()
     if ( ! uiDynamic->qslMsgSEdit->text().isEmpty() )
     {
         record.setValue("qslmsg_intl", uiDynamic->qslMsgSEdit->text());
+    }
+
+    if ( ! uiDynamic->skccEdit->text().isEmpty() )
+    {
+        record.setValue("skcc", uiDynamic->skccEdit->text());
+    }
+
+    if ( ! uiDynamic->uksmgEdit->text().isEmpty() )
+    {
+        record.setValue("uksmg", uiDynamic->uksmgEdit->text());
+    }
+
+    if ( ! uiDynamic->fistsEdit->text().isEmpty() )
+    {
+        record.setValue("fists", uiDynamic->fistsEdit->text());
+    }
+
+    if ( ! uiDynamic->fistsCCEdit->text().isEmpty() )
+    {
+        record.setValue("fists_cc", uiDynamic->fistsCCEdit->text());
     }
 
     AdiFormat::preprocessINTLFields<QSqlRecord>(record);
@@ -3750,6 +3808,10 @@ NewContactDynamicWidgets::NewContactDynamicWidgets(bool allocateWidgets,
     initializeWidgets(LogbookModel::COLUMN_TX_POWER, "power", powerLabel, powerEdit);
     initializeWidgets(LogbookModel::COLUMN_RIG_INTL, "rigDX", rigLabel, rigEdit);
     initializeWidgets(LogbookModel::COLUMN_QSLMSG_INTL, "qslMsgS", qslMsgSLabel, qslMsgSEdit);
+    initializeWidgets(LogbookModel::COLUMN_SKCC, "skcc", skccLabel, skccEdit);
+    initializeWidgets(LogbookModel::COLUMN_UKSMG, "uksmg", uksmgLabel, uksmgEdit);
+    initializeWidgets(LogbookModel::COLUMN_FISTS, "fists", fistsLabel, fistsEdit);
+    initializeWidgets(LogbookModel::COLUMN_FISTS_CC, "fistscc", fistsCCLabel, fistsCCEdit);
 
     if ( allocateWidgets )
     {
@@ -3869,6 +3931,12 @@ NewContactDynamicWidgets::NewContactDynamicWidgets(bool allocateWidgets,
         powerEdit->setSuffix(QCoreApplication::translate("NewContactWidget", " W"));
 
         rigEdit->setToolTip(QCoreApplication::translate("NewContactWidget", "Description of the contacted station's equipment", nullptr));
+
+        uksmgEdit->setValidator(new QIntValidator(0, INT_MAX, uksmgEdit));
+
+        fistsEdit->setValidator(new QIntValidator(0, INT_MAX, fistsEdit));
+
+        fistsCCEdit->setValidator(new QIntValidator(0, INT_MAX, fistsCCEdit));
     }
 }
 

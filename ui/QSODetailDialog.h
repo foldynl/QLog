@@ -91,7 +91,7 @@ private slots:
     void myPOTAChanged(const QString&);
     void myWWFFChanged(const QString&);
     void clubQueryResult(const QString &in_callsign,
-                         QMap<QString, ClubStatusQuery::ClubStatus> data);
+                         QMap<QString, ClubStatusQuery::ClubInfo> data);
 
 private:
     /* It is modified logbook model when only basic
@@ -119,6 +119,7 @@ private:
     void blockMappedWidgetSignals(bool);
     void drawDXOnMap(const QString &label, const Gridsquare &dxGrid);
     void drawMyQTHOnMap(const QString &label, const Gridsquare &myGrid);
+    void setStaticMapTime(const QDateTime &dateTime);
     void enableWidgetChangeHandlers();
     void lookupButtonWaitingStyle(bool);
     SubmitError submitAllChanges();

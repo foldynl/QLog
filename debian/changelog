@@ -1,3 +1,22 @@
+qlog (0.44.1-1) UNRELEASED; urgency=low
+  * Fixed Rotator Widget Seg Fault for new users (issue #666)
+
+ -- foldynl <foldyna@gmail.com>  Sun, 11 May 2025 07:30:56 +0200
+
+qlog (0.44.0-1) UNRELEASED; urgency=low
+  * [NEW] - Activity Manager - Added SKCC, UKSMG and FISTS as Dynamic Fields
+  * [NEW] - QSO - FISTS, SKCC, and UKSMG are auto-filled from MembershipQE (issue #628)
+  * [NEW] - Rotator - Added QSO destination needle (issue #644)
+  * [NEW] - QSO Detail - Adds grayline and short path (PR #653 @kyleboyle)
+  * [CHANGED] - Rotator - Needle colors correspond to the online map (issue #644)
+  * Fixed TCI cw_macros must contain RigID (issue #663)
+  * Fixed TCI setKeySpeed sets keyer and macros speed (issue #663)
+  * Fixed Data mode missing in rig control window - rigctld (issue #660 @aa5sh)
+  * Improved DXC Mode detection
+  * Updated Simplified Chinese translation
+
+ -- foldynl <foldyna@gmail.com>  Fri, 9 May 2025 17:05:38 +0200
+
 qlog (0.43.1-1) UNRELEASED; urgency=low
   * Fixed Click on PHONE DX Spots sets wrong mode (issue #453)
   * Fixed No freq via Omnirig for IC7400 (issue #639)

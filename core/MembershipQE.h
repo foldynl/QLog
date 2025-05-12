@@ -52,6 +52,18 @@ public:
         AllClub           = 0b1111111
     };
 
+    Q_ENUM(ClubStatus);
+
+    struct ClubInfo
+    {
+        ClubInfo(){status = UnknownStatusClub;};
+        ClubInfo(const ClubStatus status, const QString &memberID) :
+            status(status), membershipID(memberID) {};
+
+        ClubStatus status;
+        QString membershipID;
+    };
+
 public slots:
     void getClubStatus(const QString &callsign,
                        const QString &band,
@@ -61,7 +73,7 @@ public slots:
                        bool eqslConfirmed);
 
 signals:
-    void status(QString, QMap<QString, ClubStatusQuery::ClubStatus>);
+    void status(QString, QMap<QString, ClubStatusQuery::ClubInfo>);
 
 private:
     const QString dbConnectionName;
@@ -71,7 +83,7 @@ private:
     ClubStatus determineClubStatus(bool, bool, bool, bool, unsigned long);
 };
 
-Q_DECLARE_METATYPE(ClubStatusQuery::ClubStatus)
+Q_DECLARE_METATYPE(ClubStatusQuery::ClubInfo)
 
 class MembershipQE : public QObject
 {
@@ -97,7 +109,7 @@ public:
     void updateLists();
 
 signals:
-    void clubStatusResult(QString, QMap<QString, ClubStatusQuery::ClubStatus>);
+    void clubStatusResult(QString, QMap<QString, ClubStatusQuery::ClubInfo>);
 
 private:
     MembershipQE(QObject *parent = nullptr);
@@ -105,7 +117,7 @@ private:
 
 private slots:
     void statusQueryFinished(const QString &,
-                             QMap<QString, ClubStatusQuery::ClubStatus>);
+                             QMap<QString, ClubStatusQuery::ClubInfo>);
     void onFinishedListDownload(QNetworkReply *);
 
 private:

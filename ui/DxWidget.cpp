@@ -1795,10 +1795,14 @@ BandPlan::BandPlanMode DxWidget::modeGroupFromComment(const QString &comment) co
     const QStringList &tokenizedComment = comment.split(" ", QString::SkipEmptyParts);
 #endif
 
-    if ( tokenizedComment.contains("CW", Qt::CaseInsensitive) )
+    if ( tokenizedComment.contains("CW", Qt::CaseInsensitive)
+         || tokenizedComment.contains("<CW>", Qt::CaseInsensitive)
+        )
         return BandPlan::BAND_MODE_CW;
 
-    if ( tokenizedComment.contains("FT8", Qt::CaseInsensitive) )
+    if ( tokenizedComment.contains("FT8", Qt::CaseInsensitive)
+         || tokenizedComment.contains("<FT8>", Qt::CaseInsensitive)
+        )
         return BandPlan::BAND_MODE_FT8;
 
     if ( tokenizedComment.contains("FT4", Qt::CaseInsensitive) )
@@ -1816,7 +1820,9 @@ BandPlan::BandPlanMode DxWidget::modeGroupFromComment(const QString &comment) co
     if ( tokenizedComment.contains("PACKET", Qt::CaseInsensitive) )
         return BandPlan::BAND_MODE_DIGITAL;
 
-    if ( tokenizedComment.contains("SSB", Qt::CaseInsensitive) )
+    if ( tokenizedComment.contains("SSB", Qt::CaseInsensitive)
+         || tokenizedComment.contains("<SSB>", Qt::CaseInsensitive)
+        )
         return BandPlan::BAND_MODE_PHONE;
 
     if ( tokenizedComment.contains("USB", Qt::CaseInsensitive) )
@@ -1824,6 +1830,9 @@ BandPlan::BandPlanMode DxWidget::modeGroupFromComment(const QString &comment) co
 
     if ( tokenizedComment.contains("LSB", Qt::CaseInsensitive) )
         return BandPlan::BAND_MODE_LSB;
+
+    if ( tokenizedComment.contains("<FM>", Qt::CaseInsensitive) )
+        return BandPlan::BAND_MODE_PHONE;
 
     return BandPlan::BAND_MODE_UNKNOWN;
 }
