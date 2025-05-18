@@ -1,4 +1,3 @@
-#include <QSettings>
 #include <QNetworkAccessManager>
 #include <QUrl>
 #include <QUrlQuery>
@@ -10,12 +9,11 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "rig/macros.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.hrdlog");
 
 const QString HRDLogBase::SECURE_STORAGE_KEY = "HRDLog";
-const QString HRDLogBase::CONFIG_CALLSIGN_KEY = "hrdlog/callsign";
-const QString HRDLogBase::CONFIG_ONAIR_ENABLED_KEY = "hrdlog/onair";
 
 // http://www.iw1qlh.net/projects/hrdlog/HRDLognet_4.pdf
 
@@ -54,33 +52,21 @@ QStringList HRDLogUploader::uploadedFields =
 const QString HRDLogBase::getRegisteredCallsign()
 {
     FCT_IDENTIFICATION;
-    QSettings settings;
 
-    return settings.value(HRDLogBase::CONFIG_CALLSIGN_KEY).toString().trimmed();
+    return LogParam::getHRDLogLogbookReqCallsign();
 }
 
 const QString HRDLogBase::getUploadCode()
 {
     FCT_IDENTIFICATION;
-    QSettings settings;
 
     return CredentialStore::instance()->getPassword(HRDLogBase::SECURE_STORAGE_KEY,
                                                     getRegisteredCallsign());
 }
 
-bool HRDLogBase::getOnAirEnabled()
-{
-    FCT_IDENTIFICATION;
-    QSettings settings;
-
-    return settings.value(HRDLogBase::CONFIG_ONAIR_ENABLED_KEY, false).toBool();
-}
-
 void HRDLogBase::saveUploadCode(const QString &newUsername, const QString &newPassword)
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     QString oldUsername = getRegisteredCallsign();
     if ( oldUsername != newUsername )
@@ -89,19 +75,25 @@ void HRDLogBase::saveUploadCode(const QString &newUsername, const QString &newPa
                                                     oldUsername);
     }
 
-    settings.setValue(HRDLogBase::CONFIG_CALLSIGN_KEY, newUsername);
+    LogParam::setHRDLogLogbookReqCallsign(newUsername);
 
     CredentialStore::instance()->savePassword(HRDLogBase::SECURE_STORAGE_KEY,
                                               newUsername,
                                               newPassword);
 }
 
+bool HRDLogBase::getOnAirEnabled()
+{
+    FCT_IDENTIFICATION;
+
+    return LogParam::getHRDLogOnAir();
+}
+
 void HRDLogBase::saveOnAirEnabled(bool state)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue(HRDLogBase::CONFIG_ONAIR_ENABLED_KEY, state);
+    LogParam::setHRDLogOnAir(state);
 }
 
 // http://www.iw1qlh.net/projects/hrdlog/HRDLognet_4.pdf

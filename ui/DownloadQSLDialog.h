@@ -29,7 +29,6 @@ private:
     LogLocale locale;
     QHash<QString, QSLMergeStat> downloadStat;
     QQueue<std::function<void()>> downloadQueue;
-    QSettings settings;
 
 private slots:
     void downloadQSLs();

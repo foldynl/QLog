@@ -3,7 +3,6 @@
 #include <QUrlQuery>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QSettings>
 #include <QtXml>
 #include <QDebug>
 #include "QRZ.h"
@@ -11,14 +10,13 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "data/Callsign.h"
+#include "core/LogParam.h"
 
 //https://www.qrz.com/docs/logbook/QRZLogbookAPI.html
 
 MODULE_IDENTIFICATION("qlog.core.qrz");
 const QString QRZBase::SECURE_STORAGE_KEY = "QRZCOM";
 const QString QRZBase::SECURE_STORAGE_API_KEY = "QRZCOMAPI";
-const QString QRZBase::CONFIG_USERNAME_KEY = "qrzcom/username";
-const QString QRZBase::CONFIG_USERNAME_API_KEY = "qrzcom/usernameapi";
 const QString QRZBase::CONFIG_USERNAME_API_CONST = "logbookapi";
 const QString QRZCallbook::CALLBOOK_NAME = "qrzcom";
 
@@ -26,9 +24,7 @@ const QString QRZBase::getUsername()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(QRZBase::CONFIG_USERNAME_KEY).toString().trimmed();
+    return LogParam::getQRZCOMCallbookUsername();
 }
 
 const QString QRZBase::getPassword()
@@ -37,25 +33,19 @@ const QString QRZBase::getPassword()
 
     return CredentialStore::instance()->getPassword(QRZBase::SECURE_STORAGE_KEY,
                                                     getUsername());
-
 }
 
 const QString QRZBase::getLogbookAPIKey()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     return CredentialStore::instance()->getPassword(QRZBase::SECURE_STORAGE_API_KEY,
-                                        settings.value(QRZBase::CONFIG_USERNAME_API_KEY,
-                                                       QRZBase::CONFIG_USERNAME_API_CONST).toString());
+                                                    CONFIG_USERNAME_API_CONST);
 }
 
 void QRZBase::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     const QString &oldUsername = getUsername();
     if ( oldUsername != newUsername )
@@ -64,7 +54,7 @@ void QRZBase::saveUsernamePassword(const QString &newUsername, const QString &ne
                                                     oldUsername);
     }
 
-    settings.setValue(QRZBase::CONFIG_USERNAME_KEY, newUsername);
+    LogParam::setQRZCOMCallbookUsername(newUsername);
 
     CredentialStore::instance()->savePassword(QRZBase::SECURE_STORAGE_KEY,
                                               newUsername,
@@ -75,10 +65,6 @@ void QRZBase::saveLogbookAPI(const QString &newKey)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(QRZBase::CONFIG_USERNAME_API_KEY, QRZBase::CONFIG_USERNAME_API_CONST);
-
     CredentialStore::instance()->deletePassword(QRZBase::SECURE_STORAGE_API_KEY,
                                                 QRZBase::CONFIG_USERNAME_API_CONST);
 
@@ -88,7 +74,6 @@ void QRZBase::saveLogbookAPI(const QString &newKey)
                                                   QRZBase::CONFIG_USERNAME_API_CONST,
                                                   newKey);
     }
-
 }
 
 QRZCallbook::QRZCallbook(QObject* parent) :

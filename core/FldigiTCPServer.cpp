@@ -149,7 +149,6 @@ QByteArray FldigiTCPServer::addRecord(QString data) {
     qCDebug(function_parameters) << data;
 
     QByteArray out;
-    QSettings settings;
 
     QXmlStreamWriter xml(&out);
     xml.writeStartDocument();

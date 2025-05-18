@@ -2273,13 +2273,11 @@ void SettingsDialog::readSettings() {
     /* Callbook */
     /************/
 
-    int primaryCallbookIndex = ui->primaryCallbookCombo->findData(settings.value(GenericCallbook::CONFIG_PRIMARY_CALLBOOK_KEY,
-                                                                                 GenericCallbook::CALLBOOK_NAME));
+    int primaryCallbookIndex = ui->primaryCallbookCombo->findData(LogParam::getPrimaryCallbook(GenericCallbook::CALLBOOK_NAME));
 
     ui->primaryCallbookCombo->setCurrentIndex(primaryCallbookIndex);
 
-    int secondaryCallbookIndex = ui->secondaryCallbookCombo->findData(settings.value(GenericCallbook::CONFIG_SECONDARY_CALLBOOK_KEY,
-                                                                                     GenericCallbook::CALLBOOK_NAME));
+    int secondaryCallbookIndex = ui->secondaryCallbookCombo->findData(LogParam::getSecondaryCallbook(GenericCallbook::CALLBOOK_NAME));
 
     ui->secondaryCallbookCombo->setCurrentIndex(secondaryCallbookIndex);
 
@@ -2397,13 +2395,10 @@ void SettingsDialog::writeSettings() {
     QRZBase::saveUsernamePassword(ui->qrzUsernameEdit->text(),
                               ui->qrzPasswordEdit->text());
 
-    settings.setValue(GenericCallbook::CONFIG_PRIMARY_CALLBOOK_KEY,
-                      ui->primaryCallbookCombo->itemData(ui->primaryCallbookCombo->currentIndex()).toString());
-    settings.setValue(GenericCallbook::CONFIG_SECONDARY_CALLBOOK_KEY,
-                      ui->secondaryCallbookCombo->itemData(ui->secondaryCallbookCombo->currentIndex()).toString());
+    LogParam::setPrimaryCallbook(ui->primaryCallbookCombo->itemData(ui->primaryCallbookCombo->currentIndex()).toString());
+    LogParam::setSecondaryCallbook(ui->secondaryCallbookCombo->itemData(ui->secondaryCallbookCombo->currentIndex()).toString());
+    LogParam::setCallbookWebLookupURL(ui->webLookupURLEdit->text());
 
-    settings.setValue(GenericCallbook::CONFIG_WEB_LOOKUP_URL,
-                      ui->webLookupURLEdit->text());
     /********/
     /* LoTW */
     /********/

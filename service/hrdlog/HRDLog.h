@@ -23,8 +23,6 @@ public:
 
 protected:
     const static QString SECURE_STORAGE_KEY;
-    const static QString CONFIG_CALLSIGN_KEY;
-    const static QString CONFIG_ONAIR_ENABLED_KEY;
 };
 
 class HRDLogUploader : public GenericQSOUploader, private HRDLogBase

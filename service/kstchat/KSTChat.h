@@ -178,7 +178,6 @@ private:
     const NewContactWidget *contact;
 
     static const QString SECURE_STORAGE_KEY;
-    static const QString CONFIG_USERNAME_KEY;
 };
 
 #endif // QLOG_SERVICE_KSTCHAT_KSTCHAT_H

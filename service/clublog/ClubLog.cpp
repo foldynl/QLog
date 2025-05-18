@@ -1,4 +1,3 @@
-#include <QSettings>
 #include <QNetworkAccessManager>
 #include <QUrl>
 #include <QUrlQuery>
@@ -11,13 +10,11 @@
 #include "ClubLog.h"
 #include "core/debug.h"
 #include "core/CredentialStore.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.clublog");
 
 const QString ClubLogBase::SECURE_STORAGE_KEY = "Clublog";
-const QString ClubLogBase::CONFIG_EMAIL_KEY = "clublog/email";
-//const QString ClubLog::CONFIG_CALLSIGN_KEY = "clublog/callsign";  //TODO Remove later
-const QString ClubLogBase::CONFIG_UPLOAD_IMMEDIATELY_KEY = "clublog/upload_immediately";
 
 // https://clublog.freshdesk.com/support/solutions/articles/53202-which-adif-fields-does-club-log-use-
 QStringList ClubLogUploader::uploadedFields =
@@ -49,16 +46,14 @@ const QString ClubLogBase::getEmail()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value(ClubLogBase::CONFIG_EMAIL_KEY).toString().trimmed();
+    return LogParam::getClublogLogbookReqEmail();
 }
 
 bool ClubLogBase::isUploadImmediatelyEnabled()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value(ClubLogBase::CONFIG_UPLOAD_IMMEDIATELY_KEY, false).toBool();
+    return LogParam::getClublogUploadImmediatelyEnabled();
 }
 
 const QString ClubLogBase::getPassword()
@@ -73,16 +68,13 @@ void ClubLogBase::saveUsernamePassword(const QString &newEmail, const QString &n
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     const QString &oldEmail = getEmail();
     if ( oldEmail != newEmail )
     {
         CredentialStore::instance()->deletePassword(ClubLogBase::SECURE_STORAGE_KEY,
                                                     oldEmail);
     }
-    settings.setValue(ClubLogBase::CONFIG_EMAIL_KEY, newEmail);
-
+    LogParam::setClublogLogbookReqEmail(newEmail);
     CredentialStore::instance()->savePassword(ClubLogBase::SECURE_STORAGE_KEY,
                                               newEmail,
                                               newPassword);
@@ -92,9 +84,7 @@ void ClubLogBase::saveUploadImmediatelyConfig(bool value)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(ClubLogBase::CONFIG_UPLOAD_IMMEDIATELY_KEY, value);
+    LogParam::setClublogUploadImmediatelyEnabled(value);
 }
 
 

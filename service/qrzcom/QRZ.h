@@ -25,8 +25,6 @@ public:
 protected:
     const static QString SECURE_STORAGE_KEY;
     const static QString SECURE_STORAGE_API_KEY;
-    const static QString CONFIG_USERNAME_KEY;
-    const static QString CONFIG_USERNAME_API_KEY;
     const static QString CONFIG_USERNAME_API_CONST;
 };
 

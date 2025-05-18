@@ -17,6 +17,7 @@
 #include "data/Data.h"
 #include "data/StationProfile.h"
 #include "core/CredentialStore.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.kstchat");
 
@@ -87,9 +88,7 @@ const QString KSTChat::getUsername()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(KSTChat::CONFIG_USERNAME_KEY).toString();
+    return LogParam::getKSTChatUsername();
 }
 
 const QString KSTChat::getPassword()
@@ -104,8 +103,6 @@ void KSTChat::saveUsernamePassword(const QString &newUsername, const QString &ne
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     const QString &oldUsername = getUsername();
 
     if ( oldUsername != newUsername )
@@ -113,7 +110,7 @@ void KSTChat::saveUsernamePassword(const QString &newUsername, const QString &ne
         CredentialStore::instance()->deletePassword(KSTChat::SECURE_STORAGE_KEY,
                                                     oldUsername);
     }
-    settings.setValue(KSTChat::CONFIG_USERNAME_KEY, newUsername);
+    LogParam::setKSTChatUsername(newUsername);
     CredentialStore::instance()->savePassword(KSTChat::SECURE_STORAGE_KEY,
                                               newUsername,
                                               newPassword);
@@ -626,7 +623,6 @@ const QStringList KSTChat::chatRooms = {"50/70 MHz",
                                        "40 MHz"};
 
 const QString KSTChat::SECURE_STORAGE_KEY = "KST";
-const QString KSTChat::CONFIG_USERNAME_KEY = "kst/username";
 
 chatHighlightEvaluator::chatHighlightEvaluator(const int roomIndex,
                                                QObject *parent)

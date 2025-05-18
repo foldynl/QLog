@@ -25,8 +25,6 @@ public:
 
 protected:
     const static QString SECURE_STORAGE_KEY;
-    const static QString CONFIG_EMAIL_KEY;
-    const static QString CONFIG_UPLOAD_IMMEDIATELY_KEY;
 };
 
 class ClubLogUploader : public GenericQSOUploader, private ClubLogBase

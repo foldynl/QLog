@@ -38,6 +38,7 @@ private:
     bool fillCQITUZStationProfiles();
     bool resetConfigs();
     bool profiles2DB();
+    bool settings2DB();
     bool setSelectedProfile(const QString &tablename, const QString &profileName);
     QString fixIntlField(QSqlQuery &query, const QString &columName, const QString &columnNameIntl);
     bool refreshUploadStatusTrigger();

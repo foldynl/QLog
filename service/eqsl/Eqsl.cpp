@@ -1,7 +1,6 @@
 #include <QUrlQuery>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QSettings>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QHttpMultiPart>
@@ -13,6 +12,7 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "logformat/AdiFormat.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.eqsl");
 
@@ -38,14 +38,12 @@ QStringList EQSLUploader::uploadedFields =
 };
 
 const QString EQSLBase::SECURE_STORAGE_KEY = "eQSL";
-const QString EQSLBase::CONFIG_USERNAME_KEY = "eqsl/username";
 
 const QString EQSLBase::getUsername()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value(EQSLBase::CONFIG_USERNAME_KEY).toString().trimmed();
+    return LogParam::getEQSLLogbookUsername();
 }
 
 const QString EQSLBase::getPassword()
@@ -61,8 +59,6 @@ void EQSLBase::saveUsernamePassword(const QString &newUsername, const QString &n
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     const QString &oldUsername = getUsername();
 
     if ( oldUsername != newUsername )
@@ -70,7 +66,8 @@ void EQSLBase::saveUsernamePassword(const QString &newUsername, const QString &n
         CredentialStore::instance()->deletePassword(EQSLBase::SECURE_STORAGE_KEY,
                                                     oldUsername);
     }
-    settings.setValue(EQSLBase::CONFIG_USERNAME_KEY, newUsername);
+    LogParam::setEQSLLogbookUsername(newUsername);
+
     CredentialStore::instance()->savePassword(EQSLBase::SECURE_STORAGE_KEY,
                                               newUsername,
                                               newPassword);
@@ -100,8 +97,7 @@ void EQSLUploader::uploadAdif(const QByteArray &data)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    const QString &username = settings.value(EQSLUploader::CONFIG_USERNAME_KEY).toString();
+    const QString &username = getUsername();
     const QString &password = CredentialStore::instance()->getPassword(EQSLUploader::SECURE_STORAGE_KEY,
                                                                        username);
 
@@ -598,7 +594,6 @@ void EQSLQSLDownloader::get(const QList<QPair<QString, QString>> &params)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     const QString &username = getUsername();
     const QString &password = getPassword();
 

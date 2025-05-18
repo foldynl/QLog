@@ -3,25 +3,23 @@
 #include <QUrlQuery>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QSettings>
 #include <QtXml>
 #include <QDebug>
 #include "HamQTH.h"
 #include "core/debug.h"
 #include "core/CredentialStore.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.hamqth");
 
 const QString HamQTHBase::SECURE_STORAGE_KEY = "HamQTH";
-const QString HamQTHBase::CONFIG_USERNAME_KEY = "hamqth/username";
 const QString HamQTHCallbook::CALLBOOK_NAME = "hamqth";
 
 const QString HamQTHBase::getUsername()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value(HamQTHBase::CONFIG_USERNAME_KEY).toString();
+    return LogParam::getHamQTHCallbookUsername();
 }
 
 const QString HamQTHBase::getPassword()
@@ -36,8 +34,6 @@ void HamQTHBase::saveUsernamePassword(const QString &newUsername, const QString 
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     QString oldUsername = getUsername();
     if ( oldUsername != newUsername )
     {
@@ -45,12 +41,11 @@ void HamQTHBase::saveUsernamePassword(const QString &newUsername, const QString 
                                                     oldUsername);
     }
 
-    settings.setValue(HamQTHBase::CONFIG_USERNAME_KEY, newUsername);
+    LogParam::setHamQTHCallbookUsername(newUsername);
 
     CredentialStore::instance()->savePassword(HamQTHBase::SECURE_STORAGE_KEY,
                                               newUsername,
                                               newPassword);
-
 }
 
 HamQTHCallbook::HamQTHCallbook(QObject* parent) :

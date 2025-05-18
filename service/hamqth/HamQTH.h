@@ -20,7 +20,6 @@ public:
 
 protected:
     const static QString SECURE_STORAGE_KEY;
-    const static QString CONFIG_USERNAME_KEY;
 };
 
 class HamQTHCallbook : public GenericCallbook, private HamQTHBase

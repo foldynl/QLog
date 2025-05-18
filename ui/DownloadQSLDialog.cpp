@@ -9,6 +9,7 @@
 #include "service/lotw/Lotw.h"
 #include "service/eqsl/Eqsl.h"
 #include "ui/QSLImportStatDialog.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.downloadqsldialog");
 
@@ -31,25 +32,25 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
     /********/
     /* LoTW */
     /********/
-    ui->lotwGroupBox->setChecked(settings.value("lotw/download_active", true).toBool());
-    ui->lotwDateEdit->setDate(settings.value("lotw/last_update", QDate(1900, 1, 1)).toDate());
-    ui->lotwDateTypeCombo->setCurrentIndex((settings.value("lotw/last_qsoqsl", true).toBool()) ? 0 : 1);
+    ui->lotwGroupBox->setChecked(LogParam::getDownloadQSLServiceState("lotw"));
+    ui->lotwDateEdit->setDate(LogParam::getDownloadQSLServiceLastDate("lotw"));
+    ui->lotwDateTypeCombo->setCurrentIndex((LogParam::getDownloadQSLServiceLastQSOQSL("lotw")) ? 0 : 1);
 
     int index = ui->lotwMyCallsignCombo->findText(profile.callsign);
 
     if ( index >= 0 )
         ui->lotwMyCallsignCombo->setCurrentIndex(index);
     else
-        ui->lotwMyCallsignCombo->setCurrentText(settings.value("eqsl/last_mycallsign").toString());
+        ui->lotwMyCallsignCombo->setCurrentText(LogParam::getDownloadQSLLoTWLastCall());
 
     /********/
     /* eQSL */
     /********/
-    ui->eqslGroupBox->setChecked(settings.value("eqsl/download_active", true).toBool());
-    ui->eqslDateEdit->setDate(settings.value("eqsl/last_update", QDate(1900, 1, 1)).toDate());
-    ui->eqslDateTypeCombo->setCurrentIndex((settings.value("eqsl/last_qsoqsl", true).toBool()) ? 0 : 1);
+    ui->eqslGroupBox->setChecked(LogParam::getDownloadQSLServiceState("eqsl"));
+    ui->eqslDateEdit->setDate(LogParam::getDownloadQSLServiceLastDate("eqsl"));
+    ui->eqslDateTypeCombo->setCurrentIndex((LogParam::getDownloadQSLServiceLastQSOQSL("eqsl")) ? 0 : 1);
 
-    ui->eqslQTHProfileEdit->setText(settings.value("eqsl/last_QTHProfile").toString());
+    ui->eqslQTHProfileEdit->setText(LogParam::getDownloadQSLeQSLLastProfile());
 
     // Enable options based on the configuration
     if ( LotwBase::getUsername().isEmpty() )
@@ -120,10 +121,7 @@ void DownloadQSLDialog::prepareDownload(GenericQSLDownloader *service,
         qCDebug(runtime) << "Unmatched QSLs: " << stats.unmatchedQSLs;
 
         if ( qslSinceActive )
-        {
-            QString keyValue("%1/last_update");
-            settings.setValue(keyValue.arg(settingString), QDateTime::currentDateTimeUtc().date());
-        }
+            LogParam::setDownloadQSLServiceLastDate(settingString, QDateTime::currentDateTimeUtc().date());
 
         progressDialog->done(QDialog::Accepted);
         downloadStat[serviceName] = stats;
@@ -162,8 +160,8 @@ void DownloadQSLDialog::downloadQSLs()
             EQSLQSLDownloader* eqsl = new EQSLQSLDownloader(this);
             bool qslSinceActive = ui->eqslDateTypeCombo->currentIndex() == 0;
             prepareDownload(eqsl, "eQSL", qslSinceActive, "eqsl");
-            settings.setValue("eqsl/last_QTHProfile", ui->eqslQTHProfileEdit->text());
-            settings.setValue("eqsl/last_qsoqsl", qslSinceActive);
+            LogParam::setDownloadQSLeQSLLastProfile(ui->eqslQTHProfileEdit->text());
+            LogParam::setDownloadQSLServiceLastQSOQSL("eqsl", qslSinceActive);
             eqsl->receiveQSL(ui->eqslDateEdit->date(), !qslSinceActive, ui->eqslQTHProfileEdit->text());
         });
 
@@ -173,8 +171,8 @@ void DownloadQSLDialog::downloadQSLs()
             LotwQSLDownloader* lotw = new LotwQSLDownloader(this);
             bool qslSinceActive = ui->lotwDateTypeCombo->currentIndex() == 0;
             prepareDownload(lotw, "LoTW", qslSinceActive, "lotw");
-            settings.setValue("lotw/last_mycallsign", ui->lotwMyCallsignCombo->currentText());
-            settings.setValue("lotw/last_qsoqsl", qslSinceActive);
+            LogParam::setDownloadQSLLoTWLastCall(ui->lotwMyCallsignCombo->currentText());
+            LogParam::setDownloadQSLServiceLastQSOQSL("lotw", qslSinceActive);
             lotw->receiveQSL(ui->lotwDateEdit->date(), !qslSinceActive, ui->lotwMyCallsignCombo->currentText());
         });
 

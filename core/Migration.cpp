@@ -22,6 +22,7 @@ bool Migration::run() {
 
     int currentVersion = getVersion();
 
+    //settings2DB(); // TODO only for testing !!!!!
     if (currentVersion == latestVersion) {
         qCDebug(runtime) << "Database schema already up to date";
         updateExternalResource();
@@ -769,6 +770,68 @@ bool Migration::profiles2DB()
     settings.remove("last_membershipcontent_update");
 
     settings.remove("dxcc/start");
+
+    return true;
+}
+
+void removeSettings2DB()
+{
+    // TODO call it later when we will sure that everything is working
+    QSettings settings;
+
+    settings.remove("qrzcom/username");
+    settings.remove("qrzcom/usernameapi");
+    settings.remove("clublog/email");
+    settings.remove("clublog/callsign");
+    settings.remove("clublog/upload_immediately");
+    settings.remove("eqsl/username");
+    settings.remove("eqsl/last_update");
+    settings.remove("eqsl/last_qsoqsl");
+    settings.remove("eqsl/last_QTHProfile");
+    settings.remove("hamqth/username");
+    settings.remove("hrdlog/callsign");
+    settings.remove("hrdlog/onair");
+    settings.remove("kst/username");
+    settings.remove("lotw/username");
+    settings.remove("lotw/tqsl");
+    settings.remove("lotw/last_update");
+    settings.remove("lotw/last_qsoqsl");
+    settings.remove("callbook/primary");
+    settings.remove("callbook/secondary");
+    settings.remove("callbook/weblookupurl");
+}
+bool Migration::settings2DB()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    LogParam::setQRZCOMCallbookUsername(settings.value("qrzcom/username").toString().trimmed());
+
+    LogParam::setClublogLogbookReqEmail(settings.value("clublog/email").toString().trimmed());
+    LogParam::setClublogUploadImmediatelyEnabled(settings.value("clublog/upload_immediately").toBool());
+
+    LogParam::setEQSLLogbookUsername(settings.value("eqsl/username").toString());
+    LogParam::setDownloadQSLServiceLastDate("eqsl", settings.value("eqsl/last_update", QDate(1900, 1, 1)).toDate());
+    LogParam::setDownloadQSLServiceLastQSOQSL("eqsl", settings.value("eqsl/last_qsoqsl", true).toBool());
+    LogParam::setDownloadQSLeQSLLastProfile(settings.value("eqsl/last_QTHProfile").toString());
+    LogParam::setUploadeqslQTHProfile(settings.value("eqsl/last_QTHProfile").toString());
+
+    LogParam::setHamQTHCallbookUsername(settings.value("hamqth/username").toString());
+
+    LogParam::setHRDLogLogbookReqCallsign(settings.value("hrdlog/callsign").toString());
+    LogParam::setHRDLogOnAir(settings.value("hrdlog/onair").toBool());
+
+    LogParam::setKSTChatUsername(settings.value("kst/username").toString());
+
+    LogParam::setLoTWCallbookUsername(settings.value("lotw/username").toString());
+    LogParam::setLoTWTQSLPath(settings.value("lotw/tqsl").toString());
+    LogParam::setDownloadQSLServiceLastDate("lotw", settings.value("lotw/last_update", QDate(1900, 1, 1)).toDate());
+    LogParam::setDownloadQSLServiceLastQSOQSL("lotw", settings.value("lotw/last_qsoqsl", true).toBool());
+
+    LogParam::setPrimaryCallbook(settings.value("callbook/primary").toString());
+    LogParam::setSecondaryCallbook(settings.value("callbook/secondary").toString());
+    LogParam::setCallbookWebLookupURL(settings.value("callbook/weblookupurl").toString());
 
     return true;
 }

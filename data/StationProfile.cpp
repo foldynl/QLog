@@ -1,7 +1,6 @@
 #include "data/StationProfile.h"
 #include "core/debug.h"
 
-#include <QSettings>
 #include <QVariant>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -46,8 +45,6 @@ StationProfilesManager::StationProfilesManager() :
     ProfileManagerSQL<StationProfile>("station_profiles")
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     QSqlQuery profileQuery;
 
@@ -95,7 +92,6 @@ StationProfilesManager::StationProfilesManager() :
 void StationProfilesManager::save()
 {
     FCT_IDENTIFICATION;
-    QSettings settings;
 
     QSqlQuery deleteQuery;
     QSqlQuery insertQuery;

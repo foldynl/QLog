@@ -1,10 +1,10 @@
-#include <QSettings>
 #include <QCache>
 #include "CallbookManager.h"
 #include "core/debug.h"
 #include "service/hamqth/HamQTH.h"
 #include "service/qrzcom/QRZ.h"
 #include "data/Callsign.h"
+#include "LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.callbookmanager");
 
@@ -81,8 +81,6 @@ GenericCallbook *CallbookManager::createCallbook(const QString &callbookID)
 
 void CallbookManager::initCallbooks()
 {
-    QSettings settings;
-
     primaryCallbook.clear();
     secondaryCallbook.clear();
     primaryCallbookAuthSuccess = false;
@@ -91,11 +89,8 @@ void CallbookManager::initCallbooks()
     queryCache.clear();
     currentQueryCallsign = QString();
 
-    QString primaryCallbookSelection = settings.value(GenericCallbook::CONFIG_PRIMARY_CALLBOOK_KEY).toString();
-    QString secondaryCallbookSelection = settings.value(GenericCallbook::CONFIG_SECONDARY_CALLBOOK_KEY).toString();
-
-    primaryCallbook = createCallbook(primaryCallbookSelection);
-    secondaryCallbook = createCallbook(secondaryCallbookSelection);
+    primaryCallbook = createCallbook(LogParam::getPrimaryCallbook(GenericCallbook::CALLBOOK_NAME));
+    secondaryCallbook = createCallbook(LogParam::getSecondaryCallbook(GenericCallbook::CALLBOOK_NAME));
 
     if ( !primaryCallbook.isNull() )
     {

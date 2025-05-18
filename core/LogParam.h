@@ -254,6 +254,187 @@ public:
         setParam("uploadqso/filtertype", filterID);
     }
 
+    static bool getDownloadQSLServiceState(const QString& name)
+    {
+        return getParam("downloadqsl/" + name + "/enabled", false).toBool();
+    }
+
+    static void setDownloadQSLServiceState(const QString& name, bool state)
+    {
+        setParam("downloadqsl/" + name + "/enabled", state);
+    }
+
+    static QDate getDownloadQSLServiceLastDate(const QString& name)
+    {
+        return getParam("downloadqsl/" + name + "/lastdate", QDate(1900, 1, 1)).toDate();
+    }
+
+    static void setDownloadQSLServiceLastDate(const QString& name, const QDate &date)
+    {
+        setParam("downloadqsl/" + name + "/lastdate", date);
+    }
+
+    static bool getDownloadQSLServiceLastQSOQSL(const QString& name)
+    {
+        return getParam("downloadqsl/" + name + "/qsoqsl", true).toBool();
+    }
+
+    static void setDownloadQSLServiceLastQSOQSL(const QString& name, bool state)
+    {
+        setParam("downloadqsl/" + name + "/qsoqsl", state);
+    }
+
+    static QString getDownloadQSLLoTWLastCall()
+    {
+        return getParam("downloadqsl/lotw/lastmycallsign").toString();
+    }
+
+    static void setDownloadQSLLoTWLastCall(const QString &call)
+    {
+        setParam("downloadqsl/lotw/lastmycallsign", call);
+    }
+
+    static QString getDownloadQSLeQSLLastProfile()
+    {
+        return getParam("downloadqsl/lotw/lastmycallsign").toString();
+    }
+
+    static void setDownloadQSLeQSLLastProfile(const QString &profile)
+    {
+        setParam("downloadqsl/lotw/lastqthprofile", profile);
+    }
+
+    static QString getQRZCOMCallbookUsername()
+    {
+        return getParam("services/qrzcom/callbook/username").toString().trimmed();
+    }
+
+    static void setQRZCOMCallbookUsername(const QString& username)
+    {
+        setParam("services/qrzcom/callbook/username", username);
+    }
+
+    static QString getClublogLogbookReqEmail()
+    {
+        return getParam("services/clublog/logbook/regemail").toString().trimmed();
+    }
+
+    static void setClublogLogbookReqEmail(const QString& email)
+    {
+        setParam("services/clublog/logbook/regemail", email);
+    }
+
+    static bool getClublogUploadImmediatelyEnabled()
+    {
+        return getParam("services/clublog/logbook/uploadimmediately", false).toBool();
+    }
+
+    static void setClublogUploadImmediatelyEnabled(bool state)
+    {
+        setParam("services/clublog/logbook/uploadimmediately", state);
+    }
+
+    static QString getEQSLLogbookUsername()
+    {
+        return getParam("services/eqsl/logbook/username").toString().trimmed();
+    }
+
+    static void setEQSLLogbookUsername(const QString& username)
+    {
+        setParam("services/eqsl/logbook/username", username);
+    }
+
+    static QString getHamQTHCallbookUsername()
+    {
+        return getParam("services/hamqth/callbook/username").toString().trimmed();
+    }
+
+    static void setHamQTHCallbookUsername(const QString& username)
+    {
+        setParam("services/hamqth/callbook/username", username);
+    }
+
+    static QString getHRDLogLogbookReqCallsign()
+    {
+        return getParam("services/hrdlog/logbook/regcallsign").toString().trimmed();
+    }
+
+    static void setHRDLogLogbookReqCallsign(const QString& callsign)
+    {
+        setParam("services/hrdlog/logbook/regcallsign", callsign);
+    }
+
+    static bool getHRDLogOnAir()
+    {
+        return getParam("services/hrdlog/logbook/onair", false).toBool();
+    }
+
+    static void setHRDLogOnAir(bool state)
+    {
+        setParam("services/hrdlog/logbook/onair", state);
+    }
+
+    static QString getKSTChatUsername()
+    {
+        return getParam("services/kst/chat/username").toString().trimmed();
+    }
+
+    static void setKSTChatUsername(const QString& username)
+    {
+        setParam("services/kst/chat/username", username);
+    }
+
+    static QString getLoTWCallbookUsername()
+    {
+        return getParam("services/lotw/callbook/username").toString().trimmed();
+    }
+
+    static void setLoTWCallbookUsername(const QString& username)
+    {
+        setParam("services/lotw/callbook/username", username);
+    }
+
+    static QString getLoTWTQSLPath(const QString &defaultPath)
+    {
+        return getParam("services/lotw/callbook/tqsl", defaultPath).toString().trimmed();
+    }
+
+    static void setLoTWTQSLPath(const QString& path)
+    {
+        setParam("services/lotw/callbook/tqsl", path);
+    }
+
+
+    static QString getPrimaryCallbook(const QString &defaultValue)
+    {
+        return getParam("callbook/primary", defaultValue).toString();
+    }
+
+    static void setPrimaryCallbook(const QString& callbookName)
+    {
+        setParam("callbook/primary", callbookName);
+    }
+
+    static QString getSecondaryCallbook(const QString &defaultValue)
+    {
+        return getParam("callbook/secondary", defaultValue).toString();
+    }
+
+    static void setSecondaryCallbook(const QString& callbookName)
+    {
+        setParam("callbook/secondary", callbookName);
+    }
+
+    static QString getCallbookWebLookupURL(const QString &defaultURL)
+    {
+        return getParam("callbook/weblookupurl", defaultURL).toString();
+    }
+
+    static void setCallbookWebLookupURL(const QString& url)
+    {
+        setParam("callbook/weblookupurl", url);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

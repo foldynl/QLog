@@ -24,7 +24,6 @@ public:
 
 protected:
     static const QString SECURE_STORAGE_KEY;
-    static const QString CONFIG_USERNAME_KEY;
 };
 
 class LotwUploader : public GenericQSOUploader, private LotwBase

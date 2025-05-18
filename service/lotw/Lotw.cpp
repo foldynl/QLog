@@ -2,7 +2,6 @@
 #include <QUrlQuery>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QSettings>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -12,6 +11,7 @@
 #include "logformat/AdiFormat.h"
 #include "core/debug.h"
 #include "core/CredentialStore.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.lotw");
 
@@ -36,14 +36,12 @@ QStringList LotwUploader::uploadedFields =
 };
 
 const QString LotwBase::SECURE_STORAGE_KEY = "LoTW";
-const QString LotwBase::CONFIG_USERNAME_KEY = "lotw/username";
 
 const QString LotwBase::getUsername()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value(LotwBase::CONFIG_USERNAME_KEY).toString().trimmed();
+    return LogParam::getLoTWCallbookUsername();
 }
 
 const QString LotwBase::getPassword()
@@ -54,26 +52,9 @@ const QString LotwBase::getPassword()
                                                     getUsername());
 }
 
-const QString LotwBase::getTQSLPath(const QString &defaultPath)
-{
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
-
-#ifdef QLOG_FLATPAK
-    // flatpak package contain an internal tqsl that is always on the same path
-    Q_UNUSED(defaultPath);
-    return QString("/app/bin/tqsl");
-#else
-    return settings.value("lotw/tqsl", defaultPath).toString();
-#endif
-}
-
 void LotwBase::saveUsernamePassword(const QString &newUsername, const QString &newPassword)
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     const QString &oldUsername = getUsername();
     if ( oldUsername != newUsername )
@@ -81,24 +62,36 @@ void LotwBase::saveUsernamePassword(const QString &newUsername, const QString &n
         CredentialStore::instance()->deletePassword(LotwBase::SECURE_STORAGE_KEY,
                                                     oldUsername);
     }
-    settings.setValue(LotwBase::CONFIG_USERNAME_KEY, newUsername);
+
+    LogParam::setLoTWCallbookUsername(newUsername);
     CredentialStore::instance()->savePassword(LotwBase::SECURE_STORAGE_KEY,
                                               newUsername,
                                               newPassword);
 
 }
 
-void LotwBase::saveTQSLPath(const QString &newPath)
+const QString LotwBase::getTQSLPath(const QString &defaultPath)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
+#ifdef QLOG_FLATPAK
+    // flatpak package contain an internal tqsl that is always on the same path
+    Q_UNUSED(defaultPath);
+    return QString("/app/bin/tqsl");
+#else
+    return LogParam::getLoTWTQSLPath(defaultPath);
+#endif
+}
+
+void LotwBase::saveTQSLPath(const QString &newPath)
+{
+    FCT_IDENTIFICATION;
 
 #ifdef QLOG_FLATPAK
     // do not save path for Flatpak version - an internal tqsl instance is present in the package
     Q_UNUSED(newPath);
 #else
-    settings.setValue("lotw/tqsl", newPath);
+    LogParam::setLoTWTQSLPath(newPath);
 #endif
 }
 
