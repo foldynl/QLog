@@ -6117,80 +6117,85 @@
         <translation>用户过滤器</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="240"/>
+        <location filename="../ui/LogbookWidget.ui" line="178"/>
+        <source>Reset</source>
+        <translation type="unfinished">重置</translation>
+    </message>
+    <message>
+        <location filename="../ui/LogbookWidget.ui" line="255"/>
         <location filename="../ui/LogbookWidget.cpp" line="739"/>
         <location filename="../ui/LogbookWidget.cpp" line="759"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="243"/>
+        <location filename="../ui/LogbookWidget.ui" line="258"/>
         <source>Logbook - Delete QSO</source>
         <translation>日志本 - 删除 QSO</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="258"/>
+        <location filename="../ui/LogbookWidget.ui" line="273"/>
         <source>Upload to Clublog</source>
         <translation>上传至Clublog</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="267"/>
-        <location filename="../ui/LogbookWidget.ui" line="270"/>
+        <location filename="../ui/LogbookWidget.ui" line="282"/>
+        <location filename="../ui/LogbookWidget.ui" line="285"/>
         <source>Lookup on Web</source>
         <translation>在网页中查看</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="279"/>
+        <location filename="../ui/LogbookWidget.ui" line="294"/>
         <source>Update from Callbook</source>
         <translation>从电台黄页更新</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="282"/>
+        <location filename="../ui/LogbookWidget.ui" line="297"/>
         <source>Add Missing Info</source>
         <translation>添加丢失的信息</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="291"/>
+        <location filename="../ui/LogbookWidget.ui" line="306"/>
         <source>Filter Callsign</source>
         <translation>过滤呼号</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="296"/>
+        <location filename="../ui/LogbookWidget.ui" line="311"/>
         <source>Edit Value</source>
         <translation>编辑值</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="299"/>
+        <location filename="../ui/LogbookWidget.ui" line="314"/>
         <source>Logbook - Edit Value</source>
         <translation>日志本 - 编辑值</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="304"/>
+        <location filename="../ui/LogbookWidget.ui" line="319"/>
         <source>Column Visibility </source>
         <translation>列可见性 </translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="307"/>
+        <location filename="../ui/LogbookWidget.ui" line="322"/>
         <source>Which columns should be displayed</source>
         <translation>应该显示哪些列</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="316"/>
+        <location filename="../ui/LogbookWidget.ui" line="330"/>
         <source>Export Selected</source>
         <translation>导出已选择项</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="319"/>
+        <location filename="../ui/LogbookWidget.ui" line="333"/>
         <source>Export selected QSOs</source>
         <translation>导出已选择的QSOs</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="324"/>
+        <location filename="../ui/LogbookWidget.ui" line="338"/>
         <source>Send DX Spot</source>
         <translation>发送DX报点</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="327"/>
+        <location filename="../ui/LogbookWidget.ui" line="341"/>
         <source>Logbook - Send DX Spot</source>
         <translation>Logbook - 发送DX报点</translation>
     </message>

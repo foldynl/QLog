@@ -74,6 +74,7 @@ public slots:
     void callsignNotFound(const QString&);
     void callbookLoginFailed(const QString&);
     void callbookError(const QString&);
+    void resetFilter();
 
 private:
     ClubLog* clublog;

@@ -1131,8 +1131,8 @@ void LogbookWidget::colorsFilterWidget(QComboBox *widget)
 {
     FCT_IDENTIFICATION;
 
-    widget->setStyleSheet( (widget->currentIndex() > 0) ? "QComboBox {color: green}"
-                                                        : "");
+    widget->setStyleSheet(
+        (widget->currentIndex() > 0) ? "QComboBox {color: green; font-weight: bold;}" : "");
 }
 
 void LogbookWidget::filterTable()
@@ -1175,7 +1175,19 @@ void LogbookWidget::filterTable()
     model->setFilter(filterString.join(" AND "));
     qCDebug(runtime) << model->query().lastQuery();
 
+    ui->resetFilter->setEnabled(filterString.length() > 0);
+
     reselectModel();
+}
+
+void LogbookWidget::resetFilter()
+{
+    ui->callsignFilter->clear();
+    ui->countryFilter->setCurrentIndex(0);
+    ui->clubFilter->setCurrentIndex(0);
+    ui->userFilter->setCurrentIndex(0);
+    ui->bandFilter->setCurrentIndex(0);
+    ui->modeFilter->setCurrentIndex(0);
 }
 
 LogbookWidget::~LogbookWidget()

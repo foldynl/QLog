@@ -6170,81 +6170,86 @@
         <translation>Filtro de Usuario</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="240"/>
+        <location filename="../ui/LogbookWidget.ui" line="178"/>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/LogbookWidget.ui" line="255"/>
         <location filename="../ui/LogbookWidget.cpp" line="739"/>
         <location filename="../ui/LogbookWidget.cpp" line="759"/>
         <source>Delete</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="243"/>
+        <location filename="../ui/LogbookWidget.ui" line="258"/>
         <source>Logbook - Delete QSO</source>
         <translation>Libro de Guardia - Eliminar QSO</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="279"/>
+        <location filename="../ui/LogbookWidget.ui" line="294"/>
         <source>Update from Callbook</source>
         <translation>Actualización del Callbook</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="299"/>
+        <location filename="../ui/LogbookWidget.ui" line="314"/>
         <source>Logbook - Edit Value</source>
         <translation>Libro de Guardia - Editar Valor</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="324"/>
+        <location filename="../ui/LogbookWidget.ui" line="338"/>
         <source>Send DX Spot</source>
         <translatorcomment>Envía un Spot de DX</translatorcomment>
         <translation>Enviar Spot de DX</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="327"/>
+        <location filename="../ui/LogbookWidget.ui" line="341"/>
         <source>Logbook - Send DX Spot</source>
         <translation>El libro envia Spot de DX</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="258"/>
+        <location filename="../ui/LogbookWidget.ui" line="273"/>
         <source>Upload to Clublog</source>
         <translation>Subir a Clublog</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="267"/>
-        <location filename="../ui/LogbookWidget.ui" line="270"/>
+        <location filename="../ui/LogbookWidget.ui" line="282"/>
+        <location filename="../ui/LogbookWidget.ui" line="285"/>
         <source>Lookup on Web</source>
         <translation>Buscar en la Web</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="282"/>
+        <location filename="../ui/LogbookWidget.ui" line="297"/>
         <source>Add Missing Info</source>
         <translation>Añadir la información que falta</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="291"/>
+        <location filename="../ui/LogbookWidget.ui" line="306"/>
         <source>Filter Callsign</source>
         <translation>Filtrar Indicativo</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="296"/>
+        <location filename="../ui/LogbookWidget.ui" line="311"/>
         <source>Edit Value</source>
         <translation>Editar Valor</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="304"/>
+        <location filename="../ui/LogbookWidget.ui" line="319"/>
         <source>Column Visibility </source>
         <translation>Visibilidad de Columnas</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="307"/>
+        <location filename="../ui/LogbookWidget.ui" line="322"/>
         <source>Which columns should be displayed</source>
         <translation>Qué columnas deben mostrarse</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="316"/>
+        <location filename="../ui/LogbookWidget.ui" line="330"/>
         <source>Export Selected</source>
         <translation>Exportar Seleccionados</translation>
     </message>
     <message>
-        <location filename="../ui/LogbookWidget.ui" line="319"/>
+        <location filename="../ui/LogbookWidget.ui" line="333"/>
         <source>Export selected QSOs</source>
         <translation>Exportar los QSOs seleccionados</translation>
     </message>

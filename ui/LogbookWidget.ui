@@ -167,6 +167,19 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="resetFilter">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::ClickFocus</enum>
+         </property>
+         <property name="text">
+          <string>Reset</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -595,6 +608,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>resetFilter</sender>
+   <signal>clicked()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>resetFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>deleteContact()</slot>
@@ -613,5 +642,6 @@
   <slot>exportContact()</slot>
   <slot>clubFilterChanged()</slot>
   <slot>sendDXCSpot()</slot>
+  <slot>resetFilter()</slot>
  </slots>
 </ui>
