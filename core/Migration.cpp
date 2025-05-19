@@ -799,6 +799,11 @@ void removeSettings2DB()
     settings.remove("callbook/primary");
     settings.remove("callbook/secondary");
     settings.remove("callbook/weblookupurl");
+    settings.remove("network/notification/qso/adi_addrs");
+    settings.remove("network/notification/dxspot/addrs");
+    settings.remove("network/notification/wsjtx/cqspot/addrs");
+    settings.remove("network/notification/alerts/spot/addrs");
+    settings.remove("network/notification/rig/state/addrs");
 }
 bool Migration::settings2DB()
 {
@@ -832,6 +837,12 @@ bool Migration::settings2DB()
     LogParam::setPrimaryCallbook(settings.value("callbook/primary").toString());
     LogParam::setSecondaryCallbook(settings.value("callbook/secondary").toString());
     LogParam::setCallbookWebLookupURL(settings.value("callbook/weblookupurl").toString());
+
+    LogParam::setNetworkNotifLogQSOAddrs(settings.value("network/notification/qso/adi_addrs").toString());
+    LogParam::setNetworkNotifDXCSpotAddrs(settings.value("network/notification/dxspot/addrs").toString());
+    LogParam::setNetworkNotifWSJTXCQSpotAddrs(settings.value("network/notification/wsjtx/cqspot/addrs").toString());
+    LogParam::setNetworkNotifAlertsSpotAddrs(settings.value("network/notification/alerts/spot/addrs").toString());
+    LogParam::setNetworkNotifRigStateAddrs(settings.value("network/notification/rig/state/addrs").toString());
 
     return true;
 }

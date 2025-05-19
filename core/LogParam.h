@@ -435,6 +435,56 @@ public:
         setParam("callbook/weblookupurl", url);
     }
 
+    static QString getNetworkNotifLogQSOAddrs()
+    {
+        return getParam("network/notif/log/qso/addrs").toString();
+    }
+
+    static void setNetworkNotifLogQSOAddrs(const QString &addrs)
+    {
+        setParam("network/notif/log/qso/addrs", addrs);
+    }
+
+    static QString getNetworkNotifDXCSpotAddrs()
+    {
+        return getParam("network/notif/dxc/spot/addrs").toString();
+    }
+
+    static void setNetworkNotifDXCSpotAddrs(const QString &addrs)
+    {
+        setParam("network/notif/dxc/spot/addrs", addrs);
+    }
+
+    static QString getNetworkNotifWSJTXCQSpotAddrs()
+    {
+        return getParam("network/notif/wsjtx/cqspot/addrs").toString();
+    }
+
+    static void setNetworkNotifWSJTXCQSpotAddrs(const QString &addrs)
+    {
+        setParam("network/notif/wsjtx/cqspot/addrs", addrs);
+    }
+
+    static QString getNetworkNotifAlertsSpotAddrs()
+    {
+        return getParam("network/notif/alerts/spot/addrs").toString();
+    }
+
+    static void setNetworkNotifAlertsSpotAddrs(const QString &addrs)
+    {
+        setParam("network/notif/alerts/spot/addrs", addrs);
+    }
+
+    static QString getNetworkNotifRigStateAddrs()
+    {
+        return getParam("network/notif/rig/state/addrs").toString();
+    }
+
+    static void setNetworkNotifRigStateAddrs(const QString &addrs)
+    {
+        setParam("network/notif/rig/state/addrs", addrs);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

@@ -160,13 +160,6 @@ private:
     QUdpSocket udpSocket;
 
     void send(const QByteArray &, const HostsPortString &);
-
-    static QString CONFIG_NOTIF_QSO_ADI_ADDRS_KEY;
-    static QString CONFIG_NOTIF_DXSPOT_ADDRS_KEY;
-    static QString CONFIG_NOTIF_WSJTXCQSPOT_ADDRS_KEY;
-    static QString CONFIG_NOTIF_SPOTALERT_ADDRS_KEY;
-    static QString CONFIG_NOTIF_RIGSTATE_ADDRS_KEY;
-
 };
 
 #endif // QLOG_CORE_NETWORKNOTIFICATION_H
