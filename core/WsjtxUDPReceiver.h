@@ -134,7 +134,7 @@ public:
     static void saveConfigForwardAddresses(const QString &);
     static void saveConfigMulticastJoin(bool);
     static bool getConfigMulticastJoin();
-    static void saveConfigMulticastAddress(QString);
+    static void saveConfigMulticastAddress(const QString &);
     static QString getConfigMulticastAddress();
     static void saveConfigMulticastTTL(int);
     static int getConfigMulticastTTL();
@@ -161,11 +161,7 @@ private:
 
     UpdatableSQLRecord wsjtSQLRecord;
 
-    static QString CONFIG_PORT;
     static int DEFAULT_PORT;
-    static QString CONFIG_FORWARD_ADDRESSES;
-    static QString CONFIG_MULTICAST_JOIN;
-    static QString CONFIG_MULTICAST_ADDRESS;
     static QString CONFIG_MULTICAST_TTL;
 
     void openPort();

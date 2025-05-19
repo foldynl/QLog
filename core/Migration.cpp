@@ -804,6 +804,11 @@ void removeSettings2DB()
     settings.remove("network/notification/wsjtx/cqspot/addrs");
     settings.remove("network/notification/alerts/spot/addrs");
     settings.remove("network/notification/rig/state/addrs");
+    settings.remove("network/wsjtx_port");
+    settings.remove("network/wsjtx_forward");
+    settings.remove("network/wsjtx_multicast");
+    settings.remove("network/wsjtx_multicast_addr");
+    settings.remove("network/wsjtx_multicast_ttl");
 }
 bool Migration::settings2DB()
 {
@@ -843,6 +848,12 @@ bool Migration::settings2DB()
     LogParam::setNetworkNotifWSJTXCQSpotAddrs(settings.value("network/notification/wsjtx/cqspot/addrs").toString());
     LogParam::setNetworkNotifAlertsSpotAddrs(settings.value("network/notification/alerts/spot/addrs").toString());
     LogParam::setNetworkNotifRigStateAddrs(settings.value("network/notification/rig/state/addrs").toString());
+
+    LogParam::setNetworkNotifRigStateAddrs(settings.value("network/wsjtx_port").toInt());
+    LogParam::setNetworkWsjtxForwardAddrs(settings.value("network/wsjtx_forward").toString());
+    LogParam::setNetworkWsjtxListenerJoinMulticast(settings.value("network/wsjtx_multicast").toBool());
+    LogParam::setNetworkWsjtxListenerMulticastAddr(settings.value("network/wsjtx_multicast_addr").toString());
+    LogParam::setNetworkWsjtxListenerMulticastTTL(settings.value("network/wsjtx_multicast_ttl").toInt());
 
     return true;
 }

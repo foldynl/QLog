@@ -485,6 +485,56 @@ public:
         setParam("network/notif/rig/state/addrs", addrs);
     }
 
+    static int getNetworkWsjtxListenerPort(int defaultPort)
+    {
+        return getParam("network/listener/wsjtx/port", defaultPort).toInt();
+    }
+
+    static void setNetworkNotifRigStateAddrs(int port)
+    {
+        setParam("network/listener/wsjtx/port", port);
+    }
+
+    static QString getNetworkWsjtxForwardAddrs()
+    {
+        return getParam("network/forwarder/wsjtx/addrs").toString();
+    }
+
+    static void setNetworkWsjtxForwardAddrs(const QString &addrs)
+    {
+        setParam("network/forwarder/wsjtx/addrs", addrs);
+    }
+
+    static bool getNetworkWsjtxListenerJoinMulticast()
+    {
+        return getParam("network/listener/wsjtx/multicast/join", false).toBool();
+    }
+
+    static void setNetworkWsjtxListenerJoinMulticast(bool state)
+    {
+        setParam("network/listener/wsjtx/multicast/join", state);
+    }
+
+    static QString getNetworkWsjtxListenerMulticastAddr()
+    {
+        return getParam("network/listener/wsjtx/multicast/addr").toString();
+    }
+
+    static void setNetworkWsjtxListenerMulticastAddr(const QString &addr)
+    {
+        setParam("network/listener/wsjtx/multicast/addr", addr);
+    }
+
+    static int getNetworkWsjtxListenerMulticastTTL()
+    {
+        return getParam("network/listener/wsjtx/multicast/ttl").toInt();
+    }
+
+    static void setNetworkWsjtxListenerMulticastTTL(int ttl)
+    {
+        setParam("network/listener/wsjtx/multicast/ttl", ttl);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

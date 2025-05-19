@@ -16,6 +16,7 @@
 #include "rig/macros.h"
 #include "data/BandPlan.h"
 #include "logformat/AdiFormat.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.core.wsjtx");
 
@@ -34,7 +35,6 @@ void WsjtxUDPReceiver::openPort()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
 
     if ( ! socket )
     {
@@ -46,7 +46,7 @@ void WsjtxUDPReceiver::openPort()
         socket->close();
     }
 
-    int newPort = settings.value(WsjtxUDPReceiver::CONFIG_PORT,WsjtxUDPReceiver::DEFAULT_PORT).toInt();
+    int newPort = getConfigPort();
 
     qCDebug(runtime) << "Listen port"<< newPort;
 
@@ -158,90 +158,70 @@ quint16 WsjtxUDPReceiver::getConfigPort()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(WsjtxUDPReceiver::CONFIG_PORT, WsjtxUDPReceiver::DEFAULT_PORT).toInt();
+    return LogParam::getNetworkWsjtxListenerPort(WsjtxUDPReceiver::DEFAULT_PORT);
 }
 
 void WsjtxUDPReceiver::saveConfigPort(quint16 port)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(WsjtxUDPReceiver::CONFIG_PORT, port);
+    LogParam::setNetworkNotifRigStateAddrs(port);
 }
 
 QString WsjtxUDPReceiver::getConfigForwardAddresses()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(WsjtxUDPReceiver::CONFIG_FORWARD_ADDRESSES).toString();
+    return LogParam::getNetworkWsjtxForwardAddrs();
 }
 
 void WsjtxUDPReceiver::saveConfigForwardAddresses(const QString &addresses)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(WsjtxUDPReceiver::CONFIG_FORWARD_ADDRESSES, addresses);
+    LogParam::setNetworkWsjtxForwardAddrs(addresses);
 }
 
 void WsjtxUDPReceiver::saveConfigMulticastJoin(bool state)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(WsjtxUDPReceiver::CONFIG_MULTICAST_JOIN, state);
+    LogParam::setNetworkWsjtxListenerJoinMulticast(state);
 }
 
 bool WsjtxUDPReceiver::getConfigMulticastJoin()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(WsjtxUDPReceiver::CONFIG_MULTICAST_JOIN).toBool();
+    return LogParam::getNetworkWsjtxListenerJoinMulticast();
 }
 
-void WsjtxUDPReceiver::saveConfigMulticastAddress(QString addr)
+void WsjtxUDPReceiver::saveConfigMulticastAddress(const QString &addr)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(WsjtxUDPReceiver::CONFIG_MULTICAST_ADDRESS, addr);
+    LogParam::setNetworkWsjtxListenerMulticastAddr(addr);
 }
 
 QString WsjtxUDPReceiver::getConfigMulticastAddress()
 {
-    FCT_IDENTIFICATION;
+    FCT_IDENTIFICATION;    
 
-    QSettings settings;
-
-    return settings.value(WsjtxUDPReceiver::CONFIG_MULTICAST_ADDRESS).toString();
+    return LogParam::getNetworkWsjtxListenerMulticastAddr();
 }
 
 void WsjtxUDPReceiver::saveConfigMulticastTTL(int ttl)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(WsjtxUDPReceiver::CONFIG_MULTICAST_TTL, ttl);
+    LogParam::setNetworkWsjtxListenerMulticastTTL(ttl);
 }
 
 int WsjtxUDPReceiver::getConfigMulticastTTL()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(WsjtxUDPReceiver::CONFIG_MULTICAST_TTL).toInt();
+    return LogParam::getNetworkWsjtxListenerMulticastTTL();
 }
 
 void WsjtxUDPReceiver::readPendingDatagrams()
@@ -605,9 +585,5 @@ void WsjtxUDPReceiver::reloadSetting()
     openPort();
 }
 
-QString WsjtxUDPReceiver::CONFIG_PORT = "network/wsjtx_port";
 int     WsjtxUDPReceiver::DEFAULT_PORT = 2237;
-QString WsjtxUDPReceiver::CONFIG_FORWARD_ADDRESSES = "network/wsjtx_forward";
-QString WsjtxUDPReceiver::CONFIG_MULTICAST_JOIN = "network/wsjtx_multicast";
-QString WsjtxUDPReceiver::CONFIG_MULTICAST_ADDRESS = "network/wsjtx_multicast_addr";
 QString WsjtxUDPReceiver::CONFIG_MULTICAST_TTL = "network/wsjtx_multicast_ttl";
