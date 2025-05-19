@@ -93,6 +93,20 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
     return ret;
 }
 
+bool LogParam::setParam(const QString &name, const QStringList &value)
+{
+    FCT_IDENTIFICATION;
+
+    return setParam(name, serializeStringList(value));
+}
+
+QStringList LogParam::getParamStringList(const QString &name, const QStringList &defaultValue)
+{
+    FCT_IDENTIFICATION;
+
+    return deserializeStringList(getParam(name, defaultValue).toString());
+}
+
 void LogParam::removeParamGroup(const QString &paramGroup)
 {
     FCT_IDENTIFICATION;
@@ -160,6 +174,71 @@ QStringList LogParam::getKeys(const QString &group)
 #else
     return keys.toList();
 #endif
+}
+
+QString LogParam::escapeString(const QString &input, QChar escapeChar, QChar delimiter)
+{
+    QString result;
+    for (QChar ch : input)
+    {
+        if (ch == escapeChar || ch == delimiter) result += escapeChar;
+        result += ch;
+    }
+    return result;
+}
+
+QString LogParam::unescapeString(const QString &input, QChar escapeChar)
+{
+    QString result;
+    bool escaping = false;
+    for ( QChar ch : input )
+    {
+        if ( escaping )
+        {
+            result += ch;
+            escaping = false;
+        }
+        else if ( ch == escapeChar )
+            escaping = true;
+        else
+            result += ch;
+    }
+    return result;
+}
+
+QString LogParam::serializeStringList(const QStringList &list, QChar delimiter, QChar escapeChar)
+{
+    QStringList escapedList;
+    for ( const QString &item : list )
+        escapedList << escapeString(item, escapeChar, delimiter);
+    return escapedList.join(delimiter);
+}
+
+QStringList LogParam::deserializeStringList(const QString &input, QChar delimiter, QChar escapeChar)
+{
+    QStringList result;
+    QString current;
+    bool escaping = false;
+
+    for ( QChar ch : input )
+    {
+        if ( escaping )
+        {
+            current += ch;
+            escaping = false;
+        }
+        else if ( ch == escapeChar )
+            escaping = true;
+        else if ( ch == delimiter )
+        {
+            result << current;
+            current.clear();
+        }
+        else
+            current += ch;
+    }
+    result << current;
+    return result;
 }
 
 QCache<QString, QVariant> LogParam::localCache(30);

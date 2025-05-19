@@ -535,14 +535,30 @@ public:
         setParam("network/listener/wsjtx/multicast/ttl", ttl);
     }
 
+    static QStringList getEnabledMemberlists()
+    {
+        return getParamStringList("memberlist/enabledlists");
+    }
+
+    static void setEnabledMemberlists(const QStringList &list)
+    {
+        setParam("memberlist/enabledlists", list);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;
 
     static bool setParam(const QString&, const QVariant &);
+    static bool setParam(const QString&, const QStringList &);
     static QVariant getParam(const QString&, const QVariant &defaultValue = QVariant());
+    static QStringList getParamStringList(const QString&, const QStringList &defaultValue = QStringList());
     static void removeParamGroup(const QString&);
     static QStringList getKeys(const QString &);
+    static QString escapeString(const QString &input, QChar escapeChar = '\\', QChar delimiter = ',');
+    static QString unescapeString(const QString &input, QChar escapeChar = '\\');
+    static QString serializeStringList(const QStringList &list, QChar delimiter = ',', QChar escapeChar = '\\');
+    static QStringList deserializeStringList(const QString &input, QChar delimiter = ',', QChar escapeChar = '\\');
 };
 
 #endif // QLOG_CORE_LOGPARAM_H

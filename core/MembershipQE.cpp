@@ -5,7 +5,6 @@
 #include <QSqlError>
 #include <QNetworkAccessManager>
 #include <QUrl>
-#include <QSettings>
 #include <QMutexLocker>
 #include <QSqlDriver>
 #include <QMessageBox>
@@ -96,18 +95,16 @@ void MembershipQE::statusQueryFinished(const QString &callsign,
 
 void MembershipQE::saveEnabledClubLists(const QStringList &enabledLists)
 {
-    QSettings settings;
+    FCT_IDENTIFICATION;
 
-    settings.setValue(MembershipQE::CONFIG_MEMBERLIST_ENABLED, enabledLists);
+    LogParam::setEnabledMemberlists(enabledLists);
 }
 
 QStringList MembershipQE::getEnabledClubLists()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(MembershipQE::CONFIG_MEMBERLIST_ENABLED).toStringList();
+    return LogParam::getEnabledMemberlists();
 }
 
 void MembershipQE::removeClubsFromEnabledClubLists(const QList<QPair<QString, QString>> &toRemove)
@@ -476,8 +473,6 @@ bool MembershipQE::importData(const QString &clubid, const QByteArray &data)
 
     return true;
 }
-
-QString MembershipQE::CONFIG_MEMBERLIST_ENABLED = "memberlists/enabled";
 
 ClubStatusQuery::ClubStatusQuery(QObject *parent) :
     QObject(parent),

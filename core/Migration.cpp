@@ -809,6 +809,7 @@ void removeSettings2DB()
     settings.remove("network/wsjtx_multicast");
     settings.remove("network/wsjtx_multicast_addr");
     settings.remove("network/wsjtx_multicast_ttl");
+    settings.remove("memberlists/enabled");
 }
 bool Migration::settings2DB()
 {
@@ -855,6 +856,7 @@ bool Migration::settings2DB()
     LogParam::setNetworkWsjtxListenerMulticastAddr(settings.value("network/wsjtx_multicast_addr").toString());
     LogParam::setNetworkWsjtxListenerMulticastTTL(settings.value("network/wsjtx_multicast_ttl").toInt());
 
+    LogParam::setEnabledMemberlists(settings.value("memberlists/enabled").toStringList());
     return true;
 }
 
