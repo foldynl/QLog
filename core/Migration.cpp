@@ -812,6 +812,7 @@ void removeSettings2DB()
     settings.remove("memberlists/enabled");
     settings.remove("alert/alert_aging");
     settings.remove("alert/state");
+    settings.remove("cwconsole/sendWord");
 }
 bool Migration::settings2DB()
 {
@@ -863,6 +864,7 @@ bool Migration::settings2DB()
     LogParam::setWidgetAlertAging(settings.value("alert/alert_aging").toInt());
     LogParam::setWidgetAlertWidgetState(settings.value("alert/state").toByteArray());
 
+    LogParam::setWidgetCWConsoleSendWord(settings.value("cwconsole/sendWord", false).toBool());
     return true;
 }
 

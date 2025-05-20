@@ -565,6 +565,16 @@ public:
         setParam("widget/alert/widgetstate", state.toBase64());
     }
 
+    static bool getWidgetCWConsoleSendWord()
+    {
+        return getParam("widget/cwconsole/sendword", false).toBool();
+    }
+
+    static void setWidgetCWConsoleSendWord(bool state)
+    {
+        setParam("widget/cwconsole/sendword", state);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;
