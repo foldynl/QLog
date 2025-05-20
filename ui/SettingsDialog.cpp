@@ -1,4 +1,3 @@
-#include <QSettings>
 #include <QStringListModel>
 #include <QSqlTableModel>
 #include <QFileDialog>
@@ -2241,10 +2240,9 @@ void SettingsDialog::updateDateFormatResult()
     ui->dateFormatResultLabel->setText(QDate::currentDate().toString(ui->dateFormatStringEdit->text()));
 }
 
-void SettingsDialog::readSettings() {
+void SettingsDialog::readSettings()
+{
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     QStringList profiles = stationProfManager->profileNameList();
     (static_cast<QStringListModel*>(ui->stationProfilesListView->model()))->setStringList(profiles);
@@ -2373,10 +2371,9 @@ void SettingsDialog::readSettings() {
     /******************/
 }
 
-void SettingsDialog::writeSettings() {
+void SettingsDialog::writeSettings()
+{
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     stationProfManager->save();
     rigProfManager->save();

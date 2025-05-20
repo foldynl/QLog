@@ -2,7 +2,6 @@
 #include <QTableView>
 #include <QVBoxLayout>
 #include <QDate>
-#include <QSettings>
 #include <QSqlError>
 #include <QSqlQuery>
 #include "models/DxccTableModel.h"
