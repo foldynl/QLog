@@ -464,13 +464,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
         LogParam::removeBandmapWidgetGroup(orphanConfig);
     }
 
-    // Save unsaved bandmap states
-    for ( BandmapWidget *widget : static_cast<const QList<BandmapWidget *>&>(findChildren<BandmapWidget *>()) )
-    {
-        if ( widget )
-            widget->saveState();
-    }
-
+    // Save unsaved widget states
     const auto allWidgets = findChildren<QWidget *>();
     for ( QWidget *w : allWidgets )
     {
@@ -710,7 +704,7 @@ void MainWindow::clearNonVfoBandmaps()
         if ( widget )
         {
             widgetDock = findChild<QDockWidget*>(widget->objectName() + "-dock");
-            widget->saveState();
+            widget->finalizeBeforeAppExit();
             widget->setParent(nullptr);
             widget->close();
             widget->deleteLater();

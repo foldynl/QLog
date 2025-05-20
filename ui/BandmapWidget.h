@@ -14,6 +14,7 @@
 #include "data/Band.h"
 #include "rig/Rig.h"
 #include "core/LogLocale.h"
+#include "component/ShutdownAwareWidget.h"
 
 namespace Ui {
 class BandmapWidget;
@@ -36,7 +37,7 @@ protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 };
 
-class BandmapWidget : public QWidget
+class BandmapWidget : public QWidget, public ShutdownAwareWidget
 {
     Q_OBJECT
 
@@ -75,7 +76,7 @@ public slots:
     void recalculateDupe();
     void updateStations();
     void clearWidgetBand();
-    void saveState();
+    virtual void finalizeBeforeAppExit() override;
     void increasePendingSpots() {pendingSpots++;};
 
 signals:
@@ -109,6 +110,7 @@ private:
     double getSavedScrollFreq(Band);
     double visibleCentreFreq() const;
     bool isAlreadyOpened(const Band &band) const;
+    void saveState();
 
 private slots:
     void centerRXActionChecked(bool);
