@@ -545,6 +545,26 @@ public:
         setParam("memberlist/enabledlists", list);
     }
 
+    static int getWidgetAlertAging()
+    {
+        return getParam("widget/alert/aging").toInt();
+    }
+
+    static void setWidgetAlertAging(int aging)
+    {
+        setParam("widget/alert/aging", aging);
+    }
+
+    static QByteArray getWidgetAlertWidgetState()
+    {
+        return QByteArray::fromBase64(getParam("widget/alert/widgetstate").toByteArray());
+    }
+
+    static void setWidgetAlertWidgetState(const QByteArray &state)
+    {
+        setParam("widget/alert/widgetstate", state.toBase64());
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

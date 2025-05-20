@@ -810,6 +810,8 @@ void removeSettings2DB()
     settings.remove("network/wsjtx_multicast_addr");
     settings.remove("network/wsjtx_multicast_ttl");
     settings.remove("memberlists/enabled");
+    settings.remove("alert/alert_aging");
+    settings.remove("alert/state");
 }
 bool Migration::settings2DB()
 {
@@ -857,6 +859,10 @@ bool Migration::settings2DB()
     LogParam::setNetworkWsjtxListenerMulticastTTL(settings.value("network/wsjtx_multicast_ttl").toInt());
 
     LogParam::setEnabledMemberlists(settings.value("memberlists/enabled").toStringList());
+
+    LogParam::setWidgetAlertAging(settings.value("alert/alert_aging").toInt());
+    LogParam::setWidgetAlertWidgetState(settings.value("alert/state").toByteArray());
+
     return true;
 }
 

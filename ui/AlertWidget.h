@@ -5,12 +5,13 @@
 #include "data/SpotAlert.h"
 #include "models/AlertTableModel.h"
 #include "data/DxSpot.h"
+#include "component/ShutdownAwareWidget.h"
 
 namespace Ui {
 class AlertWidget;
 }
 
-class AlertWidget : public QWidget
+class AlertWidget : public QWidget, public ShutdownAwareWidget
 {
     Q_OBJECT
 
@@ -19,6 +20,7 @@ public:
     ~AlertWidget();
 
    int alertCount() const;
+   virtual void finalizeBeforeAppExit() override;
 
 public slots:
     void addAlert(const SpotAlert &alert);
@@ -33,6 +35,7 @@ public slots:
     void updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities);
     void recalculateDupe();
     void recalculateDxccStatus();
+    void saveTableHeaderState();
 
 private slots:
     void showColumnVisibility();
@@ -48,11 +51,9 @@ private:
     AlertTableModel* alertTableModel;
     QSortFilterProxyModel *proxyModel;
     QTimer *aging_timer;
-    QSettings settings;
 
 private slots:
     void alertAging();
-    void saveTableHeaderState();
     void restoreTableHeaderState();
 
 };

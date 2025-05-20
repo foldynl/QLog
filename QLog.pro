@@ -324,6 +324,7 @@ HEADERS += \
         ui/component/EditLine.h \
         ui/component/FreqQSpinBox.h \
         ui/component/MultiselectCompleter.h \
+        ui/component/ShutdownAwareWidget.h \
         ui/component/StyleItemDelegate.h \
         ui/component/SwitchButton.h
 

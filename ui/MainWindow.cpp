@@ -471,6 +471,13 @@ void MainWindow::closeEvent(QCloseEvent* event)
             widget->saveState();
     }
 
+    const auto allWidgets = findChildren<QWidget *>();
+    for ( QWidget *w : allWidgets )
+    {
+        ShutdownAwareWidget *widget = dynamic_cast<ShutdownAwareWidget *>(w);
+        if ( widget ) widget->finalizeBeforeAppExit();
+    }
+
     // save the window geometry
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
