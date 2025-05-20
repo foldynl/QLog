@@ -8,6 +8,7 @@
 #include "core/debug.h"
 #include "service/kstchat/KSTChat.h"
 #include "ui/KSTChatWidget.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.chatwidget");
 
@@ -25,8 +26,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
     QWidget *w = ui->chatTabWidget->widget(0);
     w->setProperty("chatName", tr("New"));
     ui->chatTabWidget->setTabText(0, generateTabName(w));
-    QSettings settings;
-    ui->chatRoomCombo->setCurrentIndex(settings.value("chat/last_selected_room", 0).toInt());
+    ui->chatRoomCombo->setCurrentIndex(LogParam::getWidgetChatSelectedRoom());
 }
 
 ChatWidget::~ChatWidget()
@@ -155,8 +155,6 @@ void ChatWidget::connectChat()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     QString username = KSTChat::getUsername();
     QString password = KSTChat::getPassword();
 
@@ -211,7 +209,7 @@ void ChatWidget::connectChat()
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
     }
 #endif
-    settings.setValue("chat/last_selected_room", ui->chatRoomCombo->currentIndex());
+    LogParam::setWidgetChatSelectedRoom(ui->chatRoomCombo->currentIndex());
 }
 
 void ChatWidget::closeTab(int tabIndex)

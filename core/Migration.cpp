@@ -813,6 +813,7 @@ void removeSettings2DB()
     settings.remove("alert/alert_aging");
     settings.remove("alert/state");
     settings.remove("cwconsole/sendWord");
+    settings.remove("chat/last_selected_room");
 }
 bool Migration::settings2DB()
 {
@@ -865,6 +866,8 @@ bool Migration::settings2DB()
     LogParam::setWidgetAlertWidgetState(settings.value("alert/state").toByteArray());
 
     LogParam::setWidgetCWConsoleSendWord(settings.value("cwconsole/sendWord", false).toBool());
+
+    LogParam::setWidgetChatSelectedRoom(settings.value("chat/last_selected_room", 0).toInt());
     return true;
 }
 

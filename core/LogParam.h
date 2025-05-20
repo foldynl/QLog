@@ -575,6 +575,16 @@ public:
         setParam("widget/cwconsole/sendword", state);
     }
 
+    static bool getWidgetChatSelectedRoom()
+    {
+        return getParam("widget/chat/selectedroom", 0).toInt();
+    }
+
+    static void setWidgetChatSelectedRoom(int room)
+    {
+        setParam("widget/chat/selectedroom", room);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;
