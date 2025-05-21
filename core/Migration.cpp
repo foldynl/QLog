@@ -814,6 +814,18 @@ void removeSettings2DB()
     settings.remove("alert/state");
     settings.remove("cwconsole/sendWord");
     settings.remove("chat/last_selected_room");
+    settings.remove("newcontact/frequency");
+    settings.remove("newcontact/mode");
+    settings.remove("newcontact/submode");
+    settings.remove("newcontact/power");
+    settings.remove("newcontact/tabindex");
+    settings.remove("newcontact/qslsent");
+    settings.remove("newcontact/lotwqslsent");
+    settings.remove("newcontact/eqslqslsent");
+    settings.remove("newcontact/qslsentvia");
+    settings.remove("newcontact/propmode");
+    settings.remove("newcontact/tabsexpanded");
+    settings.remove("newcontact/satname");
 }
 bool Migration::settings2DB()
 {
@@ -868,6 +880,20 @@ bool Migration::settings2DB()
     LogParam::setWidgetCWConsoleSendWord(settings.value("cwconsole/sendWord", false).toBool());
 
     LogParam::setWidgetChatSelectedRoom(settings.value("chat/last_selected_room", 0).toInt());
+
+    LogParam::setWidgetNewContactFreq(settings.value("newcontact/frequency", 3.5).toDouble());
+    LogParam::setWidgetNewContactMode(settings.value("newcontact/mode", "CW").toString());
+    LogParam::setWidgetNewContactSubMode(settings.value("newcontact/submode").toString());
+    LogParam::setWidgetNewContactPower(settings.value("newcontact/power", 100.0).toDouble());
+    LogParam::setWidgetNewContactTabIndex(settings.value("newcontact/tabindex", 0).toInt());
+    LogParam::setWidgetNewContactQSLSent(settings.value("newcontact/qslsent", "Q").toString());
+    LogParam::setWidgetNewContactLoTWQSLSent(settings.value("newcontact/lotwqslsent", "Q").toString());
+    LogParam::setWidgetNewContactEQSLQSLSent(settings.value("newcontact/eqslqslsent", "Q").toString());
+    LogParam::setWidgetNewContactQSLVia(settings.value("newcontact/qslsentvia").toString());
+    LogParam::setWidgetNewContactPropMode(settings.value("newcontact/propmode").toString());
+    LogParam::setWidgetNewContactTabsExpanded(settings.value("newcontact/tabsexpanded").toBool());
+    LogParam::setWidgetNewContactSatName(settings.value("newcontact/satname").toString());
+
     return true;
 }
 

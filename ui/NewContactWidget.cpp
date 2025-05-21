@@ -31,6 +31,7 @@
 #include "data/BandPlan.h"
 #include "core/LogParam.h"
 #include "data/ActivityProfile.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.newcontactwidget");
 
@@ -345,17 +346,17 @@ void NewContactWidget::readWidgetSettings()
 {
     FCT_IDENTIFICATION;
 
-    realRigFreq = settings.value("newcontact/frequency", 3.5).toDouble();
-    ui->modeEdit->setCurrentText(settings.value("newcontact/mode", "CW").toString());
-    ui->submodeEdit->setCurrentText(settings.value("newcontact/submode").toString());
-    uiDynamic->powerEdit->setValue(settings.value("newcontact/power", 100).toDouble());
-    ui->qsoTabs->setCurrentIndex(settings.value("newcontact/tabindex", 0).toInt());
-    setComboBaseData(ui->qslSentBox, settings.value("newcontact/qslsent", "Q").toString());
-    setComboBaseData(ui->lotwQslSentBox, settings.value("newcontact/lotwqslsent", "Q").toString());
-    setComboBaseData(ui->eQSLSentBox, settings.value("newcontact/eqslqslsent", "Q").toString());
-    setComboBaseData(ui->qslSentViaBox, settings.value("newcontact/qslsentvia", "").toString());
-    ui->propagationModeEdit->setCurrentText(Data::instance()->propagationModeIDToText(settings.value("newcontact/propmode", QString()).toString()));    
-    tabCollapseBtn->setChecked(settings.value("newcontact/tabsexpanded", "1").toBool());
+    realRigFreq = LogParam::getWidgetNewContactFreq();
+    ui->modeEdit->setCurrentText(LogParam::getWidgetNewContactMode());
+    ui->submodeEdit->setCurrentText(LogParam::getWidgetNewContactSubMode());
+    uiDynamic->powerEdit->setValue(LogParam::getWidgetNewContactPower());
+    ui->qsoTabs->setCurrentIndex(LogParam::getWidgetNewContactTabIndex());
+    setComboBaseData(ui->qslSentBox, LogParam::getWidgetNewContactQSLSent());
+    setComboBaseData(ui->lotwQslSentBox, LogParam::getWidgetNewContactLoTWQSLSent());
+    setComboBaseData(ui->eQSLSentBox, LogParam::getWidgetNewContactEQSLWQSLSent());
+    setComboBaseData(ui->qslSentViaBox, LogParam::getWidgetNewContactQSLVia());
+    ui->propagationModeEdit->setCurrentText(Data::instance()->propagationModeIDToText(LogParam::getWidgetNewContactPropMode()));
+    tabCollapseBtn->setChecked(LogParam::getWidgetNewContactTabsExpanded());
     tabsExpandCollapse();
 }
 
@@ -363,18 +364,17 @@ void NewContactWidget::writeWidgetSetting()
 {
     FCT_IDENTIFICATION;
 
-    settings.setValue("newcontact/mode", ui->modeEdit->currentText());
-    settings.setValue("newcontact/submode", ui->submodeEdit->currentText());
-    settings.setValue("newcontact/frequency", realRigFreq);
-    settings.setValue("newcontact/power", uiDynamic->powerEdit->value());
-    settings.setValue("newcontact/tabindex", ui->qsoTabs->currentIndex());
-    settings.setValue("newcontact/qslsent", ui->qslSentBox->itemData(ui->qslSentBox->currentIndex()));
-    settings.setValue("newcontact/eqslqslsent", ui->eQSLSentBox->itemData(ui->eQSLSentBox->currentIndex()));
-    settings.setValue("newcontact/eqslqslsent", ui->lotwQslSentBox->itemData(ui->lotwQslSentBox->currentIndex()));
-    settings.setValue("newcontact/qslsentvia", ui->qslSentViaBox->itemData(ui->qslSentViaBox->currentIndex()));
-    settings.setValue("newcontact/propmode", Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText()));
-    settings.setValue("newcontact/tabsexpanded", tabCollapseBtn->isChecked());
-
+    LogParam::setWidgetNewContactFreq(realRigFreq);
+    LogParam::setWidgetNewContactMode(ui->modeEdit->currentText());
+    LogParam::setWidgetNewContactSubMode(ui->submodeEdit->currentText());
+    LogParam::setWidgetNewContactPower(uiDynamic->powerEdit->value());
+    LogParam::setWidgetNewContactTabIndex(ui->qsoTabs->currentIndex());
+    LogParam::setWidgetNewContactQSLSent(ui->qslSentBox->itemData(ui->qslSentBox->currentIndex()).toString());
+    LogParam::setWidgetNewContactLoTWQSLSent(ui->lotwQslSentBox->itemData(ui->lotwQslSentBox->currentIndex()).toString());
+    LogParam::setWidgetNewContactEQSLQSLSent(ui->eQSLSentBox->itemData(ui->eQSLSentBox->currentIndex()).toString());
+    LogParam::setWidgetNewContactQSLVia(ui->qslSentViaBox->itemData(ui->qslSentViaBox->currentIndex()).toString());
+    LogParam::setWidgetNewContactPropMode(Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText()));
+    LogParam::setWidgetNewContactTabsExpanded(tabCollapseBtn->isChecked());
 }
 
 /* function read global setting, called when starting or when Setting is reloaded */
@@ -3146,6 +3146,13 @@ bool NewContactWidget::getTabCollapseState() const
     return tabCollapseBtn->isChecked();
 }
 
+void NewContactWidget::finalizeBeforeAppExit()
+{
+    FCT_IDENTIFICATION;
+
+    writeWidgetSetting();
+}
+
 void NewContactWidget::propModeChanged(const QString &propModeText)
 {
     FCT_IDENTIFICATION;
@@ -3153,7 +3160,7 @@ void NewContactWidget::propModeChanged(const QString &propModeText)
     qCDebug(runtime) << "propModeText: " << propModeText << " mode: "<< Data::instance()->propagationModeIDToText("SAT");
     if ( propModeText == Data::instance()->propagationModeIDToText("SAT") )
     {
-        uiDynamic->satNameEdit->setText(settings.value("newcontact/satname", QString()).toString());
+        uiDynamic->satNameEdit->setText(LogParam::getWidgetNewContactSatName());
         updateSatMode();
         uiDynamic->satModeEdit->setEnabled(true);
         uiDynamic->satNameEdit->setEnabled(true);
@@ -3660,13 +3667,13 @@ void NewContactWidget::satNameChanged()
     FCT_IDENTIFICATION;
 
     if ( Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText()) == "SAT")
-        settings.setValue("newcontact/satname", uiDynamic->satNameEdit->text());
+        LogParam::setWidgetNewContactSatName(uiDynamic->satNameEdit->text());
 }
 
-NewContactWidget::~NewContactWidget() {
+NewContactWidget::~NewContactWidget()
+{
     FCT_IDENTIFICATION;
 
-    writeWidgetSetting();
     delete ui;
 }
 

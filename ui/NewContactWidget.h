@@ -26,6 +26,7 @@
 #include "data/POTAEntity.h"
 #include "data/SOTAEntity.h"
 #include "data/WWFFEntity.h"
+#include "component/ShutdownAwareWidget.h"
 
 namespace Ui {
 class NewContactWidget;
@@ -177,7 +178,7 @@ private:
     bool widgetsAllocated;
 };
 
-class NewContactWidget : public QWidget
+class NewContactWidget : public QWidget, public ShutdownAwareWidget
 {
     Q_OBJECT
 
@@ -210,6 +211,7 @@ public:
     double getQSOBearing() const;
     double getQSODistance() const;
     bool getTabCollapseState() const;
+    virtual void finalizeBeforeAppExit() override;
 
 signals:
     void contactAdded(QSqlRecord record);
@@ -376,7 +378,6 @@ private:
     LogLocale locale;
     QDateTime timeOff;
     bool callbookSearchPaused;
-    QSettings settings;
     Band bandTX;
     Band bandRX;
     QSqlQuery prevQSOExactMatchQuery;

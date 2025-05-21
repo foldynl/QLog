@@ -585,6 +585,126 @@ public:
         setParam("widget/chat/selectedroom", room);
     }
 
+    static double getWidgetNewContactFreq()
+    {
+        return getParam("widget/newcontact/freq", 3.5).toDouble();
+    }
+
+    static void setWidgetNewContactFreq(double freq)
+    {
+        setParam("widget/newcontact/freq", freq);
+    }
+
+    static QString getWidgetNewContactMode()
+    {
+        return getParam("widget/newcontact/mode", "CW").toString();
+    }
+
+    static void setWidgetNewContactMode(const QString &mode)
+    {
+        setParam("widget/newcontact/mode", mode);
+    }
+
+    static QString getWidgetNewContactSubMode()
+    {
+        return getParam("widget/newcontact/submode").toString();
+    }
+
+    static void setWidgetNewContactSubMode(const QString &submode)
+    {
+        setParam("widget/newcontact/submode", submode);
+    }
+
+    static double getWidgetNewContactPower()
+    {
+        return getParam("widget/newcontact/power", 100).toDouble();
+    }
+
+    static void setWidgetNewContactPower(double power)
+    {
+        setParam("widget/newcontact/power", power);
+    }
+
+    static int getWidgetNewContactTabIndex()
+    {
+        return getParam("widget/newcontact/tabindex", 0).toInt();
+    }
+
+    static void setWidgetNewContactTabIndex(int index)
+    {
+        setParam("widget/newcontact/tabindex", index);
+    }
+
+    static QString getWidgetNewContactQSLSent()
+    {
+        return getParam("widget/newcontact/sqlsent", "Q").toString();
+    }
+
+    static void setWidgetNewContactQSLSent(const QString &qslsent)
+    {
+        setParam("widget/newcontact/sqlsent", qslsent);
+    }
+
+    static QString getWidgetNewContactLoTWQSLSent()
+    {
+        return getParam("widget/newcontact/lotwsqlsent", "Q").toString();
+    }
+
+    static void setWidgetNewContactLoTWQSLSent(const QString &qslsent)
+    {
+        setParam("widget/newcontact/lotwsqlsent", qslsent);
+    }
+
+    static QString getWidgetNewContactEQSLWQSLSent()
+    {
+        return getParam("widget/newcontact/eqslsqlsent", "Q").toString();
+    }
+
+    static void setWidgetNewContactEQSLQSLSent(const QString &qslsent)
+    {
+        setParam("widget/newcontact/eqslsqlsent", qslsent);
+    }
+
+    static QString getWidgetNewContactQSLVia()
+    {
+        return getParam("widget/newcontact/qslvia").toString();
+    }
+
+    static void setWidgetNewContactQSLVia(const QString &qslvia)
+    {
+        setParam("widget/newcontact/qslvia", qslvia);
+    }
+
+    static QString getWidgetNewContactPropMode()
+    {
+        return getParam("widget/newcontact/propmode").toString();
+    }
+
+    static void setWidgetNewContactPropMode(const QString &propmode)
+    {
+        setParam("widget/newcontact/propmode", propmode);
+    }
+
+    static bool getWidgetNewContactTabsExpanded()
+    {
+        return getParam("widget/newcontact/tabsexpand", true).toBool();
+    }
+
+    static void setWidgetNewContactTabsExpanded(bool state)
+    {
+        setParam("widget/newcontact/tabsexpand", state);
+    }
+
+    static QString getWidgetNewContactSatName()
+    {
+        return getParam("widget/newcontact/satname").toString();
+    }
+
+    static void setWidgetNewContactSatName(const QString &name)
+    {
+        setParam("widget/newcontact/satname", name);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

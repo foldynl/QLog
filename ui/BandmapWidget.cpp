@@ -59,13 +59,12 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
     ui->setupUi(this);
     setObjectName((isNonVfo) ? widgetID : MAIN_WIDGET_OBJECT_NAME);
 
-    QSettings settings;
-    double newContactFreq = (lastSeenVFOFreq == 0.0 ) ? settings.value("newcontact/frequency", 3.5).toDouble()
+    double newContactFreq = (lastSeenVFOFreq == 0.0 ) ? LogParam::getWidgetNewContactFreq()
                                                       : lastSeenVFOFreq;
     double ritFreq = newContactFreq + RigProfilesManager::instance()->getCurProfile1().ritOffset;
     double xitFreq = newContactFreq + RigProfilesManager::instance()->getCurProfile1().xitOffset;
-    const QString &mode = settings.value("newcontact/mode", "CW").toString();
-    const QString &submode = settings.value("newcontact/submode").toString();
+    const QString &mode = LogParam::getWidgetNewContactMode();
+    const QString &submode = LogParam::getWidgetNewContactSubMode();
 
     keepRXCenter = LogParam::getBandmapCenterRX(objectName());
 

@@ -20,6 +20,7 @@
 #include "rig/Rig.h"
 #include "data/BandPlan.h"
 #include "rig/macros.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.onlinemapwidget");
 
@@ -36,8 +37,6 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     main_page->setWebChannel(&channel);
 
     setPage(main_page);
@@ -48,7 +47,7 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
     setContextMenuPolicy(Qt::NoContextMenu);
     channel.registerObject("layerControlHandler", &webChannelHandler);
 
-    double freq = settings.value("newcontact/frequency", 3.5).toDouble();
+    double freq = LogParam::getWidgetNewContactFreq();
     freq += RigProfilesManager::instance()->getCurProfile1().ritOffset;
 
     setIBPBand(VFO1, 0.0, freq, 0.0);
