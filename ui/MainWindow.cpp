@@ -7,7 +7,6 @@
 #include "ui/SettingsDialog.h"
 #include "ui/ImportDialog.h"
 #include "ui/ExportDialog.h"
-#include "ui/LotwDialog.h"
 #include "core/FldigiTCPServer.h"
 #include "rig/Rig.h"
 #include "rotator/Rotator.h"
@@ -16,18 +15,10 @@
 #include "core/debug.h"
 #include "ui/NewContactWidget.h"
 #include "ui/QSOFilterDialog.h"
-#include "ui/Eqsldialog.h"
-#include "ui/ClublogDialog.h"
-#include "ui/QrzDialog.h"
 #include "ui/AwardsDialog.h"
-#include "service/lotw/Lotw.h"
-#include "service/eqsl/Eqsl.h"
-#include "service/qrzcom/QRZ.h"
 #include "core/PropConditions.h"
 #include "data/MainLayoutProfile.h"
 #include "ui/EditActivitiesDialog.h"
-#include "service/hrdlog/HRDLog.h"
-#include "ui/HRDLogDialog.h"
 #include "ui/ProfileImageWidget.h"
 #include "core/LogParam.h"
 #include "core/QSOFilterManager.h"
@@ -1534,89 +1525,6 @@ void MainWindow::exportLog() {
     ExportDialog dialog;
     dialog.exec();
     ui->logbookWidget->updateTable();
-}
-
-void MainWindow::showLotw()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! LotwBase::getUsername().isEmpty() )
-    {
-        LotwDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("LoTW is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showeQSL()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! EQSLBase::getUsername().isEmpty() )
-    {
-        EqslDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("eQSL is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showClublog()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! ClubLogBase::getEmail().isEmpty() )
-    {
-        ClublogDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("Clublog is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showHRDLog()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! HRDLogBase::getRegisteredCallsign().isEmpty() )
-    {
-        HRDLogDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("HRDLog is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showQRZ()
-{
-    FCT_IDENTIFICATION;
-
-    QString logbookAPIKey = QRZBase::getLogbookAPIKey();
-
-    if ( !logbookAPIKey.isEmpty() )
-    {
-        QRZDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("QRZ.com is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-
 }
 
 void MainWindow::showAwards()

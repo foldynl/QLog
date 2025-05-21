@@ -133,23 +133,19 @@ SOURCES += \
         ui/CWConsoleWidget.cpp \
         ui/ChatWidget.cpp \
         ui/ClockWidget.cpp \
-        ui/ClublogDialog.cpp \
         ui/ColumnSettingDialog.cpp \
         ui/DownloadQSLDialog.cpp \
         ui/DxFilterDialog.cpp \
         ui/DxWidget.cpp \
         ui/DxccTableWidget.cpp \
         ui/EditActivitiesDialog.cpp \
-        ui/Eqsldialog.cpp \
         ui/ExportDialog.cpp \
-        ui/HRDLogDialog.cpp \
         ui/ImportDialog.cpp \
         ui/InputPasswordDialog.cpp \
         ui/KSTChatWidget.cpp \
         ui/KSTHighlightRuleDetail.cpp \
         ui/KSTHighlighterSettingDialog.cpp \
         ui/LogbookWidget.cpp \
-        ui/LotwDialog.cpp \
         ui/MainWindow.cpp \
         ui/MapWebChannelHandler.cpp \
         ui/MapWidget.cpp \
@@ -162,7 +158,6 @@ SOURCES += \
         ui/QSOFilterDetail.cpp \
         ui/QSOFilterDialog.cpp \
         ui/QTableQSOView.cpp \
-        ui/QrzDialog.cpp \
         ui/RigWidget.cpp \
         ui/RotatorWidget.cpp \
         ui/SettingsDialog.cpp \
@@ -278,23 +273,19 @@ HEADERS += \
         ui/CWConsoleWidget.h \
         ui/ChatWidget.h \
         ui/ClockWidget.h \
-        ui/ClublogDialog.h \
         ui/ColumnSettingDialog.h \
         ui/DownloadQSLDialog.h \
         ui/DxFilterDialog.h \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
         ui/EditActivitiesDialog.h \
-        ui/Eqsldialog.h \
         ui/ExportDialog.h \
-        ui/HRDLogDialog.h \
         ui/ImportDialog.h \
         ui/InputPasswordDialog.h \
         ui/KSTChatWidget.h \
         ui/KSTHighlightRuleDetail.h \
         ui/KSTHighlighterSettingDialog.h \
         ui/LogbookWidget.h \
-        ui/LotwDialog.h \
         ui/MainWindow.h \
         ui/MapWebChannelHandler.h \
         ui/MapWidget.h \
@@ -307,7 +298,6 @@ HEADERS += \
         ui/QSOFilterDetail.h \
         ui/QSOFilterDialog.h \
         ui/QTableQSOView.h \
-        ui/QrzDialog.h \
         ui/ShowUploadDialog.h \
         ui/SplashScreen.h \
         ui/RigWidget.h \
@@ -338,23 +328,19 @@ FORMS += \
         ui/CWConsoleWidget.ui \
         ui/ChatWidget.ui \
         ui/ClockWidget.ui \
-        ui/ClublogDialog.ui \
         ui/ColumnSettingDialog.ui \
         ui/ColumnSettingSimpleDialog.ui \
         ui/DownloadQSLDialog.ui \
         ui/DxFilterDialog.ui \
         ui/DxWidget.ui \
         ui/EditActivitiesDialog.ui \
-        ui/Eqsldialog.ui \
         ui/ExportDialog.ui \
-        ui/HRDLogDialog.ui \
         ui/ImportDialog.ui \
         ui/InputPasswordDialog.ui \
         ui/KSTChatWidget.ui \
         ui/KSTHighlightRuleDetail.ui \
         ui/KSTHighlighterSettingDialog.ui \
         ui/LogbookWidget.ui \
-        ui/LotwDialog.ui \
         ui/MainWindow.ui \
         ui/NewContactWidget.ui \
         ui/PaperQSLDialog.ui \
@@ -363,7 +349,6 @@ FORMS += \
         ui/QSODetailDialog.ui \
         ui/QSOFilterDetail.ui \
         ui/QSOFilterDialog.ui \
-        ui/QrzDialog.ui \
         ui/RigWidget.ui \
         ui/RotatorWidget.ui \
         ui/SettingsDialog.ui \

@@ -53,11 +53,6 @@ private slots:
     void showStatistics();
     void importLog();
     void exportLog();
-    void showLotw();
-    void showeQSL();
-    void showClublog();
-    void showHRDLog();
-    void showQRZ();
     void showAwards();
     void showAbout();
     void showWikiHelp();

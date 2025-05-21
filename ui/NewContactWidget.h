@@ -318,7 +318,7 @@ private:
     void updatePartnerLocTime();
     void setDefaultReport();
     void addAddlFields(QSqlRecord &record, const StationProfile &profile);
-    bool eventFilter(QObject *object, QEvent *event);
+    bool eventFilter(QObject *object, QEvent *event) override;
     bool isQSOTimeStarted();
     void QSYContactWiping(double);
     void connectFieldChanged();
