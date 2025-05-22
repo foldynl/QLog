@@ -8,6 +8,7 @@
 
 #include "data/Data.h"
 #include "models/LogbookModel.h"
+#include "data/BandPlan.h"
 
 class LogParam : public QObject
 {
@@ -778,6 +779,191 @@ public:
     static void setWsjtxWidgetState(const QByteArray &state)
     {
         setParam("wsjtx/widgetstate", state.toBase64());
+    }
+
+    static uint getDXCFilterDxccStatus()
+    {
+        return getParam("dxc/filter/dx/dxccstatus", DxccStatus::All).toUInt();
+    }
+
+    static void setDXCFilterDxccStatus(uint mask)
+    {
+        setParam("dxc/filter/dx/dxccstatus", mask);
+    }
+
+    static QString getDXCFilterContRE()
+    {
+        return getParam("dxc/filter/dx/contregexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
+    }
+
+    static void setDXCFilterContRE(const QString &re)
+    {
+        setParam("dxc/filter/dx/contregexp", re);
+    }
+
+    static QString getDXCFilterSpotterContRE()
+    {
+        return getParam("dxc/filter/spotter/contregexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
+    }
+
+    static void setDXCFilterSpotterContRE(const QString &re)
+    {
+        setParam("dxc/filter/spotter/contregexp", re);
+    }
+
+    static bool getDXCFilterDedup()
+    {
+        return getParam("dxc/filter/dedup", false).toBool();
+    }
+
+    static void setDXCFilterDedup(bool state)
+    {
+        setParam("dxc/filter/dedup", state);
+    }
+
+    static int getDXCFilterDedupTime(int defaultValue)
+    {
+        return getParam("dxc/filter/deduptime", defaultValue).toInt();
+    }
+
+    static void setDXCFilterDedupTime(int value)
+    {
+        setParam("dxc/filter/deduptime", value);
+    }
+
+    static int getDXCFilterDedupFreq(int defaultValue)
+    {
+        return getParam("dxc/filter/dedupfreq", defaultValue).toInt();
+    }
+
+    static void setDXCFilterDedupFreq(int value)
+    {
+        setParam("dxc/filter/dedupfreq", value);
+    }
+
+    static QStringList getDXCFilterMemberlists()
+    {
+        return getParamStringList("dxc/filter/dx/memberlists");
+    }
+
+    static void setDXCFilterMemberlists(const QStringList &list)
+    {
+        setParam("dxc/filter/dx/memberlists", list);
+    }
+
+    static bool getDXCAutoconnectServer()
+    {
+        return getParam("dxc/autoconnect", false).toBool();
+    }
+
+    static void setDXCAutoconnectServer(bool state)
+    {
+        setParam("dxc/autoconnect", state);
+    }
+
+    static bool getDXCKeepQSOs()
+    {
+        return getParam("dxc/keepqsos", false).toBool();
+    }
+
+    static void setDXCKeepQSOs(bool state)
+    {
+        setParam("dxc/keepqsos", state);
+    }
+
+    static QByteArray getDXCDXTableState()
+    {
+        return QByteArray::fromBase64(getParam("dxc/dxtablestate").toByteArray());
+    }
+
+    static void setDXCDXTableState(const QByteArray &state)
+    {
+        setParam("dxc/dxtablestate", state.toBase64());
+    }
+
+    static QByteArray getDXCWCYTableState()
+    {
+        return QByteArray::fromBase64(getParam("dxc/wcytablestate").toByteArray());
+    }
+
+    static void setDXCWCYTableState(const QByteArray &state)
+    {
+        setParam("dxc/wcytablestate", state.toBase64());
+    }
+
+    static QByteArray getDXCWWVTableState()
+    {
+        return QByteArray::fromBase64(getParam("dxc/wwvtablestate").toByteArray());
+    }
+
+    static void setDXCWWVTableState(const QByteArray &state)
+    {
+        setParam("dxc/wwvtablestate", state.toBase64());
+    }
+
+    static QByteArray getDXCTOALLTableState()
+    {
+        return QByteArray::fromBase64(getParam("dxc/toalltablestate").toByteArray());
+    }
+
+    static void setDXCTOALLTableState(const QByteArray &state)
+    {
+        setParam("dxc/toalltablestate", state.toBase64());
+    }
+
+    static int getDXCConsoleFontSize()
+    {
+        return getParam("dxc/console/fontsize", -1).toInt();
+    }
+
+    static void setDXCConsoleFontSize(int value)
+    {
+        setParam("dxc/console/fontsize", value);
+    }
+
+    static QStringList getDXCServerlist()
+    {
+        return getParamStringList("dxc/serverlist");
+    }
+
+    static void setDXCServerlist(const QStringList &list)
+    {
+        setParam("dxc/serverlist", list);
+    }
+
+    static QString getDXCLastServer()
+    {
+        return getParam("dxc/lastserver").toString();
+    }
+
+    static void setDXCLastServer(const QString &server)
+    {
+        setParam("dxc/lastserver", server);
+    }
+
+    static QString getDXCFilterModeRE()
+    {
+        QString defaultValue = "NOTHING|"
+                               + BandPlan::MODE_GROUP_STRING_PHONE + "|"
+                               + BandPlan::MODE_GROUP_STRING_CW + "|"
+                               + BandPlan::MODE_GROUP_STRING_FT8 + "|"
+                               + BandPlan::MODE_GROUP_STRING_DIGITAL;
+        return getParam("dxc/filter/dx/moderegexp", defaultValue).toString();
+    }
+
+    static void setDXCFilterModeRE(const QString &re)
+    {
+        setParam("dxc/filter/dx/moderegexp", re);
+    }
+
+    static QStringList getDXCExcludedBands()
+    {
+        return getParamStringList("dxc/filter/excludedbands");
+    }
+
+    static void setDXCExcludedBands(const QStringList &excluded)
+    {
+        setParam("dxc/filter/excludedbands", excluded);
     }
 
 private:

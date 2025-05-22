@@ -10,6 +10,7 @@
 #include "LOVDownloader.h"
 #include "service/clublog/ClubLog.h"
 #include "logformat/AdxFormat.h"
+#include "ui/DxWidget.h"
 
 MODULE_IDENTIFICATION("qlog.core.migration");
 
@@ -838,6 +839,26 @@ void removeSettings2DB()
     settings.remove("wsjtx/filter_snr");
     settings.remove("wsjtx/filter_dx_member_list");
     settings.remove("wsjtx/state");
+    settings.remove("dxc/filter_dxcc_status");
+    settings.remove("dxc/filter_cont_regexp");
+    settings.remove("dxc/filter_spotter_cont_regexp");
+    settings.remove("dxc/filter_deduplication");
+    settings.remove("dxc/filter_duplicationtime");
+    settings.remove("dxc/filter_deduplicationfreq");
+    settings.remove("dxc/filter_dx_member_list");
+    settings.remove("dxc/autoconnect");
+    settings.remove("dxc/keepqsos");
+    settings.remove("dxc/dxtablestate");
+    settings.remove("dxc/wcytablestate");
+    settings.remove("dxc/wwvtablestate");
+    settings.remove("dxc/toalltablestate");
+    settings.remove("dxc/consolefontsize");
+    settings.remove("dxc/servers");
+    settings.remove("dxc/last_server");
+    settings.remove("dxc/filter_mode_cw");
+    settings.remove("dxc/filter_mode_phone");
+    settings.remove("dxc/filter_mode_digital");
+    settings.remove("dxc/filter_mode_ft8");
 }
 bool Migration::settings2DB()
 {
@@ -922,6 +943,39 @@ bool Migration::settings2DB()
     LogParam::setWsjtxFilterDistance(settings.value("wsjtx/filter_snr", -41).toInt());
     LogParam::setWsjtxMemberlists(settings.value("wsjtx/filter_dx_member_list").toStringList());
     LogParam::setWsjtxWidgetState(settings.value("wsjtx/state").toByteArray());
+
+    LogParam::setDXCFilterDxccStatus(settings.value("dxc/filter_dxcc_status", DxccStatus::All).toUInt());
+    LogParam::setDXCFilterContRE(settings.value("dxc/filter_cont_regexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString());
+    LogParam::setDXCFilterSpotterContRE(settings.value("dxc/filter_spotter_cont_regexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString());
+    LogParam::setDXCFilterDedup(settings.value("dxc/filter_deduplication", false).toBool());
+    LogParam::setDXCFilterDedupTime(settings.value("dxc/filter_duplicationtime", DEDUPLICATION_TIME).toInt());
+    LogParam::setDXCFilterDedupFreq(settings.value("dxc/filter_deduplicationfreq", DEDUPLICATION_FREQ_TOLERANCE).toInt());
+    LogParam::setDXCFilterMemberlists(settings.value("dxc/filter_dx_member_list", QStringList()).toStringList());
+    LogParam::setDXCAutoconnectServer(settings.value("dxc/autoconnect", false).toBool());
+    LogParam::setDXCKeepQSOs(settings.value("dxc/keepqsos", false).toBool());
+    LogParam::setDXCDXTableState(settings.value("dxc/dxtablestate").toByteArray());
+    LogParam::setDXCWCYTableState(settings.value("dxc/wcytablestate").toByteArray());
+    LogParam::setDXCWWVTableState(settings.value("dxc/wwvtablestate").toByteArray());
+    LogParam::setDXCTOALLTableState(settings.value("dxc/toalltablestate").toByteArray());
+    LogParam::setDXCConsoleFontSize(settings.value("dxc/consolefontsize", -1).toInt());
+    LogParam::setDXCServerlist(settings.value("dxc/servers", {"hamqth.com:7300"}).toStringList());
+    LogParam::setDXCLastServer(settings.value("dxc/last_server").toString());
+    QString value("NOTHING");
+    if ( settings.value("dxc/filter_mode_cw",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_CW);
+    if ( settings.value("dxc/filter_mode_phone",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_PHONE);
+    if ( settings.value("dxc/filter_mode_digital",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_DIGITAL);
+    if ( settings.value("dxc/filter_mode_ft8",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_FT8);
+    LogParam::setDXCFilterModeRE(value);
+
+    const QList<Band> &bands = BandPlan::bandsList(false, true);
+    QStringList excludedBandFilter;
+    for ( const Band &band : bands )
+    {
+        if ( !settings.value("dxc/filter_band_" + band.name,true).toBool())
+            excludedBandFilter << band.name;
+    }
+    qInfo() << excludedBandFilter;
+    LogParam::setDXCExcludedBands(excludedBandFilter);
     return true;
 }
 
