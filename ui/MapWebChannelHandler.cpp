@@ -1,15 +1,14 @@
 #include <QFile>
-#include <QSettings>
 
 #include "MapWebChannelHandler.h"
 #include "core/debug.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.maplayercontrolhandler");
 
 MapWebChannelHandler::MapWebChannelHandler(const QString &configID,
-                                               QObject *parent)
-    : QObject(parent),
-      configID(configID)
+                                           QObject *parent)
+    : QObject(parent), configID(configID)
 {
 }
 
@@ -102,19 +101,16 @@ void MapWebChannelHandler::restoreLayerControlStates(QWebEnginePage *page)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     QString js;
 
-    settings.beginGroup(QString("%1/layerstate").arg(configID));
-
-    const QStringList &keys = settings.allKeys();
+    const QStringList &keys = LogParam::getMapLayerStates(configID);
 
     for ( const QString &key : keys)
     {
-        qCDebug(runtime) << "key:" << key << "value:" << settings.value(key);
+        qCDebug(runtime) << "key:" << key << "value:" << LogParam::getMapLayerState(configID, key);
 
-        js += ( settings.value(key).toBool() ) ? QString("map.addLayer(%1);").arg(key)
-                                               : QString("map.removeLayer(%1);").arg(key);
+        js += ( LogParam::getMapLayerState(configID, key) ) ? QString("map.addLayer(%1);").arg(key)
+                                                            : QString("map.removeLayer(%1);").arg(key);
     }
     qCDebug(runtime) << js;
 
@@ -177,10 +173,8 @@ void MapWebChannelHandler::handleLayerSelectionChanged(const QVariant &data, con
 
     qCDebug(function_parameters) << data << state;
 
-    QSettings settings;
-
-    settings.setValue(QString("%1/layerstate/%2").arg(configID,data.toString()),
-                      (state.toString().toLower() == "on") ? true : false);
+    LogParam::setMapLayerState(configID, data.toString(),
+                               (state.toString().toLower() == "on") ? true : false);
 }
 
 void MapWebChannelHandler::chatCallsignClicked(const QVariant &data)

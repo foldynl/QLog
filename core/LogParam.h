@@ -705,6 +705,21 @@ public:
         setParam("widget/newcontact/satname", name);
     }
 
+    static QStringList getMapLayerStates(const QString &widgetID)
+    {
+        return getKeys("widget/" + widgetID + "/layerstate/");
+    }
+
+    static bool getMapLayerState(const QString &widgetID, const QString &layerName)
+    {
+        return getParam("widget/" +  widgetID + "/layerstate/" + layerName).toBool();
+    }
+
+    static void setMapLayerState(const QString &widgetID, const QString &layerName, bool state)
+    {
+        setParam("widget/" + widgetID + "/layerstate/" + layerName, state);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

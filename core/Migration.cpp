@@ -826,6 +826,13 @@ void removeSettings2DB()
     settings.remove("newcontact/propmode");
     settings.remove("newcontact/tabsexpanded");
     settings.remove("newcontact/satname");
+    settings.beginGroup("onlinemap");
+    settings.remove("");
+    settings.endGroup();
+    settings.beginGroup("qsodetail");
+    settings.remove("");
+    settings.endGroup();
+
 }
 bool Migration::settings2DB()
 {
@@ -893,6 +900,16 @@ bool Migration::settings2DB()
     LogParam::setWidgetNewContactPropMode(settings.value("newcontact/propmode").toString());
     LogParam::setWidgetNewContactTabsExpanded(settings.value("newcontact/tabsexpanded").toBool());
     LogParam::setWidgetNewContactSatName(settings.value("newcontact/satname").toString());
+
+    settings.beginGroup("onlinemap/layerstate");
+    for ( const QString &key : settings.allKeys())
+        LogParam::setMapLayerState("onlinemap", key, settings.value(key).toBool());
+    settings.endGroup();
+
+    settings.beginGroup("qsodetail/layerstate");
+    for ( const QString &key : settings.allKeys())
+        LogParam::setMapLayerState("qsodetail", key, settings.value(key).toBool());
+    settings.endGroup();
 
     return true;
 }

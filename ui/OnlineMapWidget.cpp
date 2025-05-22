@@ -6,7 +6,6 @@
 #include <QVector3D>
 #include <QtMath>
 #include <QFile>
-#include <QSettings>
 #include "OnlineMapWidget.h"
 #include "core/debug.h"
 #include "data/Gridsquare.h"
