@@ -881,25 +881,25 @@ bool Migration::settings2DB()
 
     LogParam::setEnabledMemberlists(settings.value("memberlists/enabled").toStringList());
 
-    LogParam::setWidgetAlertAging(settings.value("alert/alert_aging").toInt());
-    LogParam::setWidgetAlertWidgetState(settings.value("alert/state").toByteArray());
+    LogParam::setAlertAging(settings.value("alert/alert_aging").toInt());
+    LogParam::setAlertWidgetState(settings.value("alert/state").toByteArray());
 
-    LogParam::setWidgetCWConsoleSendWord(settings.value("cwconsole/sendWord", false).toBool());
+    LogParam::setCWConsoleSendWord(settings.value("cwconsole/sendWord", false).toBool());
 
-    LogParam::setWidgetChatSelectedRoom(settings.value("chat/last_selected_room", 0).toInt());
+    LogParam::setChatSelectedRoom(settings.value("chat/last_selected_room", 0).toInt());
 
-    LogParam::setWidgetNewContactFreq(settings.value("newcontact/frequency", 3.5).toDouble());
-    LogParam::setWidgetNewContactMode(settings.value("newcontact/mode", "CW").toString());
-    LogParam::setWidgetNewContactSubMode(settings.value("newcontact/submode").toString());
-    LogParam::setWidgetNewContactPower(settings.value("newcontact/power", 100.0).toDouble());
-    LogParam::setWidgetNewContactTabIndex(settings.value("newcontact/tabindex", 0).toInt());
-    LogParam::setWidgetNewContactQSLSent(settings.value("newcontact/qslsent", "Q").toString());
-    LogParam::setWidgetNewContactLoTWQSLSent(settings.value("newcontact/lotwqslsent", "Q").toString());
-    LogParam::setWidgetNewContactEQSLQSLSent(settings.value("newcontact/eqslqslsent", "Q").toString());
-    LogParam::setWidgetNewContactQSLVia(settings.value("newcontact/qslsentvia").toString());
-    LogParam::setWidgetNewContactPropMode(settings.value("newcontact/propmode").toString());
-    LogParam::setWidgetNewContactTabsExpanded(settings.value("newcontact/tabsexpanded").toBool());
-    LogParam::setWidgetNewContactSatName(settings.value("newcontact/satname").toString());
+    LogParam::setNewContactFreq(settings.value("newcontact/frequency", 3.5).toDouble());
+    LogParam::setNewContactMode(settings.value("newcontact/mode", "CW").toString());
+    LogParam::setNewContactSubMode(settings.value("newcontact/submode").toString());
+    LogParam::setNewContactPower(settings.value("newcontact/power", 100.0).toDouble());
+    LogParam::setNewContactTabIndex(settings.value("newcontact/tabindex", 0).toInt());
+    LogParam::setNewContactQSLSent(settings.value("newcontact/qslsent", "Q").toString());
+    LogParam::setNewContactLoTWQSLSent(settings.value("newcontact/lotwqslsent", "Q").toString());
+    LogParam::setNewContactEQSLQSLSent(settings.value("newcontact/eqslqslsent", "Q").toString());
+    LogParam::setNewContactQSLVia(settings.value("newcontact/qslsentvia").toString());
+    LogParam::setNewContactPropMode(settings.value("newcontact/propmode").toString());
+    LogParam::setNewContactTabsExpanded(settings.value("newcontact/tabsexpanded").toBool());
+    LogParam::setNewContactSatName(settings.value("newcontact/satname").toString());
 
     settings.beginGroup("onlinemap/layerstate");
     for ( const QString &key : settings.allKeys())

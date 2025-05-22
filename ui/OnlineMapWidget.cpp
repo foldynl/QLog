@@ -46,7 +46,7 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
     setContextMenuPolicy(Qt::NoContextMenu);
     channel.registerObject("layerControlHandler", &webChannelHandler);
 
-    double freq = LogParam::getWidgetNewContactFreq();
+    double freq = LogParam::getNewContactFreq();
     freq += RigProfilesManager::instance()->getCurProfile1().ritOffset;
 
     setIBPBand(VFO1, 0.0, freq, 0.0);

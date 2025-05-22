@@ -183,14 +183,14 @@ void CWConsoleWidget::saveSendWordConfig(bool state)
 {
     FCT_IDENTIFICATION;
 
-    LogParam::setWidgetCWConsoleSendWord(state);
+    LogParam::setCWConsoleSendWord(state);
 }
 
 bool CWConsoleWidget::getSendWordConfig()
 {
     FCT_IDENTIFICATION;
 
-    return LogParam::getWidgetCWConsoleSendWord();
+    return LogParam::getCWConsoleSendWord();
 }
 
 void CWConsoleWidget::refreshKeyProfileCombo()

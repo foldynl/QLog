@@ -26,7 +26,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
     QWidget *w = ui->chatTabWidget->widget(0);
     w->setProperty("chatName", tr("New"));
     ui->chatTabWidget->setTabText(0, generateTabName(w));
-    ui->chatRoomCombo->setCurrentIndex(LogParam::getWidgetChatSelectedRoom());
+    ui->chatRoomCombo->setCurrentIndex(LogParam::getChatSelectedRoom());
 }
 
 ChatWidget::~ChatWidget()
@@ -209,7 +209,7 @@ void ChatWidget::connectChat()
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
     }
 #endif
-    LogParam::setWidgetChatSelectedRoom(ui->chatRoomCombo->currentIndex());
+    LogParam::setChatSelectedRoom(ui->chatRoomCombo->currentIndex());
 }
 
 void ChatWidget::closeTab(int tabIndex)

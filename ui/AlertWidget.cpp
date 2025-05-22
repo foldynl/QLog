@@ -33,7 +33,7 @@ AlertWidget::AlertWidget(QWidget *parent) :
 
     restoreTableHeaderState();
 
-    ui->clearAlertOlderSpinBox->setValue(LogParam::getWidgetAlertAging());
+    ui->clearAlertOlderSpinBox->setValue(LogParam::getAlertAging());
 
     aging_timer = new QTimer;
     connect(aging_timer, &QTimer::timeout, this, &AlertWidget::alertAging);
@@ -86,7 +86,7 @@ void AlertWidget::alertAgingChanged(int)
 {
     FCT_IDENTIFICATION;
 
-    LogParam::setWidgetAlertAging(ui->clearAlertOlderSpinBox->value());
+    LogParam::setAlertAging(ui->clearAlertOlderSpinBox->value());
 }
 
 void AlertWidget::showEditRules()
@@ -169,14 +169,14 @@ void AlertWidget::saveTableHeaderState()
     FCT_IDENTIFICATION;
 
     const QByteArray &state = ui->alertTableView->horizontalHeader()->saveState();
-    LogParam::setWidgetAlertWidgetState(state);
+    LogParam::setAlertWidgetState(state);
 }
 
 void AlertWidget::restoreTableHeaderState()
 {
     FCT_IDENTIFICATION;
 
-    const QByteArray &state = LogParam::getWidgetAlertWidgetState();
+    const QByteArray &state = LogParam::getAlertWidgetState();
 
     if ( !state.isEmpty() )
         ui->alertTableView->horizontalHeader()->restoreState(state);

@@ -545,179 +545,179 @@ public:
         setParam("memberlist/enabledlists", list);
     }
 
-    static int getWidgetAlertAging()
+    static int getAlertAging()
     {
-        return getParam("widget/alert/aging").toInt();
+        return getParam("alert/aging").toInt();
     }
 
-    static void setWidgetAlertAging(int aging)
+    static void setAlertAging(int aging)
     {
-        setParam("widget/alert/aging", aging);
+        setParam("alert/aging", aging);
     }
 
-    static QByteArray getWidgetAlertWidgetState()
+    static QByteArray getAlertWidgetState()
     {
-        return QByteArray::fromBase64(getParam("widget/alert/widgetstate").toByteArray());
+        return QByteArray::fromBase64(getParam("alert/widgetstate").toByteArray());
     }
 
-    static void setWidgetAlertWidgetState(const QByteArray &state)
+    static void setAlertWidgetState(const QByteArray &state)
     {
-        setParam("widget/alert/widgetstate", state.toBase64());
+        setParam("alert/widgetstate", state.toBase64());
     }
 
-    static bool getWidgetCWConsoleSendWord()
+    static bool getCWConsoleSendWord()
     {
-        return getParam("widget/cwconsole/sendword", false).toBool();
+        return getParam("cwconsole/sendword", false).toBool();
     }
 
-    static void setWidgetCWConsoleSendWord(bool state)
+    static void setCWConsoleSendWord(bool state)
     {
-        setParam("widget/cwconsole/sendword", state);
+        setParam("cwconsole/sendword", state);
     }
 
-    static bool getWidgetChatSelectedRoom()
+    static bool getChatSelectedRoom()
     {
-        return getParam("widget/chat/selectedroom", 0).toInt();
+        return getParam("chat/selectedroom", 0).toInt();
     }
 
-    static void setWidgetChatSelectedRoom(int room)
+    static void setChatSelectedRoom(int room)
     {
-        setParam("widget/chat/selectedroom", room);
+        setParam("chat/selectedroom", room);
     }
 
-    static double getWidgetNewContactFreq()
+    static double getNewContactFreq()
     {
-        return getParam("widget/newcontact/freq", 3.5).toDouble();
+        return getParam("newcontact/freq", 3.5).toDouble();
     }
 
-    static void setWidgetNewContactFreq(double freq)
+    static void setNewContactFreq(double freq)
     {
-        setParam("widget/newcontact/freq", freq);
+        setParam("newcontact/freq", freq);
     }
 
-    static QString getWidgetNewContactMode()
+    static QString getNewContactMode()
     {
-        return getParam("widget/newcontact/mode", "CW").toString();
+        return getParam("newcontact/mode", "CW").toString();
     }
 
-    static void setWidgetNewContactMode(const QString &mode)
+    static void setNewContactMode(const QString &mode)
     {
-        setParam("widget/newcontact/mode", mode);
+        setParam("newcontact/mode", mode);
     }
 
-    static QString getWidgetNewContactSubMode()
+    static QString getNewContactSubMode()
     {
-        return getParam("widget/newcontact/submode").toString();
+        return getParam("newcontact/submode").toString();
     }
 
-    static void setWidgetNewContactSubMode(const QString &submode)
+    static void setNewContactSubMode(const QString &submode)
     {
-        setParam("widget/newcontact/submode", submode);
+        setParam("newcontact/submode", submode);
     }
 
-    static double getWidgetNewContactPower()
+    static double getNewContactPower()
     {
-        return getParam("widget/newcontact/power", 100).toDouble();
+        return getParam("newcontact/power", 100).toDouble();
     }
 
-    static void setWidgetNewContactPower(double power)
+    static void setNewContactPower(double power)
     {
-        setParam("widget/newcontact/power", power);
+        setParam("newcontact/power", power);
     }
 
-    static int getWidgetNewContactTabIndex()
+    static int getNewContactTabIndex()
     {
-        return getParam("widget/newcontact/tabindex", 0).toInt();
+        return getParam("newcontact/tabindex", 0).toInt();
     }
 
-    static void setWidgetNewContactTabIndex(int index)
+    static void setNewContactTabIndex(int index)
     {
-        setParam("widget/newcontact/tabindex", index);
+        setParam("newcontact/tabindex", index);
     }
 
-    static QString getWidgetNewContactQSLSent()
+    static QString getNewContactQSLSent()
     {
-        return getParam("widget/newcontact/sqlsent", "Q").toString();
+        return getParam("newcontact/sqlsent", "Q").toString();
     }
 
-    static void setWidgetNewContactQSLSent(const QString &qslsent)
+    static void setNewContactQSLSent(const QString &qslsent)
     {
-        setParam("widget/newcontact/sqlsent", qslsent);
+        setParam("newcontact/sqlsent", qslsent);
     }
 
-    static QString getWidgetNewContactLoTWQSLSent()
+    static QString getNewContactLoTWQSLSent()
     {
-        return getParam("widget/newcontact/lotwsqlsent", "Q").toString();
+        return getParam("newcontact/lotwsqlsent", "Q").toString();
     }
 
-    static void setWidgetNewContactLoTWQSLSent(const QString &qslsent)
+    static void setNewContactLoTWQSLSent(const QString &qslsent)
     {
-        setParam("widget/newcontact/lotwsqlsent", qslsent);
+        setParam("newcontact/lotwsqlsent", qslsent);
     }
 
-    static QString getWidgetNewContactEQSLWQSLSent()
+    static QString getNewContactEQSLWQSLSent()
     {
-        return getParam("widget/newcontact/eqslsqlsent", "Q").toString();
+        return getParam("newcontact/eqslsqlsent", "Q").toString();
     }
 
-    static void setWidgetNewContactEQSLQSLSent(const QString &qslsent)
+    static void setNewContactEQSLQSLSent(const QString &qslsent)
     {
-        setParam("widget/newcontact/eqslsqlsent", qslsent);
+        setParam("newcontact/eqslsqlsent", qslsent);
     }
 
-    static QString getWidgetNewContactQSLVia()
+    static QString getNewContactQSLVia()
     {
-        return getParam("widget/newcontact/qslvia").toString();
+        return getParam("newcontact/qslvia").toString();
     }
 
-    static void setWidgetNewContactQSLVia(const QString &qslvia)
+    static void setNewContactQSLVia(const QString &qslvia)
     {
-        setParam("widget/newcontact/qslvia", qslvia);
+        setParam("newcontact/qslvia", qslvia);
     }
 
-    static QString getWidgetNewContactPropMode()
+    static QString getNewContactPropMode()
     {
-        return getParam("widget/newcontact/propmode").toString();
+        return getParam("newcontact/propmode").toString();
     }
 
-    static void setWidgetNewContactPropMode(const QString &propmode)
+    static void setNewContactPropMode(const QString &propmode)
     {
-        setParam("widget/newcontact/propmode", propmode);
+        setParam("newcontact/propmode", propmode);
     }
 
-    static bool getWidgetNewContactTabsExpanded()
+    static bool getNewContactTabsExpanded()
     {
-        return getParam("widget/newcontact/tabsexpand", true).toBool();
+        return getParam("newcontact/tabsexpand", true).toBool();
     }
 
-    static void setWidgetNewContactTabsExpanded(bool state)
+    static void setNewContactTabsExpanded(bool state)
     {
-        setParam("widget/newcontact/tabsexpand", state);
+        setParam("newcontact/tabsexpand", state);
     }
 
-    static QString getWidgetNewContactSatName()
+    static QString getNewContactSatName()
     {
-        return getParam("widget/newcontact/satname").toString();
+        return getParam("newcontact/satname").toString();
     }
 
-    static void setWidgetNewContactSatName(const QString &name)
+    static void setNewContactSatName(const QString &name)
     {
-        setParam("widget/newcontact/satname", name);
+        setParam("newcontact/satname", name);
     }
 
     static QStringList getMapLayerStates(const QString &widgetID)
     {
-        return getKeys("widget/" + widgetID + "/layerstate/");
+        return getKeys(widgetID + "/layerstate/");
     }
 
     static bool getMapLayerState(const QString &widgetID, const QString &layerName)
     {
-        return getParam("widget/" +  widgetID + "/layerstate/" + layerName).toBool();
+        return getParam(widgetID + "/layerstate/" + layerName).toBool();
     }
 
     static void setMapLayerState(const QString &widgetID, const QString &layerName, bool state)
     {
-        setParam("widget/" + widgetID + "/layerstate/" + layerName, state);
+        setParam(widgetID + "/layerstate/" + layerName, state);
     }
 
 private:
