@@ -720,6 +720,66 @@ public:
         setParam(widgetID + "/layerstate/" + layerName, state);
     }
 
+    static uint getWsjtxFilterDxccStatus()
+    {
+        return getParam("wsjtx/filter/dxccstatus", DxccStatus::All).toUInt();
+    }
+
+    static void setWsjtxFilterDxccStatus(uint mask)
+    {
+        setParam("wsjtx/filter/dxccstatus", mask);
+    }
+
+    static QString getWsjtxFilterContRE()
+    {
+        return getParam("wsjtx/filter/contregexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
+    }
+
+    static void setWsjtxFilterContRE(const QString &re)
+    {
+        setParam("wsjtx/filter/contregexp", re);
+    }
+
+    static int getWsjtxFilterDistance()
+    {
+        return getParam("wsjtx/filter/distance", 0).toInt();
+    }
+
+    static void setWsjtxFilterDistance(int dist)
+    {
+        setParam("wsjtx/filter/distance", dist);
+    }
+
+    static int getWsjtxFilterSNR()
+    {
+        return getParam("wsjtx/filter/snr", -41).toInt();
+    }
+
+    static void setWsjtxFilterSNR(int snr)
+    {
+        setParam("wsjtx/filter/snr", snr);
+    }
+
+    static QStringList getWsjtxMemberlists()
+    {
+        return getParamStringList("wsjtx/filter/memberlists");
+    }
+
+    static void setWsjtxMemberlists(const QStringList &list)
+    {
+        setParam("wsjtx/filter/memberlists", list);
+    }
+
+    static QByteArray getWsjtxWidgetState()
+    {
+        return QByteArray::fromBase64(getParam("wsjtx/widgetstate").toByteArray());
+    }
+
+    static void setWsjtxWidgetState(const QByteArray &state)
+    {
+        setParam("wsjtx/widgetstate", state.toBase64());
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

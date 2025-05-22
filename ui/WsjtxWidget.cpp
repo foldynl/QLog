@@ -14,6 +14,7 @@
 #include "data/Gridsquare.h"
 #include "ui/component/StyleItemDelegate.h"
 #include "data/BandPlan.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.wsjtxswidget");
 
@@ -269,40 +270,35 @@ uint WsjtxWidget::dxccStatusFilterValue() const
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value("wsjtx/filter_dxcc_status", DxccStatus::All).toUInt();
+    return LogParam::getWsjtxFilterDxccStatus();
 }
 
 QString WsjtxWidget::contFilterRegExp() const
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value("wsjtx/filter_cont_regexp","NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
+    return LogParam::getWsjtxFilterContRE();
 }
 
 int WsjtxWidget::getDistanceFilterValue() const
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value("wsjtx/filter_distance", 0).toInt();
+    return LogParam::getWsjtxFilterDistance();
 }
 
 int WsjtxWidget::getSNRFilterValue() const
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value("wsjtx/filter_snr", -41).toInt();
+    return LogParam::getWsjtxFilterSNR();
 }
 
 QStringList WsjtxWidget::dxMemberList() const
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value("wsjtx/filter_dx_member_list").toStringList();
+    return LogParam::getWsjtxMemberlists();
 }
 
 void WsjtxWidget::reloadSetting()
@@ -334,17 +330,14 @@ void WsjtxWidget::saveTableHeaderState()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    QByteArray state = ui->tableView->horizontalHeader()->saveState();
-    settings.setValue("wsjtx/state", state);
+    LogParam::setWsjtxWidgetState(ui->tableView->horizontalHeader()->saveState());
 }
 
 void WsjtxWidget::restoreTableHeaderState()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    const QByteArray &state = settings.value("wsjtx/state").toByteArray();
+    const QByteArray &state = LogParam::getWsjtxWidgetState();
 
     if (!state.isEmpty())
     {
@@ -356,6 +349,12 @@ WsjtxWidget::~WsjtxWidget()
 {
     FCT_IDENTIFICATION;
 
-    saveTableHeaderState();
     delete ui;
+}
+
+void WsjtxWidget::finalizeBeforeAppExit()
+{
+    FCT_IDENTIFICATION;
+
+    saveTableHeaderState();
 }

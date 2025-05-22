@@ -7,18 +7,20 @@
 #include "data/WsjtxEntry.h"
 #include "models/WsjtxTableModel.h"
 #include "rig/Rig.h"
+#include "component/ShutdownAwareWidget.h"
 
 namespace Ui {
 class WsjtxWidget;
 }
 
-class WsjtxWidget : public QWidget
+class WsjtxWidget : public QWidget, public ShutdownAwareWidget
 {
     Q_OBJECT
 
 public:
     explicit WsjtxWidget(QWidget *parent = nullptr);
     ~WsjtxWidget();
+    virtual void finalizeBeforeAppExit() override;
 
 public slots:
     void decodeReceived(WsjtxDecode);

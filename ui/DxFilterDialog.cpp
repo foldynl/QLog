@@ -1,5 +1,4 @@
 #include <QDebug>
-#include <QSettings>
 #include <QCheckBox>
 #include <QSqlRecord>
 #include <QLayoutItem>
@@ -20,8 +19,6 @@ DxFilterDialog::DxFilterDialog(QWidget *parent) :
     ui(new Ui::DxFilterDialog)
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     ui->setupUi(this);
 
@@ -118,8 +115,6 @@ DxFilterDialog::DxFilterDialog(QWidget *parent) :
 void DxFilterDialog::accept()
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     /********************/
     /* Bands Checkboxes */

@@ -832,7 +832,12 @@ void removeSettings2DB()
     settings.beginGroup("qsodetail");
     settings.remove("");
     settings.endGroup();
-
+    settings.remove("wsjtx/filter_dxcc_status");
+    settings.remove("wsjtx/filter_cont_regexp");
+    settings.remove("wsjtx/filter_distance");
+    settings.remove("wsjtx/filter_snr");
+    settings.remove("wsjtx/filter_dx_member_list");
+    settings.remove("wsjtx/state");
 }
 bool Migration::settings2DB()
 {
@@ -911,6 +916,12 @@ bool Migration::settings2DB()
         LogParam::setMapLayerState("qsodetail", key, settings.value(key).toBool());
     settings.endGroup();
 
+    LogParam::setWsjtxFilterDxccStatus(settings.value("wsjtx/filter_dxcc_status", DxccStatus::All).toUInt());
+    LogParam::setWsjtxFilterContRE(settings.value("wsjtx/filter_cont_regexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString());
+    LogParam::setWsjtxFilterDistance(settings.value("wsjtx/filter_distance", 0).toInt());
+    LogParam::setWsjtxFilterDistance(settings.value("wsjtx/filter_snr", -41).toInt());
+    LogParam::setWsjtxMemberlists(settings.value("wsjtx/filter_dx_member_list").toStringList());
+    LogParam::setWsjtxWidgetState(settings.value("wsjtx/state").toByteArray());
     return true;
 }
 
