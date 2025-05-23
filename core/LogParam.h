@@ -6,1106 +6,342 @@
 #include <QVariant>
 #include <QMutex>
 
-#include "data/Data.h"
-#include "models/LogbookModel.h"
-#include "data/BandPlan.h"
-
 class LogParam : public QObject
 {
     Q_OBJECT
 public:
     explicit LogParam(QObject *parent = nullptr);
-    static bool setLOVParam(const QString &LOVName, const QVariant &value)
-    {
-        return setParam(LOVName, value);
-    };
-    static QDate getLOVaParam(const QString &LOVName)
-    {
-        return getParam(LOVName).toDate();
-    }
-    static bool setLastBackupDate(const QDate date)
-    {
-        return setParam("last_backup", date);
-    };
-    static QDate getLastBackupDate()
-    {
-        return getParam("last_backup").toDate();
-    };
-    static bool setLogID(const QString &id)
-    {
-        return setParam("logid", id);
-    };
-    static QString getLogID()
-    {
-        return getParam("logid").toString();
-    };
-    static bool setContestSeqnoType(const QVariant &data)
-    {
-        return setParam("contest/seqnotype", data);
-    };
-    static int getContestSeqnoType()
-    {
-        return getParam("contest/seqnotype", Data::SeqType::SINGLE).toInt();
-    };
-    static bool setContestManuDupeType(const QVariant &data)
-    {
-        return setParam("contest/dupetype", data);
-    };
-    static int getContestDupeType()
-    {
-        return getParam("contest/dupetype", Data::DupeType::ALL_BANDS).toInt();
-    };
-    static bool setContestLinkExchange(const QVariant &data)
-    {
-        return setParam("contest/linkexchangetype", data);
-    };
-    static int getContestLinkExchange()
-    {
-        return getParam("contest/linkexchangetype", LogbookModel::COLUMN_INVALID).toInt();
-    };
-    static bool setContestFilter(const QString &filterName)
-    {
-        return setParam("contest/filter", filterName);
-    };
-    static QString getContestFilter()
-    {
-        return getParam("contest/filter").toString();
-    };
-    static bool setContestID(const QString &contestID)
-    {
-        return setParam("contest/contestid", contestID);
-    };
-    static QString getContestID()
-    {
-        return getParam("contest/contestid", QString()).toString();
-    };
-    static bool setContestDupeDate(const QDateTime date)
-    {
-        return setParam("contest/dupeDate", date);
-    };
-    static QDateTime getContestDupeDate()
-    {
-        return getParam("contest/dupeDate").toDateTime();
-    };
-    static void removeConetstDupeDate()
-    {
-        removeParamGroup("contest/dupeDate");
-    }
-    static bool getDxccConfirmedByLotwState()
-    {
-        return getParam("others/dxccconfirmedbylotw", true).toBool();
-    };
-    static bool setDxccConfirmedByLotwState(bool state)
-    {
-        return setParam("others/dxccconfirmedbylotw", state);
-    };
-    static bool setDxccConfirmedByPaperState(bool state)
-    {
-        return setParam("others/dxccconfirmedbypaper", state);
-    };
-    static bool getDxccConfirmedByPaperState()
-    {
-        return getParam("others/dxccconfirmedbypaper", true).toBool();
-    };
-    static bool setDxccConfirmedByEqslState(bool state)
-    {
-        return setParam("others/dxccconfirmedbyeqsl", state);
-    };
-    static bool getDxccConfirmedByEqslState()
-    {
-        return getParam("others/dxccconfirmedbyeqsl", false).toBool();
-    };
-    static int getContestSeqno(const QString &band = QString())
-    {
-        return getParam(( band.isEmpty() ) ? "contest/seqnos/single"
-                                           : QString("contest/seqnos/%1").arg(band), 1).toInt();
-    }
-    static bool setContestSeqno(int value, const QString &band = QString())
-    {
-        return setParam(( band.isEmpty() ) ? "contest/seqnos/single"
-                                           : QString("contest/seqnos/%1").arg(band), value);
-    }
-    static void removeContestSeqno()
-    {
-        removeParamGroup("contest/seqnos/");
-    }
 
-    static bool setDXCTrendContinent(const QString &cont)
-    {
-        return setParam("dxc/trendContinent", cont);
-    }
-
-    static QString getDXCTrendContinent(const QString &def)
-    {
-        return getParam("dxc/trendContinent", def).toString();
-    }
-
-    static void removeDXCTrendContinent()
-    {
-        removeParamGroup("dxc/trendContinent");
-    }
-
-    static QStringList bandmapsWidgets()
-    {
-        return getKeys("bandmap/");
-    }
-
-    static void removeBandmapWidgetGroup(const QString &group)
-    {
-        removeParamGroup("bandmap/" + group);
-    }
-
-    static double getBandmapScrollFreq(const QString& widgetID, const QString &bandName)
-    {
-        return getParam("bandmap/" + widgetID + "/" + bandName + "/scrollfreq" , 0.0).toDouble();
-    }
-
-    static bool setBandmapScrollFreq(const QString& widgetID, const QString &bandName, double scroll)
-    {
-        return setParam("bandmap/" + widgetID + "/" + bandName + "/scrollfreq", scroll);
-    }
-
-    static QVariant getBandmapZoom(const QString& widgetID, const QString &bandName, const QVariant &defaultValue)
-    {
-        return getParam("bandmap/" + widgetID + "/" + bandName + "/zoom", defaultValue);
-    }
-
-    static bool setBandmapZoom(const QString& widgetID, const QString &bandName, const QVariant &zoom)
-    {
-        return setParam("bandmap/" + widgetID + "/" + bandName + "/zoom", zoom);
-    }
-
-    static bool setBandmapAging(const QString& widgetID, int aging)
-    {
-        return setParam("bandmap/" + widgetID + "/spotaging", aging);
-    }
-
-    static int getBandmapAging(const QString& widgetID)
-    {
-        return getParam("bandmap/" + widgetID + "/spotaging", 0).toInt();
-    }
-
-    static bool setBandmapCenterRX(const QString& widgetID, bool centerRX)
-    {
-        return setParam("bandmap/" + widgetID + "/centerrx", centerRX);
-    }
-
-    static bool getBandmapCenterRX(const QString& widgetID)
-    {
-        return getParam("bandmap/" + widgetID + "/centerrx", true).toBool();
-    }
-
-    static QString getUploadQSOLastCall()
-    {
-        return getParam("uploadqso/lastcall").toString();
-    }
-
-    static void setUploadQSOLastCall(const QString &call)
-    {
-        setParam("uploadqso/lastcall", call);
-    }
-
-    static bool getUploadeqslQSLComment()
-    {
-        return getParam("uploadqso/eqsl/last_checkcomment", false).toBool();
-    }
-
-    static void setUploadeqslQSLComment(const bool state)
-    {
-        setParam("uploadqso/eqsl/last_checkcomment", state);
-    }
-
-    static bool getUploadeqslQSLMessage()
-    {
-        return getParam("uploadqso/eqsl/last_checkqslsmsg", false).toBool();
-    }
-
-    static QString getUploadeqslQTHProfile()
-    {
-        return getParam("uploadqso/eqsl/last_QTHProfile").toString();
-    }
-
-    static void setUploadeqslQTHProfile(const QString &qthProfile)
-    {
-        setParam("uploadqso/eqsl/last_QTHProfile", qthProfile);
-    }
-
-    static void setUploadeqslQSLMessage(const bool state)
-    {
-        setParam("uploadqso/eqsl/last_checkqslsmsg", state);
-    }
-
-    static bool getUploadServiceState(const QString& name)
-    {
-        return getParam("uploadqso/" + name + "/enabled", false).toBool();
-    }
-
-    static void setUploadServiceState(const QString& name, bool state)
-    {
-        setParam("uploadqso/" + name + "/enabled", state);
-    }
-
-    static int getUploadQSOFilterType()
-    {
-        return getParam("uploadqso/filtertype").toInt();
-    }
-
-    static void setUploadQSOFilterType(int filterID)
-    {
-        setParam("uploadqso/filtertype", filterID);
-    }
-
-    static bool getDownloadQSLServiceState(const QString& name)
-    {
-        return getParam("downloadqsl/" + name + "/enabled", false).toBool();
-    }
-
-    static void setDownloadQSLServiceState(const QString& name, bool state)
-    {
-        setParam("downloadqsl/" + name + "/enabled", state);
-    }
-
-    static QDate getDownloadQSLServiceLastDate(const QString& name)
-    {
-        return getParam("downloadqsl/" + name + "/lastdate", QDate(1900, 1, 1)).toDate();
-    }
-
-    static void setDownloadQSLServiceLastDate(const QString& name, const QDate &date)
-    {
-        setParam("downloadqsl/" + name + "/lastdate", date);
-    }
-
-    static bool getDownloadQSLServiceLastQSOQSL(const QString& name)
-    {
-        return getParam("downloadqsl/" + name + "/qsoqsl", true).toBool();
-    }
-
-    static void setDownloadQSLServiceLastQSOQSL(const QString& name, bool state)
-    {
-        setParam("downloadqsl/" + name + "/qsoqsl", state);
-    }
-
-    static QString getDownloadQSLLoTWLastCall()
-    {
-        return getParam("downloadqsl/lotw/lastmycallsign").toString();
-    }
-
-    static void setDownloadQSLLoTWLastCall(const QString &call)
-    {
-        setParam("downloadqsl/lotw/lastmycallsign", call);
-    }
-
-    static QString getDownloadQSLeQSLLastProfile()
-    {
-        return getParam("downloadqsl/lotw/lastmycallsign").toString();
-    }
-
-    static void setDownloadQSLeQSLLastProfile(const QString &profile)
-    {
-        setParam("downloadqsl/lotw/lastqthprofile", profile);
-    }
-
-    static QString getQRZCOMCallbookUsername()
-    {
-        return getParam("services/qrzcom/callbook/username").toString().trimmed();
-    }
-
-    static void setQRZCOMCallbookUsername(const QString& username)
-    {
-        setParam("services/qrzcom/callbook/username", username);
-    }
-
-    static QString getClublogLogbookReqEmail()
-    {
-        return getParam("services/clublog/logbook/regemail").toString().trimmed();
-    }
-
-    static void setClublogLogbookReqEmail(const QString& email)
-    {
-        setParam("services/clublog/logbook/regemail", email);
-    }
-
-    static bool getClublogUploadImmediatelyEnabled()
-    {
-        return getParam("services/clublog/logbook/uploadimmediately", false).toBool();
-    }
-
-    static void setClublogUploadImmediatelyEnabled(bool state)
-    {
-        setParam("services/clublog/logbook/uploadimmediately", state);
-    }
-
-    static QString getEQSLLogbookUsername()
-    {
-        return getParam("services/eqsl/logbook/username").toString().trimmed();
-    }
-
-    static void setEQSLLogbookUsername(const QString& username)
-    {
-        setParam("services/eqsl/logbook/username", username);
-    }
-
-    static QString getHamQTHCallbookUsername()
-    {
-        return getParam("services/hamqth/callbook/username").toString().trimmed();
-    }
-
-    static void setHamQTHCallbookUsername(const QString& username)
-    {
-        setParam("services/hamqth/callbook/username", username);
-    }
-
-    static QString getHRDLogLogbookReqCallsign()
-    {
-        return getParam("services/hrdlog/logbook/regcallsign").toString().trimmed();
-    }
-
-    static void setHRDLogLogbookReqCallsign(const QString& callsign)
-    {
-        setParam("services/hrdlog/logbook/regcallsign", callsign);
-    }
-
-    static bool getHRDLogOnAir()
-    {
-        return getParam("services/hrdlog/logbook/onair", false).toBool();
-    }
-
-    static void setHRDLogOnAir(bool state)
-    {
-        setParam("services/hrdlog/logbook/onair", state);
-    }
-
-    static QString getKSTChatUsername()
-    {
-        return getParam("services/kst/chat/username").toString().trimmed();
-    }
-
-    static void setKSTChatUsername(const QString& username)
-    {
-        setParam("services/kst/chat/username", username);
-    }
-
-    static QString getLoTWCallbookUsername()
-    {
-        return getParam("services/lotw/callbook/username").toString().trimmed();
-    }
-
-    static void setLoTWCallbookUsername(const QString& username)
-    {
-        setParam("services/lotw/callbook/username", username);
-    }
-
-    static QString getLoTWTQSLPath(const QString &defaultPath)
-    {
-        return getParam("services/lotw/callbook/tqsl", defaultPath).toString().trimmed();
-    }
-
-    static void setLoTWTQSLPath(const QString& path)
-    {
-        setParam("services/lotw/callbook/tqsl", path);
-    }
-
-
-    static QString getPrimaryCallbook(const QString &defaultValue)
-    {
-        return getParam("callbook/primary", defaultValue).toString();
-    }
-
-    static void setPrimaryCallbook(const QString& callbookName)
-    {
-        setParam("callbook/primary", callbookName);
-    }
-
-    static QString getSecondaryCallbook(const QString &defaultValue)
-    {
-        return getParam("callbook/secondary", defaultValue).toString();
-    }
-
-    static void setSecondaryCallbook(const QString& callbookName)
-    {
-        setParam("callbook/secondary", callbookName);
-    }
-
-    static QString getCallbookWebLookupURL(const QString &defaultURL)
-    {
-        return getParam("callbook/weblookupurl", defaultURL).toString();
-    }
-
-    static void setCallbookWebLookupURL(const QString& url)
-    {
-        setParam("callbook/weblookupurl", url);
-    }
-
-    static QString getNetworkNotifLogQSOAddrs()
-    {
-        return getParam("network/notif/log/qso/addrs").toString();
-    }
-
-    static void setNetworkNotifLogQSOAddrs(const QString &addrs)
-    {
-        setParam("network/notif/log/qso/addrs", addrs);
-    }
-
-    static QString getNetworkNotifDXCSpotAddrs()
-    {
-        return getParam("network/notif/dxc/spot/addrs").toString();
-    }
-
-    static void setNetworkNotifDXCSpotAddrs(const QString &addrs)
-    {
-        setParam("network/notif/dxc/spot/addrs", addrs);
-    }
-
-    static QString getNetworkNotifWSJTXCQSpotAddrs()
-    {
-        return getParam("network/notif/wsjtx/cqspot/addrs").toString();
-    }
-
-    static void setNetworkNotifWSJTXCQSpotAddrs(const QString &addrs)
-    {
-        setParam("network/notif/wsjtx/cqspot/addrs", addrs);
-    }
-
-    static QString getNetworkNotifAlertsSpotAddrs()
-    {
-        return getParam("network/notif/alerts/spot/addrs").toString();
-    }
-
-    static void setNetworkNotifAlertsSpotAddrs(const QString &addrs)
-    {
-        setParam("network/notif/alerts/spot/addrs", addrs);
-    }
-
-    static QString getNetworkNotifRigStateAddrs()
-    {
-        return getParam("network/notif/rig/state/addrs").toString();
-    }
-
-    static void setNetworkNotifRigStateAddrs(const QString &addrs)
-    {
-        setParam("network/notif/rig/state/addrs", addrs);
-    }
-
-    static int getNetworkWsjtxListenerPort(int defaultPort)
-    {
-        return getParam("network/listener/wsjtx/port", defaultPort).toInt();
-    }
-
-    static void setNetworkNotifRigStateAddrs(int port)
-    {
-        setParam("network/listener/wsjtx/port", port);
-    }
-
-    static QString getNetworkWsjtxForwardAddrs()
-    {
-        return getParam("network/forwarder/wsjtx/addrs").toString();
-    }
-
-    static void setNetworkWsjtxForwardAddrs(const QString &addrs)
-    {
-        setParam("network/forwarder/wsjtx/addrs", addrs);
-    }
-
-    static bool getNetworkWsjtxListenerJoinMulticast()
-    {
-        return getParam("network/listener/wsjtx/multicast/join", false).toBool();
-    }
-
-    static void setNetworkWsjtxListenerJoinMulticast(bool state)
-    {
-        setParam("network/listener/wsjtx/multicast/join", state);
-    }
-
-    static QString getNetworkWsjtxListenerMulticastAddr()
-    {
-        return getParam("network/listener/wsjtx/multicast/addr").toString();
-    }
-
-    static void setNetworkWsjtxListenerMulticastAddr(const QString &addr)
-    {
-        setParam("network/listener/wsjtx/multicast/addr", addr);
-    }
-
-    static int getNetworkWsjtxListenerMulticastTTL()
-    {
-        return getParam("network/listener/wsjtx/multicast/ttl").toInt();
-    }
-
-    static void setNetworkWsjtxListenerMulticastTTL(int ttl)
-    {
-        setParam("network/listener/wsjtx/multicast/ttl", ttl);
-    }
-
-    static QStringList getEnabledMemberlists()
-    {
-        return getParamStringList("memberlist/enabledlists");
-    }
-
-    static void setEnabledMemberlists(const QStringList &list)
-    {
-        setParam("memberlist/enabledlists", list);
-    }
-
-    static int getAlertAging()
-    {
-        return getParam("alert/aging").toInt();
-    }
-
-    static void setAlertAging(int aging)
-    {
-        setParam("alert/aging", aging);
-    }
-
-    static QByteArray getAlertWidgetState()
-    {
-        return QByteArray::fromBase64(getParam("alert/widgetstate").toByteArray());
-    }
-
-    static void setAlertWidgetState(const QByteArray &state)
-    {
-        setParam("alert/widgetstate", state.toBase64());
-    }
-
-    static bool getCWConsoleSendWord()
-    {
-        return getParam("cwconsole/sendword", false).toBool();
-    }
-
-    static void setCWConsoleSendWord(bool state)
-    {
-        setParam("cwconsole/sendword", state);
-    }
-
-    static bool getChatSelectedRoom()
-    {
-        return getParam("chat/selectedroom", 0).toInt();
-    }
-
-    static void setChatSelectedRoom(int room)
-    {
-        setParam("chat/selectedroom", room);
-    }
-
-    static double getNewContactFreq()
-    {
-        return getParam("newcontact/freq", 3.5).toDouble();
-    }
-
-    static void setNewContactFreq(double freq)
-    {
-        setParam("newcontact/freq", freq);
-    }
-
-    static QString getNewContactMode()
-    {
-        return getParam("newcontact/mode", "CW").toString();
-    }
-
-    static void setNewContactMode(const QString &mode)
-    {
-        setParam("newcontact/mode", mode);
-    }
-
-    static QString getNewContactSubMode()
-    {
-        return getParam("newcontact/submode").toString();
-    }
-
-    static void setNewContactSubMode(const QString &submode)
-    {
-        setParam("newcontact/submode", submode);
-    }
-
-    static double getNewContactPower()
-    {
-        return getParam("newcontact/power", 100).toDouble();
-    }
-
-    static void setNewContactPower(double power)
-    {
-        setParam("newcontact/power", power);
-    }
-
-    static int getNewContactTabIndex()
-    {
-        return getParam("newcontact/tabindex", 0).toInt();
-    }
-
-    static void setNewContactTabIndex(int index)
-    {
-        setParam("newcontact/tabindex", index);
-    }
-
-    static QString getNewContactQSLSent()
-    {
-        return getParam("newcontact/sqlsent", "Q").toString();
-    }
-
-    static void setNewContactQSLSent(const QString &qslsent)
-    {
-        setParam("newcontact/sqlsent", qslsent);
-    }
-
-    static QString getNewContactLoTWQSLSent()
-    {
-        return getParam("newcontact/lotwsqlsent", "Q").toString();
-    }
-
-    static void setNewContactLoTWQSLSent(const QString &qslsent)
-    {
-        setParam("newcontact/lotwsqlsent", qslsent);
-    }
-
-    static QString getNewContactEQSLWQSLSent()
-    {
-        return getParam("newcontact/eqslsqlsent", "Q").toString();
-    }
-
-    static void setNewContactEQSLQSLSent(const QString &qslsent)
-    {
-        setParam("newcontact/eqslsqlsent", qslsent);
-    }
-
-    static QString getNewContactQSLVia()
-    {
-        return getParam("newcontact/qslvia").toString();
-    }
-
-    static void setNewContactQSLVia(const QString &qslvia)
-    {
-        setParam("newcontact/qslvia", qslvia);
-    }
-
-    static QString getNewContactPropMode()
-    {
-        return getParam("newcontact/propmode").toString();
-    }
-
-    static void setNewContactPropMode(const QString &propmode)
-    {
-        setParam("newcontact/propmode", propmode);
-    }
-
-    static bool getNewContactTabsExpanded()
-    {
-        return getParam("newcontact/tabsexpand", true).toBool();
-    }
-
-    static void setNewContactTabsExpanded(bool state)
-    {
-        setParam("newcontact/tabsexpand", state);
-    }
-
-    static QString getNewContactSatName()
-    {
-        return getParam("newcontact/satname").toString();
-    }
-
-    static void setNewContactSatName(const QString &name)
-    {
-        setParam("newcontact/satname", name);
-    }
-
-    static QStringList getMapLayerStates(const QString &widgetID)
-    {
-        return getKeys(widgetID + "/layerstate/");
-    }
-
-    static bool getMapLayerState(const QString &widgetID, const QString &layerName)
-    {
-        return getParam(widgetID + "/layerstate/" + layerName).toBool();
-    }
-
-    static void setMapLayerState(const QString &widgetID, const QString &layerName, bool state)
-    {
-        setParam(widgetID + "/layerstate/" + layerName, state);
-    }
-
-    static uint getWsjtxFilterDxccStatus()
-    {
-        return getParam("wsjtx/filter/dxccstatus", DxccStatus::All).toUInt();
-    }
-
-    static void setWsjtxFilterDxccStatus(uint mask)
-    {
-        setParam("wsjtx/filter/dxccstatus", mask);
-    }
-
-    static QString getWsjtxFilterContRE()
-    {
-        return getParam("wsjtx/filter/contregexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
-    }
-
-    static void setWsjtxFilterContRE(const QString &re)
-    {
-        setParam("wsjtx/filter/contregexp", re);
-    }
-
-    static int getWsjtxFilterDistance()
-    {
-        return getParam("wsjtx/filter/distance", 0).toInt();
-    }
-
-    static void setWsjtxFilterDistance(int dist)
-    {
-        setParam("wsjtx/filter/distance", dist);
-    }
-
-    static int getWsjtxFilterSNR()
-    {
-        return getParam("wsjtx/filter/snr", -41).toInt();
-    }
-
-    static void setWsjtxFilterSNR(int snr)
-    {
-        setParam("wsjtx/filter/snr", snr);
-    }
-
-    static QStringList getWsjtxMemberlists()
-    {
-        return getParamStringList("wsjtx/filter/memberlists");
-    }
-
-    static void setWsjtxMemberlists(const QStringList &list)
-    {
-        setParam("wsjtx/filter/memberlists", list);
-    }
-
-    static QByteArray getWsjtxWidgetState()
-    {
-        return QByteArray::fromBase64(getParam("wsjtx/widgetstate").toByteArray());
-    }
-
-    static void setWsjtxWidgetState(const QByteArray &state)
-    {
-        setParam("wsjtx/widgetstate", state.toBase64());
-    }
-
-    static uint getDXCFilterDxccStatus()
-    {
-        return getParam("dxc/filter/dx/dxccstatus", DxccStatus::All).toUInt();
-    }
-
-    static void setDXCFilterDxccStatus(uint mask)
-    {
-        setParam("dxc/filter/dx/dxccstatus", mask);
-    }
-
-    static QString getDXCFilterContRE()
-    {
-        return getParam("dxc/filter/dx/contregexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
-    }
-
-    static void setDXCFilterContRE(const QString &re)
-    {
-        setParam("dxc/filter/dx/contregexp", re);
-    }
-
-    static QString getDXCFilterSpotterContRE()
-    {
-        return getParam("dxc/filter/spotter/contregexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
-    }
-
-    static void setDXCFilterSpotterContRE(const QString &re)
-    {
-        setParam("dxc/filter/spotter/contregexp", re);
-    }
-
-    static bool getDXCFilterDedup()
-    {
-        return getParam("dxc/filter/dedup", false).toBool();
-    }
-
-    static void setDXCFilterDedup(bool state)
-    {
-        setParam("dxc/filter/dedup", state);
-    }
-
-    static int getDXCFilterDedupTime(int defaultValue)
-    {
-        return getParam("dxc/filter/deduptime", defaultValue).toInt();
-    }
-
-    static void setDXCFilterDedupTime(int value)
-    {
-        setParam("dxc/filter/deduptime", value);
-    }
-
-    static int getDXCFilterDedupFreq(int defaultValue)
-    {
-        return getParam("dxc/filter/dedupfreq", defaultValue).toInt();
-    }
-
-    static void setDXCFilterDedupFreq(int value)
-    {
-        setParam("dxc/filter/dedupfreq", value);
-    }
-
-    static QStringList getDXCFilterMemberlists()
-    {
-        return getParamStringList("dxc/filter/dx/memberlists");
-    }
-
-    static void setDXCFilterMemberlists(const QStringList &list)
-    {
-        setParam("dxc/filter/dx/memberlists", list);
-    }
-
-    static bool getDXCAutoconnectServer()
-    {
-        return getParam("dxc/autoconnect", false).toBool();
-    }
-
-    static void setDXCAutoconnectServer(bool state)
-    {
-        setParam("dxc/autoconnect", state);
-    }
-
-    static bool getDXCKeepQSOs()
-    {
-        return getParam("dxc/keepqsos", false).toBool();
-    }
-
-    static void setDXCKeepQSOs(bool state)
-    {
-        setParam("dxc/keepqsos", state);
-    }
-
-    static QByteArray getDXCDXTableState()
-    {
-        return QByteArray::fromBase64(getParam("dxc/dxtablestate").toByteArray());
-    }
-
-    static void setDXCDXTableState(const QByteArray &state)
-    {
-        setParam("dxc/dxtablestate", state.toBase64());
-    }
-
-    static QByteArray getDXCWCYTableState()
-    {
-        return QByteArray::fromBase64(getParam("dxc/wcytablestate").toByteArray());
-    }
-
-    static void setDXCWCYTableState(const QByteArray &state)
-    {
-        setParam("dxc/wcytablestate", state.toBase64());
-    }
-
-    static QByteArray getDXCWWVTableState()
-    {
-        return QByteArray::fromBase64(getParam("dxc/wwvtablestate").toByteArray());
-    }
-
-    static void setDXCWWVTableState(const QByteArray &state)
-    {
-        setParam("dxc/wwvtablestate", state.toBase64());
-    }
-
-    static QByteArray getDXCTOALLTableState()
-    {
-        return QByteArray::fromBase64(getParam("dxc/toalltablestate").toByteArray());
-    }
-
-    static void setDXCTOALLTableState(const QByteArray &state)
-    {
-        setParam("dxc/toalltablestate", state.toBase64());
-    }
-
-    static int getDXCConsoleFontSize()
-    {
-        return getParam("dxc/console/fontsize", -1).toInt();
-    }
-
-    static void setDXCConsoleFontSize(int value)
-    {
-        setParam("dxc/console/fontsize", value);
-    }
-
-    static QStringList getDXCServerlist()
-    {
-        return getParamStringList("dxc/serverlist");
-    }
-
-    static void setDXCServerlist(const QStringList &list)
-    {
-        setParam("dxc/serverlist", list);
-    }
-
-    static QString getDXCLastServer()
-    {
-        return getParam("dxc/lastserver").toString();
-    }
-
-    static void setDXCLastServer(const QString &server)
-    {
-        setParam("dxc/lastserver", server);
-    }
-
-    static QString getDXCFilterModeRE()
-    {
-        QString defaultValue = "NOTHING|"
-                               + BandPlan::MODE_GROUP_STRING_PHONE + "|"
-                               + BandPlan::MODE_GROUP_STRING_CW + "|"
-                               + BandPlan::MODE_GROUP_STRING_FT8 + "|"
-                               + BandPlan::MODE_GROUP_STRING_DIGITAL;
-        return getParam("dxc/filter/dx/moderegexp", defaultValue).toString();
-    }
-
-    static void setDXCFilterModeRE(const QString &re)
-    {
-        setParam("dxc/filter/dx/moderegexp", re);
-    }
-
-    static QStringList getDXCExcludedBands()
-    {
-        return getParamStringList("dxc/filter/excludedbands");
-    }
-
-    static void setDXCExcludedBands(const QStringList &excluded)
-    {
-        setParam("dxc/filter/excludedbands", excluded);
-    }
-
-    static QSet<int> getExportColumnSet(const QString &paramName, const QSet<int> &defaultValue)
-    {
-        QSet<int> set;
-        QStringList defaultValueList;
-
-        for (int val : defaultValue)
-            defaultValueList << QString::number(val);
-
-        const QStringList sourceList = getParamStringList("exportadi/" + paramName, defaultValueList);
-
-        for (const QString &s : sourceList)
-            set.insert(s.toInt());
-
-        return set;
-    }
-
-    static void setExportColumnSet(const QString &paramName, const QSet<int> &set)
-    {
-        QStringList valueList;
-
-        for (int val : set)
-            valueList << QString::number(val);
-
-        setParam("exportadi/" + paramName, valueList);
-    }
-
-    static QByteArray getLogbookState()
-    {
-        return QByteArray::fromBase64(getParam("logbook/maintablestate").toByteArray());
-    }
-
-    static void setLogbookState(const QByteArray &state)
-    {
-        setParam("logbook/maintablestate", state.toBase64());
-    }
-
-    static QString getLogbookFilterBand()
-    {
-        return getParam("logbook/filter/band").toString();
-    }
-
-    static void setLogbookFilterBand(const QString &name)
-    {
-        setParam("logbook/filter/band", name);
-    }
-
-    static QString getLogbookFilterMode()
-    {
-        return getParam("logbook/filter/mode").toString();
-    }
-
-    static void setLogbookFilterMode(const QString &name)
-    {
-        setParam("logbook/filter/mode", name);
-    }
-
-    static QString getLogbookFilterCountry()
-    {
-        return getParam("logbook/filter/country").toString();
-    }
-
-    static void setLogbookFilterCountry(const QString &name)
-    {
-        setParam("logbook/filter/country", name);
-    }
-
-    static QString getLogbookFilterUserFilter()
-    {
-        return getParam("logbook/filter/userfilter").toString();
-    }
-
-    static void setLogbookFilterUserFilter(const QString &name)
-    {
-        setParam("logbook/filter/userfilter", name);
-    }
-
-    static QString getLogbookFilterClub()
-    {
-        return getParam("logbook/filter/club").toString();
-    }
-
-    static void setLogbookFilterClub(const QString &name)
-    {
-        setParam("logbook/filter/club", name);
-    }
-
-    static bool getMainWindowAlertBeep()
-    {
-        return getParam("mainwindow/alertbeep", false).toBool();
-    }
-
-    static void setMainWindowAlertBeep(bool state)
-    {
-        setParam("mainwindow/alertbeep", state);
-    }
-
-    static bool getMainWindowDarkMode()
-    {
-        return getParam("mainwindow/darkmode", false).toBool();
-    }
-
-    static void setMainWindowDarkMode(bool state)
-    {
-        setParam("mainwindow/darkmode", state);
-    }
-
-    static QByteArray getMainWindowGeometry()
-    {
-        return QByteArray::fromBase64(getParam("mainwindow/geometry").toByteArray());
-    }
-
-    static void setMainWindowGeometry(const QByteArray &state)
-    {
-        setParam("mainwindow/geometry", state.toBase64());
-    }
-
-    static QByteArray getMainWindowState()
-    {
-        return QByteArray::fromBase64(getParam("mainwindow/state").toByteArray());
-    }
-
-    static void setMainWindowState(const QByteArray &state)
-    {
-        setParam("mainwindow/state", state.toBase64());
-    }
-
-    static QString getMainWindowBandmapWidgets()
-    {
-        return getParam("mainwindow/bandmapwidgets").toString();
-    }
-
-    static void setMainWindowBandmapWidgets(const QString &value)
-    {
-        setParam("mainwindow/bandmapwidgets", value);
-    }
-
-    static void removeMainWindowBandmapWidgets()
-    {
-        removeParamGroup("mainwindow/bandmapwidgets");
-    }
+    /*********
+     * LOV
+     ********/
+    static bool setLOVParam(const QString &LOVName, const QVariant &value);
+    static QDate getLOVaParam(const QString &LOVName);
+
+    /*********
+     * Backup
+     ********/
+    static bool setLastBackupDate(const QDate date);
+    static QDate getLastBackupDate();
+
+    /*********
+     * LogID
+     ********/
+    static bool setLogID(const QString &id);
+    static QString getLogID();
+
+    /*********
+     * Contest
+     ********/
+    static bool setContestSeqnoType(const QVariant &data);
+    static int getContestSeqnoType();
+    static bool setContestManuDupeType(const QVariant &data);
+    static int getContestDupeType();
+    static bool setContestLinkExchange(const QVariant &data);
+    static int getContestLinkExchange();
+    static bool setContestFilter(const QString &filterName);
+    static QString getContestFilter();
+    static bool setContestID(const QString &contestID);
+    static QString getContestID();
+    static bool setContestDupeDate(const QDateTime date);
+    static QDateTime getContestDupeDate();
+    static void removeConetstDupeDate();
+
+    /********************
+     * DXCC Confirmation
+     ********************/
+    static bool getDxccConfirmedByLotwState();
+    static bool setDxccConfirmedByLotwState(bool state);
+    static bool setDxccConfirmedByPaperState(bool state);
+    static bool getDxccConfirmedByPaperState();
+    static bool setDxccConfirmedByEqslState(bool state);
+    static bool getDxccConfirmedByEqslState();
+    static int getContestSeqno(const QString &band = QString());
+    static bool setContestSeqno(int value, const QString &band = QString());
+    static void removeContestSeqno();
+
+    /*********
+     * Bandmap
+     *********/
+    static QStringList bandmapsWidgets();
+    static void removeBandmapWidgetGroup(const QString &group);
+    static double getBandmapScrollFreq(const QString& widgetID, const QString &bandName);
+    static bool setBandmapScrollFreq(const QString& widgetID, const QString &bandName, double scroll);
+    static QVariant getBandmapZoom(const QString& widgetID, const QString &bandName, const QVariant &defaultValue);
+    static bool setBandmapZoom(const QString& widgetID, const QString &bandName, const QVariant &zoom);
+    static bool setBandmapAging(const QString& widgetID, int aging);
+    static int getBandmapAging(const QString& widgetID);
+    static bool setBandmapCenterRX(const QString& widgetID, bool centerRX);
+    static bool getBandmapCenterRX(const QString& widgetID);
+
+    /*******************
+     * UploadQSO Dialog
+     *******************/
+    static QString getUploadQSOLastCall();
+    static void setUploadQSOLastCall(const QString &call);
+    static bool getUploadeqslQSLComment();
+    static void setUploadeqslQSLComment(const bool state);
+    static bool getUploadeqslQSLMessage();
+    static QString getUploadeqslQTHProfile();
+    static void setUploadeqslQTHProfile(const QString &qthProfile);
+    static void setUploadeqslQSLMessage(const bool state);
+    static bool getUploadServiceState(const QString& name);
+    static void setUploadServiceState(const QString& name, bool state);
+    static int getUploadQSOFilterType();
+    static void setUploadQSOFilterType(int filterID);
+
+    /*********************
+     * DownloadQSL Dialog
+     *********************/
+    static bool getDownloadQSLServiceState(const QString& name);
+    static void setDownloadQSLServiceState(const QString& name, bool state);
+    static QDate getDownloadQSLServiceLastDate(const QString& name);
+    static void setDownloadQSLServiceLastDate(const QString& name, const QDate &date);
+    static bool getDownloadQSLServiceLastQSOQSL(const QString& name);
+    static void setDownloadQSLServiceLastQSOQSL(const QString& name, bool state);
+    static QString getDownloadQSLLoTWLastCall();
+    static void setDownloadQSLLoTWLastCall(const QString &call);
+    static QString getDownloadQSLeQSLLastProfile();
+    static void setDownloadQSLeQSLLastProfile(const QString &profile);
+
+    /*********
+     * QRZ
+     ********/
+    static QString getQRZCOMCallbookUsername();
+    static void setQRZCOMCallbookUsername(const QString& username);
+
+    /*********
+     * Clublog
+     ********/
+    static QString getClublogLogbookReqEmail();
+    static void setClublogLogbookReqEmail(const QString& email);
+    static bool getClublogUploadImmediatelyEnabled();
+    static void setClublogUploadImmediatelyEnabled(bool state);
+
+    /*********
+     * eQSL
+     ********/
+    static QString getEQSLLogbookUsername();
+    static void setEQSLLogbookUsername(const QString& username);
+
+    /*********
+     * HamQTH
+     ********/
+    static QString getHamQTHCallbookUsername();
+    static void setHamQTHCallbookUsername(const QString& username);
+
+    /*********
+     * HRDLog
+     ********/
+    static QString getHRDLogLogbookReqCallsign();
+    static void setHRDLogLogbookReqCallsign(const QString& callsign);
+    static bool getHRDLogOnAir();
+    static void setHRDLogOnAir(bool state);
+
+    /*********
+     * KSTChat
+     ********/
+    static QString getKSTChatUsername();
+    static void setKSTChatUsername(const QString& username);
+
+    /*********
+     * LoTW
+     ********/
+    static QString getLoTWCallbookUsername();
+    static void setLoTWCallbookUsername(const QString& username);
+    static QString getLoTWTQSLPath(const QString &defaultPath);
+    static void setLoTWTQSLPath(const QString& path);
+
+    /*******************
+     * Callbook setting
+     *******************/
+    static QString getPrimaryCallbook(const QString &defaultValue);
+    static void setPrimaryCallbook(const QString& callbookName);
+    static QString getSecondaryCallbook(const QString &defaultValue);
+    static void setSecondaryCallbook(const QString& callbookName);
+    static QString getCallbookWebLookupURL(const QString &defaultURL);
+    static void setCallbookWebLookupURL(const QString& url);
+
+    /************************
+     * Network Notifications
+     ************************/
+    static QString getNetworkNotifLogQSOAddrs();
+    static void setNetworkNotifLogQSOAddrs(const QString &addrs);
+    static QString getNetworkNotifDXCSpotAddrs();
+    static void setNetworkNotifDXCSpotAddrs(const QString &addrs);
+    static QString getNetworkNotifWSJTXCQSpotAddrs();
+    static void setNetworkNotifWSJTXCQSpotAddrs(const QString &addrs);
+    static QString getNetworkNotifAlertsSpotAddrs();
+    static void setNetworkNotifAlertsSpotAddrs(const QString &addrs);
+    static QString getNetworkNotifRigStateAddrs();
+    static void setNetworkNotifRigStateAddrs(const QString &addrs);
+    static int getNetworkWsjtxListenerPort(int defaultPort);
+    static void setNetworkNotifRigStateAddrs(int port);
+    static QString getNetworkWsjtxForwardAddrs();
+    static void setNetworkWsjtxForwardAddrs(const QString &addrs);
+    static bool getNetworkWsjtxListenerJoinMulticast();
+    static void setNetworkWsjtxListenerJoinMulticast(bool state);
+    static QString getNetworkWsjtxListenerMulticastAddr();
+    static void setNetworkWsjtxListenerMulticastAddr(const QString &addr);
+    static int getNetworkWsjtxListenerMulticastTTL();
+    static void setNetworkWsjtxListenerMulticastTTL(int ttl);
+
+    /********************
+     * Club Member Lists
+     ********************/
+    static QStringList getEnabledMemberlists();
+    static void setEnabledMemberlists(const QStringList &list);
+    static int getAlertAging();
+    static void setAlertAging(int aging);
+    static QByteArray getAlertWidgetState();
+
+    /***************
+     * Alert Dialog
+     ***************/
+    static void setAlertWidgetState(const QByteArray &state);
+
+    /*************
+     * CW Console
+     *************/
+    static bool getCWConsoleSendWord();
+    static void setCWConsoleSendWord(bool state);
+
+    /*********
+     * Chat
+     ********/
+    static bool getChatSelectedRoom();
+    static void setChatSelectedRoom(int room);
+
+    /*************
+     * NewContact
+     *************/
+    static double getNewContactFreq();
+    static void setNewContactFreq(double freq);
+    static QString getNewContactMode();
+    static void setNewContactMode(const QString &mode);
+    static QString getNewContactSubMode();
+    static void setNewContactSubMode(const QString &submode);
+    static double getNewContactPower();
+    static void setNewContactPower(double power);
+    static int getNewContactTabIndex();
+    static void setNewContactTabIndex(int index);
+    static QString getNewContactQSLSent();
+    static void setNewContactQSLSent(const QString &qslsent);
+    static QString getNewContactLoTWQSLSent();
+    static void setNewContactLoTWQSLSent(const QString &qslsent);
+    static QString getNewContactEQSLWQSLSent();
+    static void setNewContactEQSLQSLSent(const QString &qslsent);
+    static QString getNewContactQSLVia();
+    static void setNewContactQSLVia(const QString &qslvia);
+    static QString getNewContactPropMode();
+    static void setNewContactPropMode(const QString &propmode);
+    static bool getNewContactTabsExpanded();
+    static void setNewContactTabsExpanded(bool state);
+    static QString getNewContactSatName();
+    static void setNewContactSatName(const QString &name);
+
+    /*************
+     * Online Map
+     *************/
+    static QStringList getMapLayerStates(const QString &widgetID);
+    static bool getMapLayerState(const QString &widgetID, const QString &layerName);
+    static void setMapLayerState(const QString &widgetID, const QString &layerName, bool state);
+
+    /***************
+     * WSJTX Dialog
+     ***************/
+    static uint getWsjtxFilterDxccStatus();
+    static void setWsjtxFilterDxccStatus(uint mask);
+    static QString getWsjtxFilterContRE();
+    static void setWsjtxFilterContRE(const QString &re);
+    static int getWsjtxFilterDistance();
+    static void setWsjtxFilterDistance(int dist);
+    static int getWsjtxFilterSNR();
+    static void setWsjtxFilterSNR(int snr);
+    static QStringList getWsjtxMemberlists();
+    static void setWsjtxMemberlists(const QStringList &list);
+    static QByteArray getWsjtxWidgetState();
+    static void setWsjtxWidgetState(const QByteArray &state);
+
+    /******************
+     * DXCluster Dialog
+     ******************/
+    static uint getDXCFilterDxccStatus();
+    static void setDXCFilterDxccStatus(uint mask);
+    static QString getDXCFilterContRE();
+    static void setDXCFilterContRE(const QString &re);
+    static QString getDXCFilterSpotterContRE();
+    static void setDXCFilterSpotterContRE(const QString &re);
+    static bool getDXCFilterDedup();
+    static void setDXCFilterDedup(bool state);
+    static int getDXCFilterDedupTime(int defaultValue);
+    static void setDXCFilterDedupTime(int value);
+    static int getDXCFilterDedupFreq(int defaultValue);
+    static void setDXCFilterDedupFreq(int value);
+    static QStringList getDXCFilterMemberlists();
+    static void setDXCFilterMemberlists(const QStringList &list);
+    static bool getDXCAutoconnectServer();
+    static void setDXCAutoconnectServer(bool state);
+    static bool getDXCKeepQSOs();
+    static void setDXCKeepQSOs(bool state);
+    static QByteArray getDXCDXTableState();
+    static void setDXCDXTableState(const QByteArray &state);
+    static QByteArray getDXCWCYTableState();
+    static void setDXCWCYTableState(const QByteArray &state);
+    static QByteArray getDXCWWVTableState();
+    static void setDXCWWVTableState(const QByteArray &state);
+    static QByteArray getDXCTOALLTableState();
+    static void setDXCTOALLTableState(const QByteArray &state);
+    static int getDXCConsoleFontSize();
+    static void setDXCConsoleFontSize(int value);
+    static QStringList getDXCServerlist();
+    static void setDXCServerlist(const QStringList &list);
+    static QString getDXCLastServer();
+    static void setDXCLastServer(const QString &server);
+    static QString getDXCFilterModeRE();
+    static void setDXCFilterModeRE(const QString &re);
+    static QStringList getDXCExcludedBands();
+    static void setDXCExcludedBands(const QStringList &excluded);
+    static bool setDXCTrendContinent(const QString &cont);
+    static QString getDXCTrendContinent(const QString &def);
+    static void removeDXCTrendContinent();
+
+    /**************
+     * Export ADIF
+     **************/
+    static QSet<int> getExportColumnSet(const QString &paramName, const QSet<int> &defaultValue);
+    static void setExportColumnSet(const QString &paramName, const QSet<int> &set);
+
+    /*****************
+     * Logbook dialog
+     *****************/
+    static QByteArray getLogbookState();
+    static void setLogbookState(const QByteArray &state);
+    static QString getLogbookFilterBand();
+    static void setLogbookFilterBand(const QString &name);
+    static QString getLogbookFilterMode();
+    static void setLogbookFilterMode(const QString &name);
+    static QString getLogbookFilterCountry();
+    static void setLogbookFilterCountry(const QString &name);
+    static QString getLogbookFilterUserFilter();
+    static void setLogbookFilterUserFilter(const QString &name);
+    static QString getLogbookFilterClub();
+    static void setLogbookFilterClub(const QString &name);
+
+    /**************
+     * Main Window
+     *************/
+    static bool getMainWindowAlertBeep();
+    static void setMainWindowAlertBeep(bool state);
+    static bool getMainWindowDarkMode();
+    static void setMainWindowDarkMode(bool state);
+    static QByteArray getMainWindowGeometry();
+    static void setMainWindowGeometry(const QByteArray &state);
+    static QByteArray getMainWindowState();
+    static void setMainWindowState(const QByteArray &state);
+    static QString getMainWindowBandmapWidgets();
+    static void setMainWindowBandmapWidgets(const QString &value);
+    static void removeMainWindowBandmapWidgets();
 
 private:
     static QCache<QString, QVariant> localCache;

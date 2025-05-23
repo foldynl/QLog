@@ -8,6 +8,10 @@
 #include <QSqlRecord>
 #include <QApplication>
 #include <QRegularExpression>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QJsonObject>
 #include "LogParam.h"
 
 #include "LOVDownloader.h"
