@@ -220,24 +220,27 @@ QStringList LogParam::deserializeStringList(const QString &input, QChar delimite
     QString current;
     bool escaping = false;
 
-    for ( QChar ch : input )
+    if ( !input.isEmpty() )
     {
-        if ( escaping )
+        for ( QChar ch : input )
         {
-            current += ch;
-            escaping = false;
+            if ( escaping )
+            {
+                current += ch;
+                escaping = false;
+            }
+            else if ( ch == escapeChar )
+                escaping = true;
+            else if ( ch == delimiter )
+            {
+                result << current;
+                current.clear();
+            }
+            else
+                current += ch;
         }
-        else if ( ch == escapeChar )
-            escaping = true;
-        else if ( ch == delimiter )
-        {
-            result << current;
-            current.clear();
-        }
-        else
-            current += ch;
+        result << current;
     }
-    result << current;
     return result;
 }
 
