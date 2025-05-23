@@ -11,6 +11,7 @@
 #include "data/StationProfile.h"
 #include "ui/ColumnSettingDialog.h"
 #include "data/Data.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.exportdialog");
 
@@ -69,6 +70,7 @@ void ExportDialog::browse()
 {
     FCT_IDENTIFICATION;
 
+    QSettings settings; //platform-dependent, must be present
     const QString &lastPath = ( ui->fileEdit->text().isEmpty() ) ? settings.value("export/last_path", QDir::homePath()).toString()
                                                                  : ui->fileEdit->text();
 
@@ -287,15 +289,12 @@ void ExportDialog::exportedColumnStateChanged(int index, bool state)
     qCDebug(function_parameters) << index << state;
 
     if ( state )
-    {
         exportedColumns.insert(index);
-    }
     else
-    {
         exportedColumns.remove(index);
-    }
-    QString comboValue = ui->exportedColumnsCombo->itemData(ui->exportedColumnsCombo->currentIndex()).toString();
-    settings.setValue("export/" + comboValue, QVariant::fromValue(exportedColumns));
+
+    const QString &comboValue = ui->exportedColumnsCombo->itemData(ui->exportedColumnsCombo->currentIndex()).toString();
+    LogParam::setExportColumnSet(comboValue, exportedColumns);
 }
 void ExportDialog::fillExportTypeCombo()
 {
@@ -393,7 +392,7 @@ void ExportDialog::exportedColumnsComboChanged(int index)
 {
     FCT_IDENTIFICATION;
 
-    QString comboValue = ui->exportedColumnsCombo->itemData(index).toString();
+    const QString &comboValue = ui->exportedColumnsCombo->itemData(index).toString();
 
     //empty set means all values exported
     exportedColumns = QSet<int>();
@@ -411,11 +410,11 @@ void ExportDialog::exportedColumnsComboChanged(int index)
              || comboValue == "c2"
              || comboValue == "c3" )
         {
-            exportedColumns = settings.value("export/" + comboValue, QVariant::fromValue(minColumns)).value<QSet<int>>();
+            exportedColumns = LogParam::getExportColumnSet(comboValue, minColumns);
         }
         else if ( comboValue == "qsl" )
         {
-            exportedColumns = settings.value("export/" + comboValue, QVariant::fromValue(qslColumns)).value<QSet<int>>();
+            exportedColumns = LogParam::getExportColumnSet(comboValue, qslColumns);
         }
         else if ( comboValue == "pota" )
         {

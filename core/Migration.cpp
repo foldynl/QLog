@@ -863,6 +863,11 @@ void removeSettings2DB()
     settings.remove("equipment/rotconnected");
     settings.remove("equipment/cwkeyconnected");
     settings.remove("equipment/keepoptions");
+    settings.remove("export/min");
+    settings.remove("export/qsl");
+    settings.remove("export/c1");
+    settings.remove("export/c2");
+    settings.remove("export/c3");
 }
 bool Migration::settings2DB()
 {
@@ -978,8 +983,14 @@ bool Migration::settings2DB()
         if ( !settings.value("dxc/filter_band_" + band.name,true).toBool())
             excludedBandFilter << band.name;
     }
-    qInfo() << excludedBandFilter;
     LogParam::setDXCExcludedBands(excludedBandFilter);
+
+    LogParam::setExportColumnSet("min", settings.value("export/min").value<QSet<int>>());
+    LogParam::setExportColumnSet("sql", settings.value("export/sql").value<QSet<int>>());
+    LogParam::setExportColumnSet("c1", settings.value("export/c1").value<QSet<int>>());
+    LogParam::setExportColumnSet("c2", settings.value("export/c2").value<QSet<int>>());
+    LogParam::setExportColumnSet("c3", settings.value("export/c3").value<QSet<int>>());
+
     return true;
 }
 

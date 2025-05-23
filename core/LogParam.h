@@ -966,6 +966,32 @@ public:
         setParam("dxc/filter/excludedbands", excluded);
     }
 
+    static QSet<int> getExportColumnSet(const QString &paramName, const QSet<int> &defaultValue)
+    {
+        QSet<int> set;
+        QStringList defaultValueList;
+
+        for (int val : defaultValue)
+            defaultValueList << QString::number(val);
+
+        const QStringList sourceList = getParamStringList("exportadi/" + paramName, defaultValueList);
+
+        for (const QString &s : sourceList)
+            set.insert(s.toInt());
+
+        return set;
+    }
+
+    static void setExportColumnSet(const QString &paramName, const QSet<int> &set)
+    {
+        QStringList valueList;
+
+        for (int val : set)
+            valueList << QString::number(val);
+
+        setParam("exportadi/" + paramName, valueList);
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

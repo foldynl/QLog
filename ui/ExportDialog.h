@@ -77,7 +77,6 @@ private:
         LogbookModel::COLUMN_SIG_INFO
     };
     LogbookModel logbookmodel;
-    QSettings settings;
     const QList<QSqlRecord> qsos4export;
 
     void setProgress(float);
