@@ -5,7 +5,6 @@
 #include <QSqlRecord>
 #include <QList>
 #include <QSet>
-#include <QSettings>
 
 #include "core/LogLocale.h"
 #include "models/LogbookModel.h"
