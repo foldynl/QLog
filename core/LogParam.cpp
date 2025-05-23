@@ -43,8 +43,9 @@ bool LogParam::setParam(const QString &name, const QVariant &value)
         return false;
     }
 
-    localCache.insert(name, new QVariant(value));
+    localCache.remove(name);
 
+    qCWarning(runtime) << "Param:" << name << "Set - value" << value;
     return true;
 }
 
@@ -56,41 +57,45 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
 
     PARAMMUTEXLOCKER;
 
-    QVariant ret = defaultValue;
-    QVariant *valueCached = localCache.object(name);
+    const QVariant *valueCached = localCache.object(name);
 
     if ( valueCached )
     {
-        ret = *valueCached;
+        qDebug(runtime) << "Param:" << name << "Cached value: " << *valueCached;
+        return *valueCached;
+    }
+
+    QSqlQuery query;
+
+    if ( ! query.prepare("SELECT value FROM log_param WHERE name = :nam") )
+    {
+        qWarning()<< "Cannot prepare select parameter statement for" << name;
+        return defaultValue;
+    }
+
+    query.bindValue(":nam", name);
+
+    if ( ! query.exec() )
+    {
+        qWarning() << "Cannot execute GetParam Select for" << name << "using default" << defaultValue;
+        return defaultValue;
+    }
+
+    if ( query.first() )
+    {
+        if ( !query.isNull(0) )
+        {
+            QVariant dbValue = query.value(0);
+            localCache.insert(name, new QVariant(dbValue));
+            qDebug(runtime) << "Param:" << name << "DB value: " << dbValue;
+            return dbValue;
+        }
+        qDebug(runtime) << "Param:" << name << "NULL value in DB - using default " << defaultValue;
     }
     else
-    {
-        QSqlQuery query;
+        qDebug(runtime) << "Param:" << name << "Key not found in DB - using default " << defaultValue;
 
-        if ( ! query.prepare("SELECT value "
-                             "FROM log_param "
-                             "WHERE name = :nam") )
-        {
-            qWarning()<< "Cannot prepare select parameter statement for" << name;
-            return QString();
-        }
-
-        query.bindValue(":nam", name);
-
-        if ( ! query.exec() )
-        {
-            qWarning() << "Cannot execute GetParam Select for" << name;
-            return QString();
-        }
-
-        if ( query.first() )
-        {
-            ret = query.value(0);
-            localCache.insert(name, new QVariant(ret));
-        }
-    }
-    qDebug(runtime) << "value: " << ret;
-    return ret;
+    return defaultValue;
 }
 
 bool LogParam::setParam(const QString &name, const QStringList &value)
@@ -118,10 +123,7 @@ void LogParam::removeParamGroup(const QString &paramGroup)
     const QStringList &keys = localCache.keys();
 
     for ( const QString& key : keys )
-    {
-        if (key.startsWith(paramGroup))
-            localCache.remove(key);
-    }
+        if (key.startsWith(paramGroup)) localCache.remove(key);
 
     QSqlQuery query;
 
@@ -148,7 +150,6 @@ QStringList LogParam::getKeys(const QString &group)
     PARAMMUTEXLOCKER;
 
     QSet<QString> keys; // unique values;
-
     QSqlQuery query;
 
     if ( ! query.prepare("SELECT name FROM log_param WHERE name LIKE :group ") )
@@ -160,14 +161,16 @@ QStringList LogParam::getKeys(const QString &group)
     query.bindValue(":group", group + "%");
 
     if ( ! query.exec() )
+    {
         qWarning() << "Cannot execute removeParamGroup statement for" << group;
+        return QStringList();
+    }
 
     while ( query.next() )
     {
         const QString &param = query.value(0).toString();
-        QString subKey = param.mid(group.length()).section("/", 0, 0);
-        if ( !subKey.isEmpty() )
-            keys.insert(subKey);
+        const QString &subKey = param.mid(group.length()).section("/", 0, 0);
+        if ( !subKey.isEmpty() ) keys.insert(subKey);
     }
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     return QStringList(keys.begin(), keys.end());
@@ -244,7 +247,7 @@ QStringList LogParam::deserializeStringList(const QString &input, QChar delimite
     return result;
 }
 
-QCache<QString, QVariant> LogParam::localCache(30);
+QCache<QString, QVariant> LogParam::localCache(300);
 
 QMutex LogParam::cacheMutex;
 
