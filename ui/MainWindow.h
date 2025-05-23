@@ -102,7 +102,6 @@ private:
     NetworkNotification networknotification;
     AlertEvaluator alertEvaluator;
     PropConditions *conditions;
-    QSettings settings;
     bool isFusionStyle;
     ClubLogUploader* clublogRT;
     WsjtxUDPReceiver* wsjtx;

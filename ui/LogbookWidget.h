@@ -4,9 +4,11 @@
 #include <QWidget>
 #include <QProxyStyle>
 #include <QComboBox>
+#include <QSqlRecord>
+
 #include "models/SqlListModel.h"
 #include "core/CallbookManager.h"
-#include <QSqlRecord>
+#include "component/ShutdownAwareWidget.h"
 
 namespace Ui {
 class LogbookWidget;
@@ -16,12 +18,15 @@ class ClubLogUploader;
 class LogbookModel;
 class QProgressDialog;
 
-class LogbookWidget : public QWidget {
+class LogbookWidget : public QWidget, public ShutdownAwareWidget
+{
     Q_OBJECT
 
 public:
     explicit LogbookWidget(QWidget *parent = nullptr);
     ~LogbookWidget();
+
+    virtual void finalizeBeforeAppExit();
 
 signals:
     void logbookUpdated();

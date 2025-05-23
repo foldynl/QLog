@@ -868,6 +868,17 @@ void removeSettings2DB()
     settings.remove("export/c1");
     settings.remove("export/c2");
     settings.remove("export/c3");
+    settings.remove("logbook/state");
+    settings.remove("logbook/filters/band");
+    settings.remove("logbook/filters/mode");
+    settings.remove("logbook/filters/country");
+    settings.remove("logbook/filters/user");
+    settings.remove("logbook/filters/member");
+    settings.remove("alertbeep");
+    settings.remove("darkmode");
+    settings.remove("geometry");
+    settings.remove("windowState");
+    settings.remove("bandmapwidgets");
 }
 bool Migration::settings2DB()
 {
@@ -990,6 +1001,19 @@ bool Migration::settings2DB()
     LogParam::setExportColumnSet("c1", settings.value("export/c1").value<QSet<int>>());
     LogParam::setExportColumnSet("c2", settings.value("export/c2").value<QSet<int>>());
     LogParam::setExportColumnSet("c3", settings.value("export/c3").value<QSet<int>>());
+
+    LogParam::setLogbookState(settings.value("logbook/state").toByteArray());
+    LogParam::setLogbookFilterBand(settings.value("logbook/filters/band").toString());
+    LogParam::setLogbookFilterMode(settings.value("logbook/filters/mode").toString());
+    LogParam::setLogbookFilterCountry(settings.value("logbook/filters/country").toString());
+    LogParam::setLogbookFilterUserFilter(settings.value("logbook/filters/user").toString());
+    LogParam::setLogbookFilterClub(settings.value("logbook/filters/member").toString());
+
+    LogParam::setMainWindowAlertBeep(settings.value("alertbeep", false).toBool());
+    LogParam::setMainWindowDarkMode(settings.value("darkmode", false).toBool());
+    LogParam::setMainWindowGeometry(settings.value("geometry").toByteArray());
+    LogParam::setMainWindowState(settings.value("windowState").toByteArray());
+    LogParam::setMainWindowBandmapWidgets(settings.value("bandmapwidgets").toString());
 
     return true;
 }

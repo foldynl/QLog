@@ -29,6 +29,7 @@
 #include "data/RotProfile.h"
 #include "ui/DownloadQSLDialog.h"
 #include "ui/UploadQSODialog.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -117,7 +118,7 @@ MainWindow::MainWindow(QWidget* parent) :
     menuAlert->addSeparator();
     menuAlert->addAction(ui->actionEditAlertRules);
     menuAlert->addAction(ui->actionBeepSettingAlert);
-    ui->actionBeepSettingAlert->setChecked(settings.value("alertbeep", false).toBool());
+    ui->actionBeepSettingAlert->setChecked(LogParam::getMainWindowAlertBeep());
     alertButton->setMenu(menuAlert);
 
     alertTextButton = new QPushButton(" ", ui->statusBar);
@@ -187,7 +188,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::themeChanged, stats, &StatisticsWidget::changeTheme);
 
     connect(darkLightModeSwith, &SwitchButton::stateChanged, this, &MainWindow::darkModeToggle);
-    darkLightModeSwith->setChecked(settings.value("darkmode", false).toBool());
+    darkLightModeSwith->setChecked(LogParam::getMainWindowDarkMode());
 
     connect(Rig::instance(), &Rig::rigErrorPresent, this, &MainWindow::rigErrorHandler);
     connect(Rig::instance(), &Rig::rigCWKeyOpenRequest, this, &MainWindow::cwKeyerConnectProfile);
@@ -418,12 +419,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
         const QList<QPair<QString, QString>> &bandmapList = getNonVfoBandmapsParams();
 
         if ( bandmapList.isEmpty() )
-            settings.remove("bandmapwidgets");
+            LogParam::removeMainWindowBandmapWidgets();
         else
-            settings.setValue("bandmapwidgets", MainLayoutProfilesManager::toDBStringList(bandmapList));
+            LogParam::setMainWindowBandmapWidgets(MainLayoutProfilesManager::toDBStringList(bandmapList));
     }
     else
-        settings.remove("bandmapwidgets");
+        LogParam::removeMainWindowBandmapWidgets();
 
     // cleanup Bandmap config
     const QStringList configBandmapList = LogParam::bandmapsWidgets();
@@ -439,7 +440,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QSet<QString> layoutBandmapSet;
     const QStringList &profiles = layoutManager->profileNameList();
 
-    for (const auto &addBandmapClassic : MainLayoutProfilesManager::toPairStringList(settings.value("bandmapwidgets").toString()))
+    for (const auto &addBandmapClassic : MainLayoutProfilesManager::toPairStringList(LogParam::getMainWindowBandmapWidgets()))
         layoutBandmapSet.insert(addBandmapClassic.first);
 
     for ( const QString &profile: profiles )
@@ -464,8 +465,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
     }
 
     // save the window geometry
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
+    LogParam::setMainWindowGeometry(saveGeometry());
+    LogParam::setMainWindowState(saveState());
 
     if ( stats )
     {
@@ -732,16 +733,12 @@ void MainWindow::darkModeToggle(int mode)
     qCDebug(function_parameters) << mode;
 
     bool darkMode = (mode == Qt::Checked) ? true: false;
-    settings.setValue("darkmode", darkMode);
+    LogParam::setMainWindowDarkMode(darkMode);
 
     if ( mode == Qt::Checked)
-    {
         setDarkMode();
-    }
     else
-    {
         setLightMode();
-    }
 
     QFile style(":/res/stylesheet.css");
     style.open(QFile::ReadOnly | QIODevice::Text);
@@ -749,7 +746,6 @@ void MainWindow::darkModeToggle(int mode)
     style.close();
 
     emit themeChanged(darkMode);
-
 }
 
 void MainWindow::processSpotAlert(SpotAlert alert)
@@ -794,12 +790,9 @@ void MainWindow::beepSettingAlerts()
 {
     FCT_IDENTIFICATION;
 
-    settings.setValue("alertbeep", ui->actionBeepSettingAlert->isChecked());
+    LogParam::setMainWindowAlertBeep(ui->actionBeepSettingAlert->isChecked());
 
-    if ( ui->actionBeepSettingAlert->isChecked() )
-    {
-        QApplication::beep();
-    }
+    if ( ui->actionBeepSettingAlert->isChecked() ) QApplication::beep();
 }
 
 void MainWindow::shortcutALTBackslash()
@@ -854,10 +847,8 @@ void MainWindow::setLayoutGeometry()
     QByteArray newGeometry;
     QByteArray newState;
     bool darkMode = false;
-    QList<QPair<QString, QString>> bandmapWidgets;
-
-    bandmapWidgets = (layoutProfile.profileName.isEmpty()) ? MainLayoutProfilesManager::toPairStringList(settings.value("bandmapwidgets").toString())
-                                                           : layoutProfile.addlBandmaps;
+    const QList<QPair<QString, QString>> bandmapWidgets = (layoutProfile.profileName.isEmpty()) ? MainLayoutProfilesManager::toPairStringList(LogParam::getMainWindowBandmapWidgets())
+                                                                                                : layoutProfile.addlBandmaps;
     if ( layoutProfile.mainGeometry != QByteArray()
         || layoutProfile.mainState != QByteArray() )
     {
@@ -869,9 +860,9 @@ void MainWindow::setLayoutGeometry()
     else
     {
         // Classic Layout
-        newGeometry = settings.value("geometry").toByteArray();
-        newState = settings.value("windowState").toByteArray();
-        darkMode = settings.value("darkmode", false).toBool();
+        newGeometry = LogParam::getMainWindowGeometry();
+        newState = LogParam::getMainWindowState();
+        darkMode = LogParam::getMainWindowDarkMode();
     }
 
     openNonVfoBandmaps(bandmapWidgets);
@@ -1074,6 +1065,7 @@ void MainWindow::restoreUserDefinedShortcuts()
 {
     FCT_IDENTIFICATION;
 
+    QSettings settings; //platform-dependent, must be present
     const QHash<QString, QVariant> &state = settings.value("shortcuts").toHash();
 
     if ( state.count() > 0)
@@ -1099,6 +1091,8 @@ void MainWindow::restoreUserDefinedShortcuts()
 void MainWindow::saveUserDefinedShortcuts()
 {
     FCT_IDENTIFICATION;
+
+    QSettings settings; //platform-dependent, must be present
 
     QHash<QString, QVariant> state;
     const QList<QAction*> actions = getUserDefinedShortcutActionList();

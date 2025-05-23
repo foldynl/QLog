@@ -992,6 +992,121 @@ public:
         setParam("exportadi/" + paramName, valueList);
     }
 
+    static QByteArray getLogbookState()
+    {
+        return QByteArray::fromBase64(getParam("logbook/maintablestate").toByteArray());
+    }
+
+    static void setLogbookState(const QByteArray &state)
+    {
+        setParam("logbook/maintablestate", state.toBase64());
+    }
+
+    static QString getLogbookFilterBand()
+    {
+        return getParam("logbook/filter/band").toString();
+    }
+
+    static void setLogbookFilterBand(const QString &name)
+    {
+        setParam("logbook/filter/band", name);
+    }
+
+    static QString getLogbookFilterMode()
+    {
+        return getParam("logbook/filter/mode").toString();
+    }
+
+    static void setLogbookFilterMode(const QString &name)
+    {
+        setParam("logbook/filter/mode", name);
+    }
+
+    static QString getLogbookFilterCountry()
+    {
+        return getParam("logbook/filter/country").toString();
+    }
+
+    static void setLogbookFilterCountry(const QString &name)
+    {
+        setParam("logbook/filter/country", name);
+    }
+
+    static QString getLogbookFilterUserFilter()
+    {
+        return getParam("logbook/filter/userfilter").toString();
+    }
+
+    static void setLogbookFilterUserFilter(const QString &name)
+    {
+        setParam("logbook/filter/userfilter", name);
+    }
+
+    static QString getLogbookFilterClub()
+    {
+        return getParam("logbook/filter/club").toString();
+    }
+
+    static void setLogbookFilterClub(const QString &name)
+    {
+        setParam("logbook/filter/club", name);
+    }
+
+    static bool getMainWindowAlertBeep()
+    {
+        return getParam("mainwindow/alertbeep", false).toBool();
+    }
+
+    static void setMainWindowAlertBeep(bool state)
+    {
+        setParam("mainwindow/alertbeep", state);
+    }
+
+    static bool getMainWindowDarkMode()
+    {
+        return getParam("mainwindow/darkmode", false).toBool();
+    }
+
+    static void setMainWindowDarkMode(bool state)
+    {
+        setParam("mainwindow/darkmode", state);
+    }
+
+    static QByteArray getMainWindowGeometry()
+    {
+        return QByteArray::fromBase64(getParam("mainwindow/geometry").toByteArray());
+    }
+
+    static void setMainWindowGeometry(const QByteArray &state)
+    {
+        setParam("mainwindow/geometry", state.toBase64());
+    }
+
+    static QByteArray getMainWindowState()
+    {
+        return QByteArray::fromBase64(getParam("mainwindow/state").toByteArray());
+    }
+
+    static void setMainWindowState(const QByteArray &state)
+    {
+        setParam("mainwindow/state", state.toBase64());
+    }
+
+    static QString getMainWindowBandmapWidgets()
+    {
+        return getParam("mainwindow/bandmapwidgets").toString();
+    }
+
+    static void setMainWindowBandmapWidgets(const QString &value)
+    {
+        setParam("mainwindow/bandmapwidgets", value);
+    }
+
+    static void removeMainWindowBandmapWidgets()
+    {
+        removeParamGroup("mainwindow/bandmapwidgets");
+    }
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;

@@ -17,6 +17,7 @@
 #include "data/Gridsquare.h"
 #include "data/Callsign.h"
 #include "data/BandPlan.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qsodetaildialog");
 
@@ -1102,8 +1103,6 @@ void QSODetailDialog::mapLoaded(bool)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     isMainPageLoaded = true;
 
     /* which layers will be active */
@@ -1119,9 +1118,7 @@ void QSODetailDialog::mapLoaded(bool)
 
     main_page->runJavaScript(postponedScripts);
 
-    bool darkmode = settings.value("darkmode", false).toBool();
-
-    if ( darkmode )
+    if ( LogParam::getMainWindowDarkMode() )
     {
         QString themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
         main_page->runJavaScript(themeJavaScript);

@@ -28,6 +28,7 @@
 #include "core/MembershipQE.h"
 #include "service/GenericCallbook.h"
 #include "core/QSOFilterManager.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.logbookwidget");
 
@@ -166,8 +167,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_TEN_TEN, new UnitFormatDelegate("", 0, 1, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_UKSMG, new UnitFormatDelegate("", 0, 1, ui->contactTable));
 
-    QSettings settings;
-    const QByteArray &logbookState = settings.value("logbook/state").toByteArray();
+    const QByteArray &logbookState = LogParam::getLogbookState();
     if ( !logbookState.isEmpty() )
         ui->contactTable->horizontalHeader()->restoreState(logbookState);
     else
@@ -505,17 +505,15 @@ void LogbookWidget::saveBandFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/band", ui->bandFilter->currentText());
+    LogParam::setLogbookFilterBand(ui->bandFilter->currentText());
 }
 
 void LogbookWidget::restoreBandFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->bandFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/band").toString();
+    const QString &value = LogParam::getLogbookFilterBand();
     if ( !value.isEmpty() )
         ui->bandFilter->setCurrentText(value);
     else
@@ -538,17 +536,15 @@ void LogbookWidget::saveModeFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/mode", ui->modeFilter->currentText());
+    LogParam::setLogbookFilterMode(ui->modeFilter->currentText());
 }
 
 void LogbookWidget::restoreModeFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->modeFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/mode").toString();
+    const QString &value = LogParam::getLogbookFilterMode();
     if ( !value.isEmpty() )
         ui->modeFilter->setCurrentText(value);
     else
@@ -571,17 +567,15 @@ void LogbookWidget::saveCountryFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/country", ui->countryFilter->currentText());
+    LogParam::setLogbookFilterCountry(ui->countryFilter->currentText());
 }
 
 void LogbookWidget::restoreCountryFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->countryFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/country").toString();
+    const QString &value = LogParam::getLogbookFilterCountry();
     if ( !value.isEmpty() )
         ui->countryFilter->setCurrentText(value);
     else
@@ -613,17 +607,15 @@ void LogbookWidget::saveUserFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/user", ui->userFilter->currentText());
+    LogParam::setLogbookFilterUserFilter(ui->userFilter->currentText());
 }
 
 void LogbookWidget::restoreUserFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->userFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/user").toString();
+    const QString &value = LogParam::getLogbookFilterUserFilter();
     if ( !value.isEmpty() )
         ui->userFilter->setCurrentText(value);
     else
@@ -674,15 +666,15 @@ void LogbookWidget::refreshUserFilter()
 
 void LogbookWidget::saveClubFilter()
 {
-    QSettings settings;
-    settings.setValue("logbook/filters/member", ui->clubFilter->currentText());
+    FCT_IDENTIFICATION;
+
+    LogParam::setLogbookFilterClub(ui->clubFilter->currentText());
 }
 
 void LogbookWidget::restoreClubFilter()
 {
-    QSettings settings;
     ui->clubFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/member").toString();
+    const QString &value = LogParam::getLogbookFilterClub();
     if ( !value.isEmpty() )
         ui->clubFilter->setCurrentText(value);
     else
@@ -922,9 +914,7 @@ void LogbookWidget::saveTableHeaderState()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    QByteArray logbookState = ui->contactTable->horizontalHeader()->saveState();
-    settings.setValue("logbook/state", logbookState);
+    LogParam::setLogbookState(ui->contactTable->horizontalHeader()->saveState());
 }
 
 void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
@@ -1175,11 +1165,18 @@ LogbookWidget::~LogbookWidget()
 {
     FCT_IDENTIFICATION;
 
-    saveTableHeaderState();
+
     if ( lookupDialog )
     {
         callbookManager.abortQuery();
         finishQSOLookupBatch();
     }
     delete ui;
+}
+
+void LogbookWidget::finalizeBeforeAppExit()
+{
+    FCT_IDENTIFICATION;
+
+    saveTableHeaderState();
 }
