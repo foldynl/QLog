@@ -115,9 +115,6 @@ private:
     void setLightMode();
 
     void setupActivitiesMenu();
-    void saveEquipmentConnOptions();
-    void restoreConnectionStates();
-    void restoreEquipmentConnOptions();
 
     void restoreUserDefinedShortcuts();
     void saveUserDefinedShortcuts();

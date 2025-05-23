@@ -859,6 +859,10 @@ void removeSettings2DB()
     settings.remove("dxc/filter_mode_phone");
     settings.remove("dxc/filter_mode_digital");
     settings.remove("dxc/filter_mode_ft8");
+    settings.remove("equipment/rigconnected");
+    settings.remove("equipment/rotconnected");
+    settings.remove("equipment/cwkeyconnected");
+    settings.remove("equipment/keepoptions");
 }
 bool Migration::settings2DB()
 {
