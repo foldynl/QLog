@@ -40,7 +40,7 @@ void PaperQSLDialog::addFileClick()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
+    QSettings settings; //platform-dependent, must be present
 
     const QString &lastPath = settings.value("paperqslimport/last_path", QDir::homePath()).toString();
 
