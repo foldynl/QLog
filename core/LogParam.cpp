@@ -104,7 +104,7 @@ QStringList LogParam::getParamStringList(const QString &name, const QStringList 
 {
     FCT_IDENTIFICATION;
 
-    return deserializeStringList(getParam(name, defaultValue).toString());
+    return deserializeStringList(getParam(name, serializeStringList(defaultValue)).toString());
 }
 
 void LogParam::removeParamGroup(const QString &paramGroup)
