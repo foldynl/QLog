@@ -1142,7 +1142,7 @@ bool LogParam::setParam(const QString &name, const QVariant &value)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << name << " " << value;
+    qCDebug(function_parameters) << name << value;
 
     QSqlQuery query;
 
@@ -1160,13 +1160,13 @@ bool LogParam::setParam(const QString &name, const QVariant &value)
 
     if ( !query.exec() )
     {
-        qWarning() << "Cannot exec an insert parameter statement for" << name;
+        qWarning() << "SET - Cannot exec an insert parameter statement for" << name;
         return false;
     }
 
     localCache.remove(name);
 
-    qCWarning(runtime) << "Param:" << name << "Set - value" << value;
+    qCWarning(runtime) << "SET:" << name << "value" << value;
     return true;
 }
 
@@ -1182,7 +1182,7 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
 
     if ( valueCached )
     {
-        qDebug(runtime) << "Param:" << name << "Cached value: " << *valueCached;
+        qDebug(runtime) << "GET:" << name << "Cached value: " << *valueCached;
         return *valueCached;
     }
 
@@ -1190,7 +1190,7 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
 
     if ( ! query.prepare("SELECT value FROM log_param WHERE name = :nam") )
     {
-        qWarning()<< "Cannot prepare select parameter statement for" << name;
+        qWarning()<< "GET - Cannot prepare select parameter statement for" << name;
         return defaultValue;
     }
 
@@ -1198,7 +1198,7 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
 
     if ( ! query.exec() )
     {
-        qWarning() << "Cannot execute GetParam Select for" << name << "using default" << defaultValue;
+        qWarning() << "GET - Cannot execute GetParam Select for" << name << "using default" << defaultValue;
         return defaultValue;
     }
 
@@ -1208,13 +1208,13 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
         {
             QVariant dbValue = query.value(0);
             localCache.insert(name, new QVariant(dbValue));
-            qDebug(runtime) << "Param:" << name << "DB value: " << dbValue;
+            qDebug(runtime) << "GET:" << name << "DB value: " << dbValue;
             return dbValue;
         }
-        qDebug(runtime) << "Param:" << name << "NULL value in DB - using default " << defaultValue;
+        qDebug(runtime) << "GET:" << name << "NULL value in DB - using default " << defaultValue;
     }
     else
-        qDebug(runtime) << "Param:" << name << "Key not found in DB - using default " << defaultValue;
+        qDebug(runtime) << "GET:" << name << "Key not found in DB - using default " << defaultValue;
 
     localCache.insert(name, new QVariant(defaultValue));
 
