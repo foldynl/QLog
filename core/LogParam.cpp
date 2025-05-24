@@ -1216,6 +1216,8 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
     else
         qDebug(runtime) << "Param:" << name << "Key not found in DB - using default " << defaultValue;
 
+    localCache.insert(name, new QVariant(defaultValue));
+
     return defaultValue;
 }
 
