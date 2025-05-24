@@ -1131,7 +1131,7 @@ void LogbookWidget::colorsFilterWidget(QComboBox *widget)
 {
     FCT_IDENTIFICATION;
 
-    widget->setStyleSheet( (widget->currentIndex() > 0) ? "QComboBox {color: green}"
+    widget->setStyleSheet( (widget->currentIndex() > 0) ? "QComboBox {border: 2px solid red; border-radius: 4px; padding: 2px;}"
                                                         : "");
 }
 
