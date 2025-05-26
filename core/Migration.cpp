@@ -9,6 +9,7 @@
 #include "LogParam.h"
 #include "LOVDownloader.h"
 #include "service/clublog/ClubLog.h"
+#include "service/hrdlog/HRDLog.h"
 #include "logformat/AdxFormat.h"
 #include "ui/DxWidget.h"
 
@@ -1204,10 +1205,13 @@ bool Migration::refreshUploadStatusTrigger()
         return false;
     }
 
-    QStringList clublogSupportedColumns;
-
-    for ( const QString &clublogColumn : static_cast<const QStringList&>(ClubLogUploader::uploadedFields) )
-        clublogSupportedColumns << QString("old.%1 != new.%2").arg(clublogColumn, clublogColumn);
+    auto generateListSpecificConditions = [](const QStringList &columns)
+    {
+        QStringList result;
+        for (const QString &col : columns)
+            result << QString("old.\"%1\" != new.\"%2\"").arg(col, col);
+        return result.join(" OR ");
+    };
 
     if ( !stmt.exec(QString("CREATE TRIGGER update_contacts_upload_status "
                             "AFTER UPDATE OF %1 "
@@ -1215,17 +1219,16 @@ bool Migration::refreshUploadStatusTrigger()
                             "WHEN (%2) "
                             "BEGIN "
                             "   UPDATE contacts "
-                            "   SET hrdlog_qso_upload_status =  CASE old.hrdlog_qso_upload_status WHEN 'Y' THEN 'M' ELSE old.hrdlog_qso_upload_status END, "
-                            "       qrzcom_qso_upload_status =  CASE old.qrzcom_qso_upload_status WHEN 'Y' THEN 'M' ELSE old.qrzcom_qso_upload_status END , "
-                            "       hamlogeu_qso_upload_status =  CASE old.hamlogeu_qso_upload_status WHEN 'Y' THEN 'M' ELSE old.hamlogeu_qso_upload_status END ,  "
-                            "       hamqth_qso_upload_status =  CASE old.hamqth_qso_upload_status WHEN 'Y' THEN 'M' ELSE old.hamqth_qso_upload_status END ,  "
-                            "       clublog_qso_upload_status =  CASE WHEN old.clublog_qso_upload_status = 'Y'  "
-                            "                                              AND (%3) "
-                            "                                              THEN 'M' ELSE old.clublog_qso_upload_status END "
+                            "   SET hrdlog_qso_upload_status =   CASE WHEN old.hrdlog_qso_upload_status = 'Y' AND (%3) THEN 'M' ELSE old.hrdlog_qso_upload_status END, "
+                            "       qrzcom_qso_upload_status =   CASE WHEN old.qrzcom_qso_upload_status = 'Y' THEN 'M' ELSE old.qrzcom_qso_upload_status END , "
+                            "       hamlogeu_qso_upload_status = CASE WHEN old.hamlogeu_qso_upload_status = 'Y' THEN 'M' ELSE old.hamlogeu_qso_upload_status END ,  "
+                            "       hamqth_qso_upload_status =   CASE WHEN old.hamqth_qso_upload_status = 'Y' THEN 'M' ELSE old.hamqth_qso_upload_status END ,  "
+                            "       clublog_qso_upload_status =  CASE WHEN old.clublog_qso_upload_status = 'Y' AND (%4) THEN 'M' ELSE old.clublog_qso_upload_status END "
                             "   WHERE id = new.id;"
                             "END").arg(afterUpdateClause.join(","),
                                        whenClause.join(" OR "),
-                                       clublogSupportedColumns.join(" OR "))) )
+                                       generateListSpecificConditions(HRDLogUploader::uploadedFields),
+                                       generateListSpecificConditions(ClubLogUploader::uploadedFields))) )
     {
         qWarning().noquote() << "Cannot create Update Contacts Upload Trigger" << stmt.lastQuery();
         return false;
