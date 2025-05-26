@@ -41,7 +41,7 @@ QStringList HRDLogUploader::uploadedFields =
     "gridsquare",
     "dxcc",
     "qslmsg",
-    "comment"
+    "comment",
     "distance",
     "operator",
     "sat_mode",
