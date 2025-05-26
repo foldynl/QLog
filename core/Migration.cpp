@@ -880,112 +880,192 @@ void removeSettings2DB()
     settings.remove("windowState");
     settings.remove("bandmapwidgets");
 }
+
 bool Migration::settings2DB()
 {
     FCT_IDENTIFICATION;
 
     QSettings settings;
 
-    LogParam::setQRZCOMCallbookUsername(settings.value("qrzcom/username").toString().trimmed());
+    if (settings.contains("qrzcom/username"))
+        LogParam::setQRZCOMCallbookUsername(settings.value("qrzcom/username").toString().trimmed());
 
-    LogParam::setClublogLogbookReqEmail(settings.value("clublog/email").toString().trimmed());
-    LogParam::setClublogUploadImmediatelyEnabled(settings.value("clublog/upload_immediately").toBool());
+    if (settings.contains("clublog/email"))
+        LogParam::setClublogLogbookReqEmail(settings.value("clublog/email").toString().trimmed());
 
-    LogParam::setEQSLLogbookUsername(settings.value("eqsl/username").toString());
-    LogParam::setDownloadQSLServiceLastDate("eqsl", settings.value("eqsl/last_update", QDate(1900, 1, 1)).toDate());
-    LogParam::setDownloadQSLServiceLastQSOQSL("eqsl", settings.value("eqsl/last_qsoqsl", true).toBool());
-    LogParam::setDownloadQSLeQSLLastProfile(settings.value("eqsl/last_QTHProfile").toString());
-    LogParam::setUploadeqslQTHProfile(settings.value("eqsl/last_QTHProfile").toString());
+    if (settings.contains("clublog/upload_immediately"))
+        LogParam::setClublogUploadImmediatelyEnabled(settings.value("clublog/upload_immediately").toBool());
 
-    LogParam::setHamQTHCallbookUsername(settings.value("hamqth/username").toString());
+    if (settings.contains("eqsl/username"))
+        LogParam::setEQSLLogbookUsername(settings.value("eqsl/username").toString());
+    if (settings.contains("eqsl/last_update"))
+        LogParam::setDownloadQSLServiceLastDate("eqsl", settings.value("eqsl/last_update").toDate());
+    if (settings.contains("eqsl/last_qsoqsl"))
+        LogParam::setDownloadQSLServiceLastQSOQSL("eqsl", settings.value("eqsl/last_qsoqsl").toBool());
+    if (settings.contains("eqsl/last_QTHProfile"))
+    {
+        LogParam::setDownloadQSLeQSLLastProfile(settings.value("eqsl/last_QTHProfile").toString());
+        LogParam::setUploadeqslQTHProfile(settings.value("eqsl/last_QTHProfile").toString());
+    }
 
-    LogParam::setHRDLogLogbookReqCallsign(settings.value("hrdlog/callsign").toString());
-    LogParam::setHRDLogOnAir(settings.value("hrdlog/onair").toBool());
+    if (settings.contains("hamqth/username"))
+        LogParam::setHamQTHCallbookUsername(settings.value("hamqth/username").toString());
 
-    LogParam::setKSTChatUsername(settings.value("kst/username").toString());
+    if (settings.contains("hrdlog/callsign"))
+        LogParam::setHRDLogLogbookReqCallsign(settings.value("hrdlog/callsign").toString());
+    if (settings.contains("hrdlog/onair"))
+        LogParam::setHRDLogOnAir(settings.value("hrdlog/onair").toBool());
 
-    LogParam::setLoTWCallbookUsername(settings.value("lotw/username").toString());
-    LogParam::setLoTWTQSLPath(settings.value("lotw/tqsl").toString());
-    LogParam::setDownloadQSLServiceLastDate("lotw", settings.value("lotw/last_update", QDate(1900, 1, 1)).toDate());
-    LogParam::setDownloadQSLServiceLastQSOQSL("lotw", settings.value("lotw/last_qsoqsl", true).toBool());
+    if (settings.contains("kst/username"))
+        LogParam::setKSTChatUsername(settings.value("kst/username").toString());
 
-    LogParam::setPrimaryCallbook(settings.value("callbook/primary").toString());
-    LogParam::setSecondaryCallbook(settings.value("callbook/secondary").toString());
-    LogParam::setCallbookWebLookupURL(settings.value("callbook/weblookupurl").toString());
+    if (settings.contains("lotw/username"))
+        LogParam::setLoTWCallbookUsername(settings.value("lotw/username").toString());
+    if (settings.contains("lotw/tqsl"))
+        LogParam::setLoTWTQSLPath(settings.value("lotw/tqsl").toString());
+    if (settings.contains("lotw/last_update"))
+        LogParam::setDownloadQSLServiceLastDate("lotw", settings.value("lotw/last_update").toDate());
+    if (settings.contains("lotw/last_qsoqsl"))
+        LogParam::setDownloadQSLServiceLastQSOQSL("lotw", settings.value("lotw/last_qsoqsl").toBool());
 
-    LogParam::setNetworkNotifLogQSOAddrs(settings.value("network/notification/qso/adi_addrs").toString());
-    LogParam::setNetworkNotifDXCSpotAddrs(settings.value("network/notification/dxspot/addrs").toString());
-    LogParam::setNetworkNotifWSJTXCQSpotAddrs(settings.value("network/notification/wsjtx/cqspot/addrs").toString());
-    LogParam::setNetworkNotifAlertsSpotAddrs(settings.value("network/notification/alerts/spot/addrs").toString());
-    LogParam::setNetworkNotifRigStateAddrs(settings.value("network/notification/rig/state/addrs").toString());
+    if (settings.contains("callbook/primary"))
+        LogParam::setPrimaryCallbook(settings.value("callbook/primary").toString());
+    if (settings.contains("callbook/secondary"))
+        LogParam::setSecondaryCallbook(settings.value("callbook/secondary").toString());
+    if (settings.contains("callbook/weblookupurl"))
+        LogParam::setCallbookWebLookupURL(settings.value("callbook/weblookupurl").toString());
 
-    LogParam::setNetworkNotifRigStateAddrs(settings.value("network/wsjtx_port").toInt());
-    LogParam::setNetworkWsjtxForwardAddrs(settings.value("network/wsjtx_forward").toString());
-    LogParam::setNetworkWsjtxListenerJoinMulticast(settings.value("network/wsjtx_multicast").toBool());
-    LogParam::setNetworkWsjtxListenerMulticastAddr(settings.value("network/wsjtx_multicast_addr").toString());
-    LogParam::setNetworkWsjtxListenerMulticastTTL(settings.value("network/wsjtx_multicast_ttl").toInt());
+    if (settings.contains("network/notification/qso/adi_addrs"))
+        LogParam::setNetworkNotifLogQSOAddrs(settings.value("network/notification/qso/adi_addrs").toString());
+    if (settings.contains("network/notification/dxspot/addrs"))
+        LogParam::setNetworkNotifDXCSpotAddrs(settings.value("network/notification/dxspot/addrs").toString());
+    if (settings.contains("network/notification/wsjtx/cqspot/addrs"))
+        LogParam::setNetworkNotifWSJTXCQSpotAddrs(settings.value("network/notification/wsjtx/cqspot/addrs").toString());
+    if (settings.contains("network/notification/alerts/spot/addrs"))
+        LogParam::setNetworkNotifAlertsSpotAddrs(settings.value("network/notification/alerts/spot/addrs").toString());
+    if (settings.contains("network/notification/rig/state/addrs"))
+        LogParam::setNetworkNotifRigStateAddrs(settings.value("network/notification/rig/state/addrs").toString());
 
-    LogParam::setEnabledMemberlists(settings.value("memberlists/enabled").toStringList());
+    if (settings.contains("network/wsjtx_port"))
+        LogParam::setNetworkNotifRigStateAddrs(settings.value("network/wsjtx_port").toInt());
+    if (settings.contains("network/wsjtx_forward"))
+        LogParam::setNetworkWsjtxForwardAddrs(settings.value("network/wsjtx_forward").toString());
+    if (settings.contains("network/wsjtx_multicast"))
+        LogParam::setNetworkWsjtxListenerJoinMulticast(settings.value("network/wsjtx_multicast").toBool());
+    if (settings.contains("network/wsjtx_multicast_addr"))
+        LogParam::setNetworkWsjtxListenerMulticastAddr(settings.value("network/wsjtx_multicast_addr").toString());
+    if (settings.contains("network/wsjtx_multicast_ttl"))
+        LogParam::setNetworkWsjtxListenerMulticastTTL(settings.value("network/wsjtx_multicast_ttl").toInt());
 
-    LogParam::setAlertAging(settings.value("alert/alert_aging").toInt());
-    LogParam::setAlertWidgetState(settings.value("alert/state").toByteArray());
+    if (settings.contains("memberlists/enabled"))
+        LogParam::setEnabledMemberlists(settings.value("memberlists/enabled").toStringList());
 
-    LogParam::setCWConsoleSendWord(settings.value("cwconsole/sendWord", false).toBool());
+    if (settings.contains("alert/alert_aging"))
+        LogParam::setAlertAging(settings.value("alert/alert_aging").toInt());
+    if (settings.contains("alert/state"))
+        LogParam::setAlertWidgetState(settings.value("alert/state").toByteArray());
 
-    LogParam::setChatSelectedRoom(settings.value("chat/last_selected_room", 0).toInt());
+    if (settings.contains("cwconsole/sendWord"))
+        LogParam::setCWConsoleSendWord(settings.value("cwconsole/sendWord", false).toBool());
 
-    LogParam::setNewContactFreq(settings.value("newcontact/frequency", 3.5).toDouble());
-    LogParam::setNewContactMode(settings.value("newcontact/mode", "CW").toString());
-    LogParam::setNewContactSubMode(settings.value("newcontact/submode").toString());
-    LogParam::setNewContactPower(settings.value("newcontact/power", 100.0).toDouble());
-    LogParam::setNewContactTabIndex(settings.value("newcontact/tabindex", 0).toInt());
-    LogParam::setNewContactQSLSent(settings.value("newcontact/qslsent", "Q").toString());
-    LogParam::setNewContactLoTWQSLSent(settings.value("newcontact/lotwqslsent", "Q").toString());
-    LogParam::setNewContactEQSLQSLSent(settings.value("newcontact/eqslqslsent", "Q").toString());
-    LogParam::setNewContactQSLVia(settings.value("newcontact/qslsentvia").toString());
-    LogParam::setNewContactPropMode(settings.value("newcontact/propmode").toString());
-    LogParam::setNewContactTabsExpanded(settings.value("newcontact/tabsexpanded").toBool());
-    LogParam::setNewContactSatName(settings.value("newcontact/satname").toString());
+    if (settings.contains("chat/last_selected_room"))
+        LogParam::setChatSelectedRoom(settings.value("chat/last_selected_room", 0).toInt());
+
+    if (settings.contains("newcontact/frequency"))
+        LogParam::setNewContactFreq(settings.value("newcontact/frequency").toDouble());
+    if (settings.contains("newcontact/mode"))
+        LogParam::setNewContactMode(settings.value("newcontact/mode").toString());
+    if (settings.contains("newcontact/submode"))
+        LogParam::setNewContactSubMode(settings.value("newcontact/submode").toString());
+    if (settings.contains("newcontact/power"))
+        LogParam::setNewContactPower(settings.value("newcontact/power").toDouble());
+    if (settings.contains("newcontact/tabindex"))
+        LogParam::setNewContactTabIndex(settings.value("newcontact/tabindex", 0).toInt());
+    if (settings.contains("newcontact/qslsent"))
+        LogParam::setNewContactQSLSent(settings.value("newcontact/qslsent").toString());
+    if (settings.contains("newcontact/lotwqslsent"))
+        LogParam::setNewContactLoTWQSLSent(settings.value("newcontact/lotwqslsent").toString());
+    if (settings.contains("newcontact/eqslqslsent"))
+        LogParam::setNewContactEQSLQSLSent(settings.value("newcontact/eqslqslsent").toString());
+    if (settings.contains("newcontact/qslsentvia"))
+        LogParam::setNewContactQSLVia(settings.value("newcontact/qslsentvia").toString());
+    if (settings.contains("newcontact/propmode"))
+        LogParam::setNewContactPropMode(settings.value("newcontact/propmode").toString());
+    if (settings.contains("newcontact/tabsexpanded"))
+        LogParam::setNewContactTabsExpanded(settings.value("newcontact/tabsexpanded").toBool());
+    if (settings.contains("newcontact/satname"))
+        LogParam::setNewContactSatName(settings.value("newcontact/satname").toString());
 
     settings.beginGroup("onlinemap/layerstate");
-    for ( const QString &key : settings.allKeys())
+    const QStringList &onlineLayerKeys = settings.allKeys();
+    for ( const QString &key : onlineLayerKeys)
         LogParam::setMapLayerState("onlinemap", key, settings.value(key).toBool());
     settings.endGroup();
 
     settings.beginGroup("qsodetail/layerstate");
-    for ( const QString &key : settings.allKeys())
+    const QStringList &qsoDetailLayerKeys = settings.allKeys();
+    for ( const QString &key : qsoDetailLayerKeys)
         LogParam::setMapLayerState("qsodetail", key, settings.value(key).toBool());
     settings.endGroup();
 
-    LogParam::setWsjtxFilterDxccStatus(settings.value("wsjtx/filter_dxcc_status", DxccStatus::All).toUInt());
-    LogParam::setWsjtxFilterContRE(settings.value("wsjtx/filter_cont_regexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString());
-    LogParam::setWsjtxFilterDistance(settings.value("wsjtx/filter_distance", 0).toInt());
-    LogParam::setWsjtxFilterDistance(settings.value("wsjtx/filter_snr", -41).toInt());
-    LogParam::setWsjtxMemberlists(settings.value("wsjtx/filter_dx_member_list").toStringList());
-    LogParam::setWsjtxWidgetState(settings.value("wsjtx/state").toByteArray());
+    if (settings.contains("wsjtx/filter_dxcc_status"))
+        LogParam::setWsjtxFilterDxccStatus(settings.value("wsjtx/filter_dxcc_status").toUInt());
+    if (settings.contains("wsjtx/filter_cont_regexp"))
+        LogParam::setWsjtxFilterContRE(settings.value("wsjtx/filter_cont_regexp").toString());
+    if (settings.contains("wsjtx/filter_distance"))
+        LogParam::setWsjtxFilterDistance(settings.value("wsjtx/filter_distance").toInt());
+    if (settings.contains("wsjtx/filter_snr"))
+        LogParam::setWsjtxFilterDistance(settings.value("wsjtx/filter_snr").toInt());
+    if (settings.contains("wsjtx/filter_dx_member_list"))
+        LogParam::setWsjtxMemberlists(settings.value("wsjtx/filter_dx_member_list").toStringList());
+    if (settings.contains("wsjtx/state"))
+        LogParam::setWsjtxWidgetState(settings.value("wsjtx/state").toByteArray());
 
-    LogParam::setDXCFilterDxccStatus(settings.value("dxc/filter_dxcc_status", DxccStatus::All).toUInt());
-    LogParam::setDXCFilterContRE(settings.value("dxc/filter_cont_regexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString());
-    LogParam::setDXCFilterSpotterContRE(settings.value("dxc/filter_spotter_cont_regexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString());
-    LogParam::setDXCFilterDedup(settings.value("dxc/filter_deduplication", false).toBool());
-    LogParam::setDXCFilterDedupTime(settings.value("dxc/filter_duplicationtime", DEDUPLICATION_TIME).toInt());
-    LogParam::setDXCFilterDedupFreq(settings.value("dxc/filter_deduplicationfreq", DEDUPLICATION_FREQ_TOLERANCE).toInt());
-    LogParam::setDXCFilterMemberlists(settings.value("dxc/filter_dx_member_list", QStringList()).toStringList());
-    LogParam::setDXCAutoconnectServer(settings.value("dxc/autoconnect", false).toBool());
-    LogParam::setDXCKeepQSOs(settings.value("dxc/keepqsos", false).toBool());
-    LogParam::setDXCDXTableState(settings.value("dxc/dxtablestate").toByteArray());
-    LogParam::setDXCWCYTableState(settings.value("dxc/wcytablestate").toByteArray());
-    LogParam::setDXCWWVTableState(settings.value("dxc/wwvtablestate").toByteArray());
-    LogParam::setDXCTOALLTableState(settings.value("dxc/toalltablestate").toByteArray());
-    LogParam::setDXCConsoleFontSize(settings.value("dxc/consolefontsize", -1).toInt());
-    LogParam::setDXCServerlist(settings.value("dxc/servers", {"hamqth.com:7300"}).toStringList());
-    LogParam::setDXCLastServer(settings.value("dxc/last_server").toString());
-    QString value("NOTHING");
-    if ( settings.value("dxc/filter_mode_cw",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_CW);
-    if ( settings.value("dxc/filter_mode_phone",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_PHONE);
-    if ( settings.value("dxc/filter_mode_digital",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_DIGITAL);
-    if ( settings.value("dxc/filter_mode_ft8",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_FT8);
-    LogParam::setDXCFilterModeRE(value);
+    if (settings.contains("dxc/filter_dxcc_status"))
+        LogParam::setDXCFilterDxccStatus(settings.value("dxc/filter_dxcc_status").toUInt());
+    if (settings.contains("dxc/filter_cont_regexp"))
+        LogParam::setDXCFilterContRE(settings.value("dxc/filter_cont_regexp").toString());
+    if (settings.contains("dxc/filter_spotter_cont_regexp"))
+        LogParam::setDXCFilterSpotterContRE(settings.value("dxc/filter_spotter_cont_regexp").toString());
+    if (settings.contains("dxc/filter_deduplication"))
+        LogParam::setDXCFilterDedup(settings.value("dxc/filter_deduplication").toBool());
+    if (settings.contains("dxc/filter_duplicationtime"))
+        LogParam::setDXCFilterDedupTime(settings.value("dxc/filter_duplicationtime").toInt());
+    if (settings.contains("dxc/filter_deduplicationfreq"))
+        LogParam::setDXCFilterDedupFreq(settings.value("dxc/filter_deduplicationfreq", DEDUPLICATION_FREQ_TOLERANCE).toInt());
+    if (settings.contains("dxc/filter_dx_member_list"))
+        LogParam::setDXCFilterMemberlists(settings.value("dxc/filter_dx_member_list").toStringList());
+    if (settings.contains("dxc/autoconnect"))
+        LogParam::setDXCAutoconnectServer(settings.value("dxc/autoconnect").toBool());
+    if (settings.contains("dxc/keepqsos"))
+        LogParam::setDXCKeepQSOs(settings.value("dxc/keepqsos").toBool());
+    if (settings.contains("dxc/dxtablestate"))
+        LogParam::setDXCDXTableState(settings.value("dxc/dxtablestate").toByteArray());
+    if (settings.contains("dxc/wcytablestate"))
+        LogParam::setDXCWCYTableState(settings.value("dxc/wcytablestate").toByteArray());
+    if (settings.contains("dxc/wwvtablestate"))
+        LogParam::setDXCWWVTableState(settings.value("dxc/wwvtablestate").toByteArray());
+    if (settings.contains("dxc/toalltablestate"))
+        LogParam::setDXCTOALLTableState(settings.value("dxc/toalltablestate").toByteArray());
+    if (settings.contains("dxc/consolefontsize"))
+        LogParam::setDXCConsoleFontSize(settings.value("dxc/consolefontsize").toInt());
+    if (settings.contains("dxc/servers"))
+        LogParam::setDXCServerlist(settings.value("dxc/servers").toStringList());
+    if (settings.contains("dxc/last_server"))
+        LogParam::setDXCLastServer(settings.value("dxc/last_server").toString());
+
+    if (settings.contains("dxc/filter_mode_cw")
+        || settings.contains("dxc/filter_mode_phone")
+        || settings.contains("dxc/filter_mode_digital")
+        || settings.contains("dxc/filter_mode_ft8") )
+    {
+        QString value("NOTHING");
+        if ( settings.value("dxc/filter_mode_cw",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_CW);
+        if ( settings.value("dxc/filter_mode_phone",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_PHONE);
+        if ( settings.value("dxc/filter_mode_digital",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_DIGITAL);
+        if ( settings.value("dxc/filter_mode_ft8",true).toBool() ) value.append("|" + BandPlan::MODE_GROUP_STRING_FT8);
+        LogParam::setDXCFilterModeRE(value);
+    }
 
     const QList<Band> &bands = BandPlan::bandsList(false, true);
     QStringList excludedBandFilter;
@@ -994,26 +1074,43 @@ bool Migration::settings2DB()
         if ( !settings.value("dxc/filter_band_" + band.name,true).toBool())
             excludedBandFilter << band.name;
     }
-    LogParam::setDXCExcludedBands(excludedBandFilter);
+    if ( !excludedBandFilter.isEmpty() )
+        LogParam::setDXCExcludedBands(excludedBandFilter);
 
-    LogParam::setExportColumnSet("min", settings.value("export/min").value<QSet<int>>());
-    LogParam::setExportColumnSet("sql", settings.value("export/sql").value<QSet<int>>());
-    LogParam::setExportColumnSet("c1", settings.value("export/c1").value<QSet<int>>());
-    LogParam::setExportColumnSet("c2", settings.value("export/c2").value<QSet<int>>());
-    LogParam::setExportColumnSet("c3", settings.value("export/c3").value<QSet<int>>());
+    if (settings.contains("export/min"))
+        LogParam::setExportColumnSet("min", settings.value("export/min").value<QSet<int>>());
+    if (settings.contains("export/sql"))
+        LogParam::setExportColumnSet("sql", settings.value("export/sql").value<QSet<int>>());
+    if (settings.contains("export/c1"))
+        LogParam::setExportColumnSet("c1", settings.value("export/c1").value<QSet<int>>());
+    if (settings.contains("export/c2"))
+        LogParam::setExportColumnSet("c2", settings.value("export/c2").value<QSet<int>>());
+    if (settings.contains("export/c3"))
+        LogParam::setExportColumnSet("c3", settings.value("export/c3").value<QSet<int>>());
 
-    LogParam::setLogbookState(settings.value("logbook/state").toByteArray());
-    LogParam::setLogbookFilterBand(settings.value("logbook/filters/band").toString());
-    LogParam::setLogbookFilterMode(settings.value("logbook/filters/mode").toString());
-    LogParam::setLogbookFilterCountry(settings.value("logbook/filters/country").toString());
-    LogParam::setLogbookFilterUserFilter(settings.value("logbook/filters/user").toString());
-    LogParam::setLogbookFilterClub(settings.value("logbook/filters/member").toString());
+    if (settings.contains("logbook/state"))
+        LogParam::setLogbookState(settings.value("logbook/state").toByteArray());
+    if (settings.contains("logbook/filters/band"))
+        LogParam::setLogbookFilterBand(settings.value("logbook/filters/band").toString());
+    if (settings.contains("logbook/filters/mode"))
+        LogParam::setLogbookFilterMode(settings.value("logbook/filters/mode").toString());
+    if (settings.contains("logbook/filters/country"))
+        LogParam::setLogbookFilterCountry(settings.value("logbook/filters/country").toString());
+    if (settings.contains("logbook/filters/user"))
+        LogParam::setLogbookFilterUserFilter(settings.value("logbook/filters/user").toString());
+    if (settings.contains("logbook/filters/member"))
+        LogParam::setLogbookFilterClub(settings.value("logbook/filters/member").toString());
 
-    LogParam::setMainWindowAlertBeep(settings.value("alertbeep", false).toBool());
-    LogParam::setMainWindowDarkMode(settings.value("darkmode", false).toBool());
-    LogParam::setMainWindowGeometry(settings.value("geometry").toByteArray());
-    LogParam::setMainWindowState(settings.value("windowState").toByteArray());
-    LogParam::setMainWindowBandmapWidgets(settings.value("bandmapwidgets").toString());
+    if (settings.contains("alertbeep"))
+        LogParam::setMainWindowAlertBeep(settings.value("alertbeep").toBool());
+    if (settings.contains("darkmode"))
+        LogParam::setMainWindowDarkMode(settings.value("darkmode").toBool());
+    if (settings.contains("geometry"))
+        LogParam::setMainWindowGeometry(settings.value("geometry").toByteArray());
+    if (settings.contains("windowState"))
+        LogParam::setMainWindowState(settings.value("windowState").toByteArray());
+    if (settings.contains("bandmapwidgets"))
+        LogParam::setMainWindowBandmapWidgets(settings.value("bandmapwidgets").toString());
 
     return true;
 }
