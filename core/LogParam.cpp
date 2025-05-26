@@ -954,7 +954,7 @@ void LogParam::setDXCConsoleFontSize(int value)
 
 QStringList LogParam::getDXCServerlist()
 {
-    return getParamStringList("dxc/serverlist");
+    return getParamStringList("dxc/serverlist", {"hamqth.com:7300"});
 }
 
 void LogParam::setDXCServerlist(const QStringList &list)
@@ -1166,7 +1166,7 @@ bool LogParam::setParam(const QString &name, const QVariant &value)
 
     localCache.remove(name);
 
-    qCWarning(runtime) << "SET:" << name << "value" << value;
+    qCDebug(runtime) << "SET:" << name << "value" << value;
     return true;
 }
 
@@ -1182,7 +1182,7 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
 
     if ( valueCached )
     {
-        qDebug(runtime) << "GET:" << name << "Cached value: " << *valueCached;
+        qCDebug(runtime) << "GET:" << name << "Cached value: " << *valueCached;
         return *valueCached;
     }
 
@@ -1208,15 +1208,18 @@ QVariant LogParam::getParam(const QString &name, const QVariant &defaultValue)
         {
             QVariant dbValue = query.value(0);
             localCache.insert(name, new QVariant(dbValue));
-            qDebug(runtime) << "GET:" << name << "DB value: " << dbValue;
+            qCDebug(runtime) << "GET:" << name << "DB value: " << dbValue;
             return dbValue;
         }
-        qDebug(runtime) << "GET:" << name << "NULL value in DB - using default " << defaultValue;
+        qCDebug(runtime) << "GET:" << name << "NULL value in DB - using default " << defaultValue;
     }
     else
-        qDebug(runtime) << "GET:" << name << "Key not found in DB - using default " << defaultValue;
+        qCDebug(runtime) << "GET:" << name << "Key not found in DB - using default " << defaultValue;
 
-    localCache.insert(name, new QVariant(defaultValue));
+    //localCache.insert(name, new QVariant(defaultValue)); // Do not insert default value here because
+                                                           // in some use cases — for example, DXC and station_profile
+                                                           // the profile is not yet accessible during the first call,
+                                                           // and an empty value is incorrectly inserted into the cache.
 
     return defaultValue;
 }
