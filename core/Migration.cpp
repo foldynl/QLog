@@ -24,7 +24,6 @@ bool Migration::run() {
 
     int currentVersion = getVersion();
 
-    //settings2DB(); // TODO only for testing !!!!!
     if (currentVersion == latestVersion) {
         qCDebug(runtime) << "Database schema already up to date";
         updateExternalResource();
@@ -315,6 +314,9 @@ bool Migration::functionMigration(int version)
         break;
     case 29:
         ret = profiles2DB();
+        break;
+    case 34:
+        ret = settings2DB();
         break;
     default:
         ret = true;
