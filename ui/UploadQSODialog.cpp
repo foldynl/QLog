@@ -493,10 +493,28 @@ void UploadQSODialog::executeQuery()
         auto rec = QSharedPointer<QSqlRecord>::create(uploadQSOQuery.record());
         allSelectedQSOs.insert(rec->value("id").toULongLong(), rec);
 
+        bool eqslUploadStatus = rec->value("status_" + QString::number(ServiceID::EQSLID)).toBool();
+        bool lotwUploadStatus = rec->value("status_" + QString::number(ServiceID::LOTWID)).toBool();
+
         for ( auto it = onlineServices.begin(); it != onlineServices.end(); ++it )
         {
             UploadTask &task = it.value();
-            bool forUploadMarked = rec->value("status_" + QString::number(task.getServiceID())).toBool();
+
+            if ( !task.isChecked() ) continue;
+
+            ServiceID taskID = task.getServiceID();
+            bool forUploadMarked = false;
+
+            // set forUploadMarked according to service dependency.
+            switch (taskID)
+            {
+            case EQSLID: forUploadMarked = eqslUploadStatus; break;
+            case LOTWID: forUploadMarked = lotwUploadStatus; break;
+            case CLUBLOGID: forUploadMarked = lotwUploadStatus || rec->value("status_" + QString::number(taskID)).toBool(); break; // depends on the LoTW Receive field
+            case HRDLOGID: forUploadMarked = eqslUploadStatus || lotwUploadStatus || rec->value("status_" + QString::number(taskID)).toBool(); break; //depends on EQSL and LoTW fields
+            case QRZCOMID: forUploadMarked = (! serviceNames.empty()) || rec->value("status_" + QString::number(taskID)).toBool(); break; // all fields are sent
+            default: forUploadMarked = false;
+            }
 
             if ( forUploadMarked )
             {
