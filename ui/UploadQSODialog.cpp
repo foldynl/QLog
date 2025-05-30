@@ -74,7 +74,11 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
     ui->myCallsignCombo->blockSignals(true);
     ui->myGridCombo->blockSignals(true);
 
-    ui->myCallsignCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(station_callsign) FROM contacts ORDER BY station_callsign", ""));
+    // based on LoTW source code and ADIF spec - priority STATION_CALLSIGN, OPERATOR
+    ui->myCallsignCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator))) "
+                                                   "FROM contacts "
+                                                   "WHERE station_callsign IS NOT NULL OR operator IS NOT NULL "
+                                                   "ORDER BY station_callsign", ""));
     ui->myStationProfileCombo->setModel(new SqlListModel("SELECT DISTINCT profile_name FROM station_profiles ORDER BY profile_name", ""));
 
     setEQSLSettingVisible(false);
@@ -268,7 +272,7 @@ void UploadQSODialog::processNextUploader()
             statement.append("WHERE " + currentTask.getWhereClause());
 
             if ( !ui->myCallsignCombo->currentText().isEmpty() )
-                statement.append(" AND station_callsign = '" + ui->myCallsignCombo->currentText().trimmed() + "'");
+                statement.append(" AND COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator)) = '" + ui->myCallsignCombo->currentText().trimmed() + "'");
 
             if ( !ui->myGridCombo->currentText().isEmpty() && ui->myGridCombo->currentIndex() > 0 )
                 statement.append(" AND my_gridsquare = '" + ui->myGridCombo->currentText().trimmed() + "'");
@@ -438,7 +442,7 @@ void UploadQSODialog::executeQuery()
 
     if ( ui->myCallsignCheckbox->isChecked() )
     {
-        whereParts << QLatin1String("station_callsign = :station_callsign");
+        whereParts << QLatin1String("COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator)) = :station_callsign");
 
         if ( !ui->myGridCombo->currentText().isEmpty() && ui->myGridCombo->currentIndex() > 0 )
             whereParts << QLatin1String("my_gridsquare = :my_gridsquare");
@@ -543,7 +547,7 @@ void UploadQSODialog::handleCallsignChange(const QString &myCallsign)
     ui->myGridLabel->blockSignals(true);
     ui->myGridCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) "
                                                "FROM contacts "
-                                               "WHERE station_callsign ='" + myCallsign + "' ORDER BY my_gridsquare", tr("Any")));
+                                               "WHERE COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator)) ='" + myCallsign + "' ORDER BY my_gridsquare", tr("Any")));
     ui->myGridCombo->setCurrentIndex(0);
     executeQuery();
     ui->myGridLabel->blockSignals(false);
