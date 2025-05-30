@@ -18,9 +18,11 @@ public:
 
     static const QString getUsername();
     static const QString getPassword();
-    static const QString getLogbookAPIKey();
     static void saveUsernamePassword(const QString&, const QString&);
-    static void saveLogbookAPI(const QString&);
+    static const QString getLogbookAPIKey(const QString &internalUsername = QRZBase::CONFIG_USERNAME_API_CONST);
+    static const QStringList getLogbookAPIAddlCallsigns();
+    static void setLogbookAPIAddlCallsigns(const QStringList &list);
+    static void saveLogbookAPIKey(const QString& newKey, const QString &internalUsername = QRZBase::CONFIG_USERNAME_API_CONST);
 
 protected:
     const static QString SECURE_STORAGE_KEY;
@@ -78,10 +80,11 @@ protected:
 private:
     QNetworkReply *currentReply;
     QList<QSqlRecord> queuedContacts4Upload;
+    QStringList addlCallsign;
     bool cancelUpload;
     const QString API_LOGBOOK_URL = "https://logbook.qrz.com/api";
 
-    void actionInsert(QByteArray& data, const QString &insertPolicy);
+    void actionInsert(const QString &logbookAPIKey, QByteArray& data, const QString &insertPolicy);
     QMap<QString, QString> parseActionResponse(const QString&) const;
 };
 

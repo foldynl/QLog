@@ -347,6 +347,16 @@ void LogParam::setQRZCOMCallbookUsername(const QString &username)
     setParam("services/qrzcom/callbook/username", username);
 }
 
+QStringList LogParam::getQRZCOMAPICallsignsList()
+{
+    return getParamStringList("services/qrzcom/logbook/apicallsigns");
+}
+
+void LogParam::setQRZCOMAPICallsignsList(const QStringList &list)
+{
+    setParam("services/qrzcom/logbook/apicallsigns", list);
+}
+
 QString LogParam::getClublogLogbookReqEmail()
 {
     return getParam("services/clublog/logbook/regemail").toString().trimmed();

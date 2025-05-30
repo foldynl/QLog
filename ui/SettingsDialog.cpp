@@ -2240,6 +2240,29 @@ void SettingsDialog::updateDateFormatResult()
     ui->dateFormatResultLabel->setText(QDate::currentDate().toString(ui->dateFormatStringEdit->text()));
 }
 
+void SettingsDialog::qrzAddCallsignAPIKey()
+{
+    FCT_IDENTIFICATION;
+
+    QAbstractItemModel *model = ui->qrzCallsignApiKeyTableView->model();
+
+    int newRow = model->rowCount();
+    model->insertRow(newRow);
+    QModelIndex index = model->index(newRow, 0);
+    ui->qrzCallsignApiKeyTableView->setCurrentIndex(index);
+    ui->qrzCallsignApiKeyTableView->edit(index);
+}
+
+void SettingsDialog::qrzDelCallsignAPIKey()
+{
+    FCT_IDENTIFICATION;
+
+    QModelIndex index = ui->qrzCallsignApiKeyTableView->currentIndex();
+    if ( !index.isValid() ) return;
+
+    ui->qrzCallsignApiKeyTableView->model()->removeRow(index.row());
+}
+
 void SettingsDialog::readSettings()
 {
     FCT_IDENTIFICATION;
@@ -2318,6 +2341,7 @@ void SettingsDialog::readSettings()
     /* QRZ.COM */
     /***********/
     ui->qrzApiKeyEdit->setText(QRZBase::getLogbookAPIKey());
+    generateQRZAPICallsignTable();
 
     /***********************/
     /* Others - DXCC Group */
@@ -2429,7 +2453,8 @@ void SettingsDialog::writeSettings()
     /***********/
     /* QRZ.COM */
     /***********/
-    QRZBase::saveLogbookAPI(ui->qrzApiKeyEdit->text());
+    QRZBase::saveLogbookAPIKey(ui->qrzApiKeyEdit->text());
+    saveQRZAPICallsignTable();
 
     /***********************/
     /* Others - DXCC Group */
@@ -2707,6 +2732,60 @@ void SettingsDialog::generateMembershipCheckboxes()
             elementIndex++;
         }
     }
+}
+
+void SettingsDialog::generateQRZAPICallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStandardItemModel* tableModel = new QStandardItemModel(ui->qrzCallsignApiKeyTableView);
+    tableModel->setHorizontalHeaderLabels({tr("Callsign"), tr("API Key")});
+
+    const QStringList &addlCallsign = QRZBase::getLogbookAPIAddlCallsigns();
+
+
+    for ( const QString &callsign : addlCallsign )
+    {
+        QList<QStandardItem*> rowItems({new QStandardItem(callsign),
+                                        new QStandardItem(QRZBase::getLogbookAPIKey(callsign))});
+        tableModel->appendRow(rowItems);
+    }
+
+    ui->qrzCallsignApiKeyTableView->setModel(tableModel);
+    ui->qrzCallsignApiKeyTableView->resizeColumnsToContents();
+    ui->qrzCallsignApiKeyTableView->setItemDelegateForColumn(0, new UpperCaseUniqueDelegate(this));
+    ui->qrzCallsignApiKeyTableView->setItemDelegateForColumn(1, new PasswordDelegate(this));
+}
+
+void SettingsDialog::saveQRZAPICallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList &addlCallsignsAPIList = LogParam::getQRZCOMAPICallsignsList();
+    for ( const QString &callsign : addlCallsignsAPIList)
+    {
+        qCDebug(runtime) << "Deleting QRZ Callsign API" << callsign;
+        QRZBase::saveLogbookAPIKey({}, callsign); // side-effect - an empty key causes deleting its old value in the secure store.
+    }
+
+    // delete original list of callsigns
+    QRZBase::setLogbookAPIAddlCallsigns({});
+
+    QAbstractItemModel *model = ui->qrzCallsignApiKeyTableView->model();
+    QStringList newAddlCallsignsAPIList;
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QString &newCallsign = model->data(model->index(row, 0)).toString();
+        if ( !newCallsign.isEmpty() )
+        {
+            qCDebug(runtime) << "Saving a new QRZ callsign API" << newCallsign;
+            const QString &newPassword = model->data(model->index(row, 1)).toString();
+            if ( !newPassword.isEmpty() ) newAddlCallsignsAPIList.append(newCallsign);
+            QRZBase::saveLogbookAPIKey(newPassword, newCallsign);
+        }
+    }
+    if ( !newAddlCallsignsAPIList.isEmpty() )
+        QRZBase::setLogbookAPIAddlCallsigns(newAddlCallsignsAPIList);
 }
 
 SettingsDialog::~SettingsDialog() {

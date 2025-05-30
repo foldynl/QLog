@@ -18,6 +18,8 @@
 #include <QPushButton>
 #include <QApplication>
 #include <QTimeZone>
+#include <QLineEdit>
+#include <QMessageBox>
 
 #include "core/LogLocale.h"
 #include "data/Gridsquare.h"
@@ -603,6 +605,80 @@ public:
     QWidget *createEditor(QWidget *, const QStyleOptionViewItem &, const QModelIndex &) const override
     {
             return nullptr;
+    }
+};
+
+class UpperCaseDelegate : public QStyledItemDelegate {
+    Q_OBJECT
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &) const override
+    {
+        QLineEdit *editor = new QLineEdit(parent);
+        return editor;
+    }
+
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override
+    {
+        QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+        if (lineEdit)
+        {
+            QString text = lineEdit->text().toUpper();
+            model->setData(index, text);
+        }
+    }
+};
+
+class UpperCaseUniqueDelegate : public UpperCaseDelegate {
+    Q_OBJECT
+public:
+    using UpperCaseDelegate::UpperCaseDelegate;
+
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &) const override
+    {
+        QLineEdit *editor = new QLineEdit(parent);
+        return editor;
+    }
+
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override
+    {
+        QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+        if (lineEdit)
+        {
+            QString text = lineEdit->text().toUpper();
+            for (int row = 0; row < model->rowCount(); ++row)
+            {
+                if (row == index.row()) continue;
+                if (model->data(model->index(row, index.column()), Qt::EditRole).toString() == text)
+                {
+                    QMessageBox::warning(nullptr, "Duplicate value", "The value must be unique.");
+                    return;
+                }
+            }
+            model->setData(index, text);
+        }
+    }
+};
+
+class PasswordDelegate : public QStyledItemDelegate {
+    Q_OBJECT
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &) const override
+    {
+        QLineEdit *editor = new QLineEdit(parent);
+        editor->setEchoMode(QLineEdit::Password);
+        return editor;
+    }
+
+    QString displayText(const QVariant &value, const QLocale &) const override
+    {
+        QLineEdit dummy;
+        dummy.setEchoMode(QLineEdit::Password);
+        dummy.setText(value.toString());
+        return dummy.displayText();
     }
 };
 

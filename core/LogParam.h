@@ -109,6 +109,8 @@ public:
      ********/
     static QString getQRZCOMCallbookUsername();
     static void setQRZCOMCallbookUsername(const QString& username);
+    static QStringList getQRZCOMAPICallsignsList();
+    static void setQRZCOMAPICallsignsList(const QStringList &list);
 
     /*********
      * Clublog
