@@ -11,10 +11,11 @@ class CWWinKey : public CWKey,
 
 public:
     explicit CWWinKey(const QString &portName,
-                       const qint32 baudrate,
-                       const CWKey::CWKeyModeID mode,
-                       const qint32 defaultSpeed,
-                       QObject *parent = nullptr);
+                      const qint32 baudrate,
+                      const CWKey::CWKeyModeID mode,
+                      const qint32 defaultSpeed,
+                      bool paddleSwap,
+                      QObject *parent = nullptr);
     virtual ~CWWinKey();
 
     virtual bool open() override;
@@ -29,6 +30,7 @@ private:
 
     bool isInHostMode;
     bool xoff;
+    bool paddleSwap;
 
     QMutex writeBufferMutex;
     QMutex commandMutex;

@@ -13,12 +13,13 @@ CWWinKey::CWWinKey(const QString &portName,
                      const qint32 baudrate,
                      const CWKey::CWKeyModeID mode,
                      const qint32 defaultSpeed,
+                     bool paddleSwap,
                      QObject *parent)
     : CWKey(mode, defaultSpeed, parent),
       CWKeySerialInterface(portName, baudrate, 5000),
       isInHostMode(false),
-      xoff(false)
-
+      xoff(false),
+      paddleSwap(paddleSwap)
 {
     FCT_IDENTIFICATION;
 
@@ -571,7 +572,7 @@ unsigned char CWWinKey::buildWKModeByte() const
         break;
     }
 
-    //3     = 0             // Paddle Swap Normal
+    settingByte |= paddleSwap << 3;   // Paddle Swap Normal
     settingByte |= 1 << 2;  // Serial Echoback Enabled - must be
     //1     = 0             // Autospace Disabled
     //0     = 0             // Normal Wordspace

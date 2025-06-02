@@ -703,24 +703,38 @@
                   <widget class="QComboBox" name="cwModelSelect"/>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QLabel" name="label_3">
+                  <widget class="QLabel" name="cwKeyModeLabel">
                    <property name="text">
                     <string>Keyer Mode</string>
                    </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QComboBox" name="cwKeyModeSelect">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
+                  <layout class="QHBoxLayout" name="horizontalLayout_37">
+                   <property name="spacing">
+                    <number>20</number>
                    </property>
-                  </widget>
+                   <item>
+                    <widget class="QComboBox" name="cwKeyModeSelect">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="cwSwapPaddlesCheckbox">
+                     <property name="text">
+                      <string>Swap Paddles</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="3" column="0">
-                  <widget class="QLabel" name="label_4">
+                  <widget class="QLabel" name="cwDefaultSpeedLabel">
                    <property name="text">
                     <string>Default Speed</string>
                    </property>
@@ -750,6 +764,19 @@
                     <number>20</number>
                    </property>
                   </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <spacer name="verticalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                  <item row="5" column="0" colspan="2">
                   <widget class="QStackedWidget" name="cwStackedWidget">
@@ -896,19 +923,6 @@
                     </layout>
                    </widget>
                   </widget>
-                 </item>
-                 <item row="4" column="1">
-                  <spacer name="verticalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
                  </item>
                 </layout>
                </widget>
@@ -4530,6 +4544,7 @@
   <tabstop>cwProfileNameEdit</tabstop>
   <tabstop>cwModelSelect</tabstop>
   <tabstop>cwKeyModeSelect</tabstop>
+  <tabstop>cwSwapPaddlesCheckbox</tabstop>
   <tabstop>cwDefaulSpeed</tabstop>
   <tabstop>cwPortEdit</tabstop>
   <tabstop>cwBaudSelect</tabstop>
@@ -5740,6 +5755,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cwKeyModeSelect</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>cwModeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>496</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
@@ -5806,9 +5837,10 @@
   <slot>updateDateFormatResult()</slot>
   <slot>qrzAddCallsignAPIKey()</slot>
   <slot>qrzDelCallsignAPIKey()</slot>
+  <slot>cwModeChanged(int)</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

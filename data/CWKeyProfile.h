@@ -23,6 +23,7 @@ public:
         defaultSpeed = 0;
         baudrate = 0;
         netport = 0;
+        paddleSwap = false;
     };
 
     QString profileName;
@@ -33,6 +34,7 @@ public:
     quint32 baudrate;
     QString hostname;
     quint16 netport;
+    bool paddleSwap;
 
     bool operator== (const CWKeyProfile &profile);
     bool operator!= (const CWKeyProfile &profile);

@@ -1202,6 +1202,11 @@ void SettingsDialog::addCWKeyProfile()
         }
     }
 
+    cwKeyNewProfile.paddleSwap = cwKeyNewProfile.model == CWKey::WINKEY_KEYER
+                                 && cwKeyNewProfile.keyMode != CWKey::SINGLE_PADDLE
+                                 && ui->cwSwapPaddlesCheckbox->isEnabled()
+                                 && ui->cwSwapPaddlesCheckbox->isChecked();
+
     if ( ! noMorseCATSupportRigs.isEmpty() )
     {
         QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
@@ -1290,6 +1295,7 @@ void SettingsDialog::doubleClickCWKeyProfile(QModelIndex i)
     ui->cwBaudSelect->setCurrentText(QString::number(profile.baudrate));
     ui->cwHostNameEdit->setText(profile.hostname);
     ui->cwNetPortSpin->setValue(profile.netport);
+    ui->cwSwapPaddlesCheckbox->setChecked(profile.paddleSwap);
 
     ui->cwAddProfileButton->setText(tr("Modify"));
 }
@@ -1307,6 +1313,7 @@ void SettingsDialog::clearCWKeyProfileForm()
     ui->cwBaudSelect->setCurrentIndex(0);
     ui->cwHostNameEdit->clear();
     ui->cwNetPortSpin->setValue(CW_NET_CWDAEMON_PORT);
+    ui->cwSwapPaddlesCheckbox->setChecked(false);
 
     ui->cwAddProfileButton->setText(tr("Add"));
 }
@@ -1792,15 +1799,8 @@ void SettingsDialog::cwKeyChanged(int)
 
     ui->cwDefaulSpeed->setValue(CW_DEFAULT_KEY_SPEED);
 
-    if ( CWKey::isNetworkKey(currentType) )
-    {
-        ui->cwStackedWidget->setCurrentIndex(STACKED_WIDGET_NETWORK_SETTING);
-    }
-    else
-    {
-        ui->cwStackedWidget->setCurrentIndex(STACKED_WIDGET_SERIAL_SETTING);
-    }
-
+    ui->cwStackedWidget->setCurrentIndex(( CWKey::isNetworkKey(currentType) ) ? STACKED_WIDGET_NETWORK_SETTING
+                                                                              : STACKED_WIDGET_SERIAL_SETTING);
     if ( currentType == CWKey::MORSEOVERCAT
          || currentType == CWKey::CWDAEMON_KEYER
          || currentType == CWKey::FLDIGI_KEYER )
@@ -1810,6 +1810,7 @@ void SettingsDialog::cwKeyChanged(int)
         ui->cwPortEdit->clear();
         ui->cwKeyModeSelect->setEnabled(false);
         ui->cwDefaulSpeed->setEnabled(true);
+        ui->cwSwapPaddlesCheckbox->setEnabled(false);
 
         if ( currentType == CWKey::CWDAEMON_KEYER )
         {
@@ -1824,22 +1825,25 @@ void SettingsDialog::cwKeyChanged(int)
 
         return;
     }
-    else
+    else   // WINKEYS
     {
         ui->cwBaudSelect->setEnabled(true);
         ui->cwPortEdit->setEnabled(true);
         ui->cwKeyModeSelect->setEnabled(true);
         ui->cwDefaulSpeed->setEnabled(true);
+        ui->cwSwapPaddlesCheckbox->setEnabled(true);
     }
 
-    if ( currentType == CWKey::WINKEY_KEYER )
-    {
-        ui->cwBaudSelect->setCurrentText("1200");
-    }
-    else
-    {
-        ui->cwBaudSelect->setCurrentText("115200");
-    }
+    ui->cwBaudSelect->setCurrentText(( currentType == CWKey::WINKEY_KEYER ) ? "1200"
+                                                                            : "115200");
+}
+
+void SettingsDialog::cwModeChanged(int)
+{
+    FCT_IDENTIFICATION;
+
+    ui->cwSwapPaddlesCheckbox->setEnabled( CWKey::intToTypeID(ui->cwModelSelect->currentData().toInt()) == CWKey::WINKEY_KEYER
+                                           && CWKey::intToModeID(ui->cwKeyModeSelect->currentData().toInt()) != CWKey::SINGLE_PADDLE );
 }
 
 void SettingsDialog::rigStackWidgetChanged(int)

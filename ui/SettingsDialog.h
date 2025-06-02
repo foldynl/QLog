@@ -91,6 +91,7 @@ public slots:
     void rigChanged(int);
     void rotChanged(int);
     void cwKeyChanged(int);
+    void cwModeChanged(int);
     void rigStackWidgetChanged(int);
     void rotStackWidgetChanged(int);
     void cwKeyStackWidgetChanged(int);
