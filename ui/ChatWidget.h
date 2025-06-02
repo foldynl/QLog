@@ -2,7 +2,7 @@
 #define QLOG_UI_CHATWIDGET_H
 
 #include <QWidget>
-#include "core/KSTChat.h"
+#include "service/kstchat/KSTChat.h"
 #include "ui/NewContactWidget.h"
 
 namespace Ui {

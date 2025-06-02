@@ -4,7 +4,6 @@
 #include <QString>
 #include <QVariant>
 #include <QMutex>
-#include <QSettings>
 #include <QLoggingCategory>
 #include <QtSql>
 

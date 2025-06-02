@@ -9,7 +9,7 @@
 #include "ui/WebEnginePage.h"
 #include "rig/Rig.h"
 #include "ui/NewContactWidget.h"
-#include "core/KSTChat.h"
+#include "service/kstchat/KSTChat.h"
 #include "data/WsjtxEntry.h"
 
 namespace Ui {

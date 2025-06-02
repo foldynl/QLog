@@ -13,22 +13,22 @@
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
 #include "models/SqlListModel.h"
-#include "core/ClubLog.h"
+#include "service/clublog/ClubLog.h"
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"
-#include "ui/StyleItemDelegate.h"
+#include "ui/component/StyleItemDelegate.h"
 #include "core/debug.h"
 #include "models/SqlListModel.h"
 #include "ui/ColumnSettingDialog.h"
 #include "data/Data.h"
 #include "ui/ExportDialog.h"
-#include "core/Eqsl.h"
+#include "service/eqsl/Eqsl.h"
 #include "ui/PaperQSLDialog.h"
 #include "ui/QSODetailDialog.h"
 #include "core/MembershipQE.h"
-#include "core/GenericCallbook.h"
-#include "core/ClubLog.h"
+#include "service/GenericCallbook.h"
 #include "core/QSOFilterManager.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.logbookwidget");
 
@@ -167,8 +167,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_TEN_TEN, new UnitFormatDelegate("", 0, 1, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_UKSMG, new UnitFormatDelegate("", 0, 1, ui->contactTable));
 
-    QSettings settings;
-    const QByteArray &logbookState = settings.value("logbook/state").toByteArray();
+    const QByteArray &logbookState = LogParam::getLogbookState();
     if ( !logbookState.isEmpty() )
         ui->contactTable->horizontalHeader()->restoreState(logbookState);
     else
@@ -229,7 +228,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     adjusteComboMinSize(ui->userFilter);
     ui->userFilter->blockSignals(false);
 
-    clublog = new ClubLog(this);
+    clublog = new ClubLogUploader(this);
 
     restoreFilters();
 }
@@ -358,11 +357,9 @@ void LogbookWidget::finishQSOLookupBatch()
     }
 }
 
-void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& data)
+void LogbookWidget::updateQSORecordFromCallbook(const CallbookResponseData& data)
 {
     FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << data;
 
     auto getCurrIndexColumnValue = [&](const LogbookModel::ColumnID id)
     {
@@ -374,42 +371,38 @@ void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& da
         return model->setData(model->index(currLookupIndex.row(), id), value, Qt::EditRole);
     };
 
-    if ( getCurrIndexColumnValue(LogbookModel::COLUMN_CALL) != data.value("call"))
+    if ( getCurrIndexColumnValue(LogbookModel::COLUMN_CALL) != data.call)
     {
         qWarning() << "Callsigns don't match - skipping. QSO " << model->data(model->index(currLookupIndex.row(), LogbookModel::COLUMN_CALL), Qt::DisplayRole).toString()
-                   << "data " << data.value("call");
+                   << "data " << data.call;
         return;
     }
 
-    const QString fnamelname = QString("%1 %2").arg(data.value("fname"),
-                                                    data.value("lname"));
-
+    const QString fnamelname = QString("%1 %2").arg(data.fname, data.lname);
     const QString &nameValue = getCurrIndexColumnValue(LogbookModel::COLUMN_NAME_INTL);
+
     const LogbookModel::EditStrategy originEditStrategy = model->editStrategy();
 
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     if ( nameValue.isEmpty()
-         || data.value("name_fmt").contains(nameValue)
+         || data.name_fmt.contains(nameValue)
          || fnamelname.contains(nameValue)
-         || data.value("nick").contains(nameValue) )
+         || data.nick.contains(nameValue) )
     {
-        QString name = data.value("name_fmt");
+        QString name = data.name_fmt;
         if ( name.isEmpty() )
-            name = ( data.value("fname").isEmpty() && data.value("lname").isEmpty() ) ? data.value("nick")
-                                                                                    : fnamelname;
+            name = ( data.fname.isEmpty() && data.lname.isEmpty() ) ? data.nick
+                                                                    : fnamelname;
         setModelData(LogbookModel::COLUMN_NAME_INTL, name);
     }
 
     auto setIfEmpty = [&](const LogbookModel::ColumnID id,
-                          const QString &dataFieldID,
+                          const QString &callbookValue,
                           bool containsEnabled = false,
                           bool forceReplace = false)
     {
-        const QString &callbookValue = data.value(dataFieldID);
-
-        if ( callbookValue.isEmpty() )
-            return;
+        if ( callbookValue.isEmpty() ) return;
 
         const QString &columnValue = getCurrIndexColumnValue(id);
 
@@ -422,7 +415,7 @@ void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& da
             bool ret = setModelData(id, callbookValue);
 
             qCDebug(runtime) << "Changing"
-                             << dataFieldID << callbookValue
+                             << LogbookModel::getFieldNameTranslation(id) << callbookValue
                              << ret;
         }
     };
@@ -443,7 +436,7 @@ void LogbookWidget::updateQSORecordFromCallbook(const QMap<QString, QString>& da
     model->setEditStrategy(originEditStrategy);
 }
 
-void LogbookWidget::callsignFound(const QMap<QString, QString> &data)
+void LogbookWidget::callsignFound(const CallbookResponseData &data)
 {
     FCT_IDENTIFICATION;
 
@@ -512,17 +505,15 @@ void LogbookWidget::saveBandFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/band", ui->bandFilter->currentText());
+    LogParam::setLogbookFilterBand(ui->bandFilter->currentText());
 }
 
 void LogbookWidget::restoreBandFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->bandFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/band").toString();
+    const QString &value = LogParam::getLogbookFilterBand();
     if ( !value.isEmpty() )
         ui->bandFilter->setCurrentText(value);
     else
@@ -545,17 +536,15 @@ void LogbookWidget::saveModeFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/mode", ui->modeFilter->currentText());
+    LogParam::setLogbookFilterMode(ui->modeFilter->currentText());
 }
 
 void LogbookWidget::restoreModeFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->modeFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/mode").toString();
+    const QString &value = LogParam::getLogbookFilterMode();
     if ( !value.isEmpty() )
         ui->modeFilter->setCurrentText(value);
     else
@@ -578,17 +567,15 @@ void LogbookWidget::saveCountryFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/country", ui->countryFilter->currentText());
+    LogParam::setLogbookFilterCountry(ui->countryFilter->currentText());
 }
 
 void LogbookWidget::restoreCountryFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->countryFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/country").toString();
+    const QString &value = LogParam::getLogbookFilterCountry();
     if ( !value.isEmpty() )
         ui->countryFilter->setCurrentText(value);
     else
@@ -620,17 +607,15 @@ void LogbookWidget::saveUserFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue("logbook/filters/user", ui->userFilter->currentText());
+    LogParam::setLogbookFilterUserFilter(ui->userFilter->currentText());
 }
 
 void LogbookWidget::restoreUserFilter()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
     ui->userFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/user").toString();
+    const QString &value = LogParam::getLogbookFilterUserFilter();
     if ( !value.isEmpty() )
         ui->userFilter->setCurrentText(value);
     else
@@ -681,15 +666,15 @@ void LogbookWidget::refreshUserFilter()
 
 void LogbookWidget::saveClubFilter()
 {
-    QSettings settings;
-    settings.setValue("logbook/filters/member", ui->clubFilter->currentText());
+    FCT_IDENTIFICATION;
+
+    LogParam::setLogbookFilterClub(ui->clubFilter->currentText());
 }
 
 void LogbookWidget::restoreClubFilter()
 {
-    QSettings settings;
     ui->clubFilter->blockSignals(true);
-    const QString &value = settings.value("logbook/filters/member").toString();
+    const QString &value = LogParam::getLogbookFilterClub();
     if ( !value.isEmpty() )
         ui->clubFilter->setCurrentText(value);
     else
@@ -752,7 +737,7 @@ void LogbookWidget::deleteContact()
 
     // Clublog does not accept batch DELETE operation
     // ask if an operator wants to continue
-    if ( ClubLog::isUploadImmediatelyEnabled()
+    if ( ClubLogBase::isUploadImmediatelyEnabled()
          && deletedRowIndexes.count() > 5 )
     {
         reply = QMessageBox::question(this,
@@ -929,9 +914,7 @@ void LogbookWidget::saveTableHeaderState()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    QByteArray logbookState = ui->contactTable->horizontalHeader()->saveState();
-    settings.setValue("logbook/state", logbookState);
+    LogParam::setLogbookState(ui->contactTable->horizontalHeader()->saveState());
 }
 
 void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
@@ -975,16 +958,16 @@ void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)
         dialog->setAutoClose(true);
         dialog->show();
 
-        EQSL *eQSL = new EQSL(dialog);
+        EQSLQSLDownloader *eQSL = new EQSLQSLDownloader(dialog);
 
-        connect(eQSL, &EQSL::QSLImageFound, this, [dialog, eQSL](QString imgFile)
+        connect(eQSL, &EQSLQSLDownloader::QSLImageFound, this, [dialog, eQSL](QString imgFile)
         {
             dialog->done(0);
             QDesktopServices::openUrl(QUrl::fromLocalFile(imgFile));
             eQSL->deleteLater();
         });
 
-        connect(eQSL, &EQSL::QSLImageError, this, [this, dialog, eQSL](const QString &error)
+        connect(eQSL, &EQSLQSLDownloader::QSLImageError, this, [this, dialog, eQSL](const QString &error)
         {
             dialog->done(1);
             QMessageBox::critical(this, tr("QLog Error"), tr("eQSL Download Image failed: ") + error);
@@ -994,7 +977,7 @@ void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)
         connect(dialog, &QProgressDialog::canceled, this, [eQSL]()
         {
             qCDebug(runtime)<< "Operation canceled";
-            eQSL->abortRequest();
+            eQSL->abortDownload();
             eQSL->deleteLater();
         });
 
@@ -1182,11 +1165,18 @@ LogbookWidget::~LogbookWidget()
 {
     FCT_IDENTIFICATION;
 
-    saveTableHeaderState();
+
     if ( lookupDialog )
     {
         callbookManager.abortQuery();
         finishQSOLookupBatch();
     }
     delete ui;
+}
+
+void LogbookWidget::finalizeBeforeAppExit()
+{
+    FCT_IDENTIFICATION;
+
+    saveTableHeaderState();
 }

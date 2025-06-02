@@ -3,6 +3,7 @@
 #include "core/debug.h"
 #include "AlertSettingDialog.h"
 #include "ui/ColumnSettingDialog.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.alertwidget");
 
@@ -32,7 +33,7 @@ AlertWidget::AlertWidget(QWidget *parent) :
 
     restoreTableHeaderState();
 
-    ui->clearAlertOlderSpinBox->setValue(settings.value("alert/alert_aging", 0).toInt());
+    ui->clearAlertOlderSpinBox->setValue(LogParam::getAlertAging());
 
     aging_timer = new QTimer;
     connect(aging_timer, &QTimer::timeout, this, &AlertWidget::alertAging);
@@ -42,8 +43,6 @@ AlertWidget::AlertWidget(QWidget *parent) :
 AlertWidget::~AlertWidget()
 {
     FCT_IDENTIFICATION;
-
-    saveTableHeaderState();
 
     if ( aging_timer )
     {
@@ -87,7 +86,7 @@ void AlertWidget::alertAgingChanged(int)
 {
     FCT_IDENTIFICATION;
 
-    settings.setValue("alert/alert_aging", ui->clearAlertOlderSpinBox->value());
+    LogParam::setAlertAging(ui->clearAlertOlderSpinBox->value());
 }
 
 void AlertWidget::showEditRules()
@@ -170,19 +169,17 @@ void AlertWidget::saveTableHeaderState()
     FCT_IDENTIFICATION;
 
     const QByteArray &state = ui->alertTableView->horizontalHeader()->saveState();
-    settings.setValue("alert/state", state);
+    LogParam::setAlertWidgetState(state);
 }
 
 void AlertWidget::restoreTableHeaderState()
 {
     FCT_IDENTIFICATION;
 
-    const QByteArray &state = settings.value("alert/state").toByteArray();
+    const QByteArray &state = LogParam::getAlertWidgetState();
 
-    if (!state.isEmpty())
-    {
+    if ( !state.isEmpty() )
         ui->alertTableView->horizontalHeader()->restoreState(state);
-    }
 }
 
 int AlertWidget::alertCount() const
@@ -190,4 +187,11 @@ int AlertWidget::alertCount() const
     FCT_IDENTIFICATION;
 
     return alertTableModel->rowCount();
+}
+
+void AlertWidget::finalizeBeforeAppExit()
+{
+    FCT_IDENTIFICATION;
+
+    saveTableHeaderState();
 }

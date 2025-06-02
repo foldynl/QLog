@@ -59,13 +59,12 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
     ui->setupUi(this);
     setObjectName((isNonVfo) ? widgetID : MAIN_WIDGET_OBJECT_NAME);
 
-    QSettings settings;
-    double newContactFreq = (lastSeenVFOFreq == 0.0 ) ? settings.value("newcontact/frequency", 3.5).toDouble()
+    double newContactFreq = (lastSeenVFOFreq == 0.0 ) ? LogParam::getNewContactFreq()
                                                       : lastSeenVFOFreq;
     double ritFreq = newContactFreq + RigProfilesManager::instance()->getCurProfile1().ritOffset;
     double xitFreq = newContactFreq + RigProfilesManager::instance()->getCurProfile1().xitOffset;
-    const QString &mode = settings.value("newcontact/mode", "CW").toString();
-    const QString &submode = settings.value("newcontact/submode").toString();
+    const QString &mode = LogParam::getNewContactMode();
+    const QString &submode = LogParam::getNewContactSubMode();
 
     keepRXCenter = LogParam::getBandmapCenterRX(objectName());
 
@@ -312,12 +311,11 @@ void BandmapWidget::clearWidgetBand()
     updateNearestSpot();
 }
 
-void BandmapWidget::saveState()
+void BandmapWidget::finalizeBeforeAppExit()
 {
     FCT_IDENTIFICATION;
 
-    saveCurrentZoom();
-    saveCurrentScrollFreq();
+    saveState();
 }
 
 void BandmapWidget::determineStepDigits(double &step, int &digits) const
@@ -596,8 +594,7 @@ void BandmapWidget::setBand(const Band &newBand, bool savePrevBandZoom)
 {
     FCT_IDENTIFICATION;
 
-    if ( savePrevBandZoom )
-        saveState();
+    if ( savePrevBandZoom ) saveState();
 
     currentBand = newBand;
     zoom = getSavedZoom(newBand);
@@ -663,6 +660,14 @@ bool BandmapWidget::isAlreadyOpened(const Band &band) const
             return true;
     }
     return false;
+}
+
+void BandmapWidget::saveState()
+{
+    FCT_IDENTIFICATION;
+
+    saveCurrentZoom();
+    saveCurrentScrollFreq();
 }
 
 void BandmapWidget::spotAgingChanged(int)

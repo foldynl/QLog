@@ -5,7 +5,6 @@
 #include <QSqlRecord>
 #include <QList>
 #include <QSet>
-#include <QSettings>
 
 #include "core/LogLocale.h"
 #include "models/LogbookModel.h"
@@ -77,7 +76,6 @@ private:
         LogbookModel::COLUMN_SIG_INFO
     };
     LogbookModel logbookmodel;
-    QSettings settings;
     const QList<QSqlRecord> qsos4export;
 
     void setProgress(float);

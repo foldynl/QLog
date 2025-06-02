@@ -2268,7 +2268,7 @@
   <customwidget>
    <class>NewContactEditLine</class>
    <extends>QLineEdit</extends>
-   <header>ui/EditLine.h</header>
+   <header>ui/component/EditLine.h</header>
   </customwidget>
   <customwidget>
    <class>DxccTableWidget</class>
@@ -2278,7 +2278,7 @@
   <customwidget>
    <class>FreqQSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>ui/FreqQSpinBox.h</header>
+   <header>ui/component/FreqQSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

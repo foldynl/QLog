@@ -3,11 +3,11 @@
 
 #include <QMainWindow>
 #include "ui/StatisticsWidget.h"
-#include "ui/SwitchButton.h"
+#include "ui/component/SwitchButton.h"
 #include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"
-#include "core/ClubLog.h"
+#include "service/clublog/ClubLog.h"
 
 namespace Ui {
 class MainWindow;
@@ -53,11 +53,6 @@ private slots:
     void showStatistics();
     void importLog();
     void exportLog();
-    void showLotw();
-    void showeQSL();
-    void showClublog();
-    void showHRDLog();
-    void showQRZ();
     void showAwards();
     void showAbout();
     void showWikiHelp();
@@ -75,6 +70,8 @@ private slots:
     void shortcutALTBackslash();
     void setManualContact(bool);
     void showEditLayout();
+    void showServiceUpload();
+    void showServiceDownloadQSL();
 
     void saveProfileLayoutGeometry();
     void setEquipmentKeepOptions(bool);
@@ -105,10 +102,9 @@ private:
     NetworkNotification networknotification;
     AlertEvaluator alertEvaluator;
     PropConditions *conditions;
-    QSettings settings;
     bool isFusionStyle;
-    ClubLog* clublogRT;
-    Wsjtx* wsjtx;
+    ClubLogUploader* clublogRT;
+    WsjtxUDPReceiver* wsjtx;
     QActionGroup *seqGroup;
     QActionGroup *dupeGroup;
     QActionGroup *linkExchangeGroup;
@@ -118,9 +114,6 @@ private:
     void setLightMode();
 
     void setupActivitiesMenu();
-    void saveEquipmentConnOptions();
-    void restoreConnectionStates();
-    void restoreEquipmentConnOptions();
 
     void restoreUserDefinedShortcuts();
     void saveUserDefinedShortcuts();

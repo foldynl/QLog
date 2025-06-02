@@ -134,8 +134,6 @@ private:
     bool idClubQueryValid;
     QList<QPair<QString, QString>> updatePlan;
     QScopedPointer<QNetworkAccessManager> nam;
-
-    static QString CONFIG_MEMBERLIST_ENABLED;
 };
 
 #endif // QLOG_CORE_MEMBERSHIPQE_H

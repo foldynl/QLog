@@ -9,7 +9,7 @@
 #include "data/Data.h"
 #include "data/StationProfile.h"
 #include "ui/ColumnSettingDialog.h"
-#include "ui/StyleItemDelegate.h"
+#include "ui/component/StyleItemDelegate.h"
 #include "KSTHighlighterSettingDialog.h"
 #include "rotator/Rotator.h"
 

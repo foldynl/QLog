@@ -49,33 +49,18 @@ SOURCES += \
         core/AlertEvaluator.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
-        core/Callsign.cpp \
-        core/ClubLog.cpp \
         core/CredentialStore.cpp \
-        core/DxServerString.cpp \
-        core/Eqsl.cpp \
-        core/Fldigi.cpp \
-        core/GenericCallbook.cpp \
-        core/Gridsquare.cpp \
-        core/HRDLog.cpp \
-        core/HamQTH.cpp \
-        core/HostsPortString.cpp \
-        core/KSTChat.cpp \
+        core/FldigiTCPServer.cpp \
         core/LOVDownloader.cpp \
         core/LogLocale.cpp \
         core/LogParam.cpp \
-        core/Lotw.cpp \
         core/MembershipQE.cpp \
         core/Migration.cpp \
-        core/MultiselectCompleter.cpp \
         core/NetworkNotification.cpp \
         core/PropConditions.cpp \
-        core/QRZ.cpp \
         core/QSLStorage.cpp \
         core/QSOFilterManager.cpp \
-        core/SerialPort.cpp \
-        core/UpdatableSQLRecord.cpp \
-        core/Wsjtx.cpp \
+        core/WsjtxUDPReceiver.cpp \
         core/debug.cpp \
         core/main.cpp \
         core/zonedetect.c \
@@ -91,12 +76,18 @@ SOURCES += \
         data/BandPlan.cpp \
         data/CWKeyProfile.cpp \
         data/CWShortcutProfile.cpp \
+        data/Callsign.cpp \
         data/Data.cpp \
+        data/DxServerString.cpp \
+        data/Gridsquare.cpp \
+        data/HostsPortString.cpp \
         data/MainLayoutProfile.cpp \
         data/RigProfile.cpp \
         data/RotProfile.cpp \
         data/RotUsrButtonsProfile.cpp \
+        data/SerialPort.cpp \
         data/StationProfile.cpp \
+        data/UpdatableSQLRecord.cpp \
         logformat/AdiFormat.cpp \
         logformat/AdxFormat.cpp \
         logformat/CSVFormat.cpp \
@@ -123,6 +114,16 @@ SOURCES += \
         rotator/drivers/GenericRotDrv.cpp \
         rotator/drivers/HamlibRotDrv.cpp \
         rotator/drivers/PSTRotDrv.cpp \
+        service/GenericCallbook.cpp \
+        service/GenericQSLDownloader.cpp \
+        service/GenericQSOUploader.cpp \
+        service/clublog/ClubLog.cpp \
+        service/eqsl/Eqsl.cpp \
+        service/hamqth/HamQTH.cpp \
+        service/hrdlog/HRDLog.cpp \
+        service/kstchat/KSTChat.cpp \
+        service/lotw/Lotw.cpp \
+        service/qrzcom/QRZ.cpp \
         ui/ActivityEditor.cpp \
         ui/AlertRuleDetail.cpp \
         ui/AlertSettingDialog.cpp \
@@ -132,24 +133,19 @@ SOURCES += \
         ui/CWConsoleWidget.cpp \
         ui/ChatWidget.cpp \
         ui/ClockWidget.cpp \
-        ui/ClublogDialog.cpp \
         ui/ColumnSettingDialog.cpp \
+        ui/DownloadQSLDialog.cpp \
         ui/DxFilterDialog.cpp \
         ui/DxWidget.cpp \
         ui/DxccTableWidget.cpp \
         ui/EditActivitiesDialog.cpp \
-        ui/EditLine.cpp \
-        ui/Eqsldialog.cpp \
         ui/ExportDialog.cpp \
-        ui/FreqQSpinBox.cpp \
-        ui/HRDLogDialog.cpp \
         ui/ImportDialog.cpp \
         ui/InputPasswordDialog.cpp \
         ui/KSTChatWidget.cpp \
         ui/KSTHighlightRuleDetail.cpp \
         ui/KSTHighlighterSettingDialog.cpp \
         ui/LogbookWidget.cpp \
-        ui/LotwDialog.cpp \
         ui/MainWindow.cpp \
         ui/MapWebChannelHandler.cpp \
         ui/MapWidget.cpp \
@@ -162,49 +158,37 @@ SOURCES += \
         ui/QSOFilterDetail.cpp \
         ui/QSOFilterDialog.cpp \
         ui/QTableQSOView.cpp \
-        ui/QrzDialog.cpp \
         ui/RigWidget.cpp \
         ui/RotatorWidget.cpp \
         ui/SettingsDialog.cpp \
         ui/ShowUploadDialog.cpp \
         ui/StatisticsWidget.cpp \
-        ui/SwitchButton.cpp \
+        ui/UploadQSODialog.cpp \
         ui/WebEnginePage.cpp \
         ui/WsjtxFilterDialog.cpp \
-        ui/WsjtxWidget.cpp
+        ui/WsjtxWidget.cpp \
+        ui/component/EditLine.cpp \
+        ui/component/FreqQSpinBox.cpp \
+        ui/component/MultiselectCompleter.cpp \
+        ui/component/SwitchButton.cpp
 
 HEADERS += \
         core/AlertEvaluator.h \
         core/AppGuard.h \
         core/CallbookManager.h \
-        core/Callsign.h \
-        core/ClubLog.h \
         core/CredentialStore.h \
-        core/DxServerString.h \
-        core/Eqsl.h \
-        core/Fldigi.h \
-        core/GenericCallbook.h \
-        core/Gridsquare.h \
-        core/HRDLog.h \
-        core/HamQTH.h \
-        core/HostsPortString.h \
-        core/KSTChat.h \
+        core/FldigiTCPServer.h \
         core/LOVDownloader.h \
         core/LogLocale.h \
         core/LogParam.h \
-        core/Lotw.h \
         core/MembershipQE.h \
         core/Migration.h \
-        core/MultiselectCompleter.h \
         core/NetworkNotification.h \
         core/PropConditions.h \
-        core/QRZ.h \
         core/QSLStorage.h \
         core/QSOFilterManager.h \
         core/QuadKeyCache.h \
-        core/SerialPort.h \
-        core/UpdatableSQLRecord.h \
-        core/Wsjtx.h \
+        core/WsjtxUDPReceiver.h \
         core/debug.h \
         core/zonedetect.h \
         cwkey/CWKeyer.h \
@@ -220,9 +204,13 @@ HEADERS += \
         data/BandPlan.h \
         data/CWKeyProfile.h \
         data/CWShortcutProfile.h \
+        data/Callsign.h \
         data/Data.h \
+        data/DxServerString.h \
         data/DxSpot.h \
         data/Dxcc.h \
+        data/Gridsquare.h \
+        data/HostsPortString.h \
         data/MainLayoutProfile.h \
         data/POTAEntity.h \
         data/ProfileManager.h \
@@ -230,9 +218,11 @@ HEADERS += \
         data/RotProfile.h \
         data/RotUsrButtonsProfile.h \
         data/SOTAEntity.h \
+        data/SerialPort.h \
         data/SpotAlert.h \
         data/StationProfile.h \
         data/ToAllSpot.h \
+        data/UpdatableSQLRecord.h \
         data/WCYSpot.h \
         data/WWFFEntity.h \
         data/WWVSpot.h \
@@ -264,34 +254,38 @@ HEADERS += \
         rotator/drivers/GenericRotDrv.h \
         rotator/drivers/HamlibRotDrv.h \
         rotator/drivers/PSTRotDrv.h \
+        service/GenericCallbook.h \
+        service/GenericQSLDownloader.h \
+        service/GenericQSOUploader.h \
+        service/clublog/ClubLog.h \
+        service/eqsl/Eqsl.h \
+        service/hamqth/HamQTH.h \
+        service/hrdlog/HRDLog.h \
+        service/kstchat/KSTChat.h \
+        service/lotw/Lotw.h \
+        service/qrzcom/QRZ.h \
         ui/ActivityEditor.h \
         ui/AlertRuleDetail.h \
         ui/AlertSettingDialog.h \
         ui/AlertWidget.h \
         ui/AwardsDialog.h \
         ui/BandmapWidget.h \
-        ui/ButtonStyle.h \
         ui/CWConsoleWidget.h \
         ui/ChatWidget.h \
         ui/ClockWidget.h \
-        ui/ClublogDialog.h \
         ui/ColumnSettingDialog.h \
+        ui/DownloadQSLDialog.h \
         ui/DxFilterDialog.h \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
         ui/EditActivitiesDialog.h \
-        ui/EditLine.h \
-        ui/Eqsldialog.h \
         ui/ExportDialog.h \
-        ui/FreqQSpinBox.h \
-        ui/HRDLogDialog.h \
         ui/ImportDialog.h \
         ui/InputPasswordDialog.h \
         ui/KSTChatWidget.h \
         ui/KSTHighlightRuleDetail.h \
         ui/KSTHighlighterSettingDialog.h \
         ui/LogbookWidget.h \
-        ui/LotwDialog.h \
         ui/MainWindow.h \
         ui/MapWebChannelHandler.h \
         ui/MapWidget.h \
@@ -304,20 +298,25 @@ HEADERS += \
         ui/QSOFilterDetail.h \
         ui/QSOFilterDialog.h \
         ui/QTableQSOView.h \
-        ui/QrzDialog.h \
         ui/ShowUploadDialog.h \
         ui/SplashScreen.h \
-        ui/StyleItemDelegate.h \
         ui/RigWidget.h \
         ui/RotatorWidget.h \
         ui/SettingsDialog.h \
         ui/StatisticsWidget.h \
-        ui/SwitchButton.h \
+        ui/UploadQSODialog.h \
         ui/WebEnginePage.h \
         ui/WsjtxFilterDialog.h \
         ui/WsjtxWidget.h \
         i18n/dbstrings.tri \
-        i18n/datastrings.tri
+        i18n/datastrings.tri \
+        ui/component/ButtonStyle.h \
+        ui/component/EditLine.h \
+        ui/component/FreqQSpinBox.h \
+        ui/component/MultiselectCompleter.h \
+        ui/component/ShutdownAwareWidget.h \
+        ui/component/StyleItemDelegate.h \
+        ui/component/SwitchButton.h
 
 FORMS += \
         ui/ActivityEditor.ui \
@@ -329,22 +328,19 @@ FORMS += \
         ui/CWConsoleWidget.ui \
         ui/ChatWidget.ui \
         ui/ClockWidget.ui \
-        ui/ClublogDialog.ui \
         ui/ColumnSettingDialog.ui \
         ui/ColumnSettingSimpleDialog.ui \
+        ui/DownloadQSLDialog.ui \
         ui/DxFilterDialog.ui \
         ui/DxWidget.ui \
         ui/EditActivitiesDialog.ui \
-        ui/Eqsldialog.ui \
         ui/ExportDialog.ui \
-        ui/HRDLogDialog.ui \
         ui/ImportDialog.ui \
         ui/InputPasswordDialog.ui \
         ui/KSTChatWidget.ui \
         ui/KSTHighlightRuleDetail.ui \
         ui/KSTHighlighterSettingDialog.ui \
         ui/LogbookWidget.ui \
-        ui/LotwDialog.ui \
         ui/MainWindow.ui \
         ui/NewContactWidget.ui \
         ui/PaperQSLDialog.ui \
@@ -353,12 +349,12 @@ FORMS += \
         ui/QSODetailDialog.ui \
         ui/QSOFilterDetail.ui \
         ui/QSOFilterDialog.ui \
-        ui/QrzDialog.ui \
         ui/RigWidget.ui \
         ui/RotatorWidget.ui \
         ui/SettingsDialog.ui \
         ui/ShowUploadDialog.ui \
         ui/StatisticsWidget.ui \
+        ui/UploadQSODialog.ui \
         ui/WsjtxFilterDialog.ui \
         ui/WsjtxWidget.ui
 

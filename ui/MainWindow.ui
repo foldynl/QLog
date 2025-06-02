@@ -115,11 +115,8 @@
     <property name="title">
      <string>Se&amp;rvice</string>
     </property>
-    <addaction name="actionClublog"/>
-    <addaction name="actioneQSL"/>
-    <addaction name="actionHRDLog"/>
-    <addaction name="actionLotw"/>
-    <addaction name="actionQRZ_com"/>
+    <addaction name="actionServiceUpload"/>
+    <addaction name="actionServiceDownload"/>
    </widget>
    <widget class="QMenu" name="menuContest">
     <property name="title">
@@ -450,11 +447,6 @@
     <string>Wsjtx</string>
    </property>
   </action>
-  <action name="actionLotw">
-   <property name="text">
-    <string>&amp;LotW</string>
-   </property>
-  </action>
   <action name="actionConnectRotator">
    <property name="checkable">
     <bool>true</bool>
@@ -492,11 +484,6 @@
     <string>QSO &amp;Filters</string>
    </property>
   </action>
-  <action name="actioneQSL">
-   <property name="text">
-    <string>&amp;eQSL</string>
-   </property>
-  </action>
   <action name="actionOnlineMap">
    <property name="text">
     <string>Online Map</string>
@@ -509,16 +496,6 @@
    </property>
    <property name="text">
     <string>&amp;Awards</string>
-   </property>
-  </action>
-  <action name="actionClublog">
-   <property name="text">
-    <string>&amp;Clublog</string>
-   </property>
-  </action>
-  <action name="actionQRZ_com">
-   <property name="text">
-    <string>&amp;QRZ.com</string>
    </property>
   </action>
   <action name="actionEditAlertRules">
@@ -580,11 +557,6 @@
   <action name="actionActivitiesEdit">
    <property name="text">
     <string>Edit</string>
-   </property>
-  </action>
-  <action name="actionHRDLog">
-   <property name="text">
-    <string>HRDLog</string>
    </property>
   </action>
   <action name="actionChat">
@@ -879,6 +851,20 @@
     <string>None</string>
    </property>
   </action>
+  <action name="actionServiceUpload">
+   <property name="icon">
+    <iconset theme="mail-send">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Upload</string>
+   </property>
+  </action>
+  <action name="actionServiceDownload">
+   <property name="text">
+    <string>Download QSLs</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1131,22 +1117,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionLotw</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showLotw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>446</x>
-     <y>264</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionDXClusterWindow</sender>
    <signal>triggered()</signal>
    <receiver>dxDockWidget</receiver>
@@ -1291,22 +1261,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actioneQSL</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showeQSL()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>446</x>
-     <y>264</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionOnlineMap</sender>
    <signal>triggered()</signal>
    <receiver>onlineMapDockWidget</receiver>
@@ -1327,38 +1281,6 @@
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>showAwards()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>456</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionClublog</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showClublog()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>456</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionQRZ_com</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showQRZ()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1515,22 +1437,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionHRDLog</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showHRDLog()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>456</x>
-     <y>312</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionChat</sender>
    <signal>triggered()</signal>
    <receiver>chatDockWidget</receiver>
@@ -1658,6 +1564,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionServiceUpload</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showServiceUpload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionServiceDownload</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showServiceDownloadQSL()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>settingsChanged()</signal>
@@ -1669,13 +1607,9 @@
   <slot>showAbout()</slot>
   <slot>rigConnect()</slot>
   <slot>showStatistics()</slot>
-  <slot>showLotw()</slot>
   <slot>rotConnect()</slot>
   <slot>QSOFilterSetting()</slot>
-  <slot>showeQSL()</slot>
   <slot>showAwards()</slot>
-  <slot>showClublog()</slot>
-  <slot>showQRZ()</slot>
   <slot>alertRuleSetting()</slot>
   <slot>showAlerts()</slot>
   <slot>clearAlerts()</slot>
@@ -1686,9 +1620,10 @@
   <slot>setManualContact(bool)</slot>
   <slot>showMailingList()</slot>
   <slot>showEditLayout()</slot>
-  <slot>showHRDLog()</slot>
   <slot>saveProfileLayoutGeometry()</slot>
   <slot>setEquipmentKeepOptions(bool)</slot>
   <slot>stopContest()</slot>
+  <slot>showServiceDownloadQSL()</slot>
+  <slot>showServiceUpload()</slot>
  </slots>
 </ui>

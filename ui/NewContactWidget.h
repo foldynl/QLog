@@ -20,12 +20,13 @@
 #include "core/PropConditions.h"
 #include "core/LogLocale.h"
 #include "models/LogbookModel.h"
-#include "ui/EditLine.h"
+#include "ui/component/EditLine.h"
 #include "data/DxSpot.h"
-#include "core/MultiselectCompleter.h"
+#include "ui/component/MultiselectCompleter.h"
 #include "data/POTAEntity.h"
 #include "data/SOTAEntity.h"
 #include "data/WWFFEntity.h"
+#include "component/ShutdownAwareWidget.h"
 
 namespace Ui {
 class NewContactWidget;
@@ -177,7 +178,7 @@ private:
     bool widgetsAllocated;
 };
 
-class NewContactWidget : public QWidget
+class NewContactWidget : public QWidget, public ShutdownAwareWidget
 {
     Q_OBJECT
 
@@ -210,6 +211,7 @@ public:
     double getQSOBearing() const;
     double getQSODistance() const;
     bool getTabCollapseState() const;
+    virtual void finalizeBeforeAppExit() override;
 
 signals:
     void contactAdded(QSqlRecord record);
@@ -276,8 +278,8 @@ private slots:
     void startContactTimer();
     void stopContactTimer();
     void finalizeCallsignEdit();
-    void setCallbookFields(const QMap<QString, QString>& data);
     void setMembershipList(const QString&, QMap<QString, ClubStatusQuery::ClubInfo>);
+    void setCallbookFields(const CallbookResponseData &data);
     void propModeChanged(const QString&);
     void sotaChanged(const QString&);
     void sotaEditFinished();
@@ -316,7 +318,7 @@ private:
     void updatePartnerLocTime();
     void setDefaultReport();
     void addAddlFields(QSqlRecord &record, const StationProfile &profile);
-    bool eventFilter(QObject *object, QEvent *event);
+    bool eventFilter(QObject *object, QEvent *event) override;
     bool isQSOTimeStarted();
     void QSYContactWiping(double);
     void connectFieldChanged();
@@ -368,7 +370,7 @@ private:
     double QSOFreq;
     qint32 bandwidthFilter;
     bool rigOnline;
-    QMap<QString, QString> lastCallbookQueryData;
+    CallbookResponseData lastCallbookQueryData;
     SOTAEntity lastSOTA;
     POTAEntity lastPOTA;
     WWFFEntity lastWWFF;
@@ -376,7 +378,6 @@ private:
     LogLocale locale;
     QDateTime timeOff;
     bool callbookSearchPaused;
-    QSettings settings;
     Band bandTX;
     Band bandRX;
     QSqlQuery prevQSOExactMatchQuery;

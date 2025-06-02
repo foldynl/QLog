@@ -24,8 +24,9 @@
 #include "core/zonedetect.h"
 #include "ui/SplashScreen.h"
 #include "core/MembershipQE.h"
-#include "core/KSTChat.h"
+#include "service/kstchat/KSTChat.h"
 #include "data/Data.h"
+#include "service/GenericCallbook.h"
 
 MODULE_IDENTIFICATION("qlog.core.main");
 
@@ -467,6 +468,7 @@ int main(int argc, char* argv[])
     qRegisterMetaType<SpotAlert>();
     qRegisterMetaType<Rig::Status>();
     qRegisterMetaType<Band>();
+    qRegisterMetaType<CallbookResponseData>();
 
     set_debug_level(LEVEL_PRODUCTION); // you can set more verbose rules via
                                        // environment variable QT_LOGGING_RULES (project setting/debug)

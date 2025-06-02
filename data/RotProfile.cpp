@@ -1,4 +1,3 @@
-#include <QSettings>
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -39,8 +38,6 @@ RotProfilesManager::RotProfilesManager() :
     ProfileManagerSQL<RotProfile>("rot_profiles")
 {
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     QSqlQuery profileQuery;
 

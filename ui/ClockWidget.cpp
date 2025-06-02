@@ -4,7 +4,7 @@
 #include "ClockWidget.h"
 #include "ui_ClockWidget.h"
 #include "core/debug.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
 #include "data/StationProfile.h"
 
 #define EARTH_RADIUS 6371

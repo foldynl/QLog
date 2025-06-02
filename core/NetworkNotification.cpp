@@ -16,87 +16,70 @@ QString NetworkNotification::getNotifQSOAdiAddrs()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(NetworkNotification::CONFIG_NOTIF_QSO_ADI_ADDRS_KEY).toString();
+    return LogParam::getNetworkNotifLogQSOAddrs();
 }
 
 void NetworkNotification::saveNotifQSOAdiAddrs(const QString &addresses)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(NetworkNotification::CONFIG_NOTIF_QSO_ADI_ADDRS_KEY, addresses);
+    LogParam::setNetworkNotifLogQSOAddrs(addresses);
 }
 
 QString NetworkNotification::getNotifDXSpotAddrs()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(NetworkNotification::CONFIG_NOTIF_DXSPOT_ADDRS_KEY).toString();
+    return LogParam::getNetworkNotifDXCSpotAddrs();
 }
 
 void NetworkNotification::saveNotifDXSpotAddrs(const QString &addresses)
 {
-    QSettings settings;
+    FCT_IDENTIFICATION;
 
-    settings.setValue(NetworkNotification::CONFIG_NOTIF_DXSPOT_ADDRS_KEY, addresses);
+    LogParam::setNetworkNotifDXCSpotAddrs(addresses);
 }
 
 QString NetworkNotification::getNotifWSJTXCQSpotAddrs()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(NetworkNotification::CONFIG_NOTIF_WSJTXCQSPOT_ADDRS_KEY).toString();
+    return LogParam::getNetworkNotifWSJTXCQSpotAddrs();
 }
 
 void NetworkNotification::saveNotifWSJTXCQSpotAddrs(const QString &addresses)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(NetworkNotification::CONFIG_NOTIF_WSJTXCQSPOT_ADDRS_KEY, addresses);
+    LogParam::setNetworkNotifWSJTXCQSpotAddrs(addresses);
 }
 
 QString NetworkNotification::getNotifSpotAlertAddrs()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value(NetworkNotification::CONFIG_NOTIF_SPOTALERT_ADDRS_KEY).toString();
+    return LogParam::getNetworkNotifAlertsSpotAddrs();
 }
 
 void NetworkNotification::saveNotifSpotAlertAddrs(const QString &addresses)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue(NetworkNotification::CONFIG_NOTIF_SPOTALERT_ADDRS_KEY, addresses);
-
+    LogParam::setNetworkNotifAlertsSpotAddrs(addresses);
 }
 
 QString NetworkNotification::getNotifRigStateAddrs()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    return settings.value(NetworkNotification::CONFIG_NOTIF_RIGSTATE_ADDRS_KEY).toString();
+    return LogParam::getNetworkNotifRigStateAddrs();
 }
 
 void NetworkNotification::saveNotifRigStateAddrs(const QString &addresses)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    settings.setValue(NetworkNotification::CONFIG_NOTIF_RIGSTATE_ADDRS_KEY, addresses);
+     LogParam::setNetworkNotifRigStateAddrs(addresses);
 }
 
 void NetworkNotification::QSOInserted(const QSqlRecord &record)
@@ -261,12 +244,6 @@ void NetworkNotification::send(const QByteArray &data, const HostsPortString &de
         udpSocket.writeDatagram(data, addr, addr.getPort());
     }
 }
-
-QString NetworkNotification::CONFIG_NOTIF_QSO_ADI_ADDRS_KEY = "network/notification/qso/adi_addrs";
-QString NetworkNotification::CONFIG_NOTIF_DXSPOT_ADDRS_KEY = "network/notification/dxspot/addrs";
-QString NetworkNotification::CONFIG_NOTIF_WSJTXCQSPOT_ADDRS_KEY = "network/notification/wsjtx/cqspot/addrs";
-QString NetworkNotification::CONFIG_NOTIF_SPOTALERT_ADDRS_KEY = "network/notification/alerts/spot/addrs";
-QString NetworkNotification::CONFIG_NOTIF_RIGSTATE_ADDRS_KEY = "network/notification/rig/state/addrs";
 
 GenericNotificationMsg::GenericNotificationMsg(QObject *parent) :
     QObject(parent)

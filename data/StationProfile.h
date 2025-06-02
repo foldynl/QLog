@@ -40,6 +40,7 @@ public:
     bool operator!= (const StationProfile &profile);
 
     QString toHTMLString() const;
+    QString getContactInnerJoin() const;
 
 private:
     friend QDataStream& operator<<(QDataStream& out, const StationProfile& v);

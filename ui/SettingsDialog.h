@@ -19,7 +19,7 @@
 #include "data/RotUsrButtonsProfile.h"
 #include "core/LogLocale.h"
 #include "ui/MainWindow.h"
-#include "core/MultiselectCompleter.h"
+#include "ui/component/MultiselectCompleter.h"
 #include "rig/RigCaps.h"
 
 namespace Ui {
@@ -119,6 +119,9 @@ public slots:
     void clublogSettingChanged();
     void updateDateFormatResult();
 
+    void qrzAddCallsignAPIKey();
+    void qrzDelCallsignAPIKey();
+
 private:
     void readSettings();
     void writeSettings();
@@ -127,6 +130,8 @@ private:
     void setValidationResultColor(QLineEdit *);
     QString getMemberListComboValue(const QComboBox *);
     void generateMembershipCheckboxes();
+    void generateQRZAPICallsignTable();
+    void saveQRZAPICallsignTable();
 
     QSqlTableModel* modeTableModel;
     QSqlTableModel* bandTableModel;

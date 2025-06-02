@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QPointer>
-#include "core/GenericCallbook.h"
+#include "service/GenericCallbook.h"
 
 class CallbookManager : public QObject
 {
@@ -16,7 +16,7 @@ public:
 
 signals:
     void loginFailed(QString);
-    void callsignResult(const QMap<QString, QString>& data);
+    void callsignResult(CallbookResponseData);
     void callsignNotFound(QString);
     void lookupError(QString);
 
@@ -27,7 +27,7 @@ public slots:
 private slots:
     void primaryCallbookCallsignNotFound(const QString&);
     void secondaryCallbookCallsignNotFound(const QString&);
-    void processCallsignResult(const QMap<QString, QString>& data);
+    void processCallsignResult(const CallbookResponseData &data);
 
 private:
     GenericCallbook *createCallbook(const QString&);
@@ -38,7 +38,7 @@ private:
     QPointer<GenericCallbook> secondaryCallbook;
     bool secondaryCallbookAuthSuccess;
     QString currentQueryCallsign;
-    static QCache<QString, QMap<QString, QString>> queryCache;
+    static QCache<QString, CallbookResponseData> queryCache;
 
 };
 

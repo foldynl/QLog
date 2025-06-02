@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "rig/Rig.h"
-#include "core/HRDLog.h"
+#include "service/hrdlog/HRDLog.h"
 
 namespace Ui {
 class RigWidget;
@@ -54,7 +54,7 @@ private:
     bool rigOnline;
 
     Ui::RigWidget *ui;
-    HRDLog *hrdlog;
+    HRDLogUploader *hrdlog;
 };
 
 #endif // QLOG_UI_RIGWIDGET_H

@@ -52,7 +52,7 @@ void ImportDialog::browse()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
+    QSettings settings; //platform-dependent, must be present
 
     const QString &lastPath = ( ui->fileEdit->text().isEmpty() ) ? settings.value("import/last_path", QDir::homePath()).toString()
                                                                  : ui->fileEdit->text();
@@ -196,7 +196,7 @@ void ImportDialog::saveImportDetails(const QString &importDetail, const QString 
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
+    QSettings settings; //platform-dependent, must be present
 
     const QString &lastPath = settings.value("import/last_path_importdetails", QDir::homePath()).toString();
 

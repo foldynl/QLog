@@ -12,11 +12,12 @@
 #include "core/debug.h"
 #include "data/Data.h"
 #include "PaperQSLDialog.h"
-#include "core/Eqsl.h"
+#include "service/eqsl/Eqsl.h"
 #include "models/SqlListModel.h"
-#include "core/Gridsquare.h"
-#include "core/Callsign.h"
+#include "data/Gridsquare.h"
+#include "data/Callsign.h"
 #include "data/BandPlan.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qsodetaildialog");
 
@@ -668,16 +669,16 @@ void QSODetailDialog::showEQSLButton()
     dialog->setAutoClose(true);
     dialog->show();
 
-    EQSL *eQSL = new EQSL(dialog);
+    EQSLQSLDownloader *eQSL = new EQSLQSLDownloader(dialog);
 
-    connect(eQSL, &EQSL::QSLImageFound, this, [dialog, eQSL](QString imgFile)
+    connect(eQSL, &EQSLQSLDownloader::QSLImageFound, this, [dialog, eQSL](QString imgFile)
     {
         dialog->done(0);
         QDesktopServices::openUrl(QUrl::fromLocalFile(imgFile));
         eQSL->deleteLater();
     });
 
-    connect(eQSL, &EQSL::QSLImageError, this, [this, dialog, eQSL](const QString &error)
+    connect(eQSL, &EQSLQSLDownloader::QSLImageError, this, [this, dialog, eQSL](const QString &error)
     {
         dialog->done(1);
         QMessageBox::critical(this, tr("QLog Error"), tr("eQSL Download Image failed: ") + error);
@@ -687,7 +688,7 @@ void QSODetailDialog::showEQSLButton()
     connect(dialog, &QProgressDialog::canceled, this, [eQSL]()
     {
         qCDebug(runtime)<< "Operation canceled";
-        eQSL->abortRequest();
+        eQSL->abortDownload();
         eQSL->deleteLater();
     });
 
@@ -1102,8 +1103,6 @@ void QSODetailDialog::mapLoaded(bool)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
     isMainPageLoaded = true;
 
     /* which layers will be active */
@@ -1119,9 +1118,7 @@ void QSODetailDialog::mapLoaded(bool)
 
     main_page->runJavaScript(postponedScripts);
 
-    bool darkmode = settings.value("darkmode", false).toBool();
-
-    if ( darkmode )
+    if ( LogParam::getMainWindowDarkMode() )
     {
         QString themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
         main_page->runJavaScript(themeJavaScript);
@@ -1148,63 +1145,45 @@ void QSODetailDialog::DXGridChanged(const QString &newGrid)
     return;
 }
 
-void QSODetailDialog::callsignFound(const QMap<QString, QString> &data)
+void QSODetailDialog::callsignFound(const CallbookResponseData &data)
 {
     FCT_IDENTIFICATION;
 
     callbookLookupFinished();
 
     /* blank or not fully filled then update it */
-    const QString fnamelname = QString("%1 %2").arg(data.value("fname"),
-                                                    data.value("lname"));
+    const QString fnamelname = QString("%1 %2").arg(data.fname, data.lname);
 
     if (  ui->nameEdit->text().isEmpty()
-          || data.value("name_fmt").contains(ui->nameEdit->text())
+          || data.name_fmt.contains(ui->nameEdit->text())
           || fnamelname.contains(ui->nameEdit->text())
-          || data.value("nick").contains(ui->nameEdit->text()) )
+          || data.nick.contains(ui->nameEdit->text()) )
     {
-        QString name = data.value("name_fmt");
+        QString name = data.name_fmt;
 
         if ( name.isEmpty() )
-            name = ( data.value("fname").isEmpty() && data.value("lname").isEmpty() ) ? data.value("nick")
-                                                                                      : fnamelname;
+            name = ( data.fname.isEmpty() && data.lname.isEmpty() ) ? data.nick
+                                                                    : fnamelname;
         ui->nameEdit->setText(name);
     }
 
     if ( ui->gridEdit->text().isEmpty()
-         || data.value("gridsquare").contains(ui->gridEdit->text()) )
-        ui->gridEdit->setText(data.value("gridsquare"));
+         || data.gridsquare.contains(ui->gridEdit->text()) )
+        ui->gridEdit->setText(data.gridsquare);
 
     if ( ui->qthEdit->text().isEmpty()
-         || data.value("qth").contains(ui->qthEdit->text()))
-        ui->qthEdit->setText(data.value("qth"));
+         || data.qth.contains(ui->qthEdit->text()))
+        ui->qthEdit->setText(data.qth);
 
-    if ( ui->dokEdit->text().isEmpty() )
-        ui->dokEdit->setText(data.value("dok"));
-
-    if ( ui->iotaEdit->text().isEmpty() )
-        ui->iotaEdit->setText(data.value("iota"));
-
-    if ( ui->emailEdit->text().isEmpty() )
-        ui->emailEdit->setText(data.value("email"));
-
-    if ( ui->countyEdit->text().isEmpty() )
-        ui->countyEdit->setText(data.value("county"));
-
-    if ( ui->qslViaEdit->text().isEmpty() )
-        ui->qslViaEdit->setText(data.value("qsl_via"));
-
-    if ( ui->urlEdit->text().isEmpty() )
-        ui->urlEdit->setText(data.value("url"));
-
-    if ( ui->stateEdit->text().isEmpty() )
-        ui->stateEdit->setText(data.value("us_state"));
-
-    if ( ui->ituEdit->text().isEmpty() )
-        ui->ituEdit->setText(data.value("ituz"));
-
-    if ( ui->cqEdit->text().isEmpty() )
-        ui->cqEdit->setText(data.value("cqz"));
+    if ( ui->dokEdit->text().isEmpty() )    ui->dokEdit->setText(data.dok);
+    if ( ui->iotaEdit->text().isEmpty() )   ui->iotaEdit->setText(data.iota);
+    if ( ui->emailEdit->text().isEmpty() )  ui->emailEdit->setText(data.email);
+    if ( ui->countyEdit->text().isEmpty() ) ui->countyEdit->setText(data.county);
+    if ( ui->qslViaEdit->text().isEmpty() ) ui->qslViaEdit->setText(data.qsl_via);
+    if ( ui->urlEdit->text().isEmpty() )    ui->urlEdit->setText(data.url);
+    if ( ui->stateEdit->text().isEmpty() )  ui->stateEdit->setText(data.us_state);
+    if ( ui->ituEdit->text().isEmpty() )    ui->ituEdit->setText(data.ituz);
+    if ( ui->cqEdit->text().isEmpty() )     ui->cqEdit->setText(data.cqz);
 }
 
 void QSODetailDialog::callsignNotFound(const QString &)

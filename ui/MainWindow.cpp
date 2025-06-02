@@ -7,27 +7,18 @@
 #include "ui/SettingsDialog.h"
 #include "ui/ImportDialog.h"
 #include "ui/ExportDialog.h"
-#include "ui/LotwDialog.h"
-#include "core/Fldigi.h"
+#include "core/FldigiTCPServer.h"
 #include "rig/Rig.h"
 #include "rotator/Rotator.h"
 #include "cwkey/CWKeyer.h"
-#include "core/Wsjtx.h"
+#include "core/WsjtxUDPReceiver.h"
 #include "core/debug.h"
 #include "ui/NewContactWidget.h"
 #include "ui/QSOFilterDialog.h"
-#include "ui/Eqsldialog.h"
-#include "ui/ClublogDialog.h"
-#include "ui/QrzDialog.h"
 #include "ui/AwardsDialog.h"
-#include "core/Lotw.h"
-#include "core/Eqsl.h"
-#include "core/QRZ.h"
 #include "core/PropConditions.h"
 #include "data/MainLayoutProfile.h"
 #include "ui/EditActivitiesDialog.h"
-#include "core/HRDLog.h"
-#include "ui/HRDLogDialog.h"
 #include "ui/ProfileImageWidget.h"
 #include "core/LogParam.h"
 #include "core/QSOFilterManager.h"
@@ -36,6 +27,9 @@
 #include "data/AntProfile.h"
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
+#include "ui/DownloadQSLDialog.h"
+#include "ui/UploadQSODialog.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -43,7 +37,7 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     stats(new StatisticsWidget),
-    clublogRT(new ClubLog(this))
+    clublogRT(new ClubLogUploader(this))
 {
     FCT_IDENTIFICATION;
 
@@ -124,7 +118,7 @@ MainWindow::MainWindow(QWidget* parent) :
     menuAlert->addSeparator();
     menuAlert->addAction(ui->actionEditAlertRules);
     menuAlert->addAction(ui->actionBeepSettingAlert);
-    ui->actionBeepSettingAlert->setChecked(settings.value("alertbeep", false).toBool());
+    ui->actionBeepSettingAlert->setChecked(LogParam::getMainWindowAlertBeep());
     alertButton->setMenu(menuAlert);
 
     alertTextButton = new QPushButton(" ", ui->statusBar);
@@ -194,7 +188,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::themeChanged, stats, &StatisticsWidget::changeTheme);
 
     connect(darkLightModeSwith, &SwitchButton::stateChanged, this, &MainWindow::darkModeToggle);
-    darkLightModeSwith->setChecked(settings.value("darkmode", false).toBool());
+    darkLightModeSwith->setChecked(LogParam::getMainWindowDarkMode());
 
     connect(Rig::instance(), &Rig::rigErrorPresent, this, &MainWindow::rigErrorHandler);
     connect(Rig::instance(), &Rig::rigCWKeyOpenRequest, this, &MainWindow::cwKeyerConnectProfile);
@@ -235,25 +229,25 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(CWKeyer::instance(), &CWKeyer::cwKeyConnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyConnected);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyDisconnected);
 
-    Fldigi* fldigi = new Fldigi(this);
-    connect(fldigi, &Fldigi::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
+    FldigiTCPServer* fldigi = new FldigiTCPServer(this);
+    connect(fldigi, &FldigiTCPServer::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
 
-    wsjtx = new Wsjtx(this);
-    connect(wsjtx, &Wsjtx::statusReceived, ui->wsjtxWidget, &WsjtxWidget::statusReceived);
-    connect(wsjtx, &Wsjtx::decodeReceived, ui->wsjtxWidget, &WsjtxWidget::decodeReceived);
-    connect(wsjtx, &Wsjtx::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
+    wsjtx = new WsjtxUDPReceiver(this);
+    connect(wsjtx, &WsjtxUDPReceiver::statusReceived, ui->wsjtxWidget, &WsjtxWidget::statusReceived);
+    connect(wsjtx, &WsjtxUDPReceiver::decodeReceived, ui->wsjtxWidget, &WsjtxWidget::decodeReceived);
+    connect(wsjtx, &WsjtxUDPReceiver::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
     connect(ui->wsjtxWidget, &WsjtxWidget::CQSpot, &networknotification, &NetworkNotification::WSJTXCQSpot);
     connect(ui->wsjtxWidget, &WsjtxWidget::CQSpot, &alertEvaluator, &AlertEvaluator::WSJTXCQSpot);
     connect(ui->wsjtxWidget, &WsjtxWidget::filteredCQSpot, ui->onlineMapWidget, &OnlineMapWidget::drawWSJTXSpot);
     connect(ui->wsjtxWidget, &WsjtxWidget::spotsCleared, ui->onlineMapWidget, &OnlineMapWidget::clearWSJTXSpots);
-    connect(ui->wsjtxWidget, &WsjtxWidget::reply, wsjtx, &Wsjtx::startReply);
+    connect(ui->wsjtxWidget, &WsjtxWidget::reply, wsjtx, &WsjtxUDPReceiver::startReply);
     connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->newContactWidget, &NewContactWidget::changeFrequency);
     connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->onlineMapWidget, &OnlineMapWidget::setIBPBand);
     connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->bandmapWidget , &BandmapWidget::updateTunedFrequency);
     connect(ui->wsjtxWidget, &WsjtxWidget::frequencyChanged, ui->dxWidget , &DxWidget::setTunedFrequency);
     connect(ui->wsjtxWidget, &WsjtxWidget::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
 
-    connect(this, &MainWindow::settingsChanged, wsjtx, &Wsjtx::reloadSetting);
+    connect(this, &MainWindow::settingsChanged, wsjtx, &WsjtxUDPReceiver::reloadSetting);
     connect(this, &MainWindow::settingsChanged, ui->rotatorWidget, &RotatorWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->rigWidget, &RigWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->cwconsoleWidget, &CWConsoleWidget::reloadSettings);
@@ -284,7 +278,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, Data::instance(), &Data::invalidateSetOfDXCCStatusCache); // must be the first delete signal
     connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshWidget);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
-    connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLog::updateQSOImmediately);
+    connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->bandmapWidget, &BandmapWidget::updateSpotsDupeWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->bandmapWidget, &BandmapWidget::updateSpotsDxccStatusWhenQSODeleted);
@@ -293,7 +287,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->chatWidget, &ChatWidget::updateSpotsDupeWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->chatWidget, &ChatWidget::updateSpotsDxccStatusWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->newContactWidget, &NewContactWidget::refreshCallsignsColors);
-    connect(ui->logbookWidget, &LogbookWidget::clublogContactDeleted, clublogRT, &ClubLog::deleteQSOImmediately);
+    connect(ui->logbookWidget, &LogbookWidget::clublogContactDeleted, clublogRT, &ClubLogUploader::deleteQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::sendDXSpotContactReq, ui->dxWidget, &DxWidget::prepareQSOSpot);
 
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, Data::instance(), &Data::invalidateDXCCStatusCache); // must be the first delete signal
@@ -305,7 +299,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->chatWidget, &ChatWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->wsjtxWidget, &WsjtxWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->dxWidget, &DxWidget::setLastQSO);
-    connect(ui->newContactWidget, &NewContactWidget::contactAdded, clublogRT, &ClubLog::insertQSOImmediately);
+    connect(ui->newContactWidget, &NewContactWidget::contactAdded, clublogRT, &ClubLogUploader::insertQSOImmediately);
     connect(ui->newContactWidget, &NewContactWidget::contestStarted, this, &MainWindow::startContest);
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->mapWidget, &MapWidget::setTarget);
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->onlineMapWidget, &OnlineMapWidget::setTarget);
@@ -348,7 +342,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->alertsWidget, &AlertWidget::rulesChanged, &alertEvaluator, &AlertEvaluator::loadRules);
     connect(ui->alertsWidget, &AlertWidget::alertsCleared, this, &MainWindow::clearAlertEvent);
     connect(ui->alertsWidget, &AlertWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
-    connect(ui->alertsWidget, &AlertWidget::tuneWsjtx, wsjtx, &Wsjtx::startReply);
+    connect(ui->alertsWidget, &AlertWidget::tuneWsjtx, wsjtx, &WsjtxUDPReceiver::startReply);
 
     conditions = new PropConditions();
 
@@ -360,13 +354,13 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->onlineMapWidget->assignPropConditions(conditions);
     ui->newContactWidget->assignPropConditions(conditions);
 
-    connect(clublogRT, &ClubLog::uploadError, this, [this](const QString &msg)
+    connect(clublogRT, &ClubLogUploader::uploadError, this, [this](const QString &msg)
     {
         qCInfo(runtime) << "Clublog RT Upload Error: " << msg;
         QMessageBox::warning(this, tr("Clublog Immediately Upload Error"), msg);
     });
 
-    connect(clublogRT, &ClubLog::QSOUploaded, ui->logbookWidget, &LogbookWidget::updateTable);
+    connect(clublogRT, &ClubLogUploader::uploadedQSO, ui->logbookWidget, &LogbookWidget::updateTable);
 
     if ( StationProfilesManager::instance()->profileNameList().isEmpty() )
         showSettings();
@@ -425,12 +419,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
         const QList<QPair<QString, QString>> &bandmapList = getNonVfoBandmapsParams();
 
         if ( bandmapList.isEmpty() )
-            settings.remove("bandmapwidgets");
+            LogParam::removeMainWindowBandmapWidgets();
         else
-            settings.setValue("bandmapwidgets", MainLayoutProfilesManager::toDBStringList(bandmapList));
+            LogParam::setMainWindowBandmapWidgets(MainLayoutProfilesManager::toDBStringList(bandmapList));
     }
     else
-        settings.remove("bandmapwidgets");
+        LogParam::removeMainWindowBandmapWidgets();
 
     // cleanup Bandmap config
     const QStringList configBandmapList = LogParam::bandmapsWidgets();
@@ -446,7 +440,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QSet<QString> layoutBandmapSet;
     const QStringList &profiles = layoutManager->profileNameList();
 
-    for (const auto &addBandmapClassic : MainLayoutProfilesManager::toPairStringList(settings.value("bandmapwidgets").toString()))
+    for (const auto &addBandmapClassic : MainLayoutProfilesManager::toPairStringList(LogParam::getMainWindowBandmapWidgets()))
         layoutBandmapSet.insert(addBandmapClassic.first);
 
     for ( const QString &profile: profiles )
@@ -462,16 +456,17 @@ void MainWindow::closeEvent(QCloseEvent* event)
         LogParam::removeBandmapWidgetGroup(orphanConfig);
     }
 
-    // Save unsaved bandmap states
-    for ( BandmapWidget *widget : static_cast<const QList<BandmapWidget *>&>(findChildren<BandmapWidget *>()) )
+    // Save unsaved widget states
+    const auto allWidgets = findChildren<QWidget *>();
+    for ( QWidget *w : allWidgets )
     {
-        if ( widget )
-            widget->saveState();
+        ShutdownAwareWidget *widget = dynamic_cast<ShutdownAwareWidget *>(w);
+        if ( widget ) widget->finalizeBeforeAppExit();
     }
 
     // save the window geometry
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
+    LogParam::setMainWindowGeometry(saveGeometry());
+    LogParam::setMainWindowState(saveState());
 
     if ( stats )
     {
@@ -701,7 +696,7 @@ void MainWindow::clearNonVfoBandmaps()
         if ( widget )
         {
             widgetDock = findChild<QDockWidget*>(widget->objectName() + "-dock");
-            widget->saveState();
+            widget->finalizeBeforeAppExit();
             widget->setParent(nullptr);
             widget->close();
             widget->deleteLater();
@@ -738,16 +733,12 @@ void MainWindow::darkModeToggle(int mode)
     qCDebug(function_parameters) << mode;
 
     bool darkMode = (mode == Qt::Checked) ? true: false;
-    settings.setValue("darkmode", darkMode);
+    LogParam::setMainWindowDarkMode(darkMode);
 
     if ( mode == Qt::Checked)
-    {
         setDarkMode();
-    }
     else
-    {
         setLightMode();
-    }
 
     QFile style(":/res/stylesheet.css");
     style.open(QFile::ReadOnly | QIODevice::Text);
@@ -755,7 +746,6 @@ void MainWindow::darkModeToggle(int mode)
     style.close();
 
     emit themeChanged(darkMode);
-
 }
 
 void MainWindow::processSpotAlert(SpotAlert alert)
@@ -800,12 +790,9 @@ void MainWindow::beepSettingAlerts()
 {
     FCT_IDENTIFICATION;
 
-    settings.setValue("alertbeep", ui->actionBeepSettingAlert->isChecked());
+    LogParam::setMainWindowAlertBeep(ui->actionBeepSettingAlert->isChecked());
 
-    if ( ui->actionBeepSettingAlert->isChecked() )
-    {
-        QApplication::beep();
-    }
+    if ( ui->actionBeepSettingAlert->isChecked() ) QApplication::beep();
 }
 
 void MainWindow::shortcutALTBackslash()
@@ -831,6 +818,25 @@ void MainWindow::showEditLayout()
     setupActivitiesMenu();
 }
 
+void MainWindow::showServiceUpload()
+{
+    FCT_IDENTIFICATION;
+
+
+    UploadQSODialog dialog(this);
+    dialog.exec();
+    ui->logbookWidget->updateTable();
+}
+
+void MainWindow::showServiceDownloadQSL()
+{
+    FCT_IDENTIFICATION;
+
+    DownloadQSLDialog dialog(this);
+    dialog.exec();
+    ui->logbookWidget->updateTable();
+}
+
 void MainWindow::setLayoutGeometry()
 {
     FCT_IDENTIFICATION;
@@ -841,10 +847,8 @@ void MainWindow::setLayoutGeometry()
     QByteArray newGeometry;
     QByteArray newState;
     bool darkMode = false;
-    QList<QPair<QString, QString>> bandmapWidgets;
-
-    bandmapWidgets = (layoutProfile.profileName.isEmpty()) ? MainLayoutProfilesManager::toPairStringList(settings.value("bandmapwidgets").toString())
-                                                           : layoutProfile.addlBandmaps;
+    const QList<QPair<QString, QString>> bandmapWidgets = (layoutProfile.profileName.isEmpty()) ? MainLayoutProfilesManager::toPairStringList(LogParam::getMainWindowBandmapWidgets())
+                                                                                                : layoutProfile.addlBandmaps;
     if ( layoutProfile.mainGeometry != QByteArray()
         || layoutProfile.mainState != QByteArray() )
     {
@@ -856,9 +860,9 @@ void MainWindow::setLayoutGeometry()
     else
     {
         // Classic Layout
-        newGeometry = settings.value("geometry").toByteArray();
-        newState = settings.value("windowState").toByteArray();
-        darkMode = settings.value("darkmode", false).toBool();
+        newGeometry = LogParam::getMainWindowGeometry();
+        newState = LogParam::getMainWindowState();
+        darkMode = LogParam::getMainWindowDarkMode();
     }
 
     openNonVfoBandmaps(bandmapWidgets);
@@ -1057,83 +1061,11 @@ void MainWindow::setupActivitiesMenu()
     actionMenu->addAction(ui->actionActivitiesEdit);
 }
 
-void MainWindow::saveEquipmentConnOptions()
-{
-    FCT_IDENTIFICATION;
-
-    // this is obsolete, use activities instead.
-    // Left only because of possible problems and for quick activation of the function.
-#if 0
-    settings.setValue("equipment/keepoptions", ui->actionEquipmentKeepOptions->isChecked());
-
-    if ( ui->actionEquipmentKeepOptions->isChecked() )
-    {
-        settings.setValue("equipment/rigconnected", ui->actionConnectRig->isChecked());
-        settings.setValue("equipment/rotconnected", ui->actionConnectRotator->isChecked());
-        settings.setValue("equipment/cwkeyconnected", ui->actionConnectCWKeyer->isChecked());
-    }
-#endif
-
-}
-
-void MainWindow::restoreConnectionStates()
-{
-    FCT_IDENTIFICATION;
-
-    // this is obsolete, use activities instead.
-    // Left only because of possible problems and for quick activation of the function.
-#if 0
-    if ( ui->actionEquipmentKeepOptions->isChecked() )
-    {
-        if ( settings.value("equipment/rigconnected", false).toBool() )
-        {
-            QTimer::singleShot(2000, this, [this]()
-            {
-                if ( !ui->actionConnectRig->isChecked() )
-                    ui->actionConnectRig->setChecked(true);
-            });
-        }
-
-        if ( settings.value("equipment/rotconnected", false).toBool() )
-        {
-            QTimer::singleShot(2500, this, [this]()
-            {
-                if ( !ui->actionConnectRotator->isChecked() )
-                    ui->actionConnectRotator->setChecked(true);
-            });
-        }
-
-        if ( settings.value("equipment/cwkeyconnected", false).toBool() )
-        {
-            QTimer::singleShot(3000, this, [this]()
-            {
-                if ( !ui->actionConnectCWKeyer->isChecked() )
-                    ui->actionConnectCWKeyer->setChecked(true);
-            });
-        }
-    }
-#endif
-
-}
-
-void MainWindow::restoreEquipmentConnOptions()
-{
-    FCT_IDENTIFICATION;
-
-    // this is obsolete, use activities instead.
-    // Left only because of possible problems and for quick activation of the function.
-#if 0
-    ui->actionEquipmentKeepOptions->blockSignals(true);
-    ui->actionEquipmentKeepOptions->setChecked(settings.value("equipment/keepoptions", false).toBool());
-    ui->actionEquipmentKeepOptions->blockSignals(false);
-#endif
-
-}
-
 void MainWindow::restoreUserDefinedShortcuts()
 {
     FCT_IDENTIFICATION;
 
+    QSettings settings; //platform-dependent, must be present
     const QHash<QString, QVariant> &state = settings.value("shortcuts").toHash();
 
     if ( state.count() > 0)
@@ -1159,6 +1091,8 @@ void MainWindow::restoreUserDefinedShortcuts()
 void MainWindow::saveUserDefinedShortcuts()
 {
     FCT_IDENTIFICATION;
+
+    QSettings settings; //platform-dependent, must be present
 
     QHash<QString, QVariant> state;
     const QList<QAction*> actions = getUserDefinedShortcutActionList();
@@ -1512,89 +1446,6 @@ void MainWindow::exportLog() {
     ExportDialog dialog;
     dialog.exec();
     ui->logbookWidget->updateTable();
-}
-
-void MainWindow::showLotw()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! Lotw::getUsername().isEmpty() )
-    {
-        LotwDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("LoTW is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showeQSL()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! EQSL::getUsername().isEmpty() )
-    {
-        EqslDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("eQSL is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showClublog()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! ClubLog::getEmail().isEmpty() )
-    {
-        ClublogDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("Clublog is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showHRDLog()
-{
-    FCT_IDENTIFICATION;
-
-    if ( ! HRDLog::getRegisteredCallsign().isEmpty() )
-    {
-        HRDLogDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("HRDLog is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-}
-
-void MainWindow::showQRZ()
-{
-    FCT_IDENTIFICATION;
-
-    QString logbookAPIKey = QRZ::getLogbookAPIKey();
-
-    if ( !logbookAPIKey.isEmpty() )
-    {
-        QRZDialog dialog;
-        dialog.exec();
-        ui->logbookWidget->updateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("QLog Warning"), tr("QRZ.com is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
-    }
-
 }
 
 void MainWindow::showAwards()

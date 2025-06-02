@@ -3,7 +3,8 @@
 #include "core/debug.h"
 #include "data/Dxcc.h"
 #include "core/MembershipQE.h"
-#include "core/Gridsquare.h"
+#include "data/Gridsquare.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.wsjtxfilterdialog");
 
@@ -11,8 +12,6 @@ WsjtxFilterDialog::WsjtxFilterDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WsjtxFilterDialog)
 {
-    QSettings settings;
-
     ui->setupUi(this);
 
     QString unit;
@@ -22,7 +21,7 @@ WsjtxFilterDialog::WsjtxFilterDialog(QWidget *parent) :
     /*********************/
     /* Status Checkboxes */
     /*********************/
-    uint statusSetting = settings.value("wsjtx/filter_dxcc_status", DxccStatus::All).toUInt();
+    uint statusSetting = LogParam::getWsjtxFilterDxccStatus();
 
     ui->newEntityCheckBox->setChecked(statusSetting & DxccStatus::NewEntity);
     ui->newBandCheckBox->setChecked(statusSetting & DxccStatus::NewBand);
@@ -34,7 +33,7 @@ WsjtxFilterDialog::WsjtxFilterDialog(QWidget *parent) :
     /************************/
     /* Continent Checkboxes */
     /************************/
-    QString contregexp = settings.value("wsjtx/filter_cont_regexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
+    const QString &contregexp = LogParam::getWsjtxFilterContRE();
 
     ui->afCheckBox->setChecked(contregexp.contains("|AF"));
     ui->anCheckBox->setChecked(contregexp.contains("|AN"));
@@ -47,12 +46,12 @@ WsjtxFilterDialog::WsjtxFilterDialog(QWidget *parent) :
     /*************/
     /* Distance  */
     /*************/
-    ui->distanceSpinBox->setValue(settings.value("wsjtx/filter_distance", 0).toInt());
+    ui->distanceSpinBox->setValue(LogParam::getWsjtxFilterDistance());
 
     /********/
     /* SNR  */
     /********/
-    ui->snrSpinBox->setValue(settings.value("wsjtx/filter_snr", -41).toInt());
+    ui->snrSpinBox->setValue(LogParam::getWsjtxFilterSNR());
 
     /**********/
     /* MEMBER */
@@ -63,9 +62,7 @@ WsjtxFilterDialog::WsjtxFilterDialog(QWidget *parent) :
 
 void WsjtxFilterDialog::accept()
 {
-    FCT_IDENTIFICATION;
-
-    QSettings settings;
+    FCT_IDENTIFICATION;    
 
     /*********************/
     /* Status Checkboxes */
@@ -78,8 +75,7 @@ void WsjtxFilterDialog::accept()
     if ( ui->newSlotCheckBox->isChecked() ) status |=  DxccStatus::NewSlot;
     if ( ui->workedCheckBox->isChecked() ) status |=  DxccStatus::Worked;
     if ( ui->confirmedCheckBox->isChecked() ) status |=  DxccStatus::Confirmed;
-
-    settings.setValue("wsjtx/filter_dxcc_status", status);
+    LogParam::setWsjtxFilterDxccStatus(status);
 
     /************************/
     /* Continent Checkboxes */
@@ -92,17 +88,17 @@ void WsjtxFilterDialog::accept()
     if ( ui->naCheckBox->isChecked() ) contregexp.append("|NA");
     if ( ui->ocCheckBox->isChecked() ) contregexp.append("|OC");
     if ( ui->saCheckBox->isChecked() ) contregexp.append("|SA");
-    settings.setValue("wsjtx/filter_cont_regexp", contregexp);
+    LogParam::setWsjtxFilterContRE(contregexp);
 
     /*************/
     /* Distance  */
     /*************/
-    settings.setValue("wsjtx/filter_distance", ui->distanceSpinBox->value());
+    LogParam::setWsjtxFilterDistance(ui->distanceSpinBox->value());
 
     /********/
     /* SNR  */
     /********/
-    settings.setValue("wsjtx/filter_snr", ui->snrSpinBox->value());
+    LogParam::setWsjtxFilterSNR(ui->snrSpinBox->value());
 
     /**********/
     /* MEMBER */
@@ -115,14 +111,9 @@ void WsjtxFilterDialog::accept()
         memberList.append("DUMMYCLUB");
 
         for ( QCheckBox* item: static_cast<const QList<QCheckBox *>&>(memberListCheckBoxes) )
-        {
-            if ( item->isChecked() )
-            {
-                memberList.append(QString("%1").arg(item->text()));
-            }
-        }
+            if ( item->isChecked() ) memberList.append(item->text());
     }
-    settings.setValue("wsjtx/filter_dx_member_list", memberList);
+    LogParam::setWsjtxMemberlists(memberList);
 
     done(QDialog::Accepted);
 }
@@ -131,16 +122,13 @@ void WsjtxFilterDialog::generateMembershipCheckboxes()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    QStringList currentFilter = settings.value("wsjtx/filter_dx_member_list", QStringList()).toStringList();
-    QStringList enabledLists = MembershipQE::getEnabledClubLists();
+    const QStringList &currentFilter = LogParam::getWsjtxMemberlists();
+    const QStringList &enabledLists = MembershipQE::getEnabledClubLists();
 
     for ( int i = 0 ; i < enabledLists.size(); i++)
     {
         QCheckBox *columnCheckbox = new QCheckBox(this);
-
-        QString shortDesc = enabledLists.at(i);
+        const QString &shortDesc = enabledLists.at(i);
 
         columnCheckbox->setText(shortDesc);
         columnCheckbox->setChecked(currentFilter.contains(shortDesc));

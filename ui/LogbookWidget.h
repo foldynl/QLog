@@ -4,24 +4,29 @@
 #include <QWidget>
 #include <QProxyStyle>
 #include <QComboBox>
+#include <QSqlRecord>
+
 #include "models/SqlListModel.h"
 #include "core/CallbookManager.h"
-#include <QSqlRecord>
+#include "component/ShutdownAwareWidget.h"
 
 namespace Ui {
 class LogbookWidget;
 }
 
-class ClubLog;
+class ClubLogUploader;
 class LogbookModel;
 class QProgressDialog;
 
-class LogbookWidget : public QWidget {
+class LogbookWidget : public QWidget, public ShutdownAwareWidget
+{
     Q_OBJECT
 
 public:
     explicit LogbookWidget(QWidget *parent = nullptr);
     ~LogbookWidget();
+
+    virtual void finalizeBeforeAppExit();
 
 signals:
     void logbookUpdated();
@@ -70,13 +75,13 @@ public slots:
     void sendDXCSpot();
     void setDefaultSort();
     void actionCallbookLookup();
-    void callsignFound(const QMap<QString, QString>& data);
+    void callsignFound(const CallbookResponseData &data);
     void callsignNotFound(const QString&);
     void callbookLoginFailed(const QString&);
     void callbookError(const QString&);
 
 private:
-    ClubLog* clublog;
+    ClubLogUploader* clublog;
     LogbookModel* model;
     Ui::LogbookWidget *ui;
     SqlListModel* countryModel;
@@ -100,7 +105,7 @@ private:
     void reselectModel();
     void scrollToIndex(const QModelIndex& index, bool select = true);
     void adjusteComboMinSize(QComboBox * combo);
-    void updateQSORecordFromCallbook(const QMap<QString, QString>& data);
+    void updateQSORecordFromCallbook(const CallbookResponseData &data);
     void queryNextQSOLookupBatch();
     void finishQSOLookupBatch();
     QModelIndexList callbookLookupBatch;

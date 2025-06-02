@@ -7,6 +7,7 @@
 #include "data/CWKeyProfile.h"
 #include "cwkey/CWKeyer.h"
 #include "data/CWShortcutProfile.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.ui.cwconsolewidget");
 
@@ -182,18 +183,14 @@ void CWConsoleWidget::saveSendWordConfig(bool state)
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    settings.setValue("cwconsole/sendWord", state);
+    LogParam::setCWConsoleSendWord(state);
 }
 
 bool CWConsoleWidget::getSendWordConfig()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-
-    return settings.value("cwconsole/sendWord", false).toBool();
+    return LogParam::getCWConsoleSendWord();
 }
 
 void CWConsoleWidget::refreshKeyProfileCombo()

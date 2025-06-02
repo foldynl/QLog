@@ -13,9 +13,10 @@
 #include "data/WWVSpot.h"
 #include "data/ToAllSpot.h"
 #include "core/LogLocale.h"
-#include "core/DxServerString.h"
+#include "data/DxServerString.h"
 #include "models/SearchFilterProxyModel.h"
 #include "rig/Rig.h"
+#include "component/ShutdownAwareWidget.h"
 
 // in sec
 #define DEDUPLICATION_TIME 3
@@ -113,12 +114,14 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event);
 };
 
-class DxWidget : public QWidget {
+class DxWidget : public QWidget, public ShutdownAwareWidget
+{
     Q_OBJECT
 
 public:
     explicit DxWidget(QWidget *parent = 0);
     ~DxWidget();
+    virtual void finalizeBeforeAppExit() override;
 
 public slots:
     void toggleConnect();

@@ -458,7 +458,7 @@
   <customwidget>
    <class>SwitchButton</class>
    <extends>QWidget</extends>
-   <header>ui/SwitchButton.h</header>
+   <header>ui/component/SwitchButton.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

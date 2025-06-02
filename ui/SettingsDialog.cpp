@@ -1,4 +1,3 @@
-#include <QSettings>
 #include <QStringListModel>
 #include <QSqlTableModel>
 #include <QFileDialog>
@@ -9,36 +8,35 @@
 #include "ui_SettingsDialog.h"
 #include "models/RigTypeModel.h"
 #include "models/RotTypeModel.h"
-#include "../core/GenericCallbook.h"
-#include "../core/QRZ.h"
-#include "../core/HamQTH.h"
-#include "../core/Lotw.h"
-#include "../core/ClubLog.h"
-#include "../core/Eqsl.h"
-#include "../core/HRDLog.h"
-#include "../ui/StyleItemDelegate.h"
+#include "service/GenericCallbook.h"
+#include "service/qrzcom/QRZ.h"
+#include "service/hamqth/HamQTH.h"
+#include "service/lotw/Lotw.h"
+#include "service/clublog/ClubLog.h"
+#include "service/eqsl/Eqsl.h"
+#include "service/hrdlog/HRDLog.h"
+#include "ui/component/StyleItemDelegate.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
 #include "data/RigProfile.h"
 #include "data/AntProfile.h"
 #include "data/Data.h"
-#include "core/Gridsquare.h"
-#include "core/Wsjtx.h"
+#include "data/Gridsquare.h"
+#include "core/WsjtxUDPReceiver.h"
 #include "core/NetworkNotification.h"
 #include "rig/Rig.h"
 #include "rig/RigCaps.h"
 #include "rotator/Rotator.h"
 #include "rotator/RotCaps.h"
 #include "core/LogParam.h"
-#include "core/Callsign.h"
+#include "data/Callsign.h"
 #include "core/MembershipQE.h"
 #include "models/SqlListModel.h"
-#include "core/GenericCallbook.h"
-#include "core/KSTChat.h"
-#include "core/HostsPortString.h"
+#include "service/kstchat/KSTChat.h"
+#include "data/HostsPortString.h"
 #include "models/ShortcutEditorModel.h"
-#include "ui/StyleItemDelegate.h"
-#include "core/SerialPort.h"
+#include "ui/component/StyleItemDelegate.h"
+#include "data/SerialPort.h"
 
 #define STACKED_WIDGET_SERIAL_SETTING  0
 #define STACKED_WIDGET_NETWORK_SETTING 1
@@ -258,8 +256,8 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->stationSIGEdit->setCompleter(sigCompleter);
 
     ui->primaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
-    ui->primaryCallbookCombo->addItem(tr("HamQTH"),   QVariant(HamQTH::CALLBOOK_NAME));
-    ui->primaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZ::CALLBOOK_NAME));
+    ui->primaryCallbookCombo->addItem(tr("HamQTH"),   QVariant(HamQTHCallbook::CALLBOOK_NAME));
+    ui->primaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZCallbook::CALLBOOK_NAME));
 
     ui->rigFlowControlSelect->addItem(tr("None"), SerialPort::SERIAL_FLOWCONTROL_NONE);
     ui->rigFlowControlSelect->addItem(tr("Hardware"), SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
@@ -2148,19 +2146,19 @@ void SettingsDialog::primaryCallbookChanged(int index)
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->setEnabled(false);
     }
-    else if ( primaryCallbookSelection == HamQTH::CALLBOOK_NAME )
+    else if ( primaryCallbookSelection == HamQTHCallbook::CALLBOOK_NAME )
     {
         ui->secondaryCallbookCombo->setEnabled(true);
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
-        ui->secondaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZ::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZCallbook::CALLBOOK_NAME));
     }
-    else if ( primaryCallbookSelection == QRZ::CALLBOOK_NAME )
+    else if ( primaryCallbookSelection == QRZCallbook::CALLBOOK_NAME )
     {
         ui->secondaryCallbookCombo->setEnabled(true);
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
-        ui->secondaryCallbookCombo->addItem(tr("HamQTH"),  QVariant(HamQTH::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("HamQTH"),  QVariant(HamQTHCallbook::CALLBOOK_NAME));
     }
 }
 
@@ -2242,10 +2240,32 @@ void SettingsDialog::updateDateFormatResult()
     ui->dateFormatResultLabel->setText(QDate::currentDate().toString(ui->dateFormatStringEdit->text()));
 }
 
-void SettingsDialog::readSettings() {
+void SettingsDialog::qrzAddCallsignAPIKey()
+{
     FCT_IDENTIFICATION;
 
-    QSettings settings;
+    QAbstractItemModel *model = ui->qrzCallsignApiKeyTableView->model();
+
+    int newRow = model->rowCount();
+    model->insertRow(newRow);
+    QModelIndex index = model->index(newRow, 0);
+    ui->qrzCallsignApiKeyTableView->setCurrentIndex(index);
+    ui->qrzCallsignApiKeyTableView->edit(index);
+}
+
+void SettingsDialog::qrzDelCallsignAPIKey()
+{
+    FCT_IDENTIFICATION;
+
+    QModelIndex index = ui->qrzCallsignApiKeyTableView->currentIndex();
+    if ( !index.isValid() ) return;
+
+    ui->qrzCallsignApiKeyTableView->model()->removeRow(index.row());
+}
+
+void SettingsDialog::readSettings()
+{
+    FCT_IDENTIFICATION;
 
     QStringList profiles = stationProfManager->profileNameList();
     (static_cast<QStringListModel*>(ui->stationProfilesListView->model()))->setStringList(profiles);
@@ -2274,55 +2294,54 @@ void SettingsDialog::readSettings() {
     /* Callbook */
     /************/
 
-    int primaryCallbookIndex = ui->primaryCallbookCombo->findData(settings.value(GenericCallbook::CONFIG_PRIMARY_CALLBOOK_KEY,
-                                                                                 GenericCallbook::CALLBOOK_NAME));
+    int primaryCallbookIndex = ui->primaryCallbookCombo->findData(LogParam::getPrimaryCallbook(GenericCallbook::CALLBOOK_NAME));
 
     ui->primaryCallbookCombo->setCurrentIndex(primaryCallbookIndex);
 
-    int secondaryCallbookIndex = ui->secondaryCallbookCombo->findData(settings.value(GenericCallbook::CONFIG_SECONDARY_CALLBOOK_KEY,
-                                                                                     GenericCallbook::CALLBOOK_NAME));
+    int secondaryCallbookIndex = ui->secondaryCallbookCombo->findData(LogParam::getSecondaryCallbook(GenericCallbook::CALLBOOK_NAME));
 
     ui->secondaryCallbookCombo->setCurrentIndex(secondaryCallbookIndex);
 
-    ui->hamQthUsernameEdit->setText(HamQTH::getUsername());
-    ui->hamQthPasswordEdit->setText(HamQTH::getPassword());
+    ui->hamQthUsernameEdit->setText(HamQTHBase::getUsername());
+    ui->hamQthPasswordEdit->setText(HamQTHBase::getPassword());
 
-    ui->qrzUsernameEdit->setText(QRZ::getUsername());
-    ui->qrzPasswordEdit->setText(QRZ::getPassword());
+    ui->qrzUsernameEdit->setText(QRZBase::getUsername());
+    ui->qrzPasswordEdit->setText(QRZBase::getPassword());
 
     ui->webLookupURLEdit->setText(GenericCallbook::getWebLookupURL("", QString(), false));
 
     /********/
     /* LoTW */
     /********/
-    ui->lotwUsernameEdit->setText(Lotw::getUsername());
-    ui->lotwPasswordEdit->setText(Lotw::getPassword());
-    ui->tqslPathEdit->setText(Lotw::getTQSLPath());
+    ui->lotwUsernameEdit->setText(LotwBase::getUsername());
+    ui->lotwPasswordEdit->setText(LotwBase::getPassword());
+    ui->tqslPathEdit->setText(LotwBase::getTQSLPath());
 
     /***********/
     /* ClubLog */
     /***********/
-    ui->clublogEmailEdit->setText(ClubLog::getEmail());
-    ui->clublogPasswordEdit->setText(ClubLog::getPassword());
-    ui->clublogUploadImmediatelyCheckbox->setChecked(ClubLog::isUploadImmediatelyEnabled());
+    ui->clublogEmailEdit->setText(ClubLogBase::getEmail());
+    ui->clublogPasswordEdit->setText(ClubLogBase::getPassword());
+    ui->clublogUploadImmediatelyCheckbox->setChecked(ClubLogBase::isUploadImmediatelyEnabled());
 
     /********/
     /* eQSL */
     /********/
-    ui->eqslUsernameEdit->setText(EQSL::getUsername());
-    ui->eqslPasswordEdit->setText(EQSL::getPassword());
+    ui->eqslUsernameEdit->setText(EQSLBase::getUsername());
+    ui->eqslPasswordEdit->setText(EQSLBase::getPassword());
 
     /**********/
     /* HRDLog */
     /**********/
-    ui->hrdlogCallsignEdit->setText(HRDLog::getRegisteredCallsign());
-    ui->hrdlogUploadCodeEdit->setText(HRDLog::getUploadCode());
-    ui->hrdlogOnAirCheckBox->setChecked(HRDLog::getOnAirEnabled());
+    ui->hrdlogCallsignEdit->setText(HRDLogBase::getRegisteredCallsign());
+    ui->hrdlogUploadCodeEdit->setText(HRDLogBase::getUploadCode());
+    ui->hrdlogOnAirCheckBox->setChecked(HRDLogBase::getOnAirEnabled());
 
     /***********/
     /* QRZ.COM */
     /***********/
-    ui->qrzApiKeyEdit->setText(QRZ::getLogbookAPIKey());
+    ui->qrzApiKeyEdit->setText(QRZBase::getLogbookAPIKey());
+    generateQRZAPICallsignTable();
 
     /***********************/
     /* Others - DXCC Group */
@@ -2346,11 +2365,11 @@ void SettingsDialog::readSettings() {
     /* NETWORK */
     /***********/
 
-    ui->wsjtPortSpin->setValue(Wsjtx::getConfigPort());
-    ui->wsjtForwardEdit->setText(Wsjtx::getConfigForwardAddresses());
-    ui->wsjtMulticastCheckbox->setChecked(Wsjtx::getConfigMulticastJoin());
-    ui->wsjtMulticastAddressEdit->setText(Wsjtx::getConfigMulticastAddress());
-    ui->wsjtMulticastTTLSpin->setValue(Wsjtx::getConfigMulticastTTL());
+    ui->wsjtPortSpin->setValue(WsjtxUDPReceiver::getConfigPort());
+    ui->wsjtForwardEdit->setText(WsjtxUDPReceiver::getConfigForwardAddresses());
+    ui->wsjtMulticastCheckbox->setChecked(WsjtxUDPReceiver::getConfigMulticastJoin());
+    ui->wsjtMulticastAddressEdit->setText(WsjtxUDPReceiver::getConfigMulticastAddress());
+    ui->wsjtMulticastTTLSpin->setValue(WsjtxUDPReceiver::getConfigMulticastTTL());
 
     ui->notifLogIDEdit->setText(LogParam::getLogID());
     ui->notifQSOEdit->setText(NetworkNotification::getNotifQSOAdiAddrs());
@@ -2376,10 +2395,9 @@ void SettingsDialog::readSettings() {
     /******************/
 }
 
-void SettingsDialog::writeSettings() {
+void SettingsDialog::writeSettings()
+{
     FCT_IDENTIFICATION;
-
-    QSettings settings;
 
     stationProfManager->save();
     rigProfManager->save();
@@ -2392,53 +2410,51 @@ void SettingsDialog::writeSettings() {
     /************/
     /* Callbook */
     /************/
-    HamQTH::saveUsernamePassword(ui->hamQthUsernameEdit->text(),
+    HamQTHBase::saveUsernamePassword(ui->hamQthUsernameEdit->text(),
                                  ui->hamQthPasswordEdit->text());
 
-    QRZ::saveUsernamePassword(ui->qrzUsernameEdit->text(),
+    QRZBase::saveUsernamePassword(ui->qrzUsernameEdit->text(),
                               ui->qrzPasswordEdit->text());
 
-    settings.setValue(GenericCallbook::CONFIG_PRIMARY_CALLBOOK_KEY,
-                      ui->primaryCallbookCombo->itemData(ui->primaryCallbookCombo->currentIndex()).toString());
-    settings.setValue(GenericCallbook::CONFIG_SECONDARY_CALLBOOK_KEY,
-                      ui->secondaryCallbookCombo->itemData(ui->secondaryCallbookCombo->currentIndex()).toString());
+    LogParam::setPrimaryCallbook(ui->primaryCallbookCombo->itemData(ui->primaryCallbookCombo->currentIndex()).toString());
+    LogParam::setSecondaryCallbook(ui->secondaryCallbookCombo->itemData(ui->secondaryCallbookCombo->currentIndex()).toString());
+    LogParam::setCallbookWebLookupURL(ui->webLookupURLEdit->text());
 
-    settings.setValue(GenericCallbook::CONFIG_WEB_LOOKUP_URL,
-                      ui->webLookupURLEdit->text());
     /********/
     /* LoTW */
     /********/
 
-    Lotw::saveUsernamePassword(ui->lotwUsernameEdit->text(),
+    LotwBase::saveUsernamePassword(ui->lotwUsernameEdit->text(),
                                ui->lotwPasswordEdit->text());
-    Lotw::saveTQSLPath(ui->tqslPathEdit->text());
+    LotwBase::saveTQSLPath(ui->tqslPathEdit->text());
 
     /***********/
     /* ClubLog */
     /***********/
-    ClubLog::saveUsernamePassword(ui->clublogEmailEdit->text(),
+    ClubLogBase::saveUsernamePassword(ui->clublogEmailEdit->text(),
                                   ui->clublogPasswordEdit->text());
 
-    ClubLog::saveUploadImmediatelyConfig(ui->clublogUploadImmediatelyCheckbox->isChecked());
+    ClubLogBase::saveUploadImmediatelyConfig(ui->clublogUploadImmediatelyCheckbox->isChecked());
 
     /********/
     /* eQSL */
     /********/
 
-    EQSL::saveUsernamePassword(ui->eqslUsernameEdit->text(),
+    EQSLBase::saveUsernamePassword(ui->eqslUsernameEdit->text(),
                                ui->eqslPasswordEdit->text());
 
     /**********/
     /* HRDLog */
     /**********/
-    HRDLog::saveUploadCode(ui->hrdlogCallsignEdit->text(),
+    HRDLogBase::saveUploadCode(ui->hrdlogCallsignEdit->text(),
                            ui->hrdlogUploadCodeEdit->text());
-    HRDLog::saveOnAirEnabled(ui->hrdlogOnAirCheckBox->isChecked());
+    HRDLogBase::saveOnAirEnabled(ui->hrdlogOnAirCheckBox->isChecked());
 
     /***********/
     /* QRZ.COM */
     /***********/
-    QRZ::saveLogbookAPI(ui->qrzApiKeyEdit->text());
+    QRZBase::saveLogbookAPIKey(ui->qrzApiKeyEdit->text());
+    saveQRZAPICallsignTable();
 
     /***********************/
     /* Others - DXCC Group */
@@ -2471,11 +2487,11 @@ void SettingsDialog::writeSettings() {
     /***********/
     /* NETWORK */
     /***********/
-    Wsjtx::saveConfigPort(ui->wsjtPortSpin->value());
-    Wsjtx::saveConfigForwardAddresses(ui->wsjtForwardEdit->text());
-    Wsjtx::saveConfigMulticastJoin(ui->wsjtMulticastCheckbox->isChecked());
-    Wsjtx::saveConfigMulticastAddress(ui->wsjtMulticastAddressEdit->text());
-    Wsjtx::saveConfigMulticastTTL(ui->wsjtMulticastTTLSpin->value());
+    WsjtxUDPReceiver::saveConfigPort(ui->wsjtPortSpin->value());
+    WsjtxUDPReceiver::saveConfigForwardAddresses(ui->wsjtForwardEdit->text());
+    WsjtxUDPReceiver::saveConfigMulticastJoin(ui->wsjtMulticastCheckbox->isChecked());
+    WsjtxUDPReceiver::saveConfigMulticastAddress(ui->wsjtMulticastAddressEdit->text());
+    WsjtxUDPReceiver::saveConfigMulticastTTL(ui->wsjtMulticastTTLSpin->value());
 
     NetworkNotification::saveNotifQSOAdiAddrs(ui->notifQSOEdit->text());
     NetworkNotification::saveNotifDXSpotAddrs(ui->notifDXSpotsEdit->text());
@@ -2716,6 +2732,60 @@ void SettingsDialog::generateMembershipCheckboxes()
             elementIndex++;
         }
     }
+}
+
+void SettingsDialog::generateQRZAPICallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStandardItemModel* tableModel = new QStandardItemModel(ui->qrzCallsignApiKeyTableView);
+    tableModel->setHorizontalHeaderLabels({tr("Callsign"), tr("API Key")});
+
+    const QStringList &addlCallsign = QRZBase::getLogbookAPIAddlCallsigns();
+
+
+    for ( const QString &callsign : addlCallsign )
+    {
+        QList<QStandardItem*> rowItems({new QStandardItem(callsign),
+                                        new QStandardItem(QRZBase::getLogbookAPIKey(callsign))});
+        tableModel->appendRow(rowItems);
+    }
+
+    ui->qrzCallsignApiKeyTableView->setModel(tableModel);
+    ui->qrzCallsignApiKeyTableView->resizeColumnsToContents();
+    ui->qrzCallsignApiKeyTableView->setItemDelegateForColumn(0, new UpperCaseUniqueDelegate(this));
+    ui->qrzCallsignApiKeyTableView->setItemDelegateForColumn(1, new PasswordDelegate(this));
+}
+
+void SettingsDialog::saveQRZAPICallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList &addlCallsignsAPIList = LogParam::getQRZCOMAPICallsignsList();
+    for ( const QString &callsign : addlCallsignsAPIList)
+    {
+        qCDebug(runtime) << "Deleting QRZ Callsign API" << callsign;
+        QRZBase::saveLogbookAPIKey({}, callsign); // side-effect - an empty key causes deleting its old value in the secure store.
+    }
+
+    // delete original list of callsigns
+    QRZBase::setLogbookAPIAddlCallsigns({});
+
+    QAbstractItemModel *model = ui->qrzCallsignApiKeyTableView->model();
+    QStringList newAddlCallsignsAPIList;
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QString &newCallsign = model->data(model->index(row, 0)).toString();
+        if ( !newCallsign.isEmpty() )
+        {
+            qCDebug(runtime) << "Saving a new QRZ callsign API" << newCallsign;
+            const QString &newPassword = model->data(model->index(row, 1)).toString();
+            if ( !newPassword.isEmpty() ) newAddlCallsignsAPIList.append(newCallsign);
+            QRZBase::saveLogbookAPIKey(newPassword, newCallsign);
+        }
+    }
+    if ( !newAddlCallsignsAPIList.isEmpty() )
+        QRZBase::setLogbookAPIAddlCallsigns(newAddlCallsignsAPIList);
 }
 
 SettingsDialog::~SettingsDialog() {
