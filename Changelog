@@ -1,4 +1,7 @@
 TBC - 0.45.0
+- [NEW] - Single Dialog for Upload/Download Online Services (#448)
+- [NEW] - QRZ Upload - Added support for multiple API Keys
+- [CHANGE] - Unification Settings storage
 
 2025/05/11 - 0.44.1
 - Fixed Rotator Widget Seg Fault for new users (issue #666)

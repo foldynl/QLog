@@ -859,10 +859,28 @@
    <property name="text">
     <string>Upload</string>
    </property>
+   <property name="toolTip">
+    <string>Services - Upload QSOs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
+   </property>
+   <property name="changeableshortcut" stdset="0">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionServiceDownload">
    <property name="text">
     <string>Download QSLs</string>
+   </property>
+   <property name="toolTip">
+    <string>Services - Download QSLs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
+   </property>
+   <property name="changeableshortcut" stdset="0">
+    <bool>true</bool>
    </property>
   </action>
  </widget>
