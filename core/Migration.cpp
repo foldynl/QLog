@@ -822,34 +822,6 @@ QString Migration::fixIntlField(QSqlQuery &query, const QString &columName, cons
     return retValue;
 }
 
-void Migration::checkForUpdatedApp(const QString &repo, std::function<void(const QString &tagName, const QString &error)> callback)
-{
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
-
-    QString url = "https://api.github.com/repos/" + repo + "/releases/latest";
-    QNetworkRequest request((QUrl(url)));
-
-    QNetworkReply *reply = manager->get(request);
-
-    QObject::connect(reply, &QNetworkReply::finished, [reply, manager, callback]() {
-        if (reply->error()) {
-            callback(QString(), reply->errorString());
-        } else {
-            QByteArray response = reply->readAll();
-            QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-            if (jsonDoc.isObject()) {
-                QJsonObject obj = jsonDoc.object();
-                QString tag = obj["tag_name"].toString();
-                callback(tag, QString());
-            } else {
-                callback(QString(), "Invalid JSON received.");
-            }
-        }
-        reply->deleteLater();
-        manager->deleteLater();
-    });
-}
-
 bool Migration::refreshUploadStatusTrigger()
 {
     FCT_IDENTIFICATION;

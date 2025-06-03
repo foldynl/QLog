@@ -14,7 +14,6 @@ class Migration : public QObject
 
 public:
     Migration(QObject *parent = nullptr) : QObject(parent) {}
-    static void checkForUpdatedApp(const QString &repo, std::function<void(const QString &tagName, const QString &error)> callback);
     bool run();
     static bool backupDatabase(bool force = false);
 
