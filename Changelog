@@ -1,6 +1,7 @@
 TBC - 0.45.0
 - [NEW] - Single Dialog for Upload/Download Online Services (issue #448)
 - [NEW] - Added option to swap paddles to Winkey settings (issue #676)
+- [NEW] - Added New Version Notification - only for MacOS and Windows (PR #669 @aa5sh)
 - [NEW] - QRZ Upload - Added support for multiple API Keys
 - [NEW] - Logbook - Added highlighting to the filter button when a filter is active
 - [CHANGE] - Unification Settings storage
