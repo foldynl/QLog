@@ -34,6 +34,7 @@
   "GTOR": { "mode": "TOR", "submode": "GTOR" },
   "HELL80": { "mode": "HELL", "submode": "HELL80" },
   "HFSK": { "mode": "HELL", "submode": "HFSK" },
+  "JS8": { "mode": "MFSK", "submode": "JS8" },
   "JT4A": { "mode": "JT4", "submode": "JT4A" },
   "JT4B": { "mode": "JT4", "submode": "JT4B" },
   "JT4C": { "mode": "JT4", "submode": "JT4C" },
