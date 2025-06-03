@@ -14,7 +14,6 @@ class Migration : public QObject
 
 public:
     Migration(QObject *parent = nullptr) : QObject(parent) {}
-
     bool run();
     static bool backupDatabase(bool force = false);
 

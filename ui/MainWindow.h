@@ -42,6 +42,7 @@ public slots:
     void stationProfileChanged();
     void setLayoutGeometry();
     void setSimplyLayoutGeometry();
+    void checkNewVersion();
 
 private slots:
     void rigConnect();
@@ -86,6 +87,8 @@ private slots:
     void handleActivityChange(const QString name);
 
     void openNonVfoBandmap(const QString &widgetID, const QString& bandName);
+
+    void showUpdateDialog(const QString &newVersion, const QString &repoName);
 
 private:
     Ui::MainWindow* ui;

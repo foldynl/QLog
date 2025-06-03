@@ -726,6 +726,95 @@ QList<QPair<QString, QString>> MainWindow::getNonVfoBandmapsParams() const
     return  bandmapList;
 }
 
+/*
+ * This method is called only at startup and only on macOS and Windows.
+ * For Linux, it makes no sense to call this, as the platform has its own update mechanisms.
+ * And if it doesn’t, we still shouldn’t bother Linux users because
+ * we are unable to distinguish whether the DEB/RPM package was installed directly from GitHub or through a distribution.
+ * And if it’s from a distribution, the update dialog is unwanted.
+*/
+void MainWindow::checkNewVersion()
+{
+    FCT_IDENTIFICATION;
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+
+    const QString repoName =
+#ifdef Q_OS_MAC
+                "aa5sh/QLog";
+#else
+                "foldynl/QLog";
+#endif
+
+    const QUrl url("https://api.github.com/repos/" + repoName + "/releases/latest");
+
+    QNetworkRequest request(url);
+    QNetworkReply *reply = manager->get(request);
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply, manager, repoName]()
+    {
+        if (reply->error())
+        {
+            // do not show an error to user - It's not something the user should see.
+            qWarning() << "Checking Version Error:" << reply->errorString();
+        }
+        else
+        {
+            const QByteArray &response = reply->readAll();
+            const QJsonDocument &jsonDoc = QJsonDocument::fromJson(response);
+
+            if ( jsonDoc.isObject() )
+            {
+                QSettings settings;
+                const QString &curVersion = QString("v%1").arg(VERSION);
+                const QJsonObject &obj = jsonDoc.object();
+                const QString &newVersion = obj["tag_name"].toString();
+                const QString &seenVersion = settings.value("seenversion").toString();
+
+                qCDebug(runtime) << "Repo version" << newVersion
+                                 << "currVersion" << curVersion
+                                 << "setting string" << seenVersion;
+
+                if( !newVersion.isEmpty() && curVersion != newVersion && seenVersion != newVersion)
+                    showUpdateDialog(newVersion, repoName);
+            }
+            else
+            {
+                // do not show an error to user - It's not something the user should see.
+                qWarning() << "Checking Version Error: Invalid JSON: " << response;
+            }
+        }
+
+        reply->deleteLater();
+        manager->deleteLater();
+    });
+}
+
+void MainWindow::showUpdateDialog(const QString &newVersion, const QString &repoName)
+{
+    FCT_IDENTIFICATION;
+
+    QMessageBox msgBox;
+    QSettings settings;
+
+    msgBox.setWindowTitle(tr("A New Version"));
+    msgBox.setText(tr("A new version %1 is available.").arg(newVersion));
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.addButton(tr("Remind Me Later"), QMessageBox::ActionRole);
+    QAbstractButton* pButtonDwn = msgBox.addButton(tr("Download"), QMessageBox::ActionRole);
+
+    msgBox.exec();
+
+    QAbstractButton *clicked = msgBox.clickedButton();
+
+    if ( clicked == pButtonDwn )
+        QDesktopServices::openUrl(QUrl("https://www.github.com/" + repoName + "/releases/latest"));
+    else if ( msgBox.standardButton(clicked) == QMessageBox::Ok)
+        settings.setValue("seenversion", newVersion); // platform-depend parameter
+}
+
 void MainWindow::darkModeToggle(int mode)
 {
     FCT_IDENTIFICATION;
