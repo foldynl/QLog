@@ -4,6 +4,7 @@ TBC - 0.45.0
 - [NEW] - Added New Version Notification - only for MacOS and Windows (PR #669 @aa5sh)
 - [NEW] - QRZ Upload - Added support for multiple API Keys
 - [NEW] - Logbook - Added highlighting to the filter button when a filter is active
+- [NEW] - Add JS8 to legacy_modes.json (issue #677)
 - [CHANGE] - Unification Settings storage
 
 2025/05/11 - 0.44.1
