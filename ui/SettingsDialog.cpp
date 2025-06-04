@@ -37,6 +37,7 @@
 #include "models/ShortcutEditorModel.h"
 #include "ui/component/StyleItemDelegate.h"
 #include "data/SerialPort.h"
+#include "service/cloudlog/Cloudlog.h"
 
 #define STACKED_WIDGET_SERIAL_SETTING  0
 #define STACKED_WIDGET_NETWORK_SETTING 1
@@ -2347,6 +2348,12 @@ void SettingsDialog::readSettings()
     ui->qrzApiKeyEdit->setText(QRZBase::getLogbookAPIKey());
     generateQRZAPICallsignTable();
 
+    /***********/
+    /* Wavelog */
+    /***********/
+    ui->wavelogAddQSOEndpointEdit->setText(CloudlogBase::getAPIEndpoint());
+    ui->wavelogApiKeyEdit->setText(CloudlogBase::getLogbookAPIKey());
+
     /***********************/
     /* Others - DXCC Group */
     /***********************/
@@ -2459,6 +2466,12 @@ void SettingsDialog::writeSettings()
     /***********/
     QRZBase::saveLogbookAPIKey(ui->qrzApiKeyEdit->text());
     saveQRZAPICallsignTable();
+
+    /***********/
+    /* Wavelog */
+    /***********/
+    CloudlogBase::setAPIEndpoint(ui->wavelogAddQSOEndpointEdit->text());
+    CloudlogBase::saveLogbookAPIKey(ui->wavelogApiKeyEdit->text());
 
     /***********************/
     /* Others - DXCC Group */

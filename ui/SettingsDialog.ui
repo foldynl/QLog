@@ -3797,6 +3797,57 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="wavelog">
+          <attribute name="title">
+           <string>Wavelog</string>
+          </attribute>
+          <layout class="QFormLayout" name="formLayout_13">
+           <item row="2" column="0">
+            <widget class="QLabel" name="wavelogApiKeyLabel">
+             <property name="text">
+              <string>API Key</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="wavelogAddQSOEndpointLabel">
+             <property name="text">
+              <string>QSO Endpoint</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="wavelogAddQSOEndpointEdit">
+             <property name="text">
+              <string notr="true">https://localhost/index.php/api/qso</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="wavelogApiKeyEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <spacer name="verticalSpacer_21">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
          <widget class="QWidget" name="othersTab">
           <attribute name="title">
            <string>Others</string>

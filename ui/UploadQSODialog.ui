@@ -182,7 +182,17 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_11">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QCheckBox" name="wavelogCheckbox">
+           <property name="text">
+            <string>Wavelog</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">uploadButtonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="wavelogNumberLabel">
            <property name="text">
             <string/>
            </property>
@@ -443,6 +453,62 @@
          <string>Clear Clublog and reupload QSOs</string>
         </property>
        </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="wavelogGroup">
+     <property name="title">
+      <string>Wavelog</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="wavelogStationIDLabel">
+        <property name="text">
+         <string>Station Profile ID</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QSpinBox" name="wavelogStationIDSpin">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximum">
+           <number>999999999</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>60</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="wavelogReuploadCheckbox">
+          <property name="text">
+           <string>Reupload All</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -818,6 +884,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>wavelogCheckbox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>UploadQSODialog</receiver>
+   <slot>setWavelogSettingVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>442</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wavelogReuploadCheckbox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>UploadQSODialog</receiver>
+   <slot>executeQuery()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>453</x>
+     <y>423</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showQSODetails()</slot>
@@ -826,6 +924,7 @@
   <slot>executeQuery()</slot>
   <slot>handleCallsignChange(QString)</slot>
   <slot>startUploadQueue()</slot>
+  <slot>setWavelogSettingVisible(bool)</slot>
  </slots>
  <buttongroups>
   <buttongroup name="uploadButtonGroup">

@@ -1227,6 +1227,9 @@ bool Migration::refreshUploadStatusTrigger()
                             "       hamqth_qso_upload_status =   CASE WHEN old.hamqth_qso_upload_status = 'Y' THEN 'M' ELSE old.hamqth_qso_upload_status END ,  "
                             "       clublog_qso_upload_status =  CASE WHEN old.clublog_qso_upload_status = 'Y' AND (%4) THEN 'M' ELSE old.clublog_qso_upload_status END "
                             "   WHERE id = new.id;"
+                            "   UPDATE contacts_autovalue "
+                            "   SET wavelog_qso_upload_status = 'M' "
+                            "   WHERE contactid = new.id AND wavelog_qso_upload_status = 'Y'; "
                             "END").arg(afterUpdateClause.join(","),
                                        whenClause.join(" OR "),
                                        generateListSpecificConditions(HRDLogUploader::uploadedFields),

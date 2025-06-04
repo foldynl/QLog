@@ -27,6 +27,7 @@ private slots:
     void showQSODetails();
     void setEQSLSettingVisible(bool visible);
     void setClublogSettingVisible(bool visible);
+    void setWavelogSettingVisible(bool visible);
     void startUploadQueue();
     void executeQuery();
     void handleCallsignChange(const QString &);
@@ -43,6 +44,7 @@ private:
         CLUBLOGID = 3,  // depends on the LoTW Receive field
         HRDLOGID = 4,   // depends on EQSL and LoTW fields
         QRZCOMID = 5,   // all fields are sent
+        WAVELOGID = 6,    // all fiedls are sent
     };
 
     class UploadTask

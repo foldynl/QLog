@@ -117,6 +117,7 @@ SOURCES += \
         service/GenericCallbook.cpp \
         service/GenericQSLDownloader.cpp \
         service/GenericQSOUploader.cpp \
+        service/cloudlog/Cloudlog.cpp \
         service/clublog/ClubLog.cpp \
         service/eqsl/Eqsl.cpp \
         service/hamqth/HamQTH.cpp \
@@ -257,6 +258,7 @@ HEADERS += \
         service/GenericCallbook.h \
         service/GenericQSLDownloader.h \
         service/GenericQSOUploader.h \
+        service/cloudlog/Cloudlog.h \
         service/clublog/ClubLog.h \
         service/eqsl/Eqsl.h \
         service/hamqth/HamQTH.h \

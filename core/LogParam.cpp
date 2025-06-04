@@ -357,6 +357,26 @@ void LogParam::setQRZCOMAPICallsignsList(const QStringList &list)
     setParam("services/qrzcom/logbook/apicallsigns", list);
 }
 
+QString LogParam::getCloudlogAPIEndpoint()
+{
+    return getParam("services/cloudlog/logbook/endpoint", "http://localhost/index.php/api/qso").toString();
+}
+
+void LogParam::setCloudlogAPIEndpoint(const QString &endpoint)
+{
+    setParam("services/cloudlog/logbook/endpoint", endpoint);
+}
+
+uint LogParam::getCloudlogStationID()
+{
+    return getParam("services/cloudlog/logbook/stationid").toUInt();
+}
+
+void LogParam::setCloudlogStationID(uint stationID)
+{
+    setParam("services/cloudlog/logbook/stationid", stationID);
+}
+
 QString LogParam::getClublogLogbookReqEmail()
 {
     return getParam("services/clublog/logbook/regemail").toString().trimmed();
