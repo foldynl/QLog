@@ -68,7 +68,7 @@ public:
 
     bool save();
     bool load(const QString &);
-    bool match(const int roomIndex,
+    bool match(const int inRoomIndex,
                const KSTChatMsg &msg) const;
 
     QString ruleName;

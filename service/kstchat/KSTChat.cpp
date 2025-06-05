@@ -593,7 +593,7 @@ void KSTChat::finalizeShowUsersCommand(const QStringList &buffer)
                 user.status = Data::instance()->dxccStatus(user.dxcc.dxcc, contact->getBand(), contact->getMode());
                 user.dupeCount = Data::countDupe(user.callsign, contact->getBand(), contact->getMode());
             }
-            userList << user;
+            userList << user; // TODO unitialized
         }
         else
         {

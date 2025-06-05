@@ -6,7 +6,7 @@
 class DxServerString
 {
 public:
-    explicit DxServerString(const QString &string,
+    explicit DxServerString(const QString &connectString,
                             const QString &defaultUsername = QString());
 
     static bool isValidServerString(const QString &);

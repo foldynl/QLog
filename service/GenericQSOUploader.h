@@ -24,7 +24,7 @@ public slots:
 protected:
     virtual const QByteArray generateADIF(const QList<QSqlRecord> &qsos, QMap<QString,
                                           QString> *applTags = nullptr);
-    virtual const QSqlRecord stripRecord(const QSqlRecord &record);
+    virtual const QSqlRecord stripRecord(const QSqlRecord &inRecord);
     virtual void processReply(QNetworkReply *reply) = 0;
     QNetworkAccessManager* getNetworkAccessManager() {return nam;};
 

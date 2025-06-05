@@ -104,12 +104,12 @@ private:
         VALUE
     };
 
-    static void preprocessINTLField(const QString &sourceField,
-                                    const QString &sourceFieldIntl,
-                                    QMap<QString, QVariant> &);
-    static void preprocessINTLField(const QString &sourceField,
-                                    const QString &sourceFieldIntl,
-                                    QSqlRecord &);
+    static void preprocessINTLField(const QString &fieldName,
+                                    const QString &fieldIntlName,
+                                    QMap<QString, QVariant> &contact);
+    static void preprocessINTLField(const QString &fieldName,
+                                    const QString &fieldIntlName,
+                                    QSqlRecord &contact);
 
     ParserState state = START;
     bool inHeader = false;

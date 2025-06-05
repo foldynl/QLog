@@ -45,7 +45,7 @@ public:
 
     explicit CloudlogUploader(QObject *parent = nullptr);
     virtual ~CloudlogUploader();
-    static QVariantMap generateUploadConfigMap(uint profileID);
+    static QVariantMap generateUploadConfigMap(uint stationID);
     void uploadAdif(const QByteArray &data, uint stationID);
     virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
     const QMap<uint, StationProfile>& getAvailableStationIDs() const;

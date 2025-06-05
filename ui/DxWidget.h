@@ -41,7 +41,7 @@ public:
     bool addEntry(DxSpot entry,
                   bool deduplicate = false,
                   qint16 dedup_interval = DEDUPLICATION_TIME,
-                  double freq_tolerance = DEDUPLICATION_FREQ_TOLERANCE);
+                  double dedup_freq_tolerance = DEDUPLICATION_FREQ_TOLERANCE);
     const DxSpot getSpot(const QModelIndex& index) const {return dxData.at(index.row());};
     void clear();
 

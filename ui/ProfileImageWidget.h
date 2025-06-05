@@ -42,7 +42,7 @@ public:
     ~ProfileImageWidget();
 
 public slots:
-    void loadImageFromUrl(const QString &url);
+    void loadImageFromUrl(const QString &urlAddress);
 
 private slots:
     void processReply(QNetworkReply* reply);

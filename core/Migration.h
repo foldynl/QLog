@@ -23,7 +23,7 @@ private:
     int getVersion();
     bool setVersion(int version);
     bool runSqlFile(QString filename);
-    int tableRows(QString name);
+    int tableRows(const QString &name);
     bool updateExternalResource();
     void updateExternalResourceProgress(QProgressDialog&,
                                         LOVDownloader&,

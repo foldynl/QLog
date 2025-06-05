@@ -52,7 +52,7 @@ public:
     static LogFormat* open(QString type, QTextStream& stream);
     static LogFormat* open(Type type, QTextStream& stream);
 
-    unsigned long runImport(QTextStream& errorLogStream,
+    unsigned long runImport(QTextStream& importLogStream,
                             const StationProfile *defaultStationProfile,
                             unsigned long *warnings,
                             unsigned long *errors);

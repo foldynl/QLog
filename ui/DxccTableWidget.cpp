@@ -99,7 +99,7 @@ void DxccTableWidget::updateDxTable(const QString &condition,
     show();
 }
 
-void DxccTableWidget::setDxCallsign(const QString &dxCallsign, Band band)
+void DxccTableWidget::setDxCallsign(const QString &dxCallsign, const Band &band)
 {
     FCT_IDENTIFICATION;
 
@@ -112,7 +112,7 @@ void DxccTableWidget::setDxCallsign(const QString &dxCallsign, Band band)
 
 }
 
-void DxccTableWidget::setDxcc(int dxcc, Band highlightedBand)
+void DxccTableWidget::setDxcc(int dxcc, const Band &highlightedBand)
 {
     FCT_IDENTIFICATION;
 

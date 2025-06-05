@@ -446,13 +446,13 @@ void AlertRuleDetail::spotCommentChanged(const QString &enteredRE)
     ui->spotCommentEdit->setPalette(p);
 }
 
-bool AlertRuleDetail::ruleExists(const QString &filterName)
+bool AlertRuleDetail::ruleExists(const QString &ruleName)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << filterName;
+    qCDebug(function_parameters) << ruleName;
 
-    return ruleNamesList.contains(filterName);
+    return ruleNamesList.contains(ruleName);
 
 }
 

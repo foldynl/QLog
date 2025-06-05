@@ -19,7 +19,7 @@ public:
 
     virtual bool open() override;
     virtual void sendState() override;
-    virtual void setPosition(double azimuth, double elevation) override;
+    virtual void setPosition(double in_azimuth, double in_elevation) override;
     virtual void stopTimers() override;
 
 private slots:

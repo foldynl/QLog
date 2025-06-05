@@ -28,7 +28,7 @@ class Animator final : public QVariantAnimation {
     ~Animator() override;
 
     QObject* targetObject() const;
-    void setTargetObject(QObject* target);
+    void setTargetObject(QObject* _target);
 
     inline bool isRunning() const {
         return state() == Running;
@@ -36,7 +36,7 @@ class Animator final : public QVariantAnimation {
 
   public slots:
     void setup(int duration, QEasingCurve easing = QEasingCurve::Linear);
-    void interpolate(const QVariant& start, const QVariant& end);
+    void interpolate(const QVariant& _start, const QVariant& end);
     void setCurrentValue(const QVariant&);
 
   protected:

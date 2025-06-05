@@ -103,7 +103,7 @@ private:
     void saveClubFilter();
     void restoreClubFilter();
     void reselectModel();
-    void scrollToIndex(const QModelIndex& index, bool select = true);
+    void scrollToIndex(const QModelIndex& index, bool selectItem = true);
     void adjusteComboMinSize(QComboBox * combo);
     void updateQSORecordFromCallbook(const CallbookResponseData &data);
     void queryNextQSOLookupBatch();

@@ -44,7 +44,7 @@ private slots:
     void rigTypeChange(int);
     void rigStatusChange(int);
     void COMException (int,  QString, QString, QString);
-    void rigParamsChange(int rig_number, int params);
+    void rigParamsChange(int rigID, int params);
 
 private:
     OmniRigV2::IRigX *getRigPtr();

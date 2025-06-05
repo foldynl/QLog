@@ -34,7 +34,7 @@ signals:
 
 protected:
     void mousePressEvent (QGraphicsSceneMouseEvent *evt) override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt) override;
 };
 
 class BandmapWidget : public QWidget, public ShutdownAwareWidget
@@ -89,7 +89,7 @@ private:
     void removeDuplicates(DxSpot &spot);
     void spotAging();
 
-    void determineStepDigits(double &steps, int &digits) const;
+    void determineStepDigits(double &step, int &digits) const;
     void clearAllCallsignFromScene();
     void clearFreqMark(QGraphicsPolygonItem **);
     void drawFreqMark(const double, const double, const QColor&, QGraphicsPolygonItem **);

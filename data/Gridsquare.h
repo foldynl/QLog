@@ -9,7 +9,7 @@ class Gridsquare
 {
 public:
     explicit Gridsquare(const QString &in_grid = QString());
-    explicit Gridsquare(const double lat,const  double lon);
+    explicit Gridsquare(const double inlat,const  double inlon);
     ~Gridsquare() {};
     static const QRegularExpression gridRegEx();
     static const QRegularExpression gridVUCCRegEx();

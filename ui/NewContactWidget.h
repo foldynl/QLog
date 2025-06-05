@@ -234,13 +234,13 @@ public slots:
     void readGlobalSettings();
     void tuneDx(const DxSpot &spot);
     void fillCallsignGrid(const QString &callsign, const QString& grid);
-    void prepareWSJTXQSO(const QString &callsign, const QString &grid);
+    void prepareWSJTXQSO(const QString &receivedCallsign, const QString &grid);
     void resetContact();
     void saveContact();
 
     // to receive RIG instructions
     void changeFrequency(VFOID, double, double, double);
-    void changeModeWithoutSignals(const QString &mode, const QString &submode);
+    void changeModeWithoutSignals(const QString &mode, const QString &subMode);
     void changeModefromRig(VFOID, const QString &rawMode, const QString &mode,
                     const QString &subMode, qint32 width);
     void changePower(VFOID, double power);
@@ -342,7 +342,7 @@ private:
     bool shouldStartContest();
     void startContest(const QDateTime &date);
     void setSTXSeq();
-    void setSTXSeq(int number);
+    void setSTXSeq(int newValue);
     void updateNearestSpotDupe();
     void checkDupe();
 

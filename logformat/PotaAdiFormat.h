@@ -46,8 +46,8 @@ private:
                         const QString &fromFieldName,
                         const QString &toFieldName);
     bool isValidPotaRecord(const QSqlRecord &record) const;
-    void preparePotaField(QSqlRecord &record, const QString &refField,
-                          const QString &infoField, const QString &sigField);
+    void preparePotaField(QSqlRecord &record, const QString &fromField,
+                          const QString &toField, const QString &toFieldSig);
     void expandParkRecord(QList<QSqlRecord> &inputList, const QString &columnName);
 };
 

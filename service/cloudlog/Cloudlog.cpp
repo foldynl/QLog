@@ -280,7 +280,7 @@ const QByteArray CloudlogUploader::generateADIF(const QList<QSqlRecord> &qsos, Q
     return data;
 }
 
-QVariantMap CloudlogUploader::parseResponse(const QByteArray data)
+QVariantMap CloudlogUploader::parseResponse(const QByteArray &data)
 {
     FCT_IDENTIFICATION;
 
