@@ -546,7 +546,7 @@ int main(int argc, char* argv[])
     w.setLayoutGeometry();
 
     // check version only for Windows and MacOS. Linux has own distribution points
-#if defined(Q_OS_WIN) || defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
     w.checkNewVersion();
 #endif
     return app.exec();
