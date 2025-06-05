@@ -31,9 +31,15 @@ void FldigiTCPServer::incomingConnection(qintptr socket)
 void FldigiTCPServer::readClient() {
     FCT_IDENTIFICATION;
 
-    QTcpSocket* sock = (QTcpSocket*)sender();
+    QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
 
-    QString data = QString(sock->readAll());
+    if ( !socket )
+    {
+        qCWarning(runtime) << "socket is null";
+        return;
+    }
+
+    QString data = QString(socket->readAll());
     qCDebug(runtime) << data;
 
     int split = data.indexOf("\r\n\r\n", 0);
@@ -45,19 +51,17 @@ void FldigiTCPServer::readClient() {
     data.replace("<?clientid=", "<?clientid =");
 
     QXmlStreamReader xml(data);
-    processMethodCall(sock, xml);
+    processMethodCall(socket, xml);
 
-    sock->close();
-    if (sock->state() == QTcpSocket::UnconnectedState) {
-        delete sock;
-    }
+    socket->close();
+    if (socket->state() == QTcpSocket::UnconnectedState) socket->deleteLater();
 }
 
 void FldigiTCPServer::discardClient() {
     FCT_IDENTIFICATION;
 
-    QTcpSocket* sock = (QTcpSocket*)sender();
-    sock->deleteLater();
+    QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
+    if ( socket ) socket->deleteLater();
 }
 
 void FldigiTCPServer::processMethodCall(QTcpSocket* sock, QXmlStreamReader& xml) {
