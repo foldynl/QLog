@@ -14,7 +14,7 @@ QLogs aims to be as simple as possible, but to provide everything the operator e
 - Rotator control via Hamlib, PSTRotator
 - HamQTH and QRZ.com callbook integration
 - DX cluster integration
-- **LoTW**, **eQSL**, **QRZ.com**, **Clublog**, **HRDLog.net**, **ON4KST Chat** integration (**eQSL includes QSL pictures download**)
+- **LoTW**, **eQSL**, **QRZ.com**, **Clublog**, **HRDLog.net**, **ON4KST Chat**, **Cloudlog/Wavelog** integration (**eQSL includes QSL pictures download**)
 - **Secure Password Storage** for all services with password or security token
 - **Online** and **Offline** map
 - Club Member lookup
@@ -32,7 +32,7 @@ QLogs aims to be as simple as possible, but to provide everything the operator e
 
 ### Supported OS
 * Linux
-* Windows 10 (64bit)
+* Windows 10/11 (64bit)
 * MacOS (experimental - only for developers)
 
 ### Supported Rigs
