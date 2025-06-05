@@ -38,7 +38,7 @@ public:
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    bool addEntry(DxSpot entry,
+    bool addEntry(const DxSpot &entry,
                   bool deduplicate = false,
                   qint16 dedup_interval = DEDUPLICATION_TIME,
                   double dedup_freq_tolerance = DEDUPLICATION_FREQ_TOLERANCE);
@@ -60,7 +60,7 @@ public:
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    void addEntry(WCYSpot entry);
+    void addEntry(const WCYSpot &entry);
     void clear();
 
 private:
@@ -78,7 +78,7 @@ public:
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    void addEntry(WWVSpot entry);
+    void addEntry(const WWVSpot &entry);
     void clear();
 
 private:
@@ -96,7 +96,7 @@ public:
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    void addEntry(ToAllSpot entry);
+    void addEntry(const ToAllSpot &entry);
     void clear();
 
 private:

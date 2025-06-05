@@ -115,7 +115,7 @@ QVariant DxTableModel::headerData(int section, Qt::Orientation orientation, int 
     }
 }
 
-bool DxTableModel::addEntry(DxSpot entry, bool deduplicate,
+bool DxTableModel::addEntry(const DxSpot &entry, bool deduplicate,
                             qint16 dedup_interval, double dedup_freq_tolerance)
 {
     bool shouldInsert = true;
@@ -216,7 +216,7 @@ QVariant WCYTableModel::headerData(int section, Qt::Orientation orientation, int
     }
 }
 
-void WCYTableModel::addEntry(WCYSpot entry)
+void WCYTableModel::addEntry(const WCYSpot &entry)
 {
     beginInsertRows(QModelIndex(), 0, 0);
     wcyData.prepend(entry);
@@ -282,7 +282,7 @@ QVariant WWVTableModel::headerData(int section, Qt::Orientation orientation, int
     }
 }
 
-void WWVTableModel::addEntry(WWVSpot entry)
+void WWVTableModel::addEntry(const WWVSpot &entry)
 {
     beginInsertRows(QModelIndex(), 0, 0);
     wwvData.prepend(entry);
@@ -341,7 +341,7 @@ QVariant ToAllTableModel::headerData(int section, Qt::Orientation orientation, i
     }
 }
 
-void ToAllTableModel::addEntry(ToAllSpot entry)
+void ToAllTableModel::addEntry(const ToAllSpot &entry)
 {
     beginInsertRows(QModelIndex(), 0, 0);
     toAllData.prepend(entry);

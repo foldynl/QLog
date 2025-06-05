@@ -24,7 +24,7 @@ public:
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    void addOrReplaceEntry(WsjtxEntry entry);
+    void addOrReplaceEntry(const WsjtxEntry &entry);
     void spotAging();
     bool callsignExists(const WsjtxEntry &);
     const WsjtxEntry getEntry(const QString &callsign) const;

@@ -1376,11 +1376,12 @@ QString LogParam::serializeStringList(const QStringList &list, QChar delimiter, 
 QStringList LogParam::deserializeStringList(const QString &input, QChar delimiter, QChar escapeChar)
 {
     QStringList result;
-    QString current;
-    bool escaping = false;
 
     if ( !input.isEmpty() )
     {
+        QString current;
+        bool escaping = false;
+
         for ( QChar ch : input )
         {
             if ( escaping )
