@@ -12,6 +12,7 @@
 #include "service/lotw/Lotw.h"
 #include "service/qrzcom/QRZ.h"
 #include "service/hrdlog/HRDLog.h"
+#include "service/cloudlog/Cloudlog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.uploadqsodialog");
 
@@ -69,6 +70,15 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
                                          ui->qrzNumberLabel,
                                         !QRZBase::getLogbookAPIKey().isEmpty()));
 
+    onlineServices.insert(WAVELOGID, UploadTask(WAVELOGID,
+                                         tr("Wavelog"),
+                                         new CloudlogUploader(this),
+                                         "contacts_autovalue.wavelog_qso_upload_status",
+                                         "contacts_autovalue.wavelog_qso_upload_date",
+                                         ui->wavelogCheckbox,
+                                         ui->wavelogNumberLabel,
+                                        !CloudlogBase::getLogbookAPIKey().isEmpty()));
+
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Upload"));
 
     ui->myCallsignCombo->blockSignals(true);
@@ -84,7 +94,9 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
     setEQSLSettingVisible(false);
     setClublogSettingVisible(false);
     setQSODetailVisible(false);
+    setWavelogSettingVisible(false);
     loadDialogState();
+    getWavelogStationID();
     ui->myCallsignCombo->blockSignals(false);
     ui->myGridCombo->blockSignals(false);
 }
@@ -121,6 +133,14 @@ void UploadQSODialog::setClublogSettingVisible(bool visible)
     adjustSize();
 }
 
+void UploadQSODialog::setWavelogSettingVisible(bool visible)
+{
+    FCT_IDENTIFICATION;
+
+    ui->wavelogGroup->setVisible(visible);
+    adjustSize();
+}
+
 void UploadQSODialog::setQSODetailVisible(bool visible)
 {
     FCT_IDENTIFICATION;
@@ -142,6 +162,7 @@ void UploadQSODialog::loadDialogState()
     ui->lotwCheckbox->setChecked(ui->lotwCheckbox->isEnabled() && LogParam::getUploadServiceState("lotw"));
     ui->hrdlogCheckbox->setChecked(ui->hrdlogCheckbox->isEnabled() && LogParam::getUploadServiceState("hrdlog"));
     ui->qrzCheckbox->setChecked(ui->qrzCheckbox->isEnabled() && LogParam::getUploadServiceState("qrzcom"));
+    ui->wavelogCheckbox->setChecked(ui->wavelogCheckbox->isEnabled() && LogParam::getUploadServiceState("wavelog"));
 
     int index = ui->myCallsignCombo->findText(profile.callsign);
 
@@ -161,6 +182,7 @@ void UploadQSODialog::loadDialogState()
     ui->eqslQSLMessage->setChecked(LogParam::getUploadeqslQSLMessage());
     ui->eqslQTHProfileEdit->setText(LogParam::getUploadeqslQTHProfile());
     ui->myStationProfileCheckbox->setChecked(LogParam::getUploadQSOFilterType() == 1);
+    ui->wavelogStationIDSpin->setValue(LogParam::getCloudlogStationID());
 }
 
 void UploadQSODialog::saveDialogState()
@@ -172,11 +194,13 @@ void UploadQSODialog::saveDialogState()
     LogParam::setUploadServiceState("lotw", ui->lotwCheckbox->isChecked());
     LogParam::setUploadServiceState("hrdlog", ui->hrdlogCheckbox->isChecked());
     LogParam::setUploadServiceState("qrzcom", ui->qrzCheckbox->isChecked());
+    LogParam::setUploadServiceState("wavelog", ui->wavelogCheckbox->isChecked());
     LogParam::setUploadQSOLastCall(ui->myCallsignCombo->currentText());
     LogParam::setUploadeqslQSLComment(ui->eqslQSLComment->isChecked());
     LogParam::setUploadeqslQSLMessage(ui->eqslQSLMessage->isChecked());
     LogParam::setUploadeqslQTHProfile(ui->eqslQTHProfileEdit->text());
     LogParam::setUploadQSOFilterType(ui->myCallsignCheckbox->isChecked() ? 0 : 1);
+    LogParam::setCloudlogStationID(ui->wavelogStationIDSpin->value());
 }
 
 void UploadQSODialog::processNextUploader()
@@ -213,12 +237,23 @@ void UploadQSODialog::processNextUploader()
         // this part updates one QSO - it is use in case of services when a batch upload
         // is not supported
         qCDebug(runtime) << "signal uploadedQSO";
-        const QString &statusField = currentTask.getDBUploadStatusFieldName();
-        const QString &dateField = currentTask.getDBUploadDateFieldName();
-        const QString statement = QString("UPDATE contacts "
-                                          "SET %1='Y', %2 = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
-                                          "WHERE id = :qsoID").arg(statusField,
-                                                                   dateField);
+
+        QString contactIDField("id");
+        QString tableName("contacts");
+        QString statusField = currentTask.getDBUploadStatusFieldName();
+        QString dateField = currentTask.getDBUploadDateFieldName();
+
+        if ( currentTask.getServiceID() == WAVELOGID )
+        {
+             statusField.remove("contacts_autovalue."); // sqlite does not support aliases in the Update statement.
+             dateField.remove("contacts_autovalue.");
+             contactIDField = "contactid";
+             tableName = "contacts_autovalue";
+        }
+
+        const QString &statement = QString("UPDATE %1 "
+                                          "SET %2='Y', %3 = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
+                                          "WHERE %4 = :qsoID").arg(tableName, statusField, dateField, contactIDField);
 
         qCDebug(runtime) << statement;
 
@@ -261,7 +296,9 @@ void UploadQSODialog::processNextUploader()
         // is supported
 
         dialog->done(QDialog::Accepted);
-        if ( currentTask.getServiceID() != HRDLOGID && currentTask.getServiceID() != QRZCOMID )
+        if ( currentTask.getServiceID() != HRDLOGID
+             && currentTask.getServiceID() != QRZCOMID
+             && currentTask.getServiceID() != WAVELOGID )
         {
             const QString &statusField = currentTask.getDBUploadStatusFieldName();
             const QString &dateField = currentTask.getDBUploadDateFieldName();
@@ -321,6 +358,9 @@ void UploadQSODialog::processNextUploader()
         uploadConfig = ClubLogUploader::generateUploadConfigMap(ui->myCallsignCombo->currentText(),
                                                                 ui->clublogClearCheckbox->isChecked());
         break;
+    case WAVELOGID:
+        uploadConfig = CloudlogUploader::generateUploadConfigMap(ui->wavelogStationIDSpin->value());
+        break;
     default:
         break;
     }
@@ -328,7 +368,9 @@ void UploadQSODialog::processNextUploader()
     const QList<QSqlRecord> &list = currentTask.getQSOList();
 
     // set progress bar range for services that do not support the batch upload
-    if ( currentTask.getServiceID() == HRDLOGID || currentTask.getServiceID() == QRZCOMID )
+    if ( currentTask.getServiceID() == HRDLOGID
+         || currentTask.getServiceID() == QRZCOMID
+         || currentTask.getServiceID() == WAVELOGID )
         dialog->setRange(0, list.size());
 
     uploader->uploadQSOList(list, uploadConfig);
@@ -369,6 +411,24 @@ void UploadQSODialog::updateQSONumbers()
         it->updateQSONumberLabel();
 }
 
+void UploadQSODialog::getWavelogStationID()
+{
+    FCT_IDENTIFICATION;
+
+    CloudlogUploader *ptr = qobject_cast<CloudlogUploader*>(onlineServices.value(WAVELOGID).getUploader());
+
+    if ( ptr )
+    {
+        connect(ptr, &CloudlogUploader::stationIDsUpdated, this, [ptr, this]()
+        {
+            availableWavelogStationIDs = ptr->getAvailableStationIDs();
+            updateWavelogStationLabel();
+        });
+
+        ptr->sendStationInfoReq();
+    }
+}
+
 void UploadQSODialog::executeQuery()
 {
     FCT_IDENTIFICATION;
@@ -396,11 +456,13 @@ void UploadQSODialog::executeQuery()
 
         QStringList uploadStatuses(qslUploadStatuses);
 
-        if ( it.key() == CLUBLOGID && ui->clublogClearCheckbox->isChecked() )
+        if ( (    it.key() == CLUBLOGID && ui->clublogClearCheckbox->isChecked() )
+             || ( it.key() == WAVELOGID  && ui->wavelogReuploadCheckbox->isChecked() ))
         {
             //reupload all QSOs (except N)
             uploadStatuses << "'Y'";
         }
+
 
         QString addlCondition = ( it.key() == LOTWID && ui->lotwCheckbox->isChecked() )
                                 ? "AND (upper(prop_mode) NOT IN ('INTERNET', 'RPT', 'ECH', 'IRL') OR prop_mode IS NULL)"
@@ -447,7 +509,7 @@ void UploadQSODialog::executeQuery()
         if ( !ui->myGridCombo->currentText().isEmpty() && ui->myGridCombo->currentIndex() > 0 )
             whereParts << QLatin1String("my_gridsquare = :my_gridsquare");
 
-        selectStatement = QString("SELECT *, %1 FROM contacts "
+        selectStatement = QString("SELECT *, %1 FROM contacts INNER JOIN contacts_autovalue ON contacts.id = contacts_autovalue.contactid "
                                   "WHERE %2 ORDER BY start_time").arg(serviceStatusColumns.join(", "),
                                                                       whereParts.join(" AND "));
         if ( !uploadQSOQuery.prepare(selectStatement) )
@@ -463,8 +525,8 @@ void UploadQSODialog::executeQuery()
     {
         whereParts << QLatin1String("station_profiles.profile_name = :profile_name");
 
-        selectStatement = QString("SELECT contacts.*, %1 "
-                                  "FROM contacts inner join station_profiles on %2 "
+        selectStatement = QString("SELECT contacts.*, contacts_autovalue.*, %1 "
+                                  "FROM contacts inner join station_profiles on %2 INNER JOIN contacts_autovalue ON contacts.id = contacts_autovalue.contactid "
                                   "WHERE %3 ORDER BY start_time").arg(serviceStatusColumns.join(", "),
                                                                       selectedStationProfile.getContactInnerJoin(),
                                                                       whereParts.join(" AND ") );
@@ -517,6 +579,7 @@ void UploadQSODialog::executeQuery()
             case CLUBLOGID: forUploadMarked = lotwUploadStatus || rec->value("status_" + QString::number(taskID)).toBool(); break; // depends on the LoTW Receive field
             case HRDLOGID: forUploadMarked = eqslUploadStatus || lotwUploadStatus || rec->value("status_" + QString::number(taskID)).toBool(); break; //depends on EQSL and LoTW fields
             case QRZCOMID: forUploadMarked = (! serviceNames.empty()) || rec->value("status_" + QString::number(taskID)).toBool(); break; // all fields are sent
+            case WAVELOGID: forUploadMarked = rec->value("status_" + QString::number(taskID)).toBool(); break;
             default: forUploadMarked = false;
             }
 
@@ -551,4 +614,14 @@ void UploadQSODialog::handleCallsignChange(const QString &myCallsign)
     ui->myGridCombo->setCurrentIndex(0);
     executeQuery();
     ui->myGridLabel->blockSignals(false);
+}
+
+void UploadQSODialog::updateWavelogStationLabel()
+{
+    FCT_IDENTIFICATION;
+
+    const CloudlogUploader::StationProfile &currProfile = availableWavelogStationIDs.value(ui->wavelogStationIDSpin->value());
+
+    ui->wavelogStationIDProfileLabel->setText(( currProfile.station_id == ui->wavelogStationIDSpin->value()) ? currProfile.station_profile_name + " [" + currProfile.station_callsign + " / " + currProfile.station_gridsquare + "]"
+                                                                                                             : tr("Unknown"));
 }

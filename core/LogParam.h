@@ -112,6 +112,14 @@ public:
     static QStringList getQRZCOMAPICallsignsList();
     static void setQRZCOMAPICallsignsList(const QStringList &list);
 
+    /**********
+     * Cloudlog
+     **********/
+    static QString getCloudlogAPIEndpoint();
+    static void setCloudlogAPIEndpoint(const QString &endpoint);
+    static uint getCloudlogStationID();
+    static void setCloudlogStationID(uint stationID);
+
     /*********
      * Clublog
      ********/
