@@ -70,7 +70,7 @@ private:
     bool cancelUpload;
     uint stationID;
 
-    QVariantMap parseResponse(const QByteArray data);
+    QVariantMap parseResponse(const QByteArray &data);
 };
 
 #endif // QLOG_SERVICE_CLOUDLOG_CLOUDLOG_H

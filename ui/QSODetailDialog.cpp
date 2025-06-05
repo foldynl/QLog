@@ -576,7 +576,7 @@ void QSODetailDialog::setReadOnlyMode(bool inReadOnly)
                 datetime->setStyleSheet("");
             }
         }
-        else if ( QLabel *label = qobject_cast<QLabel*>(widget) )
+        else if ( qobject_cast<QLabel*>(widget) )
         {
             //do nothing - naturally readonly
         }
@@ -1395,11 +1395,13 @@ void QSODetailDialog::drawDXOnMap(const QString &label, const Gridsquare &dxGrid
 
     QString stationString;
     QString popupString = label;
-    QString unit;
+
     Gridsquare myGrid = Gridsquare(ui->myGridEdit->text());
     double distance = 0;
 
-    if (dxGrid.distanceTo(myGrid, distance)) {
+    if (dxGrid.distanceTo(myGrid, distance))
+    {
+        QString unit;
         distance = Gridsquare::distance2localeUnitDistance(distance, unit);
         popupString.append(QString("</br> %1 %2").arg(QString::number(distance, 'f', 0), unit));
     }

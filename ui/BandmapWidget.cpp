@@ -616,7 +616,7 @@ void BandmapWidget::saveCurrentZoom()
     LogParam::setBandmapZoom(objectName(), currentBand.name, zoom);
 }
 
-BandmapWidget::BandmapZoom BandmapWidget::getSavedZoom(Band band)
+BandmapWidget::BandmapZoom BandmapWidget::getSavedZoom(const Band &band)
 {
     FCT_IDENTIFICATION;
 
@@ -633,7 +633,7 @@ void BandmapWidget::saveCurrentScrollFreq()
     LogParam::setBandmapScrollFreq(objectName(), currentBand.name, visibleCentreFreq());
 }
 
-double BandmapWidget::getSavedScrollFreq(Band band)
+double BandmapWidget::getSavedScrollFreq(const Band &band)
 {
     FCT_IDENTIFICATION;
 

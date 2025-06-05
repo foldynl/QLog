@@ -3198,7 +3198,7 @@ void NewContactWidget::setValuesFromActivity(const QString &name)
 {
     FCT_IDENTIFICATION;
 
-    auto &variableHash = ActivityProfilesManager::instance()->getProfile(name).fieldValues;
+    const auto &variableHash = ActivityProfilesManager::instance()->getProfile(name).fieldValues;
 
     auto setFieldValue = [&](LogbookModel::ColumnID columnID, QLineEdit *edit)
     {

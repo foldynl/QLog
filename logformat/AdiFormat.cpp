@@ -778,7 +778,7 @@ QString AdiFormat::parseUploadStatus(const QString &value)
         case 'Y': return "Y";
         case 'N': return "N";
         case 'M': return "M";
-        default: QString();
+        default: return QString();
         }
     }
     return QString();

@@ -417,14 +417,14 @@ void AwardsDialog::awardTableDoubleClicked(QModelIndex idx)
 
     const QString &awardSelected = getSelectedAward();
     QStringList addlFilters;
-    QString band;
-    QString country;
 
     if ( ui->myEntityComboBox->isEnabled() )
         addlFilters << QString("my_dxcc='%1'").arg(getSelectedEntity());
 
     if ( idx.row() > 3 )
     {
+        QString band;
+        QString country;
         if ( awardSelected == "dxcc" )
         {
             country = detailedViewModel->data(detailedViewModel->index(idx.row(),1),Qt::DisplayRole).toString();

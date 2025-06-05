@@ -229,7 +229,6 @@ void EQSLUploader::processReply(QNetworkReply* reply)
 
         if ( matchOK.hasMatch() )
         {
-            msg = matchOK.captured(1);
             emit uploadFinished();
         }
         else if (matchError.hasMatch() )
@@ -239,7 +238,6 @@ void EQSLUploader::processReply(QNetworkReply* reply)
         }
         else if (matchWarning.hasMatch() )
         {
-            msg = matchWarning.captured(1);
             emit uploadFinished();
         }
         else if (matchCaution.hasMatch() )

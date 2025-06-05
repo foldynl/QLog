@@ -92,10 +92,8 @@ void PaperQSLDialog::showAvailableFiles()
 
     const QStringList &files = qsl->getAvailableQSLNames(dialogQSORecord, QSLObject::QSLFILE);
 
-    for ( auto &file : files )
-    {
+    for ( const QString &file : files )
         addFileToDialog(file);
-    }
 }
 
 void PaperQSLDialog::addFileToDialog(const QString &inFile)

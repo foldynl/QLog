@@ -956,8 +956,8 @@ void HamlibRigDrv::commandSleep()
 }
 
 bool HamlibRigDrv::isRigRespOK(int errorStatus,
-                                const QString errorName,
-                                bool emitError)
+                               const QString &errorName,
+                               bool emitError)
 {
     FCT_IDENTIFICATION;
 

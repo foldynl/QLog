@@ -318,18 +318,21 @@ void ImportDialog::runImport()
     msgBox.setDefaultButton(QMessageBox::Ok);
 
     if ( !s.isEmpty() )
-    {
          pButtonYes = msgBox.addButton(tr("Save Details..."), QMessageBox::ActionRole);
-    }
 
     QSpacerItem* horizontalSpacer = new QSpacerItem(500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    QGridLayout* layout = (QGridLayout*)msgBox.layout();
+    QGridLayout* layout = qobject_cast<QGridLayout*>(msgBox.layout());
+    if ( !layout )
+    {
+        qWarning() << "Layout is null";
+        delete horizontalSpacer;
+        return;
+    }
     layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
 
     msgBox.exec();
 
-    if ( pButtonYes
-         && msgBox.clickedButton() == pButtonYes )
+    if ( pButtonYes && msgBox.clickedButton() == pButtonYes )
     {
         saveImportDetails(s, ui->fileEdit->text(),
                           count, warnings, errors);

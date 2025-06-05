@@ -105,9 +105,9 @@ private:
     void setBandmapAnimation(bool);
     void setBand(const Band &newBand, bool savePrevBandZoom = true);
     void saveCurrentZoom();
-    BandmapWidget::BandmapZoom getSavedZoom(Band);
+    BandmapWidget::BandmapZoom getSavedZoom(const Band &);
     void saveCurrentScrollFreq();
-    double getSavedScrollFreq(Band);
+    double getSavedScrollFreq(const Band &);
     double visibleCentreFreq() const;
     bool isAlreadyOpened(const Band &band) const;
     void saveState();

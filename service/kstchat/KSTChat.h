@@ -58,6 +58,8 @@ public:
         InfoSource source;
         Operator operatorID;
         QString value;
+
+        Condition() : source(SENDER), operatorID(OPERATOR_CONTAINS) {};
     };
 
 public:

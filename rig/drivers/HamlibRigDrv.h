@@ -66,7 +66,7 @@ private:
     void __setMode(rmode_t newModeID);
     void commandSleep();
     bool isRigRespOK(int errorStatus,
-                     const QString errorName,
+                     const QString &errorName,
                      bool emitError = true);
 
     const QString getModeNormalizedText(const rmode_t mode,

@@ -262,13 +262,12 @@ bool Migration::runSqlFile(QString filename) {
     QFile sqlFile(filename);
     sqlFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
-    QStringList sqlQueries = QTextStream(&sqlFile).readAll().split('\n').join(" ").split(';');
+    const QStringList &sqlQueries = QTextStream(&sqlFile).readAll().split('\n').join(" ").split(';');
     qCDebug(runtime) << sqlQueries;
 
-    foreach (QString sqlQuery, sqlQueries) {
-        if (sqlQuery.trimmed().isEmpty()) {
-            continue;
-        }
+    for (const QString &sqlQuery : sqlQueries)
+    {
+        if (sqlQuery.trimmed().isEmpty()) continue;
 
         qCDebug(runtime) << sqlQuery;
 
@@ -325,8 +324,10 @@ bool Migration::functionMigration(int version)
     return ret;
 }
 
-int Migration::tableRows(QString name) {
+int Migration::tableRows(const QString &name)
+{
     FCT_IDENTIFICATION;
+
     int i = 0;
     QSqlQuery query(QString("SELECT count(*) FROM %1").arg(name));
     i = query.first() ? query.value(0).toInt() : 0;
