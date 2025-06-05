@@ -588,12 +588,13 @@ void KSTChat::finalizeShowUsersCommand(const QStringList &buffer)
             user.grid = Gridsquare(match.captured(2));
             user.stationComment = match.captured(3);
             user.dxcc = Data::instance()->lookupDxcc(user.callsign);
+            user.status = DxccStatus::UnknownStatus;
             if ( contact )
             {
                 user.status = Data::instance()->dxccStatus(user.dxcc.dxcc, contact->getBand(), contact->getMode());
                 user.dupeCount = Data::countDupe(user.callsign, contact->getBand(), contact->getMode());
             }
-            userList << user; // TODO unitialized
+            userList << user;
         }
         else
         {
