@@ -26,6 +26,8 @@ public:
     int machingType;
     QList<QSOFilterRule> rules;
 
+    QSOFilter() : machingType(0){};
+
     void addRule(const QSOFilterRule &rule)
     {
         rules.append(rule);
