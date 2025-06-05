@@ -93,7 +93,7 @@ QVariant WsjtxTableModel::headerData(int section, Qt::Orientation orientation, i
     }
 }
 
-void WsjtxTableModel::addOrReplaceEntry(WsjtxEntry entry)
+void WsjtxTableModel::addOrReplaceEntry(const WsjtxEntry &entry)
 {
     int idx = wsjtxData.indexOf(entry);
 
