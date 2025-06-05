@@ -359,7 +359,7 @@ void LogParam::setQRZCOMAPICallsignsList(const QStringList &list)
 
 QString LogParam::getCloudlogAPIEndpoint()
 {
-    return getParam("services/cloudlog/logbook/endpoint", "http://localhost/index.php/api/qso").toString();
+    return getParam("services/cloudlog/logbook/endpoint", "http://localhost/index.php").toString();
 }
 
 void LogParam::setCloudlogAPIEndpoint(const QString &endpoint)

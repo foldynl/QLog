@@ -31,21 +31,40 @@ class CloudlogUploader : public GenericQSOUploader, private CloudlogBase
     Q_OBJECT
 
 public:
+    class StationProfile
+    {
+    public:
+        int station_id;
+        QString station_profile_name;
+        QString station_gridsquare;
+        QString station_callsign;
+        bool station_active = false;
+
+        static StationProfile fromJson(const QJsonObject &obj);
+    };
+
     explicit CloudlogUploader(QObject *parent = nullptr);
     virtual ~CloudlogUploader();
     static QVariantMap generateUploadConfigMap(uint profileID);
     void uploadAdif(const QByteArray &data, uint stationID);
     virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
+    const QMap<uint, StationProfile>& getAvailableStationIDs() const;
+    void sendStationInfoReq();
 
 public slots:
     virtual void abortRequest() override;
     void uploadContact(const QSqlRecord &record, uint stationID);
+
+signals:
+    void stationIDsUpdated();
 
 protected:
     virtual void processReply(QNetworkReply* reply) override;
     virtual const QByteArray generateADIF(const QList<QSqlRecord> &qsos, QMap<QString,
                                           QString> *applTags = nullptr) override;
 private:
+
+    QMap<uint, StationProfile> availableStationIDs;
     QNetworkReply *currentReply;
     QList<QSqlRecord> queuedContacts4Upload;
     bool cancelUpload;

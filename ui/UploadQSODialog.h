@@ -11,6 +11,8 @@
 
 #include "core/LogLocale.h"
 #include "service/GenericQSOUploader.h"
+#include "service/cloudlog/Cloudlog.h"
+
 namespace Ui {
 class UploadQSODialog;
 }
@@ -31,6 +33,7 @@ private slots:
     void startUploadQueue();
     void executeQuery();
     void handleCallsignChange(const QString &);
+    void updateWavelogStationLabel();
 
 private:
 
@@ -131,6 +134,7 @@ private:
     QList<UploadTask> uploadTaskQueue;
     QStandardItemModel *detailQSOsModel;
     UploadTask currentTask;
+    QMap<uint, CloudlogUploader::StationProfile> availableWavelogStationIDs;
 
     void setQSODetailVisible(bool visible);
     void loadDialogState();
@@ -138,7 +142,9 @@ private:
     void processNextUploader();
     void uploadFinished();
     void updateQSONumbers();
+    void getWavelogStationID();
 
+    const uint WAVELOG_MAX_STATIONID = 99999;
 };
 
 #endif // UPLOADQSODIALOG_H

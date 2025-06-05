@@ -96,6 +96,7 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
     setQSODetailVisible(false);
     setWavelogSettingVisible(false);
     loadDialogState();
+    getWavelogStationID();
     ui->myCallsignCombo->blockSignals(false);
     ui->myGridCombo->blockSignals(false);
 }
@@ -410,6 +411,24 @@ void UploadQSODialog::updateQSONumbers()
         it->updateQSONumberLabel();
 }
 
+void UploadQSODialog::getWavelogStationID()
+{
+    FCT_IDENTIFICATION;
+
+    CloudlogUploader *ptr = qobject_cast<CloudlogUploader*>(onlineServices.value(WAVELOGID).getUploader());
+
+    if ( ptr )
+    {
+        connect(ptr, &CloudlogUploader::stationIDsUpdated, this, [ptr, this]()
+        {
+            availableWavelogStationIDs = ptr->getAvailableStationIDs();
+            updateWavelogStationLabel();
+        });
+
+        ptr->sendStationInfoReq();
+    }
+}
+
 void UploadQSODialog::executeQuery()
 {
     FCT_IDENTIFICATION;
@@ -595,4 +614,14 @@ void UploadQSODialog::handleCallsignChange(const QString &myCallsign)
     ui->myGridCombo->setCurrentIndex(0);
     executeQuery();
     ui->myGridLabel->blockSignals(false);
+}
+
+void UploadQSODialog::updateWavelogStationLabel()
+{
+    FCT_IDENTIFICATION;
+
+    const CloudlogUploader::StationProfile &currProfile = availableWavelogStationIDs.value(ui->wavelogStationIDSpin->value());
+
+    ui->wavelogStationIDProfileLabel->setText(( currProfile.station_id == ui->wavelogStationIDSpin->value()) ? currProfile.station_profile_name + " [" + currProfile.station_callsign + " / " + currProfile.station_gridsquare + "]"
+                                                                                                             : tr("Unknown"));
 }

@@ -93,6 +93,18 @@ void CloudlogUploader::abortRequest()
     }
 }
 
+void CloudlogUploader::sendStationInfoReq()
+{
+    FCT_IDENTIFICATION;
+
+    QUrl url(LogParam::getCloudlogAPIEndpoint() + "/api/station_info/" + getLogbookAPIKey());
+    QNetworkRequest request(url);
+
+    qCDebug(runtime) << url;
+    QNetworkReply *reply = getNetworkAccessManager()->get(request); // do not use currentReply
+    reply->setProperty("messageType", QVariant("getStationID"));
+}
+
 void CloudlogUploader::uploadContact(const QSqlRecord &record, uint stationID)
 {
     FCT_IDENTIFICATION;
@@ -107,7 +119,7 @@ void CloudlogUploader::uploadAdif(const QByteArray &data, uint stationID)
 {
     FCT_IDENTIFICATION;
 
-    QUrl url(LogParam::getCloudlogAPIEndpoint());
+    QUrl url(LogParam::getCloudlogAPIEndpoint() + "/api/qso");
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Accept", "application/json");
@@ -148,6 +160,11 @@ void CloudlogUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVaria
     queuedContacts4Upload.removeFirst();
 }
 
+const QMap<uint, CloudlogUploader::StationProfile> &CloudlogUploader::getAvailableStationIDs() const
+{
+    return availableStationIDs;
+}
+
 void CloudlogUploader::processReply(QNetworkReply *reply)
 {
     FCT_IDENTIFICATION;
@@ -157,13 +174,12 @@ void CloudlogUploader::processReply(QNetworkReply *reply)
 
     int replyStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     const QString &messageType = reply->property("messageType").toString();
+    const QByteArray &response = reply->readAll();
 
     qCDebug(runtime) << "Received Message Type: " << messageType
                      << "HTTP Code" << replyStatusCode
                      << "Cloudlog URL" << reply->request().url().toString();
-
-    const QByteArray &response = reply->readAll();
-    qCDebug(runtime) << "Response" << response;
+    qCDebug(runtime) << "Response:" << response;
 
     /*************/
     /* uploadQSO */
@@ -175,7 +191,7 @@ void CloudlogUploader::processReply(QNetworkReply *reply)
             case 201: // Created
             case 400: // Bad Request (e.g., duplicate)
             {
-                const QVariantMap resp = parseResponse(response);
+                const QVariantMap &resp = parseResponse(response);
                 const QString &status = resp.value("status").toString();
                 const QStringList &messages = resp.value("messages").toStringList();
                 QString reason = messages.isEmpty() ? QString() : messages.first();
@@ -200,10 +216,8 @@ void CloudlogUploader::processReply(QNetworkReply *reply)
                 }
                 else
                 {
-                    qCWarning(runtime) << "Upload failed with response:" << resp;
                     cancelUpload = false;
                     queuedContacts4Upload.clear();
-                    qInfo() << "messae" << reason << messages.isEmpty() << messages;
                     emit uploadError(reason.isEmpty() ? reply->errorString() : reason);
                 }
                 break;
@@ -221,6 +235,28 @@ void CloudlogUploader::processReply(QNetworkReply *reply)
                 queuedContacts4Upload.clear();
                 emit uploadError(reply->errorString());
                 break;
+        }
+    }
+    /*************/
+    /* uploadQSO */
+    /*************/
+    else if ( messageType == "getStationID" )
+    {
+        if ( replyStatusCode == 200 )
+        {
+            QJsonDocument doc = QJsonDocument::fromJson(response);
+
+            if (doc.isArray())
+            {
+                const QJsonArray &array = doc.array();
+                for ( const QJsonValue &value : array )
+                    if (value.isObject())
+                    {
+                        StationProfile profile = StationProfile::fromJson(value.toObject());
+                        availableStationIDs.insert(profile.station_id, profile);
+                    }
+            }
+            emit stationIDsUpdated();
         }
     }
 
@@ -259,4 +295,19 @@ QVariantMap CloudlogUploader::parseResponse(const QByteArray data)
 
     QJsonObject obj = doc.object();
     return obj.toVariantMap();
+}
+
+
+CloudlogUploader::StationProfile CloudlogUploader::StationProfile::fromJson(const QJsonObject &obj)
+{
+    FCT_IDENTIFICATION;
+
+    StationProfile profile;
+    profile.station_id = obj.value("station_id").toString().toInt();
+    profile.station_profile_name = obj.value("station_profile_name").toString();
+    profile.station_gridsquare = obj.value("station_gridsquare").toString();
+    profile.station_callsign = obj.value("station_callsign").toString();
+    profile.station_active = (!obj.value("station_active").isNull()) ? profile.station_active = obj.value("station_active").toString() == "1"
+                                                                     :  false;
+    return profile;
 }
