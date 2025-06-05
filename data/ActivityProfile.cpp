@@ -269,7 +269,7 @@ void ActivityProfilesManager::save()
     if ( deleteQuery.exec() )
     {
         const QStringList &keys = profileNameList();
-        for ( auto &key: keys )
+        for ( const QString &key: keys )
         {
             const ActivityProfile &activityProfile = getProfile(key);
 

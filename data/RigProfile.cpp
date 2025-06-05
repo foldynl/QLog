@@ -156,7 +156,7 @@ void RigProfilesManager::save()
     if ( deleteQuery.exec() )
     {
         const QStringList &keys = profileNameList();
-        for ( auto &key: keys )
+        for ( const QString &key: keys )
         {
             const RigProfile &rigProfile = getProfile(key);
 
