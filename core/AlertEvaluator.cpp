@@ -119,6 +119,8 @@ AlertRule::AlertRule(QObject *parent) :
     dxCountry(-1),
     dxLogStatusMap(0),
     spotterCountry(-1),
+    ituz(0),
+    cqz(0),
     pota(false),
     sota(false),
     iota(false),
