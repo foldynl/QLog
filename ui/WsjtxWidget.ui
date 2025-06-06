@@ -33,7 +33,27 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="5">
+   <item row="0" column="2">
+    <widget class="QLabel" name="modeLabel">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" colspan="6">
     <widget class="QTableView" name="tableView">
      <property name="focusPolicy">
       <enum>Qt::ClickFocus</enum>
@@ -97,25 +117,15 @@
      </attribute>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QLabel" name="modeLabel">
+   <item row="0" column="3">
+    <widget class="QLabel" name="filteredLabel">
+     <property name="styleSheet">
+      <string notr="true">color: red</string>
+     </property>
      <property name="text">
-      <string/>
+      <string>Filtered</string>
      </property>
     </widget>
-   </item>
-   <item row="0" column="3">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
   <action name="actionDisplayedColumns">

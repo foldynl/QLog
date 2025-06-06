@@ -66,6 +66,7 @@ private:
     QSet<QString> dxMemberFilter;
     void saveTableHeaderState();
     void restoreTableHeaderState();
+    bool isFilterEnabled();
 };
 
 #endif // QLOG_UI_WSJTXWIDGET_H

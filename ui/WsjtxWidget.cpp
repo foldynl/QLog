@@ -323,6 +323,8 @@ void WsjtxWidget::reloadSetting()
 #else /* Due to ubuntu 20.04 where qt5.12 is present */
     dxMemberFilter = QSet<QString>(QSet<QString>::fromList(tmp));
 #endif
+
+    ui->filteredLabel->setHidden(!isFilterEnabled());
 }
 
 void WsjtxWidget::clearTable()
@@ -350,6 +352,19 @@ void WsjtxWidget::restoreTableHeaderState()
     {
         ui->tableView->horizontalHeader()->restoreState(state);
     }
+}
+
+bool WsjtxWidget::isFilterEnabled()
+{
+    FCT_IDENTIFICATION;
+
+    return dxccStatusFilter != (DxccStatus::NewEntity | DxccStatus::NewBand |
+                                DxccStatus::NewMode   | DxccStatus::NewSlot |
+                                DxccStatus::Worked    | DxccStatus::Confirmed)
+        || contregexp.pattern().count("|") != 7
+        || distanceFilter > 0
+        || snrFilter > -41
+        || !dxMemberFilter.isEmpty();
 }
 
 WsjtxWidget::~WsjtxWidget()
