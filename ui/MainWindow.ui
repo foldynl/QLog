@@ -860,7 +860,7 @@
     <string>Upload</string>
    </property>
    <property name="toolTip">
-    <string>Services - Upload QSOs</string>
+    <string>Service - Upload QSOs</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+I</string>
@@ -874,7 +874,7 @@
     <string>Download QSLs</string>
    </property>
    <property name="toolTip">
-    <string>Services - Download QSLs</string>
+    <string>Service - Download QSLs</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+D</string>
