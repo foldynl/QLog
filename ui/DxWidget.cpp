@@ -1251,6 +1251,8 @@ void DxWidget::reloadSetting()
 #else /* Due to ubuntu 20.04 where qt5.12 is present */
     dxMemberFilter = QSet<QString>(QSet<QString>::fromList(tmp));
 #endif
+
+    ui->filteredLabel->setHidden(!isFilterEnabled());
 }
 
 void DxWidget::prepareQSOSpot(QSqlRecord qso)
@@ -1360,6 +1362,21 @@ QColor DxWidget::getHeatmapColor(int value, int maxValue)
     int a = ( value == 0 ? 0 : 255);
 
     return QColor(r, g, b, a);
+}
+
+bool DxWidget::isFilterEnabled() const
+{
+    FCT_IDENTIFICATION;
+
+    return dxccStatusFilter != (DxccStatus::NewEntity | DxccStatus::NewBand |
+                                DxccStatus::NewMode   | DxccStatus::NewSlot |
+                                DxccStatus::Worked    | DxccStatus::Confirmed)
+        || contregexp.pattern().count("|") != 7
+        || !dxMemberFilter.isEmpty()
+        // || deduplicateSpots  // deduplication does not mean filtring.
+        || spottercontregexp.pattern().count("|") != 7
+        || moderegexp.pattern().count("|") != 4
+        || BandPlan::bandsList(false, true).size() != bandregexp.pattern().count("|");
 }
 
 void DxWidget::recalculateTrend()

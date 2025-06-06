@@ -251,6 +251,8 @@ private:
     void iotaRefFromComment(DxSpot &spot) const;
 
     QColor getHeatmapColor(int value, int maxValue);
+
+    bool isFilterEnabled() const;
 };
 
 #endif // QLOG_UI_DXWIDGET_H

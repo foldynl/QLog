@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>341</width>
+    <width>406</width>
     <height>511</height>
    </rect>
   </property>
@@ -92,6 +92,22 @@
        </property>
        <property name="text">
         <string>Connect</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="filteredLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:red</string>
+       </property>
+       <property name="text">
+        <string>Filtered</string>
        </property>
       </widget>
      </item>
