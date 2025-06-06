@@ -784,7 +784,9 @@ void LogParam::setMapLayerState(const QString &widgetID, const QString &layerNam
 
 uint LogParam::getWsjtxFilterDxccStatus()
 {
-    return getParam("wsjtx/filter/dxccstatus", DxccStatus::All).toUInt();
+    return getParam("wsjtx/filter/dxccstatus", (DxccStatus::NewEntity | DxccStatus::NewBand |
+                                                DxccStatus::NewMode   | DxccStatus::NewSlot |
+                                                DxccStatus::Worked    | DxccStatus::Confirmed)).toUInt();
 }
 
 void LogParam::setWsjtxFilterDxccStatus(uint mask)
@@ -844,7 +846,9 @@ void LogParam::setWsjtxWidgetState(const QByteArray &state)
 
 uint LogParam::getDXCFilterDxccStatus()
 {
-    return getParam("dxc/filter/dx/dxccstatus", DxccStatus::All).toUInt();
+    return getParam("dxc/filter/dx/dxccstatus", (DxccStatus::NewEntity | DxccStatus::NewBand |
+                                                 DxccStatus::NewMode   | DxccStatus::NewSlot |
+                                                 DxccStatus::Worked    | DxccStatus::Confirmed)).toUInt();
 }
 
 void LogParam::setDXCFilterDxccStatus(uint mask)
