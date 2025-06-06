@@ -63,6 +63,7 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
         {
             WsjtxEntry entry;
 
+            entry.dateTime = QDateTime::currentDateTime().toTimeZone(QTimeZone::utc());
             entry.decode = decode;
             entry.callsign = match.captured(3);
             entry.grid = match.captured(4);
@@ -72,17 +73,19 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
             entry.freq = currFreq;
             entry.band = currBand;
             entry.decodedMode = status.mode;
+            entry.bandPlanMode = (status.mode == "FT8") ?  BandPlan::BAND_MODE_FT8 : BandPlan::BAND_MODE_DIGITAL;
+            entry.modeGroupString = BandPlan::bandMode2BandModeGroupString(entry.bandPlanMode);
             entry.spotter = profile.callsign.toUpper();
+            entry.comment = decode.message;
             entry.dxcc_spotter = Data::instance()->lookupDxcc(entry.spotter);
             // fix dxcc_spotter based on station prifile setting - cont is not calculated
             entry.dxcc_spotter.country = profile.country;
             entry.dxcc_spotter.cqz = profile.cqz;
             entry.dxcc_spotter.ituz = profile.ituz;
-            entry.dxcc.dxcc = profile.dxcc;
+            entry.dxcc_spotter.dxcc = profile.dxcc;
             entry.distance = 0.0;
             entry.callsign_member = MembershipQE::instance()->query(entry.callsign);
             entry.dupeCount = Data::countDupe(entry.callsign, entry.band, BandPlan::MODE_GROUP_STRING_DIGITAL);
-
             if ( !profile.locator.isEmpty() )
             {
                 Gridsquare myGrid(profile.locator);
@@ -134,6 +137,7 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
 
             if ( wsjtxTableModel->callsignExists(entry) )
             {
+                entry.dateTime = QDateTime::currentDateTime().toTimeZone(QTimeZone::utc());
                 entry.dxcc = Data::instance()->lookupDxcc(entry.callsign);
                 entry.status = Data::instance()->dxccStatus(entry.dxcc.dxcc, currBand, BandPlan::MODE_GROUP_STRING_DIGITAL);
                 entry.decode = decode;
@@ -141,13 +145,16 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
                 entry.freq = currFreq;
                 entry.band = currBand;
                 entry.decodedMode = status.mode;
+                entry.comment = decode.message;
+                entry.bandPlanMode = (status.mode == "FT8") ?  BandPlan::BAND_MODE_FT8 : BandPlan::BAND_MODE_DIGITAL;
+                entry.modeGroupString = BandPlan::bandMode2BandModeGroupString(entry.bandPlanMode);
                 entry.spotter = profile.callsign.toUpper();
                 entry.dxcc_spotter = Data::instance()->lookupDxcc(entry.spotter);
                 // fix dxcc_spotter based on station prifile setting - cont is not calculated
                 entry.dxcc_spotter.country = profile.country;
                 entry.dxcc_spotter.cqz = profile.cqz;
                 entry.dxcc_spotter.ituz = profile.ituz;
-                entry.dxcc.dxcc = profile.dxcc;
+                entry.dxcc_spotter.dxcc = profile.dxcc;
                 entry.distance = 0.0;
                 entry.dupeCount = Data::countDupe(entry.callsign, entry.band, BandPlan::MODE_GROUP_STRING_DIGITAL);
                 // it is not needed to update entry.callsign_clubs because addOrReplaceEntry does not
