@@ -7,6 +7,7 @@ TBC - 0.45.0
 - [NEW] - Added support to Upload Cloudlog/Wavelog
 - [NEW] - Add JS8 to legacy_modes.json (issue #677)
 - [CHANGE] - Unification Settings storage
+- Fixed missing Wsjtx Spot values in the AlertWindow
 
 2025/05/11 - 0.44.1
 - Fixed Rotator Widget Seg Fault for new users (issue #666)
