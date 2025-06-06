@@ -130,22 +130,28 @@
   </layout>
   <action name="actionDisplayedColumns">
    <property name="text">
-    <string>Column Visibility</string>
+    <string>Column Visibility...</string>
    </property>
    <property name="toolTip">
     <string>Which columns should be displayed</string>
    </property>
   </action>
   <action name="actionFilter">
+   <property name="icon">
+    <iconset resource="../res/icons/icons.qrc">
+     <normaloff>:/icons/filter_list-24px.svg</normaloff>:/icons/filter_list-24px.svg</iconset>
+   </property>
    <property name="text">
-    <string>Filter</string>
+    <string>Filter...</string>
    </property>
    <property name="toolTip">
     <string>Filter Spots</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/icons/icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>tableView</sender>
