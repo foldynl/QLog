@@ -122,7 +122,13 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>eqslGroupBox</tabstop>
+  <tabstop>eqslDateTypeCombo</tabstop>
+  <tabstop>eqslDateEdit</tabstop>
   <tabstop>eqslQTHProfileEdit</tabstop>
+  <tabstop>lotwGroupBox</tabstop>
+  <tabstop>lotwDateTypeCombo</tabstop>
+  <tabstop>lotwDateEdit</tabstop>
   <tabstop>lotwMyCallsignCombo</tabstop>
  </tabstops>
  <resources/>
