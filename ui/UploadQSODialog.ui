@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>597</width>
-    <height>701</height>
+    <height>725</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -620,10 +620,16 @@
  </widget>
  <tabstops>
   <tabstop>eqslCheckbox</tabstop>
-  <tabstop>lotwCheckbox</tabstop>
   <tabstop>qrzCheckbox</tabstop>
-  <tabstop>clublogCheckbox</tabstop>
   <tabstop>hrdlogCheckbox</tabstop>
+  <tabstop>lotwCheckbox</tabstop>
+  <tabstop>clublogCheckbox</tabstop>
+  <tabstop>wavelogCheckbox</tabstop>
+  <tabstop>myStationProfileCheckbox</tabstop>
+  <tabstop>myStationProfileCombo</tabstop>
+  <tabstop>myCallsignCheckbox</tabstop>
+  <tabstop>myCallsignCombo</tabstop>
+  <tabstop>myGridCombo</tabstop>
   <tabstop>includeStatusNoCheckbox</tabstop>
   <tabstop>includeIgnoreCheckbox</tabstop>
   <tabstop>eqslQTHProfileEdit</tabstop>
@@ -631,6 +637,8 @@
   <tabstop>eqslQSLMessage</tabstop>
   <tabstop>eqslQSLComment</tabstop>
   <tabstop>clublogClearCheckbox</tabstop>
+  <tabstop>wavelogStationIDSpin</tabstop>
+  <tabstop>wavelogReuploadCheckbox</tabstop>
   <tabstop>showQSOButton</tabstop>
  </tabstops>
  <resources/>
