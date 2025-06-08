@@ -3812,7 +3812,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="wavelogAddQSOEndpointLabel">
              <property name="text">
-              <string>QSO Endpoint</string>
+              <string>Endpoint</string>
              </property>
             </widget>
            </item>
@@ -4702,6 +4702,8 @@
   <tabstop>qrzCallsignApiKeyTableView</tabstop>
   <tabstop>qrzCallsignApiKeyAddButton</tabstop>
   <tabstop>qrzCallsignApiKeyDelButton</tabstop>
+  <tabstop>wavelogAddQSOEndpointEdit</tabstop>
+  <tabstop>wavelogApiKeyEdit</tabstop>
   <tabstop>dxccConfirmedByLotwCheckBox</tabstop>
   <tabstop>dxccConfirmedByPaperCheckBox</tabstop>
   <tabstop>dxccConfirmedByEqslCheckBox</tabstop>
@@ -5891,7 +5893,7 @@
   <slot>cwModeChanged(int)</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>
