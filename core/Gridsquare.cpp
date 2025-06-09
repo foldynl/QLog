@@ -132,19 +132,32 @@ const QRegularExpression Gridsquare::gridExtRegEx()
 }
 
 double Gridsquare::distance2localeUnitDistance(double km,
-                                               QString &unit)
+                                               QString &unit,
+                                               LogLocale &locale)
 {
     FCT_IDENTIFICATION;
 
     unit = QObject::tr("km");
     double ret = km;
 
-    // All imperial systems
-    if ( QLocale::system().measurementSystem() != QLocale::MetricSystem)
-    {
+    UnitFormat chosenUnit = locale.getSettingUnitFormat();
+    switch (chosenUnit) {
+    case UnitFormat::System:
+        // All imperial systems
+        if ( QLocale::system().measurementSystem() != QLocale::MetricSystem)
+        {
+            unit = QObject::tr("miles");
+            ret = km * localeDistanceCoef();
+        }
+        break;
+    case UnitFormat::Imperial:
         unit = QObject::tr("miles");
         ret = km * localeDistanceCoef();
+        break;
+    case UnitFormat::Metric:
+        break;
     }
+
     return ret;
 }
 
