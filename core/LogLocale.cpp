@@ -108,6 +108,21 @@ void LogLocale::setSettingUseSystemDateFormat(bool value)
     settings.setValue("usesystemdateformat", value);
 }
 
+const UnitFormat LogLocale::getSettingUnitFormat() const
+{
+    QVariant value = settings.value("useunitformat", unit_format);
+
+    int savedUnit = value.value<int>();
+    UnitFormat unit = static_cast<UnitFormat>(savedUnit);
+
+    return unit;
+}
+
+void LogLocale::setSettingUnitFormat(UnitFormat value)
+{
+    settings.setValue("useunitformat", value);
+}
+
 const QString LogLocale::getSettingDateFormat() const
 {
     return settings.value("customdateformatstring", systemDateFormat).toString();

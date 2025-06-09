@@ -5,6 +5,8 @@
 #include <QLocale>
 #include <QRegularExpression>
 
+enum UnitFormat { System, Imperial, Metric };
+
 class LogLocale : public QLocale
 {
 public:
@@ -21,16 +23,21 @@ public:
     bool getSettingUseSystemDateFormat() const;
     void setSettingUseSystemDateFormat(bool value);
 
+    const UnitFormat getSettingUnitFormat() const;
+    void setSettingUnitFormat(UnitFormat value);
+
     const QString getSettingDateFormat() const;
     void setSettingDateFormat(const QString &value);
 
 private:
     const QRegularExpression regexp;
     bool is24hUsed;
+    UnitFormat unit_format;
     QSettings settings;
     QString systemDateFormat;
 
     void changeTime12_24Format(QString &formatString) const;
 };
+
 
 #endif // QLOG_CORE_LOGLOCALE_H
