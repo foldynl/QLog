@@ -16,7 +16,7 @@ WsjtxFilterDialog::WsjtxFilterDialog(QWidget *parent) :
     ui->setupUi(this);
 
     QString unit;
-    Gridsquare::distance2localeUnitDistance(0, unit);
+    // Gridsquare::distance2localeUnitDistance(0, unit);
     ui->distanceSpinBox->setSuffix(" " + unit);
 
     /*********************/

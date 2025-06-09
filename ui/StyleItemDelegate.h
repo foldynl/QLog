@@ -207,6 +207,8 @@ private:
 };
 
 class DistanceFormatDelegate : public QStyledItemDelegate {
+private:
+    LogLocale locale;
 public:
     DistanceFormatDelegate(int precision, double step, QObject* parent = 0) :
         QStyledItemDelegate(parent), precision(precision), step(step) { }
@@ -218,7 +220,8 @@ public:
 
     QString displayText(const QVariant& value, const QLocale&) const {
         QString unit;
-        double displayValue = Gridsquare::distance2localeUnitDistance(value.toDouble(), unit);
+        // double displayValue = Gridsquare::distance2localeUnitDistance(value.toDouble(), unit, locale);
+        double displayValue = 1.0;
         return QString("%1 %2").arg(QString::number(displayValue, 'f', precision), unit);
     }
 
