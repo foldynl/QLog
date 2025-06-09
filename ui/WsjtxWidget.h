@@ -7,6 +7,7 @@
 #include "data/WsjtxEntry.h"
 #include "models/WsjtxTableModel.h"
 #include "rig/Rig.h"
+#include "core/LogLocale.h"
 
 namespace Ui {
 class WsjtxWidget;
@@ -64,6 +65,7 @@ private:
     QSet<QString> dxMemberFilter;
     void saveTableHeaderState();
     void restoreTableHeaderState();
+    LogLocale locale;
 };
 
 #endif // QLOG_UI_WSJTXWIDGET_H

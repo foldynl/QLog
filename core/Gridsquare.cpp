@@ -133,7 +133,7 @@ const QRegularExpression Gridsquare::gridExtRegEx()
 
 double Gridsquare::distance2localeUnitDistance(double km,
                                                QString &unit,
-                                               LogLocale &locale)
+                                               const LogLocale &locale)
 {
     FCT_IDENTIFICATION;
 

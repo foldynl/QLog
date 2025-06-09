@@ -16,7 +16,7 @@ public:
     static const QRegularExpression gridRegEx();
     static const QRegularExpression gridVUCCRegEx();
     static const QRegularExpression gridExtRegEx();
-    static double distance2localeUnitDistance(double km, QString &unit, LogLocale &locale);
+    static double distance2localeUnitDistance(double km, QString &unit, const LogLocale &locale);
     static double localeDistanceCoef();
 
     bool isValid() const;
