@@ -2366,6 +2366,24 @@ void SettingsDialog::readSettings() {
     ui->timeFormat24RadioButton->setChecked(timeformat24);
     ui->timeFormat12RadioButton->setChecked(!timeformat24);
 
+    UnitFormat unitFormat = locale.getSettingUnitFormat();
+    switch (unitFormat) {
+    case UnitFormat::System:
+      ui->unitFormatSystemRadioButton->setChecked(true);
+      ui->unitFormatImperialRadioButton->setChecked(false);
+      ui->unitFormatMetricRadioButton->setChecked(false);
+      break;
+    case UnitFormat::Imperial:
+      ui->unitFormatSystemRadioButton->setChecked(false);
+      ui->unitFormatImperialRadioButton->setChecked(true);
+      ui->unitFormatMetricRadioButton->setChecked(false);
+      break;
+    case UnitFormat::Metric:
+      ui->unitFormatSystemRadioButton->setChecked(false);
+      ui->unitFormatImperialRadioButton->setChecked(false);
+      ui->unitFormatMetricRadioButton->setChecked(true);
+      break;
+    }
     bool dateSystemFormat = locale.getSettingUseSystemDateFormat();
     ui->dateFormatSystemRadioButton->setChecked(dateSystemFormat);
     ui->dateFormatCustomRadioButton->setChecked(!dateSystemFormat);
@@ -2486,12 +2504,27 @@ void SettingsDialog::writeSettings() {
     /*******/
     /* GUI */
     /*******/
+    // Time format
     locale.setSettingUse24hformat(ui->timeFormat24RadioButton->isChecked());
 
+    // Date format
     bool systemDateChecked = ui->dateFormatSystemRadioButton->isChecked();
     locale.setSettingUseSystemDateFormat(systemDateChecked);
     if ( !systemDateChecked )
         locale.setSettingDateFormat(ui->dateFormatStringEdit->text());
+
+    // Unit format
+    UnitFormat chosenUnit = getChosenUnitFormat();
+    locale.setSettingUnitFormat(chosenUnit);
+}
+UnitFormat SettingsDialog::getChosenUnitFormat() {
+    if (ui->unitFormatMetricRadioButton->isChecked()) {
+            return UnitFormat::Metric;
+    } else if (ui->unitFormatImperialRadioButton->isChecked()) {
+            return UnitFormat::Imperial;
+    } else {
+            return UnitFormat::System;
+    }
 }
 
 /* this function is called when user modify rig progile

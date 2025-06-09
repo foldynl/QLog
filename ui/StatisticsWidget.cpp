@@ -340,7 +340,7 @@ void StatisticsWidget::refreshGraph()
              break;
          case 2: // ODX
              QString unit;
-             Gridsquare::distance2localeUnitDistance(0, unit);
+             Gridsquare::distance2localeUnitDistance(0, unit, locale);
              QString distCoef = QString::number(Gridsquare::localeDistanceCoef());
              QString sel = QString("SELECT callsign || '<br>' || CAST(ROUND(distance * %1,0) AS INT) || ' %2', gridsquare, my_gridsquare, ").arg(distCoef, unit);
 
@@ -735,7 +735,7 @@ void StatisticsWidget::setSubTypesCombo(int mainTypeIdx)
     case 3:
     {
         QString unit;
-        Gridsquare::distance2localeUnitDistance(0, unit);
+        Gridsquare::distance2localeUnitDistance(0, unit, locale);
         ui->statTypeSecCombo->addItem(tr("Distance") + QString(" [%1]").arg(unit));
     }
     break;

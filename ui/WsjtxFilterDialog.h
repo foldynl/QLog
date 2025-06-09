@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QCheckBox>
 #include <QSet>
+#include "core/LogLocale.h"
 
 namespace Ui {
 class WsjtxFilterDialog;
@@ -22,6 +23,7 @@ private:
     Ui::WsjtxFilterDialog *ui;
     QList<QCheckBox*> memberListCheckBoxes;
     QSet<QString> dxMemberFilter;
+    LogLocale locale;
 
     void generateMembershipCheckboxes();
 

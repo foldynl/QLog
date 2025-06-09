@@ -128,6 +128,8 @@ private:
     QString getMemberListComboValue(const QComboBox *);
     void generateMembershipCheckboxes();
 
+    UnitFormat getChosenUnitFormat();
+
     QSqlTableModel* modeTableModel;
     QSqlTableModel* bandTableModel;
     StationProfilesManager *stationProfManager;
