@@ -407,6 +407,8 @@ DxWidget::DxWidget(QWidget *parent) :
     separator->setSeparator(true);
 
     ui->dxTable->setModel(dxTableProxyModel);
+    ui->dxTable->setSortingEnabled(true);
+    ui->dxTable->sortByColumn(0, Qt::DescendingOrder); // Sort by Time column, newest first
     ui->dxTable->addAction(ui->actionFilter);
     ui->dxTable->addAction(ui->actionSearch);
     ui->dxTable->addAction(ui->actionDisplayedColumns);
@@ -421,16 +423,22 @@ DxWidget::DxWidget(QWidget *parent) :
     ui->dxTable->horizontalHeader()->setSectionsMovable(true);
 
     ui->wcyTable->setModel(wcyTableModel);
+    ui->wcyTable->setSortingEnabled(true);
+    ui->wcyTable->sortByColumn(0, Qt::DescendingOrder); // Sort by Time column, newest first
     ui->wcyTable->addAction(ui->actionDisplayedColumns);
     ui->wcyTable->addAction(ui->actionClear);
     ui->wcyTable->horizontalHeader()->setSectionsMovable(true);
 
     ui->wwvTable->setModel(wwvTableModel);
+    ui->wwvTable->setSortingEnabled(true);
+    ui->wwvTable->sortByColumn(0, Qt::DescendingOrder); // Sort by Time column, newest first
     ui->wwvTable->addAction(ui->actionDisplayedColumns);
     ui->wwvTable->addAction(ui->actionClear);
     ui->wwvTable->horizontalHeader()->setSectionsMovable(true);
 
     ui->toAllTable->setModel(toAllTableModel);
+    ui->toAllTable->setSortingEnabled(true);
+    ui->toAllTable->sortByColumn(0, Qt::DescendingOrder); // Sort by Time column, newest first
     ui->toAllTable->addAction(ui->actionDisplayedColumns);
     ui->toAllTable->addAction(ui->actionClear);
     ui->toAllTable->horizontalHeader()->setSectionsMovable(true);
