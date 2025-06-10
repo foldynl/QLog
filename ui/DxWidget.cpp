@@ -48,7 +48,7 @@ int DxTableModel::rowCount(const QModelIndex&) const
 
 int DxTableModel::columnCount(const QModelIndex&) const
 {
-    return 11;
+    return 12;
 }
 
 QVariant DxTableModel::data(const QModelIndex& index, int role) const
@@ -80,6 +80,8 @@ QVariant DxTableModel::data(const QModelIndex& index, int role) const
             return spot.memberList2StringList().join(", ");
         case 10:
             return QCoreApplication::translate("DBStrings", spot.dxcc.country.toUtf8().constData());
+        case 11:
+            return spot.state;
         default:
             return QVariant();
         }
@@ -112,6 +114,7 @@ QVariant DxTableModel::headerData(int section, Qt::Orientation orientation, int 
     case 8: return tr("Band");
     case 9: return tr("Member");
     case 10: return tr("Country");
+    case 11: return tr("State");
 
     default: return QVariant();
     }
@@ -1745,6 +1748,7 @@ void DxWidget::processDxSpot(const QString &spotter,
     potaRefFromComment(spot);
     sotaRefFromComment(spot);
     iotaRefFromComment(spot);
+    stateFromComment(spot);
 
 #if 0
     if ( !spot.sotaRef.isEmpty() )
@@ -1930,6 +1934,34 @@ void DxWidget::iotaRefFromComment(DxSpot &spot) const
                                  QRegularExpression::CaseInsensitiveOption);
     spot.iotaRef = refFromComment(spot.comment, spot.containsIOTA,
                                   iotaRegEx, QStringLiteral("IOTA"), 3);
+}
+
+void DxWidget::stateFromComment(DxSpot &spot) const
+{
+    FCT_IDENTIFICATION;
+
+    // Only attempt to extract state for USA (DXCC entity 291)
+    if ( spot.dxcc.dxcc != 291 )
+    {
+        spot.state = QString();
+        return;
+    }
+
+    // Common US state abbreviations - look for them in the comment
+    static QRegularExpression stateRegEx(QStringLiteral("\\b(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC)\\b"),
+                                        QRegularExpression::CaseInsensitiveOption);
+    
+    QRegularExpressionMatch stateMatch = stateRegEx.match(spot.comment);
+    
+    if (stateMatch.hasMatch())
+    {
+        spot.state = stateMatch.captured(1).toUpper();
+        qCDebug(runtime) << "State:" << spot.state << "extracted from comment:" << spot.comment;
+    }
+    else
+    {
+        spot.state = QString();
+    }
 }
 
 DxWidget::~DxWidget()

@@ -28,6 +28,7 @@ public:
     DxccEntity dxcc;
     DxccEntity dxcc_spotter;
     DxccStatus status;
+    QString state;
     bool containsWWFF;
     bool containsPOTA;
     bool containsSOTA;
