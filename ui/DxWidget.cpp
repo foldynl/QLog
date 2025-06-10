@@ -48,7 +48,7 @@ int DxTableModel::rowCount(const QModelIndex&) const
 
 int DxTableModel::columnCount(const QModelIndex&) const
 {
-    return 11;
+    return 12;
 }
 
 QVariant DxTableModel::data(const QModelIndex& index, int role) const
@@ -80,6 +80,8 @@ QVariant DxTableModel::data(const QModelIndex& index, int role) const
             return spot.memberList2StringList().join(", ");
         case 10:
             return QCoreApplication::translate("DBStrings", spot.dxcc.country.toUtf8().constData());
+        case 11:
+            return spot.state;
         default:
             return QVariant();
         }
@@ -112,6 +114,7 @@ QVariant DxTableModel::headerData(int section, Qt::Orientation orientation, int 
     case 8: return tr("Band");
     case 9: return tr("Member");
     case 10: return tr("Country");
+    case 11: return tr("State");
 
     default: return QVariant();
     }
@@ -1745,6 +1748,7 @@ void DxWidget::processDxSpot(const QString &spotter,
     potaRefFromComment(spot);
     sotaRefFromComment(spot);
     iotaRefFromComment(spot);
+    stateFromComment(spot);
 
 #if 0
     if ( !spot.sotaRef.isEmpty() )
@@ -1930,6 +1934,55 @@ void DxWidget::iotaRefFromComment(DxSpot &spot) const
                                  QRegularExpression::CaseInsensitiveOption);
     spot.iotaRef = refFromComment(spot.comment, spot.containsIOTA,
                                   iotaRegEx, QStringLiteral("IOTA"), 3);
+}
+
+void DxWidget::stateFromComment(DxSpot &spot) const
+{
+    FCT_IDENTIFICATION;
+
+    // Only attempt to extract state for USA (DXCC entity 291)
+    if ( spot.dxcc.dxcc != 291 )
+    {
+        spot.state = QString();
+        return;
+    }
+
+    // Look for patterns like "from CA", "in TX", "CA state", etc.
+    // This avoids false matches with common words like "in", "or", "me"
+    static QRegularExpression stateRegEx(QStringLiteral("(?:from|in|at|to)\\s+([A-Z]{2})\\b|\\b([A-Z]{2})\\s+(?:state|st)\\b"),
+                                        QRegularExpression::CaseInsensitiveOption);
+    
+    // List of valid US state/territory abbreviations
+    static QSet<QString> validStates = {
+        "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", 
+        "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", 
+        "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", 
+        "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", 
+        "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC"
+    };
+    
+    QRegularExpressionMatchIterator matches = stateRegEx.globalMatch(spot.comment);
+    while (matches.hasNext()) 
+    {
+        QRegularExpressionMatch match = matches.next();
+        QString state;
+        
+        // Check which capture group matched
+        if (!match.captured(1).isEmpty())
+            state = match.captured(1).toUpper();
+        else if (!match.captured(2).isEmpty())
+            state = match.captured(2).toUpper();
+            
+        // Verify it's a valid state abbreviation
+        if (validStates.contains(state))
+        {
+            spot.state = state;
+            qCDebug(runtime) << "State:" << spot.state << "extracted from comment:" << spot.comment;
+            return;
+        }
+    }
+    
+    spot.state = QString();
 }
 
 DxWidget::~DxWidget()
