@@ -6,10 +6,9 @@
 #include "rig/drivers/Omnirigv2RigDrv.h"
 #endif
 #include "rig/drivers/TCIRigDrv.h"
+#include "rig/drivers/FlrigRigDrv.h"
 
 MODULE_IDENTIFICATION("qlog.rig.rig");
-
-#define TIME_PERIOD 1000
 
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Rig mutex"; \
                         QMutexLocker locker(&rigLock); \
@@ -46,6 +45,11 @@ Rig::Rig(QObject *parent)
                                        &TCIRigDrv::getCaps,
                                        nullptr);
 
+    drvMapping[FLRIG_DRIVER] = DrvParams(FLRIG_DRIVER,
+                                         "FLRig",
+                                         &FlrigRigDrv::getModelList,
+                                         &FlrigRigDrv::getCaps,
+                                         nullptr);
 }
 
 qint32 Rig::getNormalBandwidth(const QString &mode, const QString &)
@@ -612,6 +616,11 @@ GenericRigDrv *Rig::getDriver( const RigProfile &profile )
     case Rig::TCI_DRIVER:
         return new TCIRigDrv(profile, this);
         break;
+
+    case Rig::FLRIG_DRIVER:
+        return new FlrigRigDrv(profile, this);
+        break;
+
     default:
         qWarning() << "Unsupported Rig Driver " << profile.driver;
         return nullptr;

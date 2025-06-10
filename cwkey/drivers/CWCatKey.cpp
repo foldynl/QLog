@@ -121,11 +121,8 @@ bool CWCatKey::sendText(const QString &text)
         return false;
     }
 
-    QString chpString(text);
-    chpString.replace("\n", "");
-
     QMutexLocker locker(&commandMutex);
-    Rig::instance()->sendMorse(chpString);
+    Rig::instance()->sendMorse(text);
     return true;
 }
 
