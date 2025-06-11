@@ -88,6 +88,15 @@ Prerequisites:
 
 Fedora **RPM packages** are available via GitHub [Releases](https://github.com/foldynl/QLog/releases/latest)
 
+Gentoo **ebuild** is available via the lemon-lime overlay. Gentoo users can use the following commands:
+
+`sudo eselect repository enable lemon-lime`
+
+`sudo emaint sync -r lemon-lime`
+
+`sudo emerge -av media-radio/qlog`
+
+
 <a href='https://flathub.org/apps/io.github.foldynl.QLog'>   <img width='120' alt='Download on Flathub' src='https://dl.flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
 **Flatpak** package is available via [Flathub](https://flathub.org/apps/io.github.foldynl.QLog). The package contains built-in TrustedQSL.
