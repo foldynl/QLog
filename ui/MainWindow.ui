@@ -863,7 +863,7 @@
     <string>Service - Upload QSOs</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+I</string>
+    <string notr="true">Ctrl+Shift+I</string>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -877,7 +877,7 @@
     <string>Service - Download QSLs</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+D</string>
+    <string notr="true">Ctrl+Shift+D</string>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
