@@ -615,13 +615,13 @@ QVariantList FlrigRigDrv::parseArray(QXmlStreamReader &reader)
     {
         reader.readNext();
 
-        if (reader.isStartElement() && reader.name() == "value")
+        if (reader.isStartElement() && reader.name().toString() == "value")
         {
             const QVariant &val = parseSingleValue(reader);
             list << val;
         }
 
-        if (reader.isEndElement() && reader.name() == "array") break;
+        if (reader.isEndElement() && reader.name().toString() == "array") break;
     }
 
     return list;
@@ -653,7 +653,7 @@ QVariant FlrigRigDrv::parseSingleValue(QXmlStreamReader &reader)
 
         if (reader.isCharacters())  return reader.text().toString(); // untyped
 
-        if (reader.isEndElement() && reader.name() == "value") break;
+        if (reader.isEndElement() && reader.name().toString() == "value") break;
     }
 
     return {};
@@ -672,16 +672,16 @@ QVariantMap FlrigRigDrv::parseStruct(QXmlStreamReader &reader)
 
         if (reader.isStartElement())
         {
-            if (reader.name() == "name")
+            if (reader.name().toString() == "name")
                 currentName = reader.readElementText();
-            else if (reader.name() == "value" && !currentName.isEmpty())
+            else if (reader.name().toString() == "value" && !currentName.isEmpty())
             {
                 map[currentName] = parseSingleValue(reader);
                 currentName.clear();
             }
         }
 
-        if ( reader.isEndElement() && reader.name() == "struct") break;
+        if ( reader.isEndElement() && reader.name().toString() == "struct") break;
     }
     return map;
 }
@@ -699,19 +699,19 @@ QVariant FlrigRigDrv::parseValueFromResponse(const QByteArray &xml, bool *ok, QS
     {
         reader.readNext();
 
-        if (reader.isStartElement() && reader.name() == "value")
+        if (reader.isStartElement() && reader.name().toString() == "value")
         {
             if (ok) *ok = true;
             return parseSingleValue(reader);
         }
 
-        if (reader.isStartElement() && reader.name() == "fault")
+        if (reader.isStartElement() && reader.name().toString() == "fault")
         {
             while (!reader.atEnd())
             {
                 reader.readNext();
 
-                if (reader.isStartElement() && reader.name() == "value")
+                if (reader.isStartElement() && reader.name().toString() == "value")
                 {
                     QVariantMap faultStruct = parseStruct(reader);
                     if ( faultStruct.contains("faultString"))
