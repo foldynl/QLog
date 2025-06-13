@@ -93,6 +93,8 @@ Fedora **RPM packages** are available via GitHub [Releases](https://github.com/f
 
 **Flatpak** package is available via [Flathub](https://flathub.org/apps/io.github.foldynl.QLog). The package contains built-in TrustedQSL.
 
+The above packages are maintained by the application maintainer. However, there are many other unofficial packages available for other distributions — see the Unofficial Repositories on [QLog Wiki](https://github.com/foldynl/QLog/wiki).
+
 ### Windows
 
 Prerequisites:
