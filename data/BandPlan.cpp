@@ -377,6 +377,8 @@ const QString BandPlan::modeToDXCCModeGroup(const QString &mode)
 
     qCDebug(function_parameters) << mode;
 
+    if ( mode.isEmpty() ) return QString();
+
     QSqlQuery query;
 
     if ( !query.prepare("SELECT modes.dxcc "
