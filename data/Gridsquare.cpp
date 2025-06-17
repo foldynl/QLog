@@ -5,9 +5,6 @@
 #include <cmath>
 #include <QLocale>
 
-#define EARTH_RADIUS 6371
-#define EARTH_CIRCUM 40075
-
 MODULE_IDENTIFICATION("qlog.core.gridsquare");
 
 Gridsquare::Gridsquare(const QString &in_grid) :
@@ -183,7 +180,16 @@ bool Gridsquare::distanceTo(double lat, double lon, double &distance) const
                sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2);
 
     double c = 2 * atan2(sqrt(a), sqrt(1-a));
-    distance = EARTH_RADIUS * c;
+
+    // Based on IARU Rules
+    // The centre of the Large Locator Square (e.g. IO84MM to IO91MM) is used for distance calculations.
+    // In order to make contest scores comparable, for the conversion from degrees to kilometres a factor
+    // of 111.2 should be used when calculating distances with the aid of the spherical geometry equation.
+
+    // It means that 111.2km/° * 360 =40032km
+    // It means that R = 40032 / (2*PI)
+
+    distance = (40032.0 / (2 * M_PI)) * c;
 
     return true;
 }
