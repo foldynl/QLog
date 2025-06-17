@@ -9,7 +9,8 @@ TBC - 0.45.0
 - [NEW] - DXC - Filtered label is shown when filter is enabled
 - [NEW] - Added support to Upload Cloudlog/Wavelog
 - [NEW] - Add JS8 to legacy_modes.json (issue #677)
-- [CHANGE] - Unification Settings storage
+- [CHANGED] - Unification Settings storage
+- [CHANGED] - Calculate distances according to IARU rules
 - Fixed missing Wsjtx Spot values in the AlertWindow
 
 2025/05/11 - 0.44.1
