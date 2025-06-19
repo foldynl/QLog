@@ -307,7 +307,6 @@ CloudlogUploader::StationProfile CloudlogUploader::StationProfile::fromJson(cons
     profile.station_profile_name = obj.value("station_profile_name").toString();
     profile.station_gridsquare = obj.value("station_gridsquare").toString();
     profile.station_callsign = obj.value("station_callsign").toString();
-    profile.station_active = (!obj.value("station_active").isNull()) ? profile.station_active = obj.value("station_active").toString() == "1"
-                                                                     :  false;
+    profile.station_active = obj.contains("station_active") && obj.value("station_active").toString() == "1";
     return profile;
 }
