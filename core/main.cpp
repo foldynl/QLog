@@ -494,12 +494,15 @@ int main(int argc, char* argv[])
 
     QPixmap pixmap(":/res/qlog.png");
     SplashScreen splash(pixmap);
+
     splash.show();
     splash.ensureFirstPaint();
 
     createDataDirectory();
 
     splash.showMessage(QObject::tr("Opening Database"), Qt::AlignBottom|Qt::AlignCenter );
+
+    QCoreApplication::processEvents();
 
     if (!openDatabase()) {
         QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
@@ -509,6 +512,8 @@ int main(int argc, char* argv[])
 
     splash.showMessage(QObject::tr("Backuping Database"), Qt::AlignBottom|Qt::AlignCenter);
 
+    QCoreApplication::processEvents();
+
     /* a migration can break a database therefore a backup is call before it */
     if (!Migration::backupDatabase())
     {
@@ -517,6 +522,8 @@ int main(int argc, char* argv[])
     }
 
     splash.showMessage(QObject::tr("Migrating Database"), Qt::AlignBottom|Qt::AlignCenter);
+
+    QCoreApplication::processEvents();
 
     if (!migrateDatabase()) {
         QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
@@ -533,16 +540,20 @@ int main(int argc, char* argv[])
 
     splash.showMessage(QObject::tr("Starting Application"), Qt::AlignBottom|Qt::AlignCenter);
 
+    QCoreApplication::processEvents();
+
     startRigThread();
     startRotThread();
     startCWKeyerThread();
 
     MainWindow w;
     QIcon icon(":/res/qlog.png");
-    splash.finish(&w);
+
     w.setWindowIcon(icon);
 
+    splash.finish(&w);
     w.show();
+
     w.setLayoutGeometry();
 
     // check version only for Windows and MacOS. Linux has own distribution points
