@@ -8,7 +8,7 @@
 class SplashScreen : public QSplashScreen
 {
 public:
-    SplashScreen(const QPixmap &pixmap = QPixmap()) : QSplashScreen(pixmap) {}
+    explicit SplashScreen(const QPixmap &pixmap = QPixmap()) : QSplashScreen(pixmap) {}
 
 private:
     bool painted=false;

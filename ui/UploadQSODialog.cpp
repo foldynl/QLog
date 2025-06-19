@@ -88,8 +88,8 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
     ui->myCallsignCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator))) "
                                                    "FROM contacts "
                                                    "WHERE station_callsign IS NOT NULL OR operator IS NOT NULL "
-                                                   "ORDER BY station_callsign", ""));
-    ui->myStationProfileCombo->setModel(new SqlListModel("SELECT DISTINCT profile_name FROM station_profiles ORDER BY profile_name", ""));
+                                                   "ORDER BY station_callsign", "", ui->myCallsignCombo));
+    ui->myStationProfileCombo->setModel(new SqlListModel("SELECT DISTINCT profile_name FROM station_profiles ORDER BY profile_name", "", ui->myStationProfileCombo));
 
     setEQSLSettingVisible(false);
     setClublogSettingVisible(false);
@@ -226,7 +226,7 @@ void UploadQSODialog::processNextUploader()
     qCDebug(runtime) << "Uploading to" << currentTask.getServiceName();
 
     QProgressDialog* dialog = new QProgressDialog(tr("Uploading to %1").arg(currentTask.getServiceName()),
-                                                  tr("Cancel"), 0, 0);
+                                                  tr("Cancel"), 0, 0, this);
     dialog->setWindowModality(Qt::WindowModal);
     dialog->setValue(0);
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -610,7 +610,7 @@ void UploadQSODialog::handleCallsignChange(const QString &myCallsign)
     ui->myGridLabel->blockSignals(true);
     ui->myGridCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) "
                                                "FROM contacts "
-                                               "WHERE COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator)) ='" + myCallsign + "' ORDER BY my_gridsquare", tr("Any")));
+                                               "WHERE COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator)) ='" + myCallsign + "' ORDER BY my_gridsquare", tr("Any"), ui->myGridCombo));
     ui->myGridCombo->setCurrentIndex(0);
     executeQuery();
     ui->myGridLabel->blockSignals(false);

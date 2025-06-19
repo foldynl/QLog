@@ -53,11 +53,11 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
 
     ui->setupUi(this);
     // tab pane with QSO fields - expand & collapse
-    tabCollapseBtn = new QToolButton();
-    QIcon *toggleIcon = new QIcon();
-    toggleIcon->addPixmap(QPixmap(":/icons/baseline-play_down-24px.svg"), QIcon::Normal, QIcon::On);
-    toggleIcon->addPixmap(QPixmap(":/icons/baseline-play_arrow-24px.svg"), QIcon::Normal, QIcon::Off);
-    tabCollapseBtn->setIcon(*toggleIcon);
+    tabCollapseBtn = new QToolButton(this);
+    QIcon toggleIcon;
+    toggleIcon.addPixmap(QPixmap(":/icons/baseline-play_down-24px.svg"), QIcon::Normal, QIcon::On);
+    toggleIcon.addPixmap(QPixmap(":/icons/baseline-play_arrow-24px.svg"), QIcon::Normal, QIcon::Off);
+    tabCollapseBtn->setIcon(toggleIcon);
     tabCollapseBtn->setCheckable(true);
     tabCollapseBtn->setToolTip(tr("Expand/Collapse"));
     tabCollapseBtn->setFocusPolicy(Qt::NoFocus);
@@ -162,7 +162,7 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     /****************/
     /* Modes Combo  */
     /****************/
-    QSqlTableModel* modeModel = new QSqlTableModel();
+    QSqlTableModel* modeModel = new QSqlTableModel(this);
     modeModel->setTable("modes");
     modeModel->setFilter("enabled = true");
     modeModel->setSort(modeModel->fieldIndex("name"), Qt::AscendingOrder);
@@ -3675,6 +3675,7 @@ NewContactWidget::~NewContactWidget()
     FCT_IDENTIFICATION;
 
     delete ui;
+    delete uiDynamic;
 }
 
 void NewContactWidget::assignPropConditions(PropConditions *cond)
@@ -3861,7 +3862,7 @@ NewContactDynamicWidgets::NewContactDynamicWidgets(bool allocateWidgets,
         //satNameEdit->setMaximumSize(QSize(200, 16777215));
         satNameEdit->setFocusPolicy(Qt::ClickFocus);
         satNameEdit->setEnabled(false);
-        QSqlTableModel* satModel = new QSqlTableModel();
+        QSqlTableModel* satModel = new QSqlTableModel(satNameEdit);
         satModel->setTable("sat_info");
         QCompleter *satCompleter = new QCompleter(satNameEdit);
         satCompleter->setModel(satModel);
@@ -3885,7 +3886,7 @@ NewContactDynamicWidgets::NewContactDynamicWidgets(bool allocateWidgets,
         stxEdit->setValidator(new QIntValidator(0,INT_MAX, stxEdit));
         stxEdit->setText("001");
 
-        rxPWREdit->setValidator(new QDoubleValidator(0, 100000.0, 9));
+        rxPWREdit->setValidator(new QDoubleValidator(0, 100000.0, 9, rxPWREdit));
 
         powerEdit->setMaximum(1000000.0);
         powerEdit->setValue(0.0);

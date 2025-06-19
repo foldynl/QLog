@@ -99,34 +99,34 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->lotwTextMessage->setVisible(false);
 #endif
 
-    RotTypeModel* rotTypeModel = new RotTypeModel(this);
+    RotTypeModel* rotTypeModel = new RotTypeModel(ui->rotModelSelect);
     ui->rotModelSelect->setModel(rotTypeModel);
 
-    QStringListModel* rotModel = new QStringListModel();
+    QStringListModel* rotModel = new QStringListModel(ui->rotProfilesListView);
     ui->rotProfilesListView->setModel(rotModel);
 
-    QStringListModel* rotUsrButtonModel = new QStringListModel();
+    QStringListModel* rotUsrButtonModel = new QStringListModel(ui->rotUsrButtonListView);
     ui->rotUsrButtonListView->setModel(rotUsrButtonModel);
 
-    QStringListModel* antModel = new QStringListModel();
+    QStringListModel* antModel = new QStringListModel(ui->antProfilesListView);
     ui->antProfilesListView->setModel(antModel);
 
-    QStringListModel* cwKeyModel = new QStringListModel();
+    QStringListModel* cwKeyModel = new QStringListModel(ui->cwProfilesListView);
     ui->cwProfilesListView->setModel(cwKeyModel);
 
-    QStringListModel* cwShortcutModel = new QStringListModel();
+    QStringListModel* cwShortcutModel = new QStringListModel(ui->cwShortcutListView);
     ui->cwShortcutListView->setModel(cwShortcutModel);
 
-    QStringListModel* profilesModes = new QStringListModel();
+    QStringListModel* profilesModes = new QStringListModel(ui->stationProfilesListView);
     ui->stationProfilesListView->setModel(profilesModes);
 
-    QStringListModel* cwKeysModel = new QStringListModel();
+    QStringListModel* cwKeysModel = new QStringListModel(ui->rigAssignedCWKeyCombo);
     ui->rigAssignedCWKeyCombo->setModel(cwKeysModel);
 
     /* Rig Models must be initialized after rigAssignedCWKeyCombo model !!!! */
     /* becase rigChanged is called and it constain uninitialized
      * CW Model */
-    RigTypeModel* rigTypeModel = new RigTypeModel(this);
+    RigTypeModel* rigTypeModel = new RigTypeModel(ui->rigModelSelect);
     ui->rigModelSelect->setModel(rigTypeModel);
 
     for ( const QPair<int, QString> &driver : Rig::instance()->getDriverList() )
@@ -139,13 +139,13 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
         ui->rotInterfaceCombo->addItem(driver.second, driver.first);
     }
 
-    QStringListModel* rigModel = new QStringListModel();
+    QStringListModel* rigModel = new QStringListModel(ui->rigProfilesListView);
     ui->rigProfilesListView->setModel(rigModel);
 
     /* Country Combo */
     SqlListModel* countryModel = new SqlListModel("SELECT id, translate_to_locale(name), name  "
                                                   "FROM dxcc_entities "
-                                                  "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", this);
+                                                  "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->stationCountryCombo);
     while ( countryModel->canFetchMore() )
         countryModel->fetchMore();
 
@@ -153,10 +153,10 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->stationCountryCombo->setModelColumn(1);
 
     ShortcutEditorModel *shortcutModel = new ShortcutEditorModel( parent->getUserDefinedShortcutActionList(),
-                                                                  parent->getBuiltInStaticShortcutList());
+                                                                  parent->getBuiltInStaticShortcutList(), ui->shortcutsTableView);
     ui->shortcutsTableView->setModel(shortcutModel);
     ui->shortcutsTableView->horizontalHeader()->setSectionResizeMode(ShortcutEditorModel::COLUMN_DESCRIPTION, QHeaderView::Stretch);
-    ui->shortcutsTableView->setItemDelegateForColumn(ShortcutEditorModel::COLUMN_SHORTCUT, new ShortcutDelegate(this));
+    ui->shortcutsTableView->setItemDelegateForColumn(ShortcutEditorModel::COLUMN_SHORTCUT, new ShortcutDelegate(ui->shortcutsTableView));
     connect(shortcutModel, &ShortcutEditorModel::conflictDetected, this, [this](const QString& text)
     {
         ui->shortcutInfoLabel->setText("<b>" + text + "</b>");
@@ -170,7 +170,7 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->stationCQZEdit->setValidator(new QIntValidator(Data::getCQZMin(), Data::getCQZMax(), ui->stationCQZEdit));
     ui->stationITUEdit->setValidator(new QIntValidator(Data::getITUZMin(), Data::getITUZMax(), ui->stationITUEdit));
 
-    modeTableModel = new QSqlTableModel(this);
+    modeTableModel = new QSqlTableModel(ui->modeTableView);
     modeTableModel->setTable("modes");
     modeTableModel->setEditStrategy(QSqlTableModel::OnFieldChange);
     modeTableModel->setSort(1, Qt::AscendingOrder);
@@ -184,11 +184,11 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->modeTableView->hideColumn(0);
     ui->modeTableView->hideColumn(2);
     ui->modeTableView->setItemDelegateForColumn(1, new ReadOnlyDelegate(ui->modeTableView));
-    ui->modeTableView->setItemDelegateForColumn(4,new ComboFormatDelegate(QStringList()<<"CW"<< "PHONE" << "DIGITAL"));
-    ui->modeTableView->setItemDelegateForColumn(5,new CheckBoxDelegate(ui->modeTableView));
+    ui->modeTableView->setItemDelegateForColumn(4, new ComboFormatDelegate(QStringList() << "CW"<< "PHONE" << "DIGITAL", ui->modeTableView));
+    ui->modeTableView->setItemDelegateForColumn(5, new CheckBoxDelegate(ui->modeTableView));
     modeTableModel->select();
 
-    bandTableModel = new QSqlTableModel(this);
+    bandTableModel = new QSqlTableModel(ui->bandTableView);
     bandTableModel->setTable("bands");
     bandTableModel->setEditStrategy(QSqlTableModel::OnFieldChange);
     bandTableModel->setSort(2, Qt::AscendingOrder);
@@ -210,47 +210,47 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
 
     bandTableModel->select();
 
-    ui->stationCallsignEdit->setValidator(new QRegularExpressionValidator(Callsign::callsignRegEx(), this));
-    ui->stationOperatorCallsignEdit->setValidator(new QRegularExpressionValidator(Callsign::callsignRegEx(), this));
-    ui->stationLocatorEdit->setValidator(new QRegularExpressionValidator(Gridsquare::gridRegEx(), this));
-    ui->stationVUCCEdit->setValidator(new QRegularExpressionValidator(Gridsquare::gridVUCCRegEx(), this));
+    ui->stationCallsignEdit->setValidator(new QRegularExpressionValidator(Callsign::callsignRegEx(), ui->stationCallsignEdit));
+    ui->stationOperatorCallsignEdit->setValidator(new QRegularExpressionValidator(Callsign::callsignRegEx(), ui->stationOperatorCallsignEdit));
+    ui->stationLocatorEdit->setValidator(new QRegularExpressionValidator(Gridsquare::gridRegEx(), ui->stationLocatorEdit));
+    ui->stationVUCCEdit->setValidator(new QRegularExpressionValidator(Gridsquare::gridVUCCRegEx(), ui->stationVUCCEdit));
 
     /* https://stackoverflow.com/questions/13145397/regex-for-multicast-ip-address */
     static QRegularExpression multicastAddress("^2(?:2[4-9]|3\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)){3}$");
 
-    ui->wsjtMulticastAddressEdit->setValidator(new QRegularExpressionValidator(multicastAddress, this));
+    ui->wsjtMulticastAddressEdit->setValidator(new QRegularExpressionValidator(multicastAddress, ui->wsjtMulticastAddressEdit));
 
-    ui->notifQSOEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), this));
-    ui->notifDXSpotsEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), this));
-    ui->notifWSJTXCQSpotsEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), this));
-    ui->notifSpotAlertEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), this));
-    ui->notifRigEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), this));
+    ui->notifQSOEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifQSOEdit));
+    ui->notifDXSpotsEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifDXSpotsEdit));
+    ui->notifWSJTXCQSpotsEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifWSJTXCQSpotsEdit));
+    ui->notifSpotAlertEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifSpotAlertEdit));
+    ui->notifRigEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifRigEdit));
 
-    iotaCompleter = new QCompleter(Data::instance()->iotaIDList(), this);
+    iotaCompleter = new QCompleter(Data::instance()->iotaIDList(), ui->stationIOTAEdit);
     iotaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     iotaCompleter->setFilterMode(Qt::MatchContains);
     iotaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationIOTAEdit->setCompleter(iotaCompleter);
 
-    sotaCompleter = new QCompleter(Data::instance()->sotaIDList(), this);
+    sotaCompleter = new QCompleter(Data::instance()->sotaIDList(), ui->stationSOTAEdit);
     sotaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     sotaCompleter->setFilterMode(Qt::MatchStartsWith);
     sotaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationSOTAEdit->setCompleter(nullptr);
 
-    wwffCompleter = new QCompleter(Data::instance()->wwffIDList(), this);
+    wwffCompleter = new QCompleter(Data::instance()->wwffIDList(), ui->stationWWFFEdit);
     wwffCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     wwffCompleter->setFilterMode(Qt::MatchStartsWith);
     wwffCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationWWFFEdit->setCompleter(nullptr);
 
-    potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), this);
+    potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), ui->stationPOTAEdit);
     potaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     potaCompleter->setFilterMode(Qt::MatchStartsWith);
     potaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationPOTAEdit->setCompleter(nullptr);
 
-    sigCompleter = new QCompleter(Data::instance()->sigIDList(), this);
+    sigCompleter = new QCompleter(Data::instance()->sigIDList(), ui->stationSIGEdit);
     sigCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     sigCompleter->setFilterMode(Qt::MatchStartsWith);
     sigCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);

@@ -32,7 +32,7 @@ RigWidget::RigWidget(QWidget *parent) :
     ui->rigProfilCombo->setModel(rigModel);
     ui->rigProfilCombo->setStyleSheet("QComboBox {color: red}");
 
-    QSqlTableModel* bandComboModel = new QSqlTableModel();
+    QSqlTableModel* bandComboModel = new QSqlTableModel(this);
     bandComboModel->setTable("bands");
     bandComboModel->setSort(bandComboModel->fieldIndex("start_freq"), Qt::AscendingOrder);
     ui->bandComboBox->setModel(bandComboModel);

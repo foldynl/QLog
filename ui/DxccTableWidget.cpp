@@ -16,7 +16,7 @@ DxccTableWidget::DxccTableWidget(QWidget *parent) : QTableView(parent)
 {
     FCT_IDENTIFICATION;
 
-    dxccTableModel = new DxccTableModel;
+    dxccTableModel = new DxccTableModel(parent);
 
     this->setObjectName("dxccTableView");
     this->setModel(dxccTableModel);

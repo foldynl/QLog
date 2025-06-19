@@ -110,6 +110,10 @@ class DeleteHighlightedDXServerWhenDelPressedEventFilter : public QObject
 signals:
     void deleteServerItem();
 
+public:
+    DeleteHighlightedDXServerWhenDelPressedEventFilter(QObject *parent) :
+        QObject(parent) {};
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 };

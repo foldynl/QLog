@@ -16,7 +16,7 @@ QSOFilterDialog::QSOFilterDialog(QWidget *parent) :
     FCT_IDENTIFICATION;
     ui->setupUi(this);
 
-    filterModel = new QSqlTableModel();
+    filterModel = new QSqlTableModel(ui->filtersListView);
     filterModel->setTable("qso_filters");
     ui->filtersListView->setModel(filterModel);
     ui->filtersListView->setModelColumn(filterModel->fieldIndex("filter_name"));

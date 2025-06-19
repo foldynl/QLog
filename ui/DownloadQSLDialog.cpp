@@ -22,7 +22,7 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
     ui->setupUi(this);
 
     ui->lotwMyCallsignCombo->setModel(new SqlListModel("SELECT DISTINCT UPPER(station_callsign) "
-                                                       "FROM contacts ORDER BY station_callsign", ""));
+                                                       "FROM contacts ORDER BY station_callsign", "", ui->lotwMyCallsignCombo));
     ui->lotwDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->eqslDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Download"));

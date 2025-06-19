@@ -363,6 +363,7 @@ void ActivityEditor::setupValuesTab(const QString &activityName)
     {
         QStringListModel *model = new QStringListModel(list);
         QCompleter *completer = new QCompleter(model, field);
+        model->setParent(completer);
         completer->setCaseSensitivity(Qt::CaseInsensitive);
         completer->setFilterMode(Qt::MatchStartsWith);
         field->setCompleter(completer);
@@ -373,6 +374,7 @@ void ActivityEditor::setupValuesTab(const QString &activityName)
          QSqlTableModel* model = new QSqlTableModel();
          model->setTable(tableName);
          QCompleter *completer = new QCompleter(model, field);
+         model->setParent(completer);
          completer->setCaseSensitivity(Qt::CaseInsensitive);
          completer->setFilterMode(Qt::MatchStartsWith);
          field->setCompleter(completer);
@@ -382,7 +384,7 @@ void ActivityEditor::setupValuesTab(const QString &activityName)
 
     auto assignModel = [&] (QComboBox *field, const QStringList &list)
     {
-        QStringListModel *model = new QStringListModel(list);
+        QStringListModel *model = new QStringListModel(list, field);
         field->setModel(model);
     };
 

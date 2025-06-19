@@ -12,7 +12,7 @@ AlertSettingDialog::AlertSettingDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    rulesModel = new QSqlTableModel();
+    rulesModel = new QSqlTableModel(this);
     rulesModel->setTable("alert_rules");
     rulesModel->setHeaderData(0, Qt::Horizontal, tr("Name"));
     rulesModel->setHeaderData(1, Qt::Horizontal, tr("State"));

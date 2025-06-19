@@ -338,6 +338,8 @@ void ImportDialog::runImport()
                           count, warnings, errors);
     }
 
+    delete format;
+
     qCDebug(runtime).noquote() << s;
 
     accept();

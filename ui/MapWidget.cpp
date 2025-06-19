@@ -57,6 +57,7 @@ void MapWidget::clear()
     {
         QGraphicsItem *item = i.next();
         scene->removeItem(item);
+        delete item;
         i.remove();
     }
 

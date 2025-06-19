@@ -1524,7 +1524,7 @@ void MainWindow::showStatistics()
 void MainWindow::importLog() {
     FCT_IDENTIFICATION;
 
-    ImportDialog dialog;
+    ImportDialog dialog(this);
     dialog.exec();
     ui->logbookWidget->updateTable();
 }
@@ -1532,7 +1532,7 @@ void MainWindow::importLog() {
 void MainWindow::exportLog() {
     FCT_IDENTIFICATION;
 
-    ExportDialog dialog;
+    ExportDialog dialog(this);
     dialog.exec();
     ui->logbookWidget->updateTable();
 }
@@ -1541,7 +1541,7 @@ void MainWindow::showAwards()
 {
     FCT_IDENTIFICATION;
 
-    AwardsDialog dialog;
+    AwardsDialog dialog(this);
     connect(&dialog, &AwardsDialog::AwardConditionSelected,
             ui->logbookWidget, &LogbookWidget::filterCountryBand);
     connect(&dialog, &AwardsDialog::finished,

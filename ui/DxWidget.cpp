@@ -1624,7 +1624,7 @@ void DxWidget::serverComboSetup()
 {
     FCT_IDENTIFICATION;
 
-    DeleteHighlightedDXServerWhenDelPressedEventFilter *deleteHandled = new DeleteHighlightedDXServerWhenDelPressedEventFilter;
+    DeleteHighlightedDXServerWhenDelPressedEventFilter *deleteHandled = new DeleteHighlightedDXServerWhenDelPressedEventFilter(this);
 
     ui->serverSelect->addItems(LogParam::getDXCServerlist());
     ui->serverSelect->installEventFilter(deleteHandled);
@@ -1887,6 +1887,7 @@ DxWidget::~DxWidget()
 {
     FCT_IDENTIFICATION;
 
+    disconnectCluster(false);
     delete ui;
 }
 

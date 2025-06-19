@@ -29,8 +29,8 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
                                  QWidget *parent) :
     QDialog(parent),
     ui(new Ui::QSODetailDialog),
-    mapper(new QDataWidgetMapper()),
-    model(new LogbookModelPrivate),
+    mapper(new QDataWidgetMapper(this)),
+    model(new LogbookModelPrivate(this)),
     editedRecord(new QSqlRecord(qso)),
     isMainPageLoaded(false),
     main_page(new WebEnginePage(this)),
@@ -84,7 +84,7 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
 
     /* Mapper setting */
     mapper->setModel(model);
-    QSOEditMapperDelegate *QSOitemDelegate = new QSOEditMapperDelegate;
+    QSOEditMapperDelegate *QSOitemDelegate = new QSOEditMapperDelegate(mapper);
     mapper->setItemDelegate(QSOitemDelegate);
     mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
     connect(QSOitemDelegate, &QSOEditMapperDelegate::keyEscapePressed, this, &QSODetailDialog::resetKeyPressed);
@@ -122,7 +122,7 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     ui->submodeEdit->setModel(submodeModel);
 
     /* Mode mapping */
-    QSqlTableModel* modeModel = new QSqlTableModel();
+    QSqlTableModel* modeModel = new QSqlTableModel(this);
     modeModel->setTable("modes");
     modeModel->setSort(modeModel->fieldIndex("name"), Qt::AscendingOrder);
     ui->modeEdit->setModel(modeModel);
@@ -247,9 +247,9 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     ui->propagationModeEdit->setModel(propagationModeModel);
 
     /* Sat Modes & sat names */
-    QSqlTableModel* satModel = new QSqlTableModel();
+    QSqlTableModel* satModel = new QSqlTableModel(ui->satNameEdit);
     satModel->setTable("sat_info");
-    QCompleter *satCompleter = new QCompleter();
+    QCompleter *satCompleter = new QCompleter(ui->satNameEdit);
     satCompleter->setModel(satModel);
     satCompleter->setCompletionColumn(satModel->fieldIndex("name"));
     satCompleter->setCaseSensitivity(Qt::CaseInsensitive);

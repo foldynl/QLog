@@ -22,11 +22,11 @@ ExportDialog::ExportDialog(QWidget *parent) :
 
     this->setWindowTitle(tr("Export QSOs"));
 
-    ui->myCallsignComboBox->setModel(new SqlListModel("SELECT DISTINCT UPPER(station_callsign) FROM contacts ORDER BY station_callsign", ""));
+    ui->myCallsignComboBox->setModel(new SqlListModel("SELECT DISTINCT UPPER(station_callsign) FROM contacts ORDER BY station_callsign", "", ui->myCallsignComboBox));
     ui->myCallsignComboBox->setCurrentText(StationProfilesManager::instance()->getCurProfile1().callsign.toUpper());
     ui->myGridComboBox->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) FROM contacts WHERE station_callsign ='"
                                                 + ui->myCallsignComboBox->currentText()
-                                                + "' ORDER BY my_gridsquare", ""));
+                                                + "' ORDER BY my_gridsquare", "", ui->myGridComboBox));
     ui->startDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->startDateEdit->setDate(QDate::currentDate());
     ui->endDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
@@ -35,7 +35,7 @@ ExportDialog::ExportDialog(QWidget *parent) :
     ui->userFilterComboBox->setModel(new SqlListModel("SELECT filter_name "
                                                       "FROM qso_filters "
                                                       "ORDER BY filter_name COLLATE LOCALEAWARE ASC",
-                                                      "", this));
+                                                      "", ui->userFilterComboBox));
     ui->userFilterCheckBox->setEnabled(ui->userFilterComboBox->count() > 0);
 }
 
@@ -263,7 +263,7 @@ void ExportDialog::myCallsignChanged(const QString &myCallsign)
     FCT_IDENTIFICATION;
 
     ui->myGridComboBox->setModel(new SqlListModel("SELECT DISTINCT UPPER(my_gridsquare) FROM contacts WHERE station_callsign ='"
-                                                  + myCallsign + "' ORDER BY my_gridsquare", ""));
+                                                  + myCallsign + "' ORDER BY my_gridsquare", "", ui->myGridComboBox));
 }
 
 void ExportDialog::showColumnsSetting()
