@@ -366,15 +366,24 @@ void RotatorWidget::redrawMap()
         return;
 
     // transform image to azimuthal map
-    double lambda0 = (lon / 180.0) * M_PI;
-    double phi1 = - (lat / 90.0) * (0.5 * M_PI);
+    const int mapWidth = map.width();
+    const int mapHeight = map.height();
+    const int srcWidth = source.width();
+    const int srcHeight = source.height();
 
-    for (int x = 0; x < map.width(); x++)
+    const double lambda0 = (lon / 180.0) * M_PI;
+    const double phi1 = - (lat / 90.0) * (0.5 * M_PI);
+    const double sinPhi1 = sin(phi1);
+    const double cosPhi1 = cos(phi1);
+    const double twoPI = 2.0 * M_PI;
+
+    for (int x = 0; x < mapWidth; x++)
     {
-        double x2 = 2.0 * M_PI * (static_cast<double>(x) / static_cast<double>(map.width()) - 0.5);
-        for (int y = 0; y < map.height(); y++)
+        double x2 = twoPI * (static_cast<double>(x) / static_cast<double>(mapWidth) - 0.5);
+
+        for (int y = 0; y < mapHeight; y++)
         {
-            double y2 = 2.0 * M_PI * (static_cast<double>(y) / static_cast<double>(map.height()) - 0.5);
+            double y2 = twoPI * (static_cast<double>(y) / static_cast<double>(mapHeight) - 0.5);
             double c = sqrt(x2 * x2 + y2 * y2);
 
             if ( c < M_PI )
@@ -382,20 +391,22 @@ void RotatorWidget::redrawMap()
                 double phi = phi1;
                 double lambda = lambda0;
 
-                if ( c != 0)
+                if ( c != 0.0 )
                 {
-                    phi = asin(cos(c) * sin(phi1) + y2 * sin(c) * cos(phi1) / c);
-                    lambda = lambda0 + atan2(x2 * sin(c), c * cos(phi1) * cos(c) - y2 * sin(phi1) * sin(c));
+                    double sinC = sin(c);
+                    double cosC = cos(c);
+                    phi = asin(cosC * sinPhi1 + (y2 * sinC * cosPhi1) / c);
+                    lambda = lambda0 + atan2(x2 * sinC, c * cosPhi1 * cosC - y2 * sinPhi1 * sinC);
                 }
 
-                double s = (lambda / (2 * M_PI)) + 0.5;
+                double s = (lambda / twoPI) + 0.5;
                 double t = (phi / M_PI) + 0.5;
 
-                int x3 = static_cast<int>(s * static_cast<double>(source.width())) % source.width();
-                int y3 = static_cast<int>(t * static_cast<double>(source.height())) % source.height();
+                int x3 = static_cast<int>(s * srcWidth);
+                int y3 = static_cast<int>(t * srcHeight);
 
-                if (x3 < 0) x3 += source.width();
-                if (y3 < 0) y3 += source.height();
+                x3 = (x3 % srcWidth + srcWidth) % srcWidth;
+                y3 = (y3 % srcHeight + srcHeight) % srcHeight;
 
                 map.setPixelColor(x, y, source.pixelColor(x3, y3));
             }
