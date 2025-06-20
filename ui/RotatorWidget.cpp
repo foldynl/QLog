@@ -379,13 +379,14 @@ void RotatorWidget::redrawMap()
 
             if ( c < M_PI )
             {
-                double phi = asin(cos(c) * sin(phi1) + y2 * sin(c) * cos(phi1) / c);
+                double phi = phi1;
+                double lambda = lambda0;
 
-                double lambda;
-                if (c != 0)
+                if ( c != 0)
+                {
+                    phi = asin(cos(c) * sin(phi1) + y2 * sin(c) * cos(phi1) / c);
                     lambda = lambda0 + atan2(x2 * sin(c), c * cos(phi1) * cos(c) - y2 * sin(phi1) * sin(c));
-                else
-                    lambda = lambda0;
+                }
 
                 double s = (lambda / (2 * M_PI)) + 0.5;
                 double t = (phi / M_PI) + 0.5;
