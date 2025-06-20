@@ -10723,7 +10723,7 @@
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="20"/>
         <source>Upload QSOs</source>
-        <translation>Nahráv QSO</translation>
+        <translation>Nahrát QSO</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="44"/>
