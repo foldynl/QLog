@@ -7,7 +7,6 @@ Release: 1%{?dist}
 License: GPLv3
 Group: Productivity/Hamradio/Logging
 Source: https://github.com/foldynl/QLog/archive/refs/tags/v%{version}.tar.gz#/qlog-%{version}.tar.gz
-Source1: https://github.com/foldynl/QLog-Flags/archive/refs/tags/v%{version}.tar.gz#/qlog-flags-%{version}.tar.gz
 URL: https://github.com/foldynl/QLog/wiki
 Packager: Ladislav Foldyna <ok1mlg@gmail.com>
 
@@ -19,7 +18,6 @@ is based on the Qt 5 framework and uses SQLite as database backend.
 %global debug_package %{nil}
 %setup
 %setup -T -D -b 1 
-cp -r ../QLog-Flags-%{version}/* res/flags/
 
 
 %build
