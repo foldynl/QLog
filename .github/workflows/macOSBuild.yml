@@ -34,6 +34,8 @@ jobs:
          brew install pkg-config
      - name: Checkout Code
        uses: actions/checkout@v4
+       with:
+         fetch-depth: 0
      - name: Get version from tag
        run : |
          TAGVERSION=$(git describe --tags)
