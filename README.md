@@ -195,7 +195,7 @@ for Fedora:
 
 for both:
 
-`git clone --recurse-submodules https://github.com/foldynl/QLog.git`
+`git clone https://github.com/foldynl/QLog.git`
 
 `cd  QLog`
 
