@@ -420,17 +420,17 @@ void LogbookWidget::updateQSORecordFromCallbook(const CallbookResponseData& data
         }
     };
 
-    setIfEmpty(LogbookModel::COLUMN_GRID, "gridsquare", true);
-    setIfEmpty(LogbookModel::COLUMN_QTH_INTL, "qth");
-    setIfEmpty(LogbookModel::COLUMN_DARC_DOK, "dok");
-    setIfEmpty(LogbookModel::COLUMN_IOTA, "iota");
-    setIfEmpty(LogbookModel::COLUMN_EMAIL, "email");
-    setIfEmpty(LogbookModel::COLUMN_COUNTY, "county");
-    setIfEmpty(LogbookModel::COLUMN_QSL_VIA, "qsl_via");
-    setIfEmpty(LogbookModel::COLUMN_WEB, "url");
-    setIfEmpty(LogbookModel::COLUMN_STATE, "us_state");
-    setIfEmpty(LogbookModel::COLUMN_ITUZ, "ituz", false, true); // always replace if different
-    setIfEmpty(LogbookModel::COLUMN_CQZ, "cqz", false, true);   // always replace if different
+    setIfEmpty(LogbookModel::COLUMN_GRID, data.gridsquare, true);
+    setIfEmpty(LogbookModel::COLUMN_QTH_INTL, data.qth);
+    setIfEmpty(LogbookModel::COLUMN_DARC_DOK, data.dok);
+    setIfEmpty(LogbookModel::COLUMN_IOTA, data.iota);
+    setIfEmpty(LogbookModel::COLUMN_EMAIL, data.email);
+    setIfEmpty(LogbookModel::COLUMN_COUNTY, data.county);
+    setIfEmpty(LogbookModel::COLUMN_QSL_VIA, data.qsl_via);
+    setIfEmpty(LogbookModel::COLUMN_WEB, data.url);
+    setIfEmpty(LogbookModel::COLUMN_STATE, data.us_state);
+    setIfEmpty(LogbookModel::COLUMN_ITUZ, data.ituz, false, true); // always replace if different
+    setIfEmpty(LogbookModel::COLUMN_CQZ, data.cqz, false, true);   // always replace if different
     model->submitAll();
 
     model->setEditStrategy(originEditStrategy);
