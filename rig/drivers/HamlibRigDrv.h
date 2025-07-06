@@ -76,11 +76,11 @@ private:
     serial_handshake_e stringToHamlibFlowControl(const QString &in_flowcontrol);
     serial_parity_e stringToHamlibParity(const QString &in_parity);
     QString hamlibErrorString(int);
-
+    QTime rigStartTime;
     RIG* rig;
     QTimer timer;
     QTimer errorTimer;
-
+    int SmartSDRSpotCounter;
     bool forceSendState;
     bool currPTT;
     double currFreq;
