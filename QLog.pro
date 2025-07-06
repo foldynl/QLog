@@ -476,8 +476,8 @@ macx: {
       INSTALLS += target
    }
 
-   INCLUDEPATH += /usr/local/include /opt/homebrew/include
-   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3
+   INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
+   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -L/opt/local/lib
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=

@@ -517,40 +517,44 @@ void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
         return;
     }
 
-    QString freqStr = QString::number(spot.freq, 'f', 3);
-    QString call = spot.callsign.trimmed();
+    if(std::strstr(rig->caps->model_name,"SmartSDR Slice") != nullptr)
+    {
+        QString freqStr = QString::number(spot.freq, 'f', 3);
+        QString call = spot.callsign.trimmed();
 
-    QColor spotColor = Data::statusToColor(spot.status, spot.dupeCount, QColor(187,194,195));
+        QColor spotColor = Data::statusToColor(spot.status, spot.dupeCount, QColor(187,194,195));
 
-    SmartSDRSpotCounter = SmartSDRSpotCounter + 1;
-    QString command = QString("C%1|spot add rx_freq=%2 callsign=%3 color=%4 source=QLog timestamp=%5 lifetime_seconds=3600 priority=4\n")
-                          .arg(SmartSDRSpotCounter)
-                          .arg(freqStr)
-                          .arg(call.toUpper())
-                          .arg(spotColor.name(QColor::HexArgb).toUpper())
-                          .arg(spot.dateTime.toSecsSinceEpoch());
+        SmartSDRSpotCounter = SmartSDRSpotCounter + 1;
+        QString command = QString("C%1|spot add rx_freq=%2 callsign=%3 color=%4 source=QLog timestamp=%5 lifetime_seconds=300 priority=4\n")
+                              .arg(SmartSDRSpotCounter)
+                              .arg(freqStr)
+                              .arg(call.toUpper())
+                              .arg(spotColor.name(QColor::HexArgb).toUpper())
+                              .arg(spot.dateTime.toSecsSinceEpoch());
 
-    qWarning() << "Sending DX Spot command:" << command;
+        qWarning() << "Sending DX Spot command:" << command;
 
-    QByteArray cmdBytes = command.toUtf8();
-    unsigned char terminator = '\n';
-    const unsigned char* dataPtr = reinterpret_cast<const unsigned char*>(cmdBytes.constData());
+        QByteArray cmdBytes = command.toUtf8();
+        unsigned char terminator = '\n';
+        const unsigned char* dataPtr = reinterpret_cast<const unsigned char*>(cmdBytes.constData());
 
-    int status = rig_send_raw(
-        rig,
-        dataPtr,
-        cmdBytes.length(),
-        NULL,
-        0,
-        &terminator
-        );
+        int status = rig_send_raw(
+            rig,
+            dataPtr,
+            cmdBytes.length(),
+            NULL,
+            0,
+            &terminator
+            );
 
-    if (status != RIG_OK) {
-        qCDebug(runtime) << "rig_send_raw failed:" << status;
-        qCDebug(runtime) << hamlibErrorString(status);
-    } else {
-        qCDebug(runtime) << "DX Spot sent successfully";
+        if (status != RIG_OK) {
+            qCDebug(runtime) << "rig_send_raw failed:" << status;
+            qCDebug(runtime) << hamlibErrorString(status);
+        } else {
+            qCDebug(runtime) << "DX Spot sent successfully";
+        }
     }
+    return;
 }
 
 
