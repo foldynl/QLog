@@ -329,12 +329,12 @@ void LogParam::setDownloadQSLLoTWLastCall(const QString &call)
 
 QString LogParam::getDownloadQSLeQSLLastProfile()
 {
-    return getParam("downloadqsl/lotw/lastmycallsign").toString();
+    return getParam("downloadqsl/eqsl/lastqthprofile").toString();
 }
 
 void LogParam::setDownloadQSLeQSLLastProfile(const QString &profile)
 {
-    setParam("downloadqsl/lotw/lastqthprofile", profile);
+    setParam("downloadqsl/eqsl/lastqthprofile", profile);
 }
 
 QString LogParam::getQRZCOMCallbookUsername()

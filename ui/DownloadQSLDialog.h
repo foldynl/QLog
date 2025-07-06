@@ -24,6 +24,8 @@ private:
                          bool qslSinceActive,
                          const QString &settingString);
     void startNextDownload();
+    void loadDialogState();
+    void saveDialogState();
 
     Ui::DownloadQSLDialog *ui;
     LogLocale locale;
