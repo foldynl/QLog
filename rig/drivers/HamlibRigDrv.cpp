@@ -108,8 +108,7 @@ RigCaps HamlibRigDrv::getCaps(int model)
         ret.canGetPTT = ( caps->get_ptt );
         ret.canSendMorse = ( caps->send_morse != nullptr );
 
-        if(std::strstr(caps->model_name,"SmartSDR Slice") != nullptr)
-        {
+        if (QString::fromLatin1(caps->model_name).contains("SmartSDR Slice", Qt::CaseInsensitive)) {
             ret.canProcessDXSpot = true;
         }
 
@@ -512,12 +511,12 @@ void HamlibRigDrv::stopTimers()
 void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
 {
     FCT_IDENTIFICATION;
+
     if (!rig || !opened || currFreq == 0) {
         qCWarning(runtime) << "Rig is not active";
         return;
     }
-
-    if(std::strstr(rig->caps->model_name,"SmartSDR Slice") != nullptr)
+    if (QString::fromLatin1(rig->caps->model_name).contains("SmartSDR Slice", Qt::CaseInsensitive))
     {
         QString freqStr = QString::number(spot.freq, 'f', 3);
         QString call = spot.callsign.trimmed();
@@ -534,6 +533,8 @@ void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
 
         qWarning() << "Sending DX Spot command:" << command;
 
+#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+
         QByteArray cmdBytes = command.toUtf8();
         unsigned char terminator = '\n';
         const unsigned char* dataPtr = reinterpret_cast<const unsigned char*>(cmdBytes.constData());
@@ -542,7 +543,7 @@ void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
             rig,
             dataPtr,
             cmdBytes.length(),
-            NULL,
+            nullptr,
             0,
             &terminator
             );
@@ -553,8 +554,11 @@ void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
         } else {
             qCDebug(runtime) << "DX Spot sent successfully";
         }
+
+#else
+        qCWarning(runtime) << "Hamlib version does not support rig_send_raw. DX Spot not sent.";
+#endif
     }
-    return;
 }
 
 
