@@ -3406,47 +3406,47 @@
         <translation>&amp;Descargar</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="60"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="46"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW no está configurado apropiadamente.&lt;p&gt; Por favor usar &lt;b&gt;Ajustes&lt;/b&gt; para configurarlo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="67"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="53"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>eQSL no está configurado apropiadamente.&lt;p&gt; Por favor usar &lt;b&gt;Ajustes&lt;/b&gt; para configurarlo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="102"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="129"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="107"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="134"/>
         <source>Downloading from %1</source>
         <translation>Descargando desde %1</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="113"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="140"/>
         <source>Processing %1 QSLs</source>
         <translation>Procesando %1 QSLs</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="136"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>QLog Error</source>
         <translation>Error de QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="136"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>%1 update failed: </source>
         <translation>Error al actualizar %1: </translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="181"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>QLog Information</source>
         <translation>Información de QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="181"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>No service selected</source>
         <translation>No se ha seleccionado ningún servicio</translation>
     </message>
@@ -5622,7 +5622,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="732"/>
         <source>QSLs Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mensaje del QSL</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="733"/>
@@ -6970,12 +6970,12 @@
         <translation>Antena</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3893"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3894"/>
         <source>Blank</source>
         <translation>Vacío</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3894"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3895"/>
         <source> W</source>
         <translation> W</translation>
     </message>
@@ -7125,42 +7125,42 @@
         <translation>Búsqueda en Callbook activada</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3725"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3726"/>
         <source>Contest ID must be filled in to activate</source>
         <translation>Debe rellenarse el ID del concurso para activarlo</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3822"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3823"/>
         <source>two or four adjacent Maidenhead grid locators, each four characters long, (ex. EN98,FM08,EM97,FM07)</source>
         <translation>dos o cuatro locators adyacentes, cada uno de cuatro caracteres (ej. EN98,FM08,EM97,FM07)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3825"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3826"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>el DARC DOK (código de ubicación de distrito) de la estación contactada (ej. A01)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3845"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3846"/>
         <source>World Wide Flora &amp; Fauna</source>
         <translation>World Wide Flora &amp; Fauna</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3849"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3850"/>
         <source>Special Activity Group</source>
         <translation>Grupo de Actividades Especiales</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3853"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3854"/>
         <source>Special Activity Group Information</source>
         <translation>Información Grupo de Actividades Especiales</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3881"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3882"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
         <translation>No es el nombre del concurso, sino un ID de concurso asignado (ej. CQ-WW-CW para CQ WW DX Contest (CW)) </translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3896"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3897"/>
         <source>Description of the contacted station&apos;s equipment</source>
         <translation>Descripción del equipo de la estación contactada</translation>
     </message>
@@ -7428,10 +7428,10 @@
     </message>
     <message>
         <location filename="../core/main.cpp" line="490"/>
-        <location filename="../core/main.cpp" line="505"/>
-        <location filename="../core/main.cpp" line="515"/>
-        <location filename="../core/main.cpp" line="522"/>
+        <location filename="../core/main.cpp" line="508"/>
+        <location filename="../core/main.cpp" line="520"/>
         <location filename="../core/main.cpp" line="529"/>
+        <location filename="../core/main.cpp" line="536"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="406"/>
         <location filename="../ui/ExportDialog.cpp" line="141"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
@@ -7448,22 +7448,22 @@
         <translation>QLog ya se está ejecutando</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="506"/>
+        <location filename="../core/main.cpp" line="509"/>
         <source>Could not connect to database.</source>
         <translation>No se pudo conectar a la base de datos.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="516"/>
+        <location filename="../core/main.cpp" line="521"/>
         <source>Could not export a QLog database to ADIF as a backup.&lt;p&gt;Try to export your log to ADIF manually</source>
         <translation>No se pudo exportar una base de datos QLog a ADIF como copia de seguridad.&lt;p&gt;Intente exportar su registro a ADIF manualmente</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="523"/>
+        <location filename="../core/main.cpp" line="530"/>
         <source>Database migration failed.</source>
         <translation>Error en la migración de la base de datos.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="530"/>
+        <location filename="../core/main.cpp" line="537"/>
         <source>Could not connect to database (2).</source>
         <translation>No se pudo conectar a la base de datos (2).</translation>
     </message>
@@ -7689,12 +7689,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../data/Gridsquare.cpp" line="139"/>
+        <location filename="../data/Gridsquare.cpp" line="136"/>
         <source>km</source>
         <translation>km</translation>
     </message>
     <message>
-        <location filename="../data/Gridsquare.cpp" line="145"/>
+        <location filename="../data/Gridsquare.cpp" line="142"/>
         <source>miles</source>
         <translation>millas</translation>
     </message>
@@ -7741,22 +7741,22 @@
         <translation>Error Interno</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="502"/>
+        <location filename="../core/main.cpp" line="503"/>
         <source>Opening Database</source>
         <translation>Abriendo Base de Datos</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="510"/>
+        <location filename="../core/main.cpp" line="513"/>
         <source>Backuping Database</source>
         <translation>Respaldando Base de Datos</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="519"/>
+        <location filename="../core/main.cpp" line="524"/>
         <source>Migrating Database</source>
         <translation>Migrando Base de Datos</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="534"/>
+        <location filename="../core/main.cpp" line="541"/>
         <source>Starting Application</source>
         <translation>Iniciando Aplicación</translation>
     </message>
@@ -8291,7 +8291,7 @@
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="2082"/>
         <source>QSLs Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mensaje del QSL</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="2111"/>

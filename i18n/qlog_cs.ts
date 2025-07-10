@@ -3380,47 +3380,47 @@
         <translation>&amp;Stáhnout</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="60"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="46"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW není správně nastaven.&lt;p&gt; Prosím, použijte dialog &lt;b&gt;Nastavení&lt;/b&gt; pro konfiguraci služby.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="67"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="53"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>eQSL není správně nastaven.&lt;p&gt; Prosím, použijte dialog &lt;b&gt;Nastavení&lt;/b&gt; pro konfiguraci služby.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="102"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="129"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="107"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="134"/>
         <source>Downloading from %1</source>
         <translation>Stahování z %1</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="113"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="140"/>
         <source>Processing %1 QSLs</source>
         <translation>Zpracovávám %1 QSL</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="136"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>QLog Error</source>
         <translation>Chyba QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="136"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>%1 update failed: </source>
         <translation>Aktualizace %1 selhala: </translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="181"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>QLog Information</source>
         <translation>Informace QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="181"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>No service selected</source>
         <translation>Není vybrána žádná služba</translation>
     </message>
@@ -6867,7 +6867,7 @@
         <translation>Člen:</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3845"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3846"/>
         <source>World Wide Flora &amp; Fauna</source>
         <translation>World Wide Flora &amp; Fauna</translation>
     </message>
@@ -6905,7 +6905,7 @@
         <translation>QSL odeslat přes</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3893"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3894"/>
         <source>Blank</source>
         <translation>Nevyplněno</translation>
     </message>
@@ -6930,7 +6930,7 @@
         <translation>Stanice</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3825"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3826"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>DARC DOK (kód uzemí) (např A01)</translation>
     </message>
@@ -6955,7 +6955,7 @@
         <translation>Rig</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3894"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3895"/>
         <source> W</source>
         <translation> W</translation>
     </message>
@@ -7095,17 +7095,17 @@
         <translation>Hledání v Callbooku je aktivní</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3725"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3726"/>
         <source>Contest ID must be filled in to activate</source>
         <translation>Pro aktivaci je nutné vyplnit Contest ID</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3881"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3882"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
         <translation>Není to jméno Contestu ale jeho přiřazené Contest ID (např. CQ-WW-CW pro CQ WW DX Contest (CW)) </translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3896"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3897"/>
         <source>Description of the contacted station&apos;s equipment</source>
         <translation>Popis vybavení kontaktované stanice</translation>
     </message>
@@ -7120,17 +7120,17 @@
         <translation>Rozbalit/sbalit</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3822"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3823"/>
         <source>two or four adjacent Maidenhead grid locators, each four characters long, (ex. EN98,FM08,EM97,FM07)</source>
         <translation>dva nebo čtyři sousední lokátory, každý o délce čtyř znaků (např. EN98,FM08,EM97,FM07)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3849"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3850"/>
         <source>Special Activity Group</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3853"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3854"/>
         <source>Special Activity Group Information</source>
         <translation></translation>
     </message>
@@ -7398,10 +7398,10 @@
     </message>
     <message>
         <location filename="../core/main.cpp" line="490"/>
-        <location filename="../core/main.cpp" line="505"/>
-        <location filename="../core/main.cpp" line="515"/>
-        <location filename="../core/main.cpp" line="522"/>
+        <location filename="../core/main.cpp" line="508"/>
+        <location filename="../core/main.cpp" line="520"/>
         <location filename="../core/main.cpp" line="529"/>
+        <location filename="../core/main.cpp" line="536"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="406"/>
         <location filename="../ui/ExportDialog.cpp" line="141"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
@@ -7418,22 +7418,22 @@
         <translation>QLog již běží</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="506"/>
+        <location filename="../core/main.cpp" line="509"/>
         <source>Could not connect to database.</source>
         <translation>Nelze se připojit k databázi.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="516"/>
+        <location filename="../core/main.cpp" line="521"/>
         <source>Could not export a QLog database to ADIF as a backup.&lt;p&gt;Try to export your log to ADIF manually</source>
         <translation>Nelze exportovat QLog databázi do ADIF jako backup.&lt;p&gt;Pokuste se ručně exportovat log do ADIF</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="523"/>
+        <location filename="../core/main.cpp" line="530"/>
         <source>Database migration failed.</source>
         <translation>Migrace databaze selhala.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="530"/>
+        <location filename="../core/main.cpp" line="537"/>
         <source>Could not connect to database (2).</source>
         <translation>Nelze se připojit k databázi (2).</translation>
     </message>
@@ -7706,22 +7706,22 @@
         <translation>Interní Chyba</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="502"/>
+        <location filename="../core/main.cpp" line="503"/>
         <source>Opening Database</source>
         <translation>Načítání Databáze</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="510"/>
+        <location filename="../core/main.cpp" line="513"/>
         <source>Backuping Database</source>
         <translation>Záloha Databáze</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="519"/>
+        <location filename="../core/main.cpp" line="524"/>
         <source>Migrating Database</source>
         <translation>Migrace Databáze</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="534"/>
+        <location filename="../core/main.cpp" line="541"/>
         <source>Starting Application</source>
         <translation>Start aplikace</translation>
     </message>
@@ -7848,12 +7848,12 @@
         </translation>
     </message>
     <message>
-        <location filename="../data/Gridsquare.cpp" line="139"/>
+        <location filename="../data/Gridsquare.cpp" line="136"/>
         <source>km</source>
         <translation>km</translation>
     </message>
     <message>
-        <location filename="../data/Gridsquare.cpp" line="145"/>
+        <location filename="../data/Gridsquare.cpp" line="142"/>
         <source>miles</source>
         <translation>mil</translation>
     </message>

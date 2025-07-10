@@ -3380,47 +3380,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="60"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="46"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation type="unfinished">LoTW 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="67"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="53"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation type="unfinished">eQSL 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="102"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="129"/>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="107"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="134"/>
         <source>Downloading from %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="113"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="140"/>
         <source>Processing %1 QSLs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="136"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>QLog Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="136"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>%1 update failed: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="181"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>QLog Information</source>
         <translation type="unfinished">QLog 信息</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="181"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>No service selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6919,12 +6919,12 @@
         <translation>天线</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3893"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3894"/>
         <source>Blank</source>
         <translation>空白</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3894"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3895"/>
         <source> W</source>
         <translation> W</translation>
     </message>
@@ -7064,17 +7064,17 @@
         <translation>电台黄页搜索可用</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3725"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3726"/>
         <source>Contest ID must be filled in to activate</source>
         <translation>必须填写 竞赛标识 才能激活</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3881"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3882"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
         <translation>这里要填的不是比赛名称，而是分配的竞赛标识&lt;br&gt;（例如CQ-WW-CW 代表CQ WW DX比赛(CW)） </translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3896"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3897"/>
         <source>Description of the contacted station&apos;s equipment</source>
         <translation>已通联台站的设备描述</translation>
     </message>
@@ -7089,27 +7089,27 @@
         <translation>展开/折叠</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3822"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3823"/>
         <source>two or four adjacent Maidenhead grid locators, each four characters long, (ex. EN98,FM08,EM97,FM07)</source>
         <translation>两个或四个相邻的梅登黑德网格定位器，每个四个字符长，(例如 EN98, FM08, EM97, FM07)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3825"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3826"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>联络电台的DARC DOK (地区位置代码) (例如 A01)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3845"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3846"/>
         <source>World Wide Flora &amp; Fauna</source>
         <translation>世界动植物 (可选参数)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3849"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3850"/>
         <source>Special Activity Group</source>
         <translation>特别活动或兴趣团体名称</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3853"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3854"/>
         <source>Special Activity Group Information</source>
         <translation>特别活动或兴趣团体信息</translation>
     </message>
@@ -7377,10 +7377,10 @@
     </message>
     <message>
         <location filename="../core/main.cpp" line="490"/>
-        <location filename="../core/main.cpp" line="505"/>
-        <location filename="../core/main.cpp" line="515"/>
-        <location filename="../core/main.cpp" line="522"/>
+        <location filename="../core/main.cpp" line="508"/>
+        <location filename="../core/main.cpp" line="520"/>
         <location filename="../core/main.cpp" line="529"/>
+        <location filename="../core/main.cpp" line="536"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="406"/>
         <location filename="../ui/ExportDialog.cpp" line="141"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
@@ -7397,22 +7397,22 @@
         <translation>已经有 QLog 实例正在运行</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="506"/>
+        <location filename="../core/main.cpp" line="509"/>
         <source>Could not connect to database.</source>
         <translation>无法连接至数据库。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="516"/>
+        <location filename="../core/main.cpp" line="521"/>
         <source>Could not export a QLog database to ADIF as a backup.&lt;p&gt;Try to export your log to ADIF manually</source>
         <translation>无法导出 QLog 数据库至 ADIF 备份。&lt;p&gt;请尝试手动导出您的日志至 ADIF</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="523"/>
+        <location filename="../core/main.cpp" line="530"/>
         <source>Database migration failed.</source>
         <translation>数据库迁移失败。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="530"/>
+        <location filename="../core/main.cpp" line="537"/>
         <source>Could not connect to database (2).</source>
         <translation>无法连接至数据库。</translation>
     </message>
@@ -7636,12 +7636,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../data/Gridsquare.cpp" line="139"/>
+        <location filename="../data/Gridsquare.cpp" line="136"/>
         <source>km</source>
         <translation>公里</translation>
     </message>
     <message>
-        <location filename="../data/Gridsquare.cpp" line="145"/>
+        <location filename="../data/Gridsquare.cpp" line="142"/>
         <source>miles</source>
         <translation>英里</translation>
     </message>
@@ -7688,22 +7688,22 @@
         <translation>内部错误</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="502"/>
+        <location filename="../core/main.cpp" line="503"/>
         <source>Opening Database</source>
         <translation>打开数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="510"/>
+        <location filename="../core/main.cpp" line="513"/>
         <source>Backuping Database</source>
         <translation>备份数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="519"/>
+        <location filename="../core/main.cpp" line="524"/>
         <source>Migrating Database</source>
         <translation>迁移数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="534"/>
+        <location filename="../core/main.cpp" line="541"/>
         <source>Starting Application</source>
         <translation>启动应用程序</translation>
     </message>
