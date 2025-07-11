@@ -51,6 +51,25 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.45.0" date="2025-07-11">
+      <description>
+        <ul>
+          <li>[NEW] - Single Dialog for Upload/Download Online Services (issue #448)</li>
+          <li>[NEW] - Added option to swap paddles to Winkey settings (issue #676)</li>
+          <li>[NEW] - Added native support for the FLRig interface (issue #679)</li>
+          <li>[NEW] - Added New Version Notification - only for MacOS and Windows (PR #669 @aa5sh)</li>
+          <li>[NEW] - QRZ Upload - Added support for multiple API Keys</li>
+          <li>[NEW] - Logbook - Added highlighting to the filter button when a filter is active</li>
+          <li>[NEW] - WSJTX - Filtered label is shown when filter is enabled</li>
+          <li>[NEW] - DXC - Filtered label is shown when filter is enabled</li>
+          <li>[NEW] - Added support to Upload Cloudlog/Wavelog</li>
+          <li>[NEW] - Add JS8 to legacy_modes.json (issue #677)</li>
+          <li>[CHANGED] - Unification Settings storage</li>
+          <li>[CHANGED] - Calculate distances according to IARU rules</li>
+          <li>Fixed missing Wsjtx Spot values in the AlertWindow</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.44.1" date="2025-05-11">
       <description>
         <ul>
