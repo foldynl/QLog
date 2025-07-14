@@ -774,7 +774,7 @@ qulonglong Data::countDupe(const QString &callsign,
     };
 
     if ( dupeType >= DupeType::ALL_BANDS )
-        whereClause << QLatin1String("start_time >= :date");
+        whereClause << QLatin1String("datetime(start_time) >= datetime(:date)");
 
     if ( dupeType >= DupeType::EACH_BAND)
         whereClause << QLatin1String("band = :band");
