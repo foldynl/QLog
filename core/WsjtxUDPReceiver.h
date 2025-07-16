@@ -6,7 +6,7 @@
 #include <QHostAddress>
 #include <QSqlRecord>
 #include <QNetworkDatagram>
-
+#include "data/DxSpot.h"
 #include "data/UpdatableSQLRecord.h"
 
 class Data;
@@ -147,6 +147,7 @@ signals:
 public slots:
     void startReply(WsjtxDecode);
     void reloadSetting();
+    void dxSpot(const DxSpot&);
 
 private slots:
     void readPendingDatagrams();
@@ -158,7 +159,7 @@ private:
     QUdpSocket* socket;
     QHostAddress wsjtxAddress;
     quint16 wsjtxPort;
-
+    QList<DxSpot> dxData;
     UpdatableSQLRecord wsjtSQLRecord;
 
     static int DEFAULT_PORT;

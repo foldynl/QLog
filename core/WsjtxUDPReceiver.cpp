@@ -547,6 +547,31 @@ void WsjtxUDPReceiver::insertContact(WsjtxLogADIF log)
     // Therefore, it is necessary to save the first record and possibly update it
     // with the second record and then emit the result.
     // For this we create an updatable SQLRecord
+
+    constexpr double TOLERANCE_KHZ = 0.005; // 5 kHz = 0.005 MHz
+    for (const DxSpot &spot : dxData) {
+        if (spot.callsign.compare(record.value("callsign").toString(), Qt::CaseInsensitive) == 0 &&
+            qAbs(spot.freq - record.value("freq").toDouble()) <= TOLERANCE_KHZ)
+        {
+            if(spot.containsPOTA)
+            {
+                record.setValue("pota_ref",spot.potaRef);
+            }
+            if(spot.containsIOTA)
+            {
+                record.setValue("iota_ref",spot.iotaRef);
+            }
+            if(spot.containsSOTA)
+            {
+                record.setValue("sota_ref",spot.sotaRef);
+            }
+            if(spot.containsWWFF)
+            {
+                record.setValue("wwff_ref",spot.wwffRef);
+            }
+        }
+    }
+
     wsjtSQLRecord.updateRecord(record);
     //emit addContact(record);
 }
@@ -587,3 +612,15 @@ void WsjtxUDPReceiver::reloadSetting()
 
 int     WsjtxUDPReceiver::DEFAULT_PORT = 2237;
 QString WsjtxUDPReceiver::CONFIG_MULTICAST_TTL = "network/wsjtx_multicast_ttl";
+
+void WsjtxUDPReceiver::dxSpot(const DxSpot &spot)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << "DX Spot";
+
+    if(spot.modeGroupString.startsWith("FT") || spot.modeGroupString.startsWith("DIGITAL"))
+    {
+        dxData.append(spot);
+    }
+}
