@@ -250,12 +250,6 @@ bool HamlibRigDrv::open()
 
     int status = rig_open(rig);
 
-    if (status != RIG_OK) {
-        qWarning() << "Initial open failed, retrying...";
-        QThread::sleep(1);  // optional
-        status = rig_open(rig);
-    }
-
     if (!isRigRespOK(status, tr("Rig Open Error"), false))
         return false;
 
