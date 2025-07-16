@@ -24,9 +24,7 @@ jobs:
          brew update
          brew upgrade || true
          brew install qt6
-         brew install qt6-webengine
          brew link qt6 --force
-         brew link qt6-webengine --force
          brew install hamlib
          brew link hamlib --force
          brew install qtkeychain
@@ -47,7 +45,7 @@ jobs:
        run: |
          mkdir build
          cd build
-         /opt/homebrew/opt/qt6/bin/qmake -config release ..
+         qmake -config release ..
          make -j4
      - name: Build dmg
        run: |
