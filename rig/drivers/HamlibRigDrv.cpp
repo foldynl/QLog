@@ -91,7 +91,6 @@ RigCaps HamlibRigDrv::getCaps(int model)
 
     const struct rig_caps *caps = rig_get_caps(model);
     RigCaps ret;
-    qWarning() << "HamLib Model Name" << caps->model_name;
     ret.isNetworkOnly = (model == RIG_MODEL_NETRIGCTL);
     ret.needPolling = true;
 
@@ -250,8 +249,6 @@ bool HamlibRigDrv::open()
     }
 
     int status = rig_open(rig);
-
-    rigStartTime = QTime::currentTime();
 
     if (status != RIG_OK) {
         qWarning() << "Initial open failed, retrying...";
@@ -1025,13 +1022,6 @@ bool HamlibRigDrv::isRigRespOK(int errorStatus,
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << errorStatus << errorName << emitError;
-
-    // Inside isRigRespOK
-    if (errorStatus == -6 && QTime::currentTime() < rigStartTime.addSecs(5)) {
-        qCDebug(runtime) << "Suppressed transient error: Feature not available during rig startup";
-        return true;
-    }
-
 
     if ( errorStatus == RIG_OK )
     {
