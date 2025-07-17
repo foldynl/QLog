@@ -47,7 +47,7 @@ jobs:
        run: |
          mkdir build
          cd build
-         /opt/homebrew/opt/qt6/bin/qmake -config release ..
+         qmake -config release ..
          make -j4
      - name: Build dmg
        run: |

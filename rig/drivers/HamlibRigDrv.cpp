@@ -91,7 +91,7 @@ RigCaps HamlibRigDrv::getCaps(int model)
 
     const struct rig_caps *caps = rig_get_caps(model);
     RigCaps ret;
-    qWarning() << "HamLib Model Name" << caps->model_name;
+
     ret.isNetworkOnly = (model == RIG_MODEL_NETRIGCTL);
     ret.needPolling = true;
 
@@ -107,10 +107,7 @@ RigCaps HamlibRigDrv::getCaps(int model)
 
         ret.canGetPTT = ( caps->get_ptt );
         ret.canSendMorse = ( caps->send_morse != nullptr );
-
-        if (QString::fromLatin1(caps->model_name).contains("SmartSDR Slice", Qt::CaseInsensitive)) {
-            ret.canProcessDXSpot = true;
-        }
+        ret.canProcessDXSpot = isSmartSDRSlice(caps);
 
         if ( ret.isNetworkOnly )
         {
@@ -138,6 +135,7 @@ HamlibRigDrv::HamlibRigDrv(const RigProfile &profile,
                            QObject *parent)
     : GenericRigDrv(profile, parent),
       rig(nullptr),
+      SmartSDRSpotCounter(0),
       forceSendState(false),
       currPTT(false),
       currFreq(Hz(0)),
@@ -251,15 +249,7 @@ bool HamlibRigDrv::open()
 
     int status = rig_open(rig);
 
-    rigStartTime = QTime::currentTime();
-
-    if (status != RIG_OK) {
-        qWarning() << "Initial open failed, retrying...";
-        QThread::sleep(1);  // optional
-        status = rig_open(rig);
-    }
-
-    if (!isRigRespOK(status, tr("Rig Open Error"), false))
+    if ( !isRigRespOK(status, tr("Rig Open Error"), false) )
         return false;
 
     qCDebug(runtime) << "Rig Open - OK";
@@ -512,28 +502,30 @@ void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
 {
     FCT_IDENTIFICATION;
 
-    if (!rig || !opened || currFreq == 0) {
+    if ( currFreq == 0 ) return; // empty DXSpot;
+
+    if ( !rig || !opened )
+    {
         qCWarning(runtime) << "Rig is not active";
         return;
     }
-    if (QString::fromLatin1(rig->caps->model_name).contains("SmartSDR Slice", Qt::CaseInsensitive))
+
+    if ( isSmartSDRSlice(rig->caps) )
     {
-        QString freqStr = QString::number(spot.freq, 'f', 3);
-        QString call = spot.callsign.trimmed();
+#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+        const QString freqStr = QString::number(spot.freq, 'f', 3);
+        const QString call = spot.callsign.trimmed().toUpper();
+        const QColor spotColor = Data::statusToColor(spot.status, spot.dupeCount, QColor(187,194,195));
 
-        QColor spotColor = Data::statusToColor(spot.status, spot.dupeCount, QColor(187,194,195));
-
-        SmartSDRSpotCounter = SmartSDRSpotCounter + 1;
-        QString command = QString("C%1|spot add rx_freq=%2 callsign=%3 color=%4 source=QLog timestamp=%5 lifetime_seconds=300 priority=4\n")
-                              .arg(SmartSDRSpotCounter)
+        const QString command = QString("C%1|spot add rx_freq=%2 callsign=%3 color=%4 source=QLog timestamp=%5 lifetime_seconds=300 priority=4\n")
+                              .arg(++SmartSDRSpotCounter)
                               .arg(freqStr)
-                              .arg(call.toUpper())
+                              .arg(call)
                               .arg(spotColor.name(QColor::HexArgb).toUpper())
                               .arg(spot.dateTime.toSecsSinceEpoch());
 
-        qWarning() << "Sending DX Spot command:" << command;
 
-#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+        qCDebug(runtime) << "Sending DX Spot command:" << command;
 
         QByteArray cmdBytes = command.toUtf8();
         unsigned char terminator = '\n';
@@ -548,19 +540,16 @@ void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
             &terminator
             );
 
-        if (status != RIG_OK) {
+        if (status != RIG_OK)
+        {
             qCDebug(runtime) << "rig_send_raw failed:" << status;
             qCDebug(runtime) << hamlibErrorString(status);
-        } else {
-            qCDebug(runtime) << "DX Spot sent successfully";
         }
-
 #else
         qCWarning(runtime) << "Hamlib version does not support rig_send_raw. DX Spot not sent.";
 #endif
     }
 }
-
 
 
 void HamlibRigDrv::checkChanges()
@@ -1026,13 +1015,6 @@ bool HamlibRigDrv::isRigRespOK(int errorStatus,
 
     qCDebug(function_parameters) << errorStatus << errorName << emitError;
 
-    // Inside isRigRespOK
-    if (errorStatus == -6 && QTime::currentTime() < rigStartTime.addSecs(5)) {
-        qCDebug(runtime) << "Suppressed transient error: Feature not available during rig startup";
-        return true;
-    }
-
-
     if ( errorStatus == RIG_OK )
     {
         if ( emitError )
@@ -1065,6 +1047,16 @@ bool HamlibRigDrv::isRigRespOK(int errorStatus,
         }
     }
     return false;
+}
+
+bool HamlibRigDrv::isSmartSDRSlice(const rig_caps *caps)
+{
+#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 6 ) // Hamlib 4.6 implements SmartSDR Slices.
+    return QString::fromLatin1(caps->model_name).contains("SmartSDR Slice", Qt::CaseInsensitive);
+#else
+    Q_UNUSED(caps)
+    return false;
+#endif
 }
 
 const QString HamlibRigDrv::getModeNormalizedText(const rmode_t mode,
