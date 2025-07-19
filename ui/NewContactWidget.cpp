@@ -454,6 +454,35 @@ void NewContactWidget::handleCallsignFromUser()
     clearCallbookQueryFields();
     clearMemberQueryFields();
 
+    if(callsign == ui->nearStationLabel->text() &&
+        ! ui->nearStationLabel->text().isEmpty() &&
+        ! callsign.isEmpty())
+    {
+        if (callsign == nearestSpot.callsign) // AA5SH
+        {
+            if (nearestSpot.containsPOTA)
+            {
+                uiDynamic->potaEdit->setText(nearestSpot.potaRef);
+                isPOTAValid(nullptr);
+            }
+            if (nearestSpot.containsSOTA)
+            {
+                uiDynamic->sotaEdit->setText(nearestSpot.sotaRef);
+                isSOTAValid(nullptr);
+            }
+            if (nearestSpot.containsIOTA)
+            {
+                uiDynamic->iotaEdit->setText(nearestSpot.iotaRef);
+            }
+            if (nearestSpot.containsWWFF)
+            {
+                uiDynamic->wwffEdit->setText(nearestSpot.wwffRef);
+                isWWFFValid(nullptr);
+            }
+        }
+    }
+
+
     if ( callsign.isEmpty() )
     {
         setDxccInfo(DxccEntity());
