@@ -458,7 +458,7 @@ void NewContactWidget::handleCallsignFromUser()
         ! ui->nearStationLabel->text().isEmpty() &&
         ! callsign.isEmpty())
     {
-        if (callsign == nearestSpot.callsign) // AA5SH
+        if (callsign == nearestSpot.callsign)
         {
             if (nearestSpot.containsPOTA)
             {
