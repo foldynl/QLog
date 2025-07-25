@@ -30,11 +30,12 @@ class NewContactRSTEditLine : public NewContactEditLine
 
 public:
     explicit NewContactRSTEditLine(QWidget *parent = nullptr);
-    void setSelectionBackwardOffset(int offset);
+    void setSelectionOffset(int offset);
+    void setMaxLength(int len);
 
 protected:
     void focusInEvent(QFocusEvent* event) override;
-    int focusInSelectionBackwardOffset;
+    int focusInSelectionOffset;
 };
 
 class SerialPortEditLine : public QLineEdit

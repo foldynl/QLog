@@ -1,8 +1,8 @@
 #include <QFocusEvent>
 #include <QCompleter>
 #include <QSerialPortInfo>
-
 #include "EditLine.h"
+
 
 NewContactEditLine::NewContactEditLine(QWidget *parent) :
     QLineEdit(parent),
@@ -66,21 +66,32 @@ void NewContactEditLine::spaceForbidden(bool inSpaceForbidden)
 
 NewContactRSTEditLine::NewContactRSTEditLine(QWidget *parent) :
     NewContactEditLine(parent),
-    focusInSelectionBackwardOffset(1)
+    focusInSelectionOffset(0)
 {
+    setInputMask("xxxxxxx;");
 }
 
-void NewContactRSTEditLine::setSelectionBackwardOffset(int offset)
+void NewContactRSTEditLine::setSelectionOffset(int offset)
 {
-    focusInSelectionBackwardOffset = offset;
+    focusInSelectionOffset = offset;
+}
+
+void NewContactRSTEditLine::setMaxLength(int len)
+{
+    NewContactEditLine::setMaxLength(len);
+    setInputMask(QString(len, 'x') + ';');
 }
 
 void NewContactRSTEditLine::focusInEvent(QFocusEvent *event)
 {
     NewContactEditLine::focusInEvent(event);
 
-    if ( event->reason() != Qt::PopupFocusReason && !text().isEmpty() && text().length() >= focusInSelectionBackwardOffset )
-        setSelection(text().length() - focusInSelectionBackwardOffset, 1);
+    int position = 0;
+
+    if ( event->reason() != Qt::PopupFocusReason && !text().isEmpty() && text().length() >= focusInSelectionOffset )
+        position = focusInSelectionOffset;
+
+    setCursorPosition(position);
 }
 
 SerialPortEditLine::SerialPortEditLine(QWidget *parent) :

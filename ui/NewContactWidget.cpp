@@ -2897,13 +2897,24 @@ void NewContactWidget::setDefaultReport()
 {
     FCT_IDENTIFICATION;
 
-    if (defaultReport.isEmpty())
-        defaultReport = "";
+    QString innerRpt(defaultReport);
 
-    ui->rstRcvdEdit->setText(defaultReport);
-    ui->rstRcvdEdit->setSelectionBackwardOffset(defaultReport.size() >= 3 ? 2 : 1 );
-    ui->rstSentEdit->setText(defaultReport);
-    ui->rstSentEdit->setSelectionBackwardOffset(defaultReport.size() >= 3 ? 2 : 1 );
+    /* The > character indicates the position
+     * where the focus should be.
+     * If this is missing, it means the position of the first character.
+     */
+    int position = innerRpt.indexOf(">");
+
+    if ( position >= 0 )
+        innerRpt.remove(position, 1);
+    else
+        position = 0;
+
+    ui->rstRcvdEdit->setText(innerRpt);
+    ui->rstRcvdEdit->setSelectionOffset(position);
+
+    ui->rstSentEdit->setText(innerRpt);
+    ui->rstSentEdit->setSelectionOffset(position);
 }
 
 void NewContactWidget::webLookup()
