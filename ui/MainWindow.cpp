@@ -900,7 +900,7 @@ bool MainWindow::setNativeTheme()
     const QPalette defaultPalette = this->style()->standardPalette();
     const auto text = defaultPalette.color(QPalette::WindowText);
     const auto window = defaultPalette.color(QPalette::Window);
-    isDark = return text.lightness() > window.lightness();
+    isDark = text.lightness() > window.lightness();
 #endif // QT_VERSION
 
     return isDark;
