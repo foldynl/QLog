@@ -86,17 +86,21 @@ void OnlineMapWidget::setTarget(double lat, double lon)
     antPositionChanged(lastSeenAzimuth, lastSeenElevation);
 }
 
-void OnlineMapWidget::changeTheme(int theme)
+void OnlineMapWidget::changeTheme(int theme, bool isDark)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << theme;
+    qCDebug(function_parameters) << theme << isDark;
 
     QString themeJavaScript;
 
     //theme == 1 dart
-    themeJavaScript = ( theme == 1 ) ? QLatin1String("map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";")
-                                     : QLatin1String("map.getPanes().tilePane.style.webkitFilter=\"\";");
+    themeJavaScript
+        = (isDark == 1)
+              ? QLatin1String(
+                    "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) "
+                    "contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";")
+              : QLatin1String("map.getPanes().tilePane.style.webkitFilter=\"\";");
 
     runJavaScript(themeJavaScript);
 }

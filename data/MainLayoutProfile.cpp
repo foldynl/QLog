@@ -71,7 +71,7 @@ MainLayoutProfilesManager::MainLayoutProfilesManager() :
             profileDB.detailColC = toIntList(profileQuery.value(5).toString());
             profileDB.mainGeometry = QByteArray::fromBase64(profileQuery.value(6).toString().toUtf8());
             profileDB.mainState = QByteArray::fromBase64(profileQuery.value(7).toString().toUtf8());
-            profileDB.darkMode = profileQuery.value(8).toBool();
+            profileDB.darkMode = profileQuery.value(8).toInt();
             profileDB.tabsexpanded = profileQuery.value(9).toBool();
             profileDB.addlBandmaps = toPairStringList(profileQuery.value(10).toString());
             addProfile(profileDB.profileName, profileDB);

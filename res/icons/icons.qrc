@@ -17,7 +17,6 @@
         <file>cancel-24px.svg</file>
         <file>info-24px.svg</file>
         <file>close-24px.svg</file>
-        <file>light-dark-24px.svg</file>
         <file>alert.svg</file>
         <file>connect.svg</file>
         <file>disconnect.svg</file>
@@ -35,5 +34,7 @@
         <file>delete-button.svg</file>
         <file>new-window.svg</file>
         <file>clear-button.svg</file>
+        <file>color-palette-light.svg</file>
+        <file>color-palette-dark.svg</file>
     </qresource>
 </RCC>
