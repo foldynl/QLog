@@ -204,17 +204,59 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     adjusteComboMinSize(ui->modeFilter);
     ui->modeFilter->blockSignals(false);
 
-    ui->countryFilter->blockSignals(true);
-    countryModel = new SqlListModel("SELECT id, translate_to_locale(name) "
-                                    "FROM dxcc_entities WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
-                                    "ORDER BY 2 COLLATE LOCALEAWARE ASC;", tr("Country"), this);
+    countryModel = new SqlListModel(
+        "SELECT id, translate_to_locale(name) "
+        "FROM dxcc_entities WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
+        "ORDER BY 2 COLLATE LOCALEAWARE ASC;",
+        tr("Country"), this);
+
     while (countryModel->canFetchMore())
         countryModel->fetchMore();
 
     ui->countryFilter->setModel(countryModel);
     ui->countryFilter->setModelColumn(1);
-    adjusteComboMinSize(ui->countryFilter);
-    ui->countryFilter->blockSignals(false);
+    ui->countryFilter->setEditable(true);
+    ui->countryFilter->setMinimumContentsLength(25);
+    ui->countryFilter->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    ui->countryFilter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    QStringList countryNames;
+    for (int i = 0; i < countryModel->rowCount(); ++i) {
+        QModelIndex idx = countryModel->index(i, 1);  // column 1 = name
+        countryNames << countryModel->data(idx, Qt::DisplayRole).toString();
+    }
+
+    auto *stringListModel = new QStringListModel(countryNames, this);
+
+    auto *proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setSourceModel(stringListModel);
+    proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+
+    auto *completer = new QCompleter(proxyModel, this);
+    completer->setFilterMode(Qt::MatchContains);
+    completer->setCompletionMode(QCompleter::PopupCompletion);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+
+    ui->countryFilter->setCompleter(nullptr);
+    ui->countryFilter->lineEdit()->setCompleter(completer);
+
+    connect(ui->countryFilter->lineEdit(), &QLineEdit::textEdited, this, [=](const QString &text) {
+        QRegularExpression rx(QRegularExpression::escape(text), QRegularExpression::CaseInsensitiveOption);
+        proxyModel->setFilterRegularExpression(rx);
+        completer->complete();
+
+        // If the line is empty, reset combo index to 0 (All DXCC)
+        if (text.trimmed().isEmpty()) {
+            ui->countryFilter->setCurrentIndex(0);
+        }
+    });
+
+    connect(completer, QOverload<const QString &>::of(&QCompleter::activated),
+            this, [=](const QString &text){
+                int index = ui->countryFilter->findText(text, Qt::MatchExactly);
+                if (index >= 0)
+                    ui->countryFilter->setCurrentIndex(index);
+            });
 
     refreshClubFilter();
 
