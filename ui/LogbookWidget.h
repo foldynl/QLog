@@ -84,7 +84,6 @@ private:
     ClubLogUploader* clublog;
     LogbookModel* model;
     Ui::LogbookWidget *ui;
-    SqlListModel* countryModel;
     SqlListModel* userFilterModel;
     QString externalFilter;
     bool blockClublogSignals;

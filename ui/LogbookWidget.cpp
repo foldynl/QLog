@@ -42,6 +42,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     ui->setupUi(this);
 
+    connect(ui->countrySelectFilter, &SmartSearchBox::currentTextChanged,
+            this, &LogbookWidget::countryFilterChanged);
+
     model = new LogbookModel(this);
     connect(model, &LogbookModel::beforeUpdate, this, &LogbookWidget::handleBeforeUpdate);
     connect(model, &LogbookModel::beforeDelete, this, &LogbookWidget::handleBeforeDelete);
@@ -204,17 +207,16 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     adjusteComboMinSize(ui->modeFilter);
     ui->modeFilter->blockSignals(false);
 
-    ui->countryFilter->blockSignals(true);
-    countryModel = new SqlListModel("SELECT id, translate_to_locale(name) "
-                                    "FROM dxcc_entities WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
-                                    "ORDER BY 2 COLLATE LOCALEAWARE ASC;", tr("Country"), this);
-    while (countryModel->canFetchMore())
-        countryModel->fetchMore();
-
-    ui->countryFilter->setModel(countryModel);
-    ui->countryFilter->setModelColumn(1);
-    adjusteComboMinSize(ui->countryFilter);
-    ui->countryFilter->blockSignals(false);
+    ui->countrySelectFilter->blockSignals(true);
+    ui->countrySelectFilter->setModel(new SqlListModel("SELECT id, translate_to_locale(name) "
+                                                       "FROM dxcc_entities WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
+                                                       "ORDER BY 2 COLLATE LOCALEAWARE ASC;",
+                                                       tr("Any Country"),
+                                                       ui->countrySelectFilter));
+    ui->countrySelectFilter->setModelColumn(1);
+    ui->countrySelectFilter->adjustMaxSize();
+    ui->countrySelectFilter->setHighlightWhenEnable(true);
+    ui->countrySelectFilter->blockSignals(false);
 
     refreshClubFilter();
 
@@ -251,16 +253,13 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
 {
     FCT_IDENTIFICATION;
 
-    ui->countryFilter->blockSignals(true);
+    ui->countrySelectFilter->blockSignals(true);
     ui->bandFilter->blockSignals(true);
     ui->userFilter->blockSignals(true);
     ui->modeFilter->blockSignals(true);
     ui->clubFilter->blockSignals(true);
 
-    if ( ! countryName.isEmpty() )
-        ui->countryFilter->setCurrentText(countryName);
-    else
-        ui->countryFilter->setCurrentIndex(0);
+    ui->countrySelectFilter->setCurrentText(countryName);
 
     if ( !band.isEmpty() )
         ui->bandFilter->setCurrentText(band);
@@ -278,7 +277,7 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     ui->clubFilter->blockSignals(false);
     ui->userFilter->blockSignals(false);
     ui->modeFilter->blockSignals(false);
-    ui->countryFilter->blockSignals(false);
+    ui->countrySelectFilter->blockSignals(false);
     ui->bandFilter->blockSignals(false);
 
     filterTable();
@@ -558,7 +557,6 @@ void LogbookWidget::countryFilterChanged()
 {
     FCT_IDENTIFICATION;
 
-    colorsFilterWidget(ui->countryFilter);
     saveCountryFilter();
     filterTable();
 }
@@ -567,22 +565,16 @@ void LogbookWidget::saveCountryFilter()
 {
     FCT_IDENTIFICATION;
 
-    LogParam::setLogbookFilterCountry(ui->countryFilter->currentText());
+    LogParam::setLogbookFilterCountry(ui->countrySelectFilter->currentText());
 }
 
 void LogbookWidget::restoreCountryFilter()
 {
     FCT_IDENTIFICATION;
 
-    ui->countryFilter->blockSignals(true);
-    const QString &value = LogParam::getLogbookFilterCountry();
-    if ( !value.isEmpty() )
-        ui->countryFilter->setCurrentText(value);
-    else
-        ui->countryFilter->setCurrentIndex(0);
-    colorsFilterWidget(ui->countryFilter);
-
-    ui->countryFilter->blockSignals(false);
+    ui->countrySelectFilter->blockSignals(true);
+    ui->countrySelectFilter->setCurrentText(LogParam::getLogbookFilterCountry());
+    ui->countrySelectFilter->blockSignals(false);
 }
 
 void LogbookWidget::userFilterChanged()
@@ -898,15 +890,7 @@ void LogbookWidget::updateTable()
 
     // it is called when QSO is inserted/updated/deleted
     // therefore it is needed to refresh country select box
-
-    /* Refresh country selection combobox */
-    /* block the signals !!! */
-    ui->countryFilter->blockSignals(true);
-    const QString &country = ui->countryFilter->currentText();
-    countryModel->refresh();
-    ui->countryFilter->setCurrentText(country);
-    ui->countryFilter->blockSignals(false);
-    colorsFilterWidget(ui->countryFilter);
+    ui->countrySelectFilter->refreshModel();
     emit logbookUpdated();
 }
 
@@ -1139,12 +1123,11 @@ void LogbookWidget::filterTable()
     if ( ui->modeFilter->currentIndex() != 0 && !modeFilterValue.isEmpty() )
         filterString.append(QString("mode = '%1'").arg(modeFilterValue));
 
-    int row = ui->countryFilter->currentIndex();
-    const QModelIndex &idx = ui->countryFilter->model()->index(row,0);
-    const QVariant &data = ui->countryFilter->model()->data(idx);
+    bool OK = false;
+    int countryCode = ui->countrySelectFilter->currentValue(1).toInt(&OK);
 
-    if ( ui->countryFilter->currentIndex() != 0 )
-        filterString.append(QString("dxcc = '%1'").arg(data.toInt()));
+    if ( OK && countryCode > 0 )
+        filterString.append(QString("dxcc = '%1'").arg(countryCode));
 
     if ( ui->clubFilter->currentIndex() != 0 )
         filterString.append(QString("id in (SELECT contactid FROM contact_clubs_view WHERE clubid = '%1')").arg(ui->clubFilter->currentText()));

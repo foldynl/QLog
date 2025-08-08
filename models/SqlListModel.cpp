@@ -32,24 +32,37 @@ int SqlListModel::rowCount(const QModelIndex &parent) const
 
 QVariant SqlListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
-        return QVariant();
+    if (!index.isValid()) return QVariant();
 
-    if (role == Qt::DisplayRole && (index.column() == 0 || index.column() == 1  || index.column() == 2)) {
-        if (!placeholder.isEmpty() && index.row() == 0) {
-            return placeholder;
-        }
-        else {
-            QModelIndex sqlIndex = this->index(index.row() - (!placeholder.isEmpty() ? 1 : 0), index.column());
-            return QSqlQueryModel::data(sqlIndex, role);
-        }
+    const int col = index.column();
+    const int row = index.row();
+    const bool hasPlaceholder = !placeholder.isEmpty();
+    const bool isTargetColumn = (col >= 0 && col <= 2);
+    const int realRow = row - (hasPlaceholder ? 1 : 0);
+
+    if (!isTargetColumn) return QVariant();
+
+    if ( role == Qt::DisplayRole )
+    {
+        if ( hasPlaceholder && row == 0 ) return placeholder;
+
+        const QModelIndex &sqlIndex = QSqlQueryModel::index(realRow, col);
+        return QSqlQueryModel::data(sqlIndex, role);
     }
-    else if (role == Qt::UserRole && (index.column() == 0  || index.column() == 1 || index.column() == 2)) {
-        return index.row() - (placeholder.isEmpty() ? 1 : 0);
+
+    // get row index;
+    if (role == Qt::UserRole) return row - (hasPlaceholder ? 1 : 0);
+
+    // get (role - UserRole) Column
+    if (role >= Qt::UserRole + 1)
+    {
+        if (hasPlaceholder && row == 0) return QVariant();
+
+        const QModelIndex &sqlIndex = QSqlQueryModel::index(realRow, role - 1 - Qt::UserRole);
+        return QSqlQueryModel::data(sqlIndex, Qt::DisplayRole);
     }
-    else {
-        return QVariant();
-    }
+
+    return QVariant();
 }
 
 void SqlListModel::refresh()
