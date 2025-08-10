@@ -6,7 +6,6 @@
 #include <QComboBox>
 #include <QSqlRecord>
 
-#include "models/SqlListModel.h"
 #include "core/CallbookManager.h"
 #include "component/ShutdownAwareWidget.h"
 
@@ -84,7 +83,6 @@ private:
     ClubLogUploader* clublog;
     LogbookModel* model;
     Ui::LogbookWidget *ui;
-    SqlListModel* userFilterModel;
     QString externalFilter;
     bool blockClublogSignals;
     bool eventFilter(QObject *obj, QEvent *event);

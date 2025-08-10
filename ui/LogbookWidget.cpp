@@ -48,6 +48,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     connect(ui->bandSelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::bandFilterChanged);
 
+    connect(ui->userSelectFilter, &SmartSearchBox::currentTextChanged,
+            this, &LogbookWidget::userFilterChanged);
+
     model = new LogbookModel(this);
     connect(model, &LogbookModel::beforeUpdate, this, &LogbookWidget::handleBeforeUpdate);
     connect(model, &LogbookModel::beforeDelete, this, &LogbookWidget::handleBeforeDelete);
@@ -229,15 +232,15 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     refreshClubFilter();
 
-    ui->userFilter->blockSignals(true);
-    userFilterModel = new SqlListModel("SELECT filter_name "
-                                       "FROM qso_filters "
-                                       "ORDER BY filter_name COLLATE LOCALEAWARE ASC", tr("User Filter"), this);
-    while (userFilterModel->canFetchMore())
-        userFilterModel->fetchMore();
-    ui->userFilter->setModel(userFilterModel);
-    adjusteComboMinSize(ui->userFilter);
-    ui->userFilter->blockSignals(false);
+    ui->userSelectFilter->blockSignals(true);
+    ui->userSelectFilter->setModel(new SqlListModel("SELECT filter_name "
+                                                    "FROM qso_filters "
+                                                    "ORDER BY filter_name COLLATE LOCALEAWARE ASC",
+                                                    tr("No User Filter"),
+                                                    ui->userSelectFilter));
+    ui->userSelectFilter->adjustMaxSize();
+    ui->userSelectFilter->setHighlightWhenEnable(true);
+    ui->userSelectFilter->blockSignals(false);
 
     clublog = new ClubLogUploader(this);
 
@@ -264,7 +267,7 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
 
     ui->countrySelectFilter->blockSignals(true);
     ui->bandSelectFilter->blockSignals(true);
-    ui->userFilter->blockSignals(true);
+    ui->userSelectFilter->blockSignals(true);
     ui->modeSelectFilter->blockSignals(true);
     ui->clubFilter->blockSignals(true);
 
@@ -273,7 +276,7 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     ui->bandSelectFilter->setCurrentText(band);
 
     //user wants to see only selected band and country
-    ui->userFilter->setCurrentIndex(0); //suppress user-defined filter
+    ui->userSelectFilter->setCurrentText(""); //suppress user-defined filter
     ui->modeSelectFilter->setCurrentText(""); //suppress mode filter
     ui->clubFilter->setCurrentIndex(0); //suppress club filter
 
@@ -281,7 +284,7 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     externalFilter = addlFilter;
 
     ui->clubFilter->blockSignals(false);
-    ui->userFilter->blockSignals(false);
+    ui->userSelectFilter->blockSignals(false);
     ui->modeSelectFilter->blockSignals(false);
     ui->countrySelectFilter->blockSignals(false);
     ui->bandSelectFilter->blockSignals(false);
@@ -573,7 +576,6 @@ void LogbookWidget::userFilterChanged()
 {
     FCT_IDENTIFICATION;
 
-    colorsFilterWidget(ui->userFilter);
     saveUserFilter();
     filterTable();
 }
@@ -584,29 +586,23 @@ void LogbookWidget::setUserFilter(const QString &filterName)
 
     qCDebug(function_parameters) << filterName;
 
-    ui->userFilter->setCurrentText(filterName);
+    ui->userSelectFilter->setCurrentText(filterName);
 }
 
 void LogbookWidget::saveUserFilter()
 {
     FCT_IDENTIFICATION;
 
-    LogParam::setLogbookFilterUserFilter(ui->userFilter->currentText());
+    LogParam::setLogbookFilterUserFilter(ui->userSelectFilter->currentText());
 }
 
 void LogbookWidget::restoreUserFilter()
 {
     FCT_IDENTIFICATION;
 
-    ui->userFilter->blockSignals(true);
-    const QString &value = LogParam::getLogbookFilterUserFilter();
-    if ( !value.isEmpty() )
-        ui->userFilter->setCurrentText(value);
-    else
-        ui->userFilter->setCurrentIndex(0);
-
-    colorsFilterWidget(ui->userFilter);
-    ui->userFilter->blockSignals(false);
+    ui->userSelectFilter->blockSignals(true);
+    ui->userSelectFilter->setCurrentText(LogParam::getLogbookFilterUserFilter());
+    ui->userSelectFilter->blockSignals(false);
 }
 
 void LogbookWidget::clubFilterChanged()
@@ -636,16 +632,9 @@ void LogbookWidget::refreshUserFilter()
 {
     FCT_IDENTIFICATION;
 
-    /* Refresh dynamic User Filter selection combobox */
-    /* block the signals !!! */
-    ui->userFilter->blockSignals(true);
-    const QString &userFilterString = ui->userFilter->currentText();
-    userFilterModel->refresh();
-    ui->userFilter->setCurrentText(userFilterString);
-    ui->userFilter->blockSignals(false);
-    colorsFilterWidget(ui->userFilter);
+    ui->userSelectFilter->refreshModel();
 
-    filterTable();
+    filterTable();  // TODO ??? is it needed
 }
 
 void LogbookWidget::saveClubFilter()
@@ -1124,8 +1113,8 @@ void LogbookWidget::filterTable()
     if ( ui->clubFilter->currentIndex() != 0 )
         filterString.append(QString("id in (SELECT contactid FROM contact_clubs_view WHERE clubid = '%1')").arg(ui->clubFilter->currentText()));
 
-    if ( ui->userFilter->currentIndex() != 0 )
-        filterString.append(QSOFilterManager::instance()->getWhereClause(ui->userFilter->currentText()));
+    if ( ui->userSelectFilter->currentIndex() != 0 )
+        filterString.append(QSOFilterManager::instance()->getWhereClause(ui->userSelectFilter->currentText()));
 
     if ( !externalFilter.isEmpty() )
         filterString.append(QString("( ") + externalFilter + ")");
