@@ -1219,7 +1219,7 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
                     // parse one entity
                     int adif = 0; QString name, prefix, cont; bool deleted=false;
                     int cqz = 0; QString start, end, whitelist_start, whitelist_end; bool whitelist=false;
-                    double lon=NAN, lat=NAN;
+                    double lon=0.0, lat=0.0;
 
                     while (!(xml.isEndElement() && xml.name() == "entity")) {
                         xml.readNext();
@@ -1245,15 +1245,15 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
                     insEntity.bindValue(":name", name);
                     insEntity.bindValue(":prefix", prefix);
                     insEntity.bindValue(":deleted", deleted ? 1 : 0);
-                    insEntity.bindValue(":cqz", cqz ? cqz : QVariant(QVariant::Int));
-                    insEntity.bindValue(":cont", cont.isEmpty()? QVariant(QVariant::String) : cont);
-                    insEntity.bindValue(":lon",  std::isnan(lon) ? QVariant(QVariant::Double) : lon);
-                    insEntity.bindValue(":lat",  std::isnan(lat) ? QVariant(QVariant::Double) : lat);
-                    insEntity.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
-                    insEntity.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+                    insEntity.bindValue(":cqz", cqz ? cqz : 0);
+                    insEntity.bindValue(":cont", cont.isEmpty()? "" : cont);
+                    insEntity.bindValue(":lon",  lon);
+                    insEntity.bindValue(":lat",  lat);
+                    insEntity.bindValue(":start", start.isEmpty()? "" : start);
+                    insEntity.bindValue(":end",   end.isEmpty()?   "" : end);
                     insEntity.bindValue(":whitelist", whitelist?1:0);
-                    insEntity.bindValue(":whitelist_start", whitelist_start.isEmpty()? QVariant(QVariant::String):whitelist_start);
-                    insEntity.bindValue(":whitelist_end",   whitelist_end.isEmpty()?   QVariant(QVariant::String):whitelist_end);
+                    insEntity.bindValue(":whitelist_start", whitelist_start.isEmpty()? "":whitelist_start);
+                    insEntity.bindValue(":whitelist_end",   whitelist_end.isEmpty()?   "":whitelist_end);
 
                     if (!insEntity.exec()) { qWarning() << insEntity.lastError(); rollback(); return; }
                 }
@@ -1292,12 +1292,12 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
                     ins.bindValue(":call", call);
                     ins.bindValue(":entity", entity);
                     ins.bindValue(":adif", adif);
-                    ins.bindValue(":cqz", cqz?cqz:QVariant(QVariant::Int));
-                    ins.bindValue(":cont", cont.isEmpty()? QVariant(QVariant::String) : cont);
-                    ins.bindValue(":lon",  std::isnan(lon) ? QVariant(QVariant::Double) : lon);
-                    ins.bindValue(":lat",  std::isnan(lat) ? QVariant(QVariant::Double) : lat);
-                    ins.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
-                    ins.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+                    ins.bindValue(":cqz", cqz?cqz:0);
+                    ins.bindValue(":cont", cont.isEmpty()? "" : cont);
+                    ins.bindValue(":lon",   lon);
+                    ins.bindValue(":lat",   lat);
+                    ins.bindValue(":start", start.isEmpty()? "" : start);
+                    ins.bindValue(":end",   end.isEmpty()?   "" : end);
 
                     if (!ins.exec()) { qWarning() << ins.lastError(); rollback(); return; }
                 }
@@ -1320,8 +1320,8 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
                     }
                     insInv.bindValue(":record", rec);
                     insInv.bindValue(":call", call);
-                    insInv.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
-                    insInv.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+                    insInv.bindValue(":start", start);
+                    insInv.bindValue(":end",   end);
                     if (!insInv.exec()) { qWarning() << insInv.lastError(); rollback(); return; }
                 }
             }
@@ -1345,8 +1345,8 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
                     insZone.bindValue(":record", rec);
                     insZone.bindValue(":call", call);
                     insZone.bindValue(":zone", zone);
-                    insZone.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
-                    insZone.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+                    insZone.bindValue(":start", start);
+                    insZone.bindValue(":end",   end);
                     if (!insZone.exec()) { qWarning() << insZone.lastError(); rollback(); return; }
                 }
             }

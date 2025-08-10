@@ -1118,11 +1118,8 @@ DxccEntity Data::lookupCallsign(const QString& callsign, const QDateTime& date)
                   && !parsedCallsign.secondarySpecialSuffixes.contains(suffix) ) // if there is more than one character and it is not one of the special suffixes, we definitely have a call prefix as suffix
         {
             lookupPrefix = suffix + "/" + parsedCallsign.getBase();
-            qWarning() << suffix << lookupPrefix << callsign;
         }
     }
-
-
 
     DxccEntity e; // empty = no match / invalid
     QSqlQuery q;
@@ -1137,15 +1134,15 @@ DxccEntity Data::lookupCallsign(const QString& callsign, const QDateTime& date)
     q.prepare(
         "SELECT 1 FROM clublog_invalid_ops "
         "WHERE UPPER(call)=UPPER(?) "
-        "AND (start IS NULL OR start <= ?) "
-        "AND (end   IS NULL OR end   >= ?) "
+        "AND (start IS '' OR start <= ?) "
+        "AND (end   IS '' OR end   >= ?) "
         "LIMIT 1");
     q.addBindValue(lookupPrefix);
     q.addBindValue(dateIso);
     q.addBindValue(dateIso);
     if (q.exec() && q.next())
     {
-        qWarning() << "Invalid Operation" << callsign;
+        qDebug() << "Invalid Operation" << callsign;
         return e;
     }
 
@@ -1154,8 +1151,8 @@ DxccEntity Data::lookupCallsign(const QString& callsign, const QDateTime& date)
         qz.prepare(
             "SELECT zone FROM clublog_zone_exceptions "
             "WHERE UPPER(call)=UPPER(?) "
-            "AND (start IS NULL OR start <= ?) "
-            "AND (end   IS NULL OR end   >= ?) "
+            "AND (start IS '' OR start <= ?) "
+            "AND (end   IS '' OR end   >= ?) "
             "ORDER BY record DESC LIMIT 1");
         qz.addBindValue(lookupPrefix);
         qz.addBindValue(dateIso);
@@ -1179,8 +1176,8 @@ DxccEntity Data::lookupCallsign(const QString& callsign, const QDateTime& date)
             "JOIN clublog_entities e ON e.adif = x.adif "
             "LEFT JOIN dxcc_entities de ON de.id = e.adif "
             "WHERE UPPER(x.call)=UPPER(?) "
-            "AND (x.start IS NULL OR x.start <= ?) "
-            "AND (x.end   IS NULL OR x.end   >= ?) "
+            "AND (x.start IS '' OR x.start <= ?) "
+            "AND (x.end   IS '' OR x.end   >= ?) "
             "ORDER BY x.record DESC LIMIT 1");
         qe.addBindValue(lookupPrefix);
         qe.addBindValue(dateIso);
@@ -1197,13 +1194,16 @@ DxccEntity Data::lookupCallsign(const QString& callsign, const QDateTime& date)
             out.latlon[1] = qe.value(6).toDouble();
             out.ituz      = qe.value(7).isNull() ? 0 : qe.value(7).toInt();
             out.tz        = qe.value(8).isNull() ? 0.0f : static_cast<float>(qe.value(8).toDouble());
-            out.flag      = qe.value(1).toString();
+            out.flag      = flags.value(qe.value(2).toInt());
             applyZoneOverride(out);
             return out;
         }
     }
 
     // 3) Longest prefix (join dxcc_entities to get ituz/tz)
+    DxccEntity best{};
+    bool bestFound = false;
+
     {
         QSqlQuery qp;
         qp.prepare(
@@ -1213,31 +1213,49 @@ DxccEntity Data::lookupCallsign(const QString& callsign, const QDateTime& date)
             "FROM clublog_prefixes p "
             "JOIN clublog_entities e ON e.adif = p.adif "
             "LEFT JOIN dxcc_entities de ON de.id = e.adif "
-            "WHERE ? LIKE p.call || '%' "
-            "AND (p.start IS NULL OR p.start <= ?) "
-            "AND (p.end   IS NULL OR p.end   >= ?) "
-            "ORDER BY length(p.call) DESC, p.record DESC "
+            "WHERE p.call = ? "
+            "AND (p.start IS '' OR p.start <= ?) "
+            "AND (p.end   IS '' OR p.end   >= ?) "
+            "ORDER BY p.record DESC "
             "LIMIT 1");
-        qp.addBindValue(lookupPrefix);
-        qp.addBindValue(dateIso);
-        qp.addBindValue(dateIso);
 
-        if (qp.exec() && qp.next()) {
-            DxccEntity out;
-            out.country   = qp.value(0).toString();
-            out.prefix    = qp.value(1).toString();
-            out.dxcc      = qp.value(2).toInt();
-            out.cont      = qp.value(3).toString();
-            out.cqz       = qp.value(4).toInt();
-            out.latlon[0] = qp.value(5).toDouble();
-            out.latlon[1] = qp.value(6).toDouble();
-            out.ituz      = qp.value(7).isNull() ? 0 : qp.value(7).toInt();
-            out.tz        = qp.value(8).isNull() ? 0.0f : static_cast<float>(qp.value(8).toDouble());
-            out.flag      = qp.value(1).toString();
-            applyZoneOverride(out);
-            return out;
+        // Grow the probe 1 char at a time; keep the last hit as the "longest".
+        for (int i = 1; i <= lookupPrefix.size(); ++i) {
+            const QString probe = lookupPrefix.left(i);
+
+            qp.bindValue(0, probe);
+            qp.bindValue(1, dateIso);
+            qp.bindValue(2, dateIso);
+
+            if (qp.exec() && qp.next()) {
+                DxccEntity cand;
+                cand.country   = qp.value(0).toString();
+                cand.prefix    = qp.value(1).toString();   // the matched prefix (== probe)
+                cand.dxcc      = qp.value(2).toInt();
+                cand.cont      = qp.value(3).toString();
+                cand.cqz       = qp.value(4).toInt();
+                cand.latlon[0] = qp.value(5).toDouble();
+                cand.latlon[1] = qp.value(6).toDouble();
+                cand.ituz      = qp.value(7).isNull() ? 0 : qp.value(7).toInt();
+                cand.tz        = qp.value(8).isNull() ? 0.0f : static_cast<float>(qp.value(8).toDouble());
+                cand.flag      = flags.value(cand.dxcc);
+
+                best       = cand;     // overwrite with the longer match
+                bestFound  = true;
+            } else {
+                // Clear results so we can reuse the prepared statement cleanly
+                qp.finish();
+            }
+
         }
     }
+
+    if (bestFound) {
+        applyZoneOverride(best);  // your existing override hook
+        return best;
+    }
+
+
 
     // 4) No match
     return e;
