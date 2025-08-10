@@ -8,6 +8,7 @@
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"
 #include "service/clublog/ClubLog.h"
+#include "core/dxlabserver.h"
 
 namespace Ui {
 class MainWindow;
@@ -108,6 +109,7 @@ private:
     bool isFusionStyle;
     ClubLogUploader* clublogRT;
     WsjtxUDPReceiver* wsjtx;
+    DxlabServer* dxlab;
     QActionGroup *seqGroup;
     QActionGroup *dupeGroup;
     QActionGroup *linkExchangeGroup;
