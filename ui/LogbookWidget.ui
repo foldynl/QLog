@@ -78,25 +78,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="modeFilter">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-         </property>
-         <item>
-          <property name="text">
-           <string>Mode</string>
-          </property>
-         </item>
-        </widget>
+        <widget class="SmartSearchBox" name="modeSelectFilter" native="true"/>
        </item>
        <item>
         <widget class="SmartSearchBox" name="countrySelectFilter" native="true">
@@ -415,22 +397,6 @@
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>404</x>
-     <y>168</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>modeFilter</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>LogbookWidget</receiver>
-   <slot>modeFilterChanged()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>360</x>
-     <y>17</y>
     </hint>
     <hint type="destinationlabel">
      <x>404</x>
