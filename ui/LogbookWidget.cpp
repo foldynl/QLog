@@ -51,6 +51,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     connect(ui->userSelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::userFilterChanged);
 
+    connect(ui->clubSelectFilter, &SmartSearchBox::currentTextChanged,
+            this, &LogbookWidget::clubFilterChanged);
+
     model = new LogbookModel(this);
     connect(model, &LogbookModel::beforeUpdate, this, &LogbookWidget::handleBeforeUpdate);
     connect(model, &LogbookModel::beforeDelete, this, &LogbookWidget::handleBeforeDelete);
@@ -230,6 +233,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->countrySelectFilter->setHighlightWhenEnable(true);
     ui->countrySelectFilter->blockSignals(false);
 
+    ui->clubSelectFilter->setHighlightWhenEnable(true);
     refreshClubFilter();
 
     ui->userSelectFilter->blockSignals(true);
@@ -269,7 +273,7 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     ui->bandSelectFilter->blockSignals(true);
     ui->userSelectFilter->blockSignals(true);
     ui->modeSelectFilter->blockSignals(true);
-    ui->clubFilter->blockSignals(true);
+    ui->clubSelectFilter->blockSignals(true);
 
     ui->countrySelectFilter->setCurrentText(countryName);
 
@@ -278,12 +282,12 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     //user wants to see only selected band and country
     ui->userSelectFilter->setCurrentText(""); //suppress user-defined filter
     ui->modeSelectFilter->setCurrentText(""); //suppress mode filter
-    ui->clubFilter->setCurrentIndex(0); //suppress club filter
+    ui->clubSelectFilter->setCurrentText(""); //suppress club filter
 
     // set additional filter
     externalFilter = addlFilter;
 
-    ui->clubFilter->blockSignals(false);
+    ui->clubSelectFilter->blockSignals(false);
     ui->userSelectFilter->blockSignals(false);
     ui->modeSelectFilter->blockSignals(false);
     ui->countrySelectFilter->blockSignals(false);
@@ -609,7 +613,6 @@ void LogbookWidget::clubFilterChanged()
 {
     FCT_IDENTIFICATION;
 
-    colorsFilterWidget(ui->clubFilter);
     saveClubFilter();
     filterTable();
 }
@@ -618,14 +621,13 @@ void LogbookWidget::refreshClubFilter()
 {
     FCT_IDENTIFICATION;
 
-    ui->clubFilter->blockSignals(true);
-    const QString &member = ui->clubFilter->currentText();
-    ui->clubFilter->clear();
-    ui->clubFilter->addItems(QStringList(tr("Club")) << MembershipQE::instance()->getEnabledClubLists());
-    adjusteComboMinSize(ui->clubFilter);
-    ui->clubFilter->setCurrentText(member);
-    ui->clubFilter->blockSignals(false);
-    colorsFilterWidget(ui->clubFilter);
+    ui->clubSelectFilter->blockSignals(true);
+    const QString &member = ui->clubSelectFilter->currentText();
+    ui->clubSelectFilter->setModel(new QStringListModel(QStringList(tr("Any Club"))
+                                                        << MembershipQE::instance()->getEnabledClubLists(),ui->clubSelectFilter));
+    ui->clubSelectFilter->adjustMaxSize();
+    ui->clubSelectFilter->setCurrentText(member);
+    ui->clubSelectFilter->blockSignals(false);
 }
 
 void LogbookWidget::refreshUserFilter()
@@ -641,20 +643,14 @@ void LogbookWidget::saveClubFilter()
 {
     FCT_IDENTIFICATION;
 
-    LogParam::setLogbookFilterClub(ui->clubFilter->currentText());
+    LogParam::setLogbookFilterClub(ui->clubSelectFilter->currentText());
 }
 
 void LogbookWidget::restoreClubFilter()
 {
-    ui->clubFilter->blockSignals(true);
-    const QString &value = LogParam::getLogbookFilterClub();
-    if ( !value.isEmpty() )
-        ui->clubFilter->setCurrentText(value);
-    else
-        ui->clubFilter->setCurrentIndex(0);
-
-    colorsFilterWidget(ui->clubFilter);
-    ui->clubFilter->blockSignals(false);
+    ui->clubSelectFilter->blockSignals(true);
+    ui->clubSelectFilter->setCurrentText(LogParam::getLogbookFilterClub());
+    ui->clubSelectFilter->blockSignals(false);
 }
 
 void LogbookWidget::restoreFilters()
@@ -1110,8 +1106,8 @@ void LogbookWidget::filterTable()
     if ( OK && countryCode > 0 )
         filterString.append(QString("dxcc = '%1'").arg(countryCode));
 
-    if ( ui->clubFilter->currentIndex() != 0 )
-        filterString.append(QString("id in (SELECT contactid FROM contact_clubs_view WHERE clubid = '%1')").arg(ui->clubFilter->currentText()));
+    if ( ui->clubSelectFilter->currentIndex() != 0 )
+        filterString.append(QString("id in (SELECT contactid FROM contact_clubs_view WHERE clubid = '%1')").arg(ui->clubSelectFilter->currentText()));
 
     if ( ui->userSelectFilter->currentIndex() != 0 )
         filterString.append(QSOFilterManager::instance()->getWhereClause(ui->userSelectFilter->currentText()));
