@@ -45,6 +45,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     connect(ui->countrySelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::countryFilterChanged);
 
+    connect(ui->bandSelectFilter, &SmartSearchBox::currentTextChanged,
+            this, &LogbookWidget::bandFilterChanged);
+
     model = new LogbookModel(this);
     connect(model, &LogbookModel::beforeUpdate, this, &LogbookWidget::handleBeforeUpdate);
     connect(model, &LogbookModel::beforeDelete, this, &LogbookWidget::handleBeforeDelete);
@@ -197,10 +200,13 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->installEventFilter(this);
     setDefaultSort();
 
-    ui->bandFilter->blockSignals(true);
-    ui->bandFilter->setModel(new SqlListModel("SELECT name FROM bands ORDER BY start_freq", tr("Band"), this));
-    adjusteComboMinSize(ui->bandFilter);
-    ui->bandFilter->blockSignals(false);
+    ui->bandSelectFilter->blockSignals(true);
+    ui->bandSelectFilter->setModel(new SqlListModel("SELECT name FROM bands ORDER BY start_freq",
+                                                    tr("Band"),
+                                                    ui->bandSelectFilter));
+    ui->bandSelectFilter->adjustMaxSize();
+    ui->bandSelectFilter->setHighlightWhenEnable(true);
+    ui->bandSelectFilter->blockSignals(false);
 
     ui->modeFilter->blockSignals(true);
     ui->modeFilter->setModel(new SqlListModel("SELECT name FROM modes", tr("Mode"), this));
@@ -254,17 +260,14 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     FCT_IDENTIFICATION;
 
     ui->countrySelectFilter->blockSignals(true);
-    ui->bandFilter->blockSignals(true);
+    ui->bandSelectFilter->blockSignals(true);
     ui->userFilter->blockSignals(true);
     ui->modeFilter->blockSignals(true);
     ui->clubFilter->blockSignals(true);
 
     ui->countrySelectFilter->setCurrentText(countryName);
 
-    if ( !band.isEmpty() )
-        ui->bandFilter->setCurrentText(band);
-    else
-        ui->bandFilter->setCurrentIndex(0);
+    ui->bandSelectFilter->setCurrentText(band);
 
     //user wants to see only selected band and country
     ui->userFilter->setCurrentIndex(0); //suppress user-defined filter
@@ -278,7 +281,7 @@ void LogbookWidget::filterCountryBand(const QString &countryName,
     ui->userFilter->blockSignals(false);
     ui->modeFilter->blockSignals(false);
     ui->countrySelectFilter->blockSignals(false);
-    ui->bandFilter->blockSignals(false);
+    ui->bandSelectFilter->blockSignals(false);
 
     filterTable();
 }
@@ -495,7 +498,6 @@ void LogbookWidget::bandFilterChanged()
 {
     FCT_IDENTIFICATION;
 
-    colorsFilterWidget(ui->bandFilter);
     saveBandFilter();
     filterTable();;
 }
@@ -504,22 +506,16 @@ void LogbookWidget::saveBandFilter()
 {
     FCT_IDENTIFICATION;
 
-    LogParam::setLogbookFilterBand(ui->bandFilter->currentText());
+    LogParam::setLogbookFilterBand(ui->bandSelectFilter->currentText());
 }
 
 void LogbookWidget::restoreBandFilter()
 {
     FCT_IDENTIFICATION;
 
-    ui->bandFilter->blockSignals(true);
-    const QString &value = LogParam::getLogbookFilterBand();
-    if ( !value.isEmpty() )
-        ui->bandFilter->setCurrentText(value);
-    else
-        ui->bandFilter->setCurrentIndex(0);
-
-    colorsFilterWidget(ui->bandFilter);
-    ui->bandFilter->blockSignals(false);
+    ui->bandSelectFilter->blockSignals(true);
+    ui->bandSelectFilter->setCurrentText(LogParam::getLogbookFilterBand());
+    ui->bandSelectFilter->blockSignals(false);
 }
 
 void LogbookWidget::modeFilterChanged()
@@ -1113,9 +1109,9 @@ void LogbookWidget::filterTable()
     if ( !callsignFilterValue.isEmpty() )
         filterString.append(QString("callsign LIKE '%%1%'").arg(callsignFilterValue.toUpper()));
 
-    const QString &bandFilterValue = ui->bandFilter->currentText();
+    const QString &bandFilterValue = ui->bandSelectFilter->currentText();
 
-    if ( ui->bandFilter->currentIndex() != 0 && !bandFilterValue.isEmpty())
+    if ( ui->bandSelectFilter->currentIndex() != 0 && !bandFilterValue.isEmpty())
         filterString.append(QString("band = '%1'").arg(bandFilterValue));
 
     const QString &modeFilterValue = ui->modeFilter->currentText();
