@@ -18,10 +18,10 @@
 #include "debug.h"
 #include <zlib.h>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QtCore/QLatin1StringView>
+#include <QtCore/qlatin1stringview.h>
 using XmlTag = QLatin1StringView;   // Qt 6
 #else
-#include <QtCore/QLatin1String>
+#include <QtCore/qlatin1string.h>
 using XmlTag = QLatin1String;       // Qt 5
 #endif
 
