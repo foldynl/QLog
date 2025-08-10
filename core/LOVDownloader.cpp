@@ -17,13 +17,6 @@
 #include "LOVDownloader.h"
 #include "debug.h"
 #include <zlib.h>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QtCore/qlatin1stringview.h>
-using XmlTag = QLatin1StringView;   // Qt 6
-#else
-#include <QtCore/qlatin1string.h>
-using XmlTag = QLatin1String;       // Qt 5
-#endif
 
 MODULE_IDENTIFICATION("qlog.core.lovdownloader");
 
@@ -1203,7 +1196,7 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
     auto readDate = [&](const QString &s)->QString { return s; }; // store ISO8601 text as-is
 
     // Cursor down to <clublog>
-    while (!xml.atEnd() && !(xml.isStartElement() && xml.name() == XmlTag("clublog"))) xml.readNext();
+    while (!xml.atEnd() && !(xml.isStartElement() && xml.name() == QStringLiteral("clublog"))) xml.readNext();
 
     if (xml.atEnd()) {
         qWarning() << "ClubLog: <clublog> not found";
@@ -1220,15 +1213,15 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
 
         if (top == "entities") {
             // <entities><entity>...</entity>...</entities>
-            while (!(xml.isEndElement() && xml.name() == XmlTag("entities"))) {
+            while (!(xml.isEndElement() && xml.name() == QStringLiteral("entities"))) {
                 xml.readNext();
-                if (xml.isStartElement() && xml.name() == XmlTag("entity")) {
+                if (xml.isStartElement() && xml.name() == QStringLiteral("entity")) {
                     // parse one entity
                     int adif = 0; QString name, prefix, cont; bool deleted=false;
                     int cqz = 0; QString start, end, whitelist_start, whitelist_end; bool whitelist=false;
                     double lon=0.0, lat=0.0;
 
-                    while (!(xml.isEndElement() && xml.name() == XmlTag("entity"))) {
+                    while (!(xml.isEndElement() && xml.name() == QStringLiteral("entity"))) {
                         xml.readNext();
                         if (!xml.isStartElement()) continue;
                         const QString tag = xml.name().toString();
@@ -1273,13 +1266,13 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
 
             while (!(xml.isEndElement() && xml.name() == top)) {
                 xml.readNext();
-                if (xml.isStartElement() && (xml.name()==XmlTag("prefix") || xml.name()==XmlTag("exception"))) {
+                if (xml.isStartElement() && (xml.name()==QStringLiteral("prefix") || xml.name()==QStringLiteral("exception"))) {
                     bool ok=false;
                     quint32 rec = xml.attributes().value("record").toUInt(&ok);
                     QString call, entity, cont, start, end;
                     int adif=0, cqz=0; double lon=0.0, lat=0.0;
 
-                    while (!(xml.isEndElement() && (xml.name()==XmlTag("prefix") || xml.name()==XmlTag("exception")))) {
+                    while (!(xml.isEndElement() && (xml.name()==QStringLiteral("prefix") || xml.name()==QStringLiteral("exception")))) {
                         xml.readNext();
                         if (!xml.isStartElement()) continue;
                         const QString tag = xml.name().toString();
@@ -1311,12 +1304,12 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
             }
         }
         else if (top == "invalid_operations") {
-            while (!(xml.isEndElement() && xml.name()==XmlTag("invalid_operations"))) {
+            while (!(xml.isEndElement() && xml.name()==QStringLiteral("invalid_operations"))) {
                 xml.readNext();
-                if (xml.isStartElement() && xml.name()==XmlTag("invalid")) {
+                if (xml.isStartElement() && xml.name()==QStringLiteral("invalid")) {
                     bool ok=false; quint32 rec = xml.attributes().value("record").toUInt(&ok);
                     QString call, start, end;
-                    while (!(xml.isEndElement() && xml.name()==XmlTag("invalid"))) {
+                    while (!(xml.isEndElement() && xml.name()==QStringLiteral("invalid"))) {
                         xml.readNext();
                         if (!xml.isStartElement()) continue;
                         const QString tag = xml.name().toString();
@@ -1334,12 +1327,12 @@ void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStre
             }
         }
         else if (top == "zone_exceptions") {
-            while (!(xml.isEndElement() && xml.name()==XmlTag("zone_exceptions"))) {
+            while (!(xml.isEndElement() && xml.name()==QStringLiteral("zone_exceptions"))) {
                 xml.readNext();
-                if (xml.isStartElement() && xml.name()==XmlTag("zone_exception")) {
+                if (xml.isStartElement() && xml.name()==QStringLiteral("zone_exception")) {
                     bool ok=false; quint32 rec = xml.attributes().value("record").toUInt(&ok);
                     QString call, start, end; int zone=0;
-                    while (!(xml.isEndElement() && xml.name()==XmlTag("zone_exception"))) {
+                    while (!(xml.isEndElement() && xml.name()==QStringLiteral("zone_exception"))) {
                         xml.readNext();
                         if (!xml.isStartElement()) continue;
                         const QString tag = xml.name().toString();
