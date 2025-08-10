@@ -16,6 +16,7 @@
 
 #include "LOVDownloader.h"
 #include "debug.h"
+#include <zlib.h>
 
 MODULE_IDENTIFICATION("qlog.core.lovdownloader");
 
@@ -192,7 +193,9 @@ void LOVDownloader::parseData(const SourceDefinition &sourceDef, QTextStream &da
     case MEMBERSHIPCONTENTLIST:
         parseMembershipContent(sourceDef, data);
         break;
-
+    case CLUBLOGCTY:
+        parseClubLogCTY(sourceDef, data);
+        break;
     default:
         qWarning() << "Unssorted type to download" << sourceDef.type << sourceDef.fileName;
     }
@@ -1081,6 +1084,11 @@ void LOVDownloader::processReply(QNetworkReply *reply)
 
         QFile file(dir.filePath(sourceDef.fileName));
         file.open(QIODevice::WriteOnly);
+        if (sourceType == CLUBLOGCTY)
+        {
+            QByteArray maybeXml = gunzip(data);
+            if (!maybeXml.isEmpty()) data = maybeXml;
+        }
         file.write(data);
         file.flush();
         file.close();
@@ -1097,4 +1105,262 @@ void LOVDownloader::processReply(QNetworkReply *reply)
         reply->deleteLater();
         emit finished(false);
     }
+}
+
+
+QByteArray LOVDownloader::gunzip(const QByteArray &in) {
+    if (in.isEmpty()) return {};
+    z_stream strm{};
+    strm.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(in.data()));
+    strm.avail_in = in.size();
+    // 16 + MAX_WBITS tells zlib to parse gzip header/footer
+    if (inflateInit2(&strm, 16 + MAX_WBITS) != Z_OK) return {};
+    QByteArray out;
+    char buf[8192];
+    int ret = Z_OK;
+    while (ret == Z_OK) {
+        strm.next_out = reinterpret_cast<Bytef*>(buf);
+        strm.avail_out = sizeof(buf);
+        ret = inflate(&strm, Z_NO_FLUSH);
+        if (ret == Z_OK || ret == Z_STREAM_END) {
+            out.append(buf, sizeof(buf) - strm.avail_out);
+        }
+    }
+    inflateEnd(&strm);
+    return out;
+}
+
+#include <QXmlStreamReader>
+#include <QSqlQuery>
+#include <QSqlError>
+
+void LOVDownloader::parseClubLogCTY(const SourceDefinition &sourceDef, QTextStream &stream)
+{
+    FCT_IDENTIFICATION;
+
+    if (sourceDef.type != CLUBLOGCTY)
+    {
+        return;
+    }
+
+    // Read whole text (it’s XML); QXmlStreamReader can also take QIODevice, but we
+    // already have a QTextStream here.
+    const QString xmlText = stream.readAll();
+    QXmlStreamReader xml(xmlText);
+
+    // Clean all five tables inside one transaction
+    QSqlDatabase::database().transaction();
+    auto rollback = [&](){
+        qCWarning(runtime) << "ClubLog CTY import failed - rollback";
+        QSqlDatabase::database().rollback();
+    };
+
+    if (!deleteTable("clublog_zone_exceptions")
+        || !deleteTable("clublog_invalid_ops")
+        || !deleteTable("clublog_exceptions")
+        || !deleteTable("clublog_prefixes")
+        || !deleteTable("clublog_entities")) {
+        rollback();
+        return;
+    }
+
+    QSqlQuery insEntity, insPrefix, insExc, insInv, insZone;
+
+    // prepared statements
+    if (!insEntity.prepare(
+            "INSERT INTO clublog_entities(adif,name,prefix,deleted,cqz,cont,lon,lat,start,\"end\",whitelist,whitelist_start,whitelist_end)"
+            "VALUES(:adif,:name,:prefix,:deleted,:cqz,:cont,:lon,:lat,:start,:end,:whitelist,:whitelist_start,:whitelist_end)"))
+    { qWarning() << insEntity.lastError(); rollback(); return; }
+
+    if (!insPrefix.prepare(
+            "INSERT INTO clublog_prefixes(record,call,entity,adif,cqz,cont,lon,lat,start,\"end\")"
+            "VALUES(:record,:call,:entity,:adif,:cqz,:cont,:lon,:lat,:start,:end)"))
+    { qWarning() << insPrefix.lastError(); rollback(); return; }
+
+    if (!insExc.prepare(
+            "INSERT INTO clublog_exceptions(record,call,entity,adif,cqz,cont,lon,lat,start,\"end\")"
+            "VALUES(:record,:call,:entity,:adif,:cqz,:cont,:lon,:lat,:start,:end)"))
+    { qWarning() << insExc.lastError(); rollback(); return; }
+
+    if (!insInv.prepare(
+            "INSERT INTO clublog_invalid_ops(record,call,start,\"end\")"
+            "VALUES(:record,:call,:start,:end)"))
+    { qWarning() << insInv.lastError(); rollback(); return; }
+
+    if (!insZone.prepare(
+            "INSERT INTO clublog_zone_exceptions(record,call,zone,start,\"end\")"
+            "VALUES(:record,:call,:zone,:start,:end)"))
+    { qWarning() << insZone.lastError(); rollback(); return; }
+
+    auto readText = [&](QXmlStreamReader &x)->QString { return x.readElementText().trimmed(); };
+    auto readDate = [&](const QString &s)->QString { return s; }; // store ISO8601 text as-is
+
+    // Cursor down to <clublog>
+    while (!xml.atEnd() && !(xml.isStartElement() && xml.name() == "clublog")) xml.readNext();
+
+    if (xml.atEnd()) {
+        qWarning() << "ClubLog: <clublog> not found";
+        rollback(); return;
+    }
+
+    // Iterate children of <clublog>
+    while (!xml.atEnd()) {
+        xml.readNext();
+
+        if (!xml.isStartElement()) continue;
+
+        const QString top = xml.name().toString();
+
+        if (top == "entities") {
+            // <entities><entity>...</entity>...</entities>
+            while (!(xml.isEndElement() && xml.name() == "entities")) {
+                xml.readNext();
+                if (xml.isStartElement() && xml.name() == "entity") {
+                    // parse one entity
+                    int adif = 0; QString name, prefix, cont; bool deleted=false;
+                    int cqz = 0; QString start, end, whitelist_start, whitelist_end; bool whitelist=false;
+                    double lon=NAN, lat=NAN;
+
+                    while (!(xml.isEndElement() && xml.name() == "entity")) {
+                        xml.readNext();
+                        if (!xml.isStartElement()) continue;
+                        const QString tag = xml.name().toString();
+                        if (tag=="adif") adif = readText(xml).toInt();
+                        else if (tag=="name") name = readText(xml);
+                        else if (tag=="prefix") prefix = readText(xml);
+                        else if (tag=="deleted") deleted = (readText(xml).compare("true", Qt::CaseInsensitive)==0);
+                        else if (tag=="cqz") cqz = readText(xml).toInt();
+                        else if (tag=="cont") cont = readText(xml);
+                        else if (tag=="long") lon = readText(xml).toDouble();
+                        else if (tag=="lat")  lat = readText(xml).toDouble();
+                        else if (tag=="start") start = readDate(readText(xml));
+                        else if (tag=="end")   end   = readDate(readText(xml));
+                        else if (tag=="whitelist") whitelist = (readText(xml).compare("true", Qt::CaseInsensitive)==0);
+                        else if (tag=="whitelist_start") whitelist_start = readDate(readText(xml));
+                        else if (tag=="whitelist_end")   whitelist_end   = readDate(readText(xml));
+                        else xml.skipCurrentElement();
+                    }
+
+                    insEntity.bindValue(":adif", adif);
+                    insEntity.bindValue(":name", name);
+                    insEntity.bindValue(":prefix", prefix);
+                    insEntity.bindValue(":deleted", deleted ? 1 : 0);
+                    insEntity.bindValue(":cqz", cqz ? cqz : QVariant(QVariant::Int));
+                    insEntity.bindValue(":cont", cont.isEmpty()? QVariant(QVariant::String) : cont);
+                    insEntity.bindValue(":lon",  std::isnan(lon) ? QVariant(QVariant::Double) : lon);
+                    insEntity.bindValue(":lat",  std::isnan(lat) ? QVariant(QVariant::Double) : lat);
+                    insEntity.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
+                    insEntity.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+                    insEntity.bindValue(":whitelist", whitelist?1:0);
+                    insEntity.bindValue(":whitelist_start", whitelist_start.isEmpty()? QVariant(QVariant::String):whitelist_start);
+                    insEntity.bindValue(":whitelist_end",   whitelist_end.isEmpty()?   QVariant(QVariant::String):whitelist_end);
+
+                    if (!insEntity.exec()) { qWarning() << insEntity.lastError(); rollback(); return; }
+                }
+            }
+        }
+        else if (top == "prefixes" || top == "exceptions") {
+            // these two share the same internal structure: <prefix|exception record='...'>...</...>
+            bool isPrefix = (top=="prefixes");
+            QSqlQuery &ins = isPrefix ? insPrefix : insExc;
+
+            while (!(xml.isEndElement() && xml.name() == top)) {
+                xml.readNext();
+                if (xml.isStartElement() && (xml.name()=="prefix" || xml.name()=="exception")) {
+                    bool ok=false;
+                    quint32 rec = xml.attributes().value("record").toUInt(&ok);
+                    QString call, entity, cont, start, end;
+                    int adif=0, cqz=0; double lon=NAN, lat=NAN;
+
+                    while (!(xml.isEndElement() && (xml.name()=="prefix" || xml.name()=="exception"))) {
+                        xml.readNext();
+                        if (!xml.isStartElement()) continue;
+                        const QString tag = xml.name().toString();
+                        if (tag=="call") call = readText(xml);
+                        else if (tag=="entity") entity = readText(xml);
+                        else if (tag=="adif") adif = readText(xml).toInt();
+                        else if (tag=="cqz") cqz = readText(xml).toInt();
+                        else if (tag=="cont") cont = readText(xml);
+                        else if (tag=="long") lon = readText(xml).toDouble();
+                        else if (tag=="lat")  lat = readText(xml).toDouble();
+                        else if (tag=="start") start = readDate(readText(xml));
+                        else if (tag=="end")   end = readDate(readText(xml));
+                        else xml.skipCurrentElement();
+                    }
+
+                    ins.bindValue(":record", rec);
+                    ins.bindValue(":call", call);
+                    ins.bindValue(":entity", entity);
+                    ins.bindValue(":adif", adif);
+                    ins.bindValue(":cqz", cqz?cqz:QVariant(QVariant::Int));
+                    ins.bindValue(":cont", cont.isEmpty()? QVariant(QVariant::String) : cont);
+                    ins.bindValue(":lon",  std::isnan(lon) ? QVariant(QVariant::Double) : lon);
+                    ins.bindValue(":lat",  std::isnan(lat) ? QVariant(QVariant::Double) : lat);
+                    ins.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
+                    ins.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+
+                    if (!ins.exec()) { qWarning() << ins.lastError(); rollback(); return; }
+                }
+            }
+        }
+        else if (top == "invalid_operations") {
+            while (!(xml.isEndElement() && xml.name()=="invalid_operations")) {
+                xml.readNext();
+                if (xml.isStartElement() && xml.name()=="invalid") {
+                    bool ok=false; quint32 rec = xml.attributes().value("record").toUInt(&ok);
+                    QString call, start, end;
+                    while (!(xml.isEndElement() && xml.name()=="invalid")) {
+                        xml.readNext();
+                        if (!xml.isStartElement()) continue;
+                        const QString tag = xml.name().toString();
+                        if (tag=="call") call = readText(xml);
+                        else if (tag=="start") start = readDate(readText(xml));
+                        else if (tag=="end")   end   = readDate(readText(xml));
+                        else xml.skipCurrentElement();
+                    }
+                    insInv.bindValue(":record", rec);
+                    insInv.bindValue(":call", call);
+                    insInv.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
+                    insInv.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+                    if (!insInv.exec()) { qWarning() << insInv.lastError(); rollback(); return; }
+                }
+            }
+        }
+        else if (top == "zone_exceptions") {
+            while (!(xml.isEndElement() && xml.name()=="zone_exceptions")) {
+                xml.readNext();
+                if (xml.isStartElement() && xml.name()=="zone_exception") {
+                    bool ok=false; quint32 rec = xml.attributes().value("record").toUInt(&ok);
+                    QString call, start, end; int zone=0;
+                    while (!(xml.isEndElement() && xml.name()=="zone_exception")) {
+                        xml.readNext();
+                        if (!xml.isStartElement()) continue;
+                        const QString tag = xml.name().toString();
+                        if (tag=="call") call = readText(xml);
+                        else if (tag=="zone") zone = readText(xml).toInt();
+                        else if (tag=="start") start = readDate(readText(xml));
+                        else if (tag=="end")   end   = readDate(readText(xml));
+                        else xml.skipCurrentElement();
+                    }
+                    insZone.bindValue(":record", rec);
+                    insZone.bindValue(":call", call);
+                    insZone.bindValue(":zone", zone);
+                    insZone.bindValue(":start", start.isEmpty()? QVariant(QVariant::String) : start);
+                    insZone.bindValue(":end",   end.isEmpty()?   QVariant(QVariant::String) : end);
+                    if (!insZone.exec()) { qWarning() << insZone.lastError(); rollback(); return; }
+                }
+            }
+        }
+        else {
+            xml.skipCurrentElement();
+        }
+    }
+
+    if (xml.hasError()) {
+        qWarning() << "ClubLog XML error:" << xml.errorString();
+        rollback(); return;
+    }
+
+    QSqlDatabase::database().commit();
+    qCDebug(runtime) << "ClubLog CTY import finished.";
 }

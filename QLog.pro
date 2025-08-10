@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 TARGET = qlog
 TEMPLATE = app
 VERSION = 0.45.0
-
+LIBS += -lz
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
 # Define paths to HAMLIB. Leave empty if system libraries should be used
@@ -476,8 +476,8 @@ macx: {
       INSTALLS += target
    }
 
-   INCLUDEPATH += /usr/local/include /opt/homebrew/include
-   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3
+   INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
+   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -L/opt/local/lib
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=

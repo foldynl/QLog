@@ -1092,6 +1092,158 @@ DxccEntity Data::lookupDxcc(const QString &callsign)
     return dxccRet;
 }
 
+// Data.cpp
+// Data.cpp
+DxccEntity Data::lookupCallsign(const QString& callsign, const QDateTime& date)
+{
+    const QDateTime useDate = date.isValid() ? date : QDateTime::currentDateTimeUtc();
+    const QString dateIso = useDate.toUTC().toString(Qt::ISODate);
+
+    QString lookupPrefix = callsign; // use the callsign with optional prefix as default to find the dxcc
+    const Callsign parsedCallsign(callsign); // use Callsign to split the callsign into its parts
+
+    if ( parsedCallsign.isValid() )
+    {
+        QString suffix = parsedCallsign.getSuffix();
+        if ( suffix.length() == 1 ) // some countries add single numbers as suffix to designate a call area, e.g. /4
+        {
+            bool isNumber = false;
+            (void)suffix.toInt(&isNumber);
+            if ( isNumber )
+            {
+                lookupPrefix = parsedCallsign.getBasePrefix() + suffix; // use the call prefix and the number from the suffix to find the dxcc
+            }
+        }
+        else if ( suffix.length() > 1
+                  && !parsedCallsign.secondarySpecialSuffixes.contains(suffix) ) // if there is more than one character and it is not one of the special suffixes, we definitely have a call prefix as suffix
+        {
+            lookupPrefix = suffix + "/" + parsedCallsign.getBase();
+            qWarning() << suffix << lookupPrefix << callsign;
+        }
+    }
+
+
+
+    DxccEntity e; // empty = no match / invalid
+    QSqlQuery q;
+    e.dxcc = 0;
+    e.ituz = 0;
+    e.cqz = 0;
+    e.tz = 0;
+
+    if(callsign.endsWith("/MM")) return e;
+
+    // 1) Invalid ops ⇒ treat as no result
+    q.prepare(
+        "SELECT 1 FROM clublog_invalid_ops "
+        "WHERE UPPER(call)=UPPER(?) "
+        "AND (start IS NULL OR start <= ?) "
+        "AND (end   IS NULL OR end   >= ?) "
+        "LIMIT 1");
+    q.addBindValue(lookupPrefix);
+    q.addBindValue(dateIso);
+    q.addBindValue(dateIso);
+    if (q.exec() && q.next())
+    {
+        qWarning() << "Invalid Operation" << callsign;
+        return e;
+    }
+
+    auto applyZoneOverride = [&](DxccEntity& out){
+        QSqlQuery qz;
+        qz.prepare(
+            "SELECT zone FROM clublog_zone_exceptions "
+            "WHERE UPPER(call)=UPPER(?) "
+            "AND (start IS NULL OR start <= ?) "
+            "AND (end   IS NULL OR end   >= ?) "
+            "ORDER BY record DESC LIMIT 1");
+        qz.addBindValue(lookupPrefix);
+        qz.addBindValue(dateIso);
+        qz.addBindValue(dateIso);
+        if (qz.exec() && qz.next())
+            out.cqz = qz.value(0).toInt();
+    };
+
+    // 2) Exact exceptions (join dxcc_entities to get ituz/tz)
+    {
+        QSqlQuery qe;
+        qe.prepare(
+            "SELECT "
+            "  e.name, e.prefix, e.adif, "
+            "  COALESCE(x.cont, e.cont), "
+            "  COALESCE(x.cqz , e.cqz ), "
+            "  COALESCE(x.lat , e.lat ), "
+            "  COALESCE(x.lon, e.lon), "
+            "  de.ituz, de.tz "
+            "FROM clublog_exceptions x "
+            "JOIN clublog_entities e ON e.adif = x.adif "
+            "LEFT JOIN dxcc_entities de ON de.id = e.adif "
+            "WHERE UPPER(x.call)=UPPER(?) "
+            "AND (x.start IS NULL OR x.start <= ?) "
+            "AND (x.end   IS NULL OR x.end   >= ?) "
+            "ORDER BY x.record DESC LIMIT 1");
+        qe.addBindValue(lookupPrefix);
+        qe.addBindValue(dateIso);
+        qe.addBindValue(dateIso);
+
+        if (qe.exec() && qe.next()) {
+            DxccEntity out;
+            out.country   = qe.value(0).toString();
+            out.prefix    = qe.value(1).toString();
+            out.dxcc      = qe.value(2).toInt();
+            out.cont      = qe.value(3).toString();
+            out.cqz       = qe.value(4).toInt();
+            out.latlon[0] = qe.value(5).toDouble();
+            out.latlon[1] = qe.value(6).toDouble();
+            out.ituz      = qe.value(7).isNull() ? 0 : qe.value(7).toInt();
+            out.tz        = qe.value(8).isNull() ? 0.0f : static_cast<float>(qe.value(8).toDouble());
+            out.flag      = qe.value(1).toString();
+            applyZoneOverride(out);
+            return out;
+        }
+    }
+
+    // 3) Longest prefix (join dxcc_entities to get ituz/tz)
+    {
+        QSqlQuery qp;
+        qp.prepare(
+            "SELECT "
+            "  e.name, e.prefix, e.adif, e.cont, e.cqz, e.lat, e.lon, "
+            "  de.ituz, de.tz "
+            "FROM clublog_prefixes p "
+            "JOIN clublog_entities e ON e.adif = p.adif "
+            "LEFT JOIN dxcc_entities de ON de.id = e.adif "
+            "WHERE ? LIKE p.call || '%' "
+            "AND (p.start IS NULL OR p.start <= ?) "
+            "AND (p.end   IS NULL OR p.end   >= ?) "
+            "ORDER BY length(p.call) DESC, p.record DESC "
+            "LIMIT 1");
+        qp.addBindValue(lookupPrefix);
+        qp.addBindValue(dateIso);
+        qp.addBindValue(dateIso);
+
+        if (qp.exec() && qp.next()) {
+            DxccEntity out;
+            out.country   = qp.value(0).toString();
+            out.prefix    = qp.value(1).toString();
+            out.dxcc      = qp.value(2).toInt();
+            out.cont      = qp.value(3).toString();
+            out.cqz       = qp.value(4).toInt();
+            out.latlon[0] = qp.value(5).toDouble();
+            out.latlon[1] = qp.value(6).toDouble();
+            out.ituz      = qp.value(7).isNull() ? 0 : qp.value(7).toInt();
+            out.tz        = qp.value(8).isNull() ? 0.0f : static_cast<float>(qp.value(8).toDouble());
+            out.flag      = qp.value(1).toString();
+            applyZoneOverride(out);
+            return out;
+        }
+    }
+
+    // 4) No match
+    return e;
+}
+
+
 DxccEntity Data::lookupDxccID(const int dxccID)
 {
     FCT_IDENTIFICATION;

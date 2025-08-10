@@ -19,7 +19,8 @@ public:
         IOTALIST = 4,
         POTADIRECTORY = 5,
         MEMBERSHIPCONTENTLIST = 6,
-        UNDEF = 7
+        CLUBLOGCTY = 7,
+        UNDEF = 8
     };
 
 public:
@@ -103,6 +104,12 @@ private:
                                    "content.csv",
                                    "LOV/last_membershipcontent_update",
                                    "membership_directory",
+                                   7)},
+        {CLUBLOGCTY, SourceDefinition(CLUBLOGCTY,
+                                                 "https://cdn.clublog.org/cty.php?api=a1a2215eea4990661a8ce55873a33c4ef290b49d",
+                                                 "clublog_cty.xml",
+                                                 "LOV/last_clublogcty_update",
+                                                 "clublog_entities",
                                    7)}
     };
 
@@ -126,6 +133,8 @@ private:
     void parseIOTA(const SourceDefinition &sourceDef, QTextStream& data);
     void parsePOTA(const SourceDefinition &sourceDef, QTextStream& data);
     void parseMembershipContent(const SourceDefinition &sourceDef, QTextStream& data);
+    static QByteArray gunzip(const QByteArray &in);
+    void parseClubLogCTY(const SourceDefinition &sourceDef, QTextStream &data);
 
 private slots:
     void processReply(QNetworkReply*);

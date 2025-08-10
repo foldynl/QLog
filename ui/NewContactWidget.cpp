@@ -524,7 +524,13 @@ void NewContactWidget::setDxccInfo(const QString &callsign)
 
     qCDebug(function_parameters) << callsign;
 
-    setDxccInfo(Data::instance()->lookupDxcc(callsign.toUpper()));
+    if(isManualEnterMode)
+    {
+        QDateTime qsoDt = QDateTime(ui->dateEdit->date(),ui->timeOnEdit->time());
+        setDxccInfo(Data::instance()->lookupCallsign(callsign.toUpper(), qsoDt.toUTC()));
+    }
+    else
+        setDxccInfo(Data::instance()->lookupDxcc(callsign.toUpper()));
 }
 
 void NewContactWidget::useFieldsFromPrevQSO(const QString &callsign, const QString &grid)
