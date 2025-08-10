@@ -190,6 +190,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(darkLightModeSwith, &SwitchButton::stateChanged, this, &MainWindow::darkModeToggle);
     darkLightModeSwith->setChecked(LogParam::getMainWindowDarkMode());
 
+    dxlab = new DxlabServer(Rig::instance());
     connect(Rig::instance(), &Rig::rigErrorPresent, this, &MainWindow::rigErrorHandler);
     connect(Rig::instance(), &Rig::rigCWKeyOpenRequest, this, &MainWindow::cwKeyerConnectProfile);
     connect(Rig::instance(), &Rig::rigCWKeyCloseRequest, this, &MainWindow::cwKeyerDisconnectProfile);
@@ -198,22 +199,32 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(Rig::instance(), &Rig::frequencyChanged, ui->newContactWidget, &NewContactWidget::changeFrequency);
     connect(Rig::instance(), &Rig::frequencyChanged, ui->rigWidget, &RigWidget::updateFrequency);
     connect(Rig::instance(), &Rig::frequencyChanged, ui->dxWidget , &DxWidget::setTunedFrequency);
+    connect(Rig::instance(), &Rig::frequencyChanged, dxlab, &DxlabServer::updateFrequency);
     connect(Rig::instance(), &Rig::modeChanged, ui->bandmapWidget, &BandmapWidget::updateMode);
     connect(Rig::instance(), &Rig::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
     connect(Rig::instance(), &Rig::modeChanged, ui->rigWidget, &RigWidget::updateMode);
+    connect(Rig::instance(), &Rig::modeChanged, dxlab, &DxlabServer::updateMode);
     connect(Rig::instance(), &Rig::powerChanged, ui->newContactWidget, &NewContactWidget::changePower);
     connect(Rig::instance(), &Rig::powerChanged, ui->rigWidget, &RigWidget::updatePWR);
+    connect(Rig::instance(), &Rig::powerChanged, dxlab, &DxlabServer::updatePWR);
     connect(Rig::instance(), &Rig::rigConnected, ui->newContactWidget, &NewContactWidget::rigConnected);
     connect(Rig::instance(), &Rig::rigConnected, ui->rigWidget, &RigWidget::rigConnected);
     connect(Rig::instance(), &Rig::rigConnected, ui->cwconsoleWidget, &CWConsoleWidget::rigConnectHandler);
+    connect(Rig::instance(), &Rig::rigConnected, dxlab, &DxlabServer::rigConnected);
     connect(Rig::instance(), &Rig::rigDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::rigDisconnectHandler);
     connect(Rig::instance(), &Rig::rigDisconnected, ui->newContactWidget, &NewContactWidget::rigDisconnected);
     connect(Rig::instance(), &Rig::rigDisconnected, ui->rigWidget, &RigWidget::rigDisconnected);
+    connect(Rig::instance(), &Rig::rigDisconnected, dxlab, &DxlabServer::rigDisconnected);
     connect(Rig::instance(), &Rig::vfoChanged, ui->rigWidget, &RigWidget::updateVFO);
+    connect(Rig::instance(), &Rig::vfoChanged, dxlab, &DxlabServer::updateVFO);
     connect(Rig::instance(), &Rig::xitChanged, ui->rigWidget, &RigWidget::updateXIT);
     connect(Rig::instance(), &Rig::ritChanged, ui->rigWidget, &RigWidget::updateRIT);
     connect(Rig::instance(), &Rig::pttChanged, ui->rigWidget, &RigWidget::updatePTT);
+    connect(Rig::instance(), &Rig::xitChanged, dxlab, &DxlabServer::updateXIT);
+    connect(Rig::instance(), &Rig::ritChanged, dxlab, &DxlabServer::updateRIT);
+    connect(Rig::instance(), &Rig::pttChanged, dxlab, &DxlabServer::updatePTT);
     connect(Rig::instance(), &Rig::rigStatusChanged, &networknotification, &NetworkNotification::rigStatus);
+    dxlab->start(52002);
 
     connect(Rotator::instance(), &Rotator::rotErrorPresent, this, &MainWindow::rotErrorHandler);
     connect(Rotator::instance(), &Rotator::positionChanged, ui->onlineMapWidget, &OnlineMapWidget::antPositionChanged);
