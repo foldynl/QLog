@@ -48,6 +48,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     connect(ui->bandSelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::bandFilterChanged);
 
+    connect(ui->modeSelectFilter, &SmartSearchBox::currentTextChanged,
+            this, &LogbookWidget::modeFilterChanged);
+
     connect(ui->userSelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::userFilterChanged);
 
