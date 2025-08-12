@@ -50,6 +50,10 @@ Rig::Rig(QObject *parent)
                                          &FlrigRigDrv::getModelList,
                                          &FlrigRigDrv::getCaps,
                                          nullptr);
+    QTimer *heartBeatTimer = new QTimer(this);
+    connect(heartBeatTimer, &QTimer::timeout, this, &Rig::sendHeartBeat);
+    heartBeatTimer->start(1000);
+
 }
 
 qint32 Rig::getNormalBandwidth(const QString &mode, const QString &)
@@ -664,4 +668,12 @@ Rig::~Rig()
     __closeRig();
 }
 
+void Rig::sendHeartBeat()
+{
+    if (rigStatus.isConnected)
+    {
+     emitRigStatusChanged();
+    }
+
+}
 #undef MUTEXLOCKER

@@ -134,6 +134,7 @@ private slots:
     void stopMorseImpl();
     void sendStateImpl();
     void sendDXSpotImpl(const DxSpot &spot);
+    void sendHeartBeat();
 
 private:
     class DrvParams
