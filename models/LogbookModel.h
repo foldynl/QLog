@@ -210,11 +210,6 @@ public:
         const QString value = fieldNameTranslationMap.value(key);
         return value.isEmpty() ? QString () : tr(value.toStdString().c_str());
     }
-
-    static const QMap<LogbookModel::ColumnID, QString> getAllFieldNamesTranslation()
-    {
-        return fieldNameTranslationMap;
-    }
 };
 
 #endif // QLOG_MODELS_LOGBOOKMODEL_H
