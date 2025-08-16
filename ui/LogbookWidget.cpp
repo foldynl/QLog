@@ -9,6 +9,7 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QProgressDialog>
+#include <QActionGroup>
 
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
@@ -41,6 +42,17 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+
+    searchTypeList.insert(CALLSIGN_SEARCH,
+                          SearchDefinition(CALLSIGN_SEARCH,
+                                           ui->actionSearchCallsign,
+                                           "callsign"));
+    searchTypeList.insert(GRIDSQUARE_SEARCH,
+                          SearchDefinition(GRIDSQUARE_SEARCH,
+                                           ui->actionSearchGrid,
+                                           "gridsquare"));
+
+    setupSearchMenu();
 
     connect(ui->countrySelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::countryFilterChanged);
@@ -490,17 +502,81 @@ void LogbookWidget::callbookError(const QString &error)
     QMessageBox::critical(this, tr("QLog Error"), tr("Callbook error: ") + error);
 }
 
+void LogbookWidget::setCallsignSearch()
+{
+    FCT_IDENTIFICATION;
+
+    clearSearchText();
+    ui->searchTextFilter->setPlaceholderText(tr("Callsign"));
+
+    if ( !callsignSearchValue.isEmpty() )
+        ui->searchTextFilter->setText(callsignSearchValue);
+}
+
+void LogbookWidget::setGridsquareSearch()
+{
+    FCT_IDENTIFICATION;
+
+    clearSearchText();
+    ui->searchTextFilter->setPlaceholderText(tr("Gridsquare"));
+}
+
 void LogbookWidget::filterCallsign(const QString &call)
 {
     FCT_IDENTIFICATION;
 
-    if ( call == ui->callsignFilter->text() )
+    if ( call == callsignSearchValue )
         return;
 
-    ui->callsignFilter->setText(call);
+    callsignSearchValue = call;
+
+    if ( ui->actionSearchCallsign->isChecked() )
+    {
+        ui->searchTextFilter->blockSignals(true);
+        ui->searchTextFilter->setText(call);
+        ui->searchTextFilter->blockSignals(false);
+    }
+
+    filterTable();
 }
 
-void LogbookWidget::callsignFilterChanged()
+void LogbookWidget::clearSearchText()
+{
+    FCT_IDENTIFICATION;
+
+    if ( ui->searchTextFilter->text().isEmpty() )
+        return;
+
+    ui->searchTextFilter->clear();
+}
+
+void LogbookWidget::setupSearchMenu()
+{
+    FCT_IDENTIFICATION;
+
+    QMenu *searchTypeMenu = new QMenu(ui->searchTypeButton);
+
+    searchTypeGroup = new QActionGroup(this);
+    searchTypeGroup->setExclusive(true);
+
+    for ( auto it = searchTypeList.cbegin(); it != searchTypeList.cend(); ++it)
+    {
+        QAction *action = it.value().action;
+        if ( action )
+        {
+            action->setActionGroup(searchTypeGroup);
+            searchTypeMenu->addAction(action);
+        }
+    }
+
+    connect(searchTypeGroup, &QActionGroup::triggered, this, [this](QAction *action)
+    {
+        saveSearchTextFilter(action);
+    });
+
+    ui->searchTypeButton->setMenu(searchTypeMenu);
+}
+void LogbookWidget::onSearchTextChanged()
 {
     FCT_IDENTIFICATION;
 
@@ -651,21 +727,49 @@ void LogbookWidget::saveClubFilter()
 
 void LogbookWidget::restoreClubFilter()
 {
+    FCT_IDENTIFICATION;
+
     ui->clubSelectFilter->blockSignals(true);
     ui->clubSelectFilter->setCurrentText(LogParam::getLogbookFilterClub());
     ui->clubSelectFilter->blockSignals(false);
+}
+
+void LogbookWidget::saveSearchTextFilter(QAction *action)
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setLogbookFilterSearchType(action->data().toInt());
+}
+
+void LogbookWidget::restoreSearchTextFilter()
+{
+    FCT_IDENTIFICATION;
+
+    int searchType = LogParam::getLogbookFilterSearchType(SearchType::CALLSIGN_SEARCH);
+
+    const SearchDefinition &def = searchTypeList.value(static_cast<SearchType>(searchType));
+
+    if ( def.action )
+    {
+        searchTypeGroup->blockSignals(true);
+        def.action->setChecked(true);
+        def.action->trigger();
+        searchTypeGroup->blockSignals(false);
+    }
 }
 
 void LogbookWidget::restoreFilters()
 {
     FCT_IDENTIFICATION;
 
+    restoreSearchTextFilter();
     restoreModeFilter();
     restoreBandFilter();
     restoreCountryFilter();
     restoreClubFilter();
     restoreUserFilter();
     externalFilter = QString();
+    clearSearchText();
     filterTable();
 }
 
@@ -995,7 +1099,7 @@ void LogbookWidget::focusSearchCallsign()
 {
     FCT_IDENTIFICATION;
 
-    ui->callsignFilter->setFocus();
+    ui->searchTextFilter->setFocus();
 }
 
 void LogbookWidget::reloadSetting()
@@ -1087,11 +1191,19 @@ void LogbookWidget::filterTable()
     FCT_IDENTIFICATION;
 
     QStringList filterString;
+    QString searchText = ui->searchTextFilter->text();
 
-    const QString &callsignFilterValue = ui->callsignFilter->text();
+    // an external request from Callsign search is always used (the request is sent by the NewContact Widget)
+    if ( !ui->actionSearchCallsign->isChecked() && !callsignSearchValue.isEmpty() )
+        filterString.append(QString("callsign LIKE '%%1%'").arg(callsignSearchValue.toUpper()));
 
-    if ( !callsignFilterValue.isEmpty() )
-        filterString.append(QString("callsign LIKE '%%1%'").arg(callsignFilterValue.toUpper()));
+    for ( auto it = searchTypeList.cbegin(); it != searchTypeList.cend(); it++)
+    {
+        const SearchDefinition &def = it.value();
+        if ( !def.action ) continue;
+        if ( def.action->isChecked() && !searchText.isEmpty() )
+            filterString.append(QString("%1 LIKE '%%2%'").arg(def.dbColumn, searchText.toUpper()));
+    }
 
     const QString &bandFilterValue = ui->bandSelectFilter->currentText();
 

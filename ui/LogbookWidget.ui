@@ -37,32 +37,68 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLineEdit" name="callsignFilter">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>0</number>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>140</width>
-           <height>16777215</height>
-          </size>
+         <property name="rightMargin">
+          <number>0</number>
          </property>
-         <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
-         </property>
-         <property name="maxLength">
-          <number>20</number>
-         </property>
-         <property name="placeholderText">
-          <string>Search Callsign</string>
-         </property>
-         <property name="clearButtonEnabled">
-          <bool>true</bool>
-         </property>
-        </widget>
+         <item>
+          <widget class="QPushButton" name="searchTypeButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::NoContextMenu</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">::menu-indicator{ image: none; }</string>
+           </property>
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/icons/icons.qrc">
+             <normaloff>:/icons/baseline-search-24px.svg</normaloff>:/icons/baseline-search-24px.svg</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="searchTextFilter">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>140</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
+           <property name="maxLength">
+            <number>20</number>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="SmartSearchBox" name="bandSelectFilter" native="true">
@@ -280,6 +316,22 @@
     <string>Logbook - Send DX Spot</string>
    </property>
   </action>
+  <action name="actionSearchCallsign">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Callsign</string>
+   </property>
+  </action>
+  <action name="actionSearchGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Gridsquare</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -315,10 +367,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>callsignFilter</sender>
+   <sender>searchTextFilter</sender>
    <signal>textChanged(QString)</signal>
    <receiver>LogbookWidget</receiver>
-   <slot>callsignFilterChanged()</slot>
+   <slot>onSearchTextChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>129</x>
@@ -474,10 +526,42 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSearchCallsign</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>setCallsignSearch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSearchGrid</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>setGridsquareSearch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>deleteContact()</slot>
-  <slot>callsignFilterChanged()</slot>
+  <slot>onSearchTextChanged()</slot>
   <slot>bandFilterChanged()</slot>
   <slot>uploadClublog()</slot>
   <slot>filterSelectedCallsign()</slot>
@@ -492,5 +576,7 @@
   <slot>exportContact()</slot>
   <slot>clubFilterChanged()</slot>
   <slot>sendDXCSpot()</slot>
+  <slot>setCallsignSearch()</slot>
+  <slot>setGridsquareSearch()</slot>
  </slots>
 </ui>

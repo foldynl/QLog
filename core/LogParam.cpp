@@ -1067,6 +1067,16 @@ void LogParam::setLogbookState(const QByteArray &state)
     setParam("logbook/maintablestate", state.toBase64());
 }
 
+int LogParam::getLogbookFilterSearchType(int defaultValue)
+{
+    return getParam("logbook/filter/searchtype", defaultValue).toInt();
+}
+
+void LogParam::setLogbookFilterSearchType(int type)
+{
+    setParam("logbook/filter/searchtype", type);
+}
+
 QString LogParam::getLogbookFilterBand()
 {
     return getParam("logbook/filter/band").toString();
