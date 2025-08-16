@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QCoreApplication>
 #include "models/SqlListModel.h"
+#include "core/debug.h"
 
 SmartSearchBox::SmartSearchBox(QWidget *parent)
     : QWidget(parent),
@@ -90,8 +91,8 @@ void SmartSearchBox::onTextChanged(const QString &text)
     QModelIndex indexToSelect;
 
     if (text.isEmpty())
-        indexToSelect = currentValueIndex.isValid()  ? filterModel->mapFromSource(currentValueIndex)
-                                                     : filterModel->index(0, selectedColumn);
+        indexToSelect = currentValueSourceIndex.isValid()  ? filterModel->mapFromSource(currentValueSourceIndex)
+                                                           : filterModel->index(0, selectedColumn);
     else
         indexToSelect = filterModel->index(0, selectedColumn);
 
@@ -102,7 +103,7 @@ void SmartSearchBox::onTextChanged(const QString &text)
 void SmartSearchBox::onItemClicked(const QModelIndex &index)
 {
     const QModelIndex &sourceIndex = filterModel->mapToSource(index);
-    currentValueIndex = sourceIndex;
+    currentValueSourceIndex = sourceIndex;
     popup->hide();
     searchField->clear();
     changeButtonText(currentText());
@@ -211,12 +212,12 @@ void SmartSearchBox::changeButtonText(const QString &text)
     {
         openButton->setText(text);
         adjustMaxSize();
-        listView->setCurrentIndex(filterModel->mapFromSource(currentValueIndex));
+        listView->setCurrentIndex(filterModel->mapFromSource(currentValueSourceIndex));
         emit currentTextChanged(text);
     }
 
     openButton->setStyleSheet( ( highlightWhenEnable
-                                 && currentValueIndex.row() > 0) ? "QPushButton "
+                                 && currentValueSourceIndex.row() > 0) ? "QPushButton "
                                                                   "{ border: 2px solid red; "
                                                                   "  border-radius: 4px; "
                                                                   "  padding: 2px;}"
@@ -235,7 +236,7 @@ QVariant SmartSearchBox::currentValue(int column)
     if ( !filterModel->sourceModel() )
         return {};
 
-    return filterModel->sourceModel()->data(currentValueIndex, Qt::UserRole + column);
+    return filterModel->sourceModel()->data(currentValueSourceIndex, Qt::UserRole + column);
 }
 
 QString SmartSearchBox::currentText() const
@@ -243,17 +244,17 @@ QString SmartSearchBox::currentText() const
     if ( !filterModel->sourceModel() )
         return {};
 
-    return filterModel->sourceModel()->data(currentValueIndex).toString();
+    return filterModel->sourceModel()->data(currentValueSourceIndex).toString();
 }
 
 int SmartSearchBox::currentIndex()
 {
     if (!filterModel
         || !filterModel->sourceModel()
-        || !currentValueIndex.isValid() )
+        || !currentValueSourceIndex.isValid() )
         return 0;
 
-    QModelIndex filteredIndex = filterModel->mapFromSource(currentValueIndex);
+    QModelIndex filteredIndex = filterModel->mapFromSource(currentValueSourceIndex);
     if (!filteredIndex.isValid())
         return 0;
 
@@ -267,7 +268,7 @@ void SmartSearchBox::setCurrentText(const QString &text)
     QAbstractItemModel *model = filterModel->sourceModel();
 
     // default value is the first row value
-    currentValueIndex = model->index(0, selectedColumn);
+    currentValueSourceIndex = model->index(0, selectedColumn);
 
     for ( int row = 0; row < model->rowCount(); ++row )
     {
@@ -276,7 +277,29 @@ void SmartSearchBox::setCurrentText(const QString &text)
 
         if ( itemText.compare(text, Qt::CaseInsensitive) == 0 )
         {
-            currentValueIndex = index;
+            currentValueSourceIndex = index;
+            break;
+        }
+    }
+    changeButtonText(currentText());
+}
+
+void SmartSearchBox::setCurrentValue(const QVariant var, int column)
+{
+    if (!filterModel || !filterModel->sourceModel()) return;
+
+    QAbstractItemModel *model = filterModel->sourceModel();
+
+    // default value is the first row value
+    currentValueSourceIndex = model->index(0, selectedColumn);
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QModelIndex &index = model->index(row, selectedColumn);
+        QVariant userData = index.data(Qt::UserRole + column);
+
+        if ( userData.toString() == var.toString() )
+        {
+            currentValueSourceIndex = index;
             break;
         }
     }

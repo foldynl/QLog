@@ -18,6 +18,7 @@
 #include "data/Callsign.h"
 #include "data/BandPlan.h"
 #include "core/LogParam.h"
+#include "component/SmartSearchBox.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qsodetaildialog");
 
@@ -262,24 +263,18 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     ui->satModeEdit->setModel(satModesModel);
 
     /* Country */
-    SqlListModel* countryModel = new SqlListModel("SELECT id, translate_to_locale(name), name  "
-                                                  "FROM dxcc_entities "
-                                                  "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", this);
-    while ( countryModel->canFetchMore() )
-        countryModel->fetchMore();
-
-    ui->countryCombo->setModel(countryModel);
-    ui->countryCombo->setModelColumn(1);
+    ui->countryBox->setModel(new SqlListModel("SELECT id, translate_to_locale(name), name  "
+                                              "FROM dxcc_entities "
+                                              "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->countryBox));
+    ui->countryBox->setModelColumn(1);
+    ui->countryBox->adjustMaxSize();
 
     /* My Country Combo */
-    SqlListModel* myCountryModel = new SqlListModel("SELECT id, translate_to_locale(name), name  "
-                                                  "FROM dxcc_entities "
-                                                  "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", this);
-    while ( myCountryModel->canFetchMore() )
-        myCountryModel->fetchMore();
-
-    ui->myCountryCombo->setModel(myCountryModel);
-    ui->myCountryCombo->setModelColumn(1);
+    ui->myCountryBox->setModel(new SqlListModel("SELECT id, translate_to_locale(name), name  "
+                                                "FROM dxcc_entities "
+                                                "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->myCountryBox));
+    ui->myCountryBox->setModelColumn(1);
+    ui->myCountryBox->adjustMaxSize();
 
     /* Band Combos */
     SqlListModel* bandModel = new SqlListModel("SELECT name FROM bands ORDER BY start_freq;", tr("Blank"), this);
@@ -336,7 +331,7 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     mapper->addMapping(ui->dokEdit, LogbookModel::COLUMN_DARC_DOK);
     mapper->addMapping(ui->vuccEdit, LogbookModel::COLUMN_VUCC_GRIDS);
     mapper->addMapping(ui->wwffEdit, LogbookModel::COLUMN_WWFF_REF);
-    mapper->addMapping(ui->countryCombo, LogbookModel::COLUMN_DXCC);
+    mapper->addMapping(ui->countryBox, LogbookModel::COLUMN_DXCC);
     mapper->addMapping(ui->emailEdit, LogbookModel::COLUMN_EMAIL);
     mapper->addMapping(ui->urlEdit, LogbookModel::COLUMN_WEB);
     mapper->addMapping(ui->propagationModeEdit, LogbookModel::COLUMN_PROP_MODE);
@@ -351,7 +346,7 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     /* My Station */
     mapper->addMapping(ui->myCallsignEdit, LogbookModel::COLUMN_STATION_CALLSIGN);
     mapper->addMapping(ui->myOperatorNameEdit, LogbookModel::COLUMN_MY_NAME_INTL);
-    mapper->addMapping(ui->myCountryCombo, LogbookModel::COLUMN_MY_DXCC);
+    mapper->addMapping(ui->myCountryBox, LogbookModel::COLUMN_MY_DXCC);
     mapper->addMapping(ui->myITUEdit, LogbookModel::COLUMN_MY_ITU_ZONE);
     mapper->addMapping(ui->myCQEdit, LogbookModel::COLUMN_MY_CQ_ZONE);
     mapper->addMapping(ui->myQTHEdit, LogbookModel::COLUMN_MY_CITY_INTL);
@@ -591,6 +586,10 @@ void QSODetailDialog::setReadOnlyMode(bool inReadOnly)
         else if ( widget )
         {
             widget->setEnabled(!inReadOnly);
+            if ( inReadOnly )
+            {
+                widget->setStyleSheet("");
+            }
         }
     }
 
@@ -901,7 +900,7 @@ bool QSODetailDialog::doValidation()
     const DxccEntity &dxccEntity = Data::instance()->lookupDxcc(ui->callsignEdit->text());
 
     allValid &= highlightInvalid(ui->countryLabel,
-                                 dxccEntity.dxcc && ui->countryCombo->currentText() != QCoreApplication::translate("DBStrings", dxccEntity.country.toUtf8().constData()),
+                                 dxccEntity.dxcc && ui->countryBox->currentText() != QCoreApplication::translate("DBStrings", dxccEntity.country.toUtf8().constData()),
                                  tr("Based on callsign, DXCC Country is different from the entered value - expecting ") + "<b> " + QCoreApplication::translate("DBStrings", dxccEntity.country.toUtf8().constData()) + "</b>");
 
     allValid &= highlightInvalid(ui->contLabel,
@@ -957,7 +956,7 @@ bool QSODetailDialog::doValidation()
                                  tr("Based on own callsign, own DXCC CQZ is different from the entered value - expecting ") + "<b> " + QString::number(myDxccEntity.cqz) + "</b>");
 
     allValid &= highlightInvalid(ui->myCountryLabel,
-                                 myDxccEntity.dxcc && ui->myCountryCombo->currentText() != QCoreApplication::translate("DBStrings", myDxccEntity.country.toUtf8().constData()),
+                                 myDxccEntity.dxcc && ui->myCountryBox->currentText() != QCoreApplication::translate("DBStrings", myDxccEntity.country.toUtf8().constData()),
                                  tr("Based on own callsign, own DXCC Country is different from the entered value - expecting ") + "<b> " + QCoreApplication::translate("DBStrings", myDxccEntity.country.toUtf8().constData()) + "</b>");
 
     SOTAEntity sotaInfo;
@@ -1536,6 +1535,14 @@ void QSODetailDialog::enableWidgetChangeHandlers()
                 combo->setStyleSheet(CHANGECSS);
             });
         }
+        else if ( SmartSearchBox *combo = qobject_cast<SmartSearchBox*>(widget) )
+        {
+            connect(combo, &SmartSearchBox::currentTextChanged, this, &QSODetailDialog::doValidation);
+            connect(combo, &SmartSearchBox::currentTextChanged, this, [combo](QString)
+            {
+                combo->setStyleSheet(CHANGECSS);
+            });
+        }
     }
 }
 
@@ -1696,18 +1703,13 @@ void QSOEditMapperDelegate::setEditorData(QWidget *editor,
         }
         return;
     }
-    else if ( editor->objectName() == "countryCombo"
-              || editor->objectName() == "myCountryCombo" )
+    else if ( editor->objectName() == "countryBox"
+              || editor->objectName() == "myCountryBox" )
     {
-        QComboBox* combo = qobject_cast<QComboBox*>(editor);
+        SmartSearchBox* combo = qobject_cast<SmartSearchBox*>(editor);
 
         if ( combo )
-        {
-            QModelIndexList countryIndex = combo->model()->match(combo->model()->index(0,0),
-                                                                 Qt::DisplayRole, index.data(),
-                                                                 1, Qt::MatchExactly);
-            combo->setCurrentIndex(( countryIndex.size() >= 1 ) ? countryIndex.at(0).row() : -1);
-        }
+            combo->setCurrentValue(index.data(), 1);
         return;
     }
     else if ( editor->objectName() == "noteEdit" )
@@ -1833,27 +1835,27 @@ void QSOEditMapperDelegate::setModelData(QWidget *editor,
             return;
         }
     }
-    else if ( editor->objectName() == "countryCombo"
-              || editor->objectName() == "myCountryCombo" )
+    else if ( editor->objectName() == "countryBox"
+              || editor->objectName() == "myCountryBox")
     {
-        QComboBox* combo = static_cast<QComboBox*>(editor);
+        SmartSearchBox *box = qobject_cast<SmartSearchBox*>(editor);
 
-        if ( combo )
+        if ( box )
         {
-            int row = combo->currentIndex();
+            int row = box->currentIndex();
             QVariant dataDXCC;
             QVariant dataCountryEN;
 
             if ( row > 0 ) // the first line is an empty line
             {
-                dataDXCC = combo->model()->data(combo->model()->index(row,0));
-                dataCountryEN = combo->model()->data(combo->model()->index(row,2));
+                dataDXCC = box->currentValue(1);
+                dataCountryEN = box->currentValue(3);
             }
 
             model->setData(index, dataDXCC);
             model->setData(model->index(index.row(),
-                                        (editor->objectName() == "countryCombo" ) ? LogbookModel::COLUMN_COUNTRY_INTL
-                                                                                  : LogbookModel::COLUMN_MY_COUNTRY_INTL),
+                                        (editor->objectName() == "countryBox" ) ? LogbookModel::COLUMN_COUNTRY_INTL
+                                                                                : LogbookModel::COLUMN_MY_COUNTRY_INTL),
                            dataCountryEN);
         }
         return;

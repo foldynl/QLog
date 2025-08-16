@@ -21,6 +21,7 @@ public:
     QString currentText() const;
     int currentIndex();
     void setCurrentText(const QString &text);
+    void setCurrentValue(const QVariant var, int column);
     void adjustMaxSize();
     void refreshModel();
     void setHighlightWhenEnable(bool state);
@@ -42,7 +43,7 @@ private:
     QPushButton *openButton;
     int selectedColumn;
     int maxRowsInList;
-    QModelIndex currentValueIndex;
+    QModelIndex currentValueSourceIndex;
     bool highlightWhenEnable;
     void adjustPopupSize();
     void changeButtonText(const QString &text);

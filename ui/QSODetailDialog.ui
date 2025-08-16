@@ -744,9 +744,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="countryCombo"/>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="contLabel">
            <property name="text">
@@ -963,6 +960,19 @@
            </property>
            <property name="toolTip">
             <string>two or four adjacent Gridsquares, each four characters long, (ex. EN98,FM08,EM97,FM07)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="SmartSearchBox" name="countryBox" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -1372,9 +1382,6 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QComboBox" name="myCountryCombo"/>
-         </item>
          <item row="4" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_15">
            <property name="spacing">
@@ -1480,6 +1487,19 @@
          </item>
          <item row="2" column="1">
           <widget class="NewContactEditLine" name="myOperatorCallsignEdit"/>
+         </item>
+         <item row="3" column="1">
+          <widget class="SmartSearchBox" name="myCountryBox" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -2280,6 +2300,12 @@
    <extends>QDoubleSpinBox</extends>
    <header>ui/component/FreqQSpinBox.h</header>
   </customwidget>
+  <customwidget>
+   <class>SmartSearchBox</class>
+   <extends>QWidget</extends>
+   <header>ui/component/SmartSearchBox.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>dateTimeOnEdit</tabstop>
@@ -2301,7 +2327,7 @@
   <tabstop>commentEdit</tabstop>
   <tabstop>noteEdit</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>countryCombo</tabstop>
+  <tabstop>countryBox</tabstop>
   <tabstop>contEdit</tabstop>
   <tabstop>ituEdit</tabstop>
   <tabstop>cqEdit</tabstop>
@@ -2330,7 +2356,7 @@
   <tabstop>myCallsignEdit</tabstop>
   <tabstop>myOperatorNameEdit</tabstop>
   <tabstop>myOperatorCallsignEdit</tabstop>
-  <tabstop>myCountryCombo</tabstop>
+  <tabstop>myCountryBox</tabstop>
   <tabstop>myITUEdit</tabstop>
   <tabstop>myCQEdit</tabstop>
   <tabstop>myGridEdit</tabstop>
