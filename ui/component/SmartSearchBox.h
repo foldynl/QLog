@@ -1,5 +1,5 @@
-#ifndef SMARTSEARCHBOX_H
-#define SMARTSEARCHBOX_H
+#ifndef QLOG_UI_COMPONENT_SMARTSEARCHBOX_H
+#define QLOG_UI_COMPONENT_SMARTSEARCHBOX_H
 
 #include <QWidget>
 #include <QSortFilterProxyModel>
@@ -49,4 +49,4 @@ private:
     void changeButtonText(const QString &text);
 };
 
-#endif // SMARTSEARCHBOX_H
+#endif // QLOG_UI_COMPONENT_SMARTSEARCHBOX_H
