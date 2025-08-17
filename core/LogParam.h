@@ -327,6 +327,8 @@ public:
      *****************/
     static QByteArray getLogbookState();
     static void setLogbookState(const QByteArray &state);
+    static int getLogbookFilterSearchType(int defaultValue);
+    static void setLogbookFilterSearchType(int type);
     static QString getLogbookFilterBand();
     static void setLogbookFilterBand(const QString &name);
     static QString getLogbookFilterMode();

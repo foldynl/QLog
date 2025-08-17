@@ -5,8 +5,8 @@
 #include <QProxyStyle>
 #include <QComboBox>
 #include <QSqlRecord>
+#include <QActionGroup>
 
-#include "models/SqlListModel.h"
 #include "core/CallbookManager.h"
 #include "component/ShutdownAwareWidget.h"
 
@@ -27,6 +27,13 @@ public:
     ~LogbookWidget();
 
     virtual void finalizeBeforeAppExit();
+
+    enum SearchType
+    {
+        UNKNOWN_SEARCH = 0,
+        CALLSIGN_SEARCH = 1,
+        GRIDSQUARE_SEARCH = 2,
+    };
 
 signals:
     void logbookUpdated();
@@ -49,7 +56,7 @@ public slots:
     void filterSelectedCallsign();
     void filterCountryBand(const QString&, const QString&, const QString&);
     void lookupSelectedCallsign();
-    void callsignFilterChanged();
+    void onSearchTextChanged();
     void bandFilterChanged();
     void modeFilterChanged();
     void countryFilterChanged();
@@ -79,13 +86,13 @@ public slots:
     void callsignNotFound(const QString&);
     void callbookLoginFailed(const QString&);
     void callbookError(const QString&);
+    void setCallsignSearch();
+    void setGridsquareSearch();
 
 private:
     ClubLogUploader* clublog;
     LogbookModel* model;
     Ui::LogbookWidget *ui;
-    SqlListModel* countryModel;
-    SqlListModel* userFilterModel;
     QString externalFilter;
     bool blockClublogSignals;
     bool eventFilter(QObject *obj, QEvent *event);
@@ -102,16 +109,36 @@ private:
     void restoreUserFilter();
     void saveClubFilter();
     void restoreClubFilter();
+    void saveSearchTextFilter(QAction *action);
+    void restoreSearchTextFilter();
     void reselectModel();
     void scrollToIndex(const QModelIndex& index, bool selectItem = true);
     void adjusteComboMinSize(QComboBox * combo);
     void updateQSORecordFromCallbook(const CallbookResponseData &data);
     void queryNextQSOLookupBatch();
     void finishQSOLookupBatch();
+    void clearSearchText();
+    void setupSearchMenu();
     QModelIndexList callbookLookupBatch;
     QModelIndex currLookupIndex;
     CallbookManager callbookManager;
     QProgressDialog *lookupDialog;
+    QString callsignSearchValue;
+    QActionGroup *searchTypeGroup;
+
+    class SearchDefinition
+    {
+    public:
+        SearchDefinition(const SearchType searchType, QAction *action, const QString dbColumn) :
+            searchType(searchType), action(action), dbColumn(dbColumn) {action->setData(searchType);};
+        SearchDefinition(): searchType(UNKNOWN_SEARCH), action(nullptr) {};
+
+        SearchType searchType;
+        QAction *action;
+        QString dbColumn;
+    };
+
+    QMap<SearchType, SearchDefinition> searchTypeList;
 };
 
 /* https://forum.qt.io/topic/90403/show-tooltip-immediatly/7/ */
