@@ -1669,8 +1669,14 @@ void NewContactWidget::saveContact()
     record.setValue("freq", ui->freqTXEdit->value());
     record.setValue("band", ui->bandTXLabel->text());
 
-    record.setValue("freq_rx", ui->freqRXEdit->value());
-    record.setValue("band_rx", ui->bandRXLabel->text());
+    // Based on ADIF 3.1.x FREQ_RX is defined as "in a split frequency QSO"
+    // Also here https://groups.io/g/adifdev/message/228 is mentioned:
+    //    "BAND_RX & FREQ_RX (Same than BAND and FREQ but for split/crossband/satellite QSOs)"
+    if ( ui->freqRXEdit->value() != ui->freqTXEdit->value() )
+    {
+        record.setValue("freq_rx", ui->freqRXEdit->value());
+        record.setValue("band_rx", ui->bandRXLabel->text());
+    }
 
     if ( ! ui->modeEdit->currentText().isEmpty() )
     {
