@@ -1,5 +1,6 @@
 TBC - 0.46.0
 - Fixed DUPE is not detected for the first Contest QSO (issue #699)
+- Fixed FREQ_RX/BAND_RX is present only when RX and TX freqs are different (issue #714)
 
 2025/07/11 - 0.45.0
 - [NEW] - Single Dialog for Upload/Download Online Services (issue #448)
