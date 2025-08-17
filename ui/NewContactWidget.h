@@ -339,6 +339,8 @@ private:
     bool isSOTAValid(SOTAEntity *entity);
     bool isWWFFValid(WWFFEntity *entity);
 
+    void useNearestSpotInfo(const QString &in_callsign);
+
     bool shouldStartContest();
     void startContest(const QDateTime &date);
     void setSTXSeq();

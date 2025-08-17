@@ -463,6 +463,7 @@ void NewContactWidget::handleCallsignFromUser()
     else
     {
         checkDupe();
+        useNearestSpotInfo(callsign);
         setDxccInfo(callsign);
         if ( callsign.length() >= 3 )
             useFieldsFromPrevQSO(callsign);
@@ -3393,6 +3394,38 @@ bool NewContactWidget::isWWFFValid(WWFFEntity *entity)
 
     return (wwffInfo.reference.toUpper() == uiDynamic->wwffEdit->text().toUpper()
             && !wwffInfo.name.isEmpty());
+}
+
+void NewContactWidget::useNearestSpotInfo(const QString &in_callsign)
+{
+    FCT_IDENTIFICATION;
+
+    if ( in_callsign.isEmpty()
+         || nearestSpot.callsign.isEmpty()
+         || in_callsign != ui->nearStationLabel->text() ) return;
+
+    if ( nearestSpot.containsPOTA )
+    {
+        uiDynamic->potaEdit->setText(nearestSpot.potaRef);
+        potaEditFinished();
+    }
+
+    if ( nearestSpot.containsSOTA )
+    {
+        uiDynamic->sotaEdit->setText(nearestSpot.sotaRef);
+        sotaEditFinished();
+    }
+
+    if ( nearestSpot.containsIOTA )
+    {
+        uiDynamic->iotaEdit->setText(nearestSpot.iotaRef);
+    }
+
+    if ( nearestSpot.containsWWFF )
+    {
+        uiDynamic->wwffEdit->setText(nearestSpot.wwffRef);
+        wwffEditFinished();
+    }
 }
 
 bool NewContactWidget::shouldStartContest()
