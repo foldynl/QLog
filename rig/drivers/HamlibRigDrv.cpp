@@ -5,6 +5,7 @@
 #include "core/debug.h"
 #include "rig/macros.h"
 #include "data/SerialPort.h"
+#include "data/Data.h"
 
 #ifndef HAMLIB_FILPATHLEN
 #define HAMLIB_FILPATHLEN FILPATHLEN
@@ -106,6 +107,7 @@ RigCaps HamlibRigDrv::getCaps(int model)
 
         ret.canGetPTT = ( caps->get_ptt );
         ret.canSendMorse = ( caps->send_morse != nullptr );
+        ret.canProcessDXSpot = isSmartSDRSlice(caps);
 
         if ( ret.isNetworkOnly )
         {
@@ -133,6 +135,7 @@ HamlibRigDrv::HamlibRigDrv(const RigProfile &profile,
                            QObject *parent)
     : GenericRigDrv(profile, parent),
       rig(nullptr),
+      SmartSDRSpotCounter(0),
       forceSendState(false),
       currPTT(false),
       currFreq(Hz(0)),
@@ -495,12 +498,59 @@ void HamlibRigDrv::stopTimers()
     errorTimer.stop();
 }
 
-void HamlibRigDrv::sendDXSpot(const DxSpot &)
+void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
 {
     FCT_IDENTIFICATION;
 
-    // no action
+    if ( currFreq == 0 ) return; // empty DXSpot;
+
+    if ( !rig || !opened )
+    {
+        qCWarning(runtime) << "Rig is not active";
+        return;
+    }
+
+    if ( isSmartSDRSlice(rig->caps) )
+    {
+#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+        const QString freqStr = QString::number(spot.freq, 'f', 3);
+        const QString call = spot.callsign.trimmed().toUpper();
+        const QColor spotColor = Data::statusToColor(spot.status, spot.dupeCount, QColor(187,194,195));
+
+        const QString command = QString("C%1|spot add rx_freq=%2 callsign=%3 color=%4 source=QLog timestamp=%5 lifetime_seconds=300 priority=4\n")
+                              .arg(++SmartSDRSpotCounter)
+                              .arg(freqStr)
+                              .arg(call)
+                              .arg(spotColor.name(QColor::HexArgb).toUpper())
+                              .arg(spot.dateTime.toSecsSinceEpoch());
+
+
+        qCDebug(runtime) << "Sending DX Spot command:" << command;
+
+        QByteArray cmdBytes = command.toUtf8();
+        unsigned char terminator = '\n';
+        const unsigned char* dataPtr = reinterpret_cast<const unsigned char*>(cmdBytes.constData());
+
+        int status = rig_send_raw(
+            rig,
+            dataPtr,
+            cmdBytes.length(),
+            nullptr,
+            0,
+            &terminator
+            );
+
+        if (status != RIG_OK)
+        {
+            qCDebug(runtime) << "rig_send_raw failed:" << status;
+            qCDebug(runtime) << hamlibErrorString(status);
+        }
+#else
+        qCWarning(runtime) << "Hamlib version does not support rig_send_raw. DX Spot not sent.";
+#endif
+    }
 }
+
 
 void HamlibRigDrv::checkChanges()
 {
@@ -997,6 +1047,16 @@ bool HamlibRigDrv::isRigRespOK(int errorStatus,
         }
     }
     return false;
+}
+
+bool HamlibRigDrv::isSmartSDRSlice(const rig_caps *caps)
+{
+#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 6 ) // Hamlib 4.6 implements SmartSDR Slices.
+    return QString::fromLatin1(caps->model_name).contains("SmartSDR Slice", Qt::CaseInsensitive);
+#else
+    Q_UNUSED(caps)
+    return false;
+#endif
 }
 
 const QString HamlibRigDrv::getModeNormalizedText(const rmode_t mode,
