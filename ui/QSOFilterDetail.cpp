@@ -56,11 +56,13 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     sizePolicy1.setHeightForWidth(fieldNameCombo->sizePolicy().hasHeightForWidth());
     fieldNameCombo->setSizePolicy(sizePolicy1);
 
-    const QMap<LogbookModel::ColumnID, QString> &fieldMapping = LogbookModel::getAllFieldNamesTranslation();
     QList<QPair<LogbookModel::ColumnID, QString>> items;
 
-    for ( auto it = fieldMapping.cbegin(); it != fieldMapping.cend(); ++it)
-        items.append({it.key(), it.value()});
+    for ( int i = LogbookModel::ColumnID::COLUMN_ID; i < LogbookModel::ColumnID::COLUMN_LAST_ELEMENT; ++i )
+    {
+        LogbookModel::ColumnID columnID = static_cast<LogbookModel::ColumnID>(i);
+        items.append({columnID, LogbookModel::getFieldNameTranslation(columnID)});
+    }
 
     std::sort(items.begin(), items.end(), [](const QPair<LogbookModel::ColumnID, QString>& a,
                                              const QPair<LogbookModel::ColumnID, QString>& b)
