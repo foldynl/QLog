@@ -1,4 +1,5 @@
 TBC - 0.46.0
+- [NEW] - NewContact: POTA/SOTA/WWFF/IOTA info is taken from the nearest spot (@aa5sh @foldynl)
 - [NEW] - DXSpots are sent to Flex Radio (PR #694 @aa5sh)
 - Fixed DUPE is not detected for the first Contest QSO (issue #699)
 - Fixed FREQ_RX/BAND_RX is present only when RX and TX freqs are different (issue #714)
