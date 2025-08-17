@@ -1867,6 +1867,54 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
 
     if ( savedCallsign.isEmpty() ) return;
 
+    // Workaround - Issue #722 Repeated log recording - check dupe before insert
+    // start_time, callsign, freq or band, mode
+    // This workaround is primarily due to JTDX. In general, with WSJTX, QLog receives
+    // two messages for a single QSO. One is in the QByteArray format and the other in ADIF.
+    // Both of these messages are received by QLog, and if they arrive within 0.5 seconds of each other,
+    // they are merged and sent as a single QSO. If this does not happen, unfortunately, two QSOs are sent.
+    // Under some mysterious circumstances, JTDX sometimes generates the second message after several seconds,
+    // sometimes even up to 3 minutes (see #722). This workaround is intended to prevent duplicate entries
+    // from being stored in the log.
+    //
+    // In the future, however, this should be handled by merging the records.
+
+    QSqlQuery checkQuery;
+    if ( !checkQuery.prepare(QLatin1String("SELECT id FROM contacts "
+                                     "WHERE strftime('%Y-%m-%d %H:%M:%S', start_time) = strftime('%Y-%m-%d %H:%M:%S', :starttime) "
+                                     "      AND callsign = :callsign "
+                                     "      AND (freq = :freq OR band = :band) "
+                                     "      AND mode = :mode "
+                                     "LIMIT 1")) )
+    {
+        qWarning() << "Cannot prepared select statement for the External Dupe Check";
+        return;
+    }
+
+    checkQuery.bindValue(":callsign", savedCallsign.toUpper());
+    checkQuery.bindValue(":freq", record.value("freq"));
+    checkQuery.bindValue(":mode", record.value("mode"));
+    checkQuery.bindValue(":band", record.value("band"));
+    checkQuery.bindValue(":starttime", record.value("start_time"));
+
+    if (!checkQuery.exec())
+    {
+        qWarning() << "Duplicate check failed:" << checkQuery.lastError();
+        return;
+    }
+
+    if ( checkQuery.next() )
+    {
+        qWarning() << "Contact with callsign"
+                   << savedCallsign << record.value("freq")
+                   << record.value("band") << record.value("mode")
+                   << record.value("start_time")
+                   << "already exists, skipping insert.";
+        return;
+    }
+
+    // End of workaround #722
+
     QSqlTableModel model;
 
     model.setTable("contacts");
