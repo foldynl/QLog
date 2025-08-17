@@ -171,7 +171,7 @@ QString LogFormat::getWhereClause()
     whereClause << "1 = 1"; //generic filter
 
     if ( isDateRange() )
-        whereClause << "(start_time BETWEEN :start_date AND :end_date)";
+        whereClause << "(datetime(start_time) BETWEEN datetime(:start_date) AND datetime(:end_date))";
 
     if ( !filterMyCallsign.isEmpty() )
         whereClause << "upper(station_callsign) = upper(:stationCallsign)";
