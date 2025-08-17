@@ -4073,6 +4073,16 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>The '&gt;' character is interpreted as a marker for the initial cursor position in the Report column. &lt;br/&gt;Ex.: '5&gt;9' means the cursor will be positioned on the second character</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QTableView" name="modeTableView">
          <property name="alternatingRowColors">
           <bool>true</bool>
