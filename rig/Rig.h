@@ -118,6 +118,7 @@ signals:
     void rigConnected();
     void rigErrorPresent(QString, QString);
     void rigStatusChanged(Rig::Status);
+    void rigStatusHeartBeat(Rig::Status);
 
 private slots:
     void stopTimerImplt();
@@ -176,6 +177,8 @@ private:
     QMutex rigLock;
     Rig::Status rigStatus;
     bool connected;
+    QTimer *heartBeatTimer;
+    const quint16 HEARTBEATPERIOD = 1000; // in ms
 };
 
 Q_DECLARE_METATYPE(Rig::Status);
