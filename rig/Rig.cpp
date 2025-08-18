@@ -17,7 +17,8 @@ MODULE_IDENTIFICATION("qlog.rig.rig");
 Rig::Rig(QObject *parent)
     : QObject{parent},
     rigDriver(nullptr),
-    connected(false)
+    connected(false),
+    heartBeatTimer(new QTimer(this))
 {
     FCT_IDENTIFICATION;
 
@@ -50,6 +51,8 @@ Rig::Rig(QObject *parent)
                                          &FlrigRigDrv::getModelList,
                                          &FlrigRigDrv::getCaps,
                                          nullptr);
+
+    connect(heartBeatTimer, &QTimer::timeout, this, &Rig::sendHeartBeat);
 }
 
 qint32 Rig::getNormalBandwidth(const QString &mode, const QString &)
@@ -148,6 +151,8 @@ void Rig::stopTimerImplt()
     FCT_IDENTIFICATION;
 
     MUTEXLOCKER;
+
+    heartBeatTimer->stop();
 
     if ( rigDriver )
         rigDriver->stopTimers();
@@ -284,6 +289,7 @@ void Rig::__openRig()
 
         rigStatus.profile = newRigProfile.profileName;
         rigStatus.isConnected = true;
+        heartBeatTimer->start(HEARTBEATPERIOD);
         emit rigConnected();
 
         sendState();
@@ -334,6 +340,7 @@ void Rig::__closeRig()
     }
 
     rigStatus.isConnected = false;
+    heartBeatTimer->stop();
     emitRigStatusChanged();
     rigStatus.clear();
 
@@ -664,4 +671,16 @@ Rig::~Rig()
     __closeRig();
 }
 
+void Rig::sendHeartBeat()
+{
+    FCT_IDENTIFICATION;
+
+    // The functionality is similar to emitRigStatusChanged, but emits
+    // a different signal to distinguish these two cases for future use.
+
+    if ( !rigStatus.isConnected || rigStatus.profile.isEmpty() )
+        return;
+
+    emit rigStatusHeartBeat(rigStatus);
+}
 #undef MUTEXLOCKER
