@@ -1,6 +1,7 @@
 TBC - 0.46.0
 - [NEW] - NewContact: POTA/SOTA/WWFF/IOTA info is taken from the nearest spot (@aa5sh @foldynl)
 - [NEW] - DXSpots are sent to Flex Radio (PR #694 @aa5sh)
+- [NEW] - Added mapping of Winkey hardware buttons to CW macro keys F1–F4 (issue #711)
 - [NEW] - Added Search Types to the Logbook Search Editbox - Callsign, Gridsquare (issue #733)
 - [NEW] - Rig - Periodic Rig status reporting independent of its changes (PR #730 @aa5sh)
 - [CHANGED] - Logbook Search Filter Widget - Added Search Widget
