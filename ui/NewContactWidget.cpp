@@ -32,6 +32,7 @@
 #include "core/LogParam.h"
 #include "data/ActivityProfile.h"
 #include "core/LogParam.h"
+#include "core/PotaQE.h"
 
 MODULE_IDENTIFICATION("qlog.ui.newcontactwidget");
 
