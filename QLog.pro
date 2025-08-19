@@ -42,7 +42,7 @@ DEFINES += QT_DEPRECATED_WARNINGS QT_MESSAGELOGCONTEXT
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 macx:QT_CONFIG -= no-pkg-config
 
-CONFIG += c++11 force_debug_info
+CONFIG += c++11 force_debug_info sanitizer sanitize_address sanitize_undefined
 CONFIG *= link_pkgconfig
 
 SOURCES += \
@@ -57,6 +57,7 @@ SOURCES += \
         core/MembershipQE.cpp \
         core/Migration.cpp \
         core/NetworkNotification.cpp \
+        core/PotaQE.cpp \
         core/PropConditions.cpp \
         core/QSLStorage.cpp \
         core/QSOFilterManager.cpp \
@@ -125,6 +126,7 @@ SOURCES += \
         service/hrdlog/HRDLog.cpp \
         service/kstchat/KSTChat.cpp \
         service/lotw/Lotw.cpp \
+        service/potaapp/PotaApp.cpp \
         service/qrzcom/QRZ.cpp \
         ui/ActivityEditor.cpp \
         ui/AlertRuleDetail.cpp \
@@ -188,6 +190,7 @@ HEADERS += \
         core/MembershipQE.h \
         core/Migration.h \
         core/NetworkNotification.h \
+        core/PotaQE.h \
         core/PropConditions.h \
         core/QSLStorage.h \
         core/QSOFilterManager.h \
@@ -217,6 +220,7 @@ HEADERS += \
         data/HostsPortString.h \
         data/MainLayoutProfile.h \
         data/POTAEntity.h \
+        data/POTASpot.h \
         data/ProfileManager.h \
         data/RigProfile.h \
         data/RotProfile.h \
@@ -269,6 +273,7 @@ HEADERS += \
         service/hrdlog/HRDLog.h \
         service/kstchat/KSTChat.h \
         service/lotw/Lotw.h \
+        service/potaapp/PotaApp.h \
         service/qrzcom/QRZ.h \
         ui/ActivityEditor.h \
         ui/AlertRuleDetail.h \

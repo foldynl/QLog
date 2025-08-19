@@ -30,6 +30,7 @@
 #include "ui/DownloadQSLDialog.h"
 #include "ui/UploadQSODialog.h"
 #include "core/LogParam.h"
+#include "core/PotaQE.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -46,6 +47,8 @@ MainWindow::MainWindow(QWidget* parent) :
     restoreContestMenuSeqnoType();
     restoreContestMenuDupeType();
     restoreContestMenuLinkExchange();
+
+    PotaQE::instance();
 
     darkLightModeSwith = new SwitchButton("", ui->statusBar);
     darkIconLabel = new QLabel("<html><img src=':/icons/light-dark-24px.svg'></html>",ui->statusBar);
