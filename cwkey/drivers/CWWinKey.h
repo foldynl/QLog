@@ -44,6 +44,7 @@ private:
     bool __setPOTRange();
     bool __setWPM(const qint16 wpm);
     void __close();
+    unsigned char version;
 
 private slots:
     void handleBytesWritten(qint64 bytes);

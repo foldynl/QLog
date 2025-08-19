@@ -229,6 +229,10 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(CWKeyer::instance(), &CWKeyer::cwKeyEchoText, ui->cwconsoleWidget, &CWConsoleWidget::appendCWEchoText);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyConnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyConnected);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyDisconnected);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton1Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF1);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton2Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF2);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton3Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF3);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton4Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF4);
 
     FldigiTCPServer* fldigi = new FldigiTCPServer(this);
     connect(fldigi, &FldigiTCPServer::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);

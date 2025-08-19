@@ -81,6 +81,10 @@ signals:
     void keyError(QString, QString);
     void keyChangedWPMSpeed(qint32);
     void keyEchoText(QString);
+    void keyHWButton1Pressed();
+    void keyHWButton2Pressed();
+    void keyHWButton3Pressed();
+    void keyHWButton4Pressed();
 
 public:
     explicit CWKey(CWKeyModeID mode, qint32 defaultWPM, QObject *parent = nullptr);

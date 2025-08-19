@@ -155,6 +155,11 @@ void CWKeyer::__openCWKey()
     connect(cwKey, &CWKey::keyError, this, &CWKeyer::keyErrorHandler);
     connect(cwKey, &CWKey::keyChangedWPMSpeed, this, &CWKeyer::cwKeyWPMChangedHandler);
     connect(cwKey, &CWKey::keyEchoText, this, &CWKeyer::cwKeyEchoTextHandler);
+    connect(cwKey, &CWKey::keyHWButton1Pressed, this, &CWKeyer::cwKeyHWButton1PressedHandler);
+    connect(cwKey, &CWKey::keyHWButton2Pressed, this, &CWKeyer::cwKeyHWButton2PressedHandler);
+    connect(cwKey, &CWKey::keyHWButton3Pressed, this, &CWKeyer::cwKeyHWButton3PressedHandler);
+    connect(cwKey, &CWKey::keyHWButton4Pressed, this, &CWKeyer::cwKeyHWButton4PressedHandler);
+
     connectedCWKeyProfile = newProfile;
 
     emit cwKeyConnected(connectedCWKeyProfile.profileName);
@@ -377,6 +382,26 @@ void CWKeyer::cwKeyEchoTextHandler(const QString &text)
     FCT_IDENTIFICATION;
 
     emit cwKeyEchoText(text);
+}
+
+void CWKeyer::cwKeyHWButton1PressedHandler()
+{
+    emit cwKeyHWButton1Pressed();
+}
+
+void CWKeyer::cwKeyHWButton2PressedHandler()
+{
+    emit cwKeyHWButton2Pressed();
+}
+
+void CWKeyer::cwKeyHWButton3PressedHandler()
+{
+    emit cwKeyHWButton3Pressed();
+}
+
+void CWKeyer::cwKeyHWButton4PressedHandler()
+{
+    emit cwKeyHWButton4Pressed();
 }
 
 CWKeyer::CWKeyer(QObject *parent ) :

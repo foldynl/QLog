@@ -19,7 +19,8 @@ CWWinKey::CWWinKey(const QString &portName,
       CWKeySerialInterface(portName, baudrate, 5000),
       isInHostMode(false),
       xoff(false),
-      paddleSwap(paddleSwap)
+      paddleSwap(paddleSwap),
+      version(0)
 {
     FCT_IDENTIFICATION;
 
@@ -153,11 +154,12 @@ bool CWWinKey::open()
         return false;
     }
 
-    qCDebug(runtime) << "Winkey version" << (unsigned char)cmd.at(0);
+    version = (unsigned char)cmd.at(0);
+    qCDebug(runtime) << "Winkey version" << version;
 
     lastLogicalError = QString();
 
-    qCDebug(runtime) << "Host Mode has been enabled - Version " << QString::number(cmd.at(0));
+    qCDebug(runtime) << "Host Mode has been enabled";
 
     /******************/
     /* Mode Setting   */
@@ -180,6 +182,29 @@ bool CWWinKey::open()
 
     qCDebug(runtime) << "Mode has been set";
 
+    /******************/
+    /* WK2 Mode Status*/
+    /******************/
+    if ( version >= 20 )
+    {
+        qCDebug(runtime) << "WK2 PB Mode Setting";
+
+        cmd.resize(2);
+        cmd[0] = 0x00;
+        cmd[1] = 0x0B;
+
+        if ( sendDataAndWait(cmd) != 2 )
+        {
+            qWarning() << "Unexpected size of write response or communication error";
+            qCDebug(runtime) << lastError();
+            __close();
+            return false;
+        }
+
+        // receiveDataAndWait(cmd); /* it is not needed to read here - no response */
+        qCDebug(runtime) << "WK2 PB Mode has been set";
+    }
+
     QThread::msleep(200);
 
     /* Starting Async Flow for WinKey */
@@ -198,7 +223,6 @@ bool CWWinKey::open()
 
     /* Set Default value */
     __setWPM(defaultWPMSpeed);
-
 
     return true;
 }
@@ -300,32 +324,46 @@ void CWWinKey::handleReadyRead()
         qCDebug(runtime) << "\tStatus Information Message:";
         xoff = false;
 
-        if ( rcvByte == 0xC0 )
-        {
-            qCDebug(runtime) << "\t\tIdle";
-        }
+        if ( rcvByte == 0xC0 ) qCDebug(runtime) << "\t\tIdle";
         else
         {
-            if ( rcvByte & 0x01 )
+            if ( version >= 20 && rcvByte & 0x08 )
             {
-                qCDebug(runtime) << "\t\tBuffer 2/3 full";
-                xoff = true; //slow down in sending Write Buffer - to block tryAsyncWrite
+                qCDebug(runtime) << "\tPushButton Status Byte";
+                if ( rcvByte & 0x01 )
+                {
+                    qCDebug(runtime) << "\t\tButton1 pressed";
+                    emit keyHWButton1Pressed();
+                }
+                if ( rcvByte & 0x02 )
+                {
+                    qCDebug(runtime) << "\t\tButton2 pressed";
+                    emit keyHWButton2Pressed();
+                }
+                if ( rcvByte & 0x04 )
+                {
+                    qCDebug(runtime) << "\t\tButton3 pressed";
+                    emit keyHWButton3Pressed();
+                }
+                if ( rcvByte & 0x10 )
+                {
+                    qCDebug(runtime) << "\t\tButton4 pressed";
+                    emit keyHWButton4Pressed();
+                }
             }
-            if ( rcvByte & 0x02 )
+            else
             {
-                qCDebug(runtime) << "\t\tBrk-in";
-            }
-            if ( rcvByte & 0x04 )
-            {
-                qCDebug(runtime) << "\t\tKey Busy";
-            }
-            if ( rcvByte & 0x08 )
-            {
-                qCDebug(runtime) << "\t\tTunning";
-            }
-            if ( rcvByte & 0x0F )
-            {
-                qCDebug(runtime) << "\t\tWaiting";
+                qCDebug(runtime) << "\tStatus Byte";
+
+                if ( rcvByte & 0x01 )
+                {
+                    qCDebug(runtime) << "\t\tBuffer 2/3 full";
+                    xoff = true; //slow down in sending Write Buffer - to block tryAsyncWrite
+                }
+                if ( rcvByte & 0x02 ) qCDebug(runtime) << "\t\tBrk-in";
+                if ( rcvByte & 0x04 ) qCDebug(runtime) << "\t\tKey Busy";
+                if ( rcvByte & 0x08 ) qCDebug(runtime) << "\t\tTunning";
+                if ( rcvByte & 0x0F ) qCDebug(runtime) << "\t\tWaiting";
             }
         }
     }
@@ -529,6 +567,7 @@ void CWWinKey::__close()
 
     isInHostMode = false;
     xoff = false;
+    version = 0;
     lastLogicalError = QString();
 }
 

@@ -24,6 +24,10 @@ signals:
     void cwKeyDisconnected();
     void cwKeyWPMChanged(qint32);
     void cwKeyEchoText(QString);
+    void cwKeyHWButton1Pressed();
+    void cwKeyHWButton2Pressed();
+    void cwKeyHWButton3Pressed();
+    void cwKeyHWButton4Pressed();
 
 public slots:
     void start();
@@ -49,6 +53,10 @@ private slots:
     void keyErrorHandler(const QString&, const QString&);
     void cwKeyWPMChangedHandler(qint32);
     void cwKeyEchoTextHandler(const QString&);
+    void cwKeyHWButton1PressedHandler();
+    void cwKeyHWButton2PressedHandler();
+    void cwKeyHWButton3PressedHandler();
+    void cwKeyHWButton4PressedHandler();
 
 private:
     explicit CWKeyer(QObject *parent = nullptr);
