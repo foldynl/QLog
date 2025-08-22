@@ -19,7 +19,6 @@
 #include "ui_DxWidget.h"
 #include "data/Data.h"
 #include "DxFilterDialog.h"
-#include "models/SqlListModel.h"
 #include "core/debug.h"
 #include "data/StationProfile.h"
 #include "data/WCYSpot.h"
@@ -32,6 +31,7 @@
 #include "rig/macros.h"
 #include "data/Callsign.h"
 #include "core/LogParam.h"
+#include "core/PotaQE.h"
 
 #define CONSOLE_VIEW 4
 #define NUM_OF_RECONNECT_ATTEMPTS 3
@@ -1849,6 +1849,19 @@ void DxWidget::potaRefFromComment(DxSpot &spot) const
 
     spot.potaRef = refFromComment(spot.comment, spot.containsPOTA,
                                   potaCountryRE, QStringLiteral("POTA_alternative"), 4);
+    if ( !spot.containsPOTA )
+    {
+        Callsign dxSpotCallsign(spot.callsign);
+        // If POTA Info is not present in the comment, try to find it using POTAQE
+        const QString &ref = PotaQE::instance()->findReferenceId(dxSpotCallsign, spot.freq).reference;
+        if ( !ref.isEmpty() )
+        {
+            spot.potaRef = ref;
+            spot.containsPOTA = true;
+            qCDebug(runtime) << "Found POTA" << spot.callsign << ref;
+            spot.comment.append(" [+] POTA " + ref);
+        }
+    }
 }
 
 void DxWidget::sotaRefFromComment(DxSpot &spot) const
