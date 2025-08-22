@@ -15,6 +15,7 @@
 #include "ui/component/StyleItemDelegate.h"
 #include "data/BandPlan.h"
 #include "core/LogParam.h"
+#include "core/PotaQE.h"
 
 MODULE_IDENTIFICATION("qlog.ui.wsjtxswidget");
 
@@ -84,6 +85,12 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
             entry.dxcc_spotter.ituz = profile.ituz;
             entry.dxcc_spotter.dxcc = profile.dxcc;
             entry.distance = 0.0;
+            entry.potaRef = PotaQE::instance()->findReferenceId(Callsign(entry.callsign), entry.freq).reference;
+            if ( !entry.potaRef.isEmpty() )
+            {
+                entry.containsPOTA = true;
+                entry.comment.append(" [+] POTA " + entry.potaRef);
+            }
             entry.callsign_member = MembershipQE::instance()->query(entry.callsign);
             entry.dupeCount = Data::countDupe(entry.callsign, entry.band, BandPlan::MODE_GROUP_STRING_DIGITAL);
             if ( !profile.locator.isEmpty() )
