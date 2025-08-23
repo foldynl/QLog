@@ -35,7 +35,8 @@ public:
         GRIDSQUARE_SEARCH = 2,
         POTA_SEARCH = 3,
         SOTA_SEARCH = 4,
-        WWFF_SEARCH = 5
+        WWFF_SEARCH = 5,
+        SIG_SEARCH = 6
     };
 
 signals:
@@ -94,6 +95,7 @@ public slots:
     void setPotaSearch();
     void setSotaSearch();
     void setWwffSearch();
+    void setSigSearch();
 
 private:
     ClubLogUploader* clublog;

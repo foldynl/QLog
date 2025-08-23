@@ -356,6 +356,14 @@
     <string>WWFF</string>
    </property>
   </action>
+  <action name="actionSearchSIG">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SIG</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -630,6 +638,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSearchSIG</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>setSigSearch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>deleteContact()</slot>
@@ -653,5 +677,6 @@
   <slot>setPotaSearch()</slot>
   <slot>setSotaSearch()</slot>
   <slot>setWwffSearch()</slot>
+  <slot>setSigSearch()</slot>
  </slots>
 </ui>

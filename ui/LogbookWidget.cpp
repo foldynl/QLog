@@ -66,6 +66,11 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
                           SearchDefinition(WWFF_SEARCH,
                                            ui->actionSearchWWFF,
                                            "wwff_ref"));
+
+    searchTypeList.insert(SIG_SEARCH,
+                          SearchDefinition(SIG_SEARCH,
+                                           ui->actionSearchSIG,
+                                           "sig_intl"));
     setupSearchMenu();
 
     connect(ui->countrySelectFilter, &SmartSearchBox::currentTextChanged,
@@ -557,6 +562,14 @@ void LogbookWidget::setWwffSearch()
 
     clearSearchText();
     ui->searchTextFilter->setPlaceholderText(tr("WWFF"));
+}
+
+void LogbookWidget::setSigSearch()
+{
+    FCT_IDENTIFICATION;
+
+    clearSearchText();
+    ui->searchTextFilter->setPlaceholderText(tr("SIG"));
 }
 
 void LogbookWidget::filterCallsign(const QString &call)
