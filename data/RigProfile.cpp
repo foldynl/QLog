@@ -19,7 +19,8 @@ QDataStream& operator<<(QDataStream& out, const RigProfile& v)
         << v.xitOffset << v.getRITInfo << v.getXITInfo
         << v.defaultPWR << v.getPTTInfo << v.QSYWiping
         << v.getKeySpeed << v.assignedCWKey << v.keySpeedSync
-        << v.driver << v.dxSpot2Rig << v.pttType << v.pttPortPath;
+        << v.driver << v.dxSpot2Rig << v.pttType << v.pttPortPath
+        << v.use_rigctld << v.use_rigctld_debug;
 
     return out;
 }
@@ -57,6 +58,8 @@ QDataStream& operator>>(QDataStream& in, RigProfile& v)
     in >> v.dxSpot2Rig;
     in >> v.pttType;
     in >> v.pttPortPath;
+    in >> v.use_rigctld;
+    in >> v.use_rigctld_debug;
 
     return in;
 }
@@ -73,7 +76,8 @@ RigProfilesManager::RigProfilesManager() :
                                 "pollinterval, txfreq_start, txfreq_end, get_freq, get_mode, "
                                 "get_vfo, get_pwr, rit_offset, xit_offset, get_rit, get_xit, "
                                 "default_pwr, get_ptt, qsy_wiping, get_key_speed, assigned_cw_key, "
-                                "key_speed_sync, driver, dxspot2rig, ptt_type, ptt_port_pathname "
+                                "key_speed_sync, driver, dxspot2rig, ptt_type, ptt_port_pathname, "
+                                "use_rigctld, use_rigctld_debug "
                                 "FROM rig_profiles") )
     {
         qWarning()<< "Cannot prepare select";
@@ -115,7 +119,8 @@ RigProfilesManager::RigProfilesManager() :
             profileDB.dxSpot2Rig = profileQuery.value(28).toBool();
             profileDB.pttType = profileQuery.value(29).toString();
             profileDB.pttPortPath = profileQuery.value(30).toString();
-
+            profileDB.use_rigctld = profileQuery.value(31).toBool();
+            profileDB.use_rigctld_debug = profileQuery.value(32).toBool();
             addProfile(profileDB.profileName, profileDB);
         }
     }
@@ -142,12 +147,12 @@ void RigProfilesManager::save()
                                "baudrate, databits, stopbits, flowcontrol, parity, pollinterval, txfreq_start, "
                                "txfreq_end, get_freq, get_mode, get_vfo, get_pwr, rit_offset, xit_offset, get_rit, "
                                "get_xit, default_pwr, get_ptt, qsy_wiping, get_key_speed, assigned_cw_key, key_speed_sync, "
-                               "driver, dxSpot2Rig, ptt_type, ptt_port_pathname ) "
+                               "driver, dxSpot2Rig, ptt_type, ptt_port_pathname, use_rigctld, use_rigctld_debug ) "
                         "VALUES (:profile_name, :model, :port_pathname, :hostname, :netport, "
                                ":baudrate, :databits, :stopbits, :flowcontrol, :parity, :pollinterval, :txfreq_start, "
                                ":txfreq_end, :get_freq, :get_mode, :get_vfo, :get_pwr, :rit_offset, :xit_offset, :get_rit, "
                                ":get_xit, :default_pwr, :get_ptt, :qsy_wiping, :get_key_speed, :assigned_cw_key, :key_speed_sync, "
-                               ":driver, :dxSpot2Rig, :ptt_type, :ptt_port_pathname)") )
+                               ":driver, :dxSpot2Rig, :ptt_type, :ptt_port_pathname, :use_rigctld, :use_rigctld_debug )") )
     {
         qWarning() << "cannot prepare Insert statement";
         return;
@@ -191,6 +196,8 @@ void RigProfilesManager::save()
             insertQuery.bindValue(":dxSpot2Rig", rigProfile.dxSpot2Rig);
             insertQuery.bindValue(":ptt_type", rigProfile.pttType);
             insertQuery.bindValue(":ptt_port_pathname", rigProfile.pttPortPath);
+            insertQuery.bindValue(":use_rigctld",rigProfile.use_rigctld);
+            insertQuery.bindValue(":use_rigctld_debug",rigProfile.use_rigctld_debug);
 
             if ( ! insertQuery.exec() )
             {
@@ -239,6 +246,8 @@ bool RigProfile::operator==(const RigProfile &profile)
             && profile.dxSpot2Rig == this->dxSpot2Rig
             && profile.pttType == this->pttType
             && profile.pttPortPath == this->pttPortPath
+            && profile.use_rigctld == this->use_rigctld
+            && profile.use_rigctld_debug == this->use_rigctld_debug
             );
 }
 

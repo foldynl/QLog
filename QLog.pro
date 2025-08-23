@@ -110,6 +110,7 @@ SOURCES += \
         rig/drivers/GenericRigDrv.cpp \
         rig/drivers/HamlibRigDrv.cpp \
         rig/drivers/TCIRigDrv.cpp \
+        rig/rigctldmanager.cpp \
         rotator/RotCaps.cpp \
         rotator/Rotator.cpp \
         rotator/drivers/GenericRotDrv.cpp \
@@ -252,6 +253,7 @@ HEADERS += \
         rig/drivers/HamlibRigDrv.h \
         rig/drivers/TCIRigDrv.h \
         rig/macros.h \
+        rig/rigctldmanager.h \
         rotator/RotCaps.h \
         rotator/Rotator.h \
         rotator/drivers/GenericRotDrv.h \
@@ -476,8 +478,32 @@ macx: {
       INSTALLS += target
    }
 
-   INCLUDEPATH += /usr/local/include /opt/homebrew/include
-   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3
+    RIGCTLD_PATH =
+    RIGCTLD_CANDIDATES = \
+        /opt/homebrew/bin/rigctld \        # Apple Silicon Homebrew
+        /usr/local/bin/rigctld \           # Intel Homebrew or older setups
+        $$HOME/bin/rigctld \               # user bin
+        $$PWD/third_party/rigctld          # project-local copy (if you keep one)
+
+    for (c, RIGCTLD_CANDIDATES) {
+        exists($$c) {
+            RIGCTLD_PATH = $$c
+            break()
+        }
+    }
+
+    !isEmpty(RIGCTLD_PATH) {
+        message(Embedding rigctld from: $$RIGCTLD_PATH)
+        rigctld.files = $$RIGCTLD_PATH
+        rigctld.path  = Contents/MacOS      # put next to your app binary
+        QMAKE_BUNDLE_DATA += rigctld
+    } else {
+        message(rigctld not found; not embedding)
+    }
+
+
+   INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
+   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -L/opt/local/lib
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=
