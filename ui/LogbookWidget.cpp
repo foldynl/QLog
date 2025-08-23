@@ -61,6 +61,11 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
                           SearchDefinition(SOTA_SEARCH,
                                            ui->actionSearchSOTA,
                                            "sota_ref"));
+
+    searchTypeList.insert(WWFF_SEARCH,
+                          SearchDefinition(WWFF_SEARCH,
+                                           ui->actionSearchWWFF,
+                                           "wwff_ref"));
     setupSearchMenu();
 
     connect(ui->countrySelectFilter, &SmartSearchBox::currentTextChanged,
@@ -540,8 +545,18 @@ void LogbookWidget::setPotaSearch()
 
 void LogbookWidget::setSotaSearch()
 {
+    FCT_IDENTIFICATION;
+
     clearSearchText();
     ui->searchTextFilter->setPlaceholderText(tr("SOTA"));
+}
+
+void LogbookWidget::setWwffSearch()
+{
+    FCT_IDENTIFICATION;
+
+    clearSearchText();
+    ui->searchTextFilter->setPlaceholderText(tr("WWFF"));
 }
 
 void LogbookWidget::filterCallsign(const QString &call)

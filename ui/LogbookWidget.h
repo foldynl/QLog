@@ -34,7 +34,8 @@ public:
         CALLSIGN_SEARCH = 1,
         GRIDSQUARE_SEARCH = 2,
         POTA_SEARCH = 3,
-        SOTA_SEARCH = 4
+        SOTA_SEARCH = 4,
+        WWFF_SEARCH = 5
     };
 
 signals:
@@ -92,6 +93,7 @@ public slots:
     void setGridsquareSearch();
     void setPotaSearch();
     void setSotaSearch();
+    void setWwffSearch();
 
 private:
     ClubLogUploader* clublog;

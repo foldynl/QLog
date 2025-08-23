@@ -348,6 +348,14 @@
     <string>SOTA</string>
    </property>
   </action>
+  <action name="actionSearchWWFF">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>WWFF</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -606,6 +614,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSearchWWFF</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>setWwffSearch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>deleteContact()</slot>
@@ -628,5 +652,6 @@
   <slot>setGridsquareSearch()</slot>
   <slot>setPotaSearch()</slot>
   <slot>setSotaSearch()</slot>
+  <slot>setWwffSearch()</slot>
  </slots>
 </ui>
