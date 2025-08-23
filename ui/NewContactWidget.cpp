@@ -467,7 +467,10 @@ void NewContactWidget::handleCallsignFromUser()
         useNearestSpotInfo(callsign);
         setDxccInfo(callsign);
         if ( callsign.length() >= 3 )
+        {
+            queryPota();
             useFieldsFromPrevQSO(callsign);
+        }
     }
     emit callsignChanged(callsign);
 }
@@ -926,7 +929,9 @@ void NewContactWidget::updateTXBand(double freq)
     }
 
     updateSatMode();
-    updateDxccStatus();   
+    updateDxccStatus();
+    queryPota(); // It is not possible to call the potaquert everywhere when the freq changes,
+                 // call it when band is changed
     ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, BandPlan::freq2Band(ui->freqTXEdit->value()));
     ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), BandPlan::freq2Band(ui->freqTXEdit->value()));
 }
@@ -2937,6 +2942,8 @@ void NewContactWidget::prepareWSJTXQSO(const QString &receivedCallsign,
     uiDynamic->gridEdit->setText(grid);
     checkDupe();
     setDxccInfo(receivedCallsign);
+    queryPota();
+
     // at the moment WSJTX sends several statuses about changing one callsign.
     // In order to avoid multiple searches, we will search only when we have a grid - it was usually the last
     // status message
@@ -3834,6 +3841,19 @@ void NewContactWidget::setContestFieldsState()
     uiDynamic->stxEdit->setToolTip(toolTip);
     uiDynamic->stxStringEdit->setEnabled(enabled);
     uiDynamic->stxStringEdit->setToolTip(toolTip);
+}
+
+void NewContactWidget::queryPota()
+{
+    FCT_IDENTIFICATION;
+
+    if ( callsign.size() >= 3 )
+    {
+        // use copy constructor - POTA is updated from another thread and reference can be problem
+        const QString ref = PotaQE::instance()->findReferenceId(Callsign(callsign), ui->freqRXEdit->value()).reference;
+        uiDynamic->potaEdit->setText(ref);
+        potaEditFinished();
+    }
 }
 
 NewContactDynamicWidgets::NewContactDynamicWidgets(bool allocateWidgets,

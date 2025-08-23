@@ -301,6 +301,7 @@ private slots:
     void refreshContestCompleter();
     void tabsExpandCollapse();
     void setContestFieldsState();
+    void queryPota();
 
 private:
     void useFieldsFromPrevQSO(const QString &callsign,
