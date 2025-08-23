@@ -48,7 +48,7 @@ const POTASpot PotaQE::findReferenceId(const Callsign &callsign, double freq)
 
     const QString &baseCallsign = callsign.getBase();
 
-    if ( !callsign.isValid() || baseCallsign.isEmpty() ) return {};
+    if ( !callsign.isValid() || baseCallsign.isEmpty() ) return POTASpot();
 
     QMutexLocker locker(&activatorLock);
 
@@ -61,7 +61,7 @@ const POTASpot PotaQE::findReferenceId(const Callsign &callsign, double freq)
         i++;
     }
 
-    return {};
+    return POTASpot();
 }
 
 void PotaQE::updateSpot()

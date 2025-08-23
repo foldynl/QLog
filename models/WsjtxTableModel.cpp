@@ -30,7 +30,7 @@ QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
         case COLUMN_DISTANCE: if ( entry.distance > 0.0 ) return entry.distance; else return QVariant();
         case COLUMN_SNR: return QString::number(entry.decode.snr);
         case COLUMN_LAST_ACTIVITY: return entry.decode.time.toString();
-        case COLUMN_LAST_MESSAGE: return entry.decode.message;
+        case COLUMN_LAST_MESSAGE: return entry.comment;
         case COLUMN_MEMBER: return entry.memberList2StringList().join(", ");
         default: return QVariant();
         }
