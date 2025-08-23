@@ -340,6 +340,14 @@
     <string>POTA</string>
    </property>
   </action>
+  <action name="actionSearchSOTA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SOTA</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -582,6 +590,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSearchSOTA</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>setSotaSearch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>deleteContact()</slot>
@@ -603,5 +627,6 @@
   <slot>setCallsignSearch()</slot>
   <slot>setGridsquareSearch()</slot>
   <slot>setPotaSearch()</slot>
+  <slot>setSotaSearch()</slot>
  </slots>
 </ui>
