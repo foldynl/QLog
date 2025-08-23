@@ -158,8 +158,8 @@ HamlibRigDrv::HamlibRigDrv(const RigProfile &profile,
         lastErrorText = tr("Initialization Error");
     }
 
-    rigctld_ = std::make_unique<RigctldManager>(this);
-
+   // rigctld_ = std::make_unique<RigctldManager>(this);
+    rigctld_.reset(new RigctldManager(this));
     rig_set_debug(RIG_DEBUG_BUG);
 
     connect(&errorTimer, &QTimer::timeout,
