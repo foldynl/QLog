@@ -33,6 +33,7 @@ public:
         UNKNOWN_SEARCH = 0,
         CALLSIGN_SEARCH = 1,
         GRIDSQUARE_SEARCH = 2,
+        POTA_SEARCH = 3
     };
 
 signals:
@@ -88,6 +89,7 @@ public slots:
     void callbookError(const QString&);
     void setCallsignSearch();
     void setGridsquareSearch();
+    void setPotaSearch();
 
 private:
     ClubLogUploader* clublog;

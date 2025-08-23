@@ -52,6 +52,11 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
                                            ui->actionSearchGrid,
                                            "gridsquare"));
 
+    searchTypeList.insert(POTA_SEARCH,
+                          SearchDefinition(POTA_SEARCH,
+                                           ui->actionSearchPOTA,
+                                           "pota_ref"));
+
     setupSearchMenu();
 
     connect(ui->countrySelectFilter, &SmartSearchBox::currentTextChanged,
@@ -519,6 +524,14 @@ void LogbookWidget::setGridsquareSearch()
 
     clearSearchText();
     ui->searchTextFilter->setPlaceholderText(tr("Gridsquare"));
+}
+
+void LogbookWidget::setPotaSearch()
+{
+    FCT_IDENTIFICATION;
+
+    clearSearchText();
+    ui->searchTextFilter->setPlaceholderText(tr("POTA"));
 }
 
 void LogbookWidget::filterCallsign(const QString &call)
