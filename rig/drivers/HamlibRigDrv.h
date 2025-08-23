@@ -7,6 +7,7 @@
 
 #include "GenericRigDrv.h"
 #include "rig/RigCaps.h"
+#include "rig/rigctldmanager.h"
 
 class HamlibRigDrv : public GenericRigDrv
 {
@@ -76,7 +77,7 @@ private:
     serial_handshake_e stringToHamlibFlowControl(const QString &in_flowcontrol);
     serial_parity_e stringToHamlibParity(const QString &in_parity);
     QString hamlibErrorString(int);
-
+    std::unique_ptr<RigctldManager> rigctld_;
     RIG* rig;
     QTimer timer;
     QTimer errorTimer;

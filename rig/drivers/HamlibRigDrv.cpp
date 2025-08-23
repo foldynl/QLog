@@ -5,6 +5,7 @@
 #include "core/debug.h"
 #include "rig/macros.h"
 #include "data/SerialPort.h"
+#include "rig/rigctldmanager.h"
 
 #ifndef HAMLIB_FILPATHLEN
 #define HAMLIB_FILPATHLEN FILPATHLEN
@@ -157,6 +158,8 @@ HamlibRigDrv::HamlibRigDrv(const RigProfile &profile,
         lastErrorText = tr("Initialization Error");
     }
 
+   // rigctld_ = std::make_unique<RigctldManager>(this);
+    rigctld_.reset(new RigctldManager(this));
     rig_set_debug(RIG_DEBUG_BUG);
 
     connect(&errorTimer, &QTimer::timeout,
@@ -172,6 +175,11 @@ HamlibRigDrv::~HamlibRigDrv()
         qCDebug(runtime) << "Waited too long";
         // better to make a memory leak
         return;
+    }
+
+    if (rigctld_)
+    {
+        rigctld_->stop();
     }
 
     if ( rig )
@@ -198,52 +206,93 @@ bool HamlibRigDrv::open()
     }
 
     RigProfile::rigPortType portType = rigProfile.getPortType();
+    rigctld_->setDebugLogsEnabled(rigProfile.use_rigctld_debug);
 
-    if ( portType == RigProfile::NETWORK_ATTACHED )
+    QString err;
+    const QString rigctldPath = rigctld_->findRigctldExecutable();
+
+    if (!rigctldPath.isEmpty() &&
+        rigProfile.use_rigctld)
     {
-        //handling Network Radio
-        const QString portString = rigProfile.hostname + ":" + QString::number(rigProfile.netport);
+        if(!rigctld_->startFromProfile(rigProfile, 4532, rigctldPath, &err))
+        {
+            qWarning() << "Couldn't Launch RigCtlD";
+            return false;
+        }
+        qCDebug(runtime) << "rigctld started; switching to NETRIGCTL model";
+
+        // 1) Dispose of the rig initialized with the hardware model
+        rig_close(rig);          // safe even if not opened yet
+        rig_cleanup(rig);
+        rig = nullptr;
+
+        // 2) Re-init as NETRIGCTL (hamlib model 2)
+        rig = rig_init(RIG_MODEL_NETRIGCTL);
+
+        if (!rig) {
+            lastErrorText = tr("Initialization Error (NETRIGCTL)");
+            qCDebug(runtime) << "Cannot allocate NET rig structure";
+            return false;
+        }
+
+        // optional: keep your debug level
+        rig_set_debug(RIG_DEBUG_BUG);
+
+        // 3) Point NETRIG to local rigctld
+        QString portString =  "127.0.0.1:" + QString::number(rigctld_->listenPort());
         strncpy(rig->state.rigport.pathname, portString.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
-    }
-    else if ( portType == RigProfile::SERIAL_ATTACHED )
-    {
-        //handling Serial Port Radio
-        strncpy(rig->state.rigport.pathname, rigProfile.portPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
-        rig->state.rigport.parm.serial.rate = rigProfile.baudrate;
-        rig->state.rigport.parm.serial.data_bits = rigProfile.databits;
-        rig->state.rigport.parm.serial.stop_bits = rigProfile.stopbits;
-        rig->state.rigport.parm.serial.handshake = stringToHamlibFlowControl(rigProfile.flowcontrol);
-        rig->state.rigport.parm.serial.parity = stringToHamlibParity(rigProfile.parity);
 
-        qCDebug(runtime) << "Using PTT Type" << rigProfile.pttType.toLocal8Bit().constData()
-                         << "PTT Path" << rigProfile.pttPortPath;
-
-        if ( !rigProfile.pttPortPath.isEmpty() )
-        {
-            strncpy(PTTPORT(rig)->pathname, rigProfile.pttPortPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
-        }
-
-        if ( rig_set_conf(rig, rig_token_lookup(rig, "ptt_type"), rigProfile.pttType.toLocal8Bit().constData()) != RIG_OK )
-        {
-            lastErrorText = tr("Cannot set PTT Type");
-            qCDebug(runtime) << "Rig Open Error" << lastErrorText;
-            return false;
-        }
-
-        if ( rig_set_conf(rig, rig_token_lookup(rig, "ptt_share"), "1") != RIG_OK )
-        {
-            lastErrorText = tr("Cannot set PTT Share");
-            qCDebug(runtime) << "Rig Open Error" << lastErrorText;
-            return false;
-        }
+        // From here down, treat it like a network-attached rig
+        // (skip the hardware serial config branch entirely)
+        portType = RigProfile::NETWORK_ATTACHED;
     }
     else
     {
-        lastErrorText = tr("Unsupported Rig Driver");
-        qCDebug(runtime) << "Rig Open Error" << lastErrorText;
-        return false;
-    }
+        if ( portType == RigProfile::NETWORK_ATTACHED )
+        {
+            //handling Network Radio
+            const QString portString = rigProfile.hostname + ":" + QString::number(rigProfile.netport);
+            strncpy(rig->state.rigport.pathname, portString.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
+        }
+        else if ( portType == RigProfile::SERIAL_ATTACHED )
+        {
+            //handling Serial Port Radio
+            strncpy(rig->state.rigport.pathname, rigProfile.portPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
+            rig->state.rigport.parm.serial.rate = rigProfile.baudrate;
+            rig->state.rigport.parm.serial.data_bits = rigProfile.databits;
+            rig->state.rigport.parm.serial.stop_bits = rigProfile.stopbits;
+            rig->state.rigport.parm.serial.handshake = stringToHamlibFlowControl(rigProfile.flowcontrol);
+            rig->state.rigport.parm.serial.parity = stringToHamlibParity(rigProfile.parity);
 
+            qCDebug(runtime) << "Using PTT Type" << rigProfile.pttType.toLocal8Bit().constData()
+                             << "PTT Path" << rigProfile.pttPortPath;
+
+            if ( !rigProfile.pttPortPath.isEmpty() )
+            {
+                strncpy(PTTPORT(rig)->pathname, rigProfile.pttPortPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
+            }
+
+            if ( rig_set_conf(rig, rig_token_lookup(rig, "ptt_type"), rigProfile.pttType.toLocal8Bit().constData()) != RIG_OK )
+            {
+                lastErrorText = tr("Cannot set PTT Type");
+                qCDebug(runtime) << "Rig Open Error" << lastErrorText;
+                return false;
+            }
+
+            if ( rig_set_conf(rig, rig_token_lookup(rig, "ptt_share"), "1") != RIG_OK )
+            {
+                lastErrorText = tr("Cannot set PTT Share");
+                qCDebug(runtime) << "Rig Open Error" << lastErrorText;
+                return false;
+            }
+        }
+        else
+        {
+            lastErrorText = tr("Unsupported Rig Driver");
+            qCDebug(runtime) << "Rig Open Error" << lastErrorText;
+            return false;
+        }
+  }
     int status = rig_open(rig);
 
     if ( !isRigRespOK(status, tr("Rig Open Error"), false) )

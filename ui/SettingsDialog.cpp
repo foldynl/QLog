@@ -493,7 +493,8 @@ void SettingsDialog::addRigProfile()
     profile.getKeySpeed = ui->rigGetKeySpeedCheckBox->isChecked();
     profile.keySpeedSync = ui->rigKeySpeedSyncCheckBox->isChecked();
     profile.dxSpot2Rig = ui->rigDXSpots2RigCheckBox->isChecked();
-
+    profile.use_rigctld = ui->rigRigCtlDLauncher->isChecked();
+    profile.use_rigctld_debug = ui->rigRigCtlDLoggig->isChecked();
     rigProfManager->addProfile(profile.profileName, profile);
 
     refreshRigProfilesView();
@@ -569,6 +570,8 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     ui->rigGetKeySpeedCheckBox->setChecked(profile.getKeySpeed);
     ui->rigKeySpeedSyncCheckBox->setChecked(profile.keySpeedSync);
     ui->rigDXSpots2RigCheckBox->setChecked(profile.dxSpot2Rig);
+    ui->rigRigCtlDLauncher->setChecked(profile.use_rigctld);
+    ui->rigRigCtlDLoggig->setChecked(profile.use_rigctld_debug);
 
     int flowControlIndex = ui->rigFlowControlSelect->findData(profile.flowcontrol.toLower());
     ui->rigFlowControlSelect->setCurrentIndex((flowControlIndex < 0) ? 0 : flowControlIndex);
@@ -583,6 +586,7 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     ui->rigPTTPortEdit->setText(profile.pttPortPath);
 
     setUIBasedOnRigCaps(caps);
+    qWarning() << "rigctl checked" << ui->rigRigCtlDLauncher->checkState();
 
     ui->rigAddProfileButton->setText(tr("Modify"));
 }
@@ -623,6 +627,8 @@ void SettingsDialog::clearRigProfileForm()
     ui->rigGetKeySpeedCheckBox->setChecked(true);
     ui->rigKeySpeedSyncCheckBox->setChecked(false);
     ui->rigDXSpots2RigCheckBox->setChecked(false);
+    ui->rigRigCtlDLauncher->setChecked(false);
+    ui->rigRigCtlDLoggig->setChecked(false);
     ui->rigAddProfileButton->setText(tr("Add"));
     ui->rigPTTPortEdit->clear();
 }
@@ -1761,6 +1767,12 @@ void SettingsDialog::rigChanged(int index)
     ui->rigDXSpots2RigCheckBox->setEnabled(true);
     ui->rigDXSpots2RigCheckBox->setChecked(false);
 
+    ui->rigRigCtlDLauncher->setEnabled(true);
+    ui->rigRigCtlDLauncher->setChecked(false);
+
+    ui->rigRigCtlDLoggig->setEnabled(true);
+    ui->rigRigCtlDLoggig->setChecked(false);
+
     setUIBasedOnRigCaps(caps);
 }
 
@@ -2596,6 +2608,19 @@ void SettingsDialog::setUIBasedOnRigCaps(const RigCaps &caps)
     {
         ui->rigDXSpots2RigCheckBox->setEnabled(false);
         ui->rigDXSpots2RigCheckBox->setChecked(false);
+    }
+
+    if ( ui->rigInterfaceCombo->currentText() != "Hamlib")
+    {
+        ui->rigRigCtlDLauncher->setChecked(false);
+        ui->rigRigCtlDLauncher->setEnabled(false);
+        ui->rigRigCtlDLoggig->setChecked(false);
+        ui->rigRigCtlDLoggig->setEnabled(false);
+    }
+    else
+    {
+        ui->rigRigCtlDLauncher->setEnabled(true);
+        ui->rigRigCtlDLoggig->setEnabled(true);
     }
 
     if ( ui->rigAssignedCWKeyCombo->currentText() != EMPTY_CWKEY_PROFILE )

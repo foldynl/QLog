@@ -47,5 +47,6 @@
         <file>sql/migration_032.sql</file>
         <file>sql/migration_033.sql</file>
         <file>sql/migration_034.sql</file>
+        <file>sql/migration_035.sql</file>
     </qresource>
 </RCC>
