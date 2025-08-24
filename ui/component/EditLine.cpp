@@ -1,6 +1,7 @@
 #include <QFocusEvent>
 #include <QCompleter>
 #include <QSerialPortInfo>
+#include <QDir>
 #include "EditLine.h"
 
 
@@ -97,18 +98,42 @@ void NewContactRSTEditLine::focusInEvent(QFocusEvent *event)
 SerialPortEditLine::SerialPortEditLine(QWidget *parent) :
     QLineEdit(parent)
 {
-#if defined(Q_OS_WIN)
-    // setInputMask("COM000"); // temporarily removed - it does not work in a user-friendly
-                               // because when you click, the cursor can reach the end
-                               // and in that case the mask does not work correctly.
-    QStringList portNames;
     const QList<QSerialPortInfo> &ports = QSerialPortInfo::availablePorts();
+    QStringList portNames;
+
+#if defined(Q_OS_WIN)
+    for (const QSerialPortInfo &port : ports)
+        portNames << port.portName();
+#elif defined(Q_OS_MACOS)
+    for (const QSerialPortInfo &port : ports)
+        portNames << QString("/dev/%1").arg(port.portName());
+#else
+    // In the case of Linux, it is good to use /dev/serial/by-id
+    // because it does not change over time.
+    // obtain /dev/serial/by-id files
+    QDir dir("/dev/serial/by-id");
+    const QStringList &symlinks = dir.entryList(QDir::System | QDir::Readable | QDir::NoDotAndDotDot);
 
     for ( const QSerialPortInfo &port : ports )
-        portNames << port.portName();
+    {
+        QString dev = QString("/dev/%1").arg(port.portName());
+        QString niceName = dev;
 
-    setCompleter(new QCompleter(portNames));
+        // try to find symlink
+        for ( const QString &entry : symlinks )
+        {
+            QString fullPath = dir.absoluteFilePath(entry);
+            QFileInfo fi(fullPath);
+            if ( fi.canonicalFilePath() == dev )
+            {
+                niceName = fullPath;
+                break;
+            }
+        }
+        portNames << niceName;
+    }
 #endif
+    setCompleter(new QCompleter(portNames));
 }
 
 void SerialPortEditLine::focusInEvent(QFocusEvent *event)
@@ -116,6 +141,9 @@ void SerialPortEditLine::focusInEvent(QFocusEvent *event)
     QLineEdit::focusInEvent(event);
 #if defined(Q_OS_WIN)
     completer()->setCompletionPrefix("COM");
+    completer()->complete();
+#else
+    completer()->setCompletionPrefix("/dev/");
     completer()->complete();
 #endif
 }
