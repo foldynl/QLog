@@ -97,6 +97,14 @@ SerialPortEditLine::SerialPortEditLine(QWidget *parent) :
         portNames << port.portName();
 
     setCompleter(new QCompleter(portNames));
+#elif defined(Q_OS_MAC)
+    QStringList portNames;
+    const QList<QSerialPortInfo> &ports = QSerialPortInfo::availablePorts();
+
+    for ( const QSerialPortInfo &port : ports )
+        portNames << QString("/dev/%1").arg(port.portName());
+
+    setCompleter(new QCompleter(portNames));
 #endif
 }
 
@@ -106,5 +114,9 @@ void SerialPortEditLine::focusInEvent(QFocusEvent *event)
 #if defined(Q_OS_WIN)
     completer()->setCompletionPrefix("COM");
     completer()->complete();
+#elif defined(Q_OS_WIN)
+    completer()->setCompletionPrefix("/dev/");
+    completer()->complete();
+
 #endif
 }
