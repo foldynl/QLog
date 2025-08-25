@@ -266,7 +266,7 @@ bool AlertRule::match(const WsjtxEntry &wsjtx) const
          && (dxCountry == 0 || dxCountry == wsjtx.dxcc.dxcc)
          && (ituz == 0 || ituz == wsjtx.dxcc.ituz)
          && (cqz == 0 || cqz == wsjtx.dxcc.cqz)
-         && (!pota || wsjtx.containsWWFF)
+         && (!pota || wsjtx.containsPOTA)
          && (!sota || wsjtx.containsSOTA)
          && (!iota || wsjtx.containsIOTA)
          && (!wwff || wsjtx.containsWWFF)
