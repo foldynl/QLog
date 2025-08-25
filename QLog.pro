@@ -42,7 +42,7 @@ DEFINES += QT_DEPRECATED_WARNINGS QT_MESSAGELOGCONTEXT
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 macx:QT_CONFIG -= no-pkg-config
 
-CONFIG += c++11 force_debug_info sanitizer sanitize_address sanitize_undefined
+CONFIG += c++11 force_debug_info
 CONFIG *= link_pkgconfig
 
 SOURCES += \
