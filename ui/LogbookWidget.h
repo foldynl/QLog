@@ -36,7 +36,8 @@ public:
         POTA_SEARCH = 3,
         SOTA_SEARCH = 4,
         WWFF_SEARCH = 5,
-        SIG_SEARCH = 6
+        IOTA_SEARCH = 6,
+        SIG_SEARCH = 7
     };
 
 signals:
@@ -96,6 +97,7 @@ public slots:
     void setSotaSearch();
     void setWwffSearch();
     void setSigSearch();
+    void setIOTASearch();
 
 private:
     ClubLogUploader* clublog;

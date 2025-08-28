@@ -71,6 +71,12 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
                           SearchDefinition(SIG_SEARCH,
                                            ui->actionSearchSIG,
                                            "sig_intl"));
+
+    searchTypeList.insert(IOTA_SEARCH,
+                          SearchDefinition(IOTA_SEARCH,
+                                           ui->actionSearchIOTA,
+                                           "iota"));
+
     setupSearchMenu();
 
     connect(ui->countrySelectFilter, &SmartSearchBox::currentTextChanged,
@@ -570,6 +576,14 @@ void LogbookWidget::setSigSearch()
 
     clearSearchText();
     ui->searchTextFilter->setPlaceholderText(tr("SIG"));
+}
+
+void LogbookWidget::setIOTASearch()
+{
+    FCT_IDENTIFICATION;
+
+    clearSearchText();
+    ui->searchTextFilter->setPlaceholderText(tr("IOTA"));
 }
 
 void LogbookWidget::filterCallsign(const QString &call)

@@ -364,6 +364,14 @@
     <string>SIG</string>
    </property>
   </action>
+  <action name="actionSearchIOTA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>IOTA</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -654,6 +662,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSearchIOTA</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>setIOTASearch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>deleteContact()</slot>
@@ -678,5 +702,6 @@
   <slot>setSotaSearch()</slot>
   <slot>setWwffSearch()</slot>
   <slot>setSigSearch()</slot>
+  <slot>setIOTASearch()</slot>
  </slots>
 </ui>
