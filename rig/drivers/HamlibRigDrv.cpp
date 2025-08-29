@@ -247,6 +247,13 @@ bool HamlibRigDrv::open()
         return false;
     }
 
+    if ( rig_set_conf(rig, rig_token_lookup(rig, "auto_power_on"), "1") != RIG_OK )
+    {
+        lastErrorText = tr("Cannot set auto_power_on");
+        qCDebug(runtime) << "Rig Open Error" << lastErrorText;
+        // return false; ignore the error - no critical
+    }
+
     int status = rig_open(rig);
 
     if ( !isRigRespOK(status, tr("Rig Open Error"), false) )
