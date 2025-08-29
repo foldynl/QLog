@@ -85,6 +85,7 @@ signals:
     void keyHWButton2Pressed();
     void keyHWButton3Pressed();
     void keyHWButton4Pressed();
+    void keyHWButtonHaltPressed();
 
 public:
     explicit CWKey(CWKeyModeID mode, qint32 defaultWPM, QObject *parent = nullptr);

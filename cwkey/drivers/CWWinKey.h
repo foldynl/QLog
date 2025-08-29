@@ -30,6 +30,7 @@ private:
 
     bool isInHostMode;
     bool xoff;
+    bool isBusy;
     bool paddleSwap;
 
     QMutex writeBufferMutex;

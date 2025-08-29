@@ -159,6 +159,7 @@ void CWKeyer::__openCWKey()
     connect(cwKey, &CWKey::keyHWButton2Pressed, this, &CWKeyer::cwKeyHWButton2PressedHandler);
     connect(cwKey, &CWKey::keyHWButton3Pressed, this, &CWKeyer::cwKeyHWButton3PressedHandler);
     connect(cwKey, &CWKey::keyHWButton4Pressed, this, &CWKeyer::cwKeyHWButton4PressedHandler);
+    connect(cwKey, &CWKey::keyHWButtonHaltPressed, this, &CWKeyer::cwKeyHWButtonHaltHandler);
 
     connectedCWKeyProfile = newProfile;
 
@@ -402,6 +403,11 @@ void CWKeyer::cwKeyHWButton3PressedHandler()
 void CWKeyer::cwKeyHWButton4PressedHandler()
 {
     emit cwKeyHWButton4Pressed();
+}
+
+void CWKeyer::cwKeyHWButtonHaltHandler()
+{
+    emit cwKeyHWHaltPressed();
 }
 
 CWKeyer::CWKeyer(QObject *parent ) :
