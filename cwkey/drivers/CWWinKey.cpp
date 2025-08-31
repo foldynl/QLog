@@ -19,7 +19,6 @@ CWWinKey::CWWinKey(const QString &portName,
       CWKeySerialInterface(portName, baudrate, 5000),
       isInHostMode(false),
       xoff(false),
-      isBusy(false),
       paddleSwap(paddleSwap),
       version(0)
 {
@@ -325,52 +324,46 @@ void CWWinKey::handleReadyRead()
         qCDebug(runtime) << "\tStatus Information Message:";
         xoff = false;
 
-        if ( rcvByte == 0xC0 )
-        {
-            qCDebug(runtime) << "\t\tIdle";
-            isBusy = false;
-        }
+        if ( rcvByte == 0xC0 ) qCDebug(runtime) << "\t\tIdle";
         else
         {
             if ( version >= 20 && rcvByte & 0x08 )
             {
                 qCDebug(runtime) << "\tPushButton Status Byte";
-
-                auto handleButton = [&](quint8 mask, const char *text, const std::function<void()> &signalFn)
+                if ( rcvByte & 0x01 )
                 {
-                    if ( rcvByte & mask )
-                    {
-                        qCDebug(runtime) << "\t\t" << text;
-                        if ( isBusy )
-                            emit keyHWButtonHaltPressed();
-                        else
-                            signalFn();
-                    }
-                };
-
-                handleButton(0x01, "Button1 pressed", [this]{ emit keyHWButton1Pressed(); });
-                handleButton(0x02, "Button2 pressed", [this]{ emit keyHWButton2Pressed(); });
-                handleButton(0x04, "Button3 pressed", [this]{ emit keyHWButton3Pressed(); });
-                handleButton(0x10, "Button4 pressed", [this]{ emit keyHWButton4Pressed(); });
+                    qCDebug(runtime) << "\t\tButton1 pressed";
+                    emit keyHWButton1Pressed();
+                }
+                if ( rcvByte & 0x02 )
+                {
+                    qCDebug(runtime) << "\t\tButton2 pressed";
+                    emit keyHWButton2Pressed();
+                }
+                if ( rcvByte & 0x04 )
+                {
+                    qCDebug(runtime) << "\t\tButton3 pressed";
+                    emit keyHWButton3Pressed();
+                }
+                if ( rcvByte & 0x10 )
+                {
+                    qCDebug(runtime) << "\t\tButton4 pressed";
+                    emit keyHWButton4Pressed();
+                }
             }
             else
             {
                 qCDebug(runtime) << "\tStatus Byte";
 
-                auto handleFlag = [&](quint8 mask, const char *text, const std::function<void()> &action = nullptr)
+                if ( rcvByte & 0x01 )
                 {
-                    if ( rcvByte & mask )
-                    {
-                        qCDebug(runtime) << "\t\t" << text;
-                        if (action) action();
-                    }
-                };
-
-                handleFlag(0x01, "Buffer 2/3 full", [&]{xoff = true; isBusy = true;});
-                handleFlag(0x02, "Brk-in");
-                handleFlag(0x04, "Key Busy", [&]{ isBusy = true; });
-                handleFlag(0x08, "Tunning");
-                handleFlag(0x0F, "Waiting");
+                    qCDebug(runtime) << "\t\tBuffer 2/3 full";
+                    xoff = true; //slow down in sending Write Buffer - to block tryAsyncWrite
+                }
+                if ( rcvByte & 0x02 ) qCDebug(runtime) << "\t\tBrk-in";
+                if ( rcvByte & 0x04 ) qCDebug(runtime) << "\t\tKey Busy";
+                if ( rcvByte & 0x08 ) qCDebug(runtime) << "\t\tTunning";
+                if ( rcvByte & 0x0F ) qCDebug(runtime) << "\t\tWaiting";
             }
         }
     }

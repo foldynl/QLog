@@ -28,7 +28,6 @@ signals:
     void cwKeyHWButton2Pressed();
     void cwKeyHWButton3Pressed();
     void cwKeyHWButton4Pressed();
-    void cwKeyHWHaltPressed();
 
 public slots:
     void start();
@@ -58,7 +57,6 @@ private slots:
     void cwKeyHWButton2PressedHandler();
     void cwKeyHWButton3PressedHandler();
     void cwKeyHWButton4PressedHandler();
-    void cwKeyHWButtonHaltHandler();
 
 private:
     explicit CWKeyer(QObject *parent = nullptr);
