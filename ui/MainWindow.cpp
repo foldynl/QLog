@@ -30,7 +30,7 @@
 #include "ui/DownloadQSLDialog.h"
 #include "ui/UploadQSODialog.h"
 #include "core/LogParam.h"
-#include "data/RecomputeDxccDialog.h"
+#include "data/recomputedxccdialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
