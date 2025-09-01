@@ -88,6 +88,7 @@ SOURCES += \
         data/SerialPort.cpp \
         data/StationProfile.cpp \
         data/UpdatableSQLRecord.cpp \
+        data/recomputedxccdialog.cpp \
         logformat/AdiFormat.cpp \
         logformat/AdxFormat.cpp \
         logformat/CSVFormat.cpp \
@@ -229,6 +230,7 @@ HEADERS += \
         data/WWFFEntity.h \
         data/WWVSpot.h \
         data/WsjtxEntry.h \
+        data/recomputedxccdialog.h \
         logformat/AdiFormat.h \
         logformat/AdxFormat.h \
         logformat/CSVFormat.h \

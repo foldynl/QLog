@@ -30,6 +30,7 @@
 #include "ui/DownloadQSLDialog.h"
 #include "ui/UploadQSODialog.h"
 #include "core/LogParam.h"
+#include "data/RecomputeDxccDialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.mainwindow");
 
@@ -1547,6 +1548,14 @@ void MainWindow::showAwards()
     connect(&dialog, &AwardsDialog::finished,
             ui->logbookWidget, &LogbookWidget::restoreFilters);
     dialog.exec();
+}
+
+void MainWindow::recomputeDxcc()
+{
+    FCT_IDENTIFICATION;
+
+    RecomputeDxccDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::showAbout()

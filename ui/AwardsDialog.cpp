@@ -150,8 +150,8 @@ void AwardsDialog::refreshTable(int)
         setNotWorkedEnabled(true);
         const QString &entitySelected = getSelectedEntity();
         headersColumns = "translate_to_locale(d.name) col1, d.prefix col2 ";
-        sqlPartDetailTable = " FROM (SELECT id, name, prefix FROM dxcc_entities "
-                             "       UNION SELECT DISTINCT dxcc, dxcc, '" + tr("Unknown") + "' as prefix FROM source_contacts a LEFT JOIN dxcc_entities b ON a.dxcc = b.id WHERE b.id IS NULL) d "
+        sqlPartDetailTable = " FROM (SELECT adif as id, name, prefix FROM clublog_entities "
+                             "       UNION SELECT DISTINCT dxcc, dxcc, '" + tr("Unknown") + "' as prefix FROM source_contacts a LEFT JOIN clublog_entities b ON a.dxcc = b.adif WHERE b.adif IS NULL) d "
                              "   LEFT OUTER JOIN source_contacts c ON d.id = c.dxcc"
                              "   LEFT OUTER JOIN modes m on c.mode = m.name"
                              " WHERE (c.id is NULL or c.my_dxcc = '" + entitySelected + "') ";
