@@ -1,5 +1,5 @@
 // RecomputeDxccDialog.cpp
-#include "RecomputeDxccDialog.h"
+#include "data/recomputedxccdialog.h"
 #include "Data.h"
 #include <QVBoxLayout>
 #include <QProgressBar>
