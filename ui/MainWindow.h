@@ -55,6 +55,7 @@ private slots:
     void importLog();
     void exportLog();
     void showAwards();
+    void recomputeDxcc();
     void showAbout();
     void showWikiHelp();
     void showMailingList();

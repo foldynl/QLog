@@ -499,7 +499,7 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
 
         if ( recordDXCCId != 0 || updateDxcc )
         {
-            const DxccEntity &entity = ( updateDxcc ) ? Data::instance()->lookupDxcc(call.toString())
+            const DxccEntity &entity = ( updateDxcc ) ? Data::instance()->lookupCallsign(call.toString(),start_time)
                                                       : Data::instance()->lookupDxccID(recordDXCCId);
 
             if ( entity.dxcc == 0 )  // DXCC not found

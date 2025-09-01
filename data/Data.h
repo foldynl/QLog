@@ -160,6 +160,7 @@ public:
     QStringList potaIDList() { return potaRefID.keys();}
     QString getIANATimeZone(double, double);
     QStringList sigIDList();
+    DxccEntity lookupCallsign(const QString& callsign, const QDateTime& date);
 
 signals:
 
