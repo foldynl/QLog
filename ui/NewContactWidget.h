@@ -227,6 +227,8 @@ signals:
     void contestStarted(const QString contestID,
                         const QDateTime date);
     void rigProfileChanged();
+    void callsignChanged(const QString& callsign);
+    void contactReset();
 
 public slots:
     void refreshRigProfileCombo();

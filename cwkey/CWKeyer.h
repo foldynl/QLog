@@ -24,10 +24,8 @@ signals:
     void cwKeyDisconnected();
     void cwKeyWPMChanged(qint32);
     void cwKeyEchoText(QString);
-    void cwKeyHWButton1Pressed();
-    void cwKeyHWButton2Pressed();
-    void cwKeyHWButton3Pressed();
-    void cwKeyHWButton4Pressed();
+    void cwKeyHWButton(int);
+    void cwKeyHWHaltPressed();
 
 public slots:
     void start();

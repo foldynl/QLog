@@ -219,7 +219,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="macroButton1">
+      <widget class="RepeatButton" name="macroButton1">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -241,10 +241,13 @@
        <property name="flat">
         <bool>false</bool>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="macroButton2">
+      <widget class="RepeatButton" name="macroButton2">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -257,10 +260,16 @@
        <property name="text">
         <string>F2</string>
        </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="macroButton3">
+      <widget class="RepeatButton" name="macroButton3">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -273,10 +282,13 @@
        <property name="text">
         <string>F3</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="macroButton4">
+      <widget class="RepeatButton" name="macroButton4">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -289,10 +301,13 @@
        <property name="text">
         <string>F4</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="macroButton5">
+      <widget class="RepeatButton" name="macroButton5">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -305,10 +320,13 @@
        <property name="text">
         <string>F5</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="macroButton6">
+      <widget class="RepeatButton" name="macroButton6">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -321,10 +339,13 @@
        <property name="text">
         <string>F6</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="macroButton7">
+      <widget class="RepeatButton" name="macroButton7">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -337,6 +358,9 @@
        <property name="text">
         <string>F7</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
@@ -461,6 +485,11 @@
    <header>ui/component/SwitchButton.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>RepeatButton</class>
+   <extends>QPushButton</extends>
+   <header>ui/component/RepeatButton.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -505,118 +534,6 @@
     <hint type="sourcelabel">
      <x>114</x>
      <y>134</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>macroButton1</sender>
-   <signal>clicked()</signal>
-   <receiver>CWConsoleWidget</receiver>
-   <slot>cwKeyMacroF1()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>49</x>
-     <y>167</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>macroButton2</sender>
-   <signal>clicked()</signal>
-   <receiver>CWConsoleWidget</receiver>
-   <slot>cwKeyMacroF2()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>167</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>macroButton3</sender>
-   <signal>clicked()</signal>
-   <receiver>CWConsoleWidget</receiver>
-   <slot>cwKeyMacroF3()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>191</x>
-     <y>167</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>macroButton4</sender>
-   <signal>clicked()</signal>
-   <receiver>CWConsoleWidget</receiver>
-   <slot>cwKeyMacroF4()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>262</x>
-     <y>167</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>macroButton5</sender>
-   <signal>clicked()</signal>
-   <receiver>CWConsoleWidget</receiver>
-   <slot>cwKeyMacroF5()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>49</x>
-     <y>200</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>macroButton6</sender>
-   <signal>clicked()</signal>
-   <receiver>CWConsoleWidget</receiver>
-   <slot>cwKeyMacroF6()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>200</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>111</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>macroButton7</sender>
-   <signal>clicked()</signal>
-   <receiver>CWConsoleWidget</receiver>
-   <slot>cwKeyMacroF7()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>191</x>
-     <y>200</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -721,4 +638,7 @@
   <slot>clearConsoles()</slot>
   <slot>cwTextChanged(QString)</slot>
  </slots>
+ <buttongroups>
+  <buttongroup name="macroButtonGroup"/>
+ </buttongroups>
 </ui>

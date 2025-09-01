@@ -172,6 +172,7 @@ SOURCES += \
         ui/component/EditLine.cpp \
         ui/component/FreqQSpinBox.cpp \
         ui/component/MultiselectCompleter.cpp \
+        ui/component/RepeatButton.cpp \
         ui/component/SmartSearchBox.cpp \
         ui/component/SwitchButton.cpp
 
@@ -319,6 +320,7 @@ HEADERS += \
         ui/component/EditLine.h \
         ui/component/FreqQSpinBox.h \
         ui/component/MultiselectCompleter.h \
+        ui/component/RepeatButton.h \
         ui/component/ShutdownAwareWidget.h \
         ui/component/SmartSearchBox.h \
         ui/component/StyleItemDelegate.h \

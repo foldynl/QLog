@@ -34,14 +34,9 @@ public slots:
     void rigConnectHandler();
     void cwKeyConnected(QString);
     void cwKeyDisconnected();
-    void cwKeyMacroF1();
-    void cwKeyMacroF2();
-    void cwKeyMacroF3();
-    void cwKeyMacroF4();
-    void cwKeyMacroF5();
-    void cwKeyMacroF6();
-    void cwKeyMacroF7();
     void haltButtonPressed();
+    void pressMacroButton(int);
+    void stopRepeateButtons();
 
 private slots:
     void cwKeyProfileComboChanged(QString);
@@ -59,6 +54,7 @@ private:
     bool cwKeyOnline;
     const NewContactWidget *contact;
     bool sendWord;
+    bool macroButtonsConnected;
 
     void sendCWText(const QString &, bool insertNewLine = true);
     void expandMacros(QString &);
@@ -67,6 +63,8 @@ private:
 
     void saveSendWordConfig(bool);
     bool getSendWordConfig();
+
+    int getMacroButtonID(const QAbstractButton* button);
 
 };
 

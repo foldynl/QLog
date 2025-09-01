@@ -229,10 +229,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(CWKeyer::instance(), &CWKeyer::cwKeyEchoText, ui->cwconsoleWidget, &CWConsoleWidget::appendCWEchoText);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyConnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyConnected);
     connect(CWKeyer::instance(), &CWKeyer::cwKeyDisconnected, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyDisconnected);
-    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton1Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF1);
-    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton2Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF2);
-    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton3Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF3);
-    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton4Pressed, ui->cwconsoleWidget, &CWConsoleWidget::cwKeyMacroF4);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWButton, ui->cwconsoleWidget, &CWConsoleWidget::pressMacroButton);
+    connect(CWKeyer::instance(), &CWKeyer::cwKeyHWHaltPressed, ui->cwconsoleWidget, &CWConsoleWidget::haltButtonPressed);
 
     FldigiTCPServer* fldigi = new FldigiTCPServer(this);
     connect(fldigi, &FldigiTCPServer::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
@@ -317,6 +315,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->newContactWidget, &NewContactWidget::markQSO, ui->bandmapWidget, &BandmapWidget::addSpot);
     connect(ui->newContactWidget, &NewContactWidget::callboolImageUrl, ui->profileImageWidget, &ProfileImageWidget::loadImageFromUrl);
     connect(ui->newContactWidget, &NewContactWidget::rigProfileChanged, this, &MainWindow::rigConnect);
+    connect(ui->newContactWidget, &NewContactWidget::callsignChanged, ui->cwconsoleWidget, &CWConsoleWidget::stopRepeateButtons);
+    connect(ui->newContactWidget, &NewContactWidget::contactReset, ui->cwconsoleWidget, &CWConsoleWidget::stopRepeateButtons);
 
     connect(ui->dxWidget, &DxWidget::newFilteredSpot, ui->bandmapWidget, &BandmapWidget::addSpot);
     connect(ui->dxWidget, &DxWidget::newFilteredSpot, Rig::instance(), &Rig::sendDXSpot);

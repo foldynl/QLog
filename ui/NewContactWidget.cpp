@@ -468,6 +468,7 @@ void NewContactWidget::handleCallsignFromUser()
         if ( callsign.length() >= 3 )
             useFieldsFromPrevQSO(callsign);
     }
+    emit callsignChanged(callsign);
 }
 
 /* function is called when Callsign Edit is finished - example pressed enter */
@@ -1049,6 +1050,7 @@ void NewContactWidget::resetContact()
 
     emit filterCallsign(QString());
     emit newTarget(qQNaN(), qQNaN());
+    emit contactReset();
 }
 
 void NewContactWidget::addAddlFields(QSqlRecord &record, const StationProfile &profile)

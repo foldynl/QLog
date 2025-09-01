@@ -8,6 +8,7 @@
 #include "cwkey/CWKeyer.h"
 #include "data/CWShortcutProfile.h"
 #include "core/LogParam.h"
+#include "component/RepeatButton.h"
 
 MODULE_IDENTIFICATION("qlog.ui.cwconsolewidget");
 
@@ -16,15 +17,32 @@ CWConsoleWidget::CWConsoleWidget(QWidget *parent) :
     ui(new Ui::CWConsoleWidget),
     cwKeyOnline(false),
     contact(nullptr),
-    sendWord(false)
+    sendWord(false),
+    macroButtonsConnected(false)
 {
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
 
+    connect(ui->macroButtonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
+            this, [=](const QAbstractButton *button)
+    {
+        int number = getMacroButtonID(button) - 1;
+        qCDebug(runtime) << "Clicked number" << number;
+
+        const CWShortcutProfile &profile = CWShortcutProfilesManager::instance()->getCurProfile1();
+        if ( number >= 0 && number < profile.macros.size()) sendCWText(profile.macros[number]);
+
+        const QList<QAbstractButton*> &macroButtonList = ui->macroButtonGroup->buttons();
+        for (QAbstractButton *btn : macroButtonList)
+        {
+            RepeatButton *rptButton = qobject_cast<RepeatButton*>(btn);
+            if ( rptButton && rptButton != button ) rptButton->stop();
+        }
+    });
+
     QStringListModel* keyModel = new QStringListModel(this);
     ui->cwKeyProfileCombo->setModel(keyModel);
-
 
     QStringListModel* shortcutModel = new QStringListModel(this);
     ui->cwShortcutProfileCombo->setModel(shortcutModel);
@@ -91,27 +109,31 @@ void CWConsoleWidget::cwShortcutProfileComboChanged(QString profileName)
 
     const CWShortcutProfile &profile = shortcutManager->getCurProfile1();
 
-    ui->macroButton1->setText("F1\n" + profile.shortDescs[0]);
-    ui->macroButton1->setToolTip(profile.macros[0]);
-    ui->macroButton1->setShortcut(Qt::Key_F1);
-    ui->macroButton2->setText("F2\n" + profile.shortDescs[1]);
-    ui->macroButton2->setToolTip(profile.macros[1]);
-    ui->macroButton2->setShortcut(Qt::Key_F2);
-    ui->macroButton3->setText("F3\n" + profile.shortDescs[2]);
-    ui->macroButton3->setToolTip(profile.macros[2]);
-    ui->macroButton3->setShortcut(Qt::Key_F3);
-    ui->macroButton4->setText("F4\n" + profile.shortDescs[3]);
-    ui->macroButton4->setToolTip(profile.macros[3]);
-    ui->macroButton4->setShortcut(Qt::Key_F4);
-    ui->macroButton5->setText("F5\n" + profile.shortDescs[4]);
-    ui->macroButton5->setToolTip(profile.macros[4]);
-    ui->macroButton5->setShortcut(Qt::Key_F5);
-    ui->macroButton6->setText("F6\n" + profile.shortDescs[5]);
-    ui->macroButton6->setToolTip(profile.macros[5]);
-    ui->macroButton6->setShortcut(Qt::Key_F6);
-    ui->macroButton7->setText("F7\n" + profile.shortDescs[6]);
-    ui->macroButton7->setToolTip(profile.macros[6]);
-    ui->macroButton7->setShortcut(Qt::Key_F7);
+    auto setupMacroButton = [&](RepeatButton *button, int index, int key)
+    {
+        button->setText(QString("F%1\n%2").arg(index+1).arg(profile.shortDescs[index]));
+        button->setToolTip(profile.macros[index]);
+        button->stop();
+        button->resetInterval();
+
+        if ( !macroButtonsConnected )
+        {
+            connect(new QShortcut(QKeySequence(key), button), &QShortcut::activated,
+                    button, [button]{ button->handleClick(); });
+
+            connect(new QShortcut(QKeySequence(Qt::SHIFT | key), button), &QShortcut::activated,
+                    button, [button]{ button->repeatClick(); });
+        }
+    };
+
+    setupMacroButton(ui->macroButton1, 0, Qt::Key_F1);
+    setupMacroButton(ui->macroButton2, 1, Qt::Key_F2);
+    setupMacroButton(ui->macroButton3, 2, Qt::Key_F3);
+    setupMacroButton(ui->macroButton4, 3, Qt::Key_F4);
+    setupMacroButton(ui->macroButton5, 4, Qt::Key_F5);
+    setupMacroButton(ui->macroButton6, 5, Qt::Key_F6);
+    setupMacroButton(ui->macroButton7, 6, Qt::Key_F7);
+    macroButtonsConnected = true;
 
     emit cwShortcutProfileChanged();
 }
@@ -169,13 +191,14 @@ void CWConsoleWidget::allowMorseSending(bool allow)
     ui->cwConsoleText->setEnabled(allow);
     ui->cwSendEdit->setEnabled(allow);
     ui->cwShortcutProfileCombo->setEnabled(allow);
-    ui->macroButton1->setEnabled(allow);
-    ui->macroButton2->setEnabled(allow);
-    ui->macroButton3->setEnabled(allow);
-    ui->macroButton4->setEnabled(allow);
-    ui->macroButton5->setEnabled(allow);
-    ui->macroButton6->setEnabled(allow);
-    ui->macroButton7->setEnabled(allow);
+
+    const QList<QAbstractButton*> &macroButtonList = ui->macroButtonGroup->buttons();
+    for (QAbstractButton *btn : macroButtonList)
+    {
+        RepeatButton *rptButton = qobject_cast<RepeatButton*>(btn);
+        if ( rptButton ) rptButton->stop();
+        btn->setEnabled(allow);
+    }
     ui->modeSwitch->setEnabled(allow);
 }
 
@@ -191,6 +214,15 @@ bool CWConsoleWidget::getSendWordConfig()
     FCT_IDENTIFICATION;
 
     return LogParam::getCWConsoleSendWord();
+}
+
+int CWConsoleWidget::getMacroButtonID(const QAbstractButton *button)
+{
+    FCT_IDENTIFICATION;
+
+    QString name = button->objectName();
+    name.remove("macroButton");
+    return name.toInt();
 }
 
 void CWConsoleWidget::refreshKeyProfileCombo()
@@ -375,63 +407,37 @@ void CWConsoleWidget::rigConnectHandler()
     }
 }
 
-void CWConsoleWidget::cwKeyMacroF1()
-{
-    FCT_IDENTIFICATION;
-
-    sendCWText(CWShortcutProfilesManager::instance()->getCurProfile1().macros[0]);
-}
-
-void CWConsoleWidget::cwKeyMacroF2()
-{
-    FCT_IDENTIFICATION;
-
-    sendCWText(CWShortcutProfilesManager::instance()->getCurProfile1().macros[1]);
-}
-
-void CWConsoleWidget::cwKeyMacroF3()
-{
-    FCT_IDENTIFICATION;
-
-    sendCWText(CWShortcutProfilesManager::instance()->getCurProfile1().macros[2]);
-}
-
-void CWConsoleWidget::cwKeyMacroF4()
-{
-    FCT_IDENTIFICATION;
-
-    sendCWText(CWShortcutProfilesManager::instance()->getCurProfile1().macros[3]);
-}
-
-void CWConsoleWidget::cwKeyMacroF5()
-{
-    FCT_IDENTIFICATION;
-
-    sendCWText(CWShortcutProfilesManager::instance()->getCurProfile1().macros[4]);
-}
-
-void CWConsoleWidget::cwKeyMacroF6()
-{
-    FCT_IDENTIFICATION;
-
-    sendCWText(CWShortcutProfilesManager::instance()->getCurProfile1().macros[5]);
-}
-
-void CWConsoleWidget::cwKeyMacroF7()
-{
-    FCT_IDENTIFICATION;
-
-    sendCWText(CWShortcutProfilesManager::instance()->getCurProfile1().macros[6]);
-}
-
 void CWConsoleWidget::haltButtonPressed()
 {
     FCT_IDENTIFICATION;
+
+    ui->macroButton1->stop();
 
     if ( !ui->haltButton->isEnabled() )
         return;
 
     CWKeyer::instance()->imediatellyStop();
+}
+
+void CWConsoleWidget::pressMacroButton(int buttonNumber)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << buttonNumber;
+
+    const CWShortcutProfile &profile = CWShortcutProfilesManager::instance()->getCurProfile1();
+    int index = buttonNumber - 1;
+    if ( index >= 0 && index < profile.macros.size()) sendCWText(profile.macros[index]);
+}
+
+void CWConsoleWidget::stopRepeateButtons()
+{
+    const QList<QAbstractButton*> &macroButtonList = ui->macroButtonGroup->buttons();
+    for (QAbstractButton *btn : macroButtonList)
+    {
+        RepeatButton *rptButton = qobject_cast<RepeatButton*>(btn);
+        if ( rptButton ) rptButton->stop();
+    }
 }
 
 void CWConsoleWidget::sendWordSwitched(int mode)

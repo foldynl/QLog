@@ -386,22 +386,22 @@ void CWKeyer::cwKeyEchoTextHandler(const QString &text)
 
 void CWKeyer::cwKeyHWButton1PressedHandler()
 {
-    emit cwKeyHWButton1Pressed();
+    emit cwKeyHWButton(1);
 }
 
 void CWKeyer::cwKeyHWButton2PressedHandler()
 {
-    emit cwKeyHWButton2Pressed();
+    emit cwKeyHWButton(2);
 }
 
 void CWKeyer::cwKeyHWButton3PressedHandler()
 {
-    emit cwKeyHWButton3Pressed();
+    emit cwKeyHWButton(3);
 }
 
 void CWKeyer::cwKeyHWButton4PressedHandler()
 {
-    emit cwKeyHWButton4Pressed();
+    emit cwKeyHWButton(4);
 }
 
 CWKeyer::CWKeyer(QObject *parent ) :
