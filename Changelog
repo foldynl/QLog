@@ -7,6 +7,7 @@ TBC - 0.46.0
 - [NEW] - Rig - Periodic Rig status reporting independent of its changes (PR #730 @aa5sh)
 - [NEW] - Settings - Serial Port Completer for MacOS and Linux (PR #737 @aa5sh)
 - [NEW] - Hamlib - Attempt to send Power On when connecting the Rig
+- [NEW] - POTA Spots Info is received from the API at api.pota.app to improve POTA detection
 - [CHANGED] - Logbook Search Filter Widget - Added Search Widget
 - [CHANGED] - QSO Detail Country boxes use the new Search Filter Widget
 - [CHANGED] - NewContact - RST field uses the Overwrite Mode
