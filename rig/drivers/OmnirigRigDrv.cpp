@@ -271,7 +271,7 @@ void OmnirigRigDrv::setMode(const QString &mode, const QString &submode, bool di
             innerSubmode = digMode;
     }
 
-    setRawMode((submode.isEmpty()) ? mode.toUpper() : submode.toUpper());
+    setRawMode((submode.isEmpty()) ? mode.toUpper() : innerSubmode.toUpper());
 }
 
 void OmnirigRigDrv::setPTT(bool newPTTSTate)
