@@ -248,7 +248,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     ui->bandSelectFilter->blockSignals(true);
     ui->bandSelectFilter->setModel(new SqlListModel("SELECT name FROM bands ORDER BY start_freq",
-                                                    tr("Any Band"),
+                                                    tr("All Bands"),
                                                     ui->bandSelectFilter));
     ui->bandSelectFilter->adjustMaxSize();
     ui->bandSelectFilter->setHighlightWhenEnable(true);
@@ -256,7 +256,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     ui->modeSelectFilter->blockSignals(true);
     ui->modeSelectFilter->setModel(new SqlListModel("SELECT name FROM modes",
-                                                    tr("Any Mode"),
+                                                    tr("All Modes"),
                                                     ui->modeSelectFilter));
     ui->modeSelectFilter->adjustMaxSize();
     ui->modeSelectFilter->setHighlightWhenEnable(true);
@@ -266,7 +266,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->countrySelectFilter->setModel(new SqlListModel("SELECT id, translate_to_locale(name) "
                                                        "FROM dxcc_entities WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
                                                        "ORDER BY 2 COLLATE LOCALEAWARE ASC;",
-                                                       tr("Any Country"),
+                                                       tr("All Countries"),
                                                        ui->countrySelectFilter));
     ui->countrySelectFilter->setModelColumn(1);
     ui->countrySelectFilter->adjustMaxSize();
@@ -767,7 +767,7 @@ void LogbookWidget::refreshClubFilter()
 
     ui->clubSelectFilter->blockSignals(true);
     const QString &member = ui->clubSelectFilter->currentText();
-    ui->clubSelectFilter->setModel(new QStringListModel(QStringList(tr("Any Club"))
+    ui->clubSelectFilter->setModel(new QStringListModel(QStringList(tr("All Clubs"))
                                                         << MembershipQE::instance()->getEnabledClubLists(),ui->clubSelectFilter));
     ui->clubSelectFilter->adjustMaxSize();
     ui->clubSelectFilter->setCurrentText(member);
