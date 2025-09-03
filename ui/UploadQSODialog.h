@@ -135,7 +135,7 @@ private:
     QStandardItemModel *detailQSOsModel;
     UploadTask currentTask;
     QMap<uint, CloudlogUploader::StationProfile> availableWavelogStationIDs;
-
+    bool executeQueryEnabled;
     void setQSODetailVisible(bool visible);
     void loadDialogState();
     void saveDialogState();

@@ -19,7 +19,8 @@ MODULE_IDENTIFICATION("qlog.ui.uploadqsodialog");
 UploadQSODialog::UploadQSODialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::UploadQSODialog),
-    detailQSOsModel(new QStandardItemModel(this))
+    detailQSOsModel(new QStandardItemModel(this)),
+    executeQueryEnabled(false)
 {
     FCT_IDENTIFICATION;
 
@@ -99,6 +100,8 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
     getWavelogStationID();
     ui->myCallsignCombo->blockSignals(false);
     ui->myGridCombo->blockSignals(false);
+    executeQueryEnabled = true;
+    executeQuery();
 }
 
 UploadQSODialog::~UploadQSODialog()
@@ -432,6 +435,12 @@ void UploadQSODialog::getWavelogStationID()
 void UploadQSODialog::executeQuery()
 {
     FCT_IDENTIFICATION;
+
+    if ( !executeQueryEnabled )
+    {
+        qCDebug(runtime) << "query disabled";
+        return;
+    }
 
     allSelectedQSOs.clear();
     detailQSOsModel->clear();
