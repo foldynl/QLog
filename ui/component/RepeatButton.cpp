@@ -3,7 +3,6 @@
 #include <QPainter>
 #include <QProgressBar>
 #include "RepeatButton.h"
-#include "core/debug.h"
 
 RepeatButton::RepeatButton(QWidget *parent) :
     QPushButton(parent),

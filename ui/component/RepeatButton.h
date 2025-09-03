@@ -4,8 +4,7 @@
 #include <QPushButton>
 #include <QElapsedTimer>
 #include <QTimer>
-#include <QTime>
-#include <QPainter>
+#include <QDateTime>
 
 class RepeatButton : public QPushButton
 {
