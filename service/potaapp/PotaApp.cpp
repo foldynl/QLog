@@ -116,7 +116,11 @@ void PotaAppActivatorDownloader::processReply(QNetworkReply *reply)
 
         const QString st = o.value(("spotTime")).toString();
         s.spotTime = QDateTime::fromString(st, Qt::ISODate);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+        s.spotTime.setTimeZone(QTimeZone::UTC);
+#else
         s.spotTime.setTimeSpec(Qt::UTC);
+#endif
 
         if ( !s.activator.isEmpty() && s.frequency > 0.0 && !s.mode.isEmpty() )
         {
