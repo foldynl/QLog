@@ -1129,10 +1129,10 @@ void LogParam::setMainWindowAlertBeep(bool state)
 
 bool LogParam::getMainWindowDarkMode()
 {
-    return getParam("mainwindow/darkmode", false).toBool();
+    return getParam("mainwindow/darkmode", 0).toInt();
 }
 
-void LogParam::setMainWindowDarkMode(bool state)
+void LogParam::setMainWindowDarkMode(int state)
 {
     setParam("mainwindow/darkmode", state);
 }
