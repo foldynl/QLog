@@ -3660,174 +3660,174 @@
 <context>
     <name>DxWidget</name>
     <message>
-        <location filename="../ui/DxWidget.ui" line="63"/>
+        <location filename="../ui/DxWidget.ui" line="77"/>
         <source>Insert a &lt;b&gt;hostname:port&lt;/b&gt; of DXC Server.</source>
         <translation>Inserisci un &lt;b&gt;nome host:porta&lt;/b&gt; del Server DXC.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="94"/>
+        <location filename="../ui/DxWidget.ui" line="110"/>
         <location filename="../ui/DxWidget.cpp" line="618"/>
         <source>Connect</source>
         <translation>Connette</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="110"/>
+        <location filename="../ui/DxWidget.ui" line="126"/>
         <source>Filtered</source>
         <translation>Filtrato</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="140"/>
+        <location filename="../ui/DxWidget.ui" line="156"/>
         <source>Spots</source>
         <translation>Spots</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="145"/>
+        <location filename="../ui/DxWidget.ui" line="161"/>
         <source>WCY</source>
         <translation>WCY</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="150"/>
+        <location filename="../ui/DxWidget.ui" line="166"/>
         <source>WWV</source>
         <translation>WWV</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="155"/>
+        <location filename="../ui/DxWidget.ui" line="171"/>
         <source>To All</source>
         <translation>A tutti</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="160"/>
+        <location filename="../ui/DxWidget.ui" line="176"/>
         <source>Console</source>
         <translation>Console</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="165"/>
+        <location filename="../ui/DxWidget.ui" line="181"/>
         <source>15-min Trend</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="260"/>
+        <location filename="../ui/DxWidget.ui" line="276"/>
         <source>Full-text search</source>
         <translation>Ricerca a testo completo</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="263"/>
+        <location filename="../ui/DxWidget.ui" line="279"/>
         <source>Search</source>
         <translation>Ricerca</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="273"/>
+        <location filename="../ui/DxWidget.ui" line="289"/>
         <source>Close Search</source>
         <translation>Chiudi ricerca</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="575"/>
+        <location filename="../ui/DxWidget.ui" line="591"/>
         <source>Send DX Cluster Command</source>
         <translation>Invia comando DX Cluster</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="610"/>
+        <location filename="../ui/DxWidget.ui" line="632"/>
         <source>Filter...</source>
         <translation>Filtra...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="613"/>
+        <location filename="../ui/DxWidget.ui" line="635"/>
         <source>Filter DXC</source>
         <translation>Filtro DXC</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="618"/>
+        <location filename="../ui/DxWidget.ui" line="640"/>
         <source>Spot Last QSO</source>
         <translatorcomment>Invia lo Spot dell&apos;ultimo QSO salvato completabile con altre informazioni nella riga di invio comando al cluster</translatorcomment>
         <translation>Spot Ultimo QSO salvato</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="621"/>
+        <location filename="../ui/DxWidget.ui" line="643"/>
         <source>Send last QSO spot</source>
         <translation>Invia l&apos;ultimo spot QSO</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="626"/>
+        <location filename="../ui/DxWidget.ui" line="648"/>
         <source>Show HF Stats</source>
         <translation>Mostra statistiche HF</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="631"/>
+        <location filename="../ui/DxWidget.ui" line="653"/>
         <source>Show VHF Stats</source>
         <translation>Mostra statistiche VHF</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="636"/>
+        <location filename="../ui/DxWidget.ui" line="658"/>
         <source>Show WCY</source>
         <translation>Mostra WCY</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="641"/>
+        <location filename="../ui/DxWidget.ui" line="663"/>
         <source>Show WWV</source>
         <translation>Mostra WWV</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="646"/>
+        <location filename="../ui/DxWidget.ui" line="668"/>
         <source>Column Visibility...</source>
         <translation>Visibilità della colonna...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="649"/>
+        <location filename="../ui/DxWidget.ui" line="671"/>
         <source>Which columns should be displayed</source>
         <translation>Quali colonne devono essere visualizzate</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="657"/>
+        <location filename="../ui/DxWidget.ui" line="679"/>
         <source>Connect on startup</source>
         <translation>Connetti all&apos;avvio</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="660"/>
+        <location filename="../ui/DxWidget.ui" line="682"/>
         <source>Automatic connection after start</source>
         <translation>Connessione automatica dopo l&apos;avvio</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="665"/>
+        <location filename="../ui/DxWidget.ui" line="687"/>
         <source>Delete Server</source>
         <translation>Cancella Server</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="668"/>
+        <location filename="../ui/DxWidget.ui" line="690"/>
         <source>DXC - Delete Server</source>
         <translation>DXC - Elimina server</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="673"/>
+        <location filename="../ui/DxWidget.ui" line="695"/>
         <source>Clear Password</source>
         <translation>Cancella Password</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="681"/>
+        <location filename="../ui/DxWidget.ui" line="703"/>
         <source>Keep Spots</source>
         <translation>Mantieni Spots</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="684"/>
+        <location filename="../ui/DxWidget.ui" line="706"/>
         <source>Spots are not cleared when connecting to a new DX Cluster.</source>
         <translation>Gli spot non vengono cancellati quando ci si connette a un nuovo DX Cluster.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="689"/>
+        <location filename="../ui/DxWidget.ui" line="711"/>
         <source>Clear</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="692"/>
+        <location filename="../ui/DxWidget.ui" line="714"/>
         <source>Clear all data</source>
         <translation>Cancella Tutti i Dati</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="697"/>
+        <location filename="../ui/DxWidget.ui" line="719"/>
         <source>Search...</source>
         <translation>Ricerca...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="700"/>
+        <location filename="../ui/DxWidget.ui" line="722"/>
         <source>DXC - Search</source>
         <translation>DXC - Ricerca</translation>
     </message>
@@ -6426,7 +6426,7 @@
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="123"/>
-        <location filename="../ui/MainWindow.cpp" line="1351"/>
+        <location filename="../ui/MainWindow.cpp" line="1354"/>
         <source>Contest</source>
         <translation>Contest</translation>
     </message>
@@ -6593,79 +6593,79 @@
         <translation>Nessuno</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="60"/>
+        <location filename="../ui/MainWindow.cpp" line="63"/>
         <source>Not enabled for non-Fusion style</source>
         <translation>Non abilitato per stili diversi da Fusion</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="127"/>
+        <location filename="../ui/MainWindow.cpp" line="130"/>
         <source>Press to tune the alert</source>
         <translation>Premi per sintonizzare l&apos;allarme</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="365"/>
+        <location filename="../ui/MainWindow.cpp" line="368"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Errore di caricamento immediato di Clublog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="584"/>
-        <location filename="../ui/MainWindow.cpp" line="594"/>
-        <location filename="../ui/MainWindow.cpp" line="604"/>
+        <location filename="../ui/MainWindow.cpp" line="587"/>
+        <location filename="../ui/MainWindow.cpp" line="597"/>
+        <location filename="../ui/MainWindow.cpp" line="607"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Dettagli errore:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="628"/>
+        <location filename="../ui/MainWindow.cpp" line="631"/>
         <source>op: </source>
         <translation>op: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="805"/>
+        <location filename="../ui/MainWindow.cpp" line="808"/>
         <source>A New Version</source>
         <translation>Una nuova versione</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="806"/>
+        <location filename="../ui/MainWindow.cpp" line="809"/>
         <source>A new version %1 is available.</source>
         <translation>Una nuova versione %1 è disponibile.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="810"/>
+        <location filename="../ui/MainWindow.cpp" line="813"/>
         <source>Remind Me Later</source>
         <translation>Ricordamelo più tardi</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="811"/>
+        <location filename="../ui/MainWindow.cpp" line="814"/>
         <source>Download</source>
         <translation>Download</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1100"/>
+        <location filename="../ui/MainWindow.cpp" line="1103"/>
         <source>Classic</source>
         <translation>Classico</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1352"/>
+        <location filename="../ui/MainWindow.cpp" line="1355"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>Vuoi rimuovere il Contest filter %1?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1383"/>
+        <location filename="../ui/MainWindow.cpp" line="1386"/>
         <source>Contest: </source>
         <translation>Contest: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1561"/>
+        <location filename="../ui/MainWindow.cpp" line="1564"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Basato su Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icona di &lt;a href=&apos; http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Immagini satellitari di &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect di &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;Database TimeZone di &lt;a href=&apos;https://github.com/evansiroky/timezone -boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1592"/>
+        <location filename="../ui/MainWindow.cpp" line="1595"/>
         <source>About</source>
         <translation>A proposito di</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1636"/>
+        <location filename="../ui/MainWindow.cpp" line="1639"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
@@ -6847,320 +6847,320 @@
         <translation>Modo</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="536"/>
+        <location filename="../ui/NewContactWidget.ui" line="542"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="579"/>
+        <location filename="../ui/NewContactWidget.ui" line="591"/>
         <source>Lookup the call on the web. The query URL can be changed in Settings -&gt; Callbook</source>
         <translation>Cerca il call sul web. L&apos;URL della query può essere modificato in Impostazioni -&gt; Rubrica</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="582"/>
+        <location filename="../ui/NewContactWidget.ui" line="594"/>
         <source>Web</source>
         <translation>Web</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="656"/>
+        <location filename="../ui/NewContactWidget.ui" line="668"/>
         <source>Time On</source>
         <translation>Inizio</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="666"/>
+        <location filename="../ui/NewContactWidget.ui" line="684"/>
         <source>Reset</source>
         <translation>Reset</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="703"/>
+        <location filename="../ui/NewContactWidget.ui" line="727"/>
         <source>Date</source>
         <translation>Data</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="710"/>
+        <location filename="../ui/NewContactWidget.ui" line="734"/>
         <source>Duration</source>
         <translation>Durata</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="767"/>
+        <location filename="../ui/NewContactWidget.ui" line="791"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1005"/>
+        <location filename="../ui/NewContactWidget.ui" line="1029"/>
         <source>&amp;Details</source>
         <translation>&amp;Dettagli</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1030"/>
+        <location filename="../ui/NewContactWidget.ui" line="1054"/>
         <source>QSL Send Status</source>
         <translation>Stato invio QSL</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1045"/>
-        <location filename="../ui/NewContactWidget.ui" line="1183"/>
+        <location filename="../ui/NewContactWidget.ui" line="1069"/>
+        <location filename="../ui/NewContactWidget.ui" line="1207"/>
         <source>Paper</source>
         <translation>Cartaceo</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1067"/>
-        <location filename="../ui/NewContactWidget.ui" line="1105"/>
-        <location filename="../ui/NewContactWidget.ui" line="1143"/>
+        <location filename="../ui/NewContactWidget.ui" line="1091"/>
+        <location filename="../ui/NewContactWidget.ui" line="1129"/>
+        <location filename="../ui/NewContactWidget.ui" line="1167"/>
         <source>&lt;b&gt;Yes&lt;/b&gt; - an outgoing QSL card has been sent; the QSO has been uploaded to, and accepted by, the online service&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - do not send an outgoing QSL card; do not upload the QSO to the online service&lt;br/&gt;&lt;b&gt;Requested&lt;/b&gt; - the contacted station has requested a QSL card; the contacted station has requested the QSO be uploaded to the online service&lt;br/&gt;&lt;b&gt;Queued&lt;/b&gt; - an outgoing QSL card has been selected to be sent; a QSO has been selected to be uploaded to the online service&lt;br/&gt;</source>
         <translation>&lt;b&gt;Sì&lt;/b&gt; - è stata inviata una QSL in uscita; il QSO è stato caricato e accettato dal servizio online&lt;br/&gt;&lt;b&gt;No&lt;/b&gt; - non inviare una cartolina QSL in uscita; non caricare il QSO sul servizio online&lt;br/&gt;&lt;b&gt;Richiesto&lt;/b&gt; - la stazione contattata ha richiesto una QSL; la stazione contattata ha richiesto il caricamento del QSO sul servizio online&lt;br/&gt;&lt;b&gt;Queued&lt;/b&gt; - è stata selezionata una QSL in uscita da inviare; è stato selezionato un QSO da caricare sul servizio online&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1083"/>
+        <location filename="../ui/NewContactWidget.ui" line="1107"/>
         <source>LoTW</source>
         <translation>LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1121"/>
+        <location filename="../ui/NewContactWidget.ui" line="1145"/>
         <source>eQSL</source>
         <translation>eQSL</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1168"/>
+        <location filename="../ui/NewContactWidget.ui" line="1192"/>
         <source>QSL Send via</source>
         <translation>Invia QSL vía</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1227"/>
+        <location filename="../ui/NewContactWidget.ui" line="1251"/>
         <source>QSL via</source>
         <translation>QSL vía</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1340"/>
+        <location filename="../ui/NewContactWidget.ui" line="1364"/>
         <source>Propagation Mode</source>
         <translation>Modo di Propagazione</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1375"/>
+        <location filename="../ui/NewContactWidget.ui" line="1399"/>
         <source>D&amp;X Stats</source>
         <translation>D&amp;X Statistiche</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1396"/>
+        <location filename="../ui/NewContactWidget.ui" line="1420"/>
         <source>&lt;b&gt;DXCC Statistics&lt;/b&gt;</source>
         <translation>&lt;b&gt;DXCC Statistics&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1452"/>
+        <location filename="../ui/NewContactWidget.ui" line="1476"/>
         <source>&lt;b&gt;Station Statistics&lt;/b&gt;</source>
         <translation>&lt;b&gt;Station Statistics&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1503"/>
+        <location filename="../ui/NewContactWidget.ui" line="1527"/>
         <source>M&amp;y Station</source>
         <translation>M&amp;ia Stazione</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1511"/>
+        <location filename="../ui/NewContactWidget.ui" line="1535"/>
         <source>Station</source>
         <translation>Stazione</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1528"/>
+        <location filename="../ui/NewContactWidget.ui" line="1552"/>
         <source>Rig</source>
         <translation>Radio</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1551"/>
+        <location filename="../ui/NewContactWidget.ui" line="1575"/>
         <source>Antenna</source>
         <translation>Antenna</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3994"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4015"/>
         <source>Blank</source>
         <translation>Vuoto</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3995"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4016"/>
         <source> W</source>
         <translation> W</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1596"/>
+        <location filename="../ui/NewContactWidget.ui" line="1620"/>
         <source>My &amp;Notes</source>
         <translation>Le mie N&amp;ote</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.ui" line="1639"/>
+        <location filename="../ui/NewContactWidget.ui" line="1663"/>
         <source>Member:</source>
         <translation>Membro:</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="62"/>
+        <location filename="../ui/NewContactWidget.cpp" line="63"/>
         <source>Expand/Collapse</source>
         <translation>Espandi/Comprimi</translation>
-    </message>
-    <message>
-        <location filename="../ui/NewContactWidget.cpp" line="91"/>
-        <location filename="../ui/NewContactWidget.cpp" line="104"/>
-        <location filename="../ui/NewContactWidget.cpp" line="117"/>
-        <source>No</source>
-        <translation>No</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="92"/>
         <location filename="../ui/NewContactWidget.cpp" line="105"/>
         <location filename="../ui/NewContactWidget.cpp" line="118"/>
-        <source>Yes</source>
-        <translation>Sí</translation>
+        <source>No</source>
+        <translation>No</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="93"/>
         <location filename="../ui/NewContactWidget.cpp" line="106"/>
         <location filename="../ui/NewContactWidget.cpp" line="119"/>
-        <source>Requested</source>
-        <translation>Richiesto</translation>
+        <source>Yes</source>
+        <translation>Sí</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="94"/>
         <location filename="../ui/NewContactWidget.cpp" line="107"/>
         <location filename="../ui/NewContactWidget.cpp" line="120"/>
-        <source>Queued</source>
-        <translation>In coda</translation>
+        <source>Requested</source>
+        <translation>Richiesto</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="95"/>
         <location filename="../ui/NewContactWidget.cpp" line="108"/>
         <location filename="../ui/NewContactWidget.cpp" line="121"/>
+        <source>Queued</source>
+        <translation>In coda</translation>
+    </message>
+    <message>
+        <location filename="../ui/NewContactWidget.cpp" line="96"/>
+        <location filename="../ui/NewContactWidget.cpp" line="109"/>
+        <location filename="../ui/NewContactWidget.cpp" line="122"/>
         <source>Ignored</source>
         <translation>Ignorato</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="131"/>
+        <location filename="../ui/NewContactWidget.cpp" line="132"/>
         <source>Bureau</source>
         <translation>Bureau</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="132"/>
+        <location filename="../ui/NewContactWidget.cpp" line="133"/>
         <source>Direct</source>
         <translation>Diretto</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="133"/>
+        <location filename="../ui/NewContactWidget.cpp" line="134"/>
         <source>Electronic</source>
         <translation>Elettronica</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="219"/>
+        <location filename="../ui/NewContactWidget.cpp" line="220"/>
         <source>QLog Error</source>
         <translation>Errore di QLog</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="219"/>
+        <location filename="../ui/NewContactWidget.cpp" line="220"/>
         <source>Callbook login failed</source>
         <translation>Accesso al Logbook non riuscito</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2192"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2198"/>
         <source>LP</source>
         <translation>LP</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2244"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2250"/>
         <source>New Entity!</source>
         <translation>Nuova Entità!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2247"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2253"/>
         <source>New Band!</source>
         <translation>Nuova Banda!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2250"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2256"/>
         <source>New Mode!</source>
         <translation>Nuovo Modo!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2253"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2259"/>
         <source>New Band &amp; Mode!</source>
         <translation>Nuova Banda e Modo!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2256"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2262"/>
         <source>New Slot!</source>
         <translation>Nuovo Slot!</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2259"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2265"/>
         <source>Worked</source>
         <translation>Lavorato</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2262"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2268"/>
         <source>Confirmed</source>
         <translation>Confermato</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3044"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3052"/>
         <source>GE</source>
         <translation>GE</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3054"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3062"/>
         <source>GM</source>
         <translation>GM</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3060"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3068"/>
         <source>GA</source>
         <translation>GA</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3378"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3386"/>
         <source> m</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3747"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3755"/>
         <source>Callbook search is inactive</source>
         <translation>Ricerca sul Callbook inattiva</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3752"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3760"/>
         <source>Callbook search is active</source>
         <translation>Ricerca sul Callbook attiva</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3826"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3834"/>
         <source>Contest ID must be filled in to activate</source>
         <translation>L&apos;ID del contest deve essere compilato per attivare</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3923"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3944"/>
         <source>two or four adjacent Maidenhead grid locators, each four characters long, (ex. EN98,FM08,EM97,FM07)</source>
         <translation>due o quattro localizzatori di griglia Maidenhead adiacenti, ciascuno lungo quattro caratteri, (es. EN98,FM08,EM97,FM07)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3926"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3947"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>il DARC DOK (District Location Code) della stazione contattata (ex. A01)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3946"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3967"/>
         <source>World Wide Flora &amp; Fauna</source>
         <translation>World Wide Flora &amp; Fauna</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3950"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3971"/>
         <source>Special Activity Group</source>
         <translation>Gruppo di Attività Speciali</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3954"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3975"/>
         <source>Special Activity Group Information</source>
         <translation>Informazioni sul gruppo di attività speciali</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3982"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4003"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
         <translation>Non è il nome del Contest ma è un ID del Contest assegnato (ad esempio CQ-WW-CW per CQ WW DX Contest (CW)) </translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3997"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4018"/>
         <source>Description of the contacted station&apos;s equipment</source>
         <translation>Descrizione dell&apos;attrezzatura della stazione contattata</translation>
     </message>
@@ -7371,10 +7371,10 @@
         <location filename="../core/Migration.cpp" line="418"/>
         <location filename="../ui/ExportDialog.cpp" line="132"/>
         <location filename="../ui/ImportDialog.cpp" line="240"/>
-        <location filename="../ui/MainWindow.cpp" line="582"/>
-        <location filename="../ui/MainWindow.cpp" line="592"/>
-        <location filename="../ui/MainWindow.cpp" line="602"/>
-        <location filename="../ui/NewContactWidget.cpp" line="1370"/>
+        <location filename="../ui/MainWindow.cpp" line="585"/>
+        <location filename="../ui/MainWindow.cpp" line="595"/>
+        <location filename="../ui/MainWindow.cpp" line="605"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1376"/>
         <location filename="../ui/SettingsDialog.cpp" line="309"/>
         <location filename="../ui/SettingsDialog.cpp" line="319"/>
         <location filename="../ui/SettingsDialog.cpp" line="327"/>
@@ -7436,7 +7436,7 @@ Aggiornamento elenco club non riuscito. Impossibile rimuovere i vecchi record</t
         <location filename="../ui/AlertRuleDetail.cpp" line="406"/>
         <location filename="../ui/ExportDialog.cpp" line="141"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
-        <location filename="../ui/NewContactWidget.cpp" line="1619"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1625"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="524"/>
         <location filename="../ui/SettingsDialog.cpp" line="427"/>
         <location filename="../ui/SettingsDialog.cpp" line="435"/>
@@ -7570,27 +7570,27 @@ Aggiornamento elenco club non riuscito. Impossibile rimuovere i vecchi record</t
         <translation>Il nome del filtro esiste già.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="583"/>
+        <location filename="../ui/MainWindow.cpp" line="586"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Errore della Radio:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="593"/>
+        <location filename="../ui/MainWindow.cpp" line="596"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Errore del rotore:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="603"/>
+        <location filename="../ui/MainWindow.cpp" line="606"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Errore Keyer CW:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="1371"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1377"/>
         <source>The fields &lt;b&gt;%0&lt;/b&gt; will not be saved because the &lt;b&gt;%1&lt;/b&gt; is not filled.</source>
         <translation>I campi &lt;b&gt;%0&lt;/b&gt; non verranno salvati perché &lt;b&gt;%1&lt;/b&gt; non è compilato.</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="1620"/>
+        <location filename="../ui/NewContactWidget.cpp" line="1626"/>
         <source>Your callsign is empty. Please, set your Station Profile</source>
         <translation>Il tuo nominativo è vuoto. Per favore, imposta il Profilo della tua Stazione</translation>
     </message>
@@ -10747,39 +10747,39 @@ Aggiornamento elenco club non riuscito. Impossibile rimuovere i vecchi record</t
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="44"/>
         <location filename="../ui/UploadQSODialog.ui" line="319"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="38"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="39"/>
         <source>eQSL</source>
         <translation>eQSL</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="68"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="29"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="30"/>
         <source>LoTW</source>
         <translation>LoTW</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="102"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="65"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="66"/>
         <source>QRZ.com</source>
         <translation>QRZ.com</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="126"/>
         <location filename="../ui/UploadQSODialog.ui" line="410"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="47"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="48"/>
         <source>Clublog</source>
         <translation>Clublog</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="160"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="56"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="57"/>
         <source>HRDLog</source>
         <translation>HRDLog</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="187"/>
         <location filename="../ui/UploadQSODialog.ui" line="463"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="74"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="75"/>
         <source>Wavelog</source>
         <translation>Wavelog</translation>
     </message>
@@ -10875,94 +10875,94 @@ Aggiornamento elenco club non riuscito. Impossibile rimuovere i vecchi record</t
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="603"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="150"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="153"/>
         <source>Show QSOs...</source>
         <translation>Mostra QSOs...</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="82"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="83"/>
         <source>&amp;Upload</source>
         <translation>&amp;Caricamento</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="150"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="153"/>
         <source>Hide QSOs...</source>
         <translation>Nascondi QSOs...</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="228"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="231"/>
         <source>Uploading to %1</source>
         <translation>Caricamento su %1</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="229"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="232"/>
         <source>Cancel</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="273"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="335"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="276"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="338"/>
         <source>QLog Warning - %1</source>
         <translation>Avviso QLog - %1</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="273"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="276"/>
         <source>Cannot update QSO Status</source>
         <translation>Impossibile aggiornare lo stato del QSO</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="336"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="339"/>
         <source>Cannot upload the QSO(s): </source>
         <translation>Impossibile caricare il/i QSO: </translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="391"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="402"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="394"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="405"/>
         <source>QLog Information</source>
         <translation>Informazioni QLog</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="391"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="394"/>
         <source>No QSO found to upload.</source>
         <translation>Nessun QSO trovato da caricare.</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="402"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="405"/>
         <source>QSO(s) were uploaded to the selected services</source>
         <translation>I QSOs sono stati caricati nei servizi selezionati</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="438"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Time</source>
         <translation>Ora</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="438"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Callsign</source>
         <translation>Indicativo</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="438"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Mode</source>
         <translation>Modo</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="438"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Upload to</source>
         <translation>Carica su</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="484"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="493"/>
         <source>The values below will be used when an input record does not contain the ADIF values</source>
         <translation>I valori seguenti verranno utilizzati quando una registrazione inserita non contiene i valori ADIF</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="613"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="622"/>
         <source>Any</source>
         <translation>Qualsiasi</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="626"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="635"/>
         <source>Unknown</source>
         <translation>Sconosciuto</translation>
     </message>
