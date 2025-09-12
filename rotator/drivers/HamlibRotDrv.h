@@ -48,7 +48,7 @@ private:
     bool forceSendState;
     QHash<QString, QString>postponedErrors;
 
-    const quint32 POLL_INTERVAL = 500;
+    const quint32 POLL_INTERVAL = 2000;
 };
 
 #endif // QLOG_ROTATOR_DRIVERS_HAMLIBROTDRV_H
