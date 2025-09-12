@@ -51,6 +51,31 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.46.0" date="2025-09-12">
+      <description>
+        <ul>
+          <li>[NEW] - NewContact: POTA/SOTA/WWFF/IOTA info is taken from the nearest spot (@aa5sh @foldynl)</li>
+          <li>[NEW] - DXSpots are sent to Flex Radio (PR #694 @aa5sh)</li>
+          <li>[NEW] - CWConsole - Added support for automatic periodic sending of CW Macros (issue #708)</li>
+          <li>[NEW] - Added mapping of Winkey hardware buttons to CW macro keys F1–F4 (issue #711)</li>
+          <li>[NEW] - Added Search Types to the Logbook Search Editbox (issue #733)</li>
+          <li>[NEW] - Rig - Periodic Rig status reporting independent of its changes (PR #730 @aa5sh)</li>
+          <li>[NEW] - Settings - Serial Port Completer for MacOS and Linux (PR #737 @aa5sh)</li>
+          <li>[NEW] - Hamlib - Attempt to send Power On when connecting the Rig</li>
+          <li>[NEW] - POTA Spots Info is received from the API at api.pota.app to improve POTA detection</li>
+          <li>[CHANGED] - Logbook Search Filter Widget - Added Search Widget</li>
+          <li>[CHANGED] - QSO Detail Country boxes use the new Search Filter Widget</li>
+          <li>[CHANGED] - NewContact - RST field uses the Overwrite Mode</li>
+          <li>[CHANGED] - NewContact - Default cursor position in RST is at the first character</li>
+          <li>[CHANGED] - Setting Dialog - Modes - Default Report can define cursor position</li>
+          <li>[CHANGED] - HamlibRot - Changed Poll Interval from 500 to 2000ms</li>
+          <li>Fixed DUPE is not detected for the first Contest QSO (issue #699)</li>
+          <li>Fixed FREQ_RX/BAND_RX is present only when RX and TX freqs are different (issue #714)</li>
+          <li>Fixed Repeated log recording (issue #722)</li>
+          <li>Fixed QSO Filter contains untranslated QSO items (issue #732)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.45.0" date="2025-07-11">
       <description>
         <ul>

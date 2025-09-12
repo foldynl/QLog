@@ -40,6 +40,27 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_metainfodir}/*
 
 %changelog
+* Fri Sep 12 2025 Ladislav Foldyna - 0.46.0-1
+- [NEW] - NewContact: POTA/SOTA/WWFF/IOTA info is taken from the nearest spot (@aa5sh @foldynl)
+- [NEW] - DXSpots are sent to Flex Radio (PR #694 @aa5sh)
+- [NEW] - CWConsole - Added support for automatic periodic sending of CW Macros (issue #708)
+- [NEW] - Added mapping of Winkey hardware buttons to CW macro keys F1–F4 (issue #711)
+- [NEW] - Added Search Types to the Logbook Search Editbox (issue #733)
+- [NEW] - Rig - Periodic Rig status reporting independent of its changes (PR #730 @aa5sh)
+- [NEW] - Settings - Serial Port Completer for MacOS and Linux (PR #737 @aa5sh)
+- [NEW] - Hamlib - Attempt to send Power On when connecting the Rig
+- [NEW] - POTA Spots Info is received from the API at api.pota.app to improve POTA detection
+- [CHANGED] - Logbook Search Filter Widget - Added Search Widget
+- [CHANGED] - QSO Detail Country boxes use the new Search Filter Widget
+- [CHANGED] - NewContact - RST field uses the Overwrite Mode
+- [CHANGED] - NewContact - Default cursor position in RST is at the first character
+- [CHANGED] - Setting Dialog - Modes - Default Report can define cursor position
+- [CHANGED] - HamlibRot - Changed Poll Interval from 500 to 2000ms
+- Fixed DUPE is not detected for the first Contest QSO (issue #699)
+- Fixed FREQ_RX/BAND_RX is present only when RX and TX freqs are different (issue #714)
+- Fixed Repeated log recording (issue #722)
+- Fixed QSO Filter contains untranslated QSO items (issue #732)
+
 * Fri Jul 11 2025 Ladislav Foldyna - 0.45.0-1
 - [NEW] - Single Dialog for Upload/Download Online Services (issue #448)
 - [NEW] - Added option to swap paddles to Winkey settings (issue #676)
