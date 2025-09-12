@@ -527,7 +527,7 @@ win32: {
    QMAKE_TARGET_COMPANY = OK1MLG
    QMAKE_TARGET_DESCRIPTION = Hamradio logging
 
-   LIBS += -lws2_32 -lhamlib
+   LIBS += -lws2_32 -llibhamlib-4
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
 
