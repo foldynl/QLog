@@ -4408,28 +4408,28 @@
 <context>
     <name>HamlibRotDrv</name>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="85"/>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="124"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="83"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="122"/>
         <source>Initialization Error</source>
         <translation>初始化出错</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="149"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="147"/>
         <source>Unsupported Rotator Driver</source>
         <translation>不支持的云台驱动</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="156"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="154"/>
         <source>Rot Open Error</source>
         <translation>打开云台出错</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="246"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="244"/>
         <source>Set Possition Error</source>
         <translation>设置方位出错</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="320"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="318"/>
         <source>Get Possition Error</source>
         <translation>获取方位出错</translation>
     </message>

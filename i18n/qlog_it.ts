@@ -4419,28 +4419,28 @@
 <context>
     <name>HamlibRotDrv</name>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="85"/>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="124"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="83"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="122"/>
         <source>Initialization Error</source>
         <translation>Errore di inizializzazione</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="149"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="147"/>
         <source>Unsupported Rotator Driver</source>
         <translation>Driver del rotore non supportato</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="156"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="154"/>
         <source>Rot Open Error</source>
         <translation>Connessione Rotore fallita</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="246"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="244"/>
         <source>Set Possition Error</source>
         <translation>Errore di impostazione della posizione</translation>
     </message>
     <message>
-        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="320"/>
+        <location filename="../rotator/drivers/HamlibRotDrv.cpp" line="318"/>
         <source>Get Possition Error</source>
         <translation>Errore della posizione</translation>
     </message>
