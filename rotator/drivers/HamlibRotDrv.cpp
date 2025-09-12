@@ -21,8 +21,6 @@
 
 #endif
 
-#define POOL_INTERVAL 500
-
 MODULE_IDENTIFICATION("qlog.rotator.driver.hamlibdrv");
 
 QList<QPair<int, QString> > HamlibRotDrv::getModelList()
@@ -161,7 +159,7 @@ bool HamlibRotDrv::open()
     opened = true;
 
     connect(&timer, &QTimer::timeout, this, &HamlibRotDrv::checkRotStateChange);
-    timer.start(POOL_INTERVAL);
+    timer.start(POLL_INTERVAL);
     emit rotIsReady();
     return true;
 }
@@ -275,7 +273,7 @@ void HamlibRotDrv::checkRotStateChange()
     forceSendState = false;
 
     // restart timer
-    timer.start(POOL_INTERVAL);
+    timer.start(POLL_INTERVAL);
     drvLock.unlock();
 }
 
@@ -453,4 +451,3 @@ void HamlibRotDrv::commandSleep()
 }
 
 #undef MUTEXLOCKER
-#undef POOL_INTERVAL
