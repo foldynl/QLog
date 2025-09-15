@@ -3,7 +3,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDesktopServices>
-
+#include <QStandardItemModel>
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 #include "models/RigTypeModel.h"

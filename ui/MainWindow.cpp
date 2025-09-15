@@ -2,6 +2,9 @@
 #include <QLabel>
 #include <QColor>
 #include <QSpacerItem>
+#include <QShortcut>
+#include <QDesktopServices>
+
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "ui/SettingsDialog.h"
@@ -194,13 +197,13 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::themeChanged, ui->rotatorWidget, &RotatorWidget::redrawMap);
     connect(this, &MainWindow::themeChanged, stats, &StatisticsWidget::changeTheme);
 
-    connect(ui->actionThemeNative, &QAction::triggered, this, [this](bool checked) {
+    connect(ui->actionThemeNative, &QAction::triggered, this, [this]() {
         this->themeInit(0);
     });
-    connect(ui->actionThemeDark, &QAction::triggered, this, [this](bool checked) {
+    connect(ui->actionThemeDark, &QAction::triggered, this, [this]() {
         this->themeInit(1);
     });
-    connect(ui->actionThemeLight, &QAction::triggered, this, [this](bool checked) {
+    connect(ui->actionThemeLight, &QAction::triggered, this, [this]() {
         this->themeInit(2);
     });
 

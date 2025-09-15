@@ -13,6 +13,7 @@
 #include <QSplashScreen>
 #include <QTemporaryDir>
 #include <sqlite3.h>
+#include <QStyleFactory>
 
 #include "debug.h"
 #include "Migration.h"

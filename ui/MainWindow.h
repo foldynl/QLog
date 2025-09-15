@@ -2,8 +2,9 @@
 #define QLOG_UI_MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
+#include <QActionGroup>
 #include "ui/StatisticsWidget.h"
-#include "ui/component/SwitchButton.h"
 #include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"
