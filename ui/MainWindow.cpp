@@ -935,6 +935,8 @@ void MainWindow::themeInit(int mode)
         ui->actionThemeLight->setChecked(true);
         this->setLightTheme();
         break;
+    default:
+        qWarning("Unsupported theme ID");
     }
 
     QFile style(":/res/stylesheet.css");
