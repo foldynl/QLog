@@ -1117,7 +1117,12 @@ void QSODetailDialog::mapLoaded(bool)
 
     main_page->runJavaScript(postponedScripts);
 
-    if ( LogParam::getMainWindowDarkMode() )
+    const QPalette &defaultPalette = this->palette();
+    const QColor &text = defaultPalette.color(QPalette::WindowText);
+    const QColor &window = defaultPalette.color(QPalette::Window);
+    bool isDark = text.lightness() > window.lightness();
+
+    if ( isDark )
     {
         QString themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
         main_page->runJavaScript(themeJavaScript);
