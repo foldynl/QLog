@@ -345,7 +345,7 @@ public:
      *************/
     static bool getMainWindowAlertBeep();
     static void setMainWindowAlertBeep(bool state);
-    static bool getMainWindowDarkMode();
+    static int getMainWindowDarkMode();
     static void setMainWindowDarkMode(int state);
     static QByteArray getMainWindowGeometry();
     static void setMainWindowGeometry(const QByteArray &state);
