@@ -422,7 +422,16 @@ QDateTimeEdit *QSOFilterDetail::createDateTimeEdit(const QString &value, const i
     valueDateTime->setDisplayFormat(locale.formatDateShortWithYYYY()
                                     + " " + locale.formatTimeLongWithoutTZ());
     valueDateTime->setSizePolicy(sizepolicy);
-    valueDateTime->setDateTime(QDateTime::fromString(value, "yyyy-MM-ddTHH:mm:ss"));
+    if ( !value.isEmpty() )
+    {
+        QDateTime dtValue = QDateTime::fromString(value, "yyyy-MM-ddTHH:mm:ss");
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+        dtValue.setTimeZone(QTimeZone::UTC);
+#else
+        dtValue.setTimeSpec(Qt::UTC);
+#endif
+        valueDateTime->setDateTime(dtValue);
+    }
     return valueDateTime;
 
 }
