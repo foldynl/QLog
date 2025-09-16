@@ -4,6 +4,7 @@
 #include <QSpacerItem>
 #include <QShortcut>
 #include <QDesktopServices>
+#include <QStyleHints>
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
