@@ -90,6 +90,14 @@ MainWindow::MainWindow(QWidget* parent) :
 
     const QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
     for (QDockWidget *dockWidget : dockWidgets) {
+        if (!dockWidget)
+            continue;
+
+        // macOS only: keep floating tool windows always visible
+#ifdef Q_OS_MAC
+        dockWidget->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
+#endif
+
         if (dockWidget)
             dockWidget->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
     }
