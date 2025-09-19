@@ -93,13 +93,13 @@ MainWindow::MainWindow(QWidget* parent) :
         if (!dockWidget)
             continue;
 
-        // macOS only: keep floating tool windows always visible
-#ifdef Q_OS_MAC
-        dockWidget->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
-#endif
-
         if (dockWidget)
             dockWidget->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
+
+        if (auto tabs = dockWidget->findChild<QTabWidget*>()) {
+            if (tabs->tabBar())
+                tabs->tabBar()->show();
+        }
     }
 
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
