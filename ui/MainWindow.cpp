@@ -90,8 +90,16 @@ MainWindow::MainWindow(QWidget* parent) :
 
     const QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
     for (QDockWidget *dockWidget : dockWidgets) {
+        if (!dockWidget)
+            continue;
+
         if (dockWidget)
             dockWidget->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
+
+        if (auto tabs = dockWidget->findChild<QTabWidget*>()) {
+            if (tabs->tabBar())
+                tabs->tabBar()->show();
+        }
     }
 
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
