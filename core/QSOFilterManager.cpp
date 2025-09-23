@@ -253,6 +253,14 @@ QString QSOFilterManager::getWhereClause(const QString &filterName)
     else
         qCDebug(runtime) << "User filter error - " << userFilterQuery.lastError().text();
 
+    // This filter, when used with fields that contain time, only works by luck.
+    // These fields are Timeon/Timeoff. They are stored by QSO Filter Dialog as values in the format
+    // YYYY-MM-DDThh:mm:ss without a timezone. This is fine, since all times in QLog
+    // are internally in UTC. The problem arises because this WHERE clause is later
+    // used in a SELECT in the logbook. SQL does not compare the values as datetime,
+    // but as strings — otherwise both sides would need to be proper datetime types.
+    // Fortunately, both sides are strings in the same format, except that Timeon/Timeoff
+    // includes a timezone at the end. Therefore, string comparison of the dates still works.
     return ret;
 }
 
