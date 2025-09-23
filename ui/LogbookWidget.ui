@@ -62,7 +62,7 @@
             <enum>Qt::NoContextMenu</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">::menu-indicator{ image: none; }</string>
+            <string notr="true">::menu-indicator{ image: none; width: 0px;}</string>
            </property>
            <property name="text">
             <string notr="true"/>
