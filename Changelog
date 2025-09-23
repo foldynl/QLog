@@ -1,4 +1,5 @@
 TBC - 0.46.1
+- Fixed Using CQRLog API Key for Clublog (issue #759)
 - Fixed inability to edit Power in QSO Detail (issue #763)
 
 2025/09/12 - 0.46.0
