@@ -11,6 +11,7 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "core/LogParam.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.core.clublog");
 
@@ -169,7 +170,7 @@ void ClubLogUploader::sendRealtimeRequest(const OnlineUploadCommand command,
         return;
     }
 
-    qCDebug(runtime) << query.query();
+    qCDebug(runtime) << Data::safeQueryString(query);
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");

@@ -12,6 +12,7 @@
 #include "core/debug.h"
 #include "core/CredentialStore.h"
 #include "core/LogParam.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.core.lotw");
 
@@ -364,7 +365,7 @@ void LotwQSLDownloader::get(QList<QPair<QString, QString>> params)
     QUrl url(ADIF_API);
     url.setQuery(query);
 
-    qCDebug(runtime) << url.toString();
+    qCDebug(runtime) << Data::safeQueryString(query);
 
     if ( currentReply )
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";

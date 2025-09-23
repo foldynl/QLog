@@ -11,6 +11,7 @@
 #include "core/CredentialStore.h"
 #include "data/Callsign.h"
 #include "core/LogParam.h"
+#include "data/Data.h"
 
 //https://www.qrz.com/docs/logbook/QRZLogbookAPI.html
 
@@ -419,7 +420,7 @@ void QRZUploader::actionInsert(const QString &logbookAPIKey, QByteArray& data, c
     QString rheader = QString("QLog/%1").arg(VERSION);
     request.setRawHeader("User-Agent", rheader.toUtf8());
 
-    qCDebug(runtime) << url;
+    qCDebug(runtime) << Data::safeQueryString(params);
 
     if ( currentReply )
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
