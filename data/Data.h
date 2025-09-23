@@ -135,6 +135,7 @@ public:
                                 const QString &band,
                                 const QString &mode);
 
+    static QString safeQueryString(const QUrlQuery &query);
     DxccStatus dxccStatus(int dxcc, const QString &band, const QString &mode);
     QStringList contestList();
     QStringList propagationModesList() const { return QStringList{""} + propagationModes.values(); }

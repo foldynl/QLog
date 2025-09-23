@@ -817,6 +817,25 @@ qulonglong Data::countDupe(const QString &callsign,
     return (query.first()) ? query.value(0).toULongLong() : 0ULL;
 }
 
+QString Data::safeQueryString(const QUrlQuery &query)
+{
+    FCT_IDENTIFICATION;
+
+    QUrlQuery safe;
+    const QList<QPair<QString, QString>> &items = query.queryItems(QUrl::FullyDecoded);
+
+    for ( const auto &item : items )
+    {
+        if ( item.first.compare("password", Qt::CaseInsensitive) == 0
+             || item.first.compare("code", Qt::CaseInsensitive) == 0)
+            safe.addQueryItem(item.first, "***MASKED***");
+        else
+            safe.addQueryItem(item.first, item.second);
+    }
+
+    return safe.query(QUrl::FullyEncoded);
+}
+
 void Data::loadContests()
 {
     FCT_IDENTIFICATION;

@@ -13,6 +13,7 @@
 #include "core/CredentialStore.h"
 #include "logformat/AdiFormat.h"
 #include "core/LogParam.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.core.eqsl");
 
@@ -354,7 +355,7 @@ void EQSLQSLDownloader::getQSLImage(const QSqlRecord &qso)
     QUrl url(QSL_IMAGE_FILENAME_PAGE);
     url.setQuery(query);
 
-    qCDebug(runtime) << url.toString();
+    qCDebug(runtime) << Data::safeQueryString(query);
 
     if ( currentReply )
     {
@@ -603,7 +604,7 @@ void EQSLQSLDownloader::get(const QList<QPair<QString, QString>> &params)
     QUrl url(DOWNLOAD_1ST_PAGE);
     url.setQuery(query);
 
-    qCDebug(runtime) << url.toString();
+    qCDebug(runtime) << Data::safeQueryString(query);
 
     if ( currentReply )
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";

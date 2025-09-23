@@ -100,7 +100,7 @@ void CloudlogUploader::sendStationInfoReq()
     QUrl url(LogParam::getCloudlogAPIEndpoint() + "/api/station_info/" + getLogbookAPIKey());
     QNetworkRequest request(url);
 
-    qCDebug(runtime) << url;
+    //qCDebug(runtime) << url;
     QNetworkReply *reply = getNetworkAccessManager()->get(request); // do not use currentReply
     reply->setProperty("messageType", QVariant("getStationID"));
 }

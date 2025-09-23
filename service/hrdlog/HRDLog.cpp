@@ -10,6 +10,7 @@
 #include "core/CredentialStore.h"
 #include "rig/macros.h"
 #include "core/LogParam.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.core.hrdlog");
 
@@ -157,7 +158,7 @@ void HRDLogUploader::uploadAdif(const QByteArray &data,
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-    qCDebug(runtime) << url;
+    qCDebug(runtime) << Data::safeQueryString(params);
 
     if ( currentReply )
     {
@@ -221,7 +222,7 @@ void HRDLogUploader::sendOnAir(double freq, const QString &mode)
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-    qCDebug(runtime) << url;
+    qCDebug(runtime) << Data::safeQueryString(params);
 
     if ( currentReply )
         qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
