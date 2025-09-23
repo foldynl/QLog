@@ -2,6 +2,7 @@ TBC - 0.46.1
 - Fixed Logbook Search Icon is not centered (issue #753)
 - Fixed Using CQRLog API Key for Clublog (issue #759)
 - Fixed Online Service Password leaking via debug files (issue #760)
+- Fixed Tabs are not showed properly (PR #762 @aa5sh)
 - Fixed inability to edit Power in QSO Detail (issue #763)
 
 2025/09/12 - 0.46.0
