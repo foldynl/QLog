@@ -1246,7 +1246,7 @@
     <message>
         <location filename="../service/cloudlog/Cloudlog.cpp" line="229"/>
         <source>Invalid API Key</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的API密钥</translation>
     </message>
 </context>
 <context>
@@ -1254,7 +1254,7 @@
     <message>
         <location filename="../service/clublog/ClubLog.cpp" line="289"/>
         <source>Clublog Operation for Callsign %1 failed.&lt;br&gt;%2</source>
-        <translation type="unfinished">呼号 %1 的 Clublog 操作失败。&lt;br&gt;%2</translation>
+        <translation>呼号 %1 的 Clublog 操作失败。&lt;br&gt;%2</translation>
     </message>
 </context>
 <context>
@@ -1371,12 +1371,12 @@
     <message>
         <location filename="dbstrings.tri" line="8"/>
         <source>Amsterdam &amp; St. Paul Is.</source>
-        <translation>阿姆斯特丹群岛</translation>
+        <translation>阿姆斯特丹 &amp; 圣保罗群岛.</translation>
     </message>
     <message>
         <location filename="dbstrings.tri" line="9"/>
         <source>Andaman &amp; Nicobar Is.</source>
-        <translation>安达曼 - 尼科巴群岛</translation>
+        <translation>安达曼 &amp; 尼科巴群岛.</translation>
     </message>
     <message>
         <location filename="dbstrings.tri" line="10"/>
@@ -3340,89 +3340,89 @@
     <message>
         <location filename="../ui/DownloadQSLDialog.ui" line="14"/>
         <source>Download QSLs</source>
-        <translation type="unfinished"></translation>
+        <translation>下载QSLs</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.ui" line="23"/>
         <source>eQSL</source>
-        <translation type="unfinished">eQSL</translation>
+        <translation>eQSL</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.ui" line="32"/>
         <source>eQSL QTH Profile</source>
-        <translation type="unfinished">eQSL QTH 配置文件</translation>
+        <translation>eQSL QTH昵称</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.ui" line="43"/>
         <location filename="../ui/DownloadQSLDialog.ui" line="89"/>
         <source>QSLs Since</source>
-        <translation type="unfinished"></translation>
+        <translation>QSLs自</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.ui" line="48"/>
         <location filename="../ui/DownloadQSLDialog.ui" line="94"/>
         <source>QSOs Since</source>
-        <translation type="unfinished"></translation>
+        <translation>QSOs自</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.ui" line="69"/>
         <source>LoTW</source>
-        <translation type="unfinished">LoTW</translation>
+        <translation>LoTW</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.ui" line="78"/>
         <source>My Callsign</source>
-        <translation type="unfinished">我的呼号</translation>
+        <translation>我的呼号</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="28"/>
         <source>&amp;Download</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;下载</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="46"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
-        <translation type="unfinished">LoTW 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
+        <translation>LoTW 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="53"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
-        <translation type="unfinished">eQSL 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
+        <translation>eQSL 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="129"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="134"/>
         <source>Downloading from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>从%1下载</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="140"/>
         <source>Processing %1 QSLs</source>
-        <translation type="unfinished"></translation>
+        <translation>正在处理 %1 QSLs</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>QLog Error</source>
-        <translation type="unfinished"></translation>
+        <translation>QLog错误</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="163"/>
         <source>%1 update failed: </source>
-        <translation type="unfinished"></translation>
+        <translation>%1 更新失败: </translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>QLog Information</source>
-        <translation type="unfinished">QLog 信息</translation>
+        <translation>QLog 信息</translation>
     </message>
     <message>
         <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
         <source>No service selected</source>
-        <translation type="unfinished"></translation>
+        <translation>未选择服务</translation>
     </message>
 </context>
 <context>
@@ -3674,7 +3674,7 @@
     <message>
         <location filename="../ui/DxWidget.ui" line="126"/>
         <source>Filtered</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤的内容</translation>
     </message>
     <message>
         <location filename="../ui/DxWidget.ui" line="156"/>
@@ -3933,32 +3933,32 @@
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="425"/>
         <source>Incorrect Password or QTHProfile Id</source>
-        <translation type="unfinished">无效的密码或者 QTH 配置文件 ID</translation>
+        <translation>无效的密码或者 QTH 配置文件 ID</translation>
     </message>
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="444"/>
         <source>ADIF file not found in eQSL response</source>
-        <translation type="unfinished">在 eQSL 响应中找不到 ADIF 文件</translation>
+        <translation>在 eQSL 响应中找不到 ADIF 文件</translation>
     </message>
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="460"/>
         <source>Incorrect Username or password</source>
-        <translation type="unfinished">用户名或密码不正确</translation>
+        <translation>用户名或密码不正确</translation>
     </message>
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="496"/>
         <source>Unknown Error</source>
-        <translation type="unfinished">未知错误</translation>
+        <translation>未知错误</translation>
     </message>
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="520"/>
         <source>Cannot opet temporary file</source>
-        <translation type="unfinished">无法打开临时文件</translation>
+        <translation>无法打开临时文件</translation>
     </message>
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="571"/>
         <source>Cannot save the image to file</source>
-        <translation type="unfinished">无法保存图像至文件</translation>
+        <translation>无法保存图像至文件</translation>
     </message>
 </context>
 <context>
@@ -3966,7 +3966,7 @@
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="252"/>
         <source>Unknown Reply from eQSL</source>
-        <translation type="unfinished">来自 eQSL 的未知回复</translation>
+        <translation>来自 eQSL 的未知回复</translation>
     </message>
 </context>
 <context>
@@ -4236,18 +4236,18 @@
     <message>
         <location filename="../rig/drivers/FlrigRigDrv.cpp" line="594"/>
         <source>Timeout</source>
-        <translation type="unfinished">超时</translation>
+        <translation>超时</translation>
     </message>
     <message>
         <location filename="../rig/drivers/FlrigRigDrv.cpp" line="594"/>
         <source>FLRig response timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>FLRig响应超时</translation>
     </message>
     <message>
         <location filename="../rig/drivers/FlrigRigDrv.cpp" line="859"/>
         <location filename="../rig/drivers/FlrigRigDrv.cpp" line="872"/>
         <source>Network Error</source>
-        <translation type="unfinished">网络错误</translation>
+        <translation>网络错误</translation>
     </message>
 </context>
 <context>
@@ -4255,7 +4255,7 @@
     <message>
         <location filename="../service/hrdlog/HRDLog.cpp" line="276"/>
         <source>Response message malformed</source>
-        <translation type="unfinished">响应消息格式错误</translation>
+        <translation>响应消息格式错误</translation>
     </message>
 </context>
 <context>
@@ -4263,7 +4263,7 @@
     <message>
         <location filename="../service/hamqth/HamQTH.cpp" line="73"/>
         <source>HamQTH</source>
-        <translation type="unfinished">HamQTH</translation>
+        <translation>HamQTH</translation>
     </message>
 </context>
 <context>
@@ -4312,7 +4312,7 @@
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="252"/>
         <source>Cannot set auto_power_on</source>
-        <translation type="unfinished"></translation>
+        <translation>无法设置自动开机</translation>
     </message>
     <message>
         <location filename="../rig/drivers/HamlibRigDrv.cpp" line="259"/>
@@ -4848,7 +4848,7 @@
     <message>
         <location filename="../ui/KSTHighlighterSettingDialog.cpp" line="17"/>
         <source>Name</source>
-        <translation>姓名</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/KSTHighlighterSettingDialog.cpp" line="18"/>
@@ -5554,7 +5554,7 @@
     <message>
         <location filename="../models/LogbookModel.cpp" line="716"/>
         <source>Name</source>
-        <translation>姓名</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="717"/>
@@ -5957,43 +5957,43 @@
         <location filename="../ui/LogbookWidget.ui" line="324"/>
         <location filename="../ui/LogbookWidget.cpp" line="535"/>
         <source>Callsign</source>
-        <translation type="unfinished">呼号</translation>
+        <translation>呼号</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="332"/>
         <location filename="../ui/LogbookWidget.cpp" line="546"/>
         <source>Gridsquare</source>
-        <translation type="unfinished">网格坐标</translation>
+        <translation>网格坐标</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="340"/>
         <location filename="../ui/LogbookWidget.cpp" line="554"/>
         <source>POTA</source>
-        <translation type="unfinished">POTA</translation>
+        <translation>POTA</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="348"/>
         <location filename="../ui/LogbookWidget.cpp" line="562"/>
         <source>SOTA</source>
-        <translation type="unfinished">SOTA</translation>
+        <translation>SOTA</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="356"/>
         <location filename="../ui/LogbookWidget.cpp" line="570"/>
         <source>WWFF</source>
-        <translation type="unfinished">WWFF</translation>
+        <translation>WWFF</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="364"/>
         <location filename="../ui/LogbookWidget.cpp" line="578"/>
         <source>SIG</source>
-        <translation type="unfinished">SIG</translation>
+        <translation>SIG</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="372"/>
         <location filename="../ui/LogbookWidget.cpp" line="586"/>
         <source>IOTA</source>
-        <translation type="unfinished">IOTA</translation>
+        <translation>IOTA</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="865"/>
@@ -6042,22 +6042,22 @@
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="251"/>
         <source>All Bands</source>
-        <translation type="unfinished">全部波段</translation>
+        <translation>所有波段</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="259"/>
         <source>All Modes</source>
-        <translation type="unfinished"></translation>
+        <translation>所有模式</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="269"/>
         <source>All Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>所有国家和地区</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="283"/>
         <source>No User Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>无用户筛选器</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="361"/>
@@ -6094,7 +6094,7 @@
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="770"/>
         <source>All Clubs</source>
-        <translation type="unfinished"></translation>
+        <translation>所有俱乐部</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.cpp" line="1106"/>
@@ -6107,12 +6107,12 @@
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="305"/>
         <source>Cannot open temporary file</source>
-        <translation type="unfinished">无法打开临时文件</translation>
+        <translation>无法打开临时文件</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="317"/>
         <source>Incorrect Loging or password</source>
-        <translation type="unfinished">登陆名或密码不正确</translation>
+        <translation>登陆名或密码不正确</translation>
     </message>
 </context>
 <context>
@@ -6120,73 +6120,73 @@
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="136"/>
         <source>Upload cancelled by user</source>
-        <translation type="unfinished">用户取消上传</translation>
+        <translation>用户取消上传</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="140"/>
         <source>Upload rejected by LoTW</source>
-        <translation type="unfinished">上传被 LoTW 拒绝</translation>
+        <translation>上传被 LoTW 拒绝</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="144"/>
         <source>Unexpected response from TQSL server</source>
-        <translation type="unfinished">来自 TQSL 服务器的意外响应</translation>
+        <translation>来自 TQSL 服务器的意外响应</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="148"/>
         <source>TQSL utility error</source>
-        <translation type="unfinished">TQS L实用程序错误</translation>
+        <translation>TQS L实用程序错误</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="152"/>
         <source>TQSLlib error</source>
-        <translation type="unfinished">TQSLlib 错误</translation>
+        <translation>TQSLlib 错误</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="156"/>
         <source>Unable to open input file</source>
-        <translation type="unfinished">无法打开输入文件</translation>
+        <translation>无法打开输入文件</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="160"/>
         <source>Unable to open output file</source>
-        <translation type="unfinished">无法打开输出文件</translation>
+        <translation>无法打开输出文件</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="164"/>
         <source>All QSOs were duplicates or out of date range</source>
-        <translation type="unfinished">所有 QSO 都是重复的或超出了日期范围</translation>
+        <translation>所有 QSO 都是重复的或超出了日期范围</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="168"/>
         <source>Some QSOs were duplicates or out of date range</source>
-        <translation type="unfinished">部分 QSO 是重复的或超出了日期范围</translation>
+        <translation>部分 QSO 是重复的或超出了日期范围</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="172"/>
         <source>Command syntax error</source>
-        <translation type="unfinished">命令语法错误</translation>
+        <translation>命令语法错误</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="176"/>
         <source>LoTW Connection error (no network or LoTW is unreachable)</source>
-        <translation type="unfinished">LoTW 连接错误 (没有网络或 LoTW 不可达)</translation>
+        <translation>LoTW 连接错误 (没有网络或 LoTW 不可达)</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="180"/>
         <location filename="../service/lotw/Lotw.cpp" line="200"/>
         <source>Unexpected Error from TQSL</source>
-        <translation type="unfinished">来自 TQSL 的意外错误</translation>
+        <translation>来自 TQSL 的意外错误</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="193"/>
         <source>TQSL not found</source>
-        <translation type="unfinished">未找到 TQSL</translation>
+        <translation>未找到 TQSL</translation>
     </message>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="197"/>
         <source>TQSL crashed</source>
-        <translation type="unfinished">TQSL 已崩溃</translation>
+        <translation>TQSL 已崩溃</translation>
     </message>
 </context>
 <context>
@@ -6325,22 +6325,22 @@
     <message>
         <location filename="../ui/MainWindow.ui" line="860"/>
         <source>Upload</source>
-        <translation type="unfinished">上传</translation>
+        <translation>上传</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="863"/>
         <source>Service - Upload QSOs</source>
-        <translation type="unfinished"></translation>
+        <translation>服务-上传 QSOs</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="874"/>
         <source>Download QSLs</source>
-        <translation type="unfinished"></translation>
+        <translation>下载 QSLs</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="877"/>
         <source>Service - Download QSLs</source>
-        <translation type="unfinished"></translation>
+        <translation>服务-下载 QSLs</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="314"/>
@@ -6607,22 +6607,22 @@
     <message>
         <location filename="../ui/MainWindow.cpp" line="808"/>
         <source>A New Version</source>
-        <translation type="unfinished"></translation>
+        <translation>新版本</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="809"/>
         <source>A new version %1 is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>新版本 %1 可用。</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="813"/>
         <source>Remind Me Later</source>
-        <translation type="unfinished"></translation>
+        <translation>稍后提醒我</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="814"/>
         <source>Download</source>
-        <translation type="unfinished">下载</translation>
+        <translation>下载</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1103"/>
@@ -7870,7 +7870,7 @@
     <message>
         <location filename="../service/qrzcom/QRZ.cpp" line="117"/>
         <source>QRZ.com</source>
-        <translation type="unfinished">QRZ.com</translation>
+        <translation>QRZ.com</translation>
     </message>
 </context>
 <context>
@@ -7878,7 +7878,7 @@
     <message>
         <location filename="../service/qrzcom/QRZ.cpp" line="507"/>
         <source>General Error</source>
-        <translation type="unfinished">常见错误</translation>
+        <translation>常见错误</translation>
     </message>
 </context>
 <context>
@@ -9231,7 +9231,7 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="730"/>
         <source>Swap Paddles</source>
-        <translation type="unfinished"></translation>
+        <translation>交换嘀/嗒</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="739"/>
@@ -9689,28 +9689,28 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3687"/>
         <source>Default API Key</source>
-        <translation type="unfinished"></translation>
+        <translation>默认API密钥</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3714"/>
         <source>Callsign-specific API Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>特定呼号的API密匙</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3802"/>
         <source>Wavelog</source>
-        <translation type="unfinished"></translation>
+        <translation>Wavelog</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3808"/>
         <location filename="../ui/SettingsDialog.cpp" line="2759"/>
         <source>API Key</source>
-        <translation type="unfinished"></translation>
+        <translation>API密钥</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3815"/>
         <source>Endpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>站点地址</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3853"/>
@@ -9730,7 +9730,7 @@
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4078"/>
         <source>The &apos;&gt;&apos; character is interpreted as a marker for the initial cursor position in the Report column. &lt;br/&gt;Ex.: &apos;5&gt;9&apos; means the cursor will be positioned on the second character</source>
-        <translation type="unfinished"></translation>
+        <translation>“&gt;” 字符被解读为 “报告” 列中初始光标位置的标记。 &lt;br/&gt;示例：“5&gt;9” 表示光标将定位在第二个字符上</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4345"/>
@@ -10439,7 +10439,7 @@
     <message>
         <location filename="../ui/component/SmartSearchBox.cpp" line="33"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
 </context>
 <context>
@@ -10744,234 +10744,235 @@
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="20"/>
         <source>Upload QSOs</source>
-        <translation type="unfinished"></translation>
+        <translation>上传 QSOs</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="44"/>
         <location filename="../ui/UploadQSODialog.ui" line="319"/>
         <location filename="../ui/UploadQSODialog.cpp" line="39"/>
         <source>eQSL</source>
-        <translation type="unfinished">eQSL</translation>
+        <translation>eQSL</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="68"/>
         <location filename="../ui/UploadQSODialog.cpp" line="30"/>
         <source>LoTW</source>
-        <translation type="unfinished">LoTW</translation>
+        <translation>LoTW</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="102"/>
         <location filename="../ui/UploadQSODialog.cpp" line="66"/>
         <source>QRZ.com</source>
-        <translation type="unfinished">QRZ.com</translation>
+        <translation>QRZ.com</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="126"/>
         <location filename="../ui/UploadQSODialog.ui" line="410"/>
         <location filename="../ui/UploadQSODialog.cpp" line="48"/>
         <source>Clublog</source>
-        <translation type="unfinished">Clublog</translation>
+        <translation>Clublog</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="160"/>
         <location filename="../ui/UploadQSODialog.cpp" line="57"/>
         <source>HRDLog</source>
-        <translation type="unfinished">HRDLog</translation>
+        <translation>HRDLog</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="187"/>
         <location filename="../ui/UploadQSODialog.ui" line="463"/>
         <location filename="../ui/UploadQSODialog.cpp" line="75"/>
         <source>Wavelog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="210"/>
         <source>Filters</source>
-        <translation type="unfinished">过滤器</translation>
+        <translation>过滤器</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="216"/>
         <source>Station Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>台站配置</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="233"/>
         <source>My Callsign</source>
-        <translation type="unfinished">我的呼号</translation>
+        <translation>我的呼号</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="257"/>
         <source>Gridsquare</source>
-        <translation type="unfinished">网格坐标</translation>
+        <translation>网格坐标</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="269"/>
         <source>Include QSOs Status</source>
-        <translation type="unfinished"></translation>
+        <translation>包括 QSOs 状态</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="278"/>
         <source>Under normal circumstances this status means &lt;b&gt;&quot;do not send&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when sending a QSL.</source>
-        <translation type="unfinished">在正常情况下，此状态表示&lt;b&gt;“不发送”&lt;/b&gt;。&lt;br/&gt;然而，有时可能希望在发送 QSL 时忽略此设置。</translation>
+        <translation>在正常情况下，此状态表示&lt;b&gt;“不发送”&lt;/b&gt;。&lt;br/&gt;然而，有时可能希望在发送 QSL 时忽略此设置。</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="281"/>
         <source>No</source>
-        <translation type="unfinished">否</translation>
+        <translation>否</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="288"/>
         <source>Under normal circumstances this status means &lt;b&gt;&quot;Ignore/Invalid&quot;&lt;/b&gt;.&lt;br/&gt;However, it may sometimes be wanted to ignore this setting when sending a QSL.</source>
-        <translation type="unfinished">在正常情况下，此状态表示&lt;b&gt;“忽略/无效”&lt;/b&gt;。&lt;br/&gt;然而，有时可能希望在发送 QSL 时忽略此设置。</translation>
+        <translation>在正常情况下，此状态表示&lt;b&gt;“忽略/无效”&lt;/b&gt;。&lt;br/&gt;然而，有时可能希望在发送 QSL 时忽略此设置。</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="291"/>
         <source>Ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="348"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="358"/>
         <source>QSLs Message</source>
-        <translation type="unfinished">QSLs 信息</translation>
+        <translation>QSLs 信息</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="365"/>
         <source>Comment</source>
-        <translation type="unfinished">备注</translation>
+        <translation>备注</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="390"/>
         <source>QSL Message Field</source>
-        <translation type="unfinished">QSL 确认信息字段</translation>
+        <translation>QSL 确认信息字段</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="397"/>
         <source>QTH Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>QTH 昵称</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="443"/>
         <source>This option deletes all QSOs in the Clublog&lt;br&gt;and based on filter, it uploads all QSOs regardless of their status.</source>
-        <translation type="unfinished">该选项删除 Clublog 中的所有 QSO，&lt;br&gt;并根据过滤器上传所有 QSO，而不管它们的状态如何。</translation>
+        <translation>该选项删除 Clublog 中的所有 QSO，&lt;br&gt;并根据过滤器上传所有 QSO，而不管它们的状态如何。</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="453"/>
         <source>Clear Clublog and reupload QSOs</source>
-        <translation type="unfinished">清除 Clublog 并重新上传 QSO</translation>
+        <translation>清除 Clublog 并重新上传 QSO</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="469"/>
         <source>Station Profile ID</source>
-        <translation type="unfinished"></translation>
+        <translation>台站配置ID</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="532"/>
         <source>Reupload All</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>点击后会触发 “重新上传全部已选定 / 历史上传过的内容” 的操作，常用于修复上传失败</translatorcomment>
+        <translation>重新上传全部</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.ui" line="603"/>
         <location filename="../ui/UploadQSODialog.cpp" line="153"/>
         <source>Show QSOs...</source>
-        <translation type="unfinished"></translation>
+        <translation>显示QSOs...</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="83"/>
         <source>&amp;Upload</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;上传</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="153"/>
         <source>Hide QSOs...</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏 QSOs...</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="231"/>
         <source>Uploading to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>上传到 %1</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="232"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="276"/>
         <location filename="../ui/UploadQSODialog.cpp" line="338"/>
         <source>QLog Warning - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>QLog警告- %1</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="276"/>
         <source>Cannot update QSO Status</source>
-        <translation type="unfinished"></translation>
+        <translation>无法更新 QSO 状态</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="339"/>
         <source>Cannot upload the QSO(s): </source>
-        <translation type="unfinished">无法上传该 QSO(s): </translation>
+        <translation>无法上传该 QSO(s): </translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="394"/>
         <location filename="../ui/UploadQSODialog.cpp" line="405"/>
         <source>QLog Information</source>
-        <translation type="unfinished">QLog 信息</translation>
+        <translation>QLog 信息</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="394"/>
         <source>No QSO found to upload.</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到要上传的QSO。</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="405"/>
         <source>QSO(s) were uploaded to the selected services</source>
-        <translation type="unfinished"></translation>
+        <translation>QSO(s)已上传至选定的服务</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Time</source>
-        <translation type="unfinished">时间</translation>
+        <translation>时间</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Callsign</source>
-        <translation type="unfinished">呼号</translation>
+        <translation>呼号</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Mode</source>
-        <translation type="unfinished">模式</translation>
+        <translation>模式</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="447"/>
         <source>Upload to</source>
-        <translation type="unfinished"></translation>
+        <translation>上传到</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="493"/>
         <source>The values below will be used when an input record does not contain the ADIF values</source>
-        <translation type="unfinished">当输入记录不包含ADIF值时，将使用下面的值</translation>
+        <translation>当输入记录不包含ADIF值时，将使用下面的值</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="622"/>
         <source>Any</source>
-        <translation type="unfinished"></translation>
+        <translation>任何</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="635"/>
         <source>Unknown</source>
-        <translation type="unfinished">未知</translation>
+        <translation>未知</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.h" line="74"/>
         <source>Service is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>服务配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -11249,17 +11250,17 @@
     <message>
         <location filename="../ui/WsjtxWidget.ui" line="126"/>
         <source>Filtered</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤的内容</translation>
     </message>
     <message>
         <location filename="../ui/WsjtxWidget.ui" line="133"/>
         <source>Column Visibility...</source>
-        <translation type="unfinished">列可见性...</translation>
+        <translation>列可见性...</translation>
     </message>
     <message>
         <location filename="../ui/WsjtxWidget.ui" line="145"/>
         <source>Filter...</source>
-        <translation type="unfinished">过滤器...</translation>
+        <translation>过滤器...</translation>
     </message>
     <message>
         <location filename="../ui/WsjtxWidget.ui" line="136"/>
