@@ -51,6 +51,18 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.46.1" date="2025-09-26">
+      <description>
+        <ul>
+          <li>Fixed QSO filter incorrectly displays inserted date (issue #752)</li>
+          <li>Fixed Logbook Search Icon is not centered (issue #753)</li>
+          <li>Fixed Using CQRLog API Key for Clublog (issue #759)</li>
+          <li>Fixed Online Service Password leaking via debug files (issue #760)</li>
+          <li>Fixed Tabs are not showed properly (PR #762 @aa5sh)</li>
+          <li>Fixed inability to edit Power in QSO Detail (issue #763)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.46.0" date="2025-09-12">
       <description>
         <ul>

@@ -1,4 +1,4 @@
-TBC - 0.46.1
+2025/09/26 - 0.46.1
 - Fixed QSO filter incorrectly displays inserted date (issue #752)
 - Fixed Logbook Search Icon is not centered (issue #753)
 - Fixed Using CQRLog API Key for Clublog (issue #759)

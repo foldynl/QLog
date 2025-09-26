@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
     <Name>QLog</Name>
-    <Version>0.46.0</Version>
+    <Version>0.46.1</Version>
     <Title>QLog</Title>
     <Publisher>OK1MLG</Publisher>
     <StartMenuDir>QLog</StartMenuDir>

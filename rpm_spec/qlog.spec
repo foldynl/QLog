@@ -40,6 +40,14 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_metainfodir}/*
 
 %changelog
+* Fri Sep 26 2025 Ladislav Foldyna - 0.46.1-1
+- Fixed QSO filter incorrectly displays inserted date (issue #752)
+- Fixed Logbook Search Icon is not centered (issue #753)
+- Fixed Using CQRLog API Key for Clublog (issue #759)
+- Fixed Online Service Password leaking via debug files (issue #760)
+- Fixed Tabs are not showed properly (PR #762 @aa5sh)
+- Fixed inability to edit Power in QSO Detail (issue #763)
+
 * Fri Sep 12 2025 Ladislav Foldyna - 0.46.0-1
 - [NEW] - NewContact: POTA/SOTA/WWFF/IOTA info is taken from the nearest spot (@aa5sh @foldynl)
 - [NEW] - DXSpots are sent to Flex Radio (PR #694 @aa5sh)
