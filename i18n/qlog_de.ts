@@ -1252,7 +1252,7 @@
 <context>
     <name>ClubLogUploader</name>
     <message>
-        <location filename="../service/clublog/ClubLog.cpp" line="289"/>
+        <location filename="../service/clublog/ClubLog.cpp" line="290"/>
         <source>Clublog Operation for Callsign %1 failed.&lt;br&gt;%2</source>
         <translation>Clublog-Anfrage für Rufzeichen %1 fehlgeschlagen.&lt;br&gt;%2</translation>
     </message>
@@ -3931,32 +3931,32 @@
 <context>
     <name>EQSLQSLDownloader</name>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="425"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="426"/>
         <source>Incorrect Password or QTHProfile Id</source>
         <translation>Falsches Passwort oder QTHProfil-Id</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="444"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="445"/>
         <source>ADIF file not found in eQSL response</source>
         <translation>Keine ADIF-Datei in der eQSL-Antwort gefunden</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="460"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="461"/>
         <source>Incorrect Username or password</source>
         <translation>Falscher Benutzername oder Passwort</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="496"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="497"/>
         <source>Unknown Error</source>
         <translation>Unbekannter Fehler</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="520"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="521"/>
         <source>Cannot opet temporary file</source>
         <translation>Kann temporäre Datei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="571"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="572"/>
         <source>Cannot save the image to file</source>
         <translation>Kann das Bild nicht in die Datei speichern</translation>
     </message>
@@ -3964,7 +3964,7 @@
 <context>
     <name>EQSLUploader</name>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="252"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="253"/>
         <source>Unknown Reply from eQSL</source>
         <translation>Unbekannte Antwort von eQSL</translation>
     </message>
@@ -4253,7 +4253,7 @@
 <context>
     <name>HRDLogUploader</name>
     <message>
-        <location filename="../service/hrdlog/HRDLog.cpp" line="276"/>
+        <location filename="../service/hrdlog/HRDLog.cpp" line="277"/>
         <source>Response message malformed</source>
         <translation>Antwortnachricht fehlerhaft</translation>
     </message>
@@ -6122,12 +6122,12 @@
 <context>
     <name>LotwQSLDownloader</name>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="305"/>
+        <location filename="../service/lotw/Lotw.cpp" line="306"/>
         <source>Cannot open temporary file</source>
         <translation>Kann temporäre Datei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="317"/>
+        <location filename="../service/lotw/Lotw.cpp" line="318"/>
         <source>Incorrect Loging or password</source>
         <translation>Fehlerhafte Anmeldung oder falsches Passwort</translation>
     </message>
@@ -6135,73 +6135,73 @@
 <context>
     <name>LotwUploader</name>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="136"/>
+        <location filename="../service/lotw/Lotw.cpp" line="137"/>
         <source>Upload cancelled by user</source>
         <translation>Upload vom Benutzer abgebrochen</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="140"/>
+        <location filename="../service/lotw/Lotw.cpp" line="141"/>
         <source>Upload rejected by LoTW</source>
         <translation>Upload durch LoTW abgelehnt</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="144"/>
+        <location filename="../service/lotw/Lotw.cpp" line="145"/>
         <source>Unexpected response from TQSL server</source>
         <translation>Unerwartete Antwort vom TQSL-Server</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="148"/>
+        <location filename="../service/lotw/Lotw.cpp" line="149"/>
         <source>TQSL utility error</source>
         <translation>TQSL-Utility Fehler</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="152"/>
+        <location filename="../service/lotw/Lotw.cpp" line="153"/>
         <source>TQSLlib error</source>
         <translation>TQSLib Fehler</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="156"/>
+        <location filename="../service/lotw/Lotw.cpp" line="157"/>
         <source>Unable to open input file</source>
         <translation>Kann Eingabedatei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="160"/>
+        <location filename="../service/lotw/Lotw.cpp" line="161"/>
         <source>Unable to open output file</source>
         <translation>Kann Ausgabedatei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="164"/>
+        <location filename="../service/lotw/Lotw.cpp" line="165"/>
         <source>All QSOs were duplicates or out of date range</source>
         <translation>Alle QSOs waren Duplikate oder außerhalb des Datumsbereichs</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="168"/>
+        <location filename="../service/lotw/Lotw.cpp" line="169"/>
         <source>Some QSOs were duplicates or out of date range</source>
         <translation>Einige QSOs waren Duplikate oder außerhalb des Datumsbereichs</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="172"/>
+        <location filename="../service/lotw/Lotw.cpp" line="173"/>
         <source>Command syntax error</source>
         <translation>Befehls-Syntaxfehler</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="176"/>
+        <location filename="../service/lotw/Lotw.cpp" line="177"/>
         <source>LoTW Connection error (no network or LoTW is unreachable)</source>
         <translation>LoTW Verbindungsfehler (kein Netzwerk oder LoTW nicht erreichbar)</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="180"/>
-        <location filename="../service/lotw/Lotw.cpp" line="200"/>
+        <location filename="../service/lotw/Lotw.cpp" line="181"/>
+        <location filename="../service/lotw/Lotw.cpp" line="201"/>
         <source>Unexpected Error from TQSL</source>
         <translation>Unerwarteter Fehler von TQSL</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="193"/>
+        <location filename="../service/lotw/Lotw.cpp" line="194"/>
         <source>TQSL not found</source>
         <translation>TQSL nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="197"/>
+        <location filename="../service/lotw/Lotw.cpp" line="198"/>
         <source>TQSL crashed</source>
         <translation>TQSL abgestürzt</translation>
     </message>
@@ -6554,7 +6554,7 @@
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="123"/>
-        <location filename="../ui/MainWindow.cpp" line="1354"/>
+        <location filename="../ui/MainWindow.cpp" line="1362"/>
         <source>Contest</source>
         <translation>Contest</translation>
     </message>
@@ -6589,7 +6589,7 @@
         <translation>Alerts anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1595"/>
+        <location filename="../ui/MainWindow.cpp" line="1603"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
@@ -6605,69 +6605,69 @@
         <translation>Für keinen anderen Stil als Fusion zulässig</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="130"/>
+        <location filename="../ui/MainWindow.cpp" line="138"/>
         <source>Press to tune the alert</source>
         <translation>Drücken zum Einstellen des Alarms</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="368"/>
+        <location filename="../ui/MainWindow.cpp" line="376"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Clublog-Sofort-Upload-Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="587"/>
-        <location filename="../ui/MainWindow.cpp" line="597"/>
-        <location filename="../ui/MainWindow.cpp" line="607"/>
+        <location filename="../ui/MainWindow.cpp" line="595"/>
+        <location filename="../ui/MainWindow.cpp" line="605"/>
+        <location filename="../ui/MainWindow.cpp" line="615"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Fehler-Detail:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="631"/>
+        <location filename="../ui/MainWindow.cpp" line="639"/>
         <source>op: </source>
         <translation>op: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="808"/>
+        <location filename="../ui/MainWindow.cpp" line="816"/>
         <source>A New Version</source>
         <translation>Eine neue Version</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="809"/>
+        <location filename="../ui/MainWindow.cpp" line="817"/>
         <source>A new version %1 is available.</source>
         <translation>Eine neue Version %1 ist verfügbar.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="813"/>
+        <location filename="../ui/MainWindow.cpp" line="821"/>
         <source>Remind Me Later</source>
         <translation>Später erinnern</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="814"/>
+        <location filename="../ui/MainWindow.cpp" line="822"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1103"/>
+        <location filename="../ui/MainWindow.cpp" line="1111"/>
         <source>Classic</source>
         <translation>Klassisch</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1355"/>
+        <location filename="../ui/MainWindow.cpp" line="1363"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>Möchten Sie den Contest-Filter %1 entfernen?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1386"/>
+        <location filename="../ui/MainWindow.cpp" line="1394"/>
         <source>Contest: </source>
         <translation>Contest: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1564"/>
+        <location filename="../ui/MainWindow.cpp" line="1572"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2025 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1639"/>
+        <location filename="../ui/MainWindow.cpp" line="1647"/>
         <source>N/A</source>
         <translation></translation>
     </message>
@@ -7358,7 +7358,7 @@
         <location filename="../ui/ExportDialog.cpp" line="141"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
         <location filename="../ui/NewContactWidget.cpp" line="1625"/>
-        <location filename="../ui/QSOFilterDetail.cpp" line="524"/>
+        <location filename="../ui/QSOFilterDetail.cpp" line="533"/>
         <location filename="../ui/SettingsDialog.cpp" line="427"/>
         <location filename="../ui/SettingsDialog.cpp" line="435"/>
         <source>QLog Error</source>
@@ -7397,9 +7397,9 @@
         <location filename="../core/Migration.cpp" line="418"/>
         <location filename="../ui/ExportDialog.cpp" line="132"/>
         <location filename="../ui/ImportDialog.cpp" line="240"/>
-        <location filename="../ui/MainWindow.cpp" line="585"/>
-        <location filename="../ui/MainWindow.cpp" line="595"/>
-        <location filename="../ui/MainWindow.cpp" line="605"/>
+        <location filename="../ui/MainWindow.cpp" line="593"/>
+        <location filename="../ui/MainWindow.cpp" line="603"/>
+        <location filename="../ui/MainWindow.cpp" line="613"/>
         <location filename="../ui/NewContactWidget.cpp" line="1376"/>
         <location filename="../ui/SettingsDialog.cpp" line="309"/>
         <location filename="../ui/SettingsDialog.cpp" line="319"/>
@@ -7510,7 +7510,7 @@
         <location filename="../ui/AlertRuleDetail.cpp" line="166"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="173"/>
         <location filename="../ui/KSTHighlightRuleDetail.cpp" line="143"/>
-        <location filename="../ui/QSOFilterDetail.cpp" line="454"/>
+        <location filename="../ui/QSOFilterDetail.cpp" line="463"/>
         <source>QLog Info</source>
         <translation>QLog Info</translation>
     </message>
@@ -7541,7 +7541,7 @@
     </message>
     <message>
         <location filename="../ui/KSTHighlightRuleDetail.cpp" line="144"/>
-        <location filename="../ui/QSOFilterDetail.cpp" line="455"/>
+        <location filename="../ui/QSOFilterDetail.cpp" line="464"/>
         <source>Filter name is already exists.</source>
         <translation>Filtername ist bereits vorhanden.</translation>
     </message>
@@ -7662,17 +7662,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="586"/>
+        <location filename="../ui/MainWindow.cpp" line="594"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Rig Fehler:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="596"/>
+        <location filename="../ui/MainWindow.cpp" line="604"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Rotor Fehler:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="606"/>
+        <location filename="../ui/MainWindow.cpp" line="614"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;CW-Keyer Fehler:&lt;/b&gt; </translation>
     </message>
@@ -7682,7 +7682,7 @@
         <translation>Chat Fehler: </translation>
     </message>
     <message>
-        <location filename="../ui/QSOFilterDetail.cpp" line="525"/>
+        <location filename="../ui/QSOFilterDetail.cpp" line="534"/>
         <source>Cannot update QSO Filter Conditions</source>
         <translation>QSO-Filter kann nicht aktualisiert werden</translation>
     </message>
@@ -7889,7 +7889,7 @@
 <context>
     <name>QRZCallbook</name>
     <message>
-        <location filename="../service/qrzcom/QRZ.cpp" line="117"/>
+        <location filename="../service/qrzcom/QRZ.cpp" line="118"/>
         <source>QRZ.com</source>
         <translation>QRZ.com</translation>
     </message>
@@ -7897,7 +7897,7 @@
 <context>
     <name>QRZUploader</name>
     <message>
-        <location filename="../service/qrzcom/QRZ.cpp" line="507"/>
+        <location filename="../service/qrzcom/QRZ.cpp" line="508"/>
         <source>General Error</source>
         <translation>Allgemeiner Fehler</translation>
     </message>
@@ -8809,7 +8809,7 @@
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../ui/QSOFilterDetail.cpp" line="448"/>
+        <location filename="../ui/QSOFilterDetail.cpp" line="457"/>
         <source>Must not be empty</source>
         <translation>Darf nicht leer sein</translation>
     </message>
