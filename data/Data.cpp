@@ -30,41 +30,41 @@ Data::Data(QObject *parent) :
     loadTZ();
 
 
-    // dxcc_prefixes.exact DESC, dxcc_prefixes.prefix DESC
+    // dxcc_prefixes_ad1c.exact DESC, dxcc_prefixes_ad1c.prefix DESC
     // is used because it prefers an exact-match record over a partial-match records
     isDXCCQueryValid = queryDXCC.prepare(
                 "SELECT "
-                "    dxcc_entities.id, "
-                "    dxcc_entities.name, "
-                "    dxcc_entities.prefix, "
-                "    dxcc_entities.cont, "
+                "    dxcc_entities_ad1c.id, "
+                "    dxcc_entities_ad1c.name, "
+                "    dxcc_entities_ad1c.prefix, "
+                "    dxcc_entities_ad1c.cont, "
                 "    CASE "
-                "        WHEN (dxcc_prefixes.cqz != 0) "
-                "        THEN dxcc_prefixes.cqz "
-                "        ELSE dxcc_entities.cqz "
+                "        WHEN (dxcc_prefixes_ad1c.cqz != 0) "
+                "        THEN dxcc_prefixes_ad1c.cqz "
+                "        ELSE dxcc_entities_ad1c.cqz "
                 "    END AS cqz, "
                 "    CASE "
-                "        WHEN (dxcc_prefixes.ituz != 0) "
-                "        THEN dxcc_prefixes.ituz "
-                "        ELSE dxcc_entities.ituz "
+                "        WHEN (dxcc_prefixes_ad1c.ituz != 0) "
+                "        THEN dxcc_prefixes_ad1c.ituz "
+                "        ELSE dxcc_entities_ad1c.ituz "
                 "    END AS ituz , "
-                "    dxcc_entities.lat, "
-                "    dxcc_entities.lon, "
-                "    dxcc_entities.tz, "
-                "    dxcc_prefixes.exact "
-                "FROM dxcc_prefixes "
-                "INNER JOIN dxcc_entities ON (dxcc_prefixes.dxcc = dxcc_entities.id) "
-                "WHERE (dxcc_prefixes.prefix = :callsign and dxcc_prefixes.exact = true) "
-                "    OR (dxcc_prefixes.exact = false and :callsign LIKE dxcc_prefixes.prefix || '%') "
-                "ORDER BY dxcc_prefixes.exact DESC, dxcc_prefixes.prefix DESC "
+                "    dxcc_entities_ad1c.lat, "
+                "    dxcc_entities_ad1c.lon, "
+                "    dxcc_entities_ad1c.tz, "
+                "    dxcc_prefixes_ad1c.exact "
+                "FROM dxcc_prefixes_ad1c "
+                "INNER JOIN dxcc_entities_ad1c ON (dxcc_prefixes_ad1c.dxcc = dxcc_entities_ad1c.id) "
+                "WHERE (dxcc_prefixes_ad1c.prefix = :callsign and dxcc_prefixes_ad1c.exact = true) "
+                "    OR (dxcc_prefixes_ad1c.exact = false and :callsign LIKE dxcc_prefixes_ad1c.prefix || '%') "
+                "ORDER BY dxcc_prefixes_ad1c.exact DESC, dxcc_prefixes_ad1c.prefix DESC "
                 "LIMIT 1 "
                 );
 
     isDXCCIDQueryValid = queryDXCCID.prepare(
-                " SELECT dxcc_entities.id, dxcc_entities.name, dxcc_entities.prefix, dxcc_entities.cont, "
-                "        dxcc_entities.cqz, dxcc_entities.ituz, dxcc_entities.lat, dxcc_entities.lon, dxcc_entities.tz "
-                " FROM dxcc_entities "
-                " WHERE dxcc_entities.id = :dxccid"
+                " SELECT dxcc_entities_ad1c.id, dxcc_entities_ad1c.name, dxcc_entities_ad1c.prefix, dxcc_entities_ad1c.cont, "
+                "        dxcc_entities_ad1c.cqz, dxcc_entities_ad1c.ituz, dxcc_entities_ad1c.lat, dxcc_entities_ad1c.lon, dxcc_entities_ad1c.tz "
+                " FROM dxcc_entities_ad1c "
+                " WHERE dxcc_entities_ad1c.id = :dxccid"
                 );
 
     isSOTAQueryValid = querySOTA.prepare(

@@ -206,9 +206,9 @@ void LOVDownloader::parseCTY(const SourceDefinition &sourceDef, QTextStream &dat
 
     QSqlDatabase::database().transaction();
 
-    if ( ! deleteTable("dxcc_prefixes") )
+    if ( ! deleteTable("dxcc_prefixes_ad1c") )
     {
-        qCWarning(runtime) << "dxcc_prefixes delete failed - rollback";
+        qCWarning(runtime) << "dxcc_prefixes_ad1c delete failed - rollback";
         QSqlDatabase::database().rollback();
         return;
     }
@@ -222,7 +222,7 @@ void LOVDownloader::parseCTY(const SourceDefinition &sourceDef, QTextStream &dat
 
     QSqlQuery insertEntityQuery;
 
-    if ( ! insertEntityQuery.prepare("INSERT INTO dxcc_entities (id,"
+    if ( ! insertEntityQuery.prepare("INSERT INTO dxcc_entities_ad1c (id,"
                                "                        name,"
                                "                        prefix,"
                                "                        cont,"
@@ -247,7 +247,7 @@ void LOVDownloader::parseCTY(const SourceDefinition &sourceDef, QTextStream &dat
 
     QSqlQuery insertPrefixesQuery;
 
-    if ( ! insertPrefixesQuery.prepare("INSERT INTO dxcc_prefixes ("
+    if ( ! insertPrefixesQuery.prepare("INSERT INTO dxcc_prefixes_ad1c ("
                                "                        prefix,"
                                "                        exact,"
                                "                        dxcc,"

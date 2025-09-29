@@ -264,14 +264,14 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
 
     /* Country */
     ui->countryBox->setModel(new SqlListModel("SELECT id, translate_to_locale(name), name  "
-                                              "FROM dxcc_entities "
+                                              "FROM dxcc_entities_ad1c "
                                               "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->countryBox));
     ui->countryBox->setModelColumn(1);
     ui->countryBox->adjustMaxSize();
 
     /* My Country Combo */
     ui->myCountryBox->setModel(new SqlListModel("SELECT id, translate_to_locale(name), name  "
-                                                "FROM dxcc_entities "
+                                                "FROM dxcc_entities_ad1c "
                                                 "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->myCountryBox));
     ui->myCountryBox->setModelColumn(1);
     ui->myCountryBox->adjustMaxSize();

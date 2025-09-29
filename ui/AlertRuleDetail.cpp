@@ -56,7 +56,7 @@ AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent) :
     /* DX Countries */
     /****************/
     SqlListModel *countryModel = new SqlListModel("SELECT id, translate_to_locale(name) "
-                                                  "FROM dxcc_entities "
+                                                  "FROM dxcc_entities_ad1c "
                                                   "ORDER BY 2 COLLATE LOCALEAWARE ASC;",
                                                   tr("All"), this);
     while (countryModel->canFetchMore())
@@ -70,7 +70,7 @@ AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent) :
     /* Spotter Coutries */
     /********************/
     SqlListModel *countryModel2 = new SqlListModel("SELECT id, translate_to_locale(name) "
-                                                  "FROM dxcc_entities "
+                                                  "FROM dxcc_entities_ad1c "
                                                   "ORDER BY 2 COLLATE LOCALEAWARE ASC;",
                                                   tr("All"), this);
     while (countryModel2->canFetchMore())

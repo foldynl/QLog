@@ -264,7 +264,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     ui->countrySelectFilter->blockSignals(true);
     ui->countrySelectFilter->setModel(new SqlListModel("SELECT id, translate_to_locale(name) "
-                                                       "FROM dxcc_entities WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
+                                                       "FROM dxcc_entities_ad1c WHERE id IN (SELECT DISTINCT dxcc FROM contacts) "
                                                        "ORDER BY 2 COLLATE LOCALEAWARE ASC;",
                                                        tr("All Countries"),
                                                        ui->countrySelectFilter));

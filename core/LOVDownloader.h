@@ -66,7 +66,7 @@ private:
                                "https://www.country-files.com/bigcty/cty.csv",
                                "cty.csv",
                                "LOV/last_cty_update",
-                               "dxcc_entities",
+                               "dxcc_entities_ad1c",
                                21)},
         {SATLIST, SourceDefinition(SATLIST,
                                    "https://foldynl.github.io/QLog/data/satslist.csv",

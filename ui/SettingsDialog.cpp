@@ -144,7 +144,7 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
 
     /* Country Combo */
     SqlListModel* countryModel = new SqlListModel("SELECT id, translate_to_locale(name), name  "
-                                                  "FROM dxcc_entities "
+                                                  "FROM dxcc_entities_ad1c "
                                                   "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->stationCountryCombo);
     while ( countryModel->canFetchMore() )
         countryModel->fetchMore();
