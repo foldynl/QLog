@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QRegularExpression>
+#include "service/clublog/ClubLog.h"
 
 class LOVDownloader : public QObject
 {
@@ -19,7 +20,8 @@ public:
         IOTALIST = 4,
         POTADIRECTORY = 5,
         MEMBERSHIPCONTENTLIST = 6,
-        UNDEF = 7
+        CLUBLOGCTY = 7,
+        UNDEF = 8
     };
 
 public:
@@ -67,6 +69,12 @@ private:
                                "cty.csv",
                                "LOV/last_cty_update",
                                "dxcc_entities_ad1c",
+                               21)},
+        {CLUBLOGCTY, SourceDefinition(CLUBLOGCTY,
+                               ClubLogBase::getCTYUrl(),
+                               "clublog_cty.xml",
+                               "LOV/last_clublogcty_update",
+                               "dxcc_entities_clublog",
                                21)},
         {SATLIST, SourceDefinition(SATLIST,
                                    "https://foldynl.github.io/QLog/data/satslist.csv",
@@ -126,6 +134,8 @@ private:
     void parseIOTA(const SourceDefinition &sourceDef, QTextStream& data);
     void parsePOTA(const SourceDefinition &sourceDef, QTextStream& data);
     void parseMembershipContent(const SourceDefinition &sourceDef, QTextStream& data);
+    static QByteArray gunzip(const QByteArray &in);
+    void parseClubLogCTY(const SourceDefinition &sourceDef, QTextStream &data);
 
 private slots:
     void processReply(QNetworkReply*);

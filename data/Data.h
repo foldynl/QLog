@@ -143,11 +143,15 @@ public:
     QString propagationModeTextToID(const QString &propagationText) const { return propagationModes.key(propagationText);}
     QString propagationModeIDToText(const QString &propagationID) const { return propagationModes.value(propagationID);}
     DxccEntity lookupDxcc(const QString &callsign);
+    DxccEntity lookupDxccAD1C(const QString &callsign);
     DxccEntity lookupDxccID(const int dxccID);
+    DxccEntity lookupDxccClublog(const QString &callsign, const QDateTime &date = QDateTime::currentDateTimeUtc());
     SOTAEntity lookupSOTA(const QString &SOTACode);
     POTAEntity lookupPOTA(const QString &POTACode);
     WWFFEntity lookupWWFF(const QString &reference);
-    const QString dxccFlag(int dxcc) const {return flags.value(dxcc);} ;
+    const QString dxccFlag(int dxcc) const {return dxccEntityStaticInfo.value(dxcc).value("flag").toString();};
+    const QString dxccName(int dxcc) const {return dxccEntityStaticInfo.value(dxcc).value("name").toString();};
+    int dxccITUZ(int dxcc) const {return dxccEntityStaticInfo.value(dxcc).value("ituz").toInt();};
     QPair<QString, QString> legacyMode(const QString &mode);
     QStringList satModeList() { return satModes.values();}
     QStringList satModesIDList() { return satModes.keys(); }
@@ -181,7 +185,7 @@ private:
     void loadPOTA();
     void loadTZ();
 
-    QHash<int, QString> flags;
+    QHash<int, QVariantMap> dxccEntityStaticInfo;
     QMap<QString, QString> contests;
     QMap<QString, QString> propagationModes;
     QMap<QString, QPair<QString, QString>> legacyModes;
@@ -193,10 +197,12 @@ private:
     ZoneDetect * zd;
     QSqlQuery queryDXCC;
     QSqlQuery queryDXCCID;
+    QSqlQuery queryDXCCClublog;
     QSqlQuery querySOTA;
     QSqlQuery queryWWFF;
     QSqlQuery queryPOTA;
     bool isDXCCQueryValid;
+    bool isDXCCClublogQueryValid;
     bool isSOTAQueryValid;
     bool isWWFFQueryValid;
     bool isPOTAQueryValid;

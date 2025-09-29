@@ -22,9 +22,10 @@ public:
     static const QString getPassword();
     static void saveUsernamePassword(const QString &, const QString &);
     static void saveUploadImmediatelyConfig(bool value);
-
+    static const QString getCTYUrl()  {return QString("https://cdn.clublog.org/cty.php?api=%1").arg(API_KEY);};
 protected:
     const static QString SECURE_STORAGE_KEY;
+    const static QString API_KEY ;
 };
 
 class ClubLogUploader : public GenericQSOUploader, private ClubLogBase
@@ -66,7 +67,6 @@ protected:
     virtual void processReply(QNetworkReply *reply) override;
 
 private:
-    const QString API_KEY = "7a45c2b20f932ca8908b975a60f0a78a7602f65a";
     const QString API_LIVE_UPLOAD_URL = "https://clublog.org/realtime.php";
     const QString API_LIVE_DELETE_URL = "https://clublog.org/delete.php";
     const QString API_LOG_UPLOAD_URL = "https://clublog.org/putlogs.php";
