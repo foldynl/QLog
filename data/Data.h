@@ -90,6 +90,13 @@ public:
         {" ", tr("Blank")}
     };
 
+    const QMap<QString, QString> eqslAgEnum = {
+        {"Y", tr("Confirmed (AG)")},
+        {"N", tr("Confirmed (no AG)")},
+        {"U", tr("Unknown")},
+        {" ", tr("Blank")}
+    };
+
     explicit Data(QObject *parent = nullptr);
     ~Data();
     static Data* instance()

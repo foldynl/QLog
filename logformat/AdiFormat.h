@@ -81,7 +81,7 @@ protected:
 
     static QHash<QString, AdiFormat::ExportParams> DB2ADIFExportParams;
 
-    const QString ADIF_VERSION_STRING = "3.1.5";
+    const QString ADIF_VERSION_STRING = "3.1.6";
     const QString PROGRAMID_STRING = "QLog";
 
 private:
@@ -95,6 +95,8 @@ private:
     QString parseUploadStatus(const QString &value);
     QString parseDownloadStatus(const QString &value);
     QString parseMorseKeyType(const QString &value);
+    QString parseEqslAg(const QString &value);
+
     enum ParserState {
         START,
         FIELD,

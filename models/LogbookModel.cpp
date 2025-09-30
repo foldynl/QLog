@@ -651,6 +651,7 @@ QMap<LogbookModel::ColumnID, QString> LogbookModel::fieldNameTranslationMap =
     {COLUMN_DISTANCE, QT_TR_NOOP("Distance")},
     {COLUMN_EMAIL, QT_TR_NOOP("Email")},
     {COLUMN_EQ_CALL, QT_TR_NOOP("Owner Callsign")},
+    {COLUMN_EQSL_AG, QT_TR_NOOP("eQSL AG")},
     {COLUMN_EQSL_QSLRDATE, QT_TR_NOOP("eQSLr Date")},
     {COLUMN_EQSL_QSLSDATE, QT_TR_NOOP("eQSLs Date")},
     {COLUMN_EQSL_QSL_RCVD, QT_TR_NOOP("eQSLr")},

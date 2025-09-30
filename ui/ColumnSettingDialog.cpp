@@ -136,6 +136,7 @@ void ColumnSettingDialog::setupDialog()
         case LogbookModel::COLUMN_EQSL_QSLSDATE:
         case LogbookModel::COLUMN_EQSL_QSL_RCVD:
         case LogbookModel::COLUMN_EQSL_QSL_SENT:
+        case LogbookModel::COLUMN_EQSL_AG:
         case LogbookModel::COLUMN_QSLMSG:
         case LogbookModel::COLUMN_QSLMSG_INTL:
         case LogbookModel::COLUMN_QSL_RCVD_VIA:

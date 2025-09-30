@@ -329,6 +329,7 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("distance",contact.take("distance"));
     record.setValue("email",contact.take("email"));
     record.setValue("eq_call",contact.take("eq_call"));
+    record.setValue("eqsl_ag",parseEqslAg(contact.take("eqsl_ag").toString()));
     record.setValue("eqsl_qslrdate",parseDate(contact.take("eqsl_qslrdate").toString()));
     record.setValue("eqsl_qslsdate",parseDate(contact.take("eqsl_qslsdate").toString()));
     record.setValue("eqsl_qsl_rcvd",parseQslRcvd(contact.take("eqsl_qsl_rcvd").toString()));
@@ -807,6 +808,17 @@ QString AdiFormat::parseMorseKeyType(const QString &value)
     return (allowedValues.contains(inValue)) ? inValue : QString();
 }
 
+QString AdiFormat::parseEqslAg(const QString &value)
+{
+    FCT_IDENTIFICATION;
+
+    if ( value.isEmpty() ) return QString();
+
+    char firstChar = value.toUpper().at(0).toLatin1();
+
+    return ( firstChar == 'Y' || firstChar == 'N' || firstChar == 'U' ) ? QString(firstChar)
+                                                                        : QString();
+}
 
 QMap<QString, QString> AdiFormat::fieldname2INTLNameMapping =
 {
@@ -894,6 +906,7 @@ QHash<QString, AdiFormat::ExportParams> AdiFormat::DB2ADIFExportParams =
     { "distance", ExportParams("distance")},
     { "email", ExportParams("email")},
     { "eq_call", ExportParams("eq_call")},
+    { "eqsl_ag", ExportParams("eqsl_ag", OutputFieldFormatter::TOUPPER)},
     { "eqsl_qslrdate", ExportParams("eqsl_qslrdate", OutputFieldFormatter::TODATE)},
     { "eqsl_qslsdate", ExportParams("eqsl_qslsdate", OutputFieldFormatter::TODATE)},
     { "eqsl_qsl_rcvd", ExportParams("eqsl_qsl_rcvd", OutputFieldFormatter::REMOVEDEFAULTVALUEN)},

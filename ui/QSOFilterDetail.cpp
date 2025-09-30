@@ -121,6 +121,7 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     stacked->addWidget(createComboBox(Data::instance()->qsoCompleteEnum, value, condCount, sizePolicy));
     stacked->addWidget(createComboBox(Data::instance()->downloadStatusEnum, value, condCount, sizePolicy));
     stacked->addWidget(createComboBox(Data::instance()->morseKeyTypeEnum, value, condCount, sizePolicy));
+    stacked->addWidget(createComboBox(Data::instance()->eqslAgEnum, value, condCount, sizePolicy));
 
     conditionLayout->addWidget(stacked);
 
@@ -155,6 +156,8 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
             stacked->setCurrentIndex(10);
         else if ( this->isMorseKeyTypeField(fieldIndex))
             stacked->setCurrentIndex(11);
+        else if ( this->isEqslAgTypeField(fieldIndex))
+            stacked->setCurrentIndex(12);
         else
             stacked->setCurrentIndex(0);
     });
@@ -352,6 +355,14 @@ bool QSOFilterDetail::isMorseKeyTypeField(int index)
 {
     bool ret = ( index == LogbookModel::COLUMN_MORSE_KEY_TYPE
                  || index == LogbookModel::COLUMN_MY_MORSE_KEY_TYPE );
+
+    qCDebug(function_parameters) << index << " return " << ret;
+    return ret;
+}
+
+bool QSOFilterDetail::isEqslAgTypeField(int index)
+{
+    bool ret = ( index == LogbookModel::COLUMN_EQSL_AG );
 
     qCDebug(function_parameters) << index << " return " << ret;
     return ret;
