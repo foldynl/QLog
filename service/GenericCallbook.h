@@ -58,6 +58,7 @@ public:
 protected:
     QNetworkAccessManager* getNetworkAccessManager() {return nam;};
     virtual void processReply(QNetworkReply *reply) = 0;
+    QString decodeHtmlEntities(const QString &text);
 
 signals:
     void callsignResult(CallbookResponseData);
