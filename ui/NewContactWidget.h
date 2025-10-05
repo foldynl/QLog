@@ -302,6 +302,7 @@ private slots:
     void tabsExpandCollapse();
     void setContestFieldsState();
     void queryPota();
+    void handleDateTimeChangeFromUser();
 
 private:
     void useFieldsFromPrevQSO(const QString &callsign,

@@ -530,7 +530,16 @@ void NewContactWidget::setDxccInfo(const QString &callsign)
 
     qCDebug(function_parameters) << callsign;
 
-    setDxccInfo(Data::instance()->lookupDxcc(callsign.toUpper()));
+    DxccEntity entity;
+    if ( isManualEnterMode )
+    {
+        const QDateTime &qsoDt = QDateTime(ui->dateEdit->date(), ui->timeOnEdit->time(), QTimeZone::utc());
+        entity = Data::instance()->lookupDxccClublog(callsign, qsoDt);
+    }
+    else
+        entity = Data::instance()->lookupDxcc(callsign.toUpper());
+
+    setDxccInfo(entity);
 }
 
 void NewContactWidget::useFieldsFromPrevQSO(const QString &callsign, const QString &grid)
@@ -3854,6 +3863,18 @@ void NewContactWidget::queryPota()
         uiDynamic->potaEdit->setText(ref);
         potaEditFinished();
     }
+}
+
+void NewContactWidget::handleDateTimeChangeFromUser()
+{
+    FCT_IDENTIFICATION;
+
+    if ( !isManualEnterMode ) return;
+
+    if ( callsign.isEmpty() )
+        setDxccInfo(DxccEntity());
+    else
+        setDxccInfo(callsign);
 }
 
 NewContactDynamicWidgets::NewContactDynamicWidgets(bool allocateWidgets,

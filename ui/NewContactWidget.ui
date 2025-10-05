@@ -1998,6 +1998,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dateEdit</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>NewContactWidget</receiver>
+   <slot>handleDateTimeChangeFromUser()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>485</x>
+     <y>202</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeOnEdit</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>NewContactWidget</receiver>
+   <slot>handleDateTimeChangeFromUser()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>485</x>
+     <y>202</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>saveContact()</slot>
@@ -2029,5 +2061,6 @@
   <slot>potaChanged(QString)</slot>
   <slot>changeCallbookSearchStatus()</slot>
   <slot>resetSTXCounters()</slot>
+  <slot>handleDateTimeChangeFromUser()</slot>
  </slots>
 </ui>
