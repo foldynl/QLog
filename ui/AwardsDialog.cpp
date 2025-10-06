@@ -150,11 +150,12 @@ void AwardsDialog::refreshTable(int)
         setNotWorkedEnabled(true);
         const QString &entitySelected = getSelectedEntity();
         headersColumns = "translate_to_locale(d.name) col1, d.prefix col2 ";
-        sqlPartDetailTable = " FROM (SELECT id, name, prefix FROM dxcc_entities_ad1c "
-                             "       UNION SELECT DISTINCT dxcc, dxcc, '" + tr("Unknown") + "' as prefix FROM source_contacts a LEFT JOIN dxcc_entities_ad1c b ON a.dxcc = b.id WHERE b.id IS NULL) d "
-                             "   LEFT OUTER JOIN source_contacts c ON d.id = c.dxcc"
-                             "   LEFT OUTER JOIN modes m on c.mode = m.name"
-                             " WHERE (c.id is NULL or c.my_dxcc = '" + entitySelected + "') ";
+        sqlPartDetailTable = " FROM (SELECT id, name, prefix FROM dxcc_entities_clublog WHERE deleted = 0 "
+                             "       UNION "
+                             "       SELECT DISTINCT dxcc, b.name, b.prefix || ' (" + tr("DELETED") + ")' "
+                             "             FROM source_contacts a INNER JOIN dxcc_entities_clublog b ON a.dxcc = b.id AND b.deleted = 1 where a.my_dxcc = '" + entitySelected + "') d "
+                             "   LEFT OUTER JOIN source_contacts c ON (d.id = c.dxcc AND (c.id IS NULL OR c.my_dxcc = '" + entitySelected + "'))"
+                             "   LEFT OUTER JOIN modes m on c.mode = m.name ";
         addWherePart = " AND (c.id is NULL OR c.my_dxcc = '" + entitySelected + "') ";
     }
     else if ( awardSelected == "waz" )
