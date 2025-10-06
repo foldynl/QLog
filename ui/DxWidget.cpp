@@ -1231,7 +1231,36 @@ void DxWidget::setLastQSO(QSqlRecord qsoRecord)
     FCT_IDENTIFICATION;
 
     lastQSO = qsoRecord;
+    dxTableModel->updateWorkedStation(qsoRecord);
 }
+
+void DxTableModel::updateWorkedStation(QSqlRecord qsoRecord)
+{
+    FCT_IDENTIFICATION;
+
+    QString callsign = qsoRecord.value("callsign").toString();
+
+    for (int row = 0; row < dxData.size(); ++row)
+    {
+        DxSpot &spot = dxData[row];
+        if (spot.callsign == callsign)
+        {
+            spot.status = Data::instance()->dxccStatus(
+                spot.dxcc.dxcc,
+                spot.band,
+                spot.modeGroupString
+                );
+
+            QModelIndex topLeft = index(row, 0);
+            QModelIndex bottomRight = index(row, columnCount() - 1);
+            emit dataChanged(topLeft, bottomRight);
+
+            break;
+        }
+    }
+}
+
+
 
 void DxWidget::reloadSetting()
 {
