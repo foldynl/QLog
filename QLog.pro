@@ -30,6 +30,10 @@ DEFINES += VERSION=\\\"$$VERSION\\\"
 #QTKEYCHAININCLUDEPATH =
 #QTKEYCHAINLIBPATH =
 
+# Define paths to zlib - Leave empty if system libraries should be used
+#ZLIBINCLUDEPATH =
+#ZLIBLIBPATH =
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -442,6 +446,10 @@ isEmpty(HAMLIBVERSION_PATCH){
    INCLUDEPATH += $$PTHREADINCLUDEPATH
 }
 
+!isEmpty(ZLIBINCLUDEPATH) {
+   INCLUDEPATH += $$ZLIBINCLUDEPATH
+}
+
 !isEmpty(HAMLIBLIBPATH) {
    LIBS += -L$$HAMLIBLIBPATH
 }
@@ -452,6 +460,10 @@ isEmpty(HAMLIBVERSION_PATCH){
 
 !isEmpty(PTHREADINCLUDEPATH) {
    LIBS += -L$$PTHREADINCLUDEPATH
+}
+
+!isEmpty(ZLIBLIBPATH) {
+   LIBS += -L$$ZLIBLIBPATH
 }
 
 unix:!macx {
@@ -527,7 +539,7 @@ win32: {
    QMAKE_TARGET_COMPANY = OK1MLG
    QMAKE_TARGET_DESCRIPTION = Hamradio logging
 
-   LIBS += -lws2_32 -llibhamlib-4 -lz
+   LIBS += -lws2_32 -llibhamlib-4 -lzlib
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
 

@@ -131,6 +131,8 @@ Prerequisites
 - `PTHREADLIBPATH` - the path to pthread Library - needed for Windows Hamlib 4.5 and later. Leave empty if system libraries should be used.
 - `QTKEYCHAININCLUDEPATH` - the path to QtKeyChain Includes 
 - `QTKEYCHAINLIBPATH`- the path to QtKeyChain Library
+- `ZLIBINCLUDEPATH` - the path to ZLIB Includes
+- `ZLIBLIBPATH` - the path to ZLIB Library
 
 Leave variables empty if system libraries and Hamlib version autodetect (calling `pkg-config`) should be used during compilation (for Windows, the parameter must be present)
 
