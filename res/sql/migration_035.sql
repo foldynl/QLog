@@ -63,10 +63,3 @@ CREATE TABLE "dxcc_zone_exceptions_clublog" (
         "end"  TEXT
 );
 
-CREATE VIEW dxcc_entities AS
-SELECT id, name, prefix, cont, cqz, ituz, lat, lon, tz
-FROM dxcc_entities_ad1c;
-
-CREATE VIEW dxcc_prefixes AS
-SELECT prefix, exact, dxcc, cqz, ituz, cont, lat, lon
-FROM dxcc_prefixes_ad1c;
