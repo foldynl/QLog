@@ -264,14 +264,14 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
 
     /* Country */
     ui->countryBox->setModel(new SqlListModel("SELECT id, translate_to_locale(name), name  "
-                                              "FROM dxcc_entities_ad1c "
+                                              "FROM dxcc_entities_clublog "
                                               "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->countryBox));
     ui->countryBox->setModelColumn(1);
     ui->countryBox->adjustMaxSize();
 
     /* My Country Combo */
     ui->myCountryBox->setModel(new SqlListModel("SELECT id, translate_to_locale(name), name  "
-                                                "FROM dxcc_entities_ad1c "
+                                                "FROM dxcc_entities_clublog "
                                                 "ORDER BY 2 COLLATE LOCALEAWARE ASC;", " ", ui->myCountryBox));
     ui->myCountryBox->setModelColumn(1);
     ui->myCountryBox->adjustMaxSize();
@@ -897,7 +897,7 @@ bool QSODetailDialog::doValidation()
                                  !ui->gridEdit->text().isEmpty() && !ui->gridEdit->hasAcceptableInput(),
                                  tr("DX Grid has an incorrect format"));
 
-    const DxccEntity &dxccEntity = Data::instance()->lookupDxcc(ui->callsignEdit->text());
+    const DxccEntity &dxccEntity = Data::instance()->lookupDxccClublog(ui->callsignEdit->text(), ui->dateTimeOnEdit->dateTime());
 
     allValid &= highlightInvalid(ui->countryLabel,
                                  dxccEntity.dxcc && ui->countryBox->currentText() != QCoreApplication::translate("DBStrings", dxccEntity.country.toUtf8().constData()),
@@ -929,7 +929,7 @@ bool QSODetailDialog::doValidation()
                                  Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText()) == "SAT" && ui->satNameEdit->text().isEmpty(),
                                  tr("Sat name must not be empty"));
 
-    const DxccEntity &myDxccEntity = Data::instance()->lookupDxcc(ui->myCallsignEdit->text());
+    const DxccEntity &myDxccEntity = Data::instance()->lookupDxccClublog(ui->myCallsignEdit->text(), ui->dateTimeOnEdit->dateTime());
 
     allValid &= highlightInvalid(ui->myCallsignLabel,
                                  ui->myCallsignEdit->text().isEmpty(),
@@ -1616,7 +1616,7 @@ void QSODetailDialog::refreshDXStatTabs()
 {
     FCT_IDENTIFICATION;
 
-    const DxccEntity &dxccEntity = Data::instance()->lookupDxccID(editedRecord->field("dxcc").value().toInt());
+    const DxccEntity &dxccEntity = Data::instance()->lookupDxccIDClublog(editedRecord->field("dxcc").value().toInt());
     const Band &currBand = BandPlan::freq2Band(ui->freqTXEdit->value());
 
     ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, currBand);

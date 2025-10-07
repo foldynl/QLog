@@ -84,11 +84,18 @@ Data::Data(QObject *parent) :
                 " ORDER BY p.exact DESC, p.prefix DESC LIMIT 1"
                 );
 
-    isDXCCIDQueryValid = queryDXCCID.prepare(
+    isDXCCIDAD1CQueryValid = queryDXCCIDAD1C.prepare(
                 " SELECT dxcc_entities_ad1c.id, dxcc_entities_ad1c.name, dxcc_entities_ad1c.prefix, dxcc_entities_ad1c.cont, "
                 "        dxcc_entities_ad1c.cqz, dxcc_entities_ad1c.ituz, dxcc_entities_ad1c.lat, dxcc_entities_ad1c.lon, dxcc_entities_ad1c.tz "
                 " FROM dxcc_entities_ad1c "
                 " WHERE dxcc_entities_ad1c.id = :dxccid"
+                );
+
+    isDXCCIDClublogQueryValid = queryDXCCIDClublog.prepare(
+                " SELECT c.id, c.name, c.prefix, c.cont, "
+                "        c.cqz, c.ituz, c.lat, c.lon "
+                " FROM dxcc_entities_clublog c "
+                " WHERE c.id = :dxccid"
                 );
 
     isSOTAQueryValid = querySOTA.prepare(
@@ -1160,38 +1167,38 @@ DxccEntity Data::lookupDxccAD1C(const QString &callsign)
     return dxccRet;
 }
 
-DxccEntity Data::lookupDxccID(const int dxccID)
+DxccEntity Data::lookupDxccIDAD1C(const int dxccID)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << dxccID;
 
-    if ( !isDXCCIDQueryValid )
+    if ( !isDXCCIDAD1CQueryValid )
     {
         qWarning() << "Cannot prepare Select statement";
         return DxccEntity();
     }
 
-    queryDXCCID.bindValue(":dxccid", dxccID);
-    if ( ! queryDXCCID.exec() )
+    queryDXCCIDAD1C.bindValue(":dxccid", dxccID);
+    if ( ! queryDXCCIDAD1C.exec() )
     {
-        qWarning() << "Cannot execte Select statement" << queryDXCCID.lastError();
+        qWarning() << "Cannot execte Select statement" << queryDXCCIDAD1C.lastError();
         return DxccEntity();
     }
 
     DxccEntity dxccRet;
 
-    if ( queryDXCCID.next() )
+    if ( queryDXCCIDAD1C.next() )
     {
-        dxccRet.dxcc = queryDXCCID.value(0).toInt();
-        dxccRet.country = queryDXCCID.value(1).toString();
-        dxccRet.prefix = queryDXCCID.value(2).toString();
-        dxccRet.cont = queryDXCCID.value(3).toString();
-        dxccRet.cqz = queryDXCCID.value(4).toInt();
-        dxccRet.ituz = queryDXCCID.value(5).toInt();
-        dxccRet.latlon[0] = queryDXCCID.value(6).toDouble();
-        dxccRet.latlon[1] = queryDXCCID.value(7).toDouble();
-        dxccRet.tz = queryDXCCID.value(8).toFloat();
+        dxccRet.dxcc = queryDXCCIDAD1C.value(0).toInt();
+        dxccRet.country = queryDXCCIDAD1C.value(1).toString();
+        dxccRet.prefix = queryDXCCIDAD1C.value(2).toString();
+        dxccRet.cont = queryDXCCIDAD1C.value(3).toString();
+        dxccRet.cqz = queryDXCCIDAD1C.value(4).toInt();
+        dxccRet.ituz = queryDXCCIDAD1C.value(5).toInt();
+        dxccRet.latlon[0] = queryDXCCIDAD1C.value(6).toDouble();
+        dxccRet.latlon[1] = queryDXCCIDAD1C.value(7).toDouble();
+        dxccRet.tz = queryDXCCIDAD1C.value(8).toFloat();
         dxccRet.flag = dxccFlag(dxccRet.dxcc);
     }
     else
@@ -1202,6 +1209,57 @@ DxccEntity Data::lookupDxccID(const int dxccID)
         dxccRet.tz = 0;
     }
     return dxccRet;
+}
+
+DxccEntity Data::lookupDxccIDClublog(const int dxccID)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << dxccID;
+
+    if ( !isDXCCIDClublogQueryValid )
+    {
+        qWarning() << "Cannot prepare Select statement";
+        return DxccEntity();
+    }
+
+    queryDXCCIDClublog.bindValue(":dxccid", dxccID);
+    if ( ! queryDXCCIDClublog.exec() )
+    {
+        qWarning() << "Cannot execte Select statement" << queryDXCCIDClublog.lastError();
+        return DxccEntity();
+    }
+
+    DxccEntity dxccRet;
+
+    if ( queryDXCCIDClublog.next() )
+    {
+        dxccRet.dxcc = queryDXCCIDClublog.value(0).toInt();
+        dxccRet.country = queryDXCCIDClublog.value(1).toString();
+        dxccRet.prefix = queryDXCCIDClublog.value(2).toString();
+        dxccRet.cont = queryDXCCIDClublog.value(3).toString();
+        dxccRet.cqz = queryDXCCIDClublog.value(4).toInt();
+        dxccRet.ituz = queryDXCCIDClublog.value(5).toInt();
+        dxccRet.latlon[0] = queryDXCCIDClublog.value(6).toDouble();
+        dxccRet.latlon[1] = queryDXCCIDClublog.value(7).toDouble();
+        dxccRet.tz = queryDXCCIDClublog.value(8).toFloat();
+        dxccRet.flag = dxccFlag(dxccRet.dxcc);
+    }
+    else
+    {
+        dxccRet.dxcc = 0;
+        dxccRet.ituz = 0;
+        dxccRet.cqz = 0;
+        dxccRet.tz = 0;
+    }
+    return dxccRet;
+}
+
+DxccEntity Data::lookupDxccID(const int dxccID)
+{
+    FCT_IDENTIFICATION;
+
+    return lookupDxccIDAD1C(dxccID);
 }
 
 DxccEntity Data::lookupDxccClublog(const QString &callsign, const QDateTime &date)

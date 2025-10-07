@@ -143,9 +143,11 @@ public:
     QString propagationModeTextToID(const QString &propagationText) const { return propagationModes.key(propagationText);}
     QString propagationModeIDToText(const QString &propagationID) const { return propagationModes.value(propagationID);}
     DxccEntity lookupDxcc(const QString &callsign);
-    DxccEntity lookupDxccAD1C(const QString &callsign);
     DxccEntity lookupDxccID(const int dxccID);
+    DxccEntity lookupDxccAD1C(const QString &callsign);
+    DxccEntity lookupDxccIDAD1C(const int dxccID);
     DxccEntity lookupDxccClublog(const QString &callsign, const QDateTime &date = QDateTime::currentDateTimeUtc());
+    DxccEntity lookupDxccIDClublog(const int dxccID);
     SOTAEntity lookupSOTA(const QString &SOTACode);
     POTAEntity lookupPOTA(const QString &POTACode);
     WWFFEntity lookupWWFF(const QString &reference);
@@ -196,7 +198,8 @@ private:
     QMap<QString, QString> potaRefID;
     ZoneDetect * zd;
     QSqlQuery queryDXCC;
-    QSqlQuery queryDXCCID;
+    QSqlQuery queryDXCCIDAD1C;
+    QSqlQuery queryDXCCIDClublog;
     QSqlQuery queryDXCCClublog;
     QSqlQuery querySOTA;
     QSqlQuery queryWWFF;
@@ -206,7 +209,8 @@ private:
     bool isSOTAQueryValid;
     bool isWWFFQueryValid;
     bool isPOTAQueryValid;
-    bool isDXCCIDQueryValid;
+    bool isDXCCIDAD1CQueryValid;
+    bool isDXCCIDClublogQueryValid;
     QuadKeyCache<DxccStatus> dxccStatusCache;
 
     static const char translitTab[];
