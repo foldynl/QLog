@@ -1060,9 +1060,16 @@ DxccEntity Data::lookupDxcc(const QString &callsign)
       //         << "Clublog:" << clublogDXCCData.dxcc << clublogDXCCData.cqz << clublogDXCCData.ituz;
     return ad1cDXCCData;
 #else
+    // LF: The AD1C method seems more accurate for current data regarding ITU and CQZ.
+    // The Clublog method is good for determining historical data and CQZ, but unfortunately,
+    // the ITU zone is not reliable in this method because it’s not listed and has to be
+    // calculated. Therefore, I decided to use the AD1C method as the general approach and only
+    // use Clublog in exceptional cases. Once Clublog starts distributing ITUZ, we should
+    // completely switch to the Clublog method.
+    // I also believes that the AD1C method is more accurate in determining special exceptions
+    // for American callsigns.
     return lookupDxccAD1C(callsign);
 #endif
-
 }
 
 DxccEntity Data::lookupDxccAD1C(const QString &callsign)
@@ -1259,6 +1266,14 @@ DxccEntity Data::lookupDxccID(const int dxccID)
 {
     FCT_IDENTIFICATION;
 
+    // LF: The AD1C method seems more accurate for current data regarding ITU and CQZ.
+    // The Clublog method is good for determining historical data and CQZ, but unfortunately,
+    // the ITU zone is not reliable in this method because it’s not listed and has to be
+    // calculated. Therefore, I decided to use the AD1C method as the general approach and only
+    // use Clublog in exceptional cases. Once Clublog starts distributing ITUZ, we should
+    // completely switch to the Clublog method.
+    // I also believes that the AD1C method is more accurate in determining special exceptions
+    // for American callsigns.
     return lookupDxccIDAD1C(dxccID);
 }
 
