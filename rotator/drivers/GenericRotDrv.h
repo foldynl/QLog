@@ -20,6 +20,7 @@ public:
     virtual void sendState() = 0;
     virtual void setPosition(double azimuth, double elevation) = 0;
     virtual void stopTimers() = 0;
+    double normalizeAzimuth(double azimuth) const;
 
 signals:
     void rotIsReady();
