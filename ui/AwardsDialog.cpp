@@ -44,6 +44,7 @@ AwardsDialog::AwardsDialog(QWidget *parent) :
     ui->awardComboBox->addItem(tr("Gridsquare 2-Chars"), QVariant("grid2"));
     ui->awardComboBox->addItem(tr("Gridsquare 4-Chars"), QVariant("grid4"));
     ui->awardComboBox->addItem(tr("Gridsquare 6-Chars"), QVariant("grid6"));
+    ui->awardComboBox->addItem(tr("US Counties"), QVariant("uscounty"));
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Done"));
     ui->awardTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -335,7 +336,16 @@ void AwardsDialog::refreshTable(int)
                           "     INNER JOIN source_contacts c ON c.wwff_ref = w.reference "
                           "     INNER JOIN modes m on c.mode = m.name ";
     }
-
+    else if ( awardSelected == "uscounty" )
+    {
+        setEntityInputEnabled(false);
+        setNotWorkedEnabled(false);
+        headersColumns = "cnt.county col1, NULL col2 ";
+        sqlPartDetailTable = " FROM us_counties cnt "
+                             "     INNER JOIN source_contacts c ON upper(c.cnty) = upper(cnt.county) "
+                             "     INNER JOIN modes m on c.mode = m.name ";
+        addWherePart = " AND (c.dxcc = 291 or c.dxcc = 6 or c.dxcc = 110) ";
+    }
     addlCTEs.append(sourceContactsTable);
 
     QString finalSQL(QString(

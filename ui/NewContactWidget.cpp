@@ -209,6 +209,13 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     contestCompleter->setFilterMode(Qt::MatchStartsWith);
     uiDynamic->contestIDEdit->setCompleter(contestCompleter);
 
+    uscountyCompleter = new QCompleter(Data::instance()->uscountyList(),this);
+    uscountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    uscountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    uscountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    uiDynamic->countyEdit->setCompleter(nullptr);
+
+
     /**************/
     /* CONNECTs   */
     /**************/
@@ -235,6 +242,7 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     connect(uiDynamic->sotaEdit, &QLineEdit::textChanged, this, &NewContactWidget::sotaChanged);
     connect(uiDynamic->wwffEdit, &QLineEdit::editingFinished, this, &NewContactWidget::wwffEditFinished);
     connect(uiDynamic->wwffEdit, &QLineEdit::textChanged, this, &NewContactWidget::wwffChanged);
+    connect(uiDynamic->countyEdit, &QLineEdit::textChanged, this, &NewContactWidget::countyChanged);
     connect(uiDynamic->satNameEdit, &QLineEdit::textChanged, this, &NewContactWidget::satNameChanged);
     connect(uiDynamic->sigEdit, &NewContactEditLine::focusIn, this, &NewContactWidget::refreshSIGCompleter);
     connect(uiDynamic->contestIDEdit, &NewContactEditLine::focusIn, this, &NewContactWidget::refreshContestCompleter);
@@ -3708,6 +3716,14 @@ void NewContactWidget::wwffChanged(const QString &newWWFF)
         uiDynamic->qthEdit->clear();
         uiDynamic->gridEdit->clear();
     }
+}
+
+void NewContactWidget::countyChanged(const QString &newCounty)
+{
+    FCT_IDENTIFICATION;
+
+    uiDynamic->countyEdit->setCompleter( ( newCounty.length() >= 3 ) ? uscountyCompleter
+                                                              : nullptr);
 }
 
 void NewContactWidget::formFieldChangedString(const QString &)

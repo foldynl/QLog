@@ -147,6 +147,7 @@ public:
     SOTAEntity lookupSOTA(const QString &SOTACode);
     POTAEntity lookupPOTA(const QString &POTACode);
     WWFFEntity lookupWWFF(const QString &reference);
+    QString lookupUSCounty(const QString &county);
     const QString dxccFlag(int dxcc) const {return flags.value(dxcc);} ;
     QPair<QString, QString> legacyMode(const QString &mode);
     QStringList satModeList() { return satModes.values();}
@@ -159,6 +160,7 @@ public:
     QStringList sotaIDList() { return sotaRefID.keys();}
     QStringList wwffIDList() { return wwffRefID.keys();}
     QStringList potaIDList() { return potaRefID.keys();}
+    QStringList uscountyList() {return USCounty;}
     QString getIANATimeZone(double, double);
     QStringList sigIDList();
 
@@ -180,6 +182,7 @@ private:
     void loadWWFF();
     void loadPOTA();
     void loadTZ();
+    void loadUSCounties();
 
     QHash<int, QString> flags;
     QMap<QString, QString> contests;
@@ -190,17 +193,20 @@ private:
     QMap<QString, QString> sotaRefID;
     QMap<QString, QString> wwffRefID;
     QMap<QString, QString> potaRefID;
+    QList<QString> USCounty;
     ZoneDetect * zd;
     QSqlQuery queryDXCC;
     QSqlQuery queryDXCCID;
     QSqlQuery querySOTA;
     QSqlQuery queryWWFF;
     QSqlQuery queryPOTA;
+    QSqlQuery queryUSCounty;
     bool isDXCCQueryValid;
     bool isSOTAQueryValid;
     bool isWWFFQueryValid;
     bool isPOTAQueryValid;
     bool isDXCCIDQueryValid;
+    bool isUSCountyQueryValid;
     QuadKeyCache<DxccStatus> dxccStatusCache;
 
     static const char translitTab[];

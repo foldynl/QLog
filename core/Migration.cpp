@@ -362,6 +362,7 @@ bool Migration::updateExternalResource()
     updateExternalResourceProgress(progress, downloader, LOVDownloader::POTADIRECTORY, "(6/7)");
     updateExternalResourceProgress(progress, downloader, LOVDownloader::MEMBERSHIPCONTENTLIST, "(7/7)");
 
+    updateUSCounties();
     return true;
 }
 
@@ -739,6 +740,59 @@ bool Migration::resetConfigs()
     // I don't know why, but when the layout is saved, the sort indicator
     // is not displayed when the sortable view is turned on. So I rather remove the view state
     settings.remove("wsjtx/state");
+    return true;
+}
+
+bool Migration::updateUSCounties()
+{
+    FCT_IDENTIFICATION;
+
+    QSqlQuery query;
+
+    if (!query.exec("SELECT COUNT(*) FROM us_counties")) {
+        qDebug() << "Error counting rows:" << query.lastError().text();
+        return false;
+    }
+
+    int rowCount = 0;
+    if (query.next())
+        rowCount = query.value(0).toInt();
+
+    if (rowCount > 0) {
+        qDebug() << "us_counties table already populated (" << rowCount << " rows). Skipping import.";
+        return true;
+    }
+
+
+    QFile file(":/res/data/Counties.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open embedded Counties.txt";
+        return false;
+    }
+
+    QTextStream in(&file);
+
+    int imported = 0;
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.isEmpty())
+            continue;
+
+        QSqlQuery insertQuery;
+        insertQuery.prepare("INSERT INTO us_counties (county) VALUES (:county)");
+        insertQuery.bindValue(":county", line);
+
+        if (!insertQuery.exec()) {
+            qDebug() << "Insert failed for" << line << ":" << insertQuery.lastError().text();
+        } else {
+            imported++;
+        }
+    }
+
+    file.close();
+
+    qDebug() << "Imported" << imported << "counties into us_counties table.";
+
     return true;
 }
 

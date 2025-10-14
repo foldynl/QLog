@@ -41,8 +41,8 @@ private:
     bool setSelectedProfile(const QString &tablename, const QString &profileName);
     QString fixIntlField(QSqlQuery &query, const QString &columName, const QString &columnNameIntl);
     bool refreshUploadStatusTrigger();
-
-    static const int latestVersion = 34;
+    bool updateUSCounties();
+    static const int latestVersion = 35;
 };
 
 #endif // QLOG_CORE_MIGRATION_H

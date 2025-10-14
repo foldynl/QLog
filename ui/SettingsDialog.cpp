@@ -244,6 +244,13 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     wwffCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationWWFFEdit->setCompleter(nullptr);
 
+    countyCompleter = new QCompleter(Data::instance()->uscountyList(), ui->stationCountyEdit);
+    countyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    countyCompleter->setFilterMode(Qt::MatchStartsWith);
+    countyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    ui->stationCountyEdit->setCompleter(nullptr);
+
+
     potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), ui->stationPOTAEdit);
     potaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     potaCompleter->setFilterMode(Qt::MatchStartsWith);
@@ -2088,6 +2095,16 @@ void SettingsDialog::potaEditFinished()
     else if ( !ui->stationWWFFEdit->text().isEmpty() && !wwffFallback )
     {
         wwffEditFinished();
+    }
+}
+
+void SettingsDialog::countyChanged(const QString &newCounty)
+{
+    FCT_IDENTIFICATION;
+
+    if ( newCounty.length() >= 3 )
+    {
+        ui->stationCountyEdit->setCompleter(countyCompleter);
     }
 }
 

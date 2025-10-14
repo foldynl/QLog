@@ -2702,6 +2702,38 @@
    </hints>
   </connection>
   <connection>
+   <sender>myCountyEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSODetailDialog</receiver>
+   <slot>myCountyChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>539</x>
+     <y>591</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>513</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>countyEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSODetailDialog</receiver>
+   <slot>countyChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>362</x>
+     <y>622</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>513</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>  
+  <connection>
    <sender>potaEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSODetailDialog</receiver>
@@ -2768,6 +2800,8 @@
   <slot>mySotaChanged(QString)</slot>
   <slot>wwffChanged(QString)</slot>
   <slot>myWWFFChanged(QString)</slot>
+  <slot>countyChanged(QString)</slot>
+  <slot>myCountyChanged(QString)</slot>
   <slot>potaChanged(QString)</slot>
   <slot>myPOTAChanged(QString)</slot>
   <slot>callsignEditFinished()</slot>

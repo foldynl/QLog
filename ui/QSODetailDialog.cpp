@@ -158,6 +158,20 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     wwffCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->wwffEdit->setCompleter(nullptr);
 
+    /* County Completer */
+    uscountyCompleter.reset(new QCompleter(Data::instance()->uscountyList(), this));
+    uscountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    uscountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    uscountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    ui->countyEdit->setCompleter(nullptr);
+
+    /* County Completer */
+    myUSCountyCompleter.reset(new QCompleter(Data::instance()->uscountyList(), this));
+    myUSCountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    myUSCountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    myUSCountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    ui->myCountyEdit->setCompleter(nullptr);
+
     /* MyIOTA Completer */
     myIotaCompleter.reset(new QCompleter(Data::instance()->iotaIDList(), this));
     myIotaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -1299,6 +1313,27 @@ void QSODetailDialog::myWWFFChanged(const QString &newWWFF)
         ui->myWWFFEdit->setCompleter(nullptr);
     }
 }
+
+void QSODetailDialog::countyChanged(const QString &newCounty)
+{
+    FCT_IDENTIFICATION;
+
+    if ( newCounty.length() >= 3 )
+    {
+        ui->countyEdit->setCompleter(uscountyCompleter.data());
+    }
+}
+
+void QSODetailDialog::myCountyChanged(const QString &newCounty)
+{
+    FCT_IDENTIFICATION;
+
+    if ( newCounty.length() >= 3 )
+    {
+        ui->myCountyEdit->setCompleter(myUSCountyCompleter.data());
+    }
+}
+
 
 void QSODetailDialog::clubQueryResult(const QString &in_callsign,
                                       QMap<QString, ClubStatusQuery::ClubInfo> data)

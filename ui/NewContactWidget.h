@@ -302,6 +302,7 @@ private slots:
     void tabsExpandCollapse();
     void setContestFieldsState();
     void queryPota();
+    void countyChanged(const QString&);
 
 private:
     void useFieldsFromPrevQSO(const QString &callsign,
@@ -371,6 +372,7 @@ private:
     QCompleter *wwffCompleter;
     QCompleter *sigCompleter;
     QCompleter *contestCompleter;
+    QCompleter *uscountyCompleter;
     QTimeZone partnerTimeZone;
     double QSOFreq;
     qint32 bandwidthFilter;

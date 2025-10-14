@@ -28,7 +28,7 @@ Data::Data(QObject *parent) :
     loadWWFF();
     loadPOTA();
     loadTZ();
-
+    loadUSCounties();
 
     // dxcc_prefixes.exact DESC, dxcc_prefixes.prefix DESC
     // is used because it prefers an exact-match record over a partial-match records
@@ -117,6 +117,12 @@ Data::Data(QObject *parent) :
                 "       valid_to "
                 "FROM wwff_directory "
                 "WHERE reference = :reference"
+                );
+
+    isUSCountyQueryValid = queryUSCounty.prepare(
+                "SELECT county "
+                "FROM us_counties "
+                "WHERE county = :county"
                 );
 }
 
@@ -1007,6 +1013,53 @@ void Data::loadTZ()
         qWarning() << "Cannot map TZ File to memory";
     }
 
+}
+
+void Data::loadUSCounties()
+{
+    FCT_IDENTIFICATION;
+
+    QSqlQuery query("SELECT county FROM us_counties");
+
+    while ( query.next() )
+    {
+
+        const QString &county = query.value(0).toString();
+        USCounty.append(county);
+    }
+
+}
+
+QString Data::lookupUSCounty(const QString &county)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << county;
+
+    if ( !isUSCountyQueryValid )
+    {
+        qWarning() << "Cannot prepare Select statement";
+        return "";
+    }
+
+    queryUSCounty.bindValue(":county", county);
+    if ( ! queryUSCounty.exec() )
+    {
+        qWarning() << "Cannot execte Select statement" << queryDXCCID.lastError();
+        return "";
+    }
+
+    QString us_county;
+
+    if ( queryUSCounty.next() )
+    {
+        us_county = queryDXCCID.value(0).toString();
+    }
+    else
+    {
+        us_county = "";
+    }
+    return us_county;
 }
 
 DxccEntity Data::lookupDxcc(const QString &callsign)

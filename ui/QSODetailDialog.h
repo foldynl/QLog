@@ -87,6 +87,8 @@ private slots:
     void sotaChanged(const QString&);
     void potaChanged(const QString&);
     void wwffChanged(const QString&);
+    void countyChanged(const QString&);
+    void myCountyChanged(const QString&);
     void mySotaChanged(const QString&);
     void myPOTAChanged(const QString&);
     void myWWFFChanged(const QString&);
@@ -151,6 +153,9 @@ private:
     QScopedPointer<QCompleter> wwffCompleter;
     QScopedPointer<QCompleter> myWWFFCompleter;
     QScopedPointer<QCompleter> sigCompleter;
+    QScopedPointer<QCompleter> uscountyCompleter;
+    QScopedPointer<QCompleter> myUSCountyCompleter;
+
     QWebChannel channel;
     MapWebChannelHandler layerControlHandler;
     LogLocale locale;
