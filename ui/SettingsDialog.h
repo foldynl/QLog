@@ -109,6 +109,7 @@ public slots:
     void potaChanged(const QString&);
     void potaEditFinished();
     void wwffChanged(const QString&);
+    void countyChanged(const QString&);
     void wwffEditFinished();
     void primaryCallbookChanged(int);
     void secondaryCallbookChanged(int);
@@ -146,6 +147,7 @@ private:
     QCompleter *sotaCompleter;
     QCompleter *iotaCompleter;
     QCompleter *wwffCompleter;
+    QCompleter *countyCompleter;
     MultiselectCompleter *potaCompleter;
     QCompleter *sigCompleter;
     QList<QCheckBox*> memberListCheckBoxes;

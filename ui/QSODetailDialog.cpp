@@ -158,6 +158,20 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     wwffCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->wwffEdit->setCompleter(nullptr);
 
+    /* County Completer */
+    uscountyCompleter = new QCompleter(Data::instance()->uscountyList(),this);
+    uscountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    uscountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    uscountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    ui->countyEdit->setCompleter(nullptr);
+
+    /* County Completer */
+    myUSCountyCompleter = new QCompleter(Data::instance()->uscountyList(),this);
+    myUSCountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    myUSCountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    myUSCountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+    ui->myCountyEdit->setCompleter(nullptr);
+
     /* MyIOTA Completer */
     myIotaCompleter.reset(new QCompleter(Data::instance()->iotaIDList(), this));
     myIotaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -503,6 +517,33 @@ void QSODetailDialog::resetButtonPressed()
 
     setReadOnlyMode(true);
     doValidation();
+}
+
+void QSODetailDialog::updateCountyCompleter(int dxcc)
+{
+    FCT_IDENTIFICATION;
+
+    if (uscountyCompleter) {
+        delete uscountyCompleter;
+        uscountyCompleter = nullptr;
+    }
+
+    QStringList countyList;
+
+    if(dxcc != 0)
+    {
+        countyList = Data::instance()->uscountyList(dxcc);
+    }
+    else
+    {
+        countyList = Data::instance()->uscountyList();
+    }
+    uscountyCompleter = new QCompleter(countyList, this);
+    uscountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    uscountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    uscountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+
+    ui->countyEdit->setCompleter(uscountyCompleter);
 }
 
 void QSODetailDialog::lookupButtonPressed()
@@ -1299,6 +1340,27 @@ void QSODetailDialog::myWWFFChanged(const QString &newWWFF)
         ui->myWWFFEdit->setCompleter(nullptr);
     }
 }
+
+void QSODetailDialog::countyChanged(const QString &newCounty)
+{
+    FCT_IDENTIFICATION;
+
+    if ( newCounty.length() >= 3 )
+    {
+        ui->countyEdit->setCompleter(uscountyCompleter);
+    }
+}
+
+void QSODetailDialog::myCountyChanged(const QString &newCounty)
+{
+    FCT_IDENTIFICATION;
+
+    if ( newCounty.length() >= 3 )
+    {
+        ui->myCountyEdit->setCompleter(myUSCountyCompleter);
+    }
+}
+
 
 void QSODetailDialog::clubQueryResult(const QString &in_callsign,
                                       QMap<QString, ClubStatusQuery::ClubInfo> data)

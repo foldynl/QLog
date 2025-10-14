@@ -5210,6 +5210,22 @@
     </hint>
    </hints>
   </connection>
+    <connection>
+   <sender>stationCountyEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>countyChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>651</x>
+     <y>288</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>335</x>
+     <y>439</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>rotDelProfileButton</sender>
    <signal>clicked()</signal>
@@ -5880,6 +5896,7 @@
   <slot>sotaEditFinished()</slot>
   <slot>wwffEditFinished()</slot>
   <slot>wwffChanged(QString)</slot>
+  <slot>countyChanged(QString)</slot>
   <slot>assignedKeyChanged(int)</slot>
   <slot>potaEditFinished()</slot>
   <slot>potaChanged(QString)</slot>

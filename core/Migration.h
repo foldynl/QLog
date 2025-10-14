@@ -41,7 +41,6 @@ private:
     bool setSelectedProfile(const QString &tablename, const QString &profileName);
     QString fixIntlField(QSqlQuery &query, const QString &columName, const QString &columnNameIntl);
     bool refreshUploadStatusTrigger();
-
     static const int latestVersion = 34;
 };
 

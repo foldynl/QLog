@@ -28,7 +28,7 @@ Data::Data(QObject *parent) :
     loadWWFF();
     loadPOTA();
     loadTZ();
-
+    loadUSCounties();
 
     // dxcc_prefixes.exact DESC, dxcc_prefixes.prefix DESC
     // is used because it prefers an exact-match record over a partial-match records
@@ -1008,6 +1008,121 @@ void Data::loadTZ()
     }
 
 }
+
+void Data::loadUSCounties()
+{
+    FCT_IDENTIFICATION;
+
+    // Database was generated from links:  https://www.adif.org/316/ADIF_316.htm#Secondary_Administrative_Subdivision
+
+    if (!USCounties.isEmpty())
+         return; // already loaded
+
+     QFile file(":/res/data/counties.json");
+     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+         qWarning() << "Failed to open counties.json";
+         return;
+     }
+
+     QByteArray jsonData = file.readAll();
+     file.close();
+
+     QJsonParseError parseError;
+     QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+     if (parseError.error != QJsonParseError::NoError) {
+         qWarning() << "JSON parse error in Counties.txt:" << parseError.errorString();
+         return;
+     }
+
+     if (!doc.isArray()) {
+         qWarning() << "Invalid format: root element is not an array";
+         return;
+     }
+
+     QJsonArray array = doc.array();
+     for (const QJsonValue &val : array) {
+         if (!val.isObject())
+             continue;
+
+         QJsonObject obj = val.toObject();
+         CountyInfo info;
+         info.DXCC = obj.value("DXCC").toInt();
+         info.PrimaryCode = obj.value("PrimaryCode").toString();
+         info.Name = obj.value("Name").toString();
+         info.Code = obj.value("Code").toString();
+         info.Aux = obj.value("Aux").toString();
+
+         if (!info.Code.isEmpty()) {
+             USCounties.insert(info.Code, info);
+         }
+     }
+
+     createTempUSCountyTable();
+
+     qDebug() << "Loaded" << USCounties.size() << "US counties from JSON.";
+}
+
+QString Data::lookupUSCounty(const QString &county)
+{
+    FCT_IDENTIFICATION;
+
+    QString result;
+
+    if (USCounties.isEmpty())
+        loadUSCounties();
+
+    QString needle = county.trimmed();
+    if (needle.isEmpty())
+        return result;
+
+    for (const CountyInfo &info : USCounties) {
+        if (info.Code.compare(needle, Qt::CaseInsensitive) == 0 ||
+            info.Name.compare(needle, Qt::CaseInsensitive) == 0) {
+            return info.Code;  // return first match
+        }
+    }
+
+    return result; // empty if not found
+}
+
+void Data::createTempUSCountyTable()
+{
+    FCT_IDENTIFICATION;
+
+    QSqlQuery query;
+    query.exec("DROP TABLE IF EXISTS temp_uscounties");
+
+    QString createSql = R"(
+        CREATE TEMPORARY TABLE temp_uscounties (
+            DXCC INTEGER,
+            PrimaryCode TEXT,
+            Name TEXT,
+            Code TEXT PRIMARY KEY,
+            Aux TEXT
+        )
+    )";
+
+    if (!query.exec(createSql)) {
+        qWarning() << "Failed to create temp_uscounties:" << query.lastError().text();
+        return;
+    }
+
+    query.prepare(R"(
+        INSERT INTO temp_uscounties (DXCC, PrimaryCode, Name, Code, Aux)
+        VALUES (:dxcc, :primary, :name, :code, :aux)
+    )");
+
+    for (auto it = USCounties.cbegin(); it != USCounties.cend(); ++it) {
+        const CountyInfo &info = it.value();
+        query.bindValue(":dxcc", info.DXCC);
+        query.bindValue(":primary", info.PrimaryCode);
+        query.bindValue(":name", info.Name);
+        query.bindValue(":code", info.Code);
+        query.bindValue(":aux", info.Aux);
+        query.exec();
+    }
+}
+
 
 DxccEntity Data::lookupDxcc(const QString &callsign)
 {
