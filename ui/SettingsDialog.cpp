@@ -2401,6 +2401,10 @@ void SettingsDialog::readSettings()
     ui->dateFormatCustomRadioButton->setChecked(!dateSystemFormat);
     ui->dateFormatStringEdit->setText(locale.getSettingDateFormat());
 
+    bool unitFormatMetric =  locale.getSettingUseMetric();
+    ui->unitFormatMetricRadioButton->setChecked(unitFormatMetric);
+    ui->unitFormatImperialRadioButton->setChecked(!unitFormatMetric);
+
     /******************/
     /* END OF Reading */
     /******************/
@@ -2525,6 +2529,8 @@ void SettingsDialog::writeSettings()
     locale.setSettingUseSystemDateFormat(systemDateChecked);
     if ( !systemDateChecked )
         locale.setSettingDateFormat(ui->dateFormatStringEdit->text());
+
+    locale.setSettingUseMetric(ui->unitFormatMetricRadioButton->isChecked());
 }
 
 /* this function is called when user modify rig progile

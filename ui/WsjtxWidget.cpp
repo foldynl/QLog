@@ -121,7 +121,7 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
 
             if ( entry.dxcc.cont.contains(contregexp)
                  && ( entry.status & dxccStatusFilter )
-                 && Gridsquare::distance2localeUnitDistance(entry.distance, unit) >= distanceFilter
+                 && Gridsquare::distance2localeUnitDistance(entry.distance, unit, locale) >= distanceFilter
                  && entry.decode.snr >= snrFilter
                  && ( dxMemberFilter.size() == 0
                       || (dxMemberFilter.size() && entry.memberList2Set().intersects(dxMemberFilter)))

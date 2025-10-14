@@ -9,6 +9,8 @@
 #include "rig/Rig.h"
 #include "component/ShutdownAwareWidget.h"
 
+#include "core/LogLocale.h"
+
 namespace Ui {
 class WsjtxWidget;
 }
@@ -64,6 +66,8 @@ private:
     int snrFilter;
     uint dxccStatusFilter;
     QSet<QString> dxMemberFilter;
+    LogLocale locale;
+
     void saveTableHeaderState();
     void restoreTableHeaderState();
     bool isFilterEnabled();

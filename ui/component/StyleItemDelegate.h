@@ -220,7 +220,7 @@ public:
 
     QString displayText(const QVariant& value, const QLocale&) const {
         QString unit;
-        double displayValue = Gridsquare::distance2localeUnitDistance(value.toDouble(), unit);
+        double displayValue = Gridsquare::distance2localeUnitDistance(value.toDouble(), unit, locale);
         return QString("%1 %2").arg(QString::number(displayValue, 'f', precision), unit);
     }
 
@@ -267,6 +267,7 @@ public:
 private:
     int precision;
     double step;
+    LogLocale locale;
 };
 
 class ComboFormatDelegate : public QStyledItemDelegate {

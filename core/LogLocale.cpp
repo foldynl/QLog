@@ -5,7 +5,8 @@ MODULE_IDENTIFICATION("qlog.core.loglocale");
 
 LogLocale::LogLocale() :
     regexp(QRegularExpression(R"(, tttt|\(t\)|\(tttt\)|\[tttt\]|\btttt\b|\btt\b|\bt\b)")),
-    is24hUsed(!timeFormat(QLocale::ShortFormat).contains("ap", Qt::CaseInsensitive))
+    is24hUsed(!timeFormat(QLocale::ShortFormat).contains("ap", Qt::CaseInsensitive)),
+    isMetricUnitUsed(measurementSystem() == QLocale::MetricSystem)
 {
     FCT_IDENTIFICATION;
 
@@ -96,6 +97,16 @@ bool LogLocale::getSettingUse24hformat() const
 void LogLocale::setSettingUse24hformat(bool value)
 {
     settings.setValue("use24hformat", value);
+}
+
+bool LogLocale::getSettingUseMetric() const
+{
+    return settings.value("usemetricformat", isMetricUnitUsed).toBool();
+}
+
+void LogLocale::setSettingUseMetric(bool value)
+{
+    settings.setValue("usemetricformat", value);
 }
 
 bool LogLocale::getSettingUseSystemDateFormat() const

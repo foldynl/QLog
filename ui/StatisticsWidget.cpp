@@ -279,7 +279,7 @@ void StatisticsWidget::refreshGraph()
          switch ( ui->statTypeSecCombo->currentIndex() )
          {
          case 0:  // Distance
-             QString distCoef = QString::number(Gridsquare::localeDistanceCoef());
+             QString distCoef = QString::number(Gridsquare::localeDistanceCoef(locale));
              stmt = QString("WITH hist AS ( "
                     " SELECT CAST((distance * %1)/500.00 AS INTEGER) * 500 as dist_floor, "
                     " COUNT(1) AS count "
@@ -340,8 +340,8 @@ void StatisticsWidget::refreshGraph()
              break;
          case 2: // ODX
              QString unit;
-             Gridsquare::distance2localeUnitDistance(0, unit);
-             QString distCoef = QString::number(Gridsquare::localeDistanceCoef());
+             Gridsquare::distance2localeUnitDistance(0, unit, locale);
+             QString distCoef = QString::number(Gridsquare::localeDistanceCoef(locale));
              QString sel = QString("SELECT callsign || '<br>' || CAST(ROUND(distance * %1,0) AS INT) || ' %2', gridsquare, my_gridsquare, ").arg(distCoef, unit);
 
              stmt = sel + innerCase + " AS confirmed FROM contacts WHERE "
@@ -735,7 +735,7 @@ void StatisticsWidget::setSubTypesCombo(int mainTypeIdx)
     case 3:
     {
         QString unit;
-        Gridsquare::distance2localeUnitDistance(0, unit);
+        Gridsquare::distance2localeUnitDistance(0, unit, locale);
         ui->statTypeSecCombo->addItem(tr("Distance") + QString(" [%1]").arg(unit));
     }
     break;

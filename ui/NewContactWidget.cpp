@@ -2187,7 +2187,7 @@ void NewContactWidget::updateCoordinates(double lat, double lon, CoordPrecision 
     {
         dxDistance = distance;
         QString unit;
-        double showDistance = Gridsquare::distance2localeUnitDistance(dxDistance, unit);
+        double showDistance = Gridsquare::distance2localeUnitDistance(dxDistance, unit, locale);
         double LPBearing = bearing - 180;
 
         if ( LPBearing < 0 )

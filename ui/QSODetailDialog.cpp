@@ -1401,7 +1401,7 @@ void QSODetailDialog::drawDXOnMap(const QString &label, const Gridsquare &dxGrid
     if (dxGrid.distanceTo(myGrid, distance))
     {
         QString unit;
-        distance = Gridsquare::distance2localeUnitDistance(distance, unit);
+        distance = Gridsquare::distance2localeUnitDistance(distance, unit, locale);
         popupString.append(QString("</br> %1 %2").arg(QString::number(distance, 'f', 0), unit));
     }
 

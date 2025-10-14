@@ -20,13 +20,16 @@ public:
 
     bool getSettingUseSystemDateFormat() const;
     void setSettingUseSystemDateFormat(bool value);
-
     const QString getSettingDateFormat() const;
     void setSettingDateFormat(const QString &value);
+
+    bool getSettingUseMetric() const;
+    void setSettingUseMetric(bool value);
 
 private:
     const QRegularExpression regexp;
     bool is24hUsed;
+    bool isMetricUnitUsed;
     QSettings settings;
     QString systemDateFormat;
 
