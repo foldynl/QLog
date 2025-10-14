@@ -1013,6 +1013,8 @@ void Data::loadUSCounties()
 {
     FCT_IDENTIFICATION;
 
+    // Database was generated from links:  https://www.adif.org/316/ADIF_316.htm#Secondary_Administrative_Subdivision
+
     if (!USCounties.isEmpty())
          return; // already loaded
 
