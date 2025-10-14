@@ -159,14 +159,14 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     ui->wwffEdit->setCompleter(nullptr);
 
     /* County Completer */
-    uscountyCompleter.reset(new QCompleter(Data::instance()->uscountyList(), this));
+    uscountyCompleter = new QCompleter(Data::instance()->uscountyList(),this);
     uscountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     uscountyCompleter->setFilterMode(Qt::MatchStartsWith);
     uscountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->countyEdit->setCompleter(nullptr);
 
     /* County Completer */
-    myUSCountyCompleter.reset(new QCompleter(Data::instance()->uscountyList(), this));
+    myUSCountyCompleter = new QCompleter(Data::instance()->uscountyList(),this);
     myUSCountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     myUSCountyCompleter->setFilterMode(Qt::MatchStartsWith);
     myUSCountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
@@ -517,6 +517,33 @@ void QSODetailDialog::resetButtonPressed()
 
     setReadOnlyMode(true);
     doValidation();
+}
+
+void QSODetailDialog::updateCountyCompleter(int dxcc)
+{
+    FCT_IDENTIFICATION;
+
+    if (uscountyCompleter) {
+        delete uscountyCompleter;
+        uscountyCompleter = nullptr;
+    }
+
+    QStringList countyList;
+
+    if(dxcc != 0)
+    {
+        countyList = Data::instance()->uscountyList(dxcc);
+    }
+    else
+    {
+        countyList = Data::instance()->uscountyList();
+    }
+    uscountyCompleter = new QCompleter(countyList, this);
+    uscountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    uscountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    uscountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+
+    ui->countyEdit->setCompleter(uscountyCompleter);
 }
 
 void QSODetailDialog::lookupButtonPressed()
@@ -1320,7 +1347,7 @@ void QSODetailDialog::countyChanged(const QString &newCounty)
 
     if ( newCounty.length() >= 3 )
     {
-        ui->countyEdit->setCompleter(uscountyCompleter.data());
+        ui->countyEdit->setCompleter(uscountyCompleter);
     }
 }
 
@@ -1330,7 +1357,7 @@ void QSODetailDialog::myCountyChanged(const QString &newCounty)
 
     if ( newCounty.length() >= 3 )
     {
-        ui->myCountyEdit->setCompleter(myUSCountyCompleter.data());
+        ui->myCountyEdit->setCompleter(myUSCountyCompleter);
     }
 }
 

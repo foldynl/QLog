@@ -468,6 +468,7 @@ void NewContactWidget::handleCallsignFromUser()
         setDxccInfo(DxccEntity());
         updateTime();
         stopContactTimer();
+        updateCountyCompleter(0);
     }
     else
     {
@@ -478,9 +479,39 @@ void NewContactWidget::handleCallsignFromUser()
         {
             queryPota();
             useFieldsFromPrevQSO(callsign);
+            updateCountyCompleter(dxccEntity.dxcc);
         }
     }
+
     emit callsignChanged(callsign);
+}
+
+
+void NewContactWidget::updateCountyCompleter(int dxcc)
+{
+    FCT_IDENTIFICATION;
+
+    if (uscountyCompleter) {
+        delete uscountyCompleter;
+        uscountyCompleter = nullptr;
+    }
+
+    QStringList countyList;
+
+    if(dxcc != 0)
+    {
+        countyList = Data::instance()->uscountyList(dxcc);
+    }
+    else
+    {
+        countyList = Data::instance()->uscountyList();
+    }
+    uscountyCompleter = new QCompleter(countyList, this);
+    uscountyCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    uscountyCompleter->setFilterMode(Qt::MatchStartsWith);
+    uscountyCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+
+    uiDynamic->countyEdit->setCompleter(uscountyCompleter);
 }
 
 /* function is called when Callsign Edit is finished - example pressed enter */

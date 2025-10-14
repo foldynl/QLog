@@ -94,6 +94,7 @@ private slots:
     void myWWFFChanged(const QString&);
     void clubQueryResult(const QString &in_callsign,
                          QMap<QString, ClubStatusQuery::ClubInfo> data);
+    void updateCountyCompleter(int dxcc);
 
 private:
     /* It is modified logbook model when only basic
@@ -153,8 +154,8 @@ private:
     QScopedPointer<QCompleter> wwffCompleter;
     QScopedPointer<QCompleter> myWWFFCompleter;
     QScopedPointer<QCompleter> sigCompleter;
-    QScopedPointer<QCompleter> uscountyCompleter;
-    QScopedPointer<QCompleter> myUSCountyCompleter;
+    QCompleter *uscountyCompleter;
+    QCompleter *myUSCountyCompleter;
 
     QWebChannel channel;
     MapWebChannelHandler layerControlHandler;

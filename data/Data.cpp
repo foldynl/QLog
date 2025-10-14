@@ -118,12 +118,6 @@ Data::Data(QObject *parent) :
                 "FROM wwff_directory "
                 "WHERE reference = :reference"
                 );
-
-    isUSCountyQueryValid = queryUSCounty.prepare(
-                "SELECT county "
-                "FROM us_counties "
-                "WHERE county = :county"
-                );
 }
 
 Data::~Data()
@@ -1019,48 +1013,114 @@ void Data::loadUSCounties()
 {
     FCT_IDENTIFICATION;
 
-    QSqlQuery query("SELECT county FROM us_counties");
+    if (!USCounties.isEmpty())
+         return; // already loaded
 
-    while ( query.next() )
-    {
+     QFile file(":/res/data/counties.json");
+     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+         qWarning() << "Failed to open counties.json";
+         return;
+     }
 
-        const QString &county = query.value(0).toString();
-        USCounty.append(county);
-    }
+     QByteArray jsonData = file.readAll();
+     file.close();
 
+     QJsonParseError parseError;
+     QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+     if (parseError.error != QJsonParseError::NoError) {
+         qWarning() << "JSON parse error in Counties.txt:" << parseError.errorString();
+         return;
+     }
+
+     if (!doc.isArray()) {
+         qWarning() << "Invalid format: root element is not an array";
+         return;
+     }
+
+     QJsonArray array = doc.array();
+     for (const QJsonValue &val : array) {
+         if (!val.isObject())
+             continue;
+
+         QJsonObject obj = val.toObject();
+         CountyInfo info;
+         info.DXCC = obj.value("DXCC").toInt();
+         info.PrimaryCode = obj.value("PrimaryCode").toString();
+         info.Name = obj.value("Name").toString();
+         info.Code = obj.value("Code").toString();
+         info.Aux = obj.value("Aux").toString();
+
+         if (!info.Code.isEmpty()) {
+             USCounties.insert(info.Code, info);
+         }
+     }
+
+     createTempUSCountyTable();
+
+     qDebug() << "Loaded" << USCounties.size() << "US counties from JSON.";
 }
 
 QString Data::lookupUSCounty(const QString &county)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << county;
+    QString result;
 
-    if ( !isUSCountyQueryValid )
-    {
-        qWarning() << "Cannot prepare Select statement";
-        return "";
+    if (USCounties.isEmpty())
+        loadUSCounties();
+
+    QString needle = county.trimmed();
+    if (needle.isEmpty())
+        return result;
+
+    for (const CountyInfo &info : USCounties) {
+        if (info.Code.compare(needle, Qt::CaseInsensitive) == 0 ||
+            info.Name.compare(needle, Qt::CaseInsensitive) == 0) {
+            return info.Code;  // return first match
+        }
     }
 
-    queryUSCounty.bindValue(":county", county);
-    if ( ! queryUSCounty.exec() )
-    {
-        qWarning() << "Cannot execte Select statement" << queryDXCCID.lastError();
-        return "";
-    }
-
-    QString us_county;
-
-    if ( queryUSCounty.next() )
-    {
-        us_county = queryDXCCID.value(0).toString();
-    }
-    else
-    {
-        us_county = "";
-    }
-    return us_county;
+    return result; // empty if not found
 }
+
+void Data::createTempUSCountyTable()
+{
+    FCT_IDENTIFICATION;
+
+    QSqlQuery query;
+    query.exec("DROP TABLE IF EXISTS temp_uscounties");
+
+    QString createSql = R"(
+        CREATE TEMPORARY TABLE temp_uscounties (
+            DXCC INTEGER,
+            PrimaryCode TEXT,
+            Name TEXT,
+            Code TEXT PRIMARY KEY,
+            Aux TEXT
+        )
+    )";
+
+    if (!query.exec(createSql)) {
+        qWarning() << "Failed to create temp_uscounties:" << query.lastError().text();
+        return;
+    }
+
+    query.prepare(R"(
+        INSERT INTO temp_uscounties (DXCC, PrimaryCode, Name, Code, Aux)
+        VALUES (:dxcc, :primary, :name, :code, :aux)
+    )");
+
+    for (auto it = USCounties.cbegin(); it != USCounties.cend(); ++it) {
+        const CountyInfo &info = it.value();
+        query.bindValue(":dxcc", info.DXCC);
+        query.bindValue(":primary", info.PrimaryCode);
+        query.bindValue(":name", info.Name);
+        query.bindValue(":code", info.Code);
+        query.bindValue(":aux", info.Aux);
+        query.exec();
+    }
+}
+
 
 DxccEntity Data::lookupDxcc(const QString &callsign)
 {

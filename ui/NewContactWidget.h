@@ -351,6 +351,7 @@ private:
     void setSTXSeq(int newValue);
     void updateNearestSpotDupe();
     void checkDupe();
+    void updateCountyCompleter(int dxcc);
 
 private:
     Rig* rig;

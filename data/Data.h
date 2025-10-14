@@ -10,6 +10,14 @@
 #include "core/zonedetect.h"
 #include "core/QuadKeyCache.h"
 
+struct CountyInfo {
+    int DXCC;
+    QString PrimaryCode;
+    QString Name;
+    QString Code;
+    QString Aux;
+};
+
 class Data : public QObject
 {
     Q_OBJECT
@@ -160,7 +168,20 @@ public:
     QStringList sotaIDList() { return sotaRefID.keys();}
     QStringList wwffIDList() { return wwffRefID.keys();}
     QStringList potaIDList() { return potaRefID.keys();}
-    QStringList uscountyList() {return USCounty;}
+    QStringList uscountyList() {return USCounties.keys();}
+    QStringList uscountyList(int dxcc)
+    {
+        if (USCounties.isEmpty())
+            loadUSCounties();
+
+        QStringList list;
+        for (const CountyInfo &info : USCounties) {
+            if (info.DXCC == dxcc)
+                list.append(info.Code);
+        }
+        return list;
+    }
+    QHash<QString, CountyInfo> uscountyListDetailed() { return USCounties;}
     QString getIANATimeZone(double, double);
     QStringList sigIDList();
 
@@ -183,6 +204,7 @@ private:
     void loadPOTA();
     void loadTZ();
     void loadUSCounties();
+    void createTempUSCountyTable();
 
     QHash<int, QString> flags;
     QMap<QString, QString> contests;
@@ -193,7 +215,7 @@ private:
     QMap<QString, QString> sotaRefID;
     QMap<QString, QString> wwffRefID;
     QMap<QString, QString> potaRefID;
-    QList<QString> USCounty;
+    QHash<QString, CountyInfo> USCounties;
     ZoneDetect * zd;
     QSqlQuery queryDXCC;
     QSqlQuery queryDXCCID;
@@ -206,7 +228,7 @@ private:
     bool isWWFFQueryValid;
     bool isPOTAQueryValid;
     bool isDXCCIDQueryValid;
-    bool isUSCountyQueryValid;
+
     QuadKeyCache<DxccStatus> dxccStatusCache;
 
     static const char translitTab[];

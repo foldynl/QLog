@@ -9,6 +9,14 @@
 #include <QSqlError>
 MODULE_IDENTIFICATION("qlog.ui.awardsdialog");
 
+struct CountyInfo {
+    int DXCC;
+    QString PrimaryCode;
+    QString Name;
+    QString Code;
+    QString Aux;
+};
+
 AwardsDialog::AwardsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AwardsDialog),
@@ -45,6 +53,11 @@ AwardsDialog::AwardsDialog(QWidget *parent) :
     ui->awardComboBox->addItem(tr("Gridsquare 4-Chars"), QVariant("grid4"));
     ui->awardComboBox->addItem(tr("Gridsquare 6-Chars"), QVariant("grid6"));
     ui->awardComboBox->addItem(tr("US Counties"), QVariant("uscounty"));
+    ui->awardComboBox->addItem(tr("Russian Districts"), QVariant("rda"));
+    ui->awardComboBox->addItem(tr("Japanese Cities / Ku / Guns"), QVariant("japan"));
+    ui->awardComboBox->addItem(tr("NZ Counties"), QVariant("nz"));
+    ui->awardComboBox->addItem(tr("Spanish DMEs"), QVariant("spanishdme"));
+    ui->awardComboBox->addItem(tr("Ukrainian Districts"), QVariant("ukd"));
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Done"));
     ui->awardTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -340,11 +353,61 @@ void AwardsDialog::refreshTable(int)
     {
         setEntityInputEnabled(false);
         setNotWorkedEnabled(false);
-        headersColumns = "cnt.county col1, NULL col2 ";
-        sqlPartDetailTable = " FROM us_counties cnt "
-                             "     INNER JOIN source_contacts c ON upper(c.cnty) = upper(cnt.county) "
-                             "     INNER JOIN modes m on c.mode = m.name ";
-        addWherePart = " AND (c.dxcc = 291 or c.dxcc = 6 or c.dxcc = 110) ";
+        headersColumns = "tc.PrimaryCode col1, c.cnty col2 ";
+        sqlPartDetailTable = " FROM source_contacts c "
+                             " INNER JOIN modes m on c.mode = m.name "
+                             " INNER JOIN temp_uscounties tc on c.dxcc = tc.DXCC and upper(c.cnty) = upper(tc.Code) "
+                             " where (c.dxcc = 291 or c.dxcc = 6 or c.dxcc = 110) and c.cnty <> '' ";
+    }
+    else if ( awardSelected == "rda" )
+    {
+        setEntityInputEnabled(false);
+        setNotWorkedEnabled(false);
+        headersColumns = "c.Cnty col1, tc.Name col2 ";
+        sqlPartDetailTable = " FROM source_contacts c "
+                             " INNER JOIN modes m on c.mode = m.name "
+                             " INNER JOIN temp_uscounties tc on c.dxcc = tc.DXCC and upper(c.cnty) = upper(tc.Code) "
+                             " where (c.dxcc = 15 or c.dxcc = 54 or c.dxcc = 61 or c.dxcc = 151 or c.dxcc = 126) and c.cnty <> '' ";
+    }
+    else if ( awardSelected == "japan" )
+    {
+        setEntityInputEnabled(false);
+        setNotWorkedEnabled(false);
+        headersColumns = "c.Cnty col1, tc.Name col2 ";
+        sqlPartDetailTable = " FROM source_contacts c "
+                             " INNER JOIN modes m on c.mode = m.name "
+                             " INNER JOIN temp_uscounties tc on c.dxcc = tc.DXCC and upper(c.cnty) = upper(tc.Code) "
+                             " where (c.dxcc = 339) and c.cnty <> '' ";
+    }
+    else if ( awardSelected == "nz" )
+    {
+        setEntityInputEnabled(false);
+        setNotWorkedEnabled(false);
+        headersColumns = "c.Cnty col1, tc.Name col2 ";
+        sqlPartDetailTable = " FROM source_contacts c "
+                             " INNER JOIN modes m on c.mode = m.name "
+                             " INNER JOIN temp_uscounties tc on c.dxcc = tc.DXCC and upper(c.cnty) = upper(tc.Code) "
+                             " where (c.dxcc = 170) and c.cnty <> '' ";
+    }
+    else if ( awardSelected == "spanishdme" )
+    {
+        setEntityInputEnabled(false);
+        setNotWorkedEnabled(false);
+        headersColumns = "c.Cnty col1, tc.Name col2 ";
+        sqlPartDetailTable = " FROM source_contacts c "
+                             " INNER JOIN modes m on c.mode = m.name "
+                             " INNER JOIN temp_uscounties tc on c.dxcc = tc.DXCC and upper(c.cnty) = upper(tc.Code) "
+                             " where (c.dxcc = 21 or c.dxcc = 29 or c.dxcc = 32 or c.dxcc = 281) and c.cnty <> '' ";
+    }
+    else if ( awardSelected == "ukd" )
+    {
+        setEntityInputEnabled(false);
+        setNotWorkedEnabled(false);
+        headersColumns = "c.Cnty col1, tc.Name col2 ";
+        sqlPartDetailTable = " FROM source_contacts c "
+                             " INNER JOIN modes m on c.mode = m.name "
+                             " INNER JOIN temp_uscounties tc on c.dxcc = tc.DXCC and upper(c.cnty) = upper(tc.Code) "
+                             " where (c.dxcc = 288) and c.cnty <> '' ";
     }
     addlCTEs.append(sourceContactsTable);
 
