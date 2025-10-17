@@ -199,7 +199,7 @@ void WsjtxWidget::statusReceived(WsjtxStatus newStatus)
     if ( this->status.mode != newStatus.mode )
     {
         ui->modeLabel->setText(newStatus.mode);
-        wsjtxTableModel->setCurrentSpotPeriod(WsjtxUDPReceiver::modePeriodLenght(newStatus.mode)); /*currently, only Status has a correct Mode in the message */
+        wsjtxTableModel->setCurrentSpotPeriod(WsjtxUDPReceiver::modePeriodLength(newStatus.mode)); /*currently, only Status has a correct Mode in the message */
         clearTable();
     }
 

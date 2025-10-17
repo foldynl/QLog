@@ -196,7 +196,7 @@ void Rotator::__openRot()
         emit positionChanged(a, b);
     });
 
-    connect(rotDriver, &GenericRotDrv::errorOccured, this, [this](const QString &a,
+    connect(rotDriver, &GenericRotDrv::errorOccurred, this, [this](const QString &a,
                                                                 const QString &b)
     {
         close();

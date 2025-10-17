@@ -340,7 +340,7 @@ void TCIRigDrv::onSocketError(QAbstractSocket::SocketError socker_error)
         error_msg.append(QObject::tr("Internal Error"));
     }
 
-   emit errorOccured(tr("Error Occured"),
+   emit errorOccurred(tr("Error Occurred"),
                      error_msg);
 }
 
@@ -556,7 +556,7 @@ void TCIRigDrv::rspSTOP(const QStringList &)
 
     ready = false;
 
-    emit errorOccured(tr("Rig status changed"),
+    emit errorOccurred(tr("Rig status changed"),
                       tr("Rig is not connected"));
 }
 

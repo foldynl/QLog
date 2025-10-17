@@ -31,7 +31,7 @@ void CallbookManager::queryCallsign(const QString &callsign)
     }
 
     // create an empty object in cache
-    // if there is the second query for the same call immediatelly after
+    // if there is the second query for the same call immediately after
     // the first query, then it returns a result of empty object
     queryCache.insert(callsign, new CallbookResponseData);
 

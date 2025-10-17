@@ -381,6 +381,7 @@ OTHER_FILES += \
     res/stylesheet.css \
     res/qlog.rc \
     res/qlog.desktop \
+    res/qlog.1 \
     res/io.github.foldynl.QLog.metainfo.xml
 
 TRANSLATIONS = i18n/qlog_cs.ts \
@@ -463,6 +464,9 @@ unix:!macx {
 
    desktop.path = $$PREFIX/share/applications/
    desktop.files += res/$${TARGET}.desktop
+
+   manpage.path = $$PREFIX/usr/share/man/man1
+   manpage.files += res/$${TARGET}.1
 
    icon.path = $$PREFIX/share/icons/hicolor/256x256/apps
    icon.files += res/$${TARGET}.png

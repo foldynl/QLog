@@ -405,7 +405,7 @@
         <enum>Qt::ClickFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Immediatelly stop CW sending</string>
+        <string>Immediately stop CW sending</string>
        </property>
        <property name="text">
         <string>Halt</string>

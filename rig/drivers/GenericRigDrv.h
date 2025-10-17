@@ -45,7 +45,7 @@ signals:
     void keySpeedChanged(unsigned int);
 
     // Error Signal
-    void errorOccured(QString, QString);
+    void errorOccurred(QString, QString);
 
 protected:
     RigProfile rigProfile;

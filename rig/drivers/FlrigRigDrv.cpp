@@ -529,7 +529,7 @@ void FlrigRigDrv::handleError(const QString &category, const QString &errorMsg)
         return; // only one error message will be reported
 
     lastErrorText = errorMsg;
-    emit errorOccured(category, lastErrorText);
+    emit errorOccurred(category, lastErrorText);
 }
 
 void FlrigRigDrv::sendXmlRpcCommand(const QString &method, const QList<QVariant> &params, bool emitError)

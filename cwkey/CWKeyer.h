@@ -39,14 +39,14 @@ public slots:
 
     void setSpeed(const qint16 wpm);
     void sendText(const QString&);
-    void imediatellyStop();
+    void immediatelyStop();
 
 private slots:
     void openImpl();
     void closeImpl();
     void setSpeedImpl(const qint16 wpm);
     void sendTextImpl(const QString&);
-    void immediatellyStopImpl();
+    void immediatelyStopImpl();
     void stopTimerImplt();
     void keyErrorHandler(const QString&, const QString&);
     void cwKeyWPMChangedHandler(qint32);

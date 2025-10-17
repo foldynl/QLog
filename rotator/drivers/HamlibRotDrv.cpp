@@ -288,7 +288,7 @@ void HamlibRotDrv::checkErrorCounter()
 
      // emit only one error
     auto it = postponedErrors.constBegin();
-    emit errorOccured(it.key(), it.value());
+    emit errorOccurred(it.key(), it.value());
     postponedErrors.clear();
 }
 
@@ -364,7 +364,7 @@ bool HamlibRotDrv::isRotRespOK(int errorStatus, const QString errorName, bool em
         {
             // hard error, emit error now
             qCDebug(runtime) << "Hard Error";
-            emit errorOccured(errorName, lastErrorText);
+            emit errorOccurred(errorName, lastErrorText);
         }
         else
         {

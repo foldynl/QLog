@@ -126,7 +126,7 @@ class WsjtxUDPReceiver : public QObject
     Q_OBJECT
 public:
     explicit WsjtxUDPReceiver(QObject *parent = nullptr);
-    static float modePeriodLenght(const QString &);
+    static float modePeriodLength(const QString &);
 
     static quint16 getConfigPort();
     static void saveConfigPort(quint16);

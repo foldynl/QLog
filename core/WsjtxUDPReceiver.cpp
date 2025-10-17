@@ -117,7 +117,7 @@ void WsjtxUDPReceiver::forwardDatagram(const QNetworkDatagram &datagram)
     }
 }
 
-float WsjtxUDPReceiver::modePeriodLenght(const QString &mode)
+float WsjtxUDPReceiver::modePeriodLength(const QString &mode)
 {
     FCT_IDENTIFICATION;
 

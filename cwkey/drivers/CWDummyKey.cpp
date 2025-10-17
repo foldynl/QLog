@@ -68,13 +68,13 @@ QString CWDummyKey::lastError()
     return QString();
 }
 
-bool CWDummyKey::imediatellyStop()
+bool CWDummyKey::immediatelyStop()
 {
     FCT_IDENTIFICATION;
 
     if ( isUsed )
     {
-        qInfo() << "imediatelly Stop";
+        qInfo() << "immediately Stop";
     }
 
     return true;

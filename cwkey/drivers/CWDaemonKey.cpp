@@ -89,7 +89,7 @@ bool CWDaemonKey::setWPM(const qint16 wpm)
     return (sendData(sentString.toLatin1()) > 0) ? true : false;
 }
 
-bool CWDaemonKey::imediatellyStop()
+bool CWDaemonKey::immediatelyStop()
 {
     FCT_IDENTIFICATION;
 

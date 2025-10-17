@@ -15,7 +15,7 @@ public:
     virtual bool sendText(const QString &text) override;
     virtual bool setWPM(const qint16 wpm) override;
     virtual QString lastError() override;
-    virtual bool imediatellyStop() override;
+    virtual bool immediatelyStop() override;
 
 private:
     bool isUsed;

@@ -416,7 +416,7 @@ void CWConsoleWidget::haltButtonPressed()
     if ( !ui->haltButton->isEnabled() )
         return;
 
-    CWKeyer::instance()->imediatellyStop();
+    CWKeyer::instance()->immediatelyStop();
 }
 
 void CWConsoleWidget::pressMacroButton(int buttonNumber)

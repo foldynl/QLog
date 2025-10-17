@@ -136,7 +136,7 @@ bool AlertRule::save()
 
     if ( ruleName.isEmpty() )
     {
-        qCDebug(runtime) << "rule name is emptry - do not save";
+        qCDebug(runtime) << "rule name is empty - do not save";
         return false;
     }
 
