@@ -315,7 +315,7 @@ void LotwQSLDownloader::processReply(QNetworkReply *reply)
      * otherwise, it is a long ADIF and it is not necessary to verify login status */
     if ( size < 10000 && data.contains("Username/password incorrect") )
     {
-        emit receiveQSLFailed(tr("Incorrect Loging or password"));
+        emit receiveQSLFailed(tr("Incorrect login or password"));
         return;
     }
 

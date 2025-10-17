@@ -23,7 +23,7 @@ public:
 
     virtual bool sendText(const QString &text) override;
     virtual bool setWPM(const qint16 wpm) override;
-    virtual bool imediatellyStop() override;
+    virtual bool immediatelyStop() override;
 
 protected:
     QString lastLogicalError;

@@ -344,7 +344,7 @@ void ClubLogUploader::processReply(QNetworkReply* reply)
     /* Otherwise */
     /*************/
     else
-        qWarning() << "Unrecognized Clublog reponse" << reply->property("messageType").toString();
+        qWarning() << "Unrecognized Clublog response" << reply->property("messageType").toString();
 
     reply->deleteLater(); 
 }

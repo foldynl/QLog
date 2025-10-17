@@ -515,7 +515,7 @@ void BandmapWidget::updateStationTimer()
 
     qint64 currTime = QDateTime::currentMSecsSinceEpoch();
 
-    /* If there is (are) station(s) or Time to Aging occured then update the bandmap */
+    /* If there is (are) station(s) or Time to Aging occurred then update the bandmap */
     if ( pendingSpots > 0
          || currTime - BANDMAP_AGING_CHECK_TIME >= lastStationUpdate )
     {

@@ -104,7 +104,7 @@ bool PSTRotDrv::open()
     {
         timeoutTimer.stop();
         qCWarning(runtime) << "Operation Timeout";
-        emit errorOccured(tr("Error Occured"),
+        emit errorOccurred(tr("Error Occurred"),
                           tr("Operation Timeout"));
     });
 
@@ -212,7 +212,7 @@ void PSTRotDrv::readPendingDatagrams()
         // But we prefer to check whether the length is at least expected.
         if ( data.size() < 4 )
         {
-            qCWarning(runtime) << "Unexpected lenght of packet !!! - skipping";
+            qCWarning(runtime) << "Unexpected length of packet !!! - skipping";
             continue;
         }
 

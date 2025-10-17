@@ -151,7 +151,7 @@ bool CWCatKey::setWPM(const qint16 wpm)
     return true;
 }
 
-bool CWCatKey::imediatellyStop()
+bool CWCatKey::immediatelyStop()
 {
     FCT_IDENTIFICATION;
 

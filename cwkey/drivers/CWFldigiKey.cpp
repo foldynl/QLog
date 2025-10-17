@@ -5,7 +5,7 @@
 
 MODULE_IDENTIFICATION("qlog.cwkey.driver.cwfldigikey");
 
-//reponse timeout in ms
+//response timeout in ms
 #define RESPONSE_TIMEOUT 10000
 
 CWFldigiKey::CWFldigiKey(const QString &hostname,
@@ -160,7 +160,7 @@ bool CWFldigiKey::setWPM(const qint16)
     return true;
 }
 
-bool CWFldigiKey::imediatellyStop()
+bool CWFldigiKey::immediatelyStop()
 {
     FCT_IDENTIFICATION;
 
@@ -289,7 +289,7 @@ bool CWFldigiKey::sendXMLRPCCall(const QString & methodName,
     timer.start(RESPONSE_TIMEOUT);  // timer for logical timeout - in ms
     loop.exec();
 
-    // Timeout occured
+    // Timeout occurred
     if (!timer.isActive())
     {
         disconnect(reply , &QNetworkReply::finished, &loop, &QEventLoop::quit);

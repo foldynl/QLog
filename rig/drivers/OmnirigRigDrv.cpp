@@ -460,7 +460,7 @@ void OmnirigRigDrv::rigStatusChange(int rigID)
     if ( OmniRig::ST_ONLINE != rig->Status () )
     {
         qCDebug(runtime) << "New status" << rig->StatusStr();
-        emit errorOccured(tr("Rig status changed"),
+        emit errorOccurred(tr("Rig status changed"),
                           tr("Rig is not connected"));
     }
     else
@@ -479,7 +479,7 @@ void OmnirigRigDrv::COMException(int code,
                                  << destination
                                  << help;
 
-    emit errorOccured(tr("Omnirig Error"),
+    emit errorOccurred(tr("Omnirig Error"),
                       QString("%1 at %2: %3 (%4)").arg(QString::number(code),
                                                        source,
                                                        destination,

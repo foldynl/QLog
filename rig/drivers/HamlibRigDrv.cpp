@@ -610,7 +610,7 @@ void HamlibRigDrv::checkErrorCounter()
 
     // emit only one error
     auto it = postponedErrors.constBegin();
-    emit errorOccured(it.key(), it.value());
+    emit errorOccurred(it.key(), it.value());
     postponedErrors.clear();
 }
 
@@ -1039,7 +1039,7 @@ bool HamlibRigDrv::isRigRespOK(int errorStatus,
         {
             // hard error, emit error now
             qCDebug(runtime) << "Hard Error";
-            emit errorOccured(errorName, lastErrorText);
+            emit errorOccurred(errorName, lastErrorText);
         }
         else
         {

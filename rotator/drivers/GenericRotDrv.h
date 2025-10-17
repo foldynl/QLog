@@ -26,7 +26,7 @@ signals:
     void positioningChanged(double azimuth, double elevation);
 
     // Error Signal
-    void errorOccured(QString, QString);
+    void errorOccurred(QString, QString);
 
 protected:
     RotProfile rotProfile;

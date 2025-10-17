@@ -95,7 +95,7 @@ public:
     virtual bool sendText(const QString &text) = 0;
     virtual bool setWPM(const qint16 wpm) = 0;
     virtual QString lastError() = 0;
-    virtual bool imediatellyStop() = 0;
+    virtual bool immediatelyStop() = 0;
     virtual bool canStopSending() { return stopSendingCap;}
     virtual bool canEchoChar() { return echoCharsCap;}
     virtual bool mustRigConnected() { return rigMustConnectedCap;}

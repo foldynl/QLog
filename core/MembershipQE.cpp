@@ -286,7 +286,7 @@ void MembershipQE::startPlannedDownload()
     if ( updatePlan.size() == 0 )
         return;
 
-    qCDebug(runtime) << "Remaing downloads" << updatePlan.size() << updatePlan;
+    qCDebug(runtime) << "Remaining downloads" << updatePlan.size() << updatePlan;
 
     // to prevent network overload, qlog will donwload files one-by-one
     QPair<QString, QString> nextDownload = updatePlan.at(0);

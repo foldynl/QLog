@@ -1029,7 +1029,7 @@ void LogFormat::runQSLImport(QSLFrom fromService)
         }
 
         default:
-            qCDebug(runtime) << "Uknown QSL import";
+            qCDebug(runtime) << "Unknown QSL import";
         }
     }
 

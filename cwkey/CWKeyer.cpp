@@ -328,15 +328,15 @@ void CWKeyer::sendTextImpl(const QString &text)
     cwKey->sendText(text);
 }
 
-void CWKeyer::imediatellyStop()
+void CWKeyer::immediatelyStop()
 {
     FCT_IDENTIFICATION;
 
-    QMetaObject::invokeMethod(this, "immediatellyStopImpl",
+    QMetaObject::invokeMethod(this, "immediatelyStopImpl",
                               Qt::QueuedConnection);
 }
 
-void CWKeyer::immediatellyStopImpl()
+void CWKeyer::immediatelyStopImpl()
 {
     FCT_IDENTIFICATION;
 
@@ -348,7 +348,7 @@ void CWKeyer::immediatellyStopImpl()
 
     if ( !cwKey ) return;
 
-    cwKey->imediatellyStop();
+    cwKey->immediatelyStop();
 }
 
 void CWKeyer::stopTimerImplt()

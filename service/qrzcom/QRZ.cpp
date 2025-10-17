@@ -512,14 +512,14 @@ void QRZUploader::processReply(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-QMap<QString, QString> QRZUploader::parseActionResponse(const QString &reponseString) const
+QMap<QString, QString> QRZUploader::parseActionResponse(const QString &responseString) const
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << reponseString;
+    qCDebug(function_parameters) << responseString;
 
     QMap<QString, QString> data;
-    const QStringList &parsedResponse = reponseString.split("&");
+    const QStringList &parsedResponse = responseString.split("&");
 
     for ( const QString &param : parsedResponse )
     {

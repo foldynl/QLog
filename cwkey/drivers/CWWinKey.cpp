@@ -462,7 +462,7 @@ QString CWWinKey::lastError()
     return (lastLogicalError.isEmpty()) ? serial.errorString() : lastLogicalError;
 }
 
-bool CWWinKey::imediatellyStop()
+bool CWWinKey::immediatelyStop()
 {
     FCT_IDENTIFICATION;
 
