@@ -1,5 +1,6 @@
 TBC - 0.46.1
 - Fixed Spaces after QRZ.com name (issue #767)
+- Fixed SPID Rot1Prog Rotator more 360 deg (issue #775)
 
 2025/09/26 - 0.46.1
 - Fixed QSO filter incorrectly displays inserted date (issue #752)
