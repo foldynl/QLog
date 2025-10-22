@@ -321,7 +321,7 @@ void HamlibRotDrv::checkAzEl()
             double newElevation = el;
             // Azimuth Normalization (-180,180) -> (0,360) - ADIF defined interval is 0-360
             newAzimuth += AntProfilesManager::instance()->getCurProfile1().azimuthOffset;
-            newAzimuth = (newAzimuth < 0.0 ) ? 360.0 + newAzimuth : newAzimuth;
+            newAzimuth = normalizeAzimuth(newAzimuth);
 
              qCDebug(runtime) << "Rot Position: " << newAzimuth << newElevation;
              qCDebug(runtime) << "Object Position: "<< azimuth << elevation;

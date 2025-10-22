@@ -27,3 +27,22 @@ const QString GenericRotDrv::lastError() const
 
     return lastErrorText;
 }
+
+double GenericRotDrv::normalizeAzimuth(double azimuth) const
+{
+    FCT_IDENTIFICATION;
+
+    /* This function takes any azimuth value (in degrees), including
+     * negative values or values greater than 360, and returns an
+     * equivalent angle normalized to the range [0, 360).
+     */
+
+    double normalized = fmod(azimuth, 360.0);
+
+    if ( normalized < 0.0 ) normalized += 360.0;
+
+    qCDebug(runtime) << "Input azimuth:" << azimuth
+                     << "Normalized azimuth:" << normalized;
+
+    return normalized;
+}
