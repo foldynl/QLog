@@ -187,7 +187,7 @@ for Debian:
 
 for Debian (QT6):
 
-`sudo apt-get -y install libhamlib-dev build-essential pkg-config qt6-base-dev qtkeychain-qt6-dev qt6-webengine-dev libqt6charts6-dev libqt6serialport6-dev libqt6webenginecore6-bin libqt6svg6-dev libgl-dev libqt6websockets6-dev`
+`sudo apt-get -y install libhamlib-dev build-essential pkg-config qt6-base-dev qtkeychain-qt6-dev qt6-webengine-dev libqt6charts6-dev libqt6serialport6 libqt6webenginecore6-bin libqt6svg6-dev libgl-dev libqt6websockets6-dev qt6-serialport-dev libsqlite3-dev`
 
 for Fedora:
 
@@ -225,7 +225,7 @@ In order to build QLog on MacOS, following prerequisites must be satisfied.
 2. [Homebrew](https://brew.sh)
 3. [Qt](https://www.qt.io) with QtCreator
 
-##### Xcode  
+##### Xcode
 
 Xcode command line tools can be installed by issuing a command in command terminal:
 
@@ -233,7 +233,7 @@ Xcode command line tools can be installed by issuing a command in command termin
 xcode-select --install
 ```
 
-**N.B.:** This command doesn't install Xcode itself, however It will take some time to download and  
+**N.B.:** This command doesn't install Xcode itself, however It will take some time to download and
 install the tools anyway.
 
 ##### MacOS build
@@ -252,8 +252,8 @@ Last dependencies before building QLog are:
  brew install pkg-config
 ```
 
-As soon as the steps above are finished, QLog source can be opened in QtCreator, configured, built and run.  
-QLog app (qlog.app) from the build artifacts folder can be later copied (`installed`) to `~/Applications` and  
+As soon as the steps above are finished, QLog source can be opened in QtCreator, configured, built and run.
+QLog app (qlog.app) from the build artifacts folder can be later copied (`installed`) to `~/Applications` and
 accessed via Spotlight search bar.
 
 NOTE: if it is necessary then use `qmake` input parameters described above to affect compilation. The input parameter must be use in case when hamlib or qtkeychain is compiled from their source code repos.
