@@ -1,3 +1,5 @@
+#include <QTextDocument>
+
 #include "GenericCallbook.h"
 #include "core/LogParam.h"
 
@@ -20,6 +22,13 @@ const QString GenericCallbook::getWebLookupURL(const QString &callsign,
 
     if ( replaceMacro ) url.replace("<DXCALL>", callsign);
     return url;
+}
+
+QString GenericCallbook::decodeHtmlEntities(const QString &text)
+{
+    QTextDocument doc;
+    doc.setHtml(text);
+    return doc.toRawText().trimmed();
 }
 
 void GenericCallbook::onNetworkReply(QNetworkReply *reply)
