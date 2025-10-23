@@ -202,7 +202,7 @@
     function drawShortPaths(coords) {
         pathLayer.clearLayers();
         coords.forEach(function(coord) {
-            let geodesic = new L.Geodesic([],{ wrap: true, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
+            let geodesic = new L.Geodesic([],{ wrap: false, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
             pathLayer.addLayer(geodesic);
             geodesic.setLatLngs([{lat: coord[0], lng: coord[1]}, {lat: coord[2], lng: coord[3]}]);
         });

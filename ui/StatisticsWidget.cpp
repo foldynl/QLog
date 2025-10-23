@@ -608,6 +608,13 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
             count++;
             double lat = stationGrid.getLatitude();
             double lon = stationGrid.getLongitude();
+
+            // do not wrap the points
+            double delta = lon - myStationGrid.getLongitude();
+            if ( delta > 180 )
+                lon -= 360;
+            if ( delta < -180 )
+                lon += 360;
             stations.append(QString("[\"%1\", %2, %3, %4]").arg(query.value(0).toString())
                                                            .arg(lat)
                                                            .arg(lon)
