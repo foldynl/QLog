@@ -2,7 +2,9 @@ TBC - 0.46.2
 - Fixed Spaces after QRZ.com name (issue #767)
 - Fixed SPID Rot1Prog Rotator more 360 deg (issue #775)
 - Fixed build instructions on Debian (PR #777 @leventelist)
+- Fixed Statistics - Anti-meridian bug on map (issue #786)
 - Fixed Binary file in the tarballs (issue #794)
+- Fixed Statistics Dialog does not show confirmed grids
 
 2025/09/26 - 0.46.1
 - Fixed QSO filter incorrectly displays inserted date (issue #752)
