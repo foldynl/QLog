@@ -663,7 +663,7 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
 
     while ( query.next() )
     {
-        if ( query.value(2).toInt() > 0 && ! confirmedGrids.contains(query.value(1).toString()) )
+        if ( query.value(3).toInt() > 0 && ! confirmedGrids.contains(query.value(1).toString()) )
             confirmedGrids << QString("\"" + query.value(1).toString() + "\"");
         else
             workedGrids << QString("\"" + query.value(1).toString() + "\"");
