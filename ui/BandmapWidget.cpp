@@ -113,10 +113,7 @@ void BandmapWidget::update()
     bandmapScene->clear();
 
     // do not show bandmap for submm bands
-    if ( rx_freq > 250000.0 || currentBand.start >= 300000.0 )
-    {
-        return;
-    }
+    if ( rx_freq > 250000.0 || currentBand.start >= 300000.0 ) return;
 
     /*******************
      * Determine Scale *
@@ -126,7 +123,7 @@ void BandmapWidget::update()
 
     determineStepDigits(step, digits);
 
-    int steps = static_cast<int>(round((currentBand.end - currentBand.start) / step));
+    const int steps = static_cast<int>(round((currentBand.end - currentBand.start) / step));
 
     minHeight = steps * PIXELSPERSTEP + 30;
     ui->graphicsView->setFixedSize(270, minHeight);
@@ -134,26 +131,29 @@ void BandmapWidget::update()
     /****************/
     /* Draw bandmap */
     /****************/
+    const QPen gridPen(QColor(192, 192, 192));
+    const QBrush highlightBrush(QColor(102, 153, 255, 100));
+
     for ( int i = 0; i <= steps; i++ )
     {
         double plottedFreq = currentBand.start + step * i;
+        const double y = i * PIXELSPERSTEP;
+
         // Add colored square
         if ( !currBandMode.isEmpty()
              && i < steps
              && currBandMode == BandPlan::freq2BandModeGroupString(plottedFreq) )
-            bandmapScene->addRect(0, i * PIXELSPERSTEP, 10, 10, QPen(Qt::NoPen), QBrush(QColor(102, 153, 255, 100)));
+            bandmapScene->addRect(0, y, 10, 10, QPen(Qt::NoPen), highlightBrush);
 
-        bandmapScene->addLine(0,
-                              i * PIXELSPERSTEP,
-                              (i % 5 == 0) ? 15 : 10,
-                              i * PIXELSPERSTEP,
-                              QPen(QColor(192,192,192)));
+        const int lineLength = (i % 5 == 0) ? 15 : 10;
 
-        if (i % 5 == 0)
+        bandmapScene->addLine(0, y, lineLength, y, gridPen);
+
+        if ( i % 5 == 0 )
         {
             QGraphicsTextItem* text = bandmapScene->addText(QString::number(plottedFreq, 'f', digits));
-            text->setPos(- (text->boundingRect().width()) - 5,
-                         i * PIXELSPERSTEP - (text->boundingRect().height() / 2));
+            const QRectF rect = text->boundingRect();
+            text->setPos(-rect.width() - 5, y - (rect.height() / 2));
         }
     }
 
@@ -208,10 +208,6 @@ void BandmapWidget::updateStations()
 {
     FCT_IDENTIFICATION;
 
-    double step;
-    int digits;
-    double min_y = 0;
-
     /****************
      * Restart Time *
      ****************/
@@ -222,10 +218,14 @@ void BandmapWidget::updateStations()
     spotAging();
 
     // do not show bandmap for submm bands
-    if ( rx_freq > 250000.0 || currentBand.start >= 300000.0 )
-    {
-        return;
-    }
+    if ( rx_freq > 250000.0 || currentBand.start >= 300000.0 )return;
+
+    double step;
+    int digits;
+    double min_y = 0;
+    const QColor lineColor(192,192,192);
+    const QColor defaultTextColor = qApp->palette().color(QPalette::Text);
+    const QString timeFormat = locale.formatTimeShort();
 
     determineStepDigits(step, digits);
 
@@ -234,51 +234,52 @@ void BandmapWidget::updateStations()
 
     while ( lower != upper )
     {
+        DxSpot &spot = lower.value();
+
         double freq_y = ((lower.key() - currentBand.start) / step) * PIXELSPERSTEP;
-        double text_y = std::max(min_y + 5, freq_y);
+        double text_y = std::max(min_y + 5.0, freq_y);
 
         /*************************
          * Draw Line to Callsign *
          *************************/
-        lineItemList.append(bandmapScene->addLine(17,
-                                                  freq_y,
-                                                  40,
-                                                  text_y,
-                                                  QPen(QColor(192,192,192))));
+        lineItemList.append(bandmapScene->addLine(17, freq_y, 40, text_y, QPen(lineColor)));
 
-        const QString &callsignTmp = lower.value().callsign;
-        const QString &timeTmp = locale.toString(lower.value().dateTime, locale.formatTimeShort());
+        const QString &callsignTmp = spot.callsign;
+        const QString &timeTmp = locale.toString(spot.dateTime, timeFormat);
 
         QGraphicsTextItem* text = bandmapScene->addText(callsignTmp + " @ " + timeTmp);
         text->document()->setDocumentMargin(0);
-        text->setPos(40, text_y - (text->boundingRect().height() / 2));
+
+        qreal halfHeight = text->boundingRect().height() / 2;
+        text->setPos(40, text_y - halfHeight);
         text->setFlags(QGraphicsItem::ItemIsFocusable |
                        QGraphicsItem::ItemIsSelectable |
                        text->flags());
         text->setProperty("freq", lower.key());
-        text->setProperty("bandmode", static_cast<int>(lower.value().bandPlanMode));
+        text->setProperty("bandmode", static_cast<int>(spot.bandPlanMode));
+
         QString unit;
         unsigned char decP;
         double spotFreq = Data::MHz2UserFriendlyFreq(lower.key(), unit, decP);
         text->setToolTip(QString("<b>%1</b> de %2<br/>%3 %4; %5<br/>%6").arg(callsignTmp,
-                                                             lower.value().spotter,
+                                                             spot.spotter,
                                                              QString::number(spotFreq, 'f', decP),
                                                              unit,
-                                                             lower.value().modeGroupString,
-                                                             lower.value().comment));
+                                                             spot.modeGroupString,
+                                                             spot.comment));
 
-        min_y = text_y + text->boundingRect().height() / 2;
+        min_y = text_y + halfHeight;
 
-        text->setDefaultTextColor(Data::statusToColor(lower.value().status,
-                                                      lower.value().dupeCount,
-                                                      qApp->palette().color(QPalette::Text)));
+        text->setDefaultTextColor(Data::statusToColor(spot.status,
+                                                      spot.dupeCount,
+                                                      defaultTextColor));
 
         textItemList.append(text);
         ++lower;
     }
 
     // Resize scene and view dynamically
-    QRectF itemsRect = bandmapScene->itemsBoundingRect();
+    const QRectF &itemsRect = bandmapScene->itemsBoundingRect();
     QRectF sceneRect = bandmapScene->sceneRect();
 
     double resultHeight = qMax(itemsRect.bottom(), minHeight);
