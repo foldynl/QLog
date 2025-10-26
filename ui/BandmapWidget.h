@@ -154,6 +154,17 @@ private:
     };
     LastTuneDx lastTunedDX;
     DxSpot lastNearestSpot;
+
+    const QString MAIN_WIDGET_OBJECT_NAME = "bandmapWidget";
+
+    //Pixel between each step in BandMap
+    const int PIXELSPERSTEP = 10;
+
+    //Maximal Aging interval is 20s
+    const int BANDMAP_AGING_CHECK_TIME = 20000;
+
+    //Maximal refresh rate for bandmap is 1s
+    const int BANDMAP_MAX_REFRESH_TIME = 1000;
 };
 
 Q_DECLARE_METATYPE(BandmapWidget::BandmapZoom)

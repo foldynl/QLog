@@ -18,18 +18,7 @@
 
 MODULE_IDENTIFICATION("qlog.ui.bandmapwidget");
 
-//Maximal refresh rate for bandmap is 1s
-#define BANDMAP_MAX_REFRESH_TIME 1000
-
-//Maximal Aging interval is 20s
-#define BANDMAP_AGING_CHECK_TIME 20000
-
-//Pixel between each step in BandMap
-#define PIXELSPERSTEP 10
-
 #define WIDGET_CENTER ( height()/2 - 50 )
-
-#define MAIN_WIDGET_OBJECT_NAME "bandmapWidget"
 
 QMap<double, DxSpot> BandmapWidget::spots;
 QList<BandmapWidget *> BandmapWidget::nonVfoWidgets;
@@ -1250,3 +1239,5 @@ void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evt)
 
     evt->accept();
 }
+
+#undef WIDGET_CENTER
