@@ -128,7 +128,8 @@ void BandmapWidget::update()
 
     int steps = static_cast<int>(round((currentBand.end - currentBand.start) / step));
 
-    ui->graphicsView->setFixedSize(270, steps * PIXELSPERSTEP + 30);
+    minHeight = steps * PIXELSPERSTEP + 30;
+    ui->graphicsView->setFixedSize(270, minHeight);
 
     /****************/
     /* Draw bandmap */
@@ -275,6 +276,15 @@ void BandmapWidget::updateStations()
         textItemList.append(text);
         ++lower;
     }
+
+    // Resize scene and view dynamically
+    QRectF itemsRect = bandmapScene->itemsBoundingRect();
+    QRectF sceneRect = bandmapScene->sceneRect();
+
+    double resultHeight = qMax(itemsRect.bottom(), minHeight);
+    sceneRect.setBottom(resultHeight + 10);
+    ui->graphicsView->setFixedSize(270, resultHeight + 30);
+    bandmapScene->setSceneRect(sceneRect);
 
     pendingSpots = 0;
     lastStationUpdate = QDateTime::currentMSecsSinceEpoch();

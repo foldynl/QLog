@@ -155,6 +155,7 @@ private:
     LastTuneDx lastTunedDX;
     DxSpot lastNearestSpot;
 
+    double minHeight;
     const QString MAIN_WIDGET_OBJECT_NAME = "bandmapWidget";
 
     //Pixel between each step in BandMap
