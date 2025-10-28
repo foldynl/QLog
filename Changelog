@@ -5,6 +5,7 @@ TBC - 0.46.2
 - Fixed Bandmap truncated output despite having space (issue #779)
 - Fixed Statistics - Anti-meridian bug on map (issue #786)
 - Fixed Binary file in the tarballs (issue #794)
+- Fixed LOTW & eQSL upload status updated even when nothing is uploaded (issue #807)
 - Fixed Statistics Dialog does not show confirmed grids
 
 2025/09/26 - 0.46.1

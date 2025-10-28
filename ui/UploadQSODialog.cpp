@@ -303,30 +303,29 @@ void UploadQSODialog::processNextUploader()
              && currentTask.getServiceID() != QRZCOMID
              && currentTask.getServiceID() != WAVELOGID )
         {
-            const QString &statusField = currentTask.getDBUploadStatusFieldName();
-            const QString &dateField = currentTask.getDBUploadDateFieldName();
+
+            const QString statusField = currentTask.getDBUploadStatusFieldName();
+            const QString dateField = currentTask.getDBUploadDateFieldName();
+            const QList<qulonglong> idsToUpdate = currentTask.getQSOIDs();
+
+            QStringList idStrings;
+
+            for ( qulonglong id : idsToUpdate )
+                idStrings.append(QString::number(id));
+
             QString statement = QString("UPDATE contacts "
-                                        "SET %1='Y', %2 = strftime('%Y-%m-%d',DATETIME('now', 'utc')) ").arg(statusField,
-                                                                                                             dateField);
+                                        "SET %1='Y', %2 = strftime('%Y-%m-%d',DATETIME('now', 'utc')) "
+                                        "WHERE id IN (%3) ").arg(statusField, dateField, idStrings.join(","));
 
-            statement.append("WHERE " + currentTask.getWhereClause());
-
-            if ( !ui->myCallsignCombo->currentText().isEmpty() )
-                statement.append(" AND COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator)) = '" + ui->myCallsignCombo->currentText().trimmed() + "'");
-
-            if ( !ui->myGridCombo->currentText().isEmpty() && ui->myGridCombo->currentIndex() > 0 )
-                statement.append(" AND my_gridsquare = '" + ui->myGridCombo->currentText().trimmed() + "'");
-
-            qCDebug(runtime) << statement;
-
-            QSqlQuery updateQuery(statement);
+            QSqlQuery updateQuery;
+            updateQuery.prepare(statement);
 
             if ( !updateQuery.exec() )
                 qWarning() << "Cannot update" << currentTask.getServiceName()
                            << "Upload status in DB" << updateQuery.lastError().text();
             else
                 currentTask.updateAllDBFieldValue(statusField, "Y",
-                                                  dateField, "2025-05-13");
+                                                  dateField, QDateTime::currentDateTimeUtc().date().toString(Qt::ISODate));
         }
         processNextUploader();
     });
@@ -480,7 +479,6 @@ void UploadQSODialog::executeQuery()
         const QString serviceSelectCondition = whereTemplate.arg(task.getDBUploadStatusFieldName(),
                                                                  uploadStatuses.join(","),
                                                                  addlCondition);
-        task.setWhereClause(serviceSelectCondition);
         serviceSelectConditions << serviceSelectCondition;
         serviceStatusColumns << statusColumnTemplate.arg(serviceSelectCondition,
                                                          QString::number(task.getServiceID()));

@@ -73,11 +73,12 @@ private:
             enableWidget->setToolTip((isActivable) ? ""
                                                    : tr("Service is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
         };
-        ~UploadTask() {if ( uploader ) uploader->deleteLater();};
+
+        ~UploadTask() {};
 
         ServiceID getServiceID() const {return serviceID;};
-        void addQSO(QSharedPointer<QSqlRecord> record) {qsoRefs.append(record);};
-        void clearEnqueuedQSOs() {qsoRefs.clear();};
+        void addQSO(QSharedPointer<QSqlRecord> record) {qsoRefs.append(record); qsoIds.append(record->value("id").toULongLong());};
+        void clearEnqueuedQSOs() {qsoRefs.clear(); qsoIds.clear();};
         const QList<QSqlRecord> getQSOList() const
         {
             QList<QSqlRecord> retList;
@@ -89,14 +90,12 @@ private:
             }
             return retList;
         };
-
+        const QList<qulonglong>& getQSOIDs() const { return qsoIds; };
         bool isChecked() {return (controElement) ? controElement->isChecked() : false;};
         const QString& getDBUploadStatusFieldName() const {return dbUploadStatusFieldName;};
         const QString& getDBUploadDateFieldName() const {return dbUploadDateFieldName;};
         const QString& getServiceName() const {return serviceName;};
         GenericQSOUploader *getUploader() const {return uploader;};
-        void setWhereClause(const QString &clause) {finalWhereClause = clause;};
-        const QString& getWhereClause() const {return finalWhereClause;};
         void updateQSONumberLabel() {qsoNumberLabel->setText((isChecked()) ? "(" + QString::number(qsoRefs.size()) + ")"
                                                                          : "");};
         bool isQSOListEmpty() const {return qsoRefs.isEmpty(); };
@@ -120,10 +119,10 @@ private:
         QString serviceName;
         GenericQSOUploader *uploader;
         QList<QWeakPointer<QSqlRecord>> qsoRefs;
+        QList<qulonglong> qsoIds;
         QCheckBox *controElement;
         QString dbUploadStatusFieldName;
         QString dbUploadDateFieldName;
-        QString finalWhereClause;
         QLabel *qsoNumberLabel;
     };
 
