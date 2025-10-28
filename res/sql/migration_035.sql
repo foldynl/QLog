@@ -1,0 +1,2 @@
+ALTER TABLE rig_profiles ADD COLUMN rts TEXT DEFAULT '';
+ALTER TABLE rig_profiles ADD COLUMN dtr TEXT DEFAULT '';
