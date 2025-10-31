@@ -10960,7 +10960,7 @@
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="276"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="338"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="337"/>
         <source>QLog Warning - %1</source>
         <translation>Alerta de QLog - %1</translation>
     </message>
@@ -10970,58 +10970,58 @@
         <translation>No se puede actualizar el estado del QSO</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="339"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="338"/>
         <source>Cannot upload the QSO(s): </source>
         <translation>No se puede subir el/los QSO/s: </translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="394"/>
-        <location filename="../ui/UploadQSODialog.cpp" line="405"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="393"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="404"/>
         <source>QLog Information</source>
         <translation>Información de QLog</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="394"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="393"/>
         <source>No QSO found to upload.</source>
         <translation>No se encontraron QSOs para subir.</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="405"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="404"/>
         <source>QSO(s) were uploaded to the selected services</source>
         <translation>Los QSOs se cargaron en los servicios seleccionados</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="446"/>
         <source>Time</source>
         <translation>Hora</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="446"/>
         <source>Callsign</source>
         <translation>Indicativo</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="446"/>
         <source>Mode</source>
         <translation>Modo</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="447"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="446"/>
         <source>Upload to</source>
         <translation>Subir a</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="493"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="491"/>
         <source>The values below will be used when an input record does not contain the ADIF values</source>
         <translation>Los valores siguientes se utilizarán cuando un registro de entrada no contenga los valores ADIF</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="622"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="620"/>
         <source>Any</source>
         <translation>Cualquier</translation>
     </message>
     <message>
-        <location filename="../ui/UploadQSODialog.cpp" line="635"/>
+        <location filename="../ui/UploadQSODialog.cpp" line="633"/>
         <source>Unknown</source>
         <translation>Desconocido</translation>
     </message>
