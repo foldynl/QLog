@@ -40,6 +40,17 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_metainfodir}/*
 
 %changelog
+* Fri Oct 31 2025 Ladislav Foldyna - 0.46.2-1
+- Fixed Spaces after QRZ.com name (issue #767)
+- Fixed SPID Rot1Prog Rotator more 360 deg (issue #775)
+- Fixed build instructions on Debian (PR #777 @leventelist)
+- Fixed Bandmap truncated output despite having space (issue #779)
+- Fixed Statistics - Anti-meridian bug on map (issue #786)
+- Fixed Binary file in the tarballs (issue #794)
+- Fixed LOTW and eQSL upload status updated even when nothing is uploaded (issue #807)
+- Fixed Imported QSOs contain incorrect My DXCC info (issue #812)
+- Fixed Statistics Dialog does not show confirmed grids
+
 * Fri Sep 26 2025 Ladislav Foldyna - 0.46.1-1
 - Fixed QSO filter incorrectly displays inserted date (issue #752)
 - Fixed Logbook Search Icon is not centered (issue #753)

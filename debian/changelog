@@ -1,3 +1,16 @@
+qlog (0.46.2-1) UNRELEASED; urgency=high
+  * Fixed Spaces after QRZ.com name (issue #767)
+  * Fixed SPID Rot1Prog Rotator more 360 deg (issue #775)
+  * Fixed build instructions on Debian (PR #777 @leventelist)
+  * Fixed Bandmap truncated output despite having space (issue #779)
+  * Fixed Statistics - Anti-meridian bug on map (issue #786)
+  * Fixed Binary file in the tarballs (issue #794)
+  * Fixed LOTW and eQSL upload status updated even when nothing is uploaded (issue #807)
+  * Fixed Imported QSOs contain incorrect My DXCC info (issue #812)
+  * Fixed Statistics Dialog does not show confirmed grids
+
+ -- foldynl <foldyna@gmail.com>  Fri, 31 Oct 2025 15:24:57 +0100
+
 qlog (0.46.1-1) UNRELEASED; urgency=low
   * Fixed QSO filter incorrectly displays inserted date (issue #752)
   * Fixed Logbook Search Icon is not centered (issue #753)

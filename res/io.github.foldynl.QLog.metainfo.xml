@@ -51,6 +51,21 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.46.2" date="2025-10-31">
+      <description>
+        <ul>
+          <li>Fixed Spaces after QRZ.com name (issue #767)</li>
+          <li>Fixed SPID Rot1Prog Rotator more 360 deg (issue #775)</li>
+          <li>Fixed build instructions on Debian (PR #777 @leventelist)</li>
+          <li>Fixed Bandmap truncated output despite having space (issue #779)</li>
+          <li>Fixed Statistics - Anti-meridian bug on map (issue #786)</li>
+          <li>Fixed Binary file in the tarballs (issue #794)</li>
+          <li>Fixed LOTW and eQSL upload status updated even when nothing is uploaded (issue #807)</li>
+          <li>Fixed Imported QSOs contain incorrect My DXCC info (issue #812)</li>
+          <li>Fixed Statistics Dialog does not show confirmed grids</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.46.1" date="2025-09-26">
       <description>
         <ul>

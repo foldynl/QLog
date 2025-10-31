@@ -1,4 +1,4 @@
-TBC - 0.46.2
+2025/10/31 - 0.46.2
 - Fixed Spaces after QRZ.com name (issue #767)
 - Fixed SPID Rot1Prog Rotator more 360 deg (issue #775)
 - Fixed build instructions on Debian (PR #777 @leventelist)
