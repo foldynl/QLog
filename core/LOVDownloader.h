@@ -106,6 +106,7 @@ private:
                                    7)}
     };
 
+
     QNetworkAccessManager* nam;
     QNetworkReply *currentReply;
     bool abortRequested;
