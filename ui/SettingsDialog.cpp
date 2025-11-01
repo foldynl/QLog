@@ -470,6 +470,8 @@ void SettingsDialog::addRigProfile()
         profile.parity = ui->rigParitySelect->currentData().toString();
         profile.pttType = ui->rigPTTTypeCombo->currentData().toString();
         profile.pttPortPath = ui->rigPTTPortEdit->text();
+        profile.rts = ui->cmbRigRTS->currentText();
+        profile.dtr = ui->cmbRigDTR->currentText();
     }
 
     if ( ui->rigPollIntervalSpinBox->isEnabled() )
@@ -581,6 +583,12 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     int pttIndex = ui->rigPTTTypeCombo->findData(profile.pttType);
     ui->rigPTTTypeCombo->setCurrentIndex(( pttIndex < 0 ) ? PTT_TYPE_CAT_INDEX : pttIndex);
     ui->rigPTTPortEdit->setText(profile.pttPortPath);
+
+    int rtsIndex = ui->cmbRigRTS->findText(profile.rts);
+    ui->cmbRigRTS->setCurrentIndex(( rtsIndex < 0 ) ? PTT_TYPE_CAT_INDEX : rtsIndex);
+
+    int dtrIndex = ui->cmbRigDTR->findText(profile.dtr);
+    ui->cmbRigDTR->setCurrentIndex(( dtrIndex < 0 ) ? PTT_TYPE_CAT_INDEX : dtrIndex);
 
     setUIBasedOnRigCaps(caps);
 
@@ -726,11 +734,16 @@ void SettingsDialog::rigInterfaceChanged(int)
     ui->rigModelSelect->setCurrentIndex(( driverID == Rig::HAMLIB_DRIVER ) ? ui->rigModelSelect->findData(DEFAULT_HAMLIB_RIG_MODEL)
                                                                            : 0 );
     ui->rigPTTTypeCombo->clear();
+    ui->cmbRigRTS->setCurrentIndex(0);
+    ui->cmbRigDTR->setCurrentIndex(0);
 
     const QList<QPair<QString, QString>> &pttTypes = Rig::instance()->getPTTTypeList(static_cast<Rig::DriverID>(driverID));
 
     for ( const QPair<QString, QString> &type : pttTypes )
         ui->rigPTTTypeCombo->addItem(type.second, type.first);
+
+    ui->cmbRigRTS->setVisible((driverID == Rig::HAMLIB_DRIVER));
+    ui->cmbRigDTR->setVisible((driverID == Rig::HAMLIB_DRIVER));
 
     ui->rigPTTTypeCombo->setVisible(( driverID == Rig::HAMLIB_DRIVER ));
     ui->rigPTTTypeLabel->setVisible(( driverID == Rig::HAMLIB_DRIVER ));

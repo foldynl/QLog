@@ -76,6 +76,7 @@ private:
     const QString hamlibVFO2String(const vfo_t vfo) const;
     serial_handshake_e stringToHamlibFlowControl(const QString &in_flowcontrol);
     serial_parity_e stringToHamlibParity(const QString &in_parity);
+    serial_control_state_e stringToHamlibForceFlowControl(const QString &flowcontrol);
     QString hamlibErrorString(int);
     RIG* rig;
     QTimer timer;

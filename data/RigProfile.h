@@ -63,6 +63,8 @@ public:
     bool dxSpot2Rig;
     QString pttType;
     QString pttPortPath;
+    QString rts;
+    QString dtr;
 
     bool operator== (const RigProfile &profile);
     bool operator!= (const RigProfile &profile);
