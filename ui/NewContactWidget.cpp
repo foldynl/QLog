@@ -2944,18 +2944,16 @@ void NewContactWidget::prepareWSJTXQSO(const QString &receivedCallsign,
     setDxccInfo(receivedCallsign);
     queryPota();
 
-    // at the moment WSJTX sends several statuses about changing one callsign.
-    // In order to avoid multiple searches, we will search only when we have a grid - it was usually the last
-    // status message
-    // the current status message sequence is
-    // 1) prev Callsign empty grid
-    // 2) new Callsign empty grid
-    // 3) new Calllsign, new gris
+    // Always trigger callbook lookup, even without grid square
+    // This enables lookups for WSJT-X compatible apps that don't provide grids
+    // CallbookManager has QCache caching to prevent redundant queries so this is safe
+    // it is needed for non WSJT-X content that we're accepting on the same port, such
+    // as WriteLog broadcast udp xml packets converted to ADIF.
     if ( !grid.isEmpty() )
     {
         useFieldsFromPrevQSO(callsign, grid);
-        finalizeCallsignEdit();
     }
+    finalizeCallsignEdit();
 }
 
 void NewContactWidget::setDefaultReport()
