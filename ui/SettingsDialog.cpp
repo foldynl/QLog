@@ -293,6 +293,32 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->cwKeyModeSelect->addItem(tr("Ultimate"), CWKey::ULTIMATE);
     ui->cwKeyModeSelect->setCurrentIndex(ui->cwKeyModeSelect->findData(CWKey::IAMBIC_B));
 
+    tileServers.append({"OpenStreetMap (Default, System Language)", QJsonObject{}});
+    tileServers.append({"OpenStreetMap (English)", QJsonObject{
+        {"url", "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"},
+        {"options", QJsonObject{{"attribution", "&copy; OpenStreetMap"}}},
+    }});
+    tileServers.append({"OpenStreetMap (French)", QJsonObject{
+        {"url", "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"},
+        {"options", QJsonObject{{"attribution", "&copy; OpenStreetMap"}}},
+    }});
+    tileServers.append({"OpenStreetMap (German)", QJsonObject{
+        {"url", "https://tile.openstreetmap.de/{z}/{x}/{y}.png"},
+        {"options", QJsonObject{{"attribution", "&copy; OpenStreetMap"}}},
+    }});
+
+    ui->tileServerComboBox->setEditable(true);
+    for (const auto &pair : tileServers) {
+        QString name = pair.first;
+        QJsonObject info = pair.second;
+        ui->tileServerComboBox->addItem(name);
+    }
+    ui->tileServerComboBox->addItem("Custom");
+
+    connect(ui->tileServerComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &SettingsDialog::onTileServerComboBoxChanged);
+    onTileServerComboBoxChanged(ui->tileServerComboBox->currentIndex());
+
     /* disable WSJTX Multicast by default */
     joinMulticastChanged(false);
 
@@ -300,6 +326,47 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
 
     readSettings();
 }
+
+void SettingsDialog::onTileServerComboBoxChanged(int index)
+{
+    bool isCustom = index == (ui->tileServerComboBox->count() - 1);
+    QString configStr = settings.value("tileServer/config", "{}").toString();
+
+    if (isCustom) {
+        ui->tileOptionsTextEdit->setReadOnly(false);
+        ui->tileMapUrlLineEdit->setReadOnly(false);
+
+        QJsonDocument info = QJsonDocument::fromJson(configStr.toUtf8());
+        if (info.object().isEmpty() || settings.value("tileServer/index", 0).toInt()) {
+            ui->tileMapUrlLineEdit->setText("");
+            ui->tileOptionsTextEdit->setPlainText("");
+            return;
+        };
+
+        QJsonObject obj = info.object();
+        ui->tileMapUrlLineEdit->setText(obj.contains("options") ? obj["url"].toString() : "");
+        ui->tileOptionsTextEdit->setPlainText(obj.contains("options")
+            ? QJsonDocument(obj["options"].toObject()).toJson(QJsonDocument::Compact)
+            : "");
+        return;
+    } else {
+        ui->tileOptionsTextEdit->setReadOnly(true);
+        ui->tileMapUrlLineEdit->setReadOnly(true);
+    }
+
+    QJsonObject info = tileServers[index].second;
+    if (info.isEmpty()) {
+        ui->tileMapUrlLineEdit->setText("");
+        ui->tileOptionsTextEdit->setPlainText("");
+        return;
+    };
+
+    ui->tileMapUrlLineEdit->setText(info.contains("options") ? info["url"].toString() : "");
+    ui->tileOptionsTextEdit->setPlainText(info.contains("options")
+                                              ? QJsonDocument(info["options"].toObject()).toJson(QJsonDocument::Compact)
+                                              : "");
+}
+
 
 void SettingsDialog::save() {
     FCT_IDENTIFICATION;
@@ -2401,6 +2468,21 @@ void SettingsDialog::readSettings()
     ui->dateFormatCustomRadioButton->setChecked(!dateSystemFormat);
     ui->dateFormatStringEdit->setText(locale.getSettingDateFormat());
 
+    /**************/
+    /* Online Map */
+    /**************/
+
+    int index = settings.value("tileServer/index", 0).toInt();
+    QString configStr = settings.value("tileServer/config", "{}").toString();
+
+    if (index >= ui->tileServerComboBox->count()) index = 0;
+    if (index == 0 && !QJsonDocument::fromJson(configStr.toUtf8()).object().isEmpty()) {
+        /* For convenience, `default' and `custom' use the same index, but options was stored only for `custom'. */
+        ui->tileServerComboBox->setCurrentIndex(ui->tileServerComboBox->count() - 1);
+    } else {
+        ui->tileServerComboBox->setCurrentIndex(index);
+    }
+
     /******************/
     /* END OF Reading */
     /******************/
@@ -2525,6 +2607,26 @@ void SettingsDialog::writeSettings()
     locale.setSettingUseSystemDateFormat(systemDateChecked);
     if ( !systemDateChecked )
         locale.setSettingDateFormat(ui->dateFormatStringEdit->text());
+
+    /**************/
+    /* Online Map */
+    /**************/
+    int index = ui->tileServerComboBox->currentIndex();
+    bool isCustom = index == (ui->tileServerComboBox->count() - 1);
+
+    if (isCustom) {
+        settings.setValue("tileServer/index", 0);
+        QJsonObject info = QJsonObject{
+            {"url", ui->tileMapUrlLineEdit->text()},
+            {"options", QJsonDocument::fromJson(ui->tileOptionsTextEdit->toPlainText().toUtf8()).object()}
+        };
+        settings.setValue("tileServer/config", QJsonDocument(info).toJson(QJsonDocument::Compact));
+        return;
+    }
+
+    settings.setValue("tileServer/index", index);
+    QJsonObject info = tileServers[index].second;
+    settings.setValue("tileServer/config", QJsonDocument(info).toJson(QJsonDocument::Compact));
 }
 
 /* this function is called when user modify rig progile

@@ -133,6 +133,7 @@ private:
     void generateMembershipCheckboxes();
     void generateQRZAPICallsignTable();
     void saveQRZAPICallsignTable();
+    void onTileServerComboBoxChanged(int index);
 
     QSqlTableModel* modeTableModel;
     QSqlTableModel* bandTableModel;
@@ -151,6 +152,8 @@ private:
     QList<QCheckBox*> memberListCheckBoxes;
     Ui::SettingsDialog *ui;
     LogLocale locale;
+    QVector<QPair<QString, QJsonObject>> tileServers;
+    QSettings settings;
     bool sotaFallback;
     bool potaFallback;
     bool wwffFallback;

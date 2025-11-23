@@ -67,7 +67,6 @@
   <div id="map"></div>
 
   <script>
-
     var grids_worked = [];    //field of Grids used for rendering Worked Grids
     var grids_confirmed = []; //field of Grids used for rendering Confirmed Grids
     var mylocations = [];     //field of My Locations
@@ -126,7 +125,6 @@
       popupAnchor: [1, -14]
     });
 
-
     var language = navigator.language || navigator.userLanguage;
     var mapUrl;
 
@@ -139,9 +137,16 @@
       mapUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     }
 
-    L.tileLayer(mapUrl, {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-    }).addTo(map);
+    if (!window.tileConfig) {
+      window.tileConfig = {
+        url: mapUrl,
+        options: {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+        },
+      };
+    }
+
+    L.tileLayer(window.tileConfig.url, window.tileConfig.options).addTo(map);
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
     var grayline = L.terminator({fillOpacity: 0.2})

@@ -63,6 +63,7 @@ private:
     double lastSeenAzimuth, lastSeenElevation;
     bool isRotConnected;
 
+    void injectTileConfig(void);
     void runJavaScript(const QString &);
 };
 

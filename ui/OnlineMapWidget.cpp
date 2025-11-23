@@ -6,6 +6,9 @@
 #include <QVector3D>
 #include <QtMath>
 #include <QFile>
+#include <QJsonDocument>
+#include <QWebEngineScript>
+#include <QWebEngineScriptCollection>
 #include "OnlineMapWidget.h"
 #include "core/debug.h"
 #include "data/Gridsquare.h"
@@ -37,7 +40,7 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
     FCT_IDENTIFICATION;
 
     main_page->setWebChannel(&channel);
-
+    injectTileConfig();
     setPage(main_page);
     main_page->load(QUrl(QLatin1String("qrc:/res/map/onlinemap.html")));
     connect(this, &OnlineMapWidget::loadFinished, this, &OnlineMapWidget::finishLoading);
@@ -54,6 +57,36 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
     connect(&webChannelHandler, &MapWebChannelHandler::chatCallsignPressed, this, &OnlineMapWidget::chatCallsignTrigger);
     connect(&webChannelHandler, &MapWebChannelHandler::wsjtxCallsignPressed, this, &OnlineMapWidget::wsjtxCallsignTrigger);
     connect(&webChannelHandler, &MapWebChannelHandler::IBPPressed, this, &OnlineMapWidget::IBPCallsignTrigger);
+}
+
+void OnlineMapWidget::injectTileConfig()
+{
+    if (!main_page)
+        return;
+
+    QSettings settings;
+    QString optionsStr = settings.value("tileServer/config", "{}").toString();
+
+    QJsonDocument doc = QJsonDocument::fromJson(optionsStr.toUtf8());
+
+    if (doc.isObject()) {
+        QJsonObject obj = doc.object();
+        if (!obj.contains("url") || !obj["url"].isString() ||
+            !obj.contains("options") || !obj["options"].isObject()) {
+            optionsStr = "undefined";
+        }
+    }
+
+    QString jsCode = QString("window.tileConfig = %1;").arg(optionsStr);
+
+    QWebEngineScript script;
+    script.setName("InjectTileConfig");
+    script.setSourceCode(jsCode);
+    script.setInjectionPoint(QWebEngineScript::DocumentCreation);
+    script.setWorldId(QWebEngineScript::MainWorld);
+    script.setRunsOnSubFrames(false);
+
+    main_page->scripts().insert(script);
 }
 
 void OnlineMapWidget::setTarget(double lat, double lon)
