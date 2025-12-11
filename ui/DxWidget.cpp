@@ -937,6 +937,21 @@ void DxWidget::receive()
                 connectionState = OPERATION;
 
             ui->commandButton->setEnabled(true);
+            ui->actionShowHFStats->setVisible(true);
+            ui->actionShowVHFStats->setVisible(true);
+        }
+
+        if (line.endsWith(QStringLiteral(" CCC >"), Qt::CaseInsensitive)) {
+            if (connectionState == LOGIN_SENT || connectionState == PASSWORD_SENT)
+                connectionState = OPERATION;
+
+            ui->commandButton->setEnabled(true);
+            ui->actionShowHFStats->setVisible(false);
+            ui->actionShowVHFStats->setVisible(false);
+            if (ui->commandButton->defaultAction() == ui->actionShowHFStats
+                || ui->commandButton->defaultAction() == ui->actionShowVHFStats) {
+                ui->commandButton->setDefaultAction(ui->actionSpotQSO);
+            }
         }
 
         /********************/
