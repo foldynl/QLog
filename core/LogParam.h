@@ -82,6 +82,8 @@ public:
     static bool getUploadeqslQSLComment();
     static void setUploadeqslQSLComment(const bool state);
     static bool getUploadeqslQSLMessage();
+    static QString getUploadLotwStationLocation();
+    static void setUploadLotwStationLocation(const QString &stationLocation);
     static QString getUploadeqslQTHProfile();
     static void setUploadeqslQTHProfile(const QString &qthProfile);
     static void setUploadeqslQSLMessage(const bool state);

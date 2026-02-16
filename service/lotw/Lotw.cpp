@@ -117,7 +117,14 @@ void LotwUploader::uploadAdif(const QByteArray &data)
     file.flush();
 
     QStringList args;
-    args << "-d" << "-q" << "-u" << file.fileName();
+
+    QString station_location = LogParam::getUploadLotwStationLocation();
+    if ( station_location.isEmpty() )
+    {
+        args << "-d" << "-q" << "-u" << file.fileName();
+    } else {
+        args << "-d" << "-q" << "-l" << station_location << "-u" << file.fileName();
+    }
 
     QProcess *tqslProcess = new QProcess();
 

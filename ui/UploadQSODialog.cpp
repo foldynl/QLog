@@ -92,6 +92,7 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
                                                    "ORDER BY station_callsign", "", ui->myCallsignCombo));
     ui->myStationProfileCombo->setModel(new SqlListModel("SELECT DISTINCT profile_name FROM station_profiles ORDER BY profile_name", "", ui->myStationProfileCombo));
 
+    setLotwSettingVisible(false);
     setEQSLSettingVisible(false);
     setClublogSettingVisible(false);
     setQSODetailVisible(false);
@@ -118,6 +119,14 @@ void UploadQSODialog::showQSODetails()
     FCT_IDENTIFICATION;
 
     setQSODetailVisible(!ui->detailQSOView->isVisible());
+}
+
+void UploadQSODialog::setLotwSettingVisible(bool visible)
+{
+    FCT_IDENTIFICATION;
+
+    ui->lotwGroup->setVisible(visible);
+    adjustSize();
 }
 
 void UploadQSODialog::setEQSLSettingVisible(bool visible)
@@ -181,6 +190,7 @@ void UploadQSODialog::loadDialogState()
     index = ui->myStationProfileCombo->findText(profile.profileName);
     ui->myStationProfileCombo->setCurrentIndex( ( index >= 0 ) ? index : -1);
 
+    ui->lotwStationLocEdit->setText(LogParam::getUploadLotwStationLocation());
     ui->eqslQSLComment->setChecked(LogParam::getUploadeqslQSLComment());
     ui->eqslQSLMessage->setChecked(LogParam::getUploadeqslQSLMessage());
     ui->eqslQTHProfileEdit->setText(LogParam::getUploadeqslQTHProfile());
@@ -199,6 +209,7 @@ void UploadQSODialog::saveDialogState()
     LogParam::setUploadServiceState("qrzcom", ui->qrzCheckbox->isChecked());
     LogParam::setUploadServiceState("wavelog", ui->wavelogCheckbox->isChecked());
     LogParam::setUploadQSOLastCall(ui->myCallsignCombo->currentText());
+    LogParam::setUploadLotwStationLocation(ui->lotwStationLocEdit->text());
     LogParam::setUploadeqslQSLComment(ui->eqslQSLComment->isChecked());
     LogParam::setUploadeqslQSLMessage(ui->eqslQSLMessage->isChecked());
     LogParam::setUploadeqslQTHProfile(ui->eqslQTHProfileEdit->text());

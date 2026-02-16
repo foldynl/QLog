@@ -252,6 +252,16 @@ bool LogParam::getUploadeqslQSLMessage()
     return getParam("uploadqso/eqsl/last_checkqslsmsg", false).toBool();
 }
 
+QString LogParam::getUploadLotwStationLocation()
+{
+    return getParam("uploadqso/lotw/last_station_location").toString();
+}
+
+void LogParam::setUploadLotwStationLocation(const QString &stationLocation)
+{
+    setParam("uploadqso/lotw/last_station_location", stationLocation);
+}
+
 QString LogParam::getUploadeqslQTHProfile()
 {
     return getParam("uploadqso/eqsl/last_QTHProfile").toString();

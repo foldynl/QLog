@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>597</width>
-    <height>725</height>
+    <height>859</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -306,6 +306,25 @@
          </spacer>
         </item>
        </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="lotwGroup">
+     <property name="title">
+      <string>LoTW</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_1">
+    <item row="0" column="0">
+      <widget class="QLabel" name="lotwStationLocLabel">
+       <property name="text">
+        <string>Station location</string>
+       </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lotwStationLocEdit"/>
       </item>
      </layout>
     </widget>
@@ -708,6 +727,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>lotwCheckbox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>UploadQSODialog</receiver>
+   <slot>setLotwSettingVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>224</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>eqslCheckbox</sender>
    <signal>toggled(bool)</signal>
    <receiver>UploadQSODialog</receiver>
@@ -966,6 +1001,7 @@
  </connections>
  <slots>
   <slot>showQSODetails()</slot>
+  <slot>setLotwSettingVisible(bool)</slot>
   <slot>setEQSLSettingVisible(bool)</slot>
   <slot>setClublogSettingVisible(bool)</slot>
   <slot>executeQuery()</slot>
