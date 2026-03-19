@@ -233,6 +233,9 @@ void OnlineMapWidget::finishLoading(bool)
 {
     FCT_IDENTIFICATION;
 
+    if ( isMainPageLoaded )
+        return;
+
     isMainPageLoaded = true;
 
     /* which layers will be active */

@@ -52,7 +52,19 @@ set "JOM=C:\Qt\Tools\QtCreator\bin\jom\jom.exe"
 
 rem -- Project Settings
 set "PROJECT_BASE=%DEVROOT%\QLog"
-set "INSTALLER_OUT=%DEVROOT%\qlog_build\qlog-installer.exe"
+for /f "tokens=3" %%V in ('findstr /R /C:"^VERSION *= *" "%PROJECT_BASE%\QLog.pro"') do set "QLOG_VERSION=%%V"
+set "INSTALLER_BASE=%DEVROOT%\qlog_build\qlog-installer-%QLOG_VERSION%"
+set "INSTALLER_SEQ=0"
+if exist "%INSTALLER_BASE%.exe" (
+  :seq_loop
+  set /a INSTALLER_SEQ+=1
+  if exist "%INSTALLER_BASE%-!INSTALLER_SEQ!.exe" goto :seq_loop
+)
+if %INSTALLER_SEQ%==0 (
+  set "INSTALLER_OUT=%INSTALLER_BASE%.exe"
+) else (
+  set "INSTALLER_OUT=%INSTALLER_BASE%-!INSTALLER_SEQ!.exe"
+)
 
 rem -- Libs Settings
 set "VCPKG_PACKAGES=%DEVROOT%\vcpkg\packages"

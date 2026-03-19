@@ -9,6 +9,9 @@ public:
     explicit WebEnginePage(QObject *parent = nullptr);
 
 protected:
+    bool acceptNavigationRequest(const QUrl &url,
+                                 QWebEnginePage::NavigationType type,
+                                 bool isMainFrame) override;
     void javaScriptConsoleMessage(QWebEnginePage::JavaScriptConsoleMessageLevel level,
                                   const QString &message,
                                   int lineNumber,

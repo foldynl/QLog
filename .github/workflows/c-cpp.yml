@@ -8,6 +8,7 @@ on:
     branches:
       - 'testing_*'
       - master
+  workflow_dispatch:
 jobs:
   ubuntu-build-qt5:
     name: Ubuntu CI QT5
@@ -23,7 +24,7 @@ jobs:
          sudo apt-get update
          sudo apt-get -y install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libsqlite3-dev libhamlib++-dev libqt5charts5-dev qttools5-dev-tools libqt5keychain1 qt5keychain-dev qtwebengine5-dev build-essential libqt5serialport5-dev pkg-config libqt5websockets5-dev
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: configure
       run: qmake QLog.pro
     - name: make
@@ -43,7 +44,7 @@ jobs:
          sudo apt-get update
          sudo apt-get -y install libhamlib-dev build-essential pkg-config qt6-base-dev qtkeychain-qt6-dev qt6-webengine-dev libqt6charts6-dev libqt6serialport6-dev libqt6webenginecore6-bin libqt6svg6-dev libgl-dev libqt6websockets6-dev
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: configure
       run: qmake6 QLog.pro
     - name: make
@@ -51,6 +52,7 @@ jobs:
 
   macos-build:
      name: MacOS CI
+     if: vars.ENABLE_MACOS == 'true'
      strategy:
        matrix:
          os: [macos-15]
@@ -74,7 +76,7 @@ jobs:
          brew install pkg-config
 
      - name: Checkout code
-       uses: actions/checkout@v4
+       uses: actions/checkout@v5
        with:
          fetch-depth: 0
      - name: Get version from tag
@@ -86,3 +88,118 @@ jobs:
          cd build
          qmake6 -config release ..
          make -j4
+
+  deb-package:
+    name: DEB Package Build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Install tools and build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install devscripts equivs dpkg-dev fakeroot lintian
+        sudo mk-build-deps --install --remove debian/control --tool "apt-get -y --no-install-recommends"
+
+    - name: Build DEB package
+      run: dpkg-buildpackage -b -us -uc -j2
+
+    - name: Verify DEB was created
+      run: ls -la ../qlog_*.deb
+
+    - name: Run lintian
+      run: lintian --no-tag-display-limit ../qlog_*.changes || true
+
+    - name: Upload DEB artifact
+      uses: actions/upload-artifact@v5
+      with:
+        name: deb-package
+        path: /home/runner/work/QLog/qlog_*.deb
+        retention-days: 1
+
+  deb-smoke-test:
+    name: DEB Smoke Test
+    needs: deb-package
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Download DEB artifact
+      uses: actions/download-artifact@v5
+      with:
+        name: deb-package
+
+    - name: Install and smoke test
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ./qlog_*.deb
+        QT_QPA_PLATFORM=offscreen qlog --help 2>&1 | grep -q "QLog Help"
+
+  rpm-package:
+    name: RPM Package Build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:43
+
+    steps:
+    - name: Install base tools
+      run: dnf install -y git rpm-build rpmdevtools rpmlint dnf-plugins-core
+
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+
+    - name: Get version from tag
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+        echo "REPO_VERSION=${VERSION}" >> $GITHUB_ENV
+
+    - name: Install build dependencies from spec
+      run: dnf builddep -y rpm_spec/qlog.spec
+
+    - name: Prepare RPM build tree
+      run: |
+        rpmdev-setuptree
+        TAR_DIR="QLog-${REPO_VERSION}"
+        mkdir -p "/tmp/${TAR_DIR}"
+        cp -a . "/tmp/${TAR_DIR}/"
+        tar czf ~/rpmbuild/SOURCES/qlog-${REPO_VERSION}.tar.gz --exclude='.git' -C /tmp "${TAR_DIR}"
+
+    - name: Build RPM package
+      run: rpmbuild -bb rpm_spec/qlog.spec
+
+    - name: Verify RPM was created
+      run: ls -la ~/rpmbuild/RPMS/*/QLog-*.rpm
+
+    - name: Run rpmlint
+      run: rpmlint ~/rpmbuild/RPMS/*/*.rpm || true
+
+    - name: Upload RPM artifact
+      uses: actions/upload-artifact@v5
+      with:
+        name: rpm-package
+        path: ~/rpmbuild/RPMS/*/QLog-*.rpm
+        retention-days: 1
+
+  rpm-smoke-test:
+    name: RPM Smoke Test
+    needs: rpm-package
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:43
+
+    steps:
+    - name: Download RPM artifact
+      uses: actions/download-artifact@v5
+      with:
+        name: rpm-package
+
+    - name: Install and smoke test
+      run: |
+        dnf install -y $(find . -name 'QLog-*.rpm')
+        QT_QPA_PLATFORM=offscreen qlog --help 2>&1 | grep -q "QLog Help"

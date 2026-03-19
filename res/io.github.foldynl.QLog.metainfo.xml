@@ -51,6 +51,16 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.49.1" date="2026-03-19">
+      <description>
+        <ul>
+          <li>Fixed Online Map OSM Access Blocked banner (issue #956)</li>
+          <li>Fixed Package build process issue - openssl-dev is missing (issue #957)</li>
+          <li>Fixed Missing dependence for QTKeychain (issue #964)</li>
+          <li>Added French Translation (PR #969 thx @fillods)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.49.0" date="2026-03-13">
       <description>
         <ul>

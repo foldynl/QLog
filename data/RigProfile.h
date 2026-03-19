@@ -28,7 +28,7 @@ public:
                    getXITInfo = true; defaultPWR = 0.0, getPTTInfo = false;
                    QSYWiping = false, getKeySpeed = false, keySpeedSync = false;
                    driver = 0, dxSpot2Rig = false, civAddr = -1;
-                   shareRigctld = false; rigctldPort = 4532;
+                   shareRigctld = false; rigctldPort = 4532; startupCATCmd = "";
                  };
 
     QString profileName;
@@ -46,6 +46,7 @@ public:
     QString dtr;
     QString rigctldPath;  // empty = autodetect
     QString rigctldArgs;  // additional arguments
+    QString startupCATCmd;
 
     qint32 model;
     quint32 baudrate;

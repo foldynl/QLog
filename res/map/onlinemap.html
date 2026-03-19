@@ -166,11 +166,11 @@
     } else if (language === 'fr') {
       mapUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
     } else {
-      mapUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      mapUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     }
 
     L.tileLayer(mapUrl, {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);

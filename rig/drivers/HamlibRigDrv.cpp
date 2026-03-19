@@ -301,6 +301,36 @@ bool HamlibRigDrv::open()
         modeList.append(QString(ms));
     }
 
+    if (rigProfile.startupCATCmd != "")
+    {
+        #if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+                const QString command = rigProfile.startupCATCmd;
+
+                qCDebug(runtime) << "Sending Startup commands:" << command;
+
+                QByteArray cmdBytes = command.toUtf8();
+                unsigned char terminator = '\n';
+                const unsigned char* dataPtr = reinterpret_cast<const unsigned char*>(cmdBytes.constData());
+
+                int status = rig_send_raw(
+                    rig,
+                    dataPtr,
+                    cmdBytes.length(),
+                    nullptr,
+                    0,
+                    &terminator
+                    );
+
+                if (status != RIG_OK)
+                {
+                    qCDebug(runtime) << "rig_send_raw failed:" << status;
+                    qCDebug(runtime) << hamlibErrorString(status);
+                }
+        #else
+                qCWarning(runtime) << "Hamlib version does not support rig_send_raw. DX Spot not sent.";
+        #endif
+    }
+
     connect(&timer, &QTimer::timeout, this, &HamlibRigDrv::checkRigStateChange);
     timer.start(rigProfile.pollInterval);
     emit rigIsReady();

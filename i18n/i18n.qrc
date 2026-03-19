@@ -5,6 +5,7 @@
         <file>qlog_zh_CN.qm</file>
         <file>datastrings.tri</file>
         <file>qlog_es.qm</file>
+        <file>qlog_fr.qm</file>
         <file>qlog_it.qm</file>
     </qresource>
     <qresource prefix="/"/>

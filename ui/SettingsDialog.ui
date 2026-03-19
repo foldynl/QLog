@@ -2085,7 +2085,24 @@
                    </item>
                   </layout>
                  </item>
-                 <item row="13" column="0" colspan="2">
+                 <item row="13" column="0">
+                  <widget class="QLabel" name="rigStatupCatCmdLabel">
+                   <property name="text">
+                    <string>Startup Raw CAT:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="1">
+                  <widget class="QLineEdit" name="rigStatupCatCmdEdit">
+                   <property name="toolTip">
+                    <string/>
+                   </property>
+                   <property name="maxLength">
+                    <number>25</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="14" column="0" colspan="2">
                   <widget class="QStackedWidget" name="rigStackedWidget">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -5012,6 +5029,7 @@
   <tabstop>rigShareAdvancedButton</tabstop>
   <tabstop>rigPortTypeCombo</tabstop>
   <tabstop>rigPollIntervalSpinBox</tabstop>
+  <tabstop>rigStatupCatCmdEdit</tabstop>
   <tabstop>cwNetPortSpin</tabstop>
   <tabstop>rigPortEdit</tabstop>
   <tabstop>rigBaudSelect</tabstop>

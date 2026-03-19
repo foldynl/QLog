@@ -523,6 +523,8 @@ void SettingsDialog::addRigProfile()
         profile.pollInterval = ui->rigPollIntervalSpinBox->value();
     }
 
+    profile.startupCATCmd = ui->rigStatupCatCmdEdit->text();
+
     profile.ritOffset = ui->rigRXOffsetSpinBox->value();
     profile.xitOffset = ui->rigTXOffsetSpinBox->value();
     profile.defaultPWR = ui->rigPWRDefaultSpinBox->value();
@@ -604,6 +606,7 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     ui->rigStopBitsSelect->setCurrentText(QString::number(profile.stopbits));
 
     ui->rigPollIntervalSpinBox->setValue(profile.pollInterval);
+    ui->rigStatupCatCmdEdit->setText(profile.startupCATCmd);
     ui->rigTXFreqMinSpinBox->setValue(profile.txFreqStart);
     ui->rigTXFreqMaxSpinBox->setValue(profile.txFreqEnd);
     ui->rigPWRDefaultSpinBox->setValue(profile.defaultPWR);
@@ -662,7 +665,8 @@ void SettingsDialog::clearRigProfileForm()
     ui->rigPortEdit->setPlaceholderText(QString());
     ui->rigHostNameEdit->setPlaceholderText(QString());
     ui->rigPTTPortEdit->setPlaceholderText(QString());
-
+    ui->rigStatupCatCmdEdit->setPlaceholderText(QString());
+    ui->rigStatupCatCmdEdit->clear();
     ui->rigProfileNameEdit->clear();
     ui->rigTXFreqMinSpinBox->setValue(0.0);
     ui->rigTXFreqMaxSpinBox->setValue(0.0);
@@ -823,6 +827,8 @@ void SettingsDialog::rigInterfaceChanged(int)
     ui->rigPTTPortEdit->setVisible(( driverID == Rig::HAMLIB_DRIVER ));
     ui->rigPTTPortLabel->setVisible(( driverID == Rig::HAMLIB_DRIVER ));
     ui->rigPTTTypeCombo->setCurrentIndex(( driverID == Rig::HAMLIB_DRIVER ) ? PTT_TYPE_CAT_INDEX : 0);
+    ui->rigStatupCatCmdLabel->setVisible((driverID == Rig::HAMLIB_DRIVER));
+    ui->rigStatupCatCmdEdit->setVisible((driverID == Rig::HAMLIB_DRIVER));
 }
 
 void SettingsDialog::rigPTTTypeChanged(int index)

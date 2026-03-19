@@ -201,15 +201,15 @@ In QT Creator Projects->Desktop Qt 6.8.0 MSVC2022 64Bit->Build Steps->Additional
 
 for Debian:
 
-`sudo apt-get -y install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libsqlite3-dev libhamlib++-dev libqt5charts5-dev qttools5-dev-tools libqt5keychain1 qt5keychain-dev qtwebengine5-dev build-essential libqt5serialport5-dev pkg-config libqt5websockets5-dev`
+`sudo apt-get -y install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libsqlite3-dev libhamlib++-dev libqt5charts5-dev qttools5-dev-tools libqt5keychain1 qt5keychain-dev qtwebengine5-dev build-essential libqt5serialport5-dev pkg-config libqt5websockets5-dev libssl-dev`
 
 for Debian (QT6):
 
-`sudo apt-get -y install libhamlib-dev build-essential pkg-config qt6-base-dev qtkeychain-qt6-dev qt6-webengine-dev libqt6charts6-dev libqt6serialport6 libqt6webenginecore6-bin libqt6svg6-dev libgl-dev libqt6websockets6-dev qt6-serialport-dev libsqlite3-dev`
+`sudo apt-get -y install libhamlib-dev build-essential pkg-config qt6-base-dev qtkeychain-qt6-dev qt6-webengine-dev libqt6charts6-dev libqt6serialport6 libqt6webenginecore6-bin libqt6svg6-dev libgl-dev libqt6websockets6-dev qt6-serialport-dev libsqlite3-dev libssl-dev`
 
 for Fedora:
 
-`dnf install qt5-qtbase-devel qt5-qtwebengine-devel qt5-qtcharts-devel hamlib-devel qtkeychain-qt5-devel qt5-qtserialport-devel pkg-config qt5-qtwebsockets-devel libsqlite3x-devel`
+`dnf install qt5-qtbase-devel qt5-qtwebengine-devel qt5-qtcharts-devel hamlib-devel qtkeychain-qt5-devel qt5-qtserialport-devel pkg-config qt5-qtwebsockets-devel libsqlite3x-devel openssl-devel`
 
 for both:
 

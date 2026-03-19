@@ -1,3 +1,11 @@
+qlog (0.49.1-1) UNRELEASED; urgency=low
+  * Fixed Online Map OSM Access Blocked banner (issue #956)
+  * Fixed Package build process issue - openssl-dev is missing (issue #957)
+  * Fixed Missing dependence for QTKeychain (issue #964)
+  * Added French Translation (PR #969 thx @fillods)
+
+ -- foldynl <foldyna@gmail.com>  Thu, 19 Mar 2026 12:18:46 +0100
+
 qlog (0.49.0-1) UNRELEASED; urgency=low
   * [NEW] - Added Pack and Unpack Data and Setting - Computer to Computer Migration (issue #535)
   * [NEW] - Added Rig Sharing via Rigctld (PR #736 issue #159 @aa5sh @foldynl)
