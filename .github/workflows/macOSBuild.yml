@@ -45,7 +45,7 @@ jobs:
 
      - name: Configure and compile
        run: |
-         mkdir build
+         mkdir -p build
          cd build
          qmake -config release ..
          make -j4
