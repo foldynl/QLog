@@ -357,6 +357,18 @@ public:
     static void setSourcePlatform(const QString &platform);
     static void removeSourcePlatform();
 
+    /**********************
+     * ADIF File Monitor
+     **********************/
+    static bool getADIFMonitorEnabled(int slot);
+    static void setADIFMonitorEnabled(int slot, bool enabled);
+    static QString getADIFMonitorPath(int slot);
+    static void setADIFMonitorPath(int slot, const QString &path);
+    static int getADIFMonitorFrequency(int slot);
+    static void setADIFMonitorFrequency(int slot, int frequency);
+    static QString getADIFMonitorProfile(int slot);
+    static void setADIFMonitorProfile(int slot, const QString &profile);
+
     /**************
      * Main Window
      *************/

@@ -4668,6 +4668,279 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="adifMonitorGroupBox">
+         <property name="title">
+          <string>ADIF File Monitor</string>
+         </property>
+         <layout class="QGridLayout" name="adifMonitorGridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="adifMonitorHeaderEnabledLabel">
+            <property name="text">
+             <string>Enabled</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="adifMonitorHeaderFileLabel">
+            <property name="text">
+             <string>File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="adifMonitorHeaderWhenLabel">
+            <property name="text">
+             <string>When</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="adifMonitorHeaderProfileLabel">
+            <property name="text">
+             <string>Station Profile</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="adifMonitorEnabled0">
+            <property name="toolTip">
+             <string>Enable monitoring of this ADIF file</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="adifMonitorPath0">
+            <property name="toolTip">
+             <string>Path to the ADIF file to monitor and import</string>
+            </property>
+            <property name="placeholderText">
+             <string>Select ADIF file...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="adifMonitorBrowse0">
+            <property name="toolTip">
+             <string>Browse for ADIF file</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QComboBox" name="adifMonitorFrequency0">
+            <property name="toolTip">
+             <string>When to import this file</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Disabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Startup</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shutdown</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QComboBox" name="adifMonitorProfile0">
+            <property name="toolTip">
+             <string>Default station profile to apply when importing (used when the ADIF record does not contain station data)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="adifMonitorEnabled1">
+            <property name="toolTip">
+             <string>Enable monitoring of this ADIF file</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="adifMonitorPath1">
+            <property name="toolTip">
+             <string>Path to the ADIF file to monitor and import</string>
+            </property>
+            <property name="placeholderText">
+             <string>Select ADIF file...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QToolButton" name="adifMonitorBrowse1">
+            <property name="toolTip">
+             <string>Browse for ADIF file</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QComboBox" name="adifMonitorFrequency1">
+            <property name="toolTip">
+             <string>When to import this file</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Disabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Startup</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shutdown</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="4">
+           <widget class="QComboBox" name="adifMonitorProfile1">
+            <property name="toolTip">
+             <string>Default station profile to apply when importing (used when the ADIF record does not contain station data)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="adifMonitorEnabled2">
+            <property name="toolTip">
+             <string>Enable monitoring of this ADIF file</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="adifMonitorPath2">
+            <property name="toolTip">
+             <string>Path to the ADIF file to monitor and import</string>
+            </property>
+            <property name="placeholderText">
+             <string>Select ADIF file...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QToolButton" name="adifMonitorBrowse2">
+            <property name="toolTip">
+             <string>Browse for ADIF file</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QComboBox" name="adifMonitorFrequency2">
+            <property name="toolTip">
+             <string>When to import this file</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Disabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Startup</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shutdown</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="4">
+           <widget class="QComboBox" name="adifMonitorProfile2">
+            <property name="toolTip">
+             <string>Default station profile to apply when importing (used when the ADIF record does not contain station data)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="adifMonitorEnabled3">
+            <property name="toolTip">
+             <string>Enable monitoring of this ADIF file</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="adifMonitorPath3">
+            <property name="toolTip">
+             <string>Path to the ADIF file to monitor and import</string>
+            </property>
+            <property name="placeholderText">
+             <string>Select ADIF file...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QToolButton" name="adifMonitorBrowse3">
+            <property name="toolTip">
+             <string>Browse for ADIF file</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QComboBox" name="adifMonitorFrequency3">
+            <property name="toolTip">
+             <string>When to import this file</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Disabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Startup</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shutdown</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="4" column="4">
+           <widget class="QComboBox" name="adifMonitorProfile3">
+            <property name="toolTip">
+             <string>Default station profile to apply when importing (used when the ADIF record does not contain station data)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

@@ -118,6 +118,10 @@ public slots:
     void assignedKeyChanged(int);
     void testWebLookupURL();
     void joinMulticastChanged(int);
+    void adifMonitorBrowse0();
+    void adifMonitorBrowse1();
+    void adifMonitorBrowse2();
+    void adifMonitorBrowse3();
     void adjustWSJTXMulticastAddrTextColor();
     void hrdlogSettingChanged();
     void clublogSettingChanged();

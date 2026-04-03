@@ -1247,6 +1247,46 @@ void LogParam::removeMainWindowBandmapWidgets()
     removeParamGroup("mainwindow/bandmapwidgets");
 }
 
+bool LogParam::getADIFMonitorEnabled(int slot)
+{
+    return getParam(QString("adifmonitor/slot%1/enabled").arg(slot), false).toBool();
+}
+
+void LogParam::setADIFMonitorEnabled(int slot, bool enabled)
+{
+    setParam(QString("adifmonitor/slot%1/enabled").arg(slot), enabled);
+}
+
+QString LogParam::getADIFMonitorPath(int slot)
+{
+    return getParam(QString("adifmonitor/slot%1/path").arg(slot)).toString();
+}
+
+void LogParam::setADIFMonitorPath(int slot, const QString &path)
+{
+    setParam(QString("adifmonitor/slot%1/path").arg(slot), path);
+}
+
+int LogParam::getADIFMonitorFrequency(int slot)
+{
+    return getParam(QString("adifmonitor/slot%1/frequency").arg(slot), 0).toInt();
+}
+
+void LogParam::setADIFMonitorFrequency(int slot, int frequency)
+{
+    setParam(QString("adifmonitor/slot%1/frequency").arg(slot), frequency);
+}
+
+QString LogParam::getADIFMonitorProfile(int slot)
+{
+    return getParam(QString("adifmonitor/slot%1/profile").arg(slot)).toString();
+}
+
+void LogParam::setADIFMonitorProfile(int slot, const QString &profile)
+{
+    setParam(QString("adifmonitor/slot%1/profile").arg(slot), profile);
+}
+
 bool LogParam::setParam(const QString &name, const QVariant &value)
 {
     FCT_IDENTIFICATION;

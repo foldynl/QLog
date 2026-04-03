@@ -55,6 +55,7 @@ CONFIG += c++11 force_debug_info
 CONFIG *= link_pkgconfig
 
 SOURCES += \
+        core/ADIFFileMonitor.cpp \
         core/AlertEvaluator.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
@@ -202,6 +203,7 @@ SOURCES += \
         ui/component/SwitchButton.cpp
 
 HEADERS += \
+        core/ADIFFileMonitor.h \
         core/AlertEvaluator.h \
         core/AppGuard.h \
         core/CallbookManager.h \

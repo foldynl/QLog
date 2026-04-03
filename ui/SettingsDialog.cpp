@@ -40,6 +40,7 @@
 #include "service/cloudlog/Cloudlog.h"
 #include "ui/RigctldAdvancedDialog.h"
 #include "cwkey/drivers/CWWinKey.h"
+#include "core/ADIFFileMonitor.h"
 
 #define STACKED_WIDGET_SERIAL_SETTING  0
 #define STACKED_WIDGET_NETWORK_SETTING 1
@@ -328,6 +329,29 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     joinMulticastChanged(false);
 
     generateMembershipCheckboxes();
+
+    /**********************/
+    /* ADIF File Monitor  */
+    /**********************/
+    {
+        const QStringList profiles = stationProfManager->profileNameList();
+        const QList<QComboBox*> profileCombos = {
+            ui->adifMonitorProfile0,
+            ui->adifMonitorProfile1,
+            ui->adifMonitorProfile2,
+            ui->adifMonitorProfile3
+        };
+        for ( QComboBox *combo : profileCombos )
+        {
+            combo->addItem(tr("(none)"), QString());
+            for ( const QString &p : profiles )
+                combo->addItem(p, p);
+        }
+        connect(ui->adifMonitorBrowse0, &QToolButton::clicked, this, &SettingsDialog::adifMonitorBrowse0);
+        connect(ui->adifMonitorBrowse1, &QToolButton::clicked, this, &SettingsDialog::adifMonitorBrowse1);
+        connect(ui->adifMonitorBrowse2, &QToolButton::clicked, this, &SettingsDialog::adifMonitorBrowse2);
+        connect(ui->adifMonitorBrowse3, &QToolButton::clicked, this, &SettingsDialog::adifMonitorBrowse3);
+    }
 
     readSettings();
 }
@@ -2622,6 +2646,26 @@ void SettingsDialog::readSettings()
     ui->notifSpotAlertEdit->setText(NetworkNotification::getNotifSpotAlertAddrs());
     ui->notifRigEdit->setText(NetworkNotification::getNotifRigStateAddrs());
 
+    /**********************/
+    /* ADIF File Monitor  */
+    /**********************/
+    {
+        const QList<QCheckBox*>  enabledChecks = { ui->adifMonitorEnabled0, ui->adifMonitorEnabled1, ui->adifMonitorEnabled2, ui->adifMonitorEnabled3 };
+        const QList<QLineEdit*>  pathEdits     = { ui->adifMonitorPath0,    ui->adifMonitorPath1,    ui->adifMonitorPath2,    ui->adifMonitorPath3    };
+        const QList<QComboBox*>  freqCombos    = { ui->adifMonitorFrequency0, ui->adifMonitorFrequency1, ui->adifMonitorFrequency2, ui->adifMonitorFrequency3 };
+        const QList<QComboBox*>  profCombos    = { ui->adifMonitorProfile0, ui->adifMonitorProfile1, ui->adifMonitorProfile2, ui->adifMonitorProfile3 };
+
+        for ( int i = 0; i < ADIFFileMonitor::MAX_SLOTS; ++i )
+        {
+            enabledChecks[i]->setChecked(LogParam::getADIFMonitorEnabled(i));
+            pathEdits[i]->setText(LogParam::getADIFMonitorPath(i));
+            freqCombos[i]->setCurrentIndex(LogParam::getADIFMonitorFrequency(i));
+            const QString savedProfile = LogParam::getADIFMonitorProfile(i);
+            const int profileIdx = profCombos[i]->findData(savedProfile);
+            profCombos[i]->setCurrentIndex(profileIdx >= 0 ? profileIdx : 0);
+        }
+    }
+
     /*******/
     /* GUI */
     /*******/
@@ -2752,6 +2796,24 @@ void SettingsDialog::writeSettings()
     NetworkNotification::saveNotifWSJTXCQSpotAddrs(ui->notifWSJTXCQSpotsEdit->text());
     NetworkNotification::saveNotifSpotAlertAddrs(ui->notifSpotAlertEdit->text());
     NetworkNotification::saveNotifRigStateAddrs(ui->notifRigEdit->text());
+
+    /**********************/
+    /* ADIF File Monitor  */
+    /**********************/
+    {
+        const QList<QCheckBox*>  enabledChecks = { ui->adifMonitorEnabled0, ui->adifMonitorEnabled1, ui->adifMonitorEnabled2, ui->adifMonitorEnabled3 };
+        const QList<QLineEdit*>  pathEdits     = { ui->adifMonitorPath0,    ui->adifMonitorPath1,    ui->adifMonitorPath2,    ui->adifMonitorPath3    };
+        const QList<QComboBox*>  freqCombos    = { ui->adifMonitorFrequency0, ui->adifMonitorFrequency1, ui->adifMonitorFrequency2, ui->adifMonitorFrequency3 };
+        const QList<QComboBox*>  profCombos    = { ui->adifMonitorProfile0, ui->adifMonitorProfile1, ui->adifMonitorProfile2, ui->adifMonitorProfile3 };
+
+        for ( int i = 0; i < ADIFFileMonitor::MAX_SLOTS; ++i )
+        {
+            LogParam::setADIFMonitorEnabled(i, enabledChecks[i]->isChecked());
+            LogParam::setADIFMonitorPath(i, pathEdits[i]->text());
+            LogParam::setADIFMonitorFrequency(i, freqCombos[i]->currentIndex());
+            LogParam::setADIFMonitorProfile(i, profCombos[i]->currentData().toString());
+        }
+    }
 
     /*******/
     /* GUI */
@@ -3063,6 +3125,46 @@ void SettingsDialog::updateCountyCompleter(int dxcc)
         return;
     countyCompleter = Data::createCountyCompleter(dxcc, this);
     ui->stationCountyEdit->setCompleter(countyCompleter);
+}
+
+void SettingsDialog::adifMonitorBrowse0()
+{
+    FCT_IDENTIFICATION;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Select ADIF File"),
+                                                    QDir::homePath(),
+                                                    tr("ADIF Files (*.adi *.ADI)"));
+    if ( !filename.isEmpty() )
+        ui->adifMonitorPath0->setText(filename);
+}
+
+void SettingsDialog::adifMonitorBrowse1()
+{
+    FCT_IDENTIFICATION;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Select ADIF File"),
+                                                    QDir::homePath(),
+                                                    tr("ADIF Files (*.adi *.ADI)"));
+    if ( !filename.isEmpty() )
+        ui->adifMonitorPath1->setText(filename);
+}
+
+void SettingsDialog::adifMonitorBrowse2()
+{
+    FCT_IDENTIFICATION;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Select ADIF File"),
+                                                    QDir::homePath(),
+                                                    tr("ADIF Files (*.adi *.ADI)"));
+    if ( !filename.isEmpty() )
+        ui->adifMonitorPath2->setText(filename);
+}
+
+void SettingsDialog::adifMonitorBrowse3()
+{
+    FCT_IDENTIFICATION;
+    QString filename = QFileDialog::getOpenFileName(this, tr("Select ADIF File"),
+                                                    QDir::homePath(),
+                                                    tr("ADIF Files (*.adi *.ADI)"));
+    if ( !filename.isEmpty() )
+        ui->adifMonitorPath3->setText(filename);
 }
 
 SettingsDialog::~SettingsDialog() {

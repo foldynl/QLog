@@ -461,6 +461,11 @@ MainWindow::MainWindow(QWidget* parent) :
     //restoreConnectionStates();
 
     setupActivitiesMenu();
+
+    /************************/
+    /* ADIF File Monitor    */
+    /************************/
+    adifMonitor.runStartupImports();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -511,6 +516,11 @@ void MainWindow::closeEvent(QCloseEvent* event)
         qCDebug(runtime) << "Removing orphan configuration" << orphanConfig;
         LogParam::removeBandmapWidgetGroup(orphanConfig);
     }
+
+    /****************************/
+    /* ADIF File Monitor        */
+    /****************************/
+    adifMonitor.runShutdownImports();
 
     // Save unsaved widget states
     const auto allWidgets = findChildren<QWidget *>();

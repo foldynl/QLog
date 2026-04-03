@@ -6,6 +6,7 @@
 #include <QActionGroup>
 #include "ui/StatisticsWidget.h"
 #include "core/NetworkNotification.h"
+#include "core/ADIFFileMonitor.h"
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"
 #include "service/clublog/ClubLog.h"
@@ -109,6 +110,7 @@ private:
     QPushButton *themeButton;
     StatisticsWidget* stats;
     NetworkNotification networknotification;
+    ADIFFileMonitor adifMonitor;
     AlertEvaluator alertEvaluator;
     PropConditions *conditions;
     bool isFusionStyle;
