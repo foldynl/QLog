@@ -276,7 +276,7 @@ static QSqlRecord buildDummyRecord()
     QSqlRecord r;
     for (const QString &c : cols)
     {
-        QSqlField f(c, QMetaType::fromType<QString>());
+        QSqlField f(c, QVariant::String);
         r.append(f);
     }
     r.setValue("callsign",         QStringLiteral("W1AW"));
