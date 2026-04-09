@@ -5224,6 +5224,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="emailQSLTab">
+      <attribute name="title">
+       <string>Email QSL</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="emailQSLTabLayout">
+       <item>
+        <widget class="EmailQSLSettingsWidget" name="emailQSLSettingsWidget"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -5238,6 +5248,11 @@
    <class>SerialPortEditLine</class>
    <extends>QLineEdit</extends>
    <header>ui/component/EditLine.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EmailQSLSettingsWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/EmailQSLSettingsWidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

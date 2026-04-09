@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EmailQSLSettingsWidget</class>
+ <widget class="QWidget" name="EmailQSLSettingsWidget">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>820</width><height>720</height></rect>
+  </property>
+  <property name="windowTitle"><string>Email QSL Settings</string></property>
+  <layout class="QVBoxLayout" name="mainLayout">
+
+   <item>
+    <widget class="QLabel" name="infoLabel">
+     <property name="text">
+      <string>Configure Email QSL card sending.  Use {FIELD} placeholders in subject, body and card overlays.</string>
+     </property>
+     <property name="wordWrap"><bool>true</bool></property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+
+     <!-- ================================================================ -->
+     <!-- TAB 1 — SMTP Server                                              -->
+     <!-- ================================================================ -->
+     <widget class="QWidget" name="smtpTab">
+      <attribute name="title"><string>SMTP Server</string></attribute>
+      <layout class="QVBoxLayout" name="smtpTabLayout">
+
+       <item>
+        <widget class="QGroupBox" name="presetGroup">
+         <property name="title"><string>Quick Presets</string></property>
+         <layout class="QHBoxLayout">
+          <item>
+           <widget class="QLabel" name="presetLabel">
+            <property name="text"><string>Provider preset:</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="smtpPresetCombo">
+            <property name="toolTip">
+             <string>Select a preset to auto-fill host, port and encryption.
+
+Gmail: enable 2-FA, then create an App Password at myaccount.google.com → Security → App Passwords. Use the 16-character app password (not your Google password).
+Outlook / Hotmail / Microsoft 365: use your Microsoft account email and password. If MFA is enabled generate an App Password at account.microsoft.com → Security.
+Yahoo Mail: go to Account Security and generate an App Password.
+iCloud Mail: generate an App-Specific Password at appleid.apple.com → Sign-In and Security.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation"><enum>Qt::Horizontal</enum></property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QGroupBox" name="serverGroup">
+         <property name="title"><string>Server</string></property>
+         <layout class="QFormLayout">
+          <item row="0" column="0">
+           <widget class="QLabel"><property name="text"><string>SMTP host:</string></property></widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="smtpHostEdit">
+            <property name="placeholderText"><string>e.g. smtp.gmail.com</string></property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel"><property name="text"><string>Port:</string></property></widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="smtpPortSpin">
+            <property name="minimum"><number>1</number></property>
+            <property name="maximum"><number>65535</number></property>
+            <property name="value"><number>587</number></property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel"><property name="text"><string>Encryption:</string></property></widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="encryptionCombo">
+            <item><property name="text"><string>None</string></property></item>
+            <item><property name="text"><string>SSL/TLS (implicit, port 465)</string></property></item>
+            <item><property name="text"><string>STARTTLS (explicit, port 587)</string></property></item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QGroupBox" name="authGroup">
+         <property name="title"><string>Authentication</string></property>
+         <layout class="QFormLayout">
+          <item row="0" column="0">
+           <widget class="QLabel"><property name="text"><string>Username:</string></property></widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="smtpUsernameEdit">
+            <property name="placeholderText"><string>your.address@gmail.com</string></property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel"><property name="text"><string>Password / App password:</string></property></widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="smtpPasswordEdit">
+            <property name="echoMode"><enum>QLineEdit::Password</enum></property>
+            <property name="placeholderText"><string>App password recommended (16 chars for Gmail)</string></property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel"><property name="text"><string>From address:</string></property></widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="fromAddressEdit">
+            <property name="placeholderText"><string>your.address@gmail.com</string></property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel"><property name="text"><string>From display name:</string></property></widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="fromNameEdit">
+            <property name="placeholderText"><string>AA5SH Amateur Radio</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QPushButton" name="testConnectionButton">
+           <property name="text"><string>Test Connection</string></property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="testResultLabel">
+           <property name="text"><string/></property>
+          </widget>
+         </item>
+         <item>
+          <spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer>
+         </item>
+        </layout>
+       </item>
+
+       <item>
+        <spacer><property name="orientation"><enum>Qt::Vertical</enum></property></spacer>
+       </item>
+
+      </layout>
+     </widget>
+
+     <!-- ================================================================ -->
+     <!-- TAB 2 — Card Image & Overlays                                   -->
+     <!-- ================================================================ -->
+     <widget class="QWidget" name="cardTab">
+      <attribute name="title"><string>Card Image &amp; Overlays</string></attribute>
+      <layout class="QVBoxLayout" name="cardTabLayout">
+
+       <!-- Image path row -->
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QLabel"><property name="text"><string>Card image:</string></property></widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="cardImagePathEdit">
+           <property name="placeholderText"><string>Path to base QSL card image (JPEG or PNG)</string></property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="browseCardImageButton">
+           <property name="text"><string>Browse…</string></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+
+       <!-- Interactive card editor (takes most of the vertical space) -->
+       <item>
+        <widget class="CardEditorWidget" name="cardEditorWidget">
+         <property name="minimumSize">
+          <size><width>300</width><height>220</height></size>
+         </property>
+         <property name="toolTip">
+          <string>Click an overlay to select it. Drag to reposition it on the card.</string>
+         </property>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QLabel" name="editorHintLabel">
+         <property name="text">
+          <string>Click to select · Drag to move · BOX: drag bottom-right handle to resize.</string>
+         </property>
+         <property name="styleSheet"><string>QLabel { color: #555; font-style: italic; }</string></property>
+        </widget>
+       </item>
+
+       <!-- Overlay table -->
+       <item>
+        <widget class="QGroupBox" name="overlayGroup">
+         <property name="title"><string>Overlays</string></property>
+         <layout class="QVBoxLayout">
+          <item>
+           <widget class="QTableView" name="overlayTableView">
+            <property name="maximumSize"><size><width>16777215</width><height>170</height></size></property>
+            <property name="selectionMode"><enum>QAbstractItemView::SingleSelection</enum></property>
+            <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::DoubleClicked|QAbstractItemView::SelectedClicked|QAbstractItemView::EditKeyPressed</set>
+            </property>
+            <property name="alternatingRowColors"><bool>true</bool></property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout">
+            <item>
+             <widget class="QPushButton" name="addOverlayButton">
+              <property name="text"><string>Add Text</string></property>
+              <property name="toolTip"><string>Add a merge-field text overlay</string></property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="addBoxButton">
+              <property name="text"><string>Add Box</string></property>
+              <property name="toolTip"><string>Add a filled rounded rectangle (like the yellow boxes on traditional QSL cards)</string></property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="addLabelButton">
+              <property name="text"><string>Add Static Text</string></property>
+              <property name="toolTip"><string>Add a free-form text label (literal text, not a merge field)</string></property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="addDefaultFieldsButton">
+              <property name="text"><string>Default QSL Fields</string></property>
+              <property name="toolTip">
+               <string>Insert a pre-built set of text overlays (callsign, date, time, band, mode, RST, name, grid) positioned across the lower area of the card.</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="removeOverlayButton">
+              <property name="text"><string>Remove</string></property>
+              <property name="enabled"><bool>false</bool></property>
+             </widget>
+            </item>
+            <item>
+             <spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="previewCardButton">
+              <property name="text"><string>Full-Size Preview…</string></property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="overlayHintLabel">
+            <property name="text">
+             <string>TEXT: Field=merge key.  BOX: Field=optional caption, drag corner to resize.  LABEL: Field=literal text printed as-is.  Double-click Color/Fill to pick color.</string>
+            </property>
+            <property name="wordWrap"><bool>true</bool></property>
+            <property name="styleSheet"><string>QLabel { color: #555; }</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+      </layout>
+     </widget>
+
+     <!-- ================================================================ -->
+     <!-- TAB 3 — Email Template                                          -->
+     <!-- ================================================================ -->
+     <widget class="QWidget" name="templateTab">
+      <attribute name="title"><string>Email Template</string></attribute>
+      <layout class="QVBoxLayout" name="templateTabLayout">
+
+       <item>
+        <widget class="QGroupBox" name="subjectGroup">
+         <property name="title"><string>Subject Line</string></property>
+         <layout class="QHBoxLayout">
+          <item>
+           <widget class="QLineEdit" name="subjectTemplateEdit">
+            <property name="placeholderText"><string>QSL Card from {MY_CALLSIGN} for our QSO on {QSO_DATE}</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="subjectFieldCombo">
+            <property name="toolTip"><string>Choose a merge field to insert</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="insertSubjectFieldButton">
+            <property name="text"><string>Insert</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QGroupBox" name="bodyGroup">
+         <property name="title"><string>Email Body</string></property>
+         <layout class="QVBoxLayout">
+          <item>
+           <layout class="QHBoxLayout">
+            <item>
+             <widget class="QLabel"><property name="text"><string>Insert field:</string></property></widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="bodyFieldCombo">
+              <property name="toolTip"><string>Choose a merge field to insert at the cursor</string></property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="insertBodyFieldButton">
+              <property name="text"><string>Insert</string></property>
+             </widget>
+            </item>
+            <item>
+             <spacer><property name="orientation"><enum>Qt::Horizontal</enum></property></spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="bodyTemplateEdit">
+            <property name="minimumSize"><size><width>0</width><height>180</height></size></property>
+            <property name="placeholderText"><string>Enter email body here.  Use {FIELD} placeholders.</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QGroupBox" name="mergeRefGroup">
+         <property name="title"><string>Available Merge Fields</string></property>
+         <layout class="QVBoxLayout">
+          <item>
+           <widget class="QTableWidget" name="mergeFieldRefTable">
+            <property name="maximumSize"><size><width>16777215</width><height>150</height></size></property>
+            <property name="columnCount"><number>2</number></property>
+            <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+            <property name="selectionMode"><enum>QAbstractItemView::NoSelection</enum></property>
+            <column><property name="text"><string>Placeholder</string></property></column>
+            <column><property name="text"><string>Description</string></property></column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+      </layout>
+     </widget>
+
+    </widget><!-- tabWidget -->
+   </item>
+
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CardEditorWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/component/CardEditorWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
