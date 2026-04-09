@@ -681,6 +681,38 @@ void EmailQSLSettingsWidget::onCardImageChanged(const QString &path)
     FCT_IDENTIFICATION;
 
     QPixmap pm(path);
+
+    // If there are existing overlays and a previous image, rescale all stored
+    // pixel values (positions, font sizes, box dimensions) proportionally so
+    // the layout stays in the same visual position on the new image.
+    const QPixmap &prev = ui->cardEditorWidget->image();
+    if (!prev.isNull() && !pm.isNull()
+        && prev.size() != pm.size())
+    {
+        overlayTableToList(); // make sure m_overlays is current
+
+        if (!m_overlays.isEmpty())
+        {
+            const double sx = static_cast<double>(pm.width())  / prev.width();
+            const double sy = static_cast<double>(pm.height()) / prev.height();
+
+            for (EmailQSLFieldOverlay &ov : m_overlays)
+            {
+                ov.x        = qRound(ov.x * sx);
+                ov.y        = qRound(ov.y * sy);
+                // Font size tracks horizontal scale (same axis as card width)
+                ov.fontSize = qMax(1, qRound(ov.fontSize * sx));
+                if (ov.type == QLatin1String("BOX"))
+                {
+                    ov.width  = qMax(20, qRound(ov.width  * sx));
+                    ov.height = qMax(10, qRound(ov.height * sy));
+                }
+            }
+
+            listToOverlayTable();
+        }
+    }
+
     ui->cardEditorWidget->setImage(pm);
 }
 
@@ -772,70 +804,82 @@ void EmailQSLSettingsWidget::addDefaultOverlays()
     FCT_IDENTIFICATION;
 
     const QPixmap &img = ui->cardEditorWidget->image();
-    const int W = img.isNull() ? 1000 : img.width();
-    const int H = img.isNull() ? 700  : img.height();
+    const int W = img.isNull() ? 1280 : img.width();
+    const int H = img.isNull() ? 896  : img.height();
+
+    // Font sizes are designed for a 1280-px-wide reference card and scaled
+    // linearly to the actual image width so they always look proportional.
+    // The same scale is applied to horizontal positions; vertical positions
+    // use the image height fraction directly.
+    static constexpr double REF_W = 1280.0;
+    const double fs = W / REF_W;          // font scale (also used for x/horizontal)
+
+    auto scalePt = [&](int refPt) { return qMax(1, qRound(refPt * fs)); };
 
     // Helper lambda to make a LABEL (static text) overlay
-    auto makeLabel = [](const QString &text, int x, int y, int fontSize, bool bold,
-                        const QString &color = QStringLiteral("#333333")) -> EmailQSLFieldOverlay
+    auto makeLabel = [&](const QString &text, int x, int y, int refFontPt, bool bold,
+                         const QString &color = QStringLiteral("#333333")) -> EmailQSLFieldOverlay
     {
         EmailQSLFieldOverlay ov;
         ov.type       = QStringLiteral("LABEL");
         ov.fieldName  = text;
         ov.x          = x;
         ov.y          = y;
-        ov.fontSize   = fontSize;
+        ov.fontSize   = scalePt(refFontPt);
         ov.bold       = bold;
         ov.fontFamily = QStringLiteral("Arial");
         ov.color      = color;
         return ov;
     };
 
-    // Positions expressed as fractions of card dimensions.
-    // Each data field is preceded by a static label one line above it.
-    const int labelSz = 9;
-    const int dataSz  = 14;
-    const int labelOffY = qRound(H * 0.04); // label sits this many px above the data row
+    // Reference font sizes at 1280 px width
+    const int refCallsignPt = 80;   // MY_CALLSIGN prominent header
+    const int refDxCallPt   = 40;   // DX station callsign
+    const int refDataPt     = 20;   // QSO data values
+    const int refLabelPt    = 12;   // small caption labels above each field
+
+    // Positions as fractions of card dimensions — same as before
+    const int labelOffY = qRound(H * 0.045);
 
     const int rowName = qRound(H * 0.60);
     const int rowCall = qRound(H * 0.72);
-    const int rowData = qRound(H * 0.82);
+    const int rowData = qRound(H * 0.84);
 
-    const int col1 = qRound(W * 0.08);
-    const int col2 = qRound(W * 0.35);
-    const int col3 = qRound(W * 0.55);
-    const int col4 = qRound(W * 0.68);
-    const int col5 = qRound(W * 0.80);
-    const int col6 = qRound(W * 0.90);
+    const int col1    = qRound(W * 0.08);
+    const int col2    = qRound(W * 0.35);
+    const int col3    = qRound(W * 0.55);
+    const int col4    = qRound(W * 0.68);
+    const int col5    = qRound(W * 0.80);
+    const int col6    = qRound(W * 0.90);
     const int colGrid = qRound(W * 0.40);
 
     const QList<EmailQSLFieldOverlay> defaults = {
         // My callsign centred near top — no label needed
-        makeOverlay("MY_CALLSIGN", qRound(W * 0.50), qRound(H * 0.18), 28, true),
+        makeOverlay("MY_CALLSIGN", qRound(W * 0.50), qRound(H * 0.18), scalePt(refCallsignPt), true),
 
         // Name row
-        makeLabel(tr("Name:"),         col1, rowName - labelOffY, labelSz, false),
-        makeOverlay("NAME",            col1, rowName,              dataSz,  false),
+        makeLabel(tr("Name:"),         col1, rowName - labelOffY, refLabelPt, false),
+        makeOverlay("NAME",            col1, rowName,              scalePt(refDataPt),   false),
 
         // Callsign + grid row
-        makeLabel(tr("Callsign:"),     col1, rowCall - labelOffY, labelSz, false),
-        makeOverlay("CALLSIGN",        col1, rowCall,              dataSz,  true),
-        makeLabel(tr("Grid:"),         colGrid, rowCall - labelOffY, labelSz, false),
-        makeOverlay("GRIDSQUARE",      colGrid, rowCall,              dataSz,  false),
+        makeLabel(tr("Callsign:"),     col1, rowCall - labelOffY, refLabelPt, false),
+        makeOverlay("CALLSIGN",        col1, rowCall,              scalePt(refDxCallPt), true),
+        makeLabel(tr("Grid:"),         colGrid, rowCall - labelOffY, refLabelPt, false),
+        makeOverlay("GRIDSQUARE",      colGrid, rowCall,              scalePt(refDataPt), false),
 
-        // QSO detail row: Date / Time / Band / Mode / RST S / RST R
-        makeLabel(tr("Date:"),         col1, rowData - labelOffY, labelSz, false),
-        makeOverlay("QSO_DATE",        col1, rowData,              dataSz,  false),
-        makeLabel(tr("Time (UTC):"),   col2, rowData - labelOffY, labelSz, false),
-        makeOverlay("TIME_ON",         col2, rowData,              dataSz,  false),
-        makeLabel(tr("Band:"),         col3, rowData - labelOffY, labelSz, false),
-        makeOverlay("BAND",            col3, rowData,              dataSz,  false),
-        makeLabel(tr("Mode:"),         col4, rowData - labelOffY, labelSz, false),
-        makeOverlay("MODE",            col4, rowData,              dataSz,  false),
-        makeLabel(tr("RST Snt:"),      col5, rowData - labelOffY, labelSz, false),
-        makeOverlay("RST_SENT",        col5, rowData,              dataSz,  false),
-        makeLabel(tr("RST Rcvd:"),     col6, rowData - labelOffY, labelSz, false),
-        makeOverlay("RST_RCVD",        col6, rowData,              dataSz,  false),
+        // QSO detail row
+        makeLabel(tr("Date:"),         col1, rowData - labelOffY, refLabelPt, false),
+        makeOverlay("QSO_DATE",        col1, rowData,              scalePt(refDataPt),  false),
+        makeLabel(tr("Time (UTC):"),   col2, rowData - labelOffY, refLabelPt, false),
+        makeOverlay("TIME_ON",         col2, rowData,              scalePt(refDataPt),  false),
+        makeLabel(tr("Band:"),         col3, rowData - labelOffY, refLabelPt, false),
+        makeOverlay("BAND",            col3, rowData,              scalePt(refDataPt),  false),
+        makeLabel(tr("Mode:"),         col4, rowData - labelOffY, refLabelPt, false),
+        makeOverlay("MODE",            col4, rowData,              scalePt(refDataPt),  false),
+        makeLabel(tr("RST Snt:"),      col5, rowData - labelOffY, refLabelPt, false),
+        makeOverlay("RST_SENT",        col5, rowData,              scalePt(refDataPt),  false),
+        makeLabel(tr("RST Rcvd:"),     col6, rowData - labelOffY, refLabelPt, false),
+        makeOverlay("RST_RCVD",        col6, rowData,              scalePt(refDataPt),  false),
     };
 
     overlayTableToList();

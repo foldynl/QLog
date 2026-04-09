@@ -423,6 +423,11 @@ QPixmap EmailQSLBase::renderCard(const QString &imagePath,
         return QPixmap();
     }
 
+    // Overlay x, y, fontSize and BOX width/height are all stored as absolute
+    // pixel values scaled to the source image dimensions.  No extra scaling is
+    // applied here — the values are used as-is.  addDefaultOverlays() and
+    // onCardImageChanged() are responsible for keeping them proportional whenever
+    // the background image changes.
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::TextAntialiasing);
@@ -438,7 +443,6 @@ QPixmap EmailQSLBase::renderCard(const QString &imagePath,
             painter.drawRoundedRect(ov.x, ov.y, ov.width, ov.height,
                                     ov.cornerRadius, ov.cornerRadius);
 
-            // Optional caption above the box
             if (!ov.fieldName.isEmpty())
             {
                 QFont font(ov.fontFamily, ov.fontSize > 0 ? ov.fontSize : 11);
@@ -452,7 +456,6 @@ QPixmap EmailQSLBase::renderCard(const QString &imagePath,
         }
         else if (ov.type == QLatin1String("LABEL"))
         {
-            // Render fieldName as literal static text (no merge substitution)
             if (ov.fieldName.isEmpty())
                 continue;
 
@@ -751,15 +754,23 @@ void EmailQSLService::sendEmailQSL(const QSqlRecord &record)
 {
     FCT_IDENTIFICATION;
 
-    // Render card
+    // Render card at full source resolution (fonts scale with image size)
     const QPixmap cardPixmap = EmailQSLBase::renderCard(record);
     QByteArray imageData;
     QString imageName;
     if (!cardPixmap.isNull())
     {
+        // Scale down to EMAIL_WIDTH for the attachment — keeps file size reasonable
+        // while still looking sharp on any screen.  The full-res pixmap is only
+        // used when the user explicitly saves via "Save Card…".
+        static constexpr int EMAIL_WIDTH = 1280;
+        const QPixmap emailPixmap = (cardPixmap.width() > EMAIL_WIDTH)
+            ? cardPixmap.scaledToWidth(EMAIL_WIDTH, Qt::SmoothTransformation)
+            : cardPixmap;
+
         QBuffer buf(&imageData);
         buf.open(QIODevice::WriteOnly);
-        cardPixmap.save(&buf, "JPEG", 90);
+        emailPixmap.save(&buf, "JPEG", 90);
         imageName = QStringLiteral("qsl_card.jpg");
     }
 
