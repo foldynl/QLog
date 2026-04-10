@@ -677,9 +677,9 @@ AdiFormat::AdiFormat(QTextStream &stream) :
     FCT_IDENTIFICATION;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
-    stream.setEncoding(QStringConverter::Latin1);
+    stream.setEncoding(QStringConverter::Utf8);
 #else
-    stream.setCodec("ISO 8859-1");
+    stream.setCodec("UTF-8");
 #endif
 }
 
