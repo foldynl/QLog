@@ -163,6 +163,8 @@ public:
     const QString dxccName(int dxcc) const {return dxccEntityStaticInfo.value(dxcc).value("name").toString();};
     int dxccITUZ(int dxcc) const {return dxccEntityStaticInfo.value(dxcc).value("ituz").toInt();};
     QPair<QString, QString> legacyMode(const QString &mode);
+    QStringList submodesForMode(const QString &mode) const;
+    bool isSubmodeForMode(const QString &mode, const QString &submode) const;
     QStringList satModeList() { return satModes.values();}
     QStringList satModesIDList() { return satModes.keys(); }
     QString satModeTextToID(const QString &satModeText) { return satModes.key(satModeText);}

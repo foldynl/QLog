@@ -212,7 +212,6 @@ public:
 
 private:
     static QMap<LogbookModel::ColumnID, QString> fieldNameTranslationMap;
-    bool submodeBelongsToMode(const QString &mode, const QString &submode) const;
     QVariant modeSubmodeData(int row, int role) const;
     void emitModeSubmodeChanged(int row);
 

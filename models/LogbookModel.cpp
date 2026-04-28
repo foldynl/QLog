@@ -5,9 +5,7 @@
 #include "data/Callsign.h"
 #include "data/BandPlan.h"
 
-#include <QJsonDocument>
 #include <QIcon>
-#include <QSqlQuery>
 #include <QVariantMap>
 
 LogbookModel::LogbookModel(QObject* parent, QSqlDatabase db)
@@ -72,25 +70,6 @@ QVariant LogbookModel::modeSubmodeData(int row, int role) const
         return tr("Mode: %1\nSubmode: %2").arg(mode, submode);
 
     return QVariant();
-}
-
-bool LogbookModel::submodeBelongsToMode(const QString &mode, const QString &submode) const
-{
-    if ( submode.isEmpty() )
-        return true;
-
-    if ( mode.isEmpty() )
-        return false;
-
-    QSqlQuery query(database());
-    query.prepare("SELECT submodes FROM modes WHERE name = :mode");
-    query.bindValue(":mode", mode);
-
-    if ( !query.exec() || !query.next() )
-        return false;
-
-    const QStringList submodes = QJsonDocument::fromJson(query.value(0).toString().toUtf8()).toVariant().toStringList();
-    return submodes.contains(submode);
 }
 
 void LogbookModel::emitModeSubmodeChanged(int row)
@@ -229,7 +208,7 @@ bool LogbookModel::setData(const QModelIndex &index, const QVariant &value, int 
         const QString newMode = modeSubmode.value("mode").toString();
         const QString newSubmode = modeSubmode.value("submode").toString();
 
-        if ( !submodeBelongsToMode(newMode, newSubmode) )
+        if ( !Data::instance()->isSubmodeForMode(newMode, newSubmode) )
             return false;
 
         // The merged editor represents two real ADIF fields. Always write both
@@ -335,7 +314,7 @@ bool LogbookModel::setData(const QModelIndex &index, const QVariant &value, int 
 
             // Mode defines the valid submode list. Direct mode edits must not
             // leave a stale submode that belongs to the previous mode.
-            if ( !submodeBelongsToMode(value.toString(), currentSubmode) )
+            if ( !Data::instance()->isSubmodeForMode(value.toString(), currentSubmode) )
                 depend_update_result = QSqlTableModel::setData(this->index(index.row(), COLUMN_SUBMODE), QVariant(), role);
 
             break;
@@ -344,7 +323,7 @@ bool LogbookModel::setData(const QModelIndex &index, const QVariant &value, int 
         case COLUMN_SUBMODE:
         {
             const QString currentMode = QSqlTableModel::data(this->index(index.row(), COLUMN_MODE), Qt::DisplayRole).toString();
-            depend_update_result = submodeBelongsToMode(currentMode, value.toString());
+            depend_update_result = Data::instance()->isSubmodeForMode(currentMode, value.toString());
             break;
         }
 

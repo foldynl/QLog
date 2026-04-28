@@ -11,7 +11,7 @@ class ModeSelectionController;
 class ModeSubmodeEditor : public QWidget
 {
 public:
-    explicit ModeSubmodeEditor(QWidget *parent = nullptr);
+    explicit ModeSubmodeEditor(bool showMode, QWidget *parent = nullptr);
 
     void setModeSubmode(const QString &mode, const QString &submode);
     QString mode() const;
@@ -27,6 +27,22 @@ class ModeSubmodeDelegate : public QStyledItemDelegate
 {
 public:
     explicit ModeSubmodeDelegate(QObject *parent = nullptr);
+
+    QWidget *createEditor(QWidget *parent,
+                          const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const override;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const override;
+    void setModelData(QWidget *editor, QAbstractItemModel *model,
+                      const QModelIndex &index) const override;
+    void updateEditorGeometry(QWidget *editor,
+                              const QStyleOptionViewItem &option,
+                              const QModelIndex &index) const override;
+};
+
+class SubmodeDelegate : public QStyledItemDelegate
+{
+public:
+    explicit SubmodeDelegate(QObject *parent = nullptr);
 
     QWidget *createEditor(QWidget *parent,
                           const QStyleOptionViewItem &option,
