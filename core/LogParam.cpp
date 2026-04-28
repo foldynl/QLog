@@ -1573,6 +1573,19 @@ void LogParam::setQslLabelMonoFont(const QString &family)
     setParam("qsllabel/mono_font", family);
 }
 
+QColor LogParam::getQslLabelTextColor()
+{
+    QColor color(getParam("qsllabel/text_color", QStringLiteral("#ff000000")).toString());
+
+    return color.isValid() ? color : QColor(Qt::black);
+}
+
+void LogParam::setQslLabelTextColor(const QColor &color)
+{
+    setParam("qsllabel/text_color",
+             color.isValid() ? color.name(QColor::HexArgb) : QColor(Qt::black).name(QColor::HexArgb));
+}
+
 QString LogParam::getQslLabelExtraColumn()
 {
     return getParam("qsllabel/extra_column", QString()).toString();

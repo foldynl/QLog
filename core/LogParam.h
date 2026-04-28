@@ -437,6 +437,8 @@ public:
     static void setQslLabelSansFont(const QString &family);
     static QString getQslLabelMonoFont();
     static void setQslLabelMonoFont(const QString &family);
+    static QColor getQslLabelTextColor();
+    static void setQslLabelTextColor(const QColor &color);
     static QString getQslLabelExtraColumn();
     static void setQslLabelExtraColumn(const QString &column);
     static QString getQslLabelExtraColumnHeader();

@@ -174,6 +174,8 @@ void QSLPrintLabelDialog::loadSettings()
     const QString savedMonoFont = LogParam::getQslLabelMonoFont();
     if ( !savedMonoFont.isEmpty() )
         ui->monoFontComboBox->setCurrentFont(QFont(savedMonoFont));
+    labelTextColor = LogParam::getQslLabelTextColor();
+    updateLabelTextColorUi();
 
     /* extraColumnComboBox is populated in constructor before loadSettings() is called */
     const QString savedExtraCol = LogParam::getQslLabelExtraColumn();
@@ -249,6 +251,7 @@ void QSLPrintLabelDialog::saveSettings()
     LogParam::setQslLabelDateFormat(ui->dateFormatEdit->text());
     LogParam::setQslLabelSansFont(ui->sansFontComboBox->currentFont().family());
     LogParam::setQslLabelMonoFont(ui->monoFontComboBox->currentFont().family());
+    LogParam::setQslLabelTextColor(labelTextColor);
     LogParam::setQslLabelExtraColumn(ui->extraColumnComboBox->currentData().toString());
     LogParam::setQslLabelExtraColumnHeader(ui->columnHeaderEdit->text());
     LogParam::setQslLabelToRadioText(ui->toRadioTextEdit->text());
@@ -398,6 +401,7 @@ LabelStyleOptions QSLPrintLabelDialog::buildStyleOptions() const
     LabelStyleOptions styleOpts;
     styleOpts.sansFontFamily = ui->sansFontComboBox->currentFont().family();
     styleOpts.monoFontFamily = ui->monoFontComboBox->currentFont().family();
+    styleOpts.textColor = labelTextColor;
     styleOpts.toRadioFontSize = ui->toRadioSizeSpinBox->value();
     styleOpts.callsignFontSize = ui->callsignSizeSpinBox->value();
     styleOpts.headerFontSize = ui->headerSizeSpinBox->value();
@@ -436,6 +440,13 @@ LabelStyleOptions QSLPrintLabelDialog::buildStyleOptions() const
     return styleOpts;
 }
 
+QString QSLPrintLabelDialog::buttonContrastTextColor(const QColor &backgroundColor) const
+{
+    FCT_IDENTIFICATION;
+
+    return backgroundColor.lightness() < 128 ? QStringLiteral("white") : QStringLiteral("black");
+}
+
 void QSLPrintLabelDialog::updateRendererOptions()
 {
     FCT_IDENTIFICATION;
@@ -460,16 +471,8 @@ void QSLPrintLabelDialog::updatePrintModeUi()
     ui->templateSectionContent->setEnabled(!directCard);
     ui->cardSectionButton->setEnabled(directCard);
     ui->cardSectionContent->setEnabled(directCard);
-    if ( directCard )
-    {
-        ui->templateSectionButton->setChecked(false);
-        ui->cardSectionButton->setChecked(true);
-    }
-    else
-    {
-        ui->templateSectionButton->setChecked(true);
-        ui->cardSectionButton->setChecked(false);
-    }
+    ui->templateSectionButton->setChecked(!directCard);
+    ui->cardSectionButton->setChecked(directCard);
 
     ui->templateSectionButton->setArrowType(ui->templateSectionButton->isChecked() ? Qt::DownArrow : Qt::RightArrow);
     ui->templateSectionContent->setMaximumHeight((!directCard && ui->templateSectionButton->isChecked()) ? QWIDGETSIZE_MAX : 0);
@@ -477,14 +480,25 @@ void QSLPrintLabelDialog::updatePrintModeUi()
     ui->cardSectionContent->setMaximumHeight((directCard && ui->cardSectionButton->isChecked()) ? QWIDGETSIZE_MAX : 0);
 }
 
+void QSLPrintLabelDialog::updateLabelTextColorUi()
+{
+    FCT_IDENTIFICATION;
+
+    const QColor color = labelTextColor.isValid() ? labelTextColor : QColor(Qt::black);
+    const QString buttonTextColor = buttonContrastTextColor(color);
+    ui->labelTextColorButton->setStyleSheet(QStringLiteral("background-color: %1; color: %2;")
+                                            .arg(color.name(QColor::HexArgb), buttonTextColor));
+}
+
 void QSLPrintLabelDialog::updateCardLabelBackgroundColorUi()
 {
     FCT_IDENTIFICATION;
 
     const QColor color = cardLabelBackgroundColor.isValid() ? cardLabelBackgroundColor : QColor(Qt::white);
+    const QString buttonTextColor = buttonContrastTextColor(color);
     ui->cardLabelBackgroundColorButton->setEnabled(ui->cardLabelOpaqueBackgroundCheckBox->isChecked());
-    ui->cardLabelBackgroundColorButton->setStyleSheet(QStringLiteral("background-color: %1;")
-                                                      .arg(color.name(QColor::HexArgb)));
+    ui->cardLabelBackgroundColorButton->setStyleSheet(QStringLiteral("background-color: %1; color: %2;")
+                                                      .arg(color.name(QColor::HexArgb), buttonTextColor));
 }
 
 void QSLPrintLabelDialog::updateCardBackgroundUi()
@@ -653,6 +667,22 @@ void QSLPrintLabelDialog::cardLayoutChanged()
 
     updateCardLabelBackgroundColorUi();
     refreshData();
+}
+
+void QSLPrintLabelDialog::selectLabelTextColor()
+{
+    FCT_IDENTIFICATION;
+
+    const QColor color = QColorDialog::getColor(labelTextColor.isValid() ? labelTextColor : QColor(Qt::black),
+                                                this,
+                                                tr("Select Label Text Color"),
+                                                QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
+    if ( !color.isValid() )
+        return;
+
+    labelTextColor = color;
+    updateLabelTextColorUi();
+    updatePreview();
 }
 
 void QSLPrintLabelDialog::selectCardLabelBackgroundColor()

@@ -52,6 +52,7 @@ struct LabelStyleOptions
 {
     QString sansFontFamily;          // empty = system default
     QString monoFontFamily;          // empty = system fixed font
+    QColor textColor = Qt::black;
     qreal toRadioFontSize = 7.5;
     qreal callsignFontSize = 14.0;
     qreal headerFontSize = 7.0;

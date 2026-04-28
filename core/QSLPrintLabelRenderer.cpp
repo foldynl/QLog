@@ -210,7 +210,7 @@ void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
 
     // --- Line 1: "To Radio" + Callsign ---
     painter->setFont(fontToRadio);
-    painter->setPen(Qt::black);
+    painter->setPen(styleOptions.textColor.isValid() ? styleOptions.textColor : QColor(Qt::black));
     const QRectF toRadioRect(contentRect.left(), currentY,
                              contentRect.width(), line1Height);
     const QString toRadioText = styleOptions.toRadioText.isEmpty() ? "To Radio" : styleOptions.toRadioText;
