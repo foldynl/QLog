@@ -22,7 +22,14 @@ LogbookModel::LogbookModel(QObject* parent, QSqlDatabase db)
 int LogbookModel::columnCount(const QModelIndex &parent) const
 {
     const int realColumnCount = QSqlTableModel::columnCount(parent);
-    return parent.isValid() ? realColumnCount : realColumnCount + 1;
+
+    if ( parent.isValid() )
+        return realColumnCount;
+
+    // QSqlTableModel can report zero columns before the first select. The
+    // logbook view still needs the full logical column set so column visibility
+    // UI can include the virtual Mode/Submode column consistently.
+    return qMax(realColumnCount, static_cast<int>(COLUMN_LAST_ELEMENT)) + 1;
 }
 
 QVariant LogbookModel::headerData(int section, Qt::Orientation orientation, int role) const
