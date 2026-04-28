@@ -24,6 +24,7 @@
 #include "ui/ColumnSettingDialog.h"
 #include "data/Data.h"
 #include "ui/ExportDialog.h"
+#include "ui/component/ModeSubmodeDelegate.h"
 #include "service/eqsl/Eqsl.h"
 #include "ui/PaperQSLDialog.h"
 #include "ui/QSODetailDialog.h"
@@ -155,6 +156,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_FREQUENCY, new UnitFormatDelegate("", 6, 0.001, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_BAND, new ComboFormatDelegate(new SqlListModel("SELECT name FROM bands ORDER BY start_freq", " ", ui->contactTable), ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_MODE, new ComboFormatDelegate(new SqlListModel("SELECT name FROM modes", " ", ui->contactTable), ui->contactTable));
+    ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_MODE_SUBMODE, new ModeSubmodeDelegate(ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_CONTINENT, new ComboFormatDelegate(QStringList() << " " << Data::getContinentList(), ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_QSL_SENT, new ComboFormatDelegate(Data::instance()->qslSentEnum, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_QSL_SENT_VIA, new ComboFormatDelegate(Data::instance()->qslSentViaEnum, ui->contactTable));
@@ -247,6 +249,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
         ui->contactTable->showColumn(LogbookModel::COLUMN_RST_SENT);
         ui->contactTable->showColumn(LogbookModel::COLUMN_FREQUENCY);
         ui->contactTable->showColumn(LogbookModel::COLUMN_MODE);
+        ui->contactTable->showColumn(LogbookModel::COLUMN_MODE_SUBMODE);
         ui->contactTable->showColumn(LogbookModel::COLUMN_NAME_INTL);
         ui->contactTable->showColumn(LogbookModel::COLUMN_QTH_INTL);
         ui->contactTable->showColumn(LogbookModel::COLUMN_COMMENT_INTL);

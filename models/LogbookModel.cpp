@@ -5,7 +5,10 @@
 #include "data/Callsign.h"
 #include "data/BandPlan.h"
 
+#include <QJsonDocument>
 #include <QIcon>
+#include <QSqlQuery>
+#include <QVariantMap>
 
 LogbookModel::LogbookModel(QObject* parent, QSqlDatabase db)
         : QSqlTableModel(parent, db)
@@ -18,10 +21,91 @@ LogbookModel::LogbookModel(QObject* parent, QSqlDatabase db)
         setHeaderData(it.key(), Qt::Horizontal, getFieldNameTranslation(it.key()));
 }
 
+int LogbookModel::columnCount(const QModelIndex &parent) const
+{
+    const int realColumnCount = QSqlTableModel::columnCount(parent);
+    return parent.isValid() ? realColumnCount : realColumnCount + 1;
+}
+
+QVariant LogbookModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if ( orientation == Qt::Horizontal
+         && section == COLUMN_MODE_SUBMODE
+         && role == Qt::DisplayRole )
+    {
+        return tr("Mode/Submode");
+    }
+
+    return QSqlTableModel::headerData(section, orientation, role);
+}
+
+Qt::ItemFlags LogbookModel::flags(const QModelIndex &index) const
+{
+    if ( !index.isValid() )
+        return QSqlTableModel::flags(index);
+
+    if ( index.column() == COLUMN_MODE_SUBMODE )
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+
+    return QSqlTableModel::flags(index);
+}
+
+QVariant LogbookModel::modeSubmodeData(int row, int role) const
+{
+    const QString mode = QSqlTableModel::data(this->index(row, COLUMN_MODE), Qt::DisplayRole).toString();
+    const QString submode = QSqlTableModel::data(this->index(row, COLUMN_SUBMODE), Qt::DisplayRole).toString();
+
+    if ( role == Qt::DisplayRole )
+        return submode.isEmpty() ? mode : submode;
+
+    if ( role == Qt::EditRole )
+    {
+        // QTableQSOView reads EditRole after committing an editor and reuses it
+        // for group editing, so the virtual column must expose both real fields.
+        QVariantMap value;
+        value.insert("mode", mode);
+        value.insert("submode", submode);
+        return value;
+    }
+
+    if ( role == Qt::ToolTipRole )
+        return tr("Mode: %1\nSubmode: %2").arg(mode, submode);
+
+    return QVariant();
+}
+
+bool LogbookModel::submodeBelongsToMode(const QString &mode, const QString &submode) const
+{
+    if ( submode.isEmpty() )
+        return true;
+
+    if ( mode.isEmpty() )
+        return false;
+
+    QSqlQuery query(database());
+    query.prepare("SELECT submodes FROM modes WHERE name = :mode");
+    query.bindValue(":mode", mode);
+
+    if ( !query.exec() || !query.next() )
+        return false;
+
+    const QStringList submodes = QJsonDocument::fromJson(query.value(0).toString().toUtf8()).toVariant().toStringList();
+    return submodes.contains(submode);
+}
+
+void LogbookModel::emitModeSubmodeChanged(int row)
+{
+    const QModelIndex modeSubmodeIndex = this->index(row, COLUMN_MODE_SUBMODE);
+    emit dataChanged(modeSubmodeIndex, modeSubmodeIndex, {Qt::DisplayRole, Qt::EditRole, Qt::ToolTipRole});
+}
+
 QVariant LogbookModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
+
+    if ( index.column() == COLUMN_MODE_SUBMODE )
+        return modeSubmodeData(index.row(), role);
 
     if (role == Qt::DecorationRole && index.column() == COLUMN_CALL) {
         const QString &flag = Data::instance()->dxccFlag(QSqlTableModel::data(this->index(index.row(), COLUMN_DXCC), Qt::DisplayRole).toInt());
@@ -139,6 +223,30 @@ bool LogbookModel::setData(const QModelIndex &index, const QVariant &value, int 
     bool main_update_result = true;
     bool depend_update_result = true;
 
+    if ( role == Qt::EditRole && index.column() == COLUMN_MODE_SUBMODE )
+    {
+        const QVariantMap modeSubmode = value.toMap();
+        const QString newMode = modeSubmode.value("mode").toString();
+        const QString newSubmode = modeSubmode.value("submode").toString();
+
+        if ( !submodeBelongsToMode(newMode, newSubmode) )
+            return false;
+
+        // The merged editor represents two real ADIF fields. Always write both
+        // so changing from MFSK/FT4 to CW clears the old submode.
+        const bool modeUpdated = QSqlTableModel::setData(this->index(index.row(), COLUMN_MODE),
+                                                         newMode.isEmpty() ? QVariant() : QVariant(newMode),
+                                                         role);
+        const bool submodeUpdated = QSqlTableModel::setData(this->index(index.row(), COLUMN_SUBMODE),
+                                                            newSubmode.isEmpty() ? QVariant() : QVariant(newSubmode),
+                                                            role);
+
+        if ( modeUpdated && submodeUpdated )
+            emitModeSubmodeChanged(index.row());
+
+        return modeUpdated && submodeUpdated;
+    }
+
     if ( role == Qt::EditRole )
     {
         switch ( index.column() )
@@ -218,6 +326,25 @@ bool LogbookModel::setData(const QModelIndex &index, const QVariant &value, int 
         {
             double freq = QSqlTableModel::data(this->index(index.row(), COLUMN_FREQ_RX), Qt::DisplayRole).toDouble();
             depend_update_result = ( freq == 0.0 && !value.toString().isEmpty() );
+            break;
+        }
+
+        case COLUMN_MODE:
+        {
+            const QString currentSubmode = QSqlTableModel::data(this->index(index.row(), COLUMN_SUBMODE), Qt::DisplayRole).toString();
+
+            // Mode defines the valid submode list. Direct mode edits must not
+            // leave a stale submode that belongs to the previous mode.
+            if ( !submodeBelongsToMode(value.toString(), currentSubmode) )
+                depend_update_result = QSqlTableModel::setData(this->index(index.row(), COLUMN_SUBMODE), QVariant(), role);
+
+            break;
+        }
+
+        case COLUMN_SUBMODE:
+        {
+            const QString currentMode = QSqlTableModel::data(this->index(index.row(), COLUMN_MODE), Qt::DisplayRole).toString();
+            depend_update_result = submodeBelongsToMode(currentMode, value.toString());
             break;
         }
 
@@ -579,6 +706,12 @@ bool LogbookModel::setData(const QModelIndex &index, const QVariant &value, int 
                                                                                                     : QVariant(), role);
             }
         }
+    }
+
+    if ( main_update_result && depend_update_result
+         && (index.column() == COLUMN_MODE || index.column() == COLUMN_SUBMODE) )
+    {
+        emitModeSubmodeChanged(index.row());
     }
 
     return main_update_result && depend_update_result;
