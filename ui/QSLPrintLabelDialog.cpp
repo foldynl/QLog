@@ -21,6 +21,7 @@
 #include "data/StationProfile.h"
 #include "models/SqlListModel.h"
 #include "data/Data.h"
+#include "ui/component/LogbookFieldComboBox.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qslprintlabeldialog");
 
@@ -312,33 +313,10 @@ void QSLPrintLabelDialog::populateExtraColumnCombo()
 {
     FCT_IDENTIFICATION;
 
-    ui->extraColumnComboBox->addItem(tr("Empty"), QString());
-
-    QSqlRecord contactsRecord = QSqlDatabase::database().record("contacts");
-    QList<QPair<QString, QString>> dbFieldItems;
-    for ( int i = LogbookModel::ColumnID::COLUMN_ID; i < LogbookModel::ColumnID::COLUMN_LAST_ELEMENT; ++i )
-    {
-        LogbookModel::ColumnID columnID = static_cast<LogbookModel::ColumnID>(i);
-        const QString translation = LogbookModel::getFieldNameTranslation(columnID);
-        if ( translation.isEmpty() )
-            continue;
-
-        const QString dbField = contactsRecord.fieldName(i);
-        if ( dbField.isEmpty() )
-            continue;
-
-        dbFieldItems.append({translation, dbField});
-    }
-
-    std::sort(dbFieldItems.begin(), dbFieldItems.end(),
-              [](const QPair<QString, QString> &a,
-                 const QPair<QString, QString> &b)
-    {
-        return a.first.localeAwareCompare(b.first) < 0;
-    });
-
-    for ( const QPair<QString, QString> &item : static_cast<const QList<QPair<QString, QString>>&>(dbFieldItems) )
-        ui->extraColumnComboBox->addItem(item.first, item.second);
+    LogbookFieldComboBox::populateCombo(ui->extraColumnComboBox,
+                                        LogbookFieldComboBox::ValueMode::DbFieldName,
+                                        LogbookFieldComboBox::EmptyMode::EmptyLabel,
+                                        tr("Empty"));
 }
 
 void QSLPrintLabelDialog::populateQSLSentCombo()
