@@ -79,6 +79,52 @@ QVariant LogbookModel::modeSubmodeData(int row, int role) const
     return QVariant();
 }
 
+bool LogbookModel::setModeSubmodeData(int row, const QString &newMode, const QString &newSubmode, int role)
+{
+    if ( !Data::instance()->isSubmodeForMode(newMode, newSubmode) )
+        return false;
+
+    const EditStrategy originalEditStrategy = editStrategy();
+    const bool submitCombinedChange = originalEditStrategy == QSqlTableModel::OnFieldChange;
+
+    // In the normal logbook table mode each QSqlTableModel::setData() is
+    // submitted immediately. The virtual Mode/Submode column maps to two real
+    // DB fields, so we temporarily collect both edits and submit them together.
+    if ( submitCombinedChange )
+        setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+    // Always write both real fields. This clears a stale submode when the user
+    // changes from a submode-based mode, for example MFSK/FT4, to a plain mode.
+    bool updateResult = QSqlTableModel::setData(this->index(row, COLUMN_MODE),
+                                                newMode.isEmpty() ? QVariant() : QVariant(newMode),
+                                                role);
+
+    if ( updateResult )
+        updateResult = QSqlTableModel::setData(this->index(row, COLUMN_SUBMODE),
+                                               newSubmode.isEmpty() ? QVariant() : QVariant(newSubmode),
+                                               role);
+
+    if ( submitCombinedChange )
+    {
+        // submitAll() keeps beforeUpdate/contactUpdated semantics, but emits
+        // them for one row update containing both Mode and Submode values.
+        if ( updateResult )
+            updateResult = submitAll();
+
+        // If either staged edit or the submit fails, discard the partial in-memory
+        // change before restoring OnFieldChange.
+        if ( !updateResult )
+            revertRow(row);
+
+        setEditStrategy(originalEditStrategy);
+    }
+
+    if ( updateResult )
+        emitModeSubmodeChanged(row);
+
+    return updateResult;
+}
+
 void LogbookModel::emitModeSubmodeChanged(int row)
 {
     const QModelIndex modeSubmodeIndex = this->index(row, COLUMN_MODE_SUBMODE);
@@ -215,22 +261,7 @@ bool LogbookModel::setData(const QModelIndex &index, const QVariant &value, int 
         const QString newMode = modeSubmode.value("mode").toString();
         const QString newSubmode = modeSubmode.value("submode").toString();
 
-        if ( !Data::instance()->isSubmodeForMode(newMode, newSubmode) )
-            return false;
-
-        // The merged editor represents two real ADIF fields. Always write both
-        // so changing from MFSK/FT4 to CW clears the old submode.
-        const bool modeUpdated = QSqlTableModel::setData(this->index(index.row(), COLUMN_MODE),
-                                                         newMode.isEmpty() ? QVariant() : QVariant(newMode),
-                                                         role);
-        const bool submodeUpdated = QSqlTableModel::setData(this->index(index.row(), COLUMN_SUBMODE),
-                                                            newSubmode.isEmpty() ? QVariant() : QVariant(newSubmode),
-                                                            role);
-
-        if ( modeUpdated && submodeUpdated )
-            emitModeSubmodeChanged(index.row());
-
-        return modeUpdated && submodeUpdated;
+        return setModeSubmodeData(index.row(), newMode, newSubmode, role);
     }
 
     if ( role == Qt::EditRole )
