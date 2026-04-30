@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include <QProgressDialog>
 #include <QActionGroup>
+#include <QHeaderView>
 
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
@@ -1070,6 +1071,14 @@ void LogbookWidget::saveTableHeaderState()
     LogParam::setLogbookState(ui->contactTable->horizontalHeader()->saveState());
 }
 
+void LogbookWidget::setContactTableColumnVisible(int columnIndex, bool visible)
+{
+    ui->contactTable->setColumnHidden(columnIndex, !visible);
+
+    if ( visible && ui->contactTable->columnWidth(columnIndex) == 0 )
+        ui->contactTable->setColumnWidth(columnIndex, ui->contactTable->horizontalHeader()->defaultSectionSize());
+}
+
 void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
 {
     FCT_IDENTIFICATION;
@@ -1082,9 +1091,9 @@ void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
         action->setCheckable(true);
         action->setChecked(!ui->contactTable->isColumnHidden(i));
 
-        connect(action, &QAction::triggered, this, [this, i]()
+        connect(action, &QAction::triggered, this, [this, i](bool checked)
         {
-            ui->contactTable->setColumnHidden(i, !ui->contactTable->isColumnHidden(i));
+            setContactTableColumnVisible(i, checked);
             saveTableHeaderState();
         });
 
