@@ -250,7 +250,16 @@ jobs:
               -s "$MACOS_CERTIFICATE_NAME" "$HAPP"
           done < <(find "$APP" -path "*QtWebEngineProcess.app" -type d -print0)
 
-          # 4) Sign the outer app bundle WITH entitlements
+          # 4) Re-seal every framework so the framework's seal includes any
+          #    nested helper apps we just re-signed. Without this, signing the
+          #    outer app fails with "nested code is modified or invalid".
+          while IFS= read -r -d '' FW; do
+            echo "Re-signing framework: $FW"
+            /usr/bin/codesign --force --timestamp --options runtime \
+              -s "$MACOS_CERTIFICATE_NAME" "$FW"
+          done < <(find "$APP/Contents/Frameworks" -maxdepth 1 -type d -name "*.framework" -print0)
+
+          # 5) Sign the outer app bundle WITH entitlements
           /usr/bin/codesign --force --timestamp --options runtime \
             --entitlements "$ENT" \
             -s "$MACOS_CERTIFICATE_NAME" "$APP"
