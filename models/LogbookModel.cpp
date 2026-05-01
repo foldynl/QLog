@@ -55,6 +55,13 @@ Qt::ItemFlags LogbookModel::flags(const QModelIndex &index) const
     return QSqlTableModel::flags(index);
 }
 
+void LogbookModel::sort(int column, Qt::SortOrder order)
+{
+    // The merged Mode/Submode column is UI-only and has no matching DB field.
+    // Keep header sorting usable without generating an invalid SQL ORDER BY.
+    QSqlTableModel::sort(column == COLUMN_MODE_SUBMODE ? COLUMN_MODE : column, order);
+}
+
 QVariant LogbookModel::modeSubmodeData(int row, int role) const
 {
     const QString mode = QSqlTableModel::data(this->index(row, COLUMN_MODE), Qt::DisplayRole).toString();
