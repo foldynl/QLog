@@ -1,320 +1,365 @@
 name: macOS deployment
 
-#on: [push, pull_request]
-
 on:
   workflow_dispatch:
   push:
-     branches:
-       - master
+    branches:
+      - master
+    tags:
+      - 'v*'
 
 jobs:
   macos-build:
-     name: MacOS Build
-     strategy:
-       matrix:
-         os: [macos-latest]
+    name: macOS Build
+    runs-on: macos-latest
 
-     runs-on: ${{ matrix.os }}
+    env:
+      APP_NAME: QLog
+      BUNDLE_BIN: qlog
+      QT_PREFIX: /opt/homebrew
 
-     steps:
-     - name: Install Dependencies
-       run: |
-         unset HOMEBREW_NO_INSTALL_FROM_API
-         brew update
-         brew upgrade || true
-         brew install qt6
-         brew install qtvirtualkeyboard
-         brew link qt6 --force
-         brew install hamlib
-         brew link hamlib --force
-         brew install qtkeychain
-         brew install dbus-glib
-         brew install brotli
-         brew install icu4c
-         brew install pkg-config
-     - name: Checkout Code
-       uses: actions/checkout@v4
-       with:
-         fetch-depth: 0
-         submodules: recursive
-     - name: Get version from tag
-       run : |
-         TAGVERSION=$(git describe --tags)
-         echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
 
-     - name: Configure and compile
-       run: |
-         mkdir -p build
-         cd build
-         qmake -config release ..
-         make -j4
-     - name: Build app
-       run: |
-         set -euo pipefail
-         cd build
-         APP="qlog.app"
-        
-         # 1) Deploy first (creates Contents/Frameworks etc.)
-         macdeployqt "$APP" \
-           -always-overwrite \
-           -verbose=2 \
-           -executable="$APP/Contents/MacOS/qlog" \
-           -qmldir=..
-        
-         # 2) Ensure Frameworks folder exists (macdeployqt should do this, but guard anyway)
-         mkdir -p "$APP/Contents/Frameworks"
-        
-         # 3) (Optional) copy extra non-Qt dylibs AFTER deploy
-         ICU_PATH="$(brew --prefix icu4c)/lib"
-         cp "$(brew --prefix)"/lib/libhamlib.dylib          "$APP/Contents/Frameworks/" || true
-         cp "$(brew --prefix)"/lib/libqt6keychain.dylib     "$APP/Contents/Frameworks/" || true
-         cp "$ICU_PATH"/libicui18n*.dylib                   "$APP/Contents/Frameworks/" || true
-        
-         # 4) Patch QtWebEngineProcess helper to stop using /opt/homebrew
-         HELPER_BIN="$APP/Contents/Frameworks/QtWebEngineCore.framework/Versions/A/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess"
-        
-         echo "Helper deps BEFORE:"
-         otool -L "$HELPER_BIN" | sed 's/^/  /'
-        
-         # Add rpath so @rpath/Qt*.framework resolves to app Frameworks
-         install_name_tool -add_rpath "@executable_path/../../../../../../../../Frameworks" "$HELPER_BIN" || true
-        
-         # Rewrite any hardcoded Homebrew Qt framework references to @rpath equivalents
-         # (This handles QtOpenGL, QtQuick, etc.)
-         while read -r dep; do
-           # dep looks like: /opt/homebrew/opt/qtbase/lib/QtOpenGL.framework/Versions/A/QtOpenGL
-           fw="$(basename "$dep")"                            # QtOpenGL
-           fwdir="$(basename "$(dirname "$(dirname "$(dirname "$dep")")")")"  # QtOpenGL.framework
-           install_name_tool -change "$dep" "@rpath/$fwdir/Versions/A/$fw" "$HELPER_BIN" || true
-         done < <(otool -L "$HELPER_BIN" | awk '{print $1}' | grep '^/opt/homebrew/opt/qt.*/lib/Qt.*\.framework/')
-        
-         # Remove brew rpaths if present
-         install_name_tool -delete_rpath "/opt/homebrew/opt/qtbase/lib" "$HELPER_BIN" || true
-         install_name_tool -delete_rpath "/opt/homebrew/opt/qtdeclarative/lib" "$HELPER_BIN" || true
-        
-         echo "Helper deps AFTER:"
-         otool -L "$HELPER_BIN" | sed 's/^/  /'
-         otool -l "$HELPER_BIN" | grep -A2 LC_RPATH || true
-         
-     - name: Codesign app bundle
-       env:
-         MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}            # base64 p12
-         MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}    # p12 password
-         MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}  # "Developer ID Application: ... (TEAMID)"
-         MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
-       run: |
-         set -euo pipefail
-    
-         APP="$GITHUB_WORKSPACE/build/qlog.app"
-         ENT="$GITHUB_WORKSPACE/entitlements.xml"
-         KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
-    
-         echo "Entitlements:"
-         ls -l "$ENT"
-    
-         echo "== Create+unlock CI keychain =="
-         security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
-         security set-keychain-settings -lut 21600 "$KEYCHAIN"
-         security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
-         security list-keychains -d user -s "$KEYCHAIN"
-         security default-keychain -d user -s "$KEYCHAIN"
-     
-         echo "== Import signing cert (.p12) =="
-         echo "$MACOS_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/cert.p12"
-         security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign -T /usr/bin/security
-    
-         # allow codesign to access the key without UI prompts
-         security set-key-partition-list -S apple-tool:,apple: -s -k "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
-    
-         echo "== Confirm identity =="
-         security find-identity -v -p codesigning "$KEYCHAIN" || true
-    
-         echo "== 1) Sign frameworks/plugins/dylibs first (NO entitlements) =="
-         while IFS= read -r -d '' F; do
-           /usr/bin/codesign --force --timestamp --options runtime \
-             -s "$MACOS_CERTIFICATE_NAME" "$F"
-         done < <(
-           find "$APP" -type f -print0 | while IFS= read -r -d '' F; do
-             if file "$F" | grep -q "Mach-O"; then
-               # skip QtWebEngineProcess here; we'll sign it with entitlements below
-               if [[ "$F" == *"/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess" ]]; then
-                 continue
-               fi
-               printf '%s\0' "$F"
-             fi
-           done
-         )
-    
-         echo "== 2) Sign ALL QtWebEngineProcess binaries WITH entitlements =="
-         mapfile -t WEBENGINE_BINS < <(find "$APP" -path "*QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess" -type f)
-         if [[ "${#WEBENGINE_BINS[@]}" -eq 0 ]]; then
-           echo "ERROR: no QtWebEngineProcess binary found"
-           exit 1
-         fi
-    
-         for BIN in "${WEBENGINE_BINS[@]}"; do
-           echo "Signing WebEngine helper bin: $BIN"
-           /usr/bin/codesign --force --timestamp --options runtime \
-             --entitlements "$ENT" \
-             -s "$MACOS_CERTIFICATE_NAME" "$BIN"
-         done
-    
-         echo "== 3) Sign ALL QtWebEngineProcess.app bundles WITH entitlements =="
-         mapfile -t WEBENGINE_APPS < <(find "$APP" -path "*QtWebEngineProcess.app" -type d)
-         for HAPP in "${WEBENGINE_APPS[@]}"; do
-           echo "Signing WebEngine helper app: $HAPP"
-           /usr/bin/codesign --force --timestamp --options runtime \
-             --entitlements "$ENT" \
-             -s "$MACOS_CERTIFICATE_NAME" "$HAPP"
-         done
-     
-         echo "== 4) Sign top-level app WITH entitlements =="
-         /usr/bin/codesign --force --timestamp --options runtime \
-           --entitlements "$ENT" \
-           -s "$MACOS_CERTIFICATE_NAME" "$APP"
-     
-         echo "== 5) Verify + prove entitlements stuck =="
-         /usr/bin/codesign --verify --deep --strict --verbose=4 "$APP"
-    
-         echo "Entitlements on one QtWebEngineProcess binary (should NOT be empty):"
-         /usr/bin/codesign -d --entitlements :- "${WEBENGINE_BINS[0]}" || true
-    
-         spctl -a -t exec -vv "$APP"
-    
-     - name: "Notarize app bundle"
-       env:
-           PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
-           PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
-           PROD_MACOS_NOTARIZATION_PWD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
-       run: |
-         set -euo pipefail
+      - name: Install Dependencies
+        run: |
+          set -euo pipefail
+          unset HOMEBREW_NO_INSTALL_FROM_API
+          brew update
+          brew upgrade || true
+          brew install \
+            qt6 \
+            hamlib \
+            qtkeychain \
+            dbus-glib \
+            brotli \
+            icu4c \
+            pkg-config \
+            autoconf \
+            automake \
+            libtool \
+            libusb
+          # qt6 is keg-only; many Qt-aware tools rely on the linkage being visible
+          brew link qt6 --force || true
+          brew link hamlib --force || true
 
-         echo "Create keychain profile"
-         xcrun notarytool store-credentials "notarytool-profile" \
-           --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" \
-           --team-id "$PROD_MACOS_NOTARIZATION_TEAM_ID" \
-           --password "$PROD_MACOS_NOTARIZATION_PWD"
-        
-         echo "Creating temp notarization archive"
-         ditto -c -k --keepParent "/Users/runner/work/QLog/QLog/build/qlog.app" "notarization.zip"
-        
-         echo "Notarize app (submit + wait)"
-         xcrun notarytool submit "notarization.zip" \
-          --keychain-profile "notarytool-profile" \
-          --wait \
-          --output-format json > notarization_log.json
-        
-         cat notarization_log.json
-        
-         # Extract id + status (no jq needed)
-         NOTARY_ID=$(python3 -c 'import json; print(json.load(open("notarization_log.json"))["id"])')
-         NOTARY_STATUS=$(python3 -c 'import json; print(json.load(open("notarization_log.json"))["status"])')
-        
-         echo "Notary Request ID: $NOTARY_ID"
-         echo "Notary Status: $NOTARY_STATUS"
-        
-         echo "Fetching detailed notary log..."
-         xcrun notarytool log "$NOTARY_ID" --keychain-profile "notarytool-profile" || true
-        
-         if [ "$NOTARY_STATUS" != "Accepted" ]; then
-           echo "Notarization failed with status: $NOTARY_STATUS"
-           exit 1
-         fi
-        
-         echo "Attach staple"
-         xcrun stapler staple "/Users/runner/work/QLog/QLog/build/qlog.app"
-         xcrun stapler validate "/Users/runner/work/QLog/QLog/build/qlog.app"
-     - name: make dmg
-       run: |
-        set -euo pipefail
-        # use TAGVERSION, but make a nicer filename (strip the "-14-g...." if you want)
-        VERSION="${TAGVERSION%%-*}"   # => "0.47.1" from "0.47.1-14-g0022e427"
-        DMG_NAME="QLog.v${VERSION}.dmg"
-        echo "DMG_NAME=$DMG_NAME" >> "$GITHUB_ENV"
-        echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-    
-        mkdir -p out
-        cp -R "/Users/runner/work/QLog/QLog/build/qlog.app" out/
-        ln -s /Applications out/Applications
-    
-        hdiutil create \
-          -volname "QLog Installer" \
-          -srcfolder out \
-          -ov -format UDZO \
-          "/Users/runner/work/QLog/QLog/build/$DMG_NAME"
-    
-        ls -lh "/Users/runner/work/QLog/QLog/build/$DMG_NAME"
-  
-     - name: Codesign dmg bundle
-       env:
-         MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
-         MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}
-         MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
-       run: |
-         set -euo pipefail
+      - name: Get version from tag
+        run: |
+          set -euo pipefail
+          # If we're on a tag like v0.50.0, use that; otherwise fall back to describe.
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            TAGVERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            RAW="$(git describe --tags --always 2>/dev/null || echo dev)"
+            TAGVERSION="${RAW#v}"
+          fi
+          echo "TAGVERSION=${TAGVERSION}" >> "$GITHUB_ENV"
+          echo "Version: ${TAGVERSION}"
 
-         DMG="$GITHUB_WORKSPACE/build/$DMG_NAME"
-         test -f "$DMG"
+      - name: Ensure QtSvg module is enabled
+        run: |
+          set -euo pipefail
+          PRO="qlog.pro"
+          if ! grep -q ' svg' "$PRO"; then
+            echo "Adding svg to QT modules"
+            awk '
+              BEGIN { added=0 }
+              /^[[:space:]]*QT[[:space:]]/ && !added {
+                print $0 " svg"; added=1; next
+              }
+              { print }
+            ' "$PRO" > "$PRO.tmp" && mv "$PRO.tmp" "$PRO"
+          else
+            echo "QtSvg already present"
+          fi
 
-         KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+      - name: Configure and compile
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cd build
+          qmake CONFIG+=release ..
+          make -j"$(sysctl -n hw.ncpu)"
 
-         # If the prior step already created/imported, this will work as-is.
-         # But on Actions, each step is a new shell: re-create+import to be safe.
-         security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN" || true
-         security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
-         security list-keychains -d user -s "$KEYCHAIN"
-         security default-keychain -d user -s "$KEYCHAIN"
+      - name: Run macdeployqt
+        run: |
+          set -euo pipefail
+          cd build
+          APP="$APP_NAME.app"
+          # macdeployqt builds Contents/Frameworks and rewrites Qt links.
+          macdeployqt "$APP" \
+            -always-overwrite \
+            -verbose=2 \
+            -executable="$APP/Contents/MacOS/$BUNDLE_BIN" \
+            -libpath="$QT_PREFIX/opt/qtbase/lib" \
+            -libpath="$QT_PREFIX/opt/qtdeclarative/lib" \
+            -libpath="$QT_PREFIX/opt/qtwebengine/lib" \
+            -libpath="$QT_PREFIX/opt/qtsvg/lib"
 
-         echo "$MACOS_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/cert.p12"
-         security import "$RUNNER_TEMP/cert.p12" \
-           -k "$KEYCHAIN" \
-           -P "$MACOS_CERTIFICATE_PWD" \
-           -T /usr/bin/codesign \
-           -T /usr/bin/security || true
+      - name: Bundle rigctld and fix linkage
+        run: |
+          set -euo pipefail
+          cd build
+          APP="$APP_NAME.app"
+          MACOS_DIR="$APP/Contents/MacOS"
+          FRAMEWORKS_DIR="$APP/Contents/Frameworks"
+          mkdir -p "$MACOS_DIR" "$FRAMEWORKS_DIR"
 
-         security set-key-partition-list -S apple-tool:,apple:,codesign: \
-           -s -k "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
+          RIGCTLD_SRC="$(command -v rigctld)"
+          [ -n "$RIGCTLD_SRC" ] || { echo "ERROR: rigctld not found"; exit 1; }
+          echo "Using rigctld from: $RIGCTLD_SRC"
+          cp -f "$RIGCTLD_SRC" "$MACOS_DIR/rigctld"
+          chmod 0755 "$MACOS_DIR/rigctld"
 
-         SIGN_ID_SHA=$(security find-identity -v -p codesigning "$KEYCHAIN" \
-           | awk '/Developer ID Application/ {print $2; exit}')
-         if [[ -z "${SIGN_ID_SHA:-}" ]]; then
-           echo "ERROR: No Developer ID Application identity found in keychain."
-           exit 1
-         fi
+          install_name_tool -add_rpath "@executable_path/../Frameworks" \
+            "$MACOS_DIR/rigctld" 2>/dev/null || true
 
-         /usr/bin/codesign --force --timestamp -s "$SIGN_ID_SHA" "$DMG"
-         /usr/bin/codesign -v --verbose=4 "$DMG"
-         
-     - name: Notarize dmg
-       env:
-        PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
-        PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
-        PROD_MACOS_NOTARIZATION_PWD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
-       run: |
-        set -euo pipefail
-        DMG="/Users/runner/work/QLog/QLog/build/$DMG_NAME"
-        test -f "$DMG"
-    
-        xcrun notarytool store-credentials "notarytool-profile" \
-          --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" \
-          --team-id "$PROD_MACOS_NOTARIZATION_TEAM_ID" \
-          --password "$PROD_MACOS_NOTARIZATION_PWD"
-    
-        ditto -c -k "$DMG" "notarization.zip"
-    
-        xcrun notarytool submit "notarization.zip" \
-          --keychain-profile "notarytool-profile" \
-          --wait --output-format json > notarization_dmg.json
-        cat notarization_dmg.json
-    
-        NOTARY_ID=$(python3 -c 'import json; print(json.load(open("notarization_dmg.json"))["id"])')
-        xcrun notarytool log "$NOTARY_ID" --keychain-profile "notarytool-profile" || true
-    
-        xcrun stapler staple "$DMG"
-        xcrun stapler validate "$DMG"        
-     - name: Copy artifact
-       uses: actions/upload-artifact@v4
-       with:
-         name: QLog-${{ env.TAGVERSION }}-macos
-         path: /Users/runner/work/QLog/QLog/build/${{ env.DMG_NAME }}
+          # Recursively bundle any /opt/homebrew or /usr/local dependency, fix
+          # install IDs to @rpath, and rewrite the parent's link.
+          bundle_deps() {
+            local target="$1"
+            local dep base
+            otool -L "$target" | awk 'NR>1 {print $1}' | while read -r dep; do
+              case "$dep" in
+                /opt/homebrew/*|/usr/local/*)
+                  base="$(basename "$dep")"
+                  if [ ! -f "$FRAMEWORKS_DIR/$base" ]; then
+                    echo "  -> bundling $base (from $dep)"
+                    cp -f "$dep" "$FRAMEWORKS_DIR/$base"
+                    chmod u+w "$FRAMEWORKS_DIR/$base"
+                    install_name_tool -id "@rpath/$base" "$FRAMEWORKS_DIR/$base"
+                    bundle_deps "$FRAMEWORKS_DIR/$base"
+                  fi
+                  install_name_tool -change "$dep" "@rpath/$base" "$target"
+                  ;;
+              esac
+            done
+          }
+
+          bundle_deps "$MACOS_DIR/rigctld"
+          bundle_deps "$MACOS_DIR/$BUNDLE_BIN"
+
+          echo "rigctld linkage:"
+          otool -L "$MACOS_DIR/rigctld"
+          echo "$BUNDLE_BIN linkage:"
+          otool -L "$MACOS_DIR/$BUNDLE_BIN"
+
+      - name: Fix QtWebEngineProcess rpaths
+        run: |
+          set -euo pipefail
+          cd build
+          APP="$APP_NAME.app"
+          QWEP="$APP/Contents/Frameworks/QtWebEngineCore.framework/Versions/A/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess"
+          [ -f "$QWEP" ] || { echo "QtWebEngineProcess not found at $QWEP"; exit 1; }
+
+          install_name_tool -add_rpath \
+            "@executable_path/../../../../Frameworks" "$QWEP" 2>/dev/null || true
+
+          # Rewrite any remaining hardcoded Qt framework references to @rpath.
+          otool -L "$QWEP" | awk 'NR>1 {print $1}' \
+            | grep '^/opt/homebrew/.*\.framework/' \
+            | while read -r dep; do
+                fw="$(basename "$dep")"
+                fwdir="$(basename "$(dirname "$(dirname "$(dirname "$dep")")")")"
+                install_name_tool -change "$dep" \
+                  "@rpath/$fwdir/Versions/A/$fw" "$QWEP" || true
+              done
+
+          echo "QtWebEngineProcess after fixup:"
+          otool -L "$QWEP"
+
+      - name: Scan for hardcoded Homebrew paths
+        run: |
+          set -euo pipefail
+          cd build
+          APP="$APP_NAME.app"
+          BAD=0
+          while IFS= read -r -d '' BIN; do
+            if otool -L "$BIN" 2>/dev/null \
+                 | awk 'NR>1 {print $1}' \
+                 | grep -E '^(/opt/homebrew/|/usr/local/Cellar/|/usr/local/opt/)' >/dev/null; then
+              echo "Hardcoded Homebrew path in: $BIN"
+              otool -L "$BIN" | awk 'NR>1 {print "    " $1}' \
+                | grep -E '^[[:space:]]+(/opt/homebrew/|/usr/local/Cellar/|/usr/local/opt/)'
+              BAD=1
+            fi
+          done < <(find "$APP" -type f -perm +111 -print0)
+          if [ "$BAD" -eq 1 ]; then
+            echo "ERROR: hardcoded Homebrew paths remain. Bundle would fail on user machines."
+            exit 1
+          fi
+
+      - name: Codesign app bundle
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}
+          MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
+          MACOS_CI_KEYCHAIN_PWD: ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
+        run: |
+          set -euo pipefail
+          APP="$GITHUB_WORKSPACE/build/$APP_NAME.app"
+          ENT="$GITHUB_WORKSPACE/entitlements.xml"
+          KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+
+          test -f "$ENT" || { echo "Missing entitlements.xml at $ENT"; exit 1; }
+
+          security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN"
+          security default-keychain -d user -s "$KEYCHAIN"
+
+          echo "$MACOS_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" \
+            -P "$MACOS_CERTIFICATE_PWD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: \
+            -s -k "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
+
+          security find-identity -v -p codesigning "$KEYCHAIN" || true
+
+          # 1) Sign every Mach-O inside the bundle (no entitlements), skipping
+          #    QtWebEngineProcess which we sign with entitlements below.
+          while IFS= read -r -d '' F; do
+            if file "$F" | grep -q "Mach-O"; then
+              if [[ "$F" == *"/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess" ]]; then
+                continue
+              fi
+              /usr/bin/codesign --force --timestamp --options runtime \
+                -s "$MACOS_CERTIFICATE_NAME" "$F"
+            fi
+          done < <(find "$APP" -type f -print0)
+
+          # 2) Sign QtWebEngineProcess binaries WITH entitlements
+          while IFS= read -r -d '' BIN; do
+            echo "Signing WebEngine helper: $BIN"
+            /usr/bin/codesign --force --timestamp --options runtime \
+              --entitlements "$ENT" \
+              -s "$MACOS_CERTIFICATE_NAME" "$BIN"
+          done < <(find "$APP" -path "*QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess" -type f -print0)
+
+          # 3) Sign QtWebEngineProcess.app bundles WITH entitlements
+          while IFS= read -r -d '' HAPP; do
+            echo "Signing WebEngine helper app: $HAPP"
+            /usr/bin/codesign --force --timestamp --options runtime \
+              --entitlements "$ENT" \
+              -s "$MACOS_CERTIFICATE_NAME" "$HAPP"
+          done < <(find "$APP" -path "*QtWebEngineProcess.app" -type d -print0)
+
+          # 4) Sign the outer app bundle WITH entitlements
+          /usr/bin/codesign --force --timestamp --options runtime \
+            --entitlements "$ENT" \
+            -s "$MACOS_CERTIFICATE_NAME" "$APP"
+
+          /usr/bin/codesign --verify --deep --strict --verbose=2 "$APP"
+          spctl -a -t exec -vv "$APP" || true
+
+      - name: Notarize app bundle
+        env:
+          PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
+          PROD_MACOS_NOTARIZATION_TEAM_ID:  ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
+          PROD_MACOS_NOTARIZATION_PWD:      ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
+        run: |
+          set -euo pipefail
+          APP="$GITHUB_WORKSPACE/build/$APP_NAME.app"
+
+          xcrun notarytool store-credentials "notarytool-profile" \
+            --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" \
+            --team-id  "$PROD_MACOS_NOTARIZATION_TEAM_ID" \
+            --password "$PROD_MACOS_NOTARIZATION_PWD"
+
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "notarization.zip"
+
+          xcrun notarytool submit "notarization.zip" \
+            --keychain-profile "notarytool-profile" \
+            --wait --output-format json > notarization_log.json
+          cat notarization_log.json
+
+          NOTARY_ID=$(python3 -c 'import json; print(json.load(open("notarization_log.json"))["id"])')
+          NOTARY_STATUS=$(python3 -c 'import json; print(json.load(open("notarization_log.json"))["status"])')
+
+          xcrun notarytool log "$NOTARY_ID" --keychain-profile "notarytool-profile" || true
+
+          if [ "$NOTARY_STATUS" != "Accepted" ]; then
+            echo "Notarization failed: $NOTARY_STATUS"
+            exit 1
+          fi
+
+          xcrun stapler staple "$APP"
+          xcrun stapler validate "$APP"
+
+      - name: Build DMG
+        run: |
+          set -euo pipefail
+          VERSION="${TAGVERSION%%-*}"
+          DMG_NAME="$APP_NAME.v${VERSION}.dmg"
+          echo "DMG_NAME=$DMG_NAME" >> "$GITHUB_ENV"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+          STAGING="$GITHUB_WORKSPACE/build/dmg-staging"
+          rm -rf "$STAGING"
+          mkdir -p "$STAGING"
+          cp -R "$GITHUB_WORKSPACE/build/$APP_NAME.app" "$STAGING/"
+          ln -s /Applications "$STAGING/Applications"
+
+          hdiutil create \
+            -volname "$APP_NAME Installer" \
+            -srcfolder "$STAGING" \
+            -ov -format UDZO \
+            "$GITHUB_WORKSPACE/build/$DMG_NAME"
+          ls -lh "$GITHUB_WORKSPACE/build/$DMG_NAME"
+
+      - name: Codesign DMG
+        env:
+          MACOS_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_CERTIFICATE_NAME }}
+          MACOS_CI_KEYCHAIN_PWD:  ${{ secrets.PROD_MACOS_CI_KEYCHAIN_PWD }}
+        run: |
+          set -euo pipefail
+          DMG="$GITHUB_WORKSPACE/build/$DMG_NAME"
+          KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" "$KEYCHAIN"
+          /usr/bin/codesign --force --timestamp \
+            -s "$MACOS_CERTIFICATE_NAME" "$DMG"
+          /usr/bin/codesign --verify --verbose=2 "$DMG"
+
+      - name: Notarize DMG
+        env:
+          PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
+          PROD_MACOS_NOTARIZATION_TEAM_ID:  ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
+          PROD_MACOS_NOTARIZATION_PWD:      ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
+        run: |
+          set -euo pipefail
+          DMG="$GITHUB_WORKSPACE/build/$DMG_NAME"
+
+          xcrun notarytool store-credentials "notarytool-profile" \
+            --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID" \
+            --team-id  "$PROD_MACOS_NOTARIZATION_TEAM_ID" \
+            --password "$PROD_MACOS_NOTARIZATION_PWD"
+
+          xcrun notarytool submit "$DMG" \
+            --keychain-profile "notarytool-profile" \
+            --wait --output-format json > notarization_dmg.json
+          cat notarization_dmg.json
+
+          NOTARY_ID=$(python3 -c 'import json; print(json.load(open("notarization_dmg.json"))["id"])')
+          NOTARY_STATUS=$(python3 -c 'import json; print(json.load(open("notarization_dmg.json"))["status"])')
+          xcrun notarytool log "$NOTARY_ID" --keychain-profile "notarytool-profile" || true
+
+          if [ "$NOTARY_STATUS" != "Accepted" ]; then
+            echo "DMG notarization failed: $NOTARY_STATUS"
+            exit 1
+          fi
+
+          xcrun stapler staple "$DMG"
+          xcrun stapler validate "$DMG"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: QLog-${{ env.TAGVERSION }}-macos
+          path: ${{ github.workspace }}/build/${{ env.DMG_NAME }}
+          if-no-files-found: error
