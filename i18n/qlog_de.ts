@@ -210,7 +210,7 @@
     <message>
         <location filename="../ui/ActivityEditor.h" line="116"/>
         <source>Unsaved</source>
-        <translation>Ungespeichert</translation>
+        <translation>Nicht gespeichert</translation>
     </message>
 </context>
 <context>
@@ -238,7 +238,7 @@
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="92"/>
         <source>DX Cluster</source>
-        <translation></translation>
+        <translation>DX Cluster</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="102"/>
@@ -248,7 +248,7 @@
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="154"/>
         <source>DX</source>
-        <translation></translation>
+        <translation>DX</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="180"/>
@@ -658,37 +658,37 @@
     <message>
         <location filename="../awards/AwardDXCC.cpp" line="6"/>
         <source>DXCC</source>
-        <translation></translation>
+        <translation>DXCC</translation>
     </message>
     <message>
         <location filename="../awards/AwardITU.cpp" line="6"/>
         <source>ITU</source>
-        <translation></translation>
+        <translation>ITU</translation>
     </message>
     <message>
         <location filename="../awards/AwardWAC.cpp" line="6"/>
         <source>WAC</source>
-        <translation></translation>
+        <translation>WAC</translation>
     </message>
     <message>
         <location filename="../awards/AwardWAZ.cpp" line="6"/>
         <source>WAZ</source>
-        <translation></translation>
+        <translation>WAZ</translation>
     </message>
     <message>
         <location filename="../awards/AwardWAS.cpp" line="6"/>
         <source>WAS</source>
-        <translation></translation>
+        <translation>WAS</translation>
     </message>
     <message>
         <location filename="../awards/AwardWPX.cpp" line="6"/>
         <source>WPX</source>
-        <translation></translation>
+        <translation>WPX</translation>
     </message>
     <message>
         <location filename="../awards/AwardIOTA.cpp" line="6"/>
         <source>IOTA</source>
-        <translation></translation>
+        <translation>IOTA</translation>
     </message>
     <message>
         <location filename="../awards/AwardPOTAHunter.cpp" line="6"/>
@@ -708,7 +708,7 @@
     <message>
         <location filename="../awards/AwardWWFF.cpp" line="6"/>
         <source>WWFF</source>
-        <translation></translation>
+        <translation>WWFF</translation>
     </message>
     <message>
         <location filename="../awards/AwardGridsquare.cpp" line="18"/>
@@ -803,7 +803,7 @@
     <message>
         <location filename="../awards/AwardDXCC.cpp" line="19"/>
         <source>DELETED</source>
-        <translation>Gelöscht</translation>
+        <translation>GELÖSCHT</translation>
     </message>
 </context>
 <context>
@@ -863,8 +863,8 @@
     </message>
     <message>
         <location filename="../ui/BandmapWidget.ui" line="105"/>
-        <source> min(s)</source>
-        <translation></translation>
+        <source>min(s)</source>
+        <translation>min(s)</translation>
     </message>
     <message>
         <location filename="../ui/BandmapWidget.cpp" line="619"/>
@@ -889,7 +889,7 @@
     <message>
         <location filename="../ui/BandmapWidget.cpp" line="1092"/>
         <source>SOS</source>
-        <translation></translation>
+        <translation>SOS</translation>
     </message>
 </context>
 <context>
@@ -897,7 +897,7 @@
     <message>
         <location filename="../cwkey/drivers/CWCatKey.cpp" line="36"/>
         <source>No Rig is connected</source>
-        <translation>Rig nicht verbunden</translation>
+        <translation>Kein Rig ist verbunden</translation>
     </message>
     <message>
         <location filename="../cwkey/drivers/CWCatKey.cpp" line="46"/>
@@ -925,7 +925,7 @@
         <location filename="../cwkey/drivers/CWCatKey.cpp" line="143"/>
         <location filename="../cwkey/drivers/CWCatKey.cpp" line="168"/>
         <source>Rig is not connected</source>
-        <translation>Rig nicht verbunden</translation>
+        <translation>Rig ist nicht verbunden</translation>
     </message>
     <message>
         <location filename="../cwkey/drivers/CWCatKey.cpp" line="136"/>
@@ -986,17 +986,17 @@
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="233"/>
         <source>F1</source>
-        <translation></translation>
+        <translation>F1</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="261"/>
         <source>F2</source>
-        <translation></translation>
+        <translation>F2</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="283"/>
         <source>F3</source>
-        <translation></translation>
+        <translation>F3</translation>
     </message>
     <message>
         <location filename="../ui/CWConsoleWidget.ui" line="62"/>
@@ -10621,7 +10621,7 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1958"/>
         <source>Received</source>
-        <translation>Eingang</translation>
+        <translation>Erhalten</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="2029"/>
@@ -10641,12 +10641,12 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1848"/>
         <source>QSL via</source>
-        <translation></translation>
+        <translation>QSL via</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="2055"/>
         <source>Sent</source>
-        <translation>Ausgang</translation>
+        <translation>Gesendet</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.ui" line="1715"/>
