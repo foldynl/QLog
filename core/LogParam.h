@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QDate>
+#include <QColor>
+#include <QImage>
 #include <QVariant>
 #include <QMutex>
 
@@ -385,6 +387,10 @@ public:
     static void setQslLabelSkip(int count);
     static int getQslLabelZoom();
     static void setQslLabelZoom(int zoom);
+    static int getQslLabelPrintMode();
+    static void setQslLabelPrintMode(int mode);
+    static int getQslLabelPageSize();
+    static void setQslLabelPageSize(int pageSize);
     static int getQslLabelCustomPageSize();
     static void setQslLabelCustomPageSize(int pageSizeIndex);
     static int getQslLabelCustomCols();
@@ -403,6 +409,26 @@ public:
     static void setQslLabelCustomHSpacing(double spacing);
     static double getQslLabelCustomVSpacing();
     static void setQslLabelCustomVSpacing(double spacing);
+    static double getQslLabelCardWidth();
+    static void setQslLabelCardWidth(double width);
+    static double getQslLabelCardHeight();
+    static void setQslLabelCardHeight(double height);
+    static double getQslLabelCardGap();
+    static void setQslLabelCardGap(double gap);
+    static double getQslLabelCardLabelWidth();
+    static void setQslLabelCardLabelWidth(double width);
+    static double getQslLabelCardLabelHeight();
+    static void setQslLabelCardLabelHeight(double height);
+    static double getQslLabelCardLabelOffsetX();
+    static void setQslLabelCardLabelOffsetX(double offset);
+    static double getQslLabelCardLabelOffsetY();
+    static void setQslLabelCardLabelOffsetY(double offset);
+    static bool getQslLabelCardLabelOpaqueBackground();
+    static void setQslLabelCardLabelOpaqueBackground(bool enabled);
+    static QColor getQslLabelCardLabelBackgroundColor();
+    static void setQslLabelCardLabelBackgroundColor(const QColor &color);
+    static QImage getQslLabelCardBackgroundImage();
+    static void setQslLabelCardBackgroundImage(const QImage &image);
     static bool getQslLabelPrintBorders();
     static void setQslLabelPrintBorders(bool enabled);
     static QString getQslLabelDateFormat();
@@ -411,6 +437,8 @@ public:
     static void setQslLabelSansFont(const QString &family);
     static QString getQslLabelMonoFont();
     static void setQslLabelMonoFont(const QString &family);
+    static QColor getQslLabelTextColor();
+    static void setQslLabelTextColor(const QColor &color);
     static QString getQslLabelExtraColumn();
     static void setQslLabelExtraColumn(const QString &column);
     static QString getQslLabelExtraColumnHeader();

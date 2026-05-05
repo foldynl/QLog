@@ -1,5 +1,10 @@
 #include <QSqlQuery>
 #include <QCache>
+#include <QBuffer>
+#include <QColor>
+#include <QImage>
+#include <QIODevice>
+#include <QPageSize>
 #include <QSqlError>
 
 #include "LogParam.h"
@@ -1297,6 +1302,26 @@ void LogParam::setQslLabelZoom(int zoom)
     setParam("qsllabel/zoom", zoom);
 }
 
+int LogParam::getQslLabelPrintMode()
+{
+    return getParam("qsllabel/print_mode", 0).toInt();
+}
+
+void LogParam::setQslLabelPrintMode(int mode)
+{
+    setParam("qsllabel/print_mode", mode);
+}
+
+int LogParam::getQslLabelPageSize()
+{
+    return getParam("qsllabel/page_size", static_cast<int>(QPageSize::A4)).toInt();
+}
+
+void LogParam::setQslLabelPageSize(int pageSize)
+{
+    setParam("qsllabel/page_size", pageSize);
+}
+
 int LogParam::getQslLabelCustomPageSize()
 {
     return getParam("qsllabel/custom_pagesize", 0).toInt();
@@ -1387,6 +1412,127 @@ void LogParam::setQslLabelCustomVSpacing(double spacing)
     setParam("qsllabel/custom_vspacing", spacing);
 }
 
+double LogParam::getQslLabelCardWidth()
+{
+    return getParam("qsllabel/card_width", 140.0).toDouble();
+}
+
+void LogParam::setQslLabelCardWidth(double width)
+{
+    setParam("qsllabel/card_width", width);
+}
+
+double LogParam::getQslLabelCardHeight()
+{
+    return getParam("qsllabel/card_height", 90.0).toDouble();
+}
+
+void LogParam::setQslLabelCardHeight(double height)
+{
+    setParam("qsllabel/card_height", height);
+}
+
+double LogParam::getQslLabelCardGap()
+{
+    return getParam("qsllabel/card_gap", 2.0).toDouble();
+}
+
+void LogParam::setQslLabelCardGap(double gap)
+{
+    setParam("qsllabel/card_gap", gap);
+}
+
+double LogParam::getQslLabelCardLabelWidth()
+{
+    return getParam("qsllabel/card_label_width", 70.0).toDouble();
+}
+
+void LogParam::setQslLabelCardLabelWidth(double width)
+{
+    setParam("qsllabel/card_label_width", width);
+}
+
+double LogParam::getQslLabelCardLabelHeight()
+{
+    return getParam("qsllabel/card_label_height", 35.0).toDouble();
+}
+
+void LogParam::setQslLabelCardLabelHeight(double height)
+{
+    setParam("qsllabel/card_label_height", height);
+}
+
+double LogParam::getQslLabelCardLabelOffsetX()
+{
+    return getParam("qsllabel/card_label_offset_x", 5.0).toDouble();
+}
+
+void LogParam::setQslLabelCardLabelOffsetX(double offset)
+{
+    setParam("qsllabel/card_label_offset_x", offset);
+}
+
+double LogParam::getQslLabelCardLabelOffsetY()
+{
+    return getParam("qsllabel/card_label_offset_y", 5.0).toDouble();
+}
+
+void LogParam::setQslLabelCardLabelOffsetY(double offset)
+{
+    setParam("qsllabel/card_label_offset_y", offset);
+}
+
+bool LogParam::getQslLabelCardLabelOpaqueBackground()
+{
+    return getParam("qsllabel/card_label_opaque_background", true).toBool();
+}
+
+void LogParam::setQslLabelCardLabelOpaqueBackground(bool enabled)
+{
+    setParam("qsllabel/card_label_opaque_background", enabled);
+}
+
+QColor LogParam::getQslLabelCardLabelBackgroundColor()
+{
+    QColor color(getParam("qsllabel/card_label_background_color", QStringLiteral("#ffffffff")).toString());
+
+    return color.isValid() ? color : QColor(Qt::white);
+}
+
+void LogParam::setQslLabelCardLabelBackgroundColor(const QColor &color)
+{
+    setParam("qsllabel/card_label_background_color",
+             color.isValid() ? color.name(QColor::HexArgb) : QColor(Qt::white).name(QColor::HexArgb));
+}
+
+QImage LogParam::getQslLabelCardBackgroundImage()
+{
+    QImage image;
+    const QString base64 = getParam("qsllabel/card_background_image", QString()).toString();
+
+    if ( !base64.isEmpty() )
+        image.loadFromData(QByteArray::fromBase64(base64.toLatin1()));
+
+    return image;
+}
+
+void LogParam::setQslLabelCardBackgroundImage(const QImage &image)
+{
+    if ( image.isNull() )
+    {
+        setParam("qsllabel/card_background_image", QString());
+        return;
+    }
+
+    QByteArray imageData;
+    QBuffer buffer(&imageData);
+
+    if ( !buffer.open(QIODevice::WriteOnly) || !image.save(&buffer, "PNG") )
+        return;
+
+    setParam("qsllabel/card_background_image", QString::fromLatin1(imageData.toBase64()));
+}
+
 bool LogParam::getQslLabelPrintBorders()
 {
     return getParam("qsllabel/print_borders", false).toBool();
@@ -1425,6 +1571,19 @@ QString LogParam::getQslLabelMonoFont()
 void LogParam::setQslLabelMonoFont(const QString &family)
 {
     setParam("qsllabel/mono_font", family);
+}
+
+QColor LogParam::getQslLabelTextColor()
+{
+    QColor color(getParam("qsllabel/text_color", QStringLiteral("#ff000000")).toString());
+
+    return color.isValid() ? color : QColor(Qt::black);
+}
+
+void LogParam::setQslLabelTextColor(const QColor &color)
+{
+    setParam("qsllabel/text_color",
+             color.isValid() ? color.name(QColor::HexArgb) : QColor(Qt::black).name(QColor::HexArgb));
 }
 
 QString LogParam::getQslLabelExtraColumn()

@@ -225,6 +225,7 @@ SOURCES += \
         ui/component/EditLine.cpp \
         ui/component/FreqQSpinBox.cpp \
         ui/component/ModeSubmodeDelegate.cpp \
+        ui/component/LogbookFieldComboBox.cpp \
         ui/component/MultiselectCompleter.cpp \
         ui/component/RepeatButton.cpp \
         ui/component/SmartSearchBox.cpp \
@@ -424,6 +425,7 @@ HEADERS += \
         ui/component/EditLine.h \
         ui/component/FreqQSpinBox.h \
         ui/component/ModeSubmodeDelegate.h \
+        ui/component/LogbookFieldComboBox.h \
         ui/component/MultiselectCompleter.h \
         ui/component/RepeatButton.h \
         ui/component/ShutdownAwareWidget.h \

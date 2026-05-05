@@ -3,6 +3,8 @@
 #include <QFontDatabase>
 #include <QFontMetricsF>
 #include <QPageSize>
+#include <QPair>
+#include <QtMath>
 
 #include "QSLPrintLabelRenderer.h"
 #include "core/debug.h"
@@ -25,7 +27,7 @@ void QSLPrintLabelRenderer::setTemplate(const LabelTemplate &tmpl)
 void QSLPrintLabelRenderer::setLabels(const QList<QSLLabelData> &inLabels)
 {
     FCT_IDENTIFICATION;
-    qCDebug(function_parameters) << labels.size();
+    qCDebug(function_parameters) << inLabels.size();
 
     labels = inLabels;
 }
@@ -69,9 +71,43 @@ void QSLPrintLabelRenderer::setStyleOptions(const LabelStyleOptions &opts)
     styleOptions = opts;
 }
 
+void QSLPrintLabelRenderer::setPrintMode(QSLPrintMode mode)
+{
+    FCT_IDENTIFICATION;
+
+    printMode = mode;
+}
+
+void QSLPrintLabelRenderer::setPageSize(QPageSize::PageSizeId pageSize)
+{
+    FCT_IDENTIFICATION;
+
+    outputPageSize = pageSize;
+}
+
+void QSLPrintLabelRenderer::setCardLayout(const QSLCardLayout &layout)
+{
+    FCT_IDENTIFICATION;
+
+    cardLayout = layout;
+}
+
+void QSLPrintLabelRenderer::setCardBackgroundImage(const QImage &image)
+{
+    FCT_IDENTIFICATION;
+
+    cardBackgroundImage = image;
+}
+
 int QSLPrintLabelRenderer::labelsPerPage() const
 {
     FCT_IDENTIFICATION;
+
+    if ( printMode == QSLPrintMode::DirectCard )
+    {
+        const DirectCardGrid grid = directCardGrid();
+        return grid.cols * grid.rows;
+    }
 
     return labelTemplate.cols * labelTemplate.rows;
 }
@@ -174,7 +210,7 @@ void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
 
     // --- Line 1: "To Radio" + Callsign ---
     painter->setFont(fontToRadio);
-    painter->setPen(Qt::black);
+    painter->setPen(styleOptions.textColor.isValid() ? styleOptions.textColor : QColor(Qt::black));
     const QRectF toRadioRect(contentRect.left(), currentY,
                              contentRect.width(), line1Height);
     const QString toRadioText = styleOptions.toRadioText.isEmpty() ? "To Radio" : styleOptions.toRadioText;
@@ -325,6 +361,16 @@ void QSLPrintLabelRenderer::drawPage(QPainter *painter, int pageIndex)
     FCT_IDENTIFICATION;
     qCDebug(function_parameters) << pageIndex;
 
+    if ( printMode == QSLPrintMode::DirectCard )
+        drawDirectCardPage(painter, pageIndex);
+    else
+        drawLabelSheetPage(painter, pageIndex);
+}
+
+void QSLPrintLabelRenderer::drawLabelSheetPage(QPainter *painter, int pageIndex)
+{
+    FCT_IDENTIFICATION;
+
     if ( !painter )
         return;
 
@@ -371,6 +417,205 @@ void QSLPrintLabelRenderer::drawPage(QPainter *painter, int pageIndex)
     }
 }
 
+void QSLPrintLabelRenderer::drawDirectCardPage(QPainter *painter, int pageIndex)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !painter )
+        return;
+
+    QPaintDevice *device = painter->device();
+
+    if ( !device )
+        return;
+
+    const DirectCardGrid grid = directCardGrid();
+    const QSizeF pageSize = grid.pageSizeMm;
+    const QSizeF printableSize = directCardPrintableSize(pageSize);
+    const int cols = grid.cols;
+    const int rows = grid.rows;
+    const int perPage = cols * rows;
+
+    if ( perPage <= 0 )
+        return;
+
+    const qreal cardSlotW = mmToUnits(grid.cardSlotWidthMm, device);
+    const qreal cardSlotH = mmToUnits(grid.cardSlotHeightMm, device, true);
+    const qreal gapX = mmToUnits(cardLayout.cardGapMm, device);
+    const qreal gapY = mmToUnits(cardLayout.cardGapMm, device, true);
+    const qreal gridW = mmToUnits(grid.usedWidthMm, device);
+    const qreal gridH = mmToUnits(grid.usedHeightMm, device, true);
+    const qreal pageMarginX = mmToUnits(directCardPageMarginMm, device);
+    const qreal pageMarginY = mmToUnits(directCardPageMarginMm, device, true);
+    const qreal printableW = mmToUnits(printableSize.width(), device);
+    const qreal printableH = mmToUnits(printableSize.height(), device, true);
+    const qreal startX = pageMarginX + qMax<qreal>(0.0, (printableW - gridW) / 2.0);
+    const qreal startY = pageMarginY + qMax<qreal>(0.0, (printableH - gridH) / 2.0);
+
+    const int slotStart = pageIndex * perPage;
+
+    for ( int row = 0; row < rows; ++row )
+    {
+        for ( int col = 0; col < cols; ++col )
+        {
+            const int slotIndex = slotStart + row * cols + col;
+            const int labelIndex = slotIndex - skipLabels;
+
+            if ( labelIndex < 0 )
+                continue;
+
+            if ( labelIndex >= labels.size() )
+                return;
+
+            const QRectF slotRect(startX + col * (cardSlotW + gapX),
+                                  startY + row * (cardSlotH + gapY),
+                                  cardSlotW,
+                                  cardSlotH);
+
+            painter->save();
+            if ( grid.rotateCard )
+            {
+                painter->translate(slotRect.left() + slotRect.width(), slotRect.top());
+                painter->rotate(90.0);
+            }
+            else
+            {
+                painter->translate(slotRect.left(), slotRect.top());
+            }
+
+            const QRectF cardRect(0, 0,
+                                  mmToUnits(cardLayout.cardWidthMm, device),
+                                  mmToUnits(cardLayout.cardHeightMm, device, true));
+            if ( !cardBackgroundImage.isNull() )
+                painter->drawImage(cardRect, cardBackgroundImage);
+
+            if ( printBorders )
+            {
+                painter->save();
+                painter->setPen(QPen(Qt::black, 0.5));
+                painter->setBrush(Qt::NoBrush);
+                painter->drawRect(cardRect);
+                painter->restore();
+            }
+
+            const QRectF labelRect(cardRect.left() + mmToUnits(cardLayout.labelOffsetXMm, device),
+                                   cardRect.top() + mmToUnits(cardLayout.labelOffsetYMm, device, true),
+                                   mmToUnits(cardLayout.labelWidthMm, device),
+                                   mmToUnits(cardLayout.labelHeightMm, device, true));
+
+            if ( cardLayout.labelOpaqueBackground )
+            {
+                painter->save();
+                painter->setPen(Qt::NoPen);
+                painter->setBrush(cardLayout.labelBackgroundColor);
+                painter->drawRect(labelRect);
+                painter->restore();
+            }
+
+            drawLabel(painter, labelRect, labels.at(labelIndex));
+            painter->restore();
+        }
+    }
+}
+
+QSizeF QSLPrintLabelRenderer::pageSizeMm() const
+{
+    FCT_IDENTIFICATION;
+
+    if ( printMode == QSLPrintMode::DirectCard )
+        return directCardGrid().pageSizeMm;
+
+    QSizeF size = QPageSize(outputPageSize).size(QPageSize::Millimeter);
+
+    if ( labelTemplate.orientation == QPageLayout::Landscape )
+        size.transpose();
+
+    return size;
+}
+
+QSizeF QSLPrintLabelRenderer::directCardPrintableSize(const QSizeF &pageSize) const
+{
+    FCT_IDENTIFICATION;
+
+    return QSizeF(qMax(0.0, pageSize.width() - 2.0 * directCardPageMarginMm),
+                  qMax(0.0, pageSize.height() - 2.0 * directCardPageMarginMm));
+}
+
+QSLPrintLabelRenderer::DirectCardGrid QSLPrintLabelRenderer::directCardGrid() const
+{
+    FCT_IDENTIFICATION;
+
+    DirectCardGrid best;
+
+    const QSizeF portrait = QPageSize(outputPageSize).size(QPageSize::Millimeter);
+    QSizeF landscape = portrait;
+    landscape.transpose();
+    const QList<QPair<QSizeF, QPageLayout::Orientation>> pageOptions =
+    {
+        {portrait, QPageLayout::Portrait},
+        {landscape, QPageLayout::Landscape}
+    };
+
+    for ( const auto &pageOption : pageOptions )
+    {
+        const QSizeF printableSize = directCardPrintableSize(pageOption.first);
+
+        for ( bool rotateCard : {false, true} )
+        {
+            DirectCardGrid candidate;
+            candidate.pageSizeMm = pageOption.first;
+            candidate.pageOrientation = pageOption.second;
+            candidate.rotateCard = rotateCard;
+            candidate.cardSlotWidthMm = rotateCard ? cardLayout.cardHeightMm : cardLayout.cardWidthMm;
+            candidate.cardSlotHeightMm = rotateCard ? cardLayout.cardWidthMm : cardLayout.cardHeightMm;
+            candidate.cols = directCardCols(printableSize, rotateCard);
+            candidate.rows = directCardRows(printableSize, rotateCard);
+            candidate.usedWidthMm = candidate.cols > 0
+                                    ? candidate.cols * candidate.cardSlotWidthMm
+                                      + (candidate.cols - 1) * cardLayout.cardGapMm
+                                    : 0.0;
+            candidate.usedHeightMm = candidate.rows > 0
+                                     ? candidate.rows * candidate.cardSlotHeightMm
+                                       + (candidate.rows - 1) * cardLayout.cardGapMm
+                                     : 0.0;
+
+            const int bestCount = best.cols * best.rows;
+            const int candidateCount = candidate.cols * candidate.rows;
+            const QSizeF bestPrintableSize = directCardPrintableSize(best.pageSizeMm);
+            const double bestWaste = bestPrintableSize.width() * bestPrintableSize.height()
+                                     - best.usedWidthMm * best.usedHeightMm;
+            const double candidateWaste = printableSize.width() * printableSize.height()
+                                          - candidate.usedWidthMm * candidate.usedHeightMm;
+
+            if ( candidateCount > bestCount
+                 || (candidateCount == bestCount && candidateWaste < bestWaste) )
+            {
+                best = candidate;
+            }
+        }
+    }
+
+    return best;
+}
+
+int QSLPrintLabelRenderer::directCardCols(const QSizeF &printableSize, bool rotateCard) const
+{
+    FCT_IDENTIFICATION;
+
+    const double cardWidth = rotateCard ? cardLayout.cardHeightMm : cardLayout.cardWidthMm;
+    return cardWidth > 0.0 ? qFloor((printableSize.width() + cardLayout.cardGapMm)
+                                    / (cardWidth + cardLayout.cardGapMm)) : 0;
+}
+
+int QSLPrintLabelRenderer::directCardRows(const QSizeF &printableSize, bool rotateCard) const
+{
+    FCT_IDENTIFICATION;
+
+    const double cardHeight = rotateCard ? cardLayout.cardWidthMm : cardLayout.cardHeightMm;
+    return cardHeight > 0.0 ? qFloor((printableSize.height() + cardLayout.cardGapMm)
+                                     / (cardHeight + cardLayout.cardGapMm)) : 0;
+}
+
 QImage QSLPrintLabelRenderer::renderPage(int pageIndex, int dpi)
 {
     FCT_IDENTIFICATION;
@@ -388,10 +633,7 @@ QImage QSLPrintLabelRenderer::renderPage(int pageIndex, int dpi)
         return QImage();
     }
 
-    QSizeF pageSizeMm = QPageSize(labelTemplate.pageSize).size(QPageSize::Millimeter);
-
-    if ( labelTemplate.orientation == QPageLayout::Landscape )
-        pageSizeMm.transpose();
+    QSizeF pageSizeMm = this->pageSizeMm();
 
     const int widthPx = qRound(pageSizeMm.width() * dpi / 25.4);
     const int heightPx = qRound(pageSizeMm.height() * dpi / 25.4);
@@ -431,8 +673,14 @@ void QSLPrintLabelRenderer::printAll(QPrinter *printer)
 
     printer->setResolution(PRINTER_RESOLUTION);
 
-    const QPageLayout layout(QPageSize(labelTemplate.pageSize),
-                             labelTemplate.orientation,
+    const QPageSize pageSize(outputPageSize);
+    QPageLayout::Orientation orientation = labelTemplate.orientation;
+
+    if ( printMode == QSLPrintMode::DirectCard )
+        orientation = directCardGrid().pageOrientation;
+
+    const QPageLayout layout(pageSize,
+                             orientation,
                              QMarginsF(0, 0, 0, 0),
                              QPageLayout::Millimeter);
     printer->setPageLayout(layout);
