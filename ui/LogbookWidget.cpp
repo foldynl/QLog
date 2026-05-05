@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include <QProgressDialog>
 #include <QActionGroup>
+#include <QHeaderView>
 
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
@@ -24,6 +25,7 @@
 #include "ui/ColumnSettingDialog.h"
 #include "data/Data.h"
 #include "ui/ExportDialog.h"
+#include "ui/component/ModeSubmodeDelegate.h"
 #include "service/eqsl/Eqsl.h"
 #include "ui/PaperQSLDialog.h"
 #include "ui/QSODetailDialog.h"
@@ -155,6 +157,8 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_FREQUENCY, new UnitFormatDelegate("", 6, 0.001, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_BAND, new ComboFormatDelegate(new SqlListModel("SELECT name FROM bands ORDER BY start_freq", " ", ui->contactTable), ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_MODE, new ComboFormatDelegate(new SqlListModel("SELECT name FROM modes", " ", ui->contactTable), ui->contactTable));
+    ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_SUBMODE, new SubmodeDelegate(ui->contactTable));
+    ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_MODE_SUBMODE, new ModeSubmodeDelegate(ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_CONTINENT, new ComboFormatDelegate(QStringList() << " " << Data::getContinentList(), ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_QSL_SENT, new ComboFormatDelegate(Data::instance()->qslSentEnum, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_QSL_SENT_VIA, new ComboFormatDelegate(Data::instance()->qslSentViaEnum, ui->contactTable));
@@ -1067,6 +1071,14 @@ void LogbookWidget::saveTableHeaderState()
     LogParam::setLogbookState(ui->contactTable->horizontalHeader()->saveState());
 }
 
+void LogbookWidget::setContactTableColumnVisible(int columnIndex, bool visible)
+{
+    ui->contactTable->setColumnHidden(columnIndex, !visible);
+
+    if ( visible && ui->contactTable->columnWidth(columnIndex) == 0 )
+        ui->contactTable->setColumnWidth(columnIndex, ui->contactTable->horizontalHeader()->defaultSectionSize());
+}
+
 void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
 {
     FCT_IDENTIFICATION;
@@ -1079,9 +1091,9 @@ void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
         action->setCheckable(true);
         action->setChecked(!ui->contactTable->isColumnHidden(i));
 
-        connect(action, &QAction::triggered, this, [this, i]()
+        connect(action, &QAction::triggered, this, [this, i](bool checked)
         {
-            ui->contactTable->setColumnHidden(i, !ui->contactTable->isColumnHidden(i));
+            setContactTableColumnVisible(i, checked);
             saveTableHeaderState();
         });
 

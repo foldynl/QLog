@@ -1,4 +1,5 @@
 #include <QCheckBox>
+#include <QHeaderView>
 #include <QPushButton>
 #include "ColumnSettingDialog.h"
 #include "ui_ColumnSettingDialog.h"
@@ -77,8 +78,13 @@ void ColumnSettingDialog::setupDialog()
         connect(columnCheckbox, &QCheckBox::stateChanged, this, [columnIndex, this](int state)
 #endif
         {
-            emit columnChanged(columnIndex, state);
-            if ( table ) table->setColumnHidden(columnIndex, !table->isColumnHidden(columnIndex));
+            const bool columnVisible = state == Qt::Checked;
+
+            emit columnChanged(columnIndex, columnVisible);
+
+            // The checkbox is the source of truth. Toggling the current table
+            // state can get out of sync after restoring an older header state.
+            setColumnVisible(columnIndex, columnVisible);
         });
 
         switch ( columnIndex )
@@ -265,6 +271,17 @@ ColumnSettingDialog::~ColumnSettingDialog()
     delete ui;
 }
 
+void ColumnSettingDialog::setColumnVisible(int columnIndex, bool visible)
+{
+    if ( !table )
+        return;
+
+    table->setColumnHidden(columnIndex, !visible);
+
+    if ( visible && table->columnWidth(columnIndex) == 0 )
+        table->setColumnWidth(columnIndex, table->horizontalHeader()->defaultSectionSize());
+}
+
 ColumnSettingGenericDialog::ColumnSettingGenericDialog(const QAbstractItemModel *model,
                                                        QWidget *parent) :
     QDialog(parent),
@@ -368,13 +385,18 @@ ColumnSettingSimpleDialog::ColumnSettingSimpleDialog(QTableView *table, QWidget 
         columnCheckbox->setText(columnNameString);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 7, 0))
-        connect(columnCheckbox, &QCheckBox::checkStateChanged, this, [columnIndex, table, this](Qt::CheckState state)
+        connect(columnCheckbox, &QCheckBox::checkStateChanged, this, [columnIndex, this](Qt::CheckState state)
 #else
-        connect(columnCheckbox, &QCheckBox::stateChanged, this, [columnIndex, table, this](int state)
+        connect(columnCheckbox, &QCheckBox::stateChanged, this, [columnIndex, this](int state)
 #endif
         {
-            emit columnChanged(columnIndex, state);
-            if ( table) table->setColumnHidden(columnIndex, !table->isColumnHidden(columnIndex));
+            const bool columnVisible = state == Qt::Checked;
+
+            emit columnChanged(columnIndex, columnVisible);
+
+            // Keep the simple dialog deterministic as well: checked means
+            // visible, unchecked means hidden.
+            setColumnVisible(columnIndex, columnVisible);
         });
 
         checkboxList.append(columnCheckbox);
@@ -389,4 +411,15 @@ ColumnSettingSimpleDialog::~ColumnSettingSimpleDialog()
 {
     FCT_IDENTIFICATION;
     delete ui;
+}
+
+void ColumnSettingSimpleDialog::setColumnVisible(int columnIndex, bool visible)
+{
+    if ( !table )
+        return;
+
+    table->setColumnHidden(columnIndex, !visible);
+
+    if ( visible && table->columnWidth(columnIndex) == 0 )
+        table->setColumnWidth(columnIndex, table->horizontalHeader()->defaultSectionSize());
 }

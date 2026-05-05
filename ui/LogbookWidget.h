@@ -131,6 +131,7 @@ private:
     void finishQSOLookupBatch();
     void clearSearchText();
     void setupSearchMenu();
+    void setContactTableColumnVisible(int columnIndex, bool visible);
     void updateSelectedRows(std::function<void(int row)> updater);
     QModelIndexList callbookLookupBatch;
     QModelIndex currLookupIndex;

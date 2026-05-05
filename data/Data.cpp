@@ -675,6 +675,34 @@ QPair<QString, QString> Data::legacyMode(const QString &mode)
     return legacyModes.value(mode);
 }
 
+QStringList Data::submodesForMode(const QString &mode) const
+{
+    FCT_IDENTIFICATION;
+
+    if ( mode.isEmpty() )
+        return QStringList();
+
+    QSqlQuery query;
+    query.prepare("SELECT submodes FROM modes WHERE name = :mode");
+    query.bindValue(":mode", mode);
+
+    if ( !query.exec() || !query.next() )
+        return QStringList();
+
+    return QJsonDocument::fromJson(query.value(0).toString().toUtf8()).toVariant().toStringList();
+}
+
+bool Data::isSubmodeForMode(const QString &mode, const QString &submode) const
+{
+    FCT_IDENTIFICATION;
+
+    // Empty submode is a valid way to store a plain ADIF mode without subtype.
+    if ( submode.isEmpty() )
+        return true;
+
+    return submodesForMode(mode).contains(submode);
+}
+
 QString Data::getIANATimeZone(double lat, double lon)
 {
     FCT_IDENTIFICATION;
@@ -1518,4 +1546,3 @@ WWFFEntity Data::lookupWWFF(const QString &reference)
 
     return WWFFRet;
 }
-
