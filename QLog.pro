@@ -76,6 +76,8 @@ SOURCES += \
         awards/AwardWPX.cpp \
         awards/AwardWWFF.cpp \
         awards/BandTableAward.cpp \
+        awards/awardwaac.cpp \
+        awards/awardwaip.cpp \
         core/AlertEvaluator.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
@@ -252,6 +254,8 @@ HEADERS += \
         awards/AwardWPX.h \
         awards/AwardWWFF.h \
         awards/BandTableAward.h \
+        awards/awardwaac.h \
+        awards/awardwaip.h \
         core/AlertEvaluator.h \
         core/AppGuard.h \
         core/CallbookManager.h \

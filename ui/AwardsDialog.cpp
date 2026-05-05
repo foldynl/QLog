@@ -25,6 +25,8 @@
 #include "awards/AwardNZ.h"
 #include "awards/AwardSpanishDME.h"
 #include "awards/AwardUKD.h"
+#include "awards/awardwaip.h"
+#include "awards/awardwaac.h"
 
 MODULE_IDENTIFICATION("qlog.ui.awardsdialog");
 
@@ -205,5 +207,7 @@ QList<AwardDefinition*> AwardsDialog::createAwards()
         new AwardNZ(),
         new AwardSpanishDME(),
         new AwardUKD(),
+        new AwardWAIP(),
+        new AwardWAAC(),
     };
 }
