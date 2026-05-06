@@ -43,6 +43,7 @@ public:
                   qint16 dedup_interval = DEDUPLICATION_TIME,
                   double dedup_freq_tolerance = DEDUPLICATION_FREQ_TOLERANCE);
     const DxSpot getSpot(const QModelIndex& index) const {return dxData.at(index.row());};
+    void updateWorkedStation(QSqlRecord qsoRecord);
     void clear();
 
 private:
