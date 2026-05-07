@@ -512,8 +512,11 @@
    </property>
   </action>
   <action name="actionPrintQslLabels">
+   <property name="icon">
+    <iconset theme="document-print"/>
+   </property>
    <property name="text">
-    <string>Print QSL &amp;Labels</string>
+    <string>Print QS&amp;L</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
