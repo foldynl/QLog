@@ -9,6 +9,7 @@
 #include <QKeyEvent>
 #include <QToolButton>
 #include <QStackedWidget>
+#include <QRandomGenerator>
 
 #include "rig/Rig.h"
 #include "rig/macros.h"
@@ -48,9 +49,12 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     prop_cond(nullptr),
     countyCompleter(nullptr),
     QSOFreq(0.0),
+    QSOTxFreq(0.0),
+    prevQSOTxFreq(0.0),
     bandwidthFilter(BANDWIDTH_UNKNOWN),
     rigOnline(false),
     isManualEnterMode(false),
+    rigSplitEnabled(false),
     callbookSearchPaused(false),
     modeController(nullptr)
 {
@@ -1044,6 +1048,8 @@ void NewContactWidget::resetContact()
     dxccEntity = DxccEntity();
     coordPrec = COORD_NONE;
     QSOFreq = 0.0;
+    QSOTxFreq = 0.0;
+    prevQSOTxFreq = 0.0;
 
     emit filterCallsign(QString());
     emit newTarget(qQNaN(), qQNaN());
@@ -1459,19 +1465,31 @@ void NewContactWidget::QSYContactWiping(double newFreq)
 
     qCDebug(runtime) << "Rig online: " << rigOnline << " "
                      << "QSO Freq: " << QSOFreq << " "
+                     << "QSO TX Freq: " << QSOTxFreq << " "
+                     << "QSO prev TX Freq: " << prevQSOTxFreq << " "
                      << "QSO Time: " << isQSOTimeStarted() << " "
                      << "Mode/submode: " << ui->modeEdit->currentText() << ui->submodeEdit->currentText()
                      << "RIG Filter width: " << bandwidthFilter
                      << "QSYWipingWidth: " << QSYWipingWidth << QSTRING_FREQ(Hz2MHz(QSYWipingWidth))
-                     << "Diff: " << qAbs(QSOFreq - newFreq)
+                     << "Diff RX: " << qAbs(QSOFreq - newFreq)
+                     << "Diff TX: " << qAbs(QSOTxFreq - newFreq)
+                     << "Diff prevTX: " << qAbs(prevQSOTxFreq - newFreq)
                      << "Rig Profile QSO Wiping: " << RigProfilesManager::instance()->getCurProfile1().QSYWiping;
 
+    double threshold = Hz2MHz(QSYWipingWidth) / 1.5; //1.5 is a magic constant - determined experimentally
+
+    // Wipe only if the new freq is far from ALL known frequencies (RX, TX, and previous TX).
+    // During VFO swap, VFO1/VFO2 updates arrive asynchronously in any order:
+    //   - VFO1 first: QSOTxFreq still holds the old TX freq -> matches new VFO1 → no wipe
+    //   - VFO2 first: QSOTxFreq is overwritten, but prevQSOTxFreq holds the old TX freq -> matches -> no wipe
     if ( RigProfilesManager::instance()->getCurProfile1().QSYWiping
          && rigOnline            // only if Rig is connected
          && QSOFreq > 0.0        // it means that Form is "dirty" and contain freq when it got dirty
          && !isQSOTimeStarted()  // operator is not in QSO
          && QSYWipingWidth != BANDWIDTH_UNKNOWN
-         && qAbs(QSOFreq - newFreq) > Hz2MHz(QSYWipingWidth) / 1.5 )  //1.5 is a magic constant - determined experimentally
+         && qAbs(QSOFreq - newFreq) > threshold
+         && ( QSOTxFreq <= 0.0 || qAbs(QSOTxFreq - newFreq) > threshold )
+         && ( prevQSOTxFreq <= 0.0 || qAbs(prevQSOTxFreq - newFreq) > threshold ) )
     {
         resetContact();
     }
@@ -2304,6 +2322,14 @@ void NewContactWidget::frequencyTXChanged()
         return;
     }
 
+    if ( rigSplitEnabled )
+    {
+        // In split mode, TX frequency change goes to VFO2
+        updateTXBand(xitFreq);
+        qCDebug(runtime) << "split TX freq: " << xitFreq;
+        rig->setFrequency(VFO2, MHz(xitFreq));
+        return;
+    }
 
     realRigFreq = xitFreq - RigProfilesManager::instance()->getCurProfile1().xitOffset;
     double ritFreq = (isManualEnterMode) ? ui->freqRXEdit->value()
@@ -2315,16 +2341,9 @@ void NewContactWidget::frequencyTXChanged()
     // cleared
     // queryMemberList();
 
-    if ( ! isManualEnterMode )
-    {
-        qCDebug(runtime) << "rig real freq: " << realRigFreq;
-        rig->setFrequency(MHz(realRigFreq));  // set rig frequency
-        emit userFrequencyChanged(VFO1, realRigFreq, ritFreq, xitFreq);
-    }
-    else
-    {
-
-    }
+    qCDebug(runtime) << "rig real freq: " << realRigFreq;
+    rig->setFrequency(MHz(realRigFreq));  // set rig frequency
+    emit userFrequencyChanged(VFO1, realRigFreq, ritFreq, xitFreq);
 }
 
 /* the function is called when a newcontact RX frequecy spinbox is changed */
@@ -2361,6 +2380,27 @@ void NewContactWidget::changeFrequency(VFOID vfoid, double vfoFreq, double ritFr
 {
     FCT_IDENTIFICATION;
 
+    qCDebug(function_parameters) << vfoid << vfoFreq << ritFreq << xitFreq;
+
+    if ( vfoid == VFO2 )
+    {
+        // TX VFO frequency update (split mode)
+        // Keep previous TX freq — during VFO swap, VFO1/VFO2 updates
+        // arrive asynchronously; prevQSOTxFreq prevents false QSY Wipe
+        prevQSOTxFreq = QSOTxFreq;
+        QSOTxFreq = vfoFreq;
+
+        if ( isManualEnterMode )
+            return;
+
+        ui->freqTXEdit->blockSignals(true);
+        ui->freqTXEdit->setValue(vfoFreq);
+        updateTXBand(vfoFreq);
+        ui->freqTXEdit->blockSignals(false);
+        return;
+    }
+
+    // VFO1 — RX frequency
     realFreqForManualExit = vfoFreq;
 
     if ( isManualEnterMode )
@@ -2368,7 +2408,33 @@ void NewContactWidget::changeFrequency(VFOID vfoid, double vfoFreq, double ritFr
         qCDebug(runtime) << "Manual mode enabled - ignore event";
         return;
     }
-    __changeFrequency (vfoid, vfoFreq, ritFreq, xitFreq);
+    __changeFrequency(vfoid, vfoFreq, ritFreq, xitFreq);
+}
+
+void NewContactWidget::changeSplit(VFOID, bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << enabled;
+
+    rigSplitEnabled = enabled;
+
+    if ( !enabled )
+    {
+        // Split turned off — sync TX freq back to VFO1 + XIT
+        double xitFreq = realRigFreq + RigProfilesManager::instance()->getCurProfile1().xitOffset;
+        ui->freqTXEdit->blockSignals(true);
+        ui->freqTXEdit->setValue(xitFreq);
+        updateTXBand(xitFreq);
+        ui->freqTXEdit->blockSignals(false);
+    }
+
+    ui->freqTXEdit->setEnabled(!enabled);
+
+    showRXTXFreqs(enabled
+                  || RigProfilesManager::instance()->getCurProfile1().ritOffset != 0.0
+                  || RigProfilesManager::instance()->getCurProfile1().xitOffset != 0.0
+                  || isManualEnterMode);
 }
 
 void NewContactWidget::changeModeWithoutSignals(const QString &mode, const QString &subMode)
@@ -2419,17 +2485,22 @@ void NewContactWidget::__changeFrequency(VFOID, double vfoFreq, double ritFreq, 
 
     realRigFreq = vfoFreq;
 
-    ui->freqTXEdit->blockSignals(true);
-    ui->freqTXEdit->setValue(xitFreq);
-    updateTXBand(xitFreq);
-    ui->freqTXEdit->blockSignals(false);
+    // When split is active, TX freq comes via VFO2 — don't overwrite it here
+    if ( !rigSplitEnabled )
+    {
+        ui->freqTXEdit->blockSignals(true);
+        ui->freqTXEdit->setValue(xitFreq);
+        updateTXBand(xitFreq);
+        ui->freqTXEdit->blockSignals(false);
+    }
 
     ui->freqRXEdit->blockSignals(true);
     ui->freqRXEdit->setValue(ritFreq);
     updateRXBand(ritFreq);
     ui->freqRXEdit->blockSignals(false);
 
-    showRXTXFreqs(( ritFreq != xitFreq
+    showRXTXFreqs(( rigSplitEnabled
+                    || ritFreq != xitFreq
                     || RigProfilesManager::instance()->getCurProfile1().ritOffset != 0.0
                     || RigProfilesManager::instance()->getCurProfile1().xitOffset != 0.0
                     || isManualEnterMode ));
@@ -2496,6 +2567,7 @@ void NewContactWidget::rigDisconnected()
         return;
     }
 
+    changeSplit(VFO1, false);
     uiDynamic->powerEdit->setEnabled(true);
     uiDynamic->powerEdit->setValue(RigProfilesManager::instance()->getCurProfile1().defaultPWR);
 
@@ -2820,9 +2892,7 @@ void NewContactWidget::tuneDx(const DxSpot &spot)
 {
     FCT_IDENTIFICATION;
 
-    double frequency = spot.freq;
-
-    qCDebug(function_parameters) << spot.callsign<< frequency << spot.bandPlanMode;
+    qCDebug(function_parameters) << spot.callsign<< spot.freq << spot.bandPlanMode;
 
     if ( isManualEnterMode )
     {
@@ -2830,7 +2900,43 @@ void NewContactWidget::tuneDx(const DxSpot &spot)
         return;
     }
 
-    frequency = ( frequency > 0.0 ) ? frequency : ui->freqRXEdit->value();
+    const double frequency = (spot.freq > 0.0) ? spot.freq : ui->freqRXEdit->value();
+
+#if 0 // DX SPLIT MODE
+    // Enable split BEFORE setting RX frequency — setSplit(true) forces
+    // VFO A as primary, so the subsequent RX freq goes to the correct VFO.
+    // All rig commands are queued, so order of calls here = execution order.
+    double txFreq = 0.0;
+
+
+    // DX SPLIT MODE : Removed due to the inability of rig drivers to consistently manage split mode.
+    // Example: the IC-7300 has an incorrectly implemented frequency setting when
+    // enabling split on VFO B in Hamlib. It appears to be fixed in version 4.7,
+    // but previous versions are broken. The same issue applies to Omnirig.
+    // Because this would require a significant number of exceptions in the code and
+    // would result in unreliable behavior, split configuration for DX is postponed
+    // indefinitely for now.
+
+    if ( spot.freqTX > 0.0 && rigOnline )
+    {
+        txFreq = spot.freqTX;
+
+        // For relative offsets (UP/DOWN), add random jitter within +- mode bandwidth
+        // so that all QLog users don't call on the exact same frequency.
+        // Absolute QSX frequencies (where freqTX differs significantly from freq)
+        // are left unchanged — the spotter gave a precise frequency.
+        if ( spot.freq > 0.0 && qAbs(spot.freqTX - spot.freq) < 0.1 )
+        {
+            qint32 bw = Rig::getNormalBandwidth(ui->modeEdit->currentText(),
+                                                ui->submodeEdit->currentText());
+            double jitterMHz = Hz2MHz(QRandomGenerator::global()->bounded(bw) - bw / 2);
+            txFreq += jitterMHz;
+        }
+
+        qCDebug(runtime) << "Setting split from DX spot: TX" << txFreq;
+        rig->setSplit(true);
+    }
+#endif
 
     // Fix #453
     // it is necessary to have the sequence of Set Freq and Set Mode.
@@ -2839,10 +2945,15 @@ void NewContactWidget::tuneDx(const DxSpot &spot)
 
     if ( frequency > 0.0 )
     {
+#if 0 // SPLIT MODE
+        // Set TX frequency after RX frequency — split is already enabled above
+        if ( txFreq > 0.0 )
+            rig->setFrequency(VFO2, MHz(txFreq));
+#endif
+
         QString subMode;
         QString mode = BandPlan::bandPlanMode2ExpectedMode(spot.bandPlanMode,
                                                            subMode);
-
         if ( mode.isEmpty() )
         {
             qCDebug(runtime) << "mode not found" << spot.bandPlanMode;
@@ -2875,32 +2986,19 @@ void NewContactWidget::tuneDx(const DxSpot &spot)
     resetContact();
     changeCallsignManually(spot.callsign, frequency);
 
-    if ( uiDynamic->potaEdit->text().isEmpty()
-          && !spot.potaRef.isEmpty() )
+    auto fillRef = [&](QLineEdit* edit, const QString& value, std::function<void()> finishSlot = nullptr)
     {
-        uiDynamic->potaEdit->setText(spot.potaRef);
-        potaEditFinished();
-    }
+        if ( edit->text().isEmpty() && !value.isEmpty() )
+        {
+            edit->setText(value);
+            if (finishSlot) finishSlot();
+        }
+    };
 
-    if ( uiDynamic->sotaEdit->text().isEmpty()
-        && !spot.sotaRef.isEmpty() )
-    {
-        uiDynamic->sotaEdit->setText(spot.sotaRef);
-        sotaEditFinished();
-    }
-
-    if ( uiDynamic->wwffEdit->text().isEmpty()
-        && !spot.wwffRef.isEmpty() )
-    {
-        uiDynamic->wwffEdit->setText(spot.wwffRef);
-        wwffEditFinished();
-    }
-
-    if ( uiDynamic->iotaEdit->text().isEmpty()
-        && !spot.iotaRef.isEmpty() )
-    {
-        uiDynamic->iotaEdit->setText(spot.iotaRef);
-    }
+    fillRef(uiDynamic->potaEdit, spot.potaRef, [this] { potaEditFinished(); });
+    fillRef(uiDynamic->sotaEdit, spot.sotaRef, [this] { sotaEditFinished(); });
+    fillRef(uiDynamic->wwffEdit, spot.wwffRef, [this] { wwffEditFinished(); });
+    fillRef(uiDynamic->iotaEdit, spot.iotaRef);
 }
 
 void NewContactWidget::fillCallsignGrid(const QString &callsign, const QString &grid)
@@ -3033,7 +3131,7 @@ QString NewContactWidget::getCallsign() const
 {
     FCT_IDENTIFICATION;
 
-    return ui->callsignEdit->text();
+    return ui->callsignEdit->text().toUpper();
 }
 
 QString NewContactWidget::getName() const
@@ -3728,6 +3826,15 @@ void NewContactWidget::formFieldChangedString(const QString &)
     FCT_IDENTIFICATION;
 
     QSOFreq = ui->freqRXEdit->value();
+
+    // Initialize QSOTxFreq from display when form becomes dirty.
+    // Rig drivers only emit VFO2 signals when TX freq CHANGES —
+    // after resetContact() zeroes QSOTxFreq, the driver won't re-emit
+    // an unchanged TX freq, leaving QSOTxFreq at 0. This causes false
+    // QSY Wipe on the first VFO swap. Reading from the display provides
+    // the correct TX freq even before the next VFO2 signal arrives.
+    if ( QSOTxFreq <= 0.0 && rigSplitEnabled )
+        QSOTxFreq = ui->freqTXEdit->value();
 }
 
 void NewContactWidget::formFieldChanged()
@@ -3818,6 +3925,10 @@ void NewContactWidget::changeCallsignManually(const QString &callsign, double fr
     FCT_IDENTIFICATION;
 
     QSOFreq = freq; // Important !!! - to prevent QSY Contact Reset when the frequency is set
+
+    // Initialize TX freq for QSY Wipe protection — see formFieldChangedString comment
+    if ( QSOTxFreq <= 0.0 && rigSplitEnabled )
+        QSOTxFreq = ui->freqTXEdit->value();
     ui->callsignEdit->setText(callsign);
     ui->callsignEdit->end(false);
     handleCallsignFromUser();

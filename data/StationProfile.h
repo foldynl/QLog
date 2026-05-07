@@ -64,6 +64,7 @@ public:
         return &instance;
     };
     void save();
+    StationProfile findByCallsign(const QString &callsign);
 };
 
 

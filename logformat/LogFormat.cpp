@@ -6,6 +6,7 @@
 #include "PotaAdiFormat.h"
 #include "JsonFormat.h"
 #include "CSVFormat.h"
+#include "CabrilloFormat.h"
 #include "data/Data.h"
 #include "core/debug.h"
 #include "data/Gridsquare.h"
@@ -51,7 +52,7 @@ LogFormat* LogFormat::open(QString type, QTextStream& stream) {
         return open(LogFormat::CSV, stream);
     }
     else if (type == "cabrillo") {
-        return open(LogFormat::JSON, stream);
+        return open(LogFormat::CABRILLO, stream);
     }
     else if (type == "pota") {
         return open(LogFormat::POTA, stream);
@@ -80,7 +81,7 @@ LogFormat* LogFormat::open(LogFormat::Type type, QTextStream& stream) {
         return new CSVFormat(stream);
 
     case LogFormat::CABRILLO:
-        return nullptr;
+        return new CabrilloFormat(stream);
 
     case LogFormat::POTA:
         return new PotaAdiFormat(stream);
@@ -260,12 +261,13 @@ void LogFormat::setExportedFields(const QStringList &fieldsList)
     exportedFields = fieldsList;
 }
 
-void LogFormat::setUpdateDxcc(bool updateDxcc) {
+void LogFormat::setFillMissingDxcc(bool fillMissingDxcc)
+{
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters)<<updateDxcc;
+    qCDebug(function_parameters)<<fillMissingDxcc;
 
-    this->updateDxcc = updateDxcc;
+    this->fillMissingDxcc = fillMissingDxcc;
 }
 
 void LogFormat::setDuplicateQSOCallback(duplicateQSOBehaviour (*func)(QSqlRecord *, QSqlRecord *))
@@ -517,51 +519,60 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         /************************/
         /* Add DXCC Entity Info */
         /************************/
+        const int recordDXCCId = record.value(RECORDIDX(LogbookModel::COLUMN_DXCC)).toInt();  // 0 = NaN or not present
+                                                                                              // otherwise = DXCC ID
+        DxccEntity entity;
 
-        int recordDXCCId = record.value(RECORDIDX(LogbookModel::COLUMN_DXCC)).toInt(); // 0 = NAN or not present
-                                                                                       // otherwise = DXCC ID
-
-        if ( recordDXCCId != 0 || updateDxcc )
+        if ( recordDXCCId != 0 )
         {
-            const DxccEntity &entity = ( updateDxcc ) ? Data::instance()->lookupDxcc(call.toString())
-                                                      : Data::instance()->lookupDxccID(recordDXCCId);
+            // get additional DXCC info
+            entity = Data::instance()->lookupDxccIDAD1C(recordDXCCId);
 
-            if ( entity.dxcc == 0 )  // DXCC not found
-            {
-                writeImportLog(importLogStream,
-                               (updateDxcc) ? ERROR_SEVERITY : WARNING_SEVERITY,
-                               errors,
-                               warnings,
-                               processedRec,
-                               record,
-                               tr("Cannot find DXCC Entity Info"));
-                if ( updateDxcc )
-                    continue;
-            }
-            else
-            {
-                // force overwrite
-                record.setValue(RECORDIDX(LogbookModel::COLUMN_DXCC), entity.dxcc);
-                record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY), Data::removeAccents(entity.country));
-                record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY_INTL), entity.country);
+            // if DXCC is not present on AD1C list, try Clublog, no CQZ and ITUZ info here
+            if ( entity.dxcc == 0 )
+                entity = Data::instance()->lookupDxccIDClublog(recordDXCCId);
 
-                // other DXCC related values ​​are not closely related to DXCC value and could have been filled
-                // therefore check if it is present or not.
-                setIfEmpty(LogbookModel::COLUMN_CONTINENT, entity.cont);
-                setIfEmpty(LogbookModel::COLUMN_ITUZ, QString::number(entity.ituz));
-                setIfEmpty(LogbookModel::COLUMN_CQZ, QString::number(entity.cqz));
-            }
+            // no record in clublog, only Warning, because DXCC number is present
+            if ( entity.dxcc == 0 )
+                writeImportLog(importLogStream, WARNING_SEVERITY, errors, warnings,
+                               processedRec, record, tr("DXCC Info is missing"));
+        }
+        else if ( !fillMissingDxcc )
+        {
+            // DXCC info is missing in the source and fillMissingDXCC is disabled - ERROR - QLog needs DXCC
+            writeImportLog(importLogStream, ERROR_SEVERITY, errors, warnings,
+                           processedRec, record, tr("DXCC Info is missing"));
+            continue;
         }
         else
         {
-            writeImportLog(importLogStream,
-                           WARNING_SEVERITY,
-                           errors,
-                           warnings,
-                           processedRec,
-                           record,
-                           tr("DXCC Info is missing"));
+            // DXCC info is missing in the source and fillMissingDXCC is enabled, try to find on AD1C list
+            entity = Data::instance()->lookupDxccAD1C(call.toString());
+            if ( entity.dxcc == 0 )
+                // if DXCC is not present on AD1C list, try Clublog, no CQZ and ITUZ info here
+                entity = Data::instance()->lookupDxccClublog(call.toString(), start_time);
+
+            if ( entity.dxcc == 0 )
+            {
+                // no record in clublog - ERROR - QLog needs DXCC
+                writeImportLog(importLogStream, ERROR_SEVERITY, errors, warnings,
+                               processedRec, record, tr("DXCC Info is missing"));
+                continue;
+            }
         }
+
+        if ( entity.dxcc != 0 )
+        {
+            record.setValue(RECORDIDX(LogbookModel::COLUMN_DXCC), entity.dxcc);
+            record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY), Data::removeAccents(entity.country));
+            record.setValue(RECORDIDX(LogbookModel::COLUMN_COUNTRY_INTL), entity.country);
+
+            // other DXCC related values ​​are not closely related to DXCC value and could have been filled
+            // therefore check if it is present or not.
+            setIfEmpty(LogbookModel::COLUMN_CONTINENT, entity.cont);
+            setIfEmpty(LogbookModel::COLUMN_ITUZ, QString::number(entity.ituz));
+            setIfEmpty(LogbookModel::COLUMN_CQZ, QString::number(entity.cqz));
+        };
 
         /************************/
         /* Add My Station Info  */

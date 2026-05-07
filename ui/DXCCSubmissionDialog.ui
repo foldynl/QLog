@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DXCCSubmissionDialog</class>
+ <widget class="QDialog" name="DXCCSubmissionDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>803</width>
+    <height>617</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DXCC Submission List</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="optionsGroupBox">
+     <property name="title">
+      <string>Options</string>
+     </property>
+     <layout class="QFormLayout" name="optionsFormLayout">
+      <property name="horizontalSpacing">
+       <number>4</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>3</number>
+      </property>
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="myEntityLabel">
+        <property name="text">
+         <string>My DXCC Entity</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="entityFilterLayout">
+        <item>
+         <widget class="QComboBox" name="myEntityComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer1">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>30</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="userFilterLabel">
+          <property name="text">
+           <string>User Filter</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QComboBox" name="userFilterComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="awardCategoryLabel">
+        <property name="text">
+         <string>Category</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="awardCategoryLayout">
+        <item>
+         <widget class="QRadioButton" name="mixedRadioButton">
+          <property name="text">
+           <string>Mixed</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="cwRadioButton">
+          <property name="text">
+           <string>CW</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="phoneRadioButton">
+          <property name="text">
+           <string>Phone</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="digitalRadioButton">
+          <property name="text">
+           <string>Digital</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="confirmedByLabel">
+        <property name="text">
+         <string>Confirmed by</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="qslConfirmLayout">
+        <property name="spacing">
+         <number>25</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="lotwCheckBox">
+          <property name="text">
+           <string>LoTW</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="paperCheckBox">
+          <property name="text">
+           <string>Paper</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="showStatusLabel">
+        <property name="text">
+         <string>Show</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="showStatusLayout">
+        <property name="spacing">
+         <number>25</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="showUnsubmittedCheckBox">
+          <property name="text">
+           <string>Not Yet Submitted</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="showSubmittedCheckBox">
+          <property name="text">
+           <string>Submitted (Not Granted)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="showGrantedCheckBox">
+          <property name="text">
+           <string>Already Granted</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="bandScopeLabel">
+        <property name="text">
+         <string>Band Scope</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <layout class="QHBoxLayout" name="bandScopeLayout">
+        <item>
+         <widget class="QComboBox" name="bandScopeComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="fiveBandButton">
+          <property name="toolTip">
+           <string>Select 5-Band DXCC preset bands (80/40/20/15/10m)</string>
+          </property>
+          <property name="text">
+           <string>5-Band DXCC</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>10</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="allBandsButton">
+          <property name="toolTip">
+           <string>Select all DXCC-eligible bands</string>
+          </property>
+          <property name="text">
+           <string>All DXCC Bands</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hSpacer6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="bandsLabel">
+        <property name="text">
+         <string>Bands</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <layout class="QGridLayout" name="bandGroup"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="statusLabel">
+     <property name="text">
+      <string>Select options above and the list will update automatically.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableView" name="submissionTableView">
+     <property name="focusPolicy">
+      <enum>Qt::ClickFocus</enum>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
+     <property name="verticalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="horizontalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <attribute name="horizontalHeaderCascadingSectionResizes">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderMinimumSectionSize">
+      <number>20</number>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>20</number>
+     </attribute>
+     <attribute name="verticalHeaderHighlightSections">
+      <bool>false</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="bottomLayout">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportADIFButton">
+       <property name="toolTip">
+        <string>Export the contacts listed above to an ADIF file</string>
+       </property>
+       <property name="text">
+        <string>Export</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-save-as">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="bottomSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Close</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>738</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>myEntityComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>refreshTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>177</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userFilterComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>refreshTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>402</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandScopeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>onBandScopeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>177</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lotwCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>refreshTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>paperCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>refreshTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showUnsubmittedCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>refreshTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>214</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showSubmittedCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>refreshTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>401</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showGrantedCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>refreshTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>580</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fiveBandButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>onFiveBandClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>294</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>allBandsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>onAllBandsClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>426</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportADIFButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DXCCSubmissionDialog</receiver>
+   <slot>exportAsADIF()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>refreshTable()</slot>
+  <slot>onBandScopeChanged(int)</slot>
+  <slot>onFiveBandClicked()</slot>
+  <slot>onAllBandsClicked()</slot>
+  <slot>exportAsADIF()</slot>
+ </slots>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
+</ui>

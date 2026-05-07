@@ -38,6 +38,8 @@ public:
     virtual QStringList getAvailableModes() override;
 
     virtual void setFrequency(double) override;
+    virtual void setFrequency(VFOID, double) override;
+    virtual void setSplit(bool) override;
     virtual void setRawMode(const QString &) override;
     virtual void setMode(const QString &, const QString &, bool) override;
     virtual void setPTT(bool newPTTState) override;
@@ -65,6 +67,7 @@ private:
     void checkPTTChange(int, bool);
     void checkVFOChange(int, bool);
     void checkRITChange(int, bool);
+    void checkSplitChange(int, bool);
 
     double getRITFreq();
     void setRITFreq(double);
@@ -76,11 +79,14 @@ private:
 private:
 
     unsigned int currFreq;
+    unsigned int currTxFreq;
     QString currModeID;
     QString currVFO;
     unsigned int currRIT;
     unsigned int currXIT;
     bool currPTT;
+    bool currSplitEnabled;
+    bool futureSplit;
 
     // COM Objects
     OmnirigV1::IOmniRigX *omniInterface;   // the main OmniRigX COM object
@@ -102,6 +108,7 @@ private:
     const int VFO_B_MASK;
     const int VFO_SPEC_MASK;
     const int ALLVFOsMASK;
+    const int SPLIT_MASK;
 
     static const uint OFFLINETIMER_TIME_MS = 10000;
 

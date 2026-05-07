@@ -22,6 +22,7 @@ signals:
 
 public slots:
     void updateFrequency(VFOID, double, double, double);
+    void updateSplit(VFOID, bool);
     void updateMode(VFOID, const QString&, const QString&,
                     const QString&, qint32);
     void updatePWR(VFOID, double);
@@ -45,6 +46,7 @@ public slots:
 private slots:
     void sendOnAirState();
     void freqChanged(double);
+    void txFreqChanged(double);
 
 private:
 
@@ -56,6 +58,7 @@ private:
     double lastSeenFreq;
     QString lastSeenMode;
     bool rigOnline;
+    bool splitEnabled;
 
     Ui::RigWidget *ui;
     HRDLogUploader *hrdlog;

@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QTemporaryDir>
 #include <QListWidget>
-
+#include <QMimeDatabase>
 #include "core/QSLStorage.h"
 #include "core/LogLocale.h"
 
@@ -64,8 +64,8 @@ private:
     void loadGallery();
     void populateItems(const QList<QSLGalleryItem> &items);
     QPixmap createThumbnail(const QByteArray &data, const QString &name) const;
-    void openItem(QListWidgetItem *item);
-    void saveItem(QListWidgetItem *item);
+    void openItem(const QListWidgetItem *item);
+    void saveItem(const QListWidgetItem *item);
     void toggleFavorite(QListWidgetItem *item);
     void exportFiltered();
 
@@ -75,6 +75,7 @@ private:
     QTimer *searchTimer;
     QTemporaryDir *tempDir;
     LogLocale locale;
+    QMimeDatabase mimeDb;
 };
 
 #endif // QLOG_UI_QSLGALLERYDIALOG_H

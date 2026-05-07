@@ -50,11 +50,11 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="headerHidden">
-       <bool>true</bool>
-      </property>
       <property name="indentation">
        <number>16</number>
+      </property>
+      <property name="headerHidden">
+       <bool>true</bool>
       </property>
       <column>
        <property name="text">
@@ -63,17 +63,17 @@
       </column>
      </widget>
      <widget class="QListWidget" name="cardListWidget">
-      <property name="viewMode">
-       <enum>QListView::IconMode</enum>
-      </property>
       <property name="iconSize">
        <size>
         <width>150</width>
         <height>112</height>
        </size>
       </property>
-      <property name="resizeMode">
-       <enum>QListView::Adjust</enum>
+      <property name="verticalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="horizontalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
       </property>
       <property name="movement">
        <enum>QListView::Static</enum>
@@ -81,13 +81,19 @@
       <property name="flow">
        <enum>QListView::LeftToRight</enum>
       </property>
-      <property name="wrapping">
-       <bool>true</bool>
+      <property name="resizeMode">
+       <enum>QListView::Adjust</enum>
       </property>
       <property name="spacing">
        <number>10</number>
       </property>
+      <property name="viewMode">
+       <enum>QListView::IconMode</enum>
+      </property>
       <property name="uniformItemSizes">
+       <bool>true</bool>
+      </property>
+      <property name="wrapping" stdset="0">
        <bool>true</bool>
       </property>
      </widget>
@@ -118,7 +124,11 @@
      <item>
       <widget class="QPushButton" name="exportFilteredButton">
        <property name="text">
-        <string>Export Filtered...</string>
+        <string>Export Filtered</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-save-as">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>

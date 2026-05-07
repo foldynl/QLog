@@ -19,7 +19,8 @@ public:
             bool canProcessDXSpot = false,
             int serial_data_bits = 8,
             int serial_stop_bits = 1,
-            bool isCIVAddrSupported = false
+            bool isCIVAddrSupported = false,
+            bool canGetSplit = false
             );
 
     bool canGetFreq;
@@ -37,6 +38,7 @@ public:
     bool needPolling;
     bool canProcessDXSpot;
     bool isCIVAddrSupported;
+    bool canGetSplit;
 };
 
 #endif // RIG_RIGCAPS_H

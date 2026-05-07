@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProgressDialog>
 #include <QSqlError>
 #include "ui_ExportDialog.h"
 #include <logformat/PotaAdiFormat.h>
@@ -185,7 +186,7 @@ void ExportDialog::runExport()
 
     LogFormat *format = LogFormat::open(ui->typeSelect->currentText(), out);
 
-    if (!format)
+    if ( !format )
     {
         qCritical() << "unknown log format";
         return;
@@ -229,35 +230,6 @@ void ExportDialog::runExport()
                                       (ui->addlSentStatusCheckbox->isChecked()) ? ui->addlSentStatusAlreadySentCheckBox->isChecked() : false);
     }
 
-    long count = 0L;
-
-    connect(format, &LogFormat::exportProgress, this, &ExportDialog::setProgress);
-
-    ui->buttonBox->setEnabled(false);
-    ui->fileEdit->setEnabled(false);
-    ui->typeSelect->setEnabled(false);
-    ui->browseButton->setEnabled(false);
-    ui->startDateEdit->setEnabled(false);
-    ui->endDateEdit->setEnabled(false);
-    ui->dateRangeCheckBox->setEnabled(false);
-    ui->myCallsignCheckBox->setEnabled(false);
-    ui->myCallsignComboBox->setEnabled(false);
-    ui->myGridCheckBox->setEnabled(false);
-    ui->myGridComboBox->setEnabled(false);
-    ui->addlSentStatusICheckBox->setEnabled(false);
-    ui->addlSentStatusNCheckBox->setEnabled(false);
-    ui->addlSentStatusCheckbox->setEnabled(false);
-    ui->addlSentStatusAlreadySentCheckBox->setEnabled(false);
-    ui->exportedColumnsButton->setEnabled(false);
-    ui->exportTypeCombo->setEnabled(false);
-    ui->qslSendViaCheckbox->setEnabled(false);
-    ui->qslSendViaComboBox->setEnabled(false);
-    ui->markAsSentCheckbox->setEnabled(false);
-    ui->exportedColumnsCombo->setEnabled(false);
-    ui->userFilterCheckBox->setEnabled(false);
-    ui->userFilterComboBox->setEnabled(false);
-    ui->myStationProfileCheckbox->setEnabled(false);
-    ui->myStationProfileComboBox->setEnabled(false);
     if ( exportedColumns.count() > 0 )
     {
         //translate column indexes to SQL column names
@@ -270,6 +242,15 @@ void ExportDialog::runExport()
         }
         format->setExportedFields(fields);
     }
+
+    // Modal progress dialog
+    QProgressDialog progressDialog(tr("Exporting..."), tr("Cancel"), 0, 100, this);
+    progressDialog.setWindowModality(Qt::WindowModal);
+    progressDialog.setMinimumDuration(0);
+
+    connect(format, &LogFormat::exportProgress, &progressDialog, &QProgressDialog::setValue);
+
+    long count = 0L;
 
     if ( qsos4export.size() > 0 )
     {
@@ -291,6 +272,8 @@ void ExportDialog::runExport()
             }
         }
     }
+
+    progressDialog.close();
 
     delete format;
 
@@ -470,14 +453,6 @@ void ExportDialog::exportedColumnsComboChanged(int index)
     }
 }
 
-void ExportDialog::setProgress(float progress)
-{
-    FCT_IDENTIFICATION;
-
-    ui->progressBar->setValue(progress);
-    QCoreApplication::processEvents();
-}
-
 void ExportDialog::fillQSLSendViaCombo()
 {
     FCT_IDENTIFICATION;
@@ -493,7 +468,7 @@ void ExportDialog::exportFormatChanged(const QString &format)
 {
     FCT_IDENTIFICATION;
 
-    if (format == "POTA")
+    if ( format == "POTA" )
     {
         ui->exportedColumnsCombo->setCurrentIndex(ui->exportedColumnsCombo->findData("pota"));
         ui->exportTypeCombo->setEnabled(false);

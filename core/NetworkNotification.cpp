@@ -759,8 +759,13 @@ RigStatusNotificationMsg::RigStatusNotificationMsg(const Rig::Status &status, QO
     if ( !status.vfo.isEmpty() )
     {
         rigData["txvfo"] = status.vfo;
-        rigData["rxvfo"] = status.vfo; // split mode is not supported yet
+        rigData["rxvfo"] = status.vfo;
     }
+
+    rigData["split"] = status.splitEnabled;
+
+    if ( status.splitEnabled && status.txFreq > 0.0 )
+        rigData["txfreq"] = status.txFreq;
 
     if ( status.power > 0.0 )
         rigData["txpower"] = status.power;

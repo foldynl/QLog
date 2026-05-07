@@ -1,5 +1,28 @@
 #include "debug.h"
 
+static bool logToFile = false;
+static QString debugLogFilename;
+
+bool isLogToFileEnabled()
+{
+    return logToFile;
+}
+
+void setLogToFile(bool enabled)
+{
+    logToFile = enabled;
+}
+
+QString currentDebugLogFilename()
+{
+    return debugLogFilename;
+}
+
+void setCurrentDebugLogFilename(const QString &filename)
+{
+    debugLogFilename = filename;
+}
+
 void set_debug_level(DEBUG_LEVEL_TYPE type)
 {
     switch ( type )

@@ -245,6 +245,20 @@ void Rig::__openRig()
         emitRigStatusChanged();
     });
 
+    connect( rigDriver, &GenericRigDrv::txFrequencyChanged, this, [this](double txFreq)
+    {
+        rigStatus.txFreq = txFreq;
+        emit frequencyChanged(VFO2, txFreq, txFreq, txFreq);
+        emitRigStatusChanged();
+    });
+
+    connect( rigDriver, &GenericRigDrv::splitChanged, this, [this](bool enabled)
+    {
+        rigStatus.splitEnabled = enabled;
+        emit splitChanged(VFO1, enabled);
+        emitRigStatusChanged();
+    });
+
     connect( rigDriver, &GenericRigDrv::pttChanged, this, [this](bool a)
     {
         rigStatus.ptt = (a) ? 1 : 0;
@@ -416,25 +430,61 @@ void Rig::setFrequency(double newFreq)
 
     qCDebug(function_parameters) << newFreq;
 
-    if ( newFreq > 0.0 )
-    {
-        QMetaObject::invokeMethod(this, "setFrequencyImpl",
-                                  Qt::QueuedConnection, Q_ARG(double,newFreq));
-    }
+    setFrequency(VFO1, newFreq);
 }
 
-void Rig::setFrequencyImpl(double newFreq)
+void Rig::setFrequency(VFOID vfoid, double newFreq)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << newFreq;
+    qCDebug(function_parameters) << vfoid << newFreq;
+
+    if ( newFreq > 0.0 )
+    {
+        QMetaObject::invokeMethod(this, "setVFOFrequencyImpl",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(VFOID, vfoid),
+                                  Q_ARG(double, newFreq));
+    }
+}
+
+void Rig::setSplit(bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << enabled;
+
+    QMetaObject::invokeMethod(this, "setSplitImpl",
+                              Qt::QueuedConnection,
+                              Q_ARG(bool, enabled));
+}
+
+void Rig::setVFOFrequencyImpl(VFOID vfoid, double newFreq)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << vfoid << newFreq;
 
     MUTEXLOCKER;
 
     if ( ! rigDriver )
         return;
 
-    rigDriver->setFrequency(newFreq);
+    rigDriver->setFrequency(vfoid, newFreq);
+}
+
+void Rig::setSplitImpl(bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << enabled;
+
+    MUTEXLOCKER;
+
+    if ( ! rigDriver )
+        return;
+
+    rigDriver->setSplit(enabled);
 }
 
 void Rig::setRawMode(const QString& rawMode)

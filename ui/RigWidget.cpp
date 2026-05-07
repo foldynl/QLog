@@ -12,6 +12,7 @@ RigWidget::RigWidget(QWidget *parent) :
     QWidget(parent),
     lastSeenFreq(0.0),
     rigOnline(false),
+    splitEnabled(false),
     ui(new Ui::RigWidget),
     hrdlog(new HRDLogUploader(this))
 {
@@ -24,6 +25,18 @@ RigWidget::RigWidget(QWidget *parent) :
     ui->freqLabel->setLocale(QLocale::c());
     connect(ui->freqLabel, &FreqQSpinBox::debouncedValueChanged,
             this, &RigWidget::freqChanged);
+
+    ui->txFreqLabel->setVisible(false);
+    ui->txFreqLabel->setSelectionModeEnabled(false);
+    ui->txFreqLabel->setDebounceEnabled(true);
+    ui->txFreqLabel->setDebounceIntervalMs(250);
+    ui->txFreqLabel->setLocale(QLocale::c());
+    connect(ui->txFreqLabel, &FreqQSpinBox::debouncedValueChanged,
+            this, &RigWidget::txFreqChanged);
+
+    ui->splitOffButton->setVisible(false);
+    connect(ui->splitOffButton, &QToolButton::clicked,
+            this, []() { Rig::instance()->setSplit(false); });
 
     QStringListModel* rigModel = new QStringListModel(this);
     ui->rigProfilCombo->setModel(rigModel);
@@ -62,14 +75,23 @@ void RigWidget::updateFrequency(VFOID vfoid, double vfoFreq, double ritFreq, dou
 {
     FCT_IDENTIFICATION;
 
-    Q_UNUSED(vfoid)
+    qCDebug(function_parameters) << vfoid << vfoFreq << ritFreq << xitFreq;
 
-    qCDebug(function_parameters) << vfoFreq << ritFreq << xitFreq;
+    if ( vfoid == VFO2 )
+    {
+        // TX VFO frequency update (only when split is active)
+        ui->txFreqLabel->blockSignals(true);
+        ui->txFreqLabel->setValue(vfoFreq);
+        ui->txFreqLabel->blockSignals(false);
+        ui->txFreqLabel->setReadOnly(true);
+        return;
+    }
 
+    // VFO1 — RX frequency
     ui->freqLabel->blockSignals(true);
     ui->freqLabel->setValue(vfoFreq);
     ui->freqLabel->blockSignals(false);
-    const QString& bandName = BandPlan::freq2Band(vfoFreq).name;
+    const QString &bandName = BandPlan::freq2Band(vfoFreq).name;
 
     if ( bandName != ui->bandComboBox->currentText() )
     {
@@ -79,6 +101,17 @@ void RigWidget::updateFrequency(VFOID vfoid, double vfoFreq, double ritFreq, dou
         ui->bandComboBox->blockSignals(false);
     }
     lastSeenFreq = vfoFreq;
+}
+
+void RigWidget::updateSplit(VFOID, bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << enabled;
+
+    splitEnabled = enabled;
+    ui->txFreqLabel->setVisible(enabled);
+    ui->splitOffButton->setVisible(enabled);
 }
 
 void RigWidget::updateMode(VFOID vfoid, const QString &rawMode, const QString &mode,
@@ -167,17 +200,12 @@ void RigWidget::updatePTT(VFOID, bool ptt)
 {
     FCT_IDENTIFICATION;
 
-    ui->pttLabel->setText((ptt)? "TX" : "RX");
+    ui->pttLabel->setText(ptt ? "TX" : "RX");
 
     if ( ptt )
-    {
-        ui->pttLabel->setStyleSheet("QLabel { border-radius: 16px;background-color : red; }");
-    }
+        ui->pttLabel->setStyleSheet("QLabel { font-weight: bold; color: white; border-radius: 8px; background-color: red; padding: 2px 4px; }");
     else
-    {
-        ui->pttLabel->setStyleSheet("");
-    }
-
+        ui->pttLabel->setStyleSheet("QLabel { font-weight: bold; padding: 2px 4px; }");
 }
 
 void RigWidget::bandComboChanged(const QString &newBand)
@@ -220,7 +248,7 @@ void RigWidget::rigProfileComboChanged(const QString &profileName)
     refreshModeCombo();
     resetRigInfo();
 
-    ui->pttLabel->setHidden(!RigProfilesManager::instance()->getCurProfile1().getPTTInfo);
+    ui->pttLabel->setVisible(rigOnline && RigProfilesManager::instance()->getCurProfile1().getPTTInfo);
     emit rigProfileChanged();
 }
 
@@ -251,7 +279,7 @@ void RigWidget::refreshRigProfileCombo()
     updateRIT(VFO1, rigManager->getCurProfile1().ritOffset);
     updateXIT(VFO1, rigManager->getCurProfile1().xitOffset);
 
-    ui->pttLabel->setHidden(!RigProfilesManager::instance()->getCurProfile1().getPTTInfo);
+    ui->pttLabel->setVisible(rigOnline && RigProfilesManager::instance()->getCurProfile1().getPTTInfo);
 
     ui->rigProfilCombo->blockSignals(false);
     refreshBandCombo();
@@ -307,6 +335,8 @@ void RigWidget::rigConnected()
     ui->modeComboBox->blockSignals(false);
     ui->bandComboBox->blockSignals(false);
     ui->freqLabel->setReadOnly(false);
+    ui->txFreqLabel->setReadOnly(false);
+    ui->pttLabel->setVisible(RigProfilesManager::instance()->getCurProfile1().getPTTInfo);
     refreshModeCombo();
 }
 
@@ -329,6 +359,8 @@ void RigWidget::rigDisconnected()
     ui->bandComboBox->blockSignals(false);
 
     ui->freqLabel->setReadOnly(true);
+    ui->txFreqLabel->setReadOnly(true);
+    ui->pttLabel->setVisible(false);
 }
 
 void RigWidget::bandUp()
@@ -388,6 +420,15 @@ void RigWidget::freqChanged(double)
     Rig::instance()->setFrequency(MHz(ui->freqLabel->value()));
 }
 
+void RigWidget::txFreqChanged(double)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !rigOnline || !splitEnabled ) return;
+
+    Rig::instance()->setFrequency(VFO2, MHz(ui->txFreqLabel->value()));
+}
+
 void RigWidget::resetRigInfo()
 {
     QString empty;
@@ -396,6 +437,7 @@ void RigWidget::resetRigInfo()
     ui->pwrLabel->setText(QString(""));
     updateVFO(VFO1, empty);
     updateFrequency(VFO1, 0, 0, 0);
+    updateSplit(VFO1, false);
     updateRIT(VFO1, RigProfilesManager::instance()->getCurProfile1().ritOffset);
     updateXIT(VFO1, RigProfilesManager::instance()->getCurProfile1().xitOffset);
     updatePTT(VFO1, false);

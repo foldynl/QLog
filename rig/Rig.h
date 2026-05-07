@@ -11,13 +11,6 @@
 
 class RigctldManager;
 
-enum VFOID
-{
-    VFO1 = 0
-};
-
-Q_DECLARE_METATYPE(VFOID)
-
 class Rig : public QObject
 {
     Q_OBJECT
@@ -50,6 +43,8 @@ public:
         double xit = 0.0;
         qint32 bandwidth = 0;
         bool isConnected = false;
+        bool splitEnabled = false;
+        double txFreq = 0.0;
 
         void clear()
         {
@@ -66,6 +61,8 @@ public:
             xit = 0.0;
             bandwidth = 0;
             isConnected = false;
+            splitEnabled = false;
+            txFreq = 0.0;
         };
     };
 
@@ -97,6 +94,8 @@ public slots:
     void stopTimer();
 
     void setFrequency(double);
+    void setFrequency(VFOID, double);
+    void setSplit(bool);
     void setRawMode(const QString &rawMode);
     void setMode(const QString &, const QString &, bool = false);
     void setPTT(bool);
@@ -109,6 +108,7 @@ public slots:
 
 signals:
     void frequencyChanged(VFOID, double, double, double);
+    void splitChanged(VFOID, bool);
     void modeChanged(VFOID, QString, QString, QString, qint32);
     void powerChanged(VFOID, double);
     void keySpeedChanged(VFOID, unsigned int);
@@ -129,7 +129,8 @@ private slots:
     void openImpl();
     void closeImpl();
 
-    void setFrequencyImpl(double);
+    void setVFOFrequencyImpl(VFOID, double);
+    void setSplitImpl(bool);
     void setRawModeImpl(const QString&);
     void setModeImpl(const QString &, const QString &, bool);
     void setPTTImpl(bool);

@@ -20,6 +20,8 @@
 #include "FileCompressor.h"
 #include "debug.h"
 #include "data/Data.h"
+#include "core/csv.hpp"
+#include "core/FileCompressor.h"
 
 MODULE_IDENTIFICATION("qlog.core.lovdownloader");
 
@@ -27,8 +29,6 @@ LOVDownloader::LOVDownloader(QObject *parent) :
     QObject(parent),
     currentReply(nullptr),
     abortRequested(false),
-    /* https://stackoverflow.com/questions/18144431/regex-to-split-a-csv */
-    CSVRe("(?:^|,)(?=[^\"]|(\")?)\"?((?(1)(?:[^\"]|\"\")*|[^,\"]*))\"?(?=,|$)"),
     CTYPrefixSeperatorRe("[\\s;]"),
     CTYPrefixFormatRe("(=?)([A-Z0-9/]+)(?:\\((\\d+)\\))?(?:\\[(\\d+)\\])?$")
 {
@@ -96,15 +96,24 @@ void LOVDownloader::loadData(const LOVDownloader::SourceDefinition &sourceDef)
 {
     FCT_IDENTIFICATION;
 
-    QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+    const QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
     QFile file(dir.filePath(sourceDef.fileName));
+    if ( ! file.open(QIODevice::ReadOnly) )
+    {
+        qWarning() << "Cannot open" << dir.filePath(sourceDef.fileName);
+        return;
+    }
 
-    emit processingSize(file.size());
-    file.open(QIODevice::ReadOnly);
-    QTextStream stream(&file);
-    parseData(sourceDef, stream);
+    QByteArray data = file.readAll();
     file.close();
 
+    if (sourceDef.fileName.endsWith(".gz", Qt::CaseInsensitive))
+        data = FileCompressor::gunzip(data);
+
+    emit processingSize(data.size());
+
+    QTextStream stream(data);
+    parseData(sourceDef, stream);
     emit finished(true);
 }
 
@@ -438,336 +447,169 @@ void LOVDownloader::parseSATLIST(const SourceDefinition &sourceDef, QTextStream 
     }
 }
 
-void LOVDownloader::parseSOTASummits(const SourceDefinition &sourceDef, QTextStream &data)
+bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
+                                    QTextStream &data,
+                                    const QString &insertSQL,
+                                    const QStringList &csvColumns,
+                                    csv::CSVFormat format,
+                                    const QString &preValidateContains)
 {
     FCT_IDENTIFICATION;
 
+    const std::string csvData = data.readAll().toStdString();
+    const qint64 totalBytes = static_cast<qint64>(csvData.size());
+    const int totalRows = qMax(1, static_cast<int>(
+                                      std::count(csvData.begin(), csvData.end(), '\n')));
+
+    if ( !preValidateContains.isEmpty()
+        && csvData.find(preValidateContains.toStdString()) == std::string::npos )
+    {
+        qWarning() << "Unexpected file header for" << sourceDef.tableName;
+        return false;
+    }
+
     QSqlDatabase::database().transaction();
 
-    if ( ! deleteTable(sourceDef.tableName) )
+    if ( !deleteTable(sourceDef.tableName) )
     {
-        qCWarning(runtime) << "SOTA Summits delete failed - rollback";
+        qCWarning(runtime) << "Delete failed - rollback:" << sourceDef.tableName;
         QSqlDatabase::database().rollback();
-        return;
+        return false;
     }
-
-    int count = 0;
 
     QSqlQuery insertQuery;
-
-    if ( ! insertQuery.prepare("INSERT INTO sota_summits(summit_code,"
-                               "                        association_name,"
-                               "                        region_name,"
-                               "                        summit_name,"
-                               "                        altm,"
-                               "                        altft,"
-                               "                        gridref1,"
-                               "                        gridref2,"
-                               "                        longitude,"
-                               "                        latitude,"
-                               "                        points,"
-                               "                        bonus_points,"
-                               "                        valid_from,"
-                               "                        valid_to) "
-                               " VALUES (               ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?,"
-                               "                        ?)") )
+    if ( !insertQuery.prepare(insertSQL) )
     {
-        qWarning() << "cannot prepare Insert statement";
-        abortRequested = true;
+        qWarning() << "Cannot prepare insert statement for" << sourceDef.tableName;
+        QSqlDatabase::database().rollback();
+        return false;
     }
 
-    QVariantList sota_summit_code;
-    QVariantList sota_association_name;
-    QVariantList sota_region_name;
-    QVariantList sota_summit_name;
-    QVariantList sota_altm;
-    QVariantList sota_altft;
-    QVariantList sota_gridref1;
-    QVariantList sota_gridref2;
-    QVariantList sota_longitude;
-    QVariantList sota_latitude;
-    QVariantList sota_points;
-    QVariantList sota_bonus_points;
-    QVariantList sota_valid_from;
-    QVariantList sota_valid_to;
+    csv::CSVReader reader = csv::parse(csvData, format);
 
-    while ( !data.atEnd() && !abortRequested )
+    const std::vector<std::string> colNames = reader.get_col_names();
+    for ( const QString &col : csvColumns )
     {
-        QString line = data.readLine();
-        if ( count == 0 || count ==1 )
+        if ( std::find(colNames.begin(), colNames.end(), col.toStdString()) == colNames.end() )
         {
-            QString checkingString = (count == 0 ) ?
-                                      "SOTA Summits List" :
-                                      "SummitCode,AssociationName,RegionName,"
-                                      "SummitName,AltM,AltFt,GridRef1,GridRef2,"
-                                      "Longitude,Latitude,Points,BonusPoints,"
-                                      "ValidFrom,ValidTo,ActivationCount,"
-                                      "ActivationDate,ActivationCall";
-            //read the first line
-            if ( !line.contains(checkingString) )
+            qWarning() << "Missing column:" << col << "in" << sourceDef.tableName;
+            QSqlDatabase::database().rollback();
+            return false;
+        }
+    }
+
+    const int CHUNK = 5000;
+    const int colCount = csvColumns.size();
+
+    std::vector<std::string> stdCols;
+    stdCols.reserve(colCount);
+    for ( const QString &col : csvColumns )
+        stdCols.push_back(col.toStdString());
+
+    QVector<QVariantList> columns(colCount);
+
+    auto reserveAll = [&]()
+    {
+        for ( auto &col : columns )
+            col.reserve(CHUNK);
+    };
+
+    auto flushChunk = [&]() -> bool
+    {
+        for ( const QVariantList &col : columns )
+            insertQuery.addBindValue(col);
+
+        if ( !insertQuery.execBatch() )
+        {
+            qWarning() << "Insert error for" << sourceDef.tableName
+                       << ":" << insertQuery.lastError().text();
+            return false;
+        }
+
+        for ( QVariantList &col : columns )
+            col.clear();
+
+        reserveAll();
+        return true;
+    };
+
+    reserveAll();
+    int count = 0;
+
+    for ( csv::CSVRow &row : reader )
+    {
+        if ( abortRequested )
+            break;
+
+        for ( int i = 0; i < colCount; ++i )
+            columns[i] << QString::fromStdString(row[stdCols[i]].get<std::string>());
+
+        ++count;
+
+        if ( count % CHUNK == 0 )
+        {
+            if ( !flushChunk() )
             {
-                qCDebug(runtime) << line;
-                qWarning() << "Unexpected header for SOTA Summit CSV file - aborting";
                 abortRequested = true;
+                break;
             }
-            count++;
-            continue;
+            emit progress(static_cast<qint64>(count) * totalBytes / totalRows);
+            QCoreApplication::processEvents();
         }
-
-        QRegularExpressionMatchIterator i = CSVRe.globalMatch(line);
-        QStringList fields;
-
-        while ( i.hasNext() )
-        {
-            QRegularExpressionMatch match = i.next();
-            fields << match.captured(2);
-        }
-
-        if ( fields.size() >= 14 )
-        {
-            qCDebug(runtime) << fields;
-
-            sota_summit_code << fields.at(0);
-            sota_association_name << fields.at(1);
-            sota_region_name << fields.at(2);
-            sota_summit_name << fields.at(3);
-            sota_altm << fields.at(4);
-            sota_altft << fields.at(5);
-            sota_gridref1 << fields.at(6);
-            sota_gridref2 << fields.at(7);
-            sota_longitude << fields.at(8);
-            sota_latitude << fields.at(9);
-            sota_points << fields.at(10);
-            sota_bonus_points << fields.at(11);
-            sota_valid_from << fields.at(12);
-            sota_valid_to << fields.at(13);
-
-            if ( count%10000 == 0 )
-            {
-                emit progress(data.pos());
-                QCoreApplication::processEvents();
-            }
-        }
-        else
-        {
-            qCDebug(runtime) << "Invalid line in the input file " << line;
-        }
-        count++;
     }
 
-    insertQuery.addBindValue(sota_summit_code);
-    insertQuery.addBindValue(sota_association_name);
-    insertQuery.addBindValue(sota_region_name);
-    insertQuery.addBindValue(sota_summit_name);
-    insertQuery.addBindValue(sota_altm);
-    insertQuery.addBindValue(sota_altft);
-    insertQuery.addBindValue(sota_gridref1);
-    insertQuery.addBindValue(sota_gridref2);
-    insertQuery.addBindValue(sota_longitude);
-    insertQuery.addBindValue(sota_latitude);
-    insertQuery.addBindValue(sota_points);
-    insertQuery.addBindValue(sota_bonus_points);
-    insertQuery.addBindValue(sota_valid_from);
-    insertQuery.addBindValue(sota_valid_to);
-
-    if ( ! insertQuery.execBatch() )
+    if ( !abortRequested && !columns[0].isEmpty() )
     {
-        qInfo() << "SOTA Summit insert error " << insertQuery.lastError().text() << insertQuery.lastQuery();
-        abortRequested = true;
+        if ( !flushChunk() )
+            abortRequested = true;
     }
 
     if ( !abortRequested )
     {
         QSqlDatabase::database().commit();
-        qCDebug(runtime) << "SOTA Summits update finished:" << count << "entities loaded.";
+        qCDebug(runtime) << sourceDef.tableName << "update finished:" << count << "entities loaded.";
+        return true;
     }
-    else
-    {
-        qCWarning(runtime) << "SOTA Summits update failed - rollback";
-        QSqlDatabase::database().rollback();
-    }
+
+    qCWarning(runtime) << sourceDef.tableName << "update failed - rollback";
+    QSqlDatabase::database().rollback();
+    return false;
+}
+
+void LOVDownloader::parseSOTASummits(const SourceDefinition &sourceDef, QTextStream &data)
+{
+    FCT_IDENTIFICATION;
+
+    csv::CSVFormat format;
+    format.delimiter(',').quote('"').header_row(1);
+
+    parseCSVGeneric(sourceDef, data,
+                    "INSERT INTO sota_summits(summit_code, association_name, region_name, summit_name,"
+                    "  altm, altft, gridref1, gridref2, longitude, latitude, points, bonus_points,"
+                    "  valid_from, valid_to) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    {"SummitCode", "AssociationName", "RegionName", "SummitName",
+                     "AltM", "AltFt", "GridRef1", "GridRef2",
+                     "Longitude", "Latitude", "Points", "BonusPoints",
+                     "ValidFrom", "ValidTo"},
+                    format,
+                    "SOTA Summits List");   // preValidateContains
 }
 
 void LOVDownloader::parseWWFFDirectory(const SourceDefinition &sourceDef, QTextStream &data)
 {
     FCT_IDENTIFICATION;
 
-    QSqlDatabase::database().transaction();
+    csv::CSVFormat format;
+    format.delimiter(',').quote('"').trim({' '});
 
-    if ( ! deleteTable(sourceDef.tableName) )
-    {
-        qCWarning(runtime) << "WWFT Directory delete failed - rollback";
-        QSqlDatabase::database().rollback();
-        return;
-    }
-
-    int count = 0;
-
-    QSqlQuery insertQuery;
-
-    if ( ! insertQuery.prepare("INSERT INTO wwff_directory(reference,"
-                             "                        status,"
-                             "                        name,"
-                             "                        program,"
-                             "                        dxcc,"
-                             "                        state,"
-                             "                        county,"
-                             "                        continent,"
-                             "                        iota,"
-                             "                        iaruLocator,"
-                             "                        latitude,"
-                             "                        longitude,"
-                             "                        iucncat,"
-                             "                        valid_from,"
-                             "                        valid_to) "
-                             " VALUES (               ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?,"
-                             "                        ?) ") )
-    {
-        qWarning() << "cannot prepare Insert statement";
-        abortRequested = true;
-    }
-
-    QVariantList wwff_reference;
-    QVariantList wwff_status;
-    QVariantList wwff_name;
-    QVariantList wwff_program;
-    QVariantList wwff_dxcc;
-    QVariantList wwff_state;
-    QVariantList wwff_county;
-    QVariantList wwff_continent;
-    QVariantList wwff_iota;
-    QVariantList wwff_iaruLocator;
-    QVariantList wwff_latitude;
-    QVariantList wwff_longitude;
-    QVariantList wwff_iucncat;
-    QVariantList wwff_valid_from;
-    QVariantList wwff_valid_to;
-
-    while ( !data.atEnd() && !abortRequested )
-    {
-        QString line = data.readLine();
-        if ( count == 0 )
-        {
-            QString checkingString = "reference,status,"
-                                     "name,program,dxcc,state,"
-                                     "county,continent,iota,"
-                                     "iaruLocator,latitude,"
-                                     "longitude,IUCNcat,validFrom,"
-                                     "validTo,notes,lastMod,changeLog,"
-                                     "reviewFlag,specialFlags,website,"
-                                     "country,region";
-            //read the first line
-            if ( !line.contains(checkingString) )
-            {
-                qCDebug(runtime) << line;
-                qWarning() << "Unexpected header for WWFF Directory CSV file - aborting";
-                abortRequested = true;
-            }
-            count++;
-            continue;
-        }
-
-        QRegularExpressionMatchIterator i = CSVRe.globalMatch(line);
-        QStringList fields;
-
-
-        while ( i.hasNext() )
-        {
-            QRegularExpressionMatch match = i.next();
-            fields << match.captured(2);
-        }
-
-        if ( fields.size() >= 15 )
-        {
-            qCDebug(runtime) << fields;
-
-            wwff_reference << fields.at(0);
-            wwff_status << fields.at(1);
-            wwff_name << fields.at(2);
-            wwff_program << fields.at(3);
-            wwff_dxcc << fields.at(4);
-            wwff_state << fields.at(5);
-            wwff_county << fields.at(6);
-            wwff_continent << fields.at(7);
-            wwff_iota << fields.at(8);
-            wwff_iaruLocator << fields.at(9);
-            wwff_latitude << fields.at(10);
-            wwff_longitude << fields.at(11);
-            wwff_iucncat << fields.at(12);
-            wwff_valid_from << fields.at(13);
-            wwff_valid_to << fields.at(14);
-
-            if ( count%10000 == 0 )
-            {
-                emit progress(data.pos());
-                QCoreApplication::processEvents();
-            }
-        }
-        else
-        {
-            qCDebug(runtime) << "Invalid line in the input file " << line;
-        }
-        count++;
-    }
-
-    insertQuery.addBindValue(wwff_reference);
-    insertQuery.addBindValue(wwff_status);
-    insertQuery.addBindValue(wwff_name);
-    insertQuery.addBindValue(wwff_program);
-    insertQuery.addBindValue(wwff_dxcc);
-    insertQuery.addBindValue(wwff_state);
-    insertQuery.addBindValue(wwff_county);
-    insertQuery.addBindValue(wwff_continent);
-    insertQuery.addBindValue(wwff_iota);
-    insertQuery.addBindValue(wwff_iaruLocator);
-    insertQuery.addBindValue(wwff_latitude);
-    insertQuery.addBindValue(wwff_longitude);
-    insertQuery.addBindValue(wwff_iucncat);
-    insertQuery.addBindValue(wwff_valid_from);
-    insertQuery.addBindValue( wwff_valid_to);
-
-
-    if ( ! insertQuery.execBatch() )
-    {
-        qInfo() << "WWFT Directory insert error " << insertQuery.lastError().text() << insertQuery.lastQuery();
-        abortRequested = true;
-    }
-
-    if ( !abortRequested )
-    {
-        QSqlDatabase::database().commit();
-        qCDebug(runtime) << "WWFT Directory update finished:" << count << "entities loaded.";
-    }
-    else
-    {
-        qCWarning(runtime) << "WWFT Directory update failed - rollback";
-        QSqlDatabase::database().rollback();
-    }
+    parseCSVGeneric(sourceDef, data,
+                    "INSERT INTO wwff_directory(reference, status, name, program, dxcc, state,"
+                    "  county, continent, iota, iaruLocator, latitude, longitude, iucncat,"
+                    "  valid_from, valid_to) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    {"reference", "status", "name", "program", "dxcc", "state",
+                     "county", "continent", "iota", "iaruLocator", "latitude", "longitude",
+                     "IUCNcat", "validFrom", "validTo"},
+                    format);
 }
 
 
@@ -859,128 +701,15 @@ void LOVDownloader::parsePOTA(const SourceDefinition &sourceDef, QTextStream &da
 {
     FCT_IDENTIFICATION;
 
-    QSqlDatabase::database().transaction();
+    csv::CSVFormat format;
+    format.delimiter(',').quote('"');
 
-    if ( ! deleteTable(sourceDef.tableName) )
-    {
-        qCWarning(runtime) << "POTA List delete failed - rollback";
-        QSqlDatabase::database().rollback();
-        return;
-    }
-
-    int count = 0;
-
-    QSqlQuery insertQuery;
-
-    if ( ! insertQuery.prepare("INSERT INTO POTA_DIRECTORY(reference,"
-                               "                           name,"
-                               "                           active,"
-                               "                           entityID,"
-                               "                           locationDesc,"
-                               "                           latitude,"
-                               "                           longitude,"
-                               "                           grid"
-                               ")"
-                               " VALUES (?,"
-                               "         ?,"
-                               "         ?,"
-                               "         ?,"
-                               "         ?,"
-                               "         ?,"
-                               "         ?,"
-                               "         ?"
-                               ")") )
-    {
-        qWarning() << "cannot prepare Insert statement";
-        abortRequested = true;
-    }
-
-    QVariantList pota_reference;
-    QVariantList pota_name;
-    QVariantList pota_active;
-    QVariantList pota_entityID;
-    QVariantList pota_locationDesc;
-    QVariantList pota_latitude;
-    QVariantList pota_longitude;
-    QVariantList pota_grid;
-
-    while ( !data.atEnd() && !abortRequested )
-    {
-        QString line = data.readLine();
-        if ( count == 0 )
-        {
-            QString checkingString = "\"reference\",\"name\",\"active\",\"entityId\",\"locationDesc\",\"latitude\",\"longitude\",\"grid\"";
-            //read the first line
-            if ( !line.contains(checkingString) )
-            {
-                qCDebug(runtime) << line;
-                qWarning() << "Unexpected header for POTA CSV file - aborting";
-                abortRequested = true;
-            }
-            count++;
-            continue;
-        }
-
-        QRegularExpressionMatchIterator i = CSVRe.globalMatch(line);
-        QStringList fields;
-
-        while ( i.hasNext() )
-        {
-            QRegularExpressionMatch match = i.next();
-            fields << match.captured(2);
-        }
-
-        if ( fields.size() >= 8 )
-        {
-            qCDebug(runtime) << fields;
-
-            pota_reference << fields.at(0);
-            pota_name << fields.at(1);
-            pota_active << fields.at(2);
-            pota_entityID << fields.at(3);
-            pota_locationDesc << fields.at(4);
-            pota_latitude << fields.at(5);
-            pota_longitude << fields.at(6);
-            pota_grid << fields.at(7);
-
-            if ( count%3000 == 0 )
-            {
-                emit progress(data.pos());
-                QCoreApplication::processEvents();
-            }
-        }
-        else
-        {
-            qCDebug(runtime) << "Invalid line in the input file " << line;
-        }
-        count++;
-    }
-
-    insertQuery.addBindValue(pota_reference);
-    insertQuery.addBindValue(pota_name);
-    insertQuery.addBindValue(pota_active);
-    insertQuery.addBindValue(pota_entityID);
-    insertQuery.addBindValue(pota_locationDesc);
-    insertQuery.addBindValue(pota_latitude);
-    insertQuery.addBindValue(pota_longitude);
-    insertQuery.addBindValue(pota_grid);
-
-    if ( ! insertQuery.execBatch() )
-    {
-        qInfo() << "POTA Directory insert error " << insertQuery.lastError().text() << insertQuery.lastQuery();
-        abortRequested = true;
-    }
-
-    if ( !abortRequested )
-    {
-        QSqlDatabase::database().commit();
-        qCDebug(runtime) << "POTA update finished:" << count << "entities loaded.";
-    }
-    else
-    {
-        qCWarning(runtime) << "POTA update failed - rollback";
-        QSqlDatabase::database().rollback();
-    }
+    parseCSVGeneric(sourceDef, data,
+                    "INSERT INTO POTA_DIRECTORY(reference, name, active, entityID,"
+                    "  locationDesc, latitude, longitude, grid) VALUES (?,?,?,?,?,?,?,?)",
+                    {"reference", "name", "active", "entityId",
+                     "locationDesc", "latitude", "longitude", "grid"},
+                    format);
 }
 
 void LOVDownloader::parseMembershipContent(const SourceDefinition &sourceDef, QTextStream &data)

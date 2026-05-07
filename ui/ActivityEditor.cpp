@@ -126,7 +126,7 @@ void ActivityEditor::save()
 
     auto insertProfile = [&](ActivityProfile::ProfileType profileType,
                              bool save,
-                             const QString profileName,
+                             const QString &profileName,
                              QCheckBox* connectCheckbox = nullptr)
     {
         if ( save )
@@ -369,7 +369,7 @@ void ActivityEditor::setupValuesTab(const QString &activityName)
         field->setCompleter(completer);
     };
 
-    auto assignTableCompleter = [&] (QLineEdit *field, const QString tableName)
+    auto assignTableCompleter = [&] (QLineEdit *field, const QString &tableName)
     {
          QSqlTableModel* model = new QSqlTableModel();
          model->setTable(tableName);

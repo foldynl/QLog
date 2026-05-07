@@ -28,4 +28,10 @@ typedef enum debug_level
 
 void set_debug_level(DEBUG_LEVEL_TYPE);
 
+bool isLogToFileEnabled();
+void setLogToFile(bool enabled);
+void closeDebugLogFile();
+QString currentDebugLogFilename();
+void setCurrentDebugLogFilename(const QString &filename);
+
 #endif // QLOG_CORE_DEBUG_LOG_H

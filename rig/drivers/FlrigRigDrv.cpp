@@ -20,6 +20,7 @@ RigCaps FlrigRigDrv::getCaps(int)
     ret.canGetKeySpeed = true;
     ret.canSendMorse = true;
     ret.needPolling = true;
+    ret.canGetSplit = true;
 
     return ret;
 }
@@ -90,6 +91,35 @@ void FlrigRigDrv::setFrequency(double newFreq)
     }
 
     sendXmlRpcCommand("rig.set_vfo", { newFreq });
+}
+
+void FlrigRigDrv::setFrequency(VFOID vfoid, double newFreq)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << vfoid << QSTRING_FREQ(newFreq);
+
+    if ( !rigProfile.getFreqInfo || !rigReady ) return;
+
+    if ( vfoid == VFO1 )
+    {
+        setFrequency(newFreq);
+        return;
+    }
+
+    // VFO2 — TX frequency
+    sendXmlRpcCommand("rig.set_vfoB", { newFreq });
+}
+
+void FlrigRigDrv::setSplit(bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << enabled;
+
+    if ( !rigProfile.getSplitInfo || !rigReady  ) return;
+
+    sendXmlRpcCommand("rig.set_split", { enabled ? 1 : 0 });
 }
 
 void FlrigRigDrv::setRawMode(const QString &rawMode)
@@ -216,6 +246,7 @@ void FlrigRigDrv::startRigStatePoll()
     reqGET_POWER();
     reqGET_AB();
     reqGET_PTT();
+    reqGET_SPLIT();
     reqCWIO_GET_WPM();
 }
 
@@ -507,10 +538,76 @@ void FlrigRigDrv::rspCWIO_GET_WPM(const QVariant &value)
     QTimer::singleShot(rigProfile.pollInterval, this, &FlrigRigDrv::reqCWIO_GET_WPM);
 }
 
+void FlrigRigDrv::reqGET_SPLIT()
+{
+    FCT_IDENTIFICATION;
+
+    if ( rigProfile.getSplitInfo ) sendXmlRpcCommand("rig.get_split", {}, false);
+}
+
+void FlrigRigDrv::rspGET_SPLIT(const QVariant &value)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << value;
+
+    bool newSplitEnabled = value.toBool();
+
+    qCDebug(runtime) << "Rig Split:" << newSplitEnabled;
+    qCDebug(runtime) << "Object Split:" << currSplitEnabled;
+
+    if ( newSplitEnabled != currSplitEnabled )
+    {
+        currSplitEnabled = newSplitEnabled;
+        qCDebug(runtime) << "emitting SPLIT changed" << currSplitEnabled;
+        emit splitChanged(currSplitEnabled);
+    }
+
+    if ( currSplitEnabled )
+    {
+        // When split is on, also poll TX frequency
+        reqGET_TX_FREQ();
+    }
+    else if ( currTxFreq != 0.0 )
+    {
+        currTxFreq = 0.0;
+    }
+
+    QTimer::singleShot(rigProfile.pollInterval, this, &FlrigRigDrv::reqGET_SPLIT);
+}
+
+void FlrigRigDrv::reqGET_TX_FREQ()
+{
+    FCT_IDENTIFICATION;
+
+    sendXmlRpcCommand("rig.get_vfoB", {}, false);
+}
+
+void FlrigRigDrv::rspGET_TX_FREQ(const QVariant &value)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << value;
+
+    double txFreq = Hz2MHz(value.toLongLong());
+
+    qCDebug(runtime) << "Rig TX Freq:" << QSTRING_FREQ(txFreq);
+    qCDebug(runtime) << "Object TX Freq:" << QSTRING_FREQ(currTxFreq);
+
+    if ( txFreq != currTxFreq )
+    {
+        currTxFreq = txFreq;
+        qCDebug(runtime) << "emitting TX FREQ changed";
+        emit txFrequencyChanged(currTxFreq);
+    }
+}
+
 void FlrigRigDrv::resetCurrStates()
 {
     // clear current values means emiting all params
     currFreq = 0.0;
+    currTxFreq = 0.0;
+    currSplitEnabled = false;
     currVFO.clear();
     currRawMode.clear();
     currPWR = -1;

@@ -1,3 +1,6 @@
+QT_TRANSLATE_NOOP("DBStrings", "PHONE");
+QT_TRANSLATE_NOOP("DBStrings", "CW");
+QT_TRANSLATE_NOOP("DBStrings", "DIGITAL");
 QT_TRANSLATE_NOOP("DBStrings", "Afghanistan");
 QT_TRANSLATE_NOOP("DBStrings", "Agalega & St. Brandon");
 QT_TRANSLATE_NOOP("DBStrings", "Aland Islands");

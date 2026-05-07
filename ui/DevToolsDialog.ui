@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DevToolsDialog</class>
+ <widget class="QDialog" name="DevToolsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>729</width>
+    <height>620</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Developer Tools</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="debugLogGroup">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Debug Log</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="loggingRulesLabel">
+          <property name="text">
+           <string>Logging Rules:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="loggingRulesEdit">
+          <property name="placeholderText">
+           <string>e.g. qlog.ui.*.runtime=true</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="applyRulesButton">
+          <property name="text">
+           <string>Apply</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="logToFileCheckBox">
+          <property name="text">
+           <string>Generate Debug File</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="saveDebugLogButton">
+          <property name="text">
+           <string>Export File</string>
+          </property>
+          <property name="icon">
+           <iconset theme="document-save-as">
+            <normaloff>.</normaloff>.</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="debugLogFileLabel">
+        <property name="text">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="sqlConsoleGroup">
+     <property name="title">
+      <string>SQL Console</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="openButton">
+          <property name="text">
+           <string>Open SQL</string>
+          </property>
+          <property name="icon">
+           <iconset theme="document-open"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="saveButton">
+          <property name="text">
+           <string>Save SQL</string>
+          </property>
+          <property name="icon">
+           <iconset theme="document-save"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="runButton">
+          <property name="text">
+           <string>Run SQL</string>
+          </property>
+          <property name="icon">
+           <iconset theme="media-playback-start"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="exportButton">
+          <property name="text">
+           <string>Export As</string>
+          </property>
+          <property name="icon">
+           <iconset theme="document-save-as"/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QSplitter" name="splitter">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QPlainTextEdit" name="sqlEditor">
+         <property name="placeholderText">
+          <string>Enter SQL query here... Ctrl+Return = run</string>
+         </property>
+        </widget>
+        <widget class="QTableView" name="resultsTable"/>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="statusLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DevToolsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DevToolsDialog</receiver>
+   <slot>openQuery()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DevToolsDialog</receiver>
+   <slot>saveQuery()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>runButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DevToolsDialog</receiver>
+   <slot>runQuery()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>588</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>logToFileCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DevToolsDialog</receiver>
+   <slot>logToFileToggled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>applyRulesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DevToolsDialog</receiver>
+   <slot>applyLoggingRules()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>887</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveDebugLogButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DevToolsDialog</receiver>
+   <slot>saveDebugLog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>182</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>openQuery()</slot>
+  <slot>saveQuery()</slot>
+  <slot>exportQuery()</slot>
+  <slot>runQuery()</slot>
+  <slot>logToFileToggled(bool)</slot>
+  <slot>applyLoggingRules()</slot>
+  <slot>saveDebugLog()</slot>
+ </slots>
+</ui>

@@ -46,6 +46,9 @@ ImportDialog::ImportDialog(QWidget *parent) :
     }
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Import"));
+
+    // TODO: disabled #983 - If everything is OK, then delete it over time.
+    ui->optionBox->setVisible(false);
 }
 
 void ImportDialog::browse()
@@ -268,7 +271,7 @@ void ImportDialog::runImport()
     }
 
     format->setDefaults(defaults);
-    format->setUpdateDxcc(ui->updateDxccCheckBox->isChecked());
+    format->setFillMissingDxcc(ui->fillMissingDxccCheckBox->isChecked());
 
     if (!ui->allCheckBox->isChecked()) {
         format->setFilterDateRange(ui->startDateEdit->date(), ui->endDateEdit->date());
@@ -291,7 +294,7 @@ void ImportDialog::runImport()
     ui->rigSelect->setEnabled(false);
     ui->commentCheckBox->setEnabled(false);
     ui->commentEdit->setEnabled(false);
-    ui->updateDxccCheckBox->setEnabled(false);
+    ui->fillMissingDxccCheckBox->setEnabled(false);
 
     QString s;
     QTextStream out(&s);

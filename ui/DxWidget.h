@@ -15,8 +15,8 @@
 #include "core/LogLocale.h"
 #include "data/DxServerString.h"
 #include "models/SearchFilterProxyModel.h"
-#include "rig/Rig.h"
 #include "component/ShutdownAwareWidget.h"
+#include "NewContactWidget.h"
 
 // in sec
 #define DEDUPLICATION_TIME 3
@@ -126,6 +126,7 @@ public:
     explicit DxWidget(QWidget *parent = 0);
     ~DxWidget();
     virtual void finalizeBeforeAppExit() override;
+    void registerContactWidget(const NewContactWidget * contactWidget);
 
 public slots:
     void toggleConnect();
@@ -219,6 +220,7 @@ private:
     QHash<QString, QHash<QString, int>> trendDataForMyCont;
     QStringList trendBandList;
     QLabel *trendTableCornerLabel;
+    const NewContactWidget *newContactWidget;
 
     void connectCluster();
     void disconnectCluster(bool tryReconnect = false);
@@ -262,6 +264,7 @@ private:
     void potaRefFromComment(DxSpot &spot) const;
     void sotaRefFromComment(DxSpot &spot) const;
     void iotaRefFromComment(DxSpot &spot) const;
+    void splitFreqFromComment(DxSpot &spot) const;
 
     QColor getHeatmapColor(int value, int maxValue);
 

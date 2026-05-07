@@ -160,9 +160,13 @@ void OnlineMapWidget::mufDataUpdate()
     runJavaScript(QString(" drawMuf([%1]);").arg(mapPoints.join(",")));
 }
 
-void OnlineMapWidget::setIBPBand(VFOID , double, double ritFreq, double)
+void OnlineMapWidget::setIBPBand(VFOID vfoid, double, double ritFreq, double)
 {
     FCT_IDENTIFICATION;
+
+    // Online map tracks the RX frequency only
+    if ( vfoid == VFO2 )
+        return;
 
     runJavaScript(QString("currentBand=\"%1\";").arg(BandPlan::freq2Band(ritFreq).name));
 }

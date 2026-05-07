@@ -1,3 +1,26 @@
+qlog (0.50.0-1) UNRELEASED; urgency=low
+  * [NEW] - Added Split detection
+  * [NEW] - Added Developer and Support tools (PR #991 @aa5sh @foldynl)
+  * [NEW] - Added a simple QSL label printing dialog (issue #562)
+  * [NEW] - Added Cabrillo contest export
+  * [NEW] - Added direct labeling of QSL Requested and QSL Received to the QSO context menu (PR #982 @aa5sh)
+  * [NEW] - DXCC Submission Report (PR #967 @aa5sh)
+  * [NEW] - DXC - Search pre-fills the callsign from New Contact if callsign is present
+  * [NEW] - Settings - Added Danger Zone tab with Delete all passwords and QSOs
+  * [CHANGED] - Mutex-free Omnirig1 and Omnirig2
+  * [CHANGED] - POTA/SOTA/WWFF/SAT list are download from QLog LOV-repo
+  * [CHANGED] - Used an external lib for CSV parsing for LOV Download
+  * [CHANGED] - Import - ADIF import updates DXCC only if it is missing in the QSO (issue #983)
+  * [REMOVED] - Import - ADIF import does not include the option to update DXCC during the import - no longer needed
+  * Fixed Callsign disappears when calling a DX in a split via VFO-B (issue #799)
+  * Fixing Rendering issue (issue #989)
+  * Updated debian packaging (PR @979 thx @dawkagaming)
+  * Hamlib rigctld switching between VFO A/B doesnt change the band mode - added workaround (issue #999)
+  * Awards internal redesign
+  * Removed AN from the WAC award (issue #1010)
+
+ -- foldynl <foldyna@gmail.com>  Sun, 26 Apr 2026 10:25:10 +0200
+
 qlog (0.49.1-1) UNRELEASED; urgency=low
   * Fixed Online Map OSM Access Blocked banner (issue #956)
   * Fixed Package build process issue - openssl-dev is missing (issue #957)

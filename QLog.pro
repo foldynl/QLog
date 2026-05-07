@@ -4,13 +4,13 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network xml charts webenginewidgets serialport dbus quickwidgets webchannel websockets
+QT       += core gui sql network xml charts webenginewidgets serialport dbus quickwidgets webchannel websockets printsupport
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 TARGET = qlog
 TEMPLATE = app
-VERSION = 0.49.1
+VERSION = 0.50.0
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
@@ -55,6 +55,27 @@ CONFIG += c++11 force_debug_info
 CONFIG *= link_pkgconfig
 
 SOURCES += \
+        awards/AwardDefinition.cpp \
+        awards/AwardDXCC.cpp \
+        awards/AwardGridsquare.cpp \
+        awards/AwardIOTA.cpp \
+        awards/AwardITU.cpp \
+        awards/AwardJapan.cpp \
+        awards/AwardNZ.cpp \
+        awards/AwardRDA.cpp \
+        awards/AwardSpanishDME.cpp \
+        awards/AwardUKD.cpp \
+        awards/AwardUSCounty.cpp \
+        awards/AwardPOTAActivator.cpp \
+        awards/AwardPOTAHunter.cpp \
+        awards/AwardSOTA.cpp \
+        awards/SecondarySubdivisionAward.cpp \
+        awards/AwardWAC.cpp \
+        awards/AwardWAS.cpp \
+        awards/AwardWAZ.cpp \
+        awards/AwardWPX.cpp \
+        awards/AwardWWFF.cpp \
+        awards/BandTableAward.cpp \
         core/AlertEvaluator.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
@@ -72,6 +93,7 @@ SOURCES += \
         core/PlatformParameterManager.cpp \
         core/PotaQE.cpp \
         core/PropConditions.cpp \
+        core/QSLPrintLabelRenderer.cpp \
         core/QSLStorage.cpp \
         core/QSOFilterManager.cpp \
         core/WsjtxUDPReceiver.cpp \
@@ -106,6 +128,7 @@ SOURCES += \
         data/UpdatableSQLRecord.cpp \
         logformat/AdiFormat.cpp \
         logformat/AdxFormat.cpp \
+        logformat/CabrilloFormat.cpp \
         logformat/CSVFormat.cpp \
         logformat/JsonFormat.cpp \
         logformat/LogFormat.cpp \
@@ -149,21 +172,26 @@ SOURCES += \
         ui/AlertSettingDialog.cpp \
         ui/AlertWidget.cpp \
         ui/AwardsDialog.cpp \
+        ui/DXCCSubmissionDialog.cpp \
         ui/BandmapWidget.cpp \
         ui/CWConsoleWidget.cpp \
         ui/ChatWidget.cpp \
         ui/ClockWidget.cpp \
         ui/ColumnSettingDialog.cpp \
+        ui/DevToolsDialog.cpp \
         ui/DownloadQSLDialog.cpp \
         ui/DxFilterDialog.cpp \
         ui/DxWidget.cpp \
         ui/DxccTableWidget.cpp \
         ui/EditActivitiesDialog.cpp \
+        ui/CabrilloExportDialog.cpp \
+        ui/CabrilloTemplateDialog.cpp \
         ui/ExportDialog.cpp \
         ui/ExportPasswordDialog.cpp \
         ui/LoadDatabaseDialog.cpp \
         ui/PlatformSettingsDialog.cpp \
         ui/QSLGalleryDialog.cpp \
+        ui/QSLPrintLabelDialog.cpp \
         ui/RigctldAdvancedDialog.cpp \
         ui/ImportDialog.cpp \
         ui/InputPasswordDialog.cpp \
@@ -199,9 +227,31 @@ SOURCES += \
         ui/component/MultiselectCompleter.cpp \
         ui/component/RepeatButton.cpp \
         ui/component/SmartSearchBox.cpp \
+        ui/component/SqlHighlighter.cpp \
         ui/component/SwitchButton.cpp
 
 HEADERS += \
+        awards/AwardDefinition.h \
+        awards/AwardDXCC.h \
+        awards/AwardGridsquare.h \
+        awards/AwardIOTA.h \
+        awards/AwardITU.h \
+        awards/AwardJapan.h \
+        awards/AwardNZ.h \
+        awards/AwardRDA.h \
+        awards/AwardSpanishDME.h \
+        awards/AwardUKD.h \
+        awards/AwardUSCounty.h \
+        awards/AwardPOTAActivator.h \
+        awards/AwardPOTAHunter.h \
+        awards/AwardSOTA.h \
+        awards/SecondarySubdivisionAward.h \
+        awards/AwardWAC.h \
+        awards/AwardWAS.h \
+        awards/AwardWAZ.h \
+        awards/AwardWPX.h \
+        awards/AwardWWFF.h \
+        awards/BandTableAward.h \
         core/AlertEvaluator.h \
         core/AppGuard.h \
         core/CallbookManager.h \
@@ -219,10 +269,12 @@ HEADERS += \
         core/PlatformParameterManager.h \
         core/PotaQE.h \
         core/PropConditions.h \
+        core/QSLPrintLabelRenderer.h \
         core/QSLStorage.h \
         core/QSOFilterManager.h \
         core/QuadKeyCache.h \
         core/WsjtxUDPReceiver.h \
+        core/csv.hpp \
         core/debug.h \
         core/EmergencyFrequency.h \
         core/zonedetect.h \
@@ -269,6 +321,7 @@ HEADERS += \
         data/WsjtxStatus.h \
         logformat/AdiFormat.h \
         logformat/AdxFormat.h \
+        logformat/CabrilloFormat.h \
         logformat/CSVFormat.h \
         logformat/JsonFormat.h \
         logformat/LogFormat.h \
@@ -313,21 +366,26 @@ HEADERS += \
         ui/AlertSettingDialog.h \
         ui/AlertWidget.h \
         ui/AwardsDialog.h \
+        ui/DXCCSubmissionDialog.h \
         ui/BandmapWidget.h \
         ui/CWConsoleWidget.h \
         ui/ChatWidget.h \
         ui/ClockWidget.h \
         ui/ColumnSettingDialog.h \
+        ui/DevToolsDialog.h \
         ui/DownloadQSLDialog.h \
         ui/DxFilterDialog.h \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
         ui/EditActivitiesDialog.h \
+        ui/CabrilloExportDialog.h \
+        ui/CabrilloTemplateDialog.h \
         ui/ExportDialog.h \
         ui/ExportPasswordDialog.h \
         ui/LoadDatabaseDialog.h \
         ui/PlatformSettingsDialog.h \
         ui/QSLGalleryDialog.h \
+        ui/QSLPrintLabelDialog.h \
         ui/RigctldAdvancedDialog.h \
         ui/ImportDialog.h \
         ui/InputPasswordDialog.h \
@@ -368,6 +426,7 @@ HEADERS += \
         ui/component/RepeatButton.h \
         ui/component/ShutdownAwareWidget.h \
         ui/component/SmartSearchBox.h \
+        ui/component/SqlHighlighter.h \
         ui/component/StyleItemDelegate.h \
         ui/component/SwitchButton.h
 
@@ -377,21 +436,26 @@ FORMS += \
         ui/AlertSettingDialog.ui \
         ui/AlertWidget.ui \
         ui/AwardsDialog.ui \
+        ui/DXCCSubmissionDialog.ui \
         ui/BandmapWidget.ui \
         ui/CWConsoleWidget.ui \
         ui/ChatWidget.ui \
         ui/ClockWidget.ui \
         ui/ColumnSettingDialog.ui \
         ui/ColumnSettingSimpleDialog.ui \
+        ui/DevToolsDialog.ui \
         ui/DownloadQSLDialog.ui \
         ui/DxFilterDialog.ui \
         ui/DxWidget.ui \
         ui/EditActivitiesDialog.ui \
+        ui/CabrilloExportDialog.ui \
+        ui/CabrilloTemplateDialog.ui \
         ui/ExportDialog.ui \
         ui/ExportPasswordDialog.ui \
         ui/LoadDatabaseDialog.ui \
         ui/PlatformSettingsDialog.ui \
         ui/QSLGalleryDialog.ui \
+        ui/QSLPrintLabelDialog.ui \
         ui/RigctldAdvancedDialog.ui \
         ui/ImportDialog.ui \
         ui/InputPasswordDialog.ui \

@@ -23,6 +23,8 @@ public:
     virtual QStringList getAvailableModes() override;
 
     virtual void setFrequency(double) override;
+    virtual void setFrequency(VFOID, double) override;
+    virtual void setSplit(bool) override;
     virtual void setRawMode(const QString &) override;
     virtual void setMode(const QString &, const QString &, bool) override;
     virtual void setPTT(bool) override;
@@ -65,6 +67,7 @@ private:
     void rspCW_MACROS_SPEED(const QStringList &);
     void rspRIT_ENABLE(const QStringList &);
     void rspXIT_ENABLE(const QStringList &);
+    void rspSPLIT_ENABLE(const QStringList &);
 
     double getRITFreq();
     void setRITFreq(double);
@@ -78,11 +81,13 @@ private:
     bool receivedOnly;
     QStringList modeList;
     double currFreq;
+    double currTxFreq;
     QString currMode;
     double currRIT;
     double currXIT;
     bool RITEnabled;
     bool XITEnabled;
+    bool currSplitEnabled;
 
     const QHash<QString, TCIRigDrv::parseFce> responseParsers =
     {
@@ -102,6 +107,7 @@ private:
         {"cw_macros_speed", &TCIRigDrv::rspCW_MACROS_SPEED},
         {"rit_enable", &TCIRigDrv::rspRIT_ENABLE},
         {"xit_enable", &TCIRigDrv::rspXIT_ENABLE},
+        {"split_enable", &TCIRigDrv::rspSPLIT_ENABLE},
     };
 };
 

@@ -307,7 +307,7 @@ const Band BandPlan::bandName2Band(const QString &name)
         return Band();
     }
 
-    query.bindValue(0, name);
+    query.bindValue(0, name.toLower());
 
     if ( ! query.exec() )
     {

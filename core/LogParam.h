@@ -372,6 +372,72 @@ public:
     static void setMainWindowBandmapWidgets(const QString &value);
     static void removeMainWindowBandmapWidgets();
 
+    /*********************
+     * QSL Print Labels
+     *********************/
+    static int getQslLabelTemplate();
+    static void setQslLabelTemplate(int index);
+    static QString getQslLabelFooterLeft();
+    static void setQslLabelFooterLeft(const QString &text);
+    static QString getQslLabelFooterRight();
+    static void setQslLabelFooterRight(const QString &text);
+    static int getQslLabelSkip();
+    static void setQslLabelSkip(int count);
+    static int getQslLabelZoom();
+    static void setQslLabelZoom(int zoom);
+    static int getQslLabelCustomPageSize();
+    static void setQslLabelCustomPageSize(int pageSizeIndex);
+    static int getQslLabelCustomCols();
+    static void setQslLabelCustomCols(int cols);
+    static int getQslLabelCustomRows();
+    static void setQslLabelCustomRows(int rows);
+    static double getQslLabelCustomLabelWidth();
+    static void setQslLabelCustomLabelWidth(double width);
+    static double getQslLabelCustomLabelHeight();
+    static void setQslLabelCustomLabelHeight(double height);
+    static double getQslLabelCustomLeftMargin();
+    static void setQslLabelCustomLeftMargin(double margin);
+    static double getQslLabelCustomTopMargin();
+    static void setQslLabelCustomTopMargin(double margin);
+    static double getQslLabelCustomHSpacing();
+    static void setQslLabelCustomHSpacing(double spacing);
+    static double getQslLabelCustomVSpacing();
+    static void setQslLabelCustomVSpacing(double spacing);
+    static bool getQslLabelPrintBorders();
+    static void setQslLabelPrintBorders(bool enabled);
+    static QString getQslLabelDateFormat();
+    static void setQslLabelDateFormat(const QString &format);
+    static QString getQslLabelSansFont();
+    static void setQslLabelSansFont(const QString &family);
+    static QString getQslLabelMonoFont();
+    static void setQslLabelMonoFont(const QString &family);
+    static QString getQslLabelExtraColumn();
+    static void setQslLabelExtraColumn(const QString &column);
+    static QString getQslLabelExtraColumnHeader();
+    static void setQslLabelExtraColumnHeader(const QString &header);
+    static QString getQslLabelToRadioText();
+    static void setQslLabelToRadioText(const QString &text);
+    static QString getQslLabelHdrDate();
+    static void setQslLabelHdrDate(const QString &text);
+    static QString getQslLabelHdrTime();
+    static void setQslLabelHdrTime(const QString &text);
+    static QString getQslLabelHdrBand();
+    static void setQslLabelHdrBand(const QString &text);
+    static QString getQslLabelHdrMode();
+    static void setQslLabelHdrMode(const QString &text);
+    static QString getQslLabelHdrQsl();
+    static void setQslLabelHdrQsl(const QString &text);
+    static int getQslLabelMaxRows();
+    static void setQslLabelMaxRows(int rows);
+    static double getQslLabelFontSizeToRadio();
+    static void setQslLabelFontSizeToRadio(double size);
+    static double getQslLabelFontSizeCallsign();
+    static void setQslLabelFontSizeCallsign(double size);
+    static double getQslLabelFontSizeHeader();
+    static void setQslLabelFontSizeHeader(double size);
+    static double getQslLabelFontSizeData();
+    static void setQslLabelFontSizeData(double size);
+
 private:
     static QCache<QString, QVariant> localCache;
     static QMutex cacheMutex;
