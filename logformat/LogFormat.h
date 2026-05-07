@@ -34,6 +34,7 @@ public:
     enum QSLFrom {
         LOTW,
         EQSL,
+        LOTW_DXCC,
         UNKNOW
     };
 
@@ -57,6 +58,7 @@ public:
                             unsigned long *warnings,
                             unsigned long *errors);
     void runQSLImport(QSLFrom fromService);
+    void runQSOCreditImport(QSLFrom fromService);
     long runExport();
     long runExport(const QList<QSqlRecord>&);
     void setDefaults(QMap<QString, QString>& defaults);

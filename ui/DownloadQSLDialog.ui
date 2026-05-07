@@ -108,7 +108,14 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="0" colspan="2">
+    <widget class="QCheckBox" name="lotwDXCCCheckBox">
+     <property name="text">
+      <string>LoTW DXCC Credits</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -129,6 +136,7 @@
   <tabstop>lotwDateTypeCombo</tabstop>
   <tabstop>lotwDateEdit</tabstop>
   <tabstop>lotwMyCallsignCombo</tabstop>
+  <tabstop>lotwDXCCCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

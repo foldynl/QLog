@@ -25,6 +25,7 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
                                                        "FROM contacts ORDER BY station_callsign", "", ui->lotwMyCallsignCombo));
     ui->lotwDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->eqslDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
+
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Download"));
 
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
@@ -44,6 +45,9 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
         ui->lotwGroupBox->setChecked(false);
         ui->lotwGroupBox->setEnabled(false);
         ui->lotwGroupBox->setToolTip(tr("LoTW is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
+        ui->lotwDXCCCheckBox->setChecked(false);
+        ui->lotwDXCCCheckBox->setEnabled(false);
+        ui->lotwDXCCCheckBox->setToolTip(tr("LoTW is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
     }
 
     if ( EQSLBase::getUsername().isEmpty() )
@@ -97,6 +101,9 @@ void DownloadQSLDialog::loadDialogState()
     ui->eqslDateTypeCombo->setCurrentIndex((LogParam::getDownloadQSLServiceLastQSOQSL("eqsl")) ? 0 : 1);
 
     ui->eqslQTHProfileEdit->setText(LogParam::getDownloadQSLeQSLLastProfile());
+
+    /* LoTW DXCC Credits checkbox always starts unchecked — this is a one-off task. */
+    ui->lotwDXCCCheckBox->setChecked(false);
 }
 
 void DownloadQSLDialog::saveDialogState()
@@ -203,6 +210,15 @@ void DownloadQSLDialog::downloadQSLs()
             LogParam::setDownloadQSLLoTWLastCall(ui->lotwMyCallsignCombo->currentText());
             LogParam::setDownloadQSLServiceLastQSOQSL("lotw", qslSinceActive);
             lotw->receiveQSL(ui->lotwDateEdit->date(), !qslSinceActive, ui->lotwMyCallsignCombo->currentText());
+        });
+
+    if ( ui->lotwDXCCCheckBox->isChecked() )
+        downloadQueue.enqueue([=]()
+        {
+            LotwQSLDownloader* lotw = new LotwQSLDownloader(this);
+            lotw->LotwDXCCCredits = true;
+            prepareDownload(lotw, tr("LoTW DXCC Credits"), false, "lotwdxcc");
+            lotw->receiveQSL(QDate(), false, QString());
         });
 
     if ( downloadQueue.isEmpty() )

@@ -95,6 +95,8 @@ public:
     explicit LotwQSLDownloader(QObject *parent = nullptr);
     virtual ~LotwQSLDownloader();
 
+    bool LotwDXCCCredits = false;
+
     virtual void receiveQSL(const QDate &, bool, const QString &) override;
 
 public slots:
@@ -103,6 +105,7 @@ public slots:
 private:
     QNetworkReply *currentReply;
     const QString ADIF_API = "https://lotw.arrl.org/lotwuser/lotwreport.adi";
+    const QString DXCC_CREDIT_API = "https://lotw.arrl.org/lotwuser/logbook/qslcards.php";
 
     virtual void processReply(QNetworkReply* reply) override;
     void get(QList<QPair<QString, QString>> params);

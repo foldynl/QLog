@@ -434,21 +434,29 @@ void LotwQSLDownloader::receiveQSL(const QDate &start_date, bool qso_since, cons
     qCDebug(function_parameters) << start_date << " " << qso_since;
 
     QList<QPair<QString, QString>> params;
-    params.append(qMakePair(QString("qso_query"), QString("1")));
-    params.append(qMakePair(QString("qso_qsldetail"), QString("yes")));
-    params.append(qMakePair(QString("qso_owncall"), station_callsign));
 
-    const QString &start = start_date.toString("yyyy-MM-dd");
-
-    if (qso_since)
+    if ( LotwDXCCCredits )
     {
-        params.append(qMakePair(QString("qso_qsl"), QString("no")));
-        params.append(qMakePair(QString("qso_qsorxsince"), start));
+        params.append(qMakePair(QString("ac_acct"), QString("1")));
     }
     else
     {
-        params.append(qMakePair(QString("qso_qsl"), QString("yes")));
-        params.append(qMakePair(QString("qso_qslsince"), start));
+        params.append(qMakePair(QString("qso_query"), QString("1")));
+        params.append(qMakePair(QString("qso_qsldetail"), QString("yes")));
+        params.append(qMakePair(QString("qso_owncall"), station_callsign));
+
+        const QString &start = start_date.toString("yyyy-MM-dd");
+
+        if (qso_since)
+        {
+            params.append(qMakePair(QString("qso_qsl"), QString("no")));
+            params.append(qMakePair(QString("qso_qsorxsince"), start));
+        }
+        else
+        {
+            params.append(qMakePair(QString("qso_qsl"), QString("yes")));
+            params.append(qMakePair(QString("qso_qslsince"), start));
+        }
     }
 
     get(params);
@@ -540,7 +548,10 @@ void LotwQSLDownloader::processReply(QNetworkReply *reply)
         emit receiveQSLComplete(stats);
     });
 
-    adi.runQSLImport(adi.LOTW);
+    if ( LotwDXCCCredits )
+        adi.runQSOCreditImport(adi.LOTW_DXCC);
+    else
+        adi.runQSLImport(adi.LOTW);
 
     tempFile.close();
 
@@ -559,7 +570,7 @@ void LotwQSLDownloader::get(QList<QPair<QString, QString>> params)
     query.addQueryItem("login", username.toUtf8().toPercentEncoding());
     query.addQueryItem("password", password.toUtf8().toPercentEncoding());
 
-    QUrl url(ADIF_API);
+    QUrl url(LotwDXCCCredits ? DXCC_CREDIT_API : ADIF_API);
     url.setQuery(query);
 
     qCDebug(runtime) << Data::safeQueryString(query);

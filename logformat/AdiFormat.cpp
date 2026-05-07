@@ -492,6 +492,14 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
         time_on = time_off;
     }
 
+    /* Records that have a date but no time (e.g. LoTW DXCC credit exports) would
+     * produce an invalid QDateTime, making them impossible to match later.
+     * Default to midnight UTC so the record remains usable. */
+    if ( !time_on.isValid() && date_on.isValid() )
+    {
+        time_on = QTime(0, 0, 0);
+    }
+
     QDateTime start_time(date_on, time_on, QTimeZone::utc());
     QDateTime end_time(date_off, time_off, QTimeZone::utc());
 

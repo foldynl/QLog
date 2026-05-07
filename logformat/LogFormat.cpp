@@ -784,6 +784,136 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
 
 #undef RECORDIDX
 
+void LogFormat::runQSOCreditImport(QSLFrom /*fromService*/)
+{
+    FCT_IDENTIFICATION;
+
+    auto reportFormatter = [&](const QDateTime &qsoTime,
+                               const QString &callsign,
+                               const QString &mode,
+                               const QStringList addInfo = QStringList())
+    {
+        return QString("%0; %1; %2%3 %4").arg(qsoTime.isValid() ? qsoTime.toString(locale.formatDateShortWithYYYY()) : "-",
+                                              callsign,
+                                              mode,
+                                              (addInfo.size() > 0 ) ? ";" : "",
+                                              addInfo.join(", "));
+    };
+
+    QSLMergeStat stats = {QStringList(), QStringList(), QStringList(), QStringList(), 0};
+    this->importStart();
+
+    QSqlTableModel model;
+    model.setTable("contacts");
+    QSqlRecord QSLRecord = model.record(0);
+
+    while ( true )
+    {
+        QSLRecord.clearValues();
+
+        if ( !this->importNext(QSLRecord) ) break;
+
+        stats.qsosDownloaded++;
+
+        if ( stats.qsosDownloaded % 100 == 0 )
+        {
+            emit importPosition(stream.pos());
+        }
+
+        const QVariant &call = QSLRecord.value("callsign");
+        const QVariant &band = QSLRecord.value("band");
+        const QVariant &start_time = QSLRecord.value("start_time");
+        const QVariant &satName = QSLRecord.value("sat_name");
+
+        /* require at minimum: callsign, band, and a valid date */
+        if ( !start_time.toDateTime().isValid()
+             || call.toString().isEmpty()
+             || band.toString().isEmpty() )
+        {
+            qWarning() << "DXCC credit import: missing start_time, callsign, or band";
+            qCDebug(runtime) << QSLRecord;
+            stats.errorQSLs.append(reportFormatter(start_time.toDateTime(), call.toString(), ""));
+            continue;
+        }
+
+        /* Match on callsign + band + date + must already have a QSL confirmed.
+         * Mode is intentionally omitted because DXCC credit records may use generic
+         * mode group names that do not precisely match the logged mode.
+         * A ±1 day tolerance is applied because the credit file may record the QSO
+         * date in the operator's local time zone while the DB stores UTC, causing a
+         * one-day discrepancy for QSOs made near midnight. */
+        const QString matchFilter = QString(
+            "callsign=upper('%1') AND upper(band)=upper('%2') AND "
+            "COALESCE(sat_name, '') = upper('%3') AND "
+            "ABS(JULIANDAY(date(start_time)) - JULIANDAY(date('%4'))) <= 1 AND "
+            "(qsl_rcvd = 'Y' OR lotw_qsl_rcvd = 'Y')"
+        ).arg(call.toString(),
+              band.toString(),
+              satName.toString(),
+              start_time.toDateTime().toTimeZone(QTimeZone::utc()).toString("yyyy-MM-dd hh:mm:ss"));
+
+        model.setFilter(matchFilter);
+        model.select();
+
+        if ( model.rowCount() < 1 )
+        {
+            stats.unmatchedQSLs.append(reportFormatter(start_time.toDateTime(), call.toString(), ""));
+            continue;
+        }
+
+        qCDebug(runtime) << "DXCC credit: found" << model.rowCount() << "match(es) for"
+                         << call.toString() << band.toString() << start_time.toString();
+
+        /* Update every matching contact — multiple QSOs on the same date/band are possible. */
+        for ( int row = 0; row < model.rowCount(); ++row )
+        {
+            QSqlRecord originalRecord = model.record(row);
+
+            QStringList updatedFields;
+            bool callUpdate = false;
+
+            auto conditionUpdate = [&](const QString &contactKey,
+                                       const QString &qslKey)
+            {
+                if ( !QSLRecord.value(qslKey).toString().isEmpty()
+                     && originalRecord.value(contactKey).toString().isEmpty() )
+                {
+                    qCDebug(runtime) << "Updating:" << contactKey
+                                     << "to" << QSLRecord.value(qslKey).toString();
+                    updatedFields.append(contactKey + "(" + QSLRecord.value(qslKey).toString() + ")");
+                    originalRecord.setValue(contactKey, QSLRecord.value(qslKey));
+                    return true;
+                }
+                return false;
+            };
+
+            callUpdate |= conditionUpdate("credit_granted",            "credit_granted");
+            callUpdate |= conditionUpdate("credit_submitted",          "credit_submitted");
+
+            if ( callUpdate )
+            {
+                if ( !model.setRecord(row, originalRecord) )
+                {
+                    qWarning() << "Cannot update a Contact record - " << model.lastError();
+                    qCDebug(runtime) << originalRecord;
+                }
+                stats.updatedQSOs.append(reportFormatter(start_time.toDateTime(), call.toString(), "", updatedFields));
+            }
+        }
+
+        if ( !model.submitAll() )
+        {
+            qWarning() << "Cannot commit changes to Contact Table - " << model.lastError();
+        }
+    }
+
+    emit importPosition(stream.pos());
+
+    this->importEnd();
+
+    emit QSLMergeFinished(stats);
+}
+
 void LogFormat::runQSLImport(QSLFrom fromService)
 {
     FCT_IDENTIFICATION;
