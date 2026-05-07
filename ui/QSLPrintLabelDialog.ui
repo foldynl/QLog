@@ -48,7 +48,7 @@
           <x>0</x>
           <y>0</y>
           <width>393</width>
-          <height>1620</height>
+          <height>1778</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="settingsScrollLayout">
@@ -554,7 +554,10 @@
               <item>
                <widget class="QPushButton" name="selectCardBackgroundButton">
                 <property name="text">
-                 <string>Select</string>
+                 <string>Browse</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="folder-open"/>
                 </property>
                </widget>
               </item>
@@ -562,6 +565,9 @@
                <widget class="QPushButton" name="clearCardBackgroundButton">
                 <property name="text">
                  <string>Clear</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="edit-delete"/>
                 </property>
                </widget>
               </item>
