@@ -200,7 +200,7 @@ SOURCES += \
         ui/KSTHighlighterSettingDialog.cpp \
         ui/LogbookWidget.cpp \
         ui/MainWindow.cpp \
-        ui/MapWebChannelHandler.cpp \
+        ui/MapPageController.cpp \
         ui/MapWidget.cpp \
         ui/ModeSelectionController.cpp \
         ui/NewContactWidget.cpp \
@@ -396,7 +396,8 @@ HEADERS += \
         ui/KSTHighlighterSettingDialog.h \
         ui/LogbookWidget.h \
         ui/MainWindow.h \
-        ui/MapWebChannelHandler.h \
+        ui/MapLayer.h \
+        ui/MapPageController.h \
         ui/MapWidget.h \
         ui/ModeSelectionController.h \
         ui/NewContactWidget.h \

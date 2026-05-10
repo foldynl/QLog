@@ -105,6 +105,80 @@
     var staticMapTime = null;
 
     var map = L.map('map', {center: [0,0], zoom: 2, minZoom: 1});
+    var layerControl = null;
+    var mapBridge = null;
+    const qlogLayerStateKeys = new Map();
+    let qlogLayerStateBridgeConnected = false;
+
+    function mapLayerByKey(key) {
+      return window[key] || null;
+    }
+
+    function sendToQt(method) {
+      if (!window.mapBridge || typeof window.mapBridge[method] !== 'function')
+        return;
+
+      window.mapBridge[method].apply(window.mapBridge, Array.prototype.slice.call(arguments, 1));
+    }
+
+    function setQLogLayerVisibility(key, visible) {
+      const layer = mapLayerByKey(key);
+      if (!layer)
+        return;
+
+      if (visible)
+        map.addLayer(layer);
+      else
+        map.removeLayer(layer);
+    }
+
+    function restoreQLogLayerStates(states) {
+      states.forEach(function(state) {
+        setQLogLayerVisibility(state.key, state.visible);
+      });
+    }
+
+    function configureLayerControl(layers) {
+      const overlays = {};
+      qlogLayerStateKeys.clear();
+
+      layers.forEach(function(layerSpec) {
+        const layer = mapLayerByKey(layerSpec.key);
+        if (!layer)
+          return;
+
+        overlays[layerSpec.label] = layer;
+        qlogLayerStateKeys.set(layer, layerSpec.key);
+      });
+
+      if (layerControl)
+        map.removeControl(layerControl);
+
+      layerControl = new L.Control.Layers(null, overlays, {}).addTo(map);
+    }
+
+    function handleQLogLayerStateChanged(layer, state) {
+      const key = qlogLayerStateKeys.get(layer);
+      if (!key)
+        return;
+
+      sendToQt('handleLayerSelectionChanged', key, state);
+    }
+
+    function connectQtMapBridge(handler) {
+      window.mapBridge = handler;
+
+      if (qlogLayerStateBridgeConnected)
+        return;
+
+      map.on('overlayadd', function(e) {
+        handleQLogLayerStateChanged(e.layer, 'on');
+      });
+      map.on('overlayremove', function(e) {
+        handleQLogLayerStateChanged(e.layer, 'off');
+      });
+      qlogLayerStateBridgeConnected = true;
+    }
 
     map.createPane('lowestPane');
     map.getPane('lowestPane').style.zIndex = 200;
@@ -155,6 +229,47 @@
       iconAnchor: [15, 25],
       popupAnchor: [1, -14]
     });
+
+    const mapIcons = {
+      greenIcon: greenIcon,
+      greenIconSmall: greenIconSmall,
+      yellowIcon: yellowIcon,
+      yellowIconSmall: yellowIconSmall,
+      homeIcon: homeIcon
+    };
+
+    function resolveIcon(icon) {
+      return mapIcons[icon] || null;
+    }
+
+    function normalizePoint(point) {
+      if (Array.isArray(point)) {
+        return {
+          label: point[0],
+          lat: point[1],
+          lng: point[2],
+          icon: point[3]
+        };
+      }
+
+      return point;
+    }
+
+    function markerOptions(point) {
+      const icon = resolveIcon(point.icon);
+      return icon ? {icon: icon} : {};
+    }
+
+    function normalizePath(path) {
+      if (Array.isArray(path)) {
+        return {
+          from: {lat: path[0], lng: path[1]},
+          to: {lat: path[2], lng: path[3]}
+        };
+      }
+
+      return path;
+    }
 
 
     var language = navigator.language || navigator.userLanguage;
@@ -256,10 +371,11 @@
 
     function drawShortPaths(coords) {
         pathLayer.clearLayers();
-        coords.forEach(function(coord) {
+        coords.forEach(function(rawPath) {
+            const path = normalizePath(rawPath);
             let geodesic = new L.Geodesic([],{ wrap: false, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
             pathLayer.addLayer(geodesic);
-            geodesic.setLatLngs([{lat: coord[0], lng: coord[1]}, {lat: coord[2], lng: coord[3]}]);
+            geodesic.setLatLngs([path.from, path.to]);
         });
     }
 
@@ -308,15 +424,19 @@
 
     var markersLayer = L.layerGroup().addTo(map);
 
+    function drawPointMarkers(layer, points) {
+        layer.clearLayers();
+        points.forEach(function(point) {
+           const mapPoint = normalizePoint(point);
+           let marker = L.marker([mapPoint.lat, mapPoint.lng], markerOptions(mapPoint))
+                         .bindPopup(mapPoint.label);
+           layer.addLayer(marker);
+        });
+    }
+
     // generic function to render point on the map
     function drawPoints(points) {
-        markersLayer.clearLayers();
-        points.forEach(function(point) {
-           let marker = L.marker([point[1], point[2]], {
-                        icon: point[3]})
-                        .bindPopup(point[0]);
-           markersLayer.addLayer(marker);
-        });
+        drawPointMarkers(markersLayer, points);
      }
 
     function drawPointsBusy(points, text) {
@@ -325,7 +445,8 @@
 
      // generic function for flying to the point
      function flyToPoint(point, zoom) {
-        map.flyTo([point[1], point[2]],zoom);
+        const mapPoint = normalizePoint(point);
+        map.flyTo([mapPoint.lat, mapPoint.lng], zoom);
      }
 
      var markersLayer2 = L.layerGroup().addTo(map);
@@ -333,13 +454,7 @@
      // generic function to render the sencond layer of the points
      // It is usually used to render My QTHs
      function drawPointsGroup2(points) {
-        markersLayer2.clearLayers();
-        points.forEach(function(point) {
-           let marker = L.marker([point[1], point[2]], {
-                        icon: point[3]})
-                        .bindPopup(point[0]);
-           markersLayer2.addLayer(marker);
-        });
+        drawPointMarkers(markersLayer2, points);
      }
 
     // compute 3-color gradient
@@ -400,13 +515,14 @@
 
        mufLayer.clearLayers();
        points.forEach(function(point) {
-            let marker = new L.marker([point[1], point[2]], {opacity: 0.001 });
-            marker.bindTooltip(point[0], {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
+            const mapPoint = normalizePoint(point);
+            let marker = new L.marker([mapPoint.lat, mapPoint.lng], {opacity: 0.001 });
+            marker.bindTooltip(mapPoint.label, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
             // color gradient is calculated for number interval 0 - 1.
             // MUF value is a fgrequency. Threfore is it needed to recalculate Freq to interval 0 - 1
             // QLog currently recalculate the interval 0 - 50 MHz. This is due to the fact that
             // most of the values move in this interval and it is easy to see the individual frequency ranges
-            const oldValue = parseFloat(point[0]);
+            const oldValue = parseFloat(mapPoint.label);
             const oldMin = 0; const oldMax = 50; //frequency input range (0 - 50MHz)
             const newMin = 0; const newMax = 1; //mapped to range 0 - 1
             const newValue = (oldValue - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin;
@@ -449,7 +565,10 @@
 
     function IBPCallsignPressed(e) {
        let currentIndex = band.findIndex(object => {return object.band_name === currentBand;});
-       foo.IBPCallsignClicked(this.callsign, band[currentIndex].freq);
+       if (currentIndex === -1)
+         return;
+
+       sendToQt('IBPCallsignClicked', this.callsign, band[currentIndex].freq);
      }
 
     // render IPB Beacon Point
@@ -512,7 +631,7 @@
     var chatStationsLayer = L.layerGroup().addTo(map);
 
     function chatCallsignPressed(e) {
-       foo.chatCallsignClicked(this.callsign);
+       sendToQt('chatCallsignClicked', this.callsign);
     }
 
     // generic function to render the third layer of the points
@@ -520,10 +639,11 @@
     function drawPointsGroup3(points) {
        chatStationsLayer.clearLayers();
        points.forEach(function(point) {
-          let marker = new L.marker([point[1], point[2]], {opacity: 0.001 });
-          marker.bindTooltip(point[0], {pane: 'lowestPane', permanent: true, direction : 'bottom', offset: [-16, 8], className: 'chat-tooltip' });
+          const mapPoint = normalizePoint(point);
+          let marker = new L.marker([mapPoint.lat, mapPoint.lng], {opacity: 0.001 });
+          marker.bindTooltip(mapPoint.label, {pane: 'lowestPane', permanent: true, direction : 'bottom', offset: [-16, 8], className: 'chat-tooltip' });
           marker.on('dblclick', chatCallsignPressed);
-          marker.callsign = point[0];
+          marker.callsign = mapPoint.label;
           marker.getTooltip().setContent(`<div style="background-color: aqua;border-radius: 20px;padding: 5px;font-weight: bold;">${marker.getTooltip().getContent()}</div>`);
           chatStationsLayer.addLayer(marker);
        });
@@ -532,13 +652,14 @@
     setInterval(function(){updateBeacon()}, 250);
 
     function wsjtxCallsignPressed(e) {
-       foo.wsjtxCallsignClicked(this.callsign);
+       sendToQt('wsjtxCallsignClicked', this.callsign);
     }
 
     var wsjtxStationsLayer = L.layerGroup();
 
     // this function show WSJTX spots
-    function addWSJTXSpot(lat, lng, callsign, color) {
+    function addWSJTXSpot(point, color) {
+        const spot = normalizePoint(point);
         const fadeSchedule = [
             { timeout: 30000, className: 'fade-out75' },
             { timeout: 45000, className: 'fade-out50' },
@@ -549,9 +670,9 @@
 
         function createSpotMarker(latitude, longitude) {
             const marker = new L.marker([latitude, longitude], { opacity: 0.001 });
-            marker.callsign = callsign;
+            marker.callsign = spot.label;
 
-            marker.bindTooltip(callsign, {
+            marker.bindTooltip(spot.label, {
                 pane: 'lowestPane',
                 permanent: true,
                 direction: 'bottom',
@@ -568,11 +689,11 @@
         }
 
         // the main marker
-        const marker = createSpotMarker(lat, lng);
+        const marker = createSpotMarker(spot.lat, spot.lng);
 
         // mirror marker
-        const mirrorLon = lng >= 0 ? lng - 360 : lng + 360;
-        const markerMirror = createSpotMarker(lat, mirrorLon);
+        const mirrorLon = spot.lng >= 0 ? spot.lng - 360 : spot.lng + 360;
+        const markerMirror = createSpotMarker(spot.lat, mirrorLon);
 
         wsjtxStationsLayer.addLayer(marker);
         wsjtxStationsLayer.addLayer(markerMirror);

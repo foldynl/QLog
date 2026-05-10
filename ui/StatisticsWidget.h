@@ -5,10 +5,9 @@
 #include <QSqlQuery>
 #include <QPieSeries>
 #include <QComboBox>
-#include <QWebChannel>
+#include <QScopedPointer>
 
-#include "ui/MapWebChannelHandler.h"
-#include "ui/WebEnginePage.h"
+#include "ui/MapPageController.h"
 #include "core/LogLocale.h"
 
 namespace Ui {
@@ -26,7 +25,6 @@ class StatisticsWidget : public QWidget
 public slots:
     void mainStatChanged(int);
     void dateRangeCheckBoxChanged(int);
-    void mapLoaded(bool);
     void changeTheme(int, bool isDark);
     void refreshWidget();
 
@@ -53,11 +51,7 @@ private:
 
 private:
     Ui::StatisticsWidget *ui;
-    WebEnginePage *main_page;
-    bool isMainPageLoaded;
-    QString postponedScripts;
-    QWebChannel channel;
-    MapWebChannelHandler layerControlHandler;
+    QScopedPointer<MapPageController> mapController;
     LogLocale locale;
 
 

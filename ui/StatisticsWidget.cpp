@@ -386,44 +386,19 @@ void StatisticsWidget::dateRangeCheckBoxChanged(int)
     refreshGraph();
 }
 
-void StatisticsWidget::mapLoaded(bool)
-{
-    FCT_IDENTIFICATION;
-
-    isMainPageLoaded = true;
-
-    /* which layers will be active */
-    postponedScripts += layerControlHandler.generateMapMenuJS(true, false, false, false, false, false, false, false, true);
-    main_page->runJavaScript(postponedScripts);
-
-    layerControlHandler.restoreLayerControlStates(main_page);
-}
-
 void StatisticsWidget::changeTheme(int theme, bool isDark)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << theme << isDark;
 
-    QString themeJavaScript;
-
-    if (isDark) /* dark mode */
-        themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
-    else
-        themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"\";";
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(themeJavaScript);
-    else
-        main_page->runJavaScript(themeJavaScript);
+    mapController->setDarkTheme(isDark);
 }
 
 StatisticsWidget::StatisticsWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::StatisticsWidget),
-    main_page(new WebEnginePage(this)),
-    isMainPageLoaded(false),
-    layerControlHandler("statistics", parent)
+    mapController(new MapPageController(QStringLiteral("statistics"), this))
 {
     FCT_IDENTIFICATION;
 
@@ -447,18 +422,14 @@ StatisticsWidget::StatisticsWidget(QWidget *parent) :
     ui->graphView->setRenderHint(QPainter::Antialiasing);
     ui->graphView->setChart(new QChart());
 
-    main_page->setWebChannel(&channel);
-    ui->mapView->setPage(main_page);
-    connect(ui->mapView, &QWebEngineView::loadFinished, this, &StatisticsWidget::mapLoaded);
-    main_page->load(QUrl(QStringLiteral("qrc:/res/map/onlinemap.html")));
-    ui->mapView->setFocusPolicy(Qt::ClickFocus);
-    channel.registerObject("layerControlHandler", &layerControlHandler);
+    mapController->attach(ui->mapView,
+                          MapLayer::Grid
+                          | MapLayer::Path);
 }
 
 StatisticsWidget::~StatisticsWidget()
 {
     FCT_IDENTIFICATION;
-    main_page->deleteLater();
     delete ui;
 }
 
@@ -563,8 +534,8 @@ void StatisticsWidget::drawMyLocationsOnMap(QSqlQuery &query)
     if ( query.lastQuery().isEmpty() )
         return;
 
-    QStringList locationIcons;
-    QStringList rawLocationsPoint;
+    QList<MapPoint> locationIcons;
+    QList<MapCoordinate> rawLocationsPoint;
 
     while ( query.next() )
     {
@@ -575,23 +546,15 @@ void StatisticsWidget::drawMyLocationsOnMap(QSqlQuery &query)
         {
             double lat = stationGrid.getLatitude();
             double lon = stationGrid.getLongitude();
-            locationIcons.append(QString("[\"%1\", %2, %3, homeIcon]").arg(stationGrid.getGrid()).arg(lat).arg(lon));
-            rawLocationsPoint.append(QString("[%1, %2]").arg(lat).arg(lon));
+            locationIcons << MapPoint(stationGrid.getGrid(), lat, lon, QStringLiteral("homeIcon"));
+            rawLocationsPoint << MapCoordinate(lat, lon);
         }
     }
 
-    QString javaScript = QString("grids_confirmed = [];"
-                                 "grids_worked = [];"
-                                 "drawPointsGroup2([%1]);"
-                                 "maidenheadConfWorked.redraw();"
-                                 "map.panTo([0, L.latLngBounds([%2]).getCenter().lng]);").arg(locationIcons.join(","), rawLocationsPoint.join(","));
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(javaScript);
-    else
-        main_page->runJavaScript(javaScript);
+    mapController->clearGridLayers();
+    mapController->drawHomePoints(locationIcons);
+    mapController->redrawGridLayer();
+    mapController->panToBoundsLongitudeCenter(rawLocationsPoint);
 }
 
 void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
@@ -601,8 +564,8 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
     if ( query.lastQuery().isEmpty() )
         return;
 
-    QList<QString> stations;
-    QList<QString> shortPaths;
+    QList<MapPoint> stations;
+    QList<MapPath> shortPaths;
 
     qulonglong count = 0;
 
@@ -616,21 +579,25 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
             double lat = stationGrid.getLatitude();
             double lon = stationGrid.getLongitude();
 
-            // do not wrap the points
-            double delta = lon - myStationGrid.getLongitude();
-            if ( delta > 180 )
-                lon -= 360;
-            if ( delta < -180 )
-                lon += 360;
-            stations.append(QString("[\"%1\", %2, %3, %4]").arg(query.value(0).toString())
-                                                           .arg(lat)
-                                                           .arg(lon)
-                                                           .arg((query.value(3).toInt()) > 0 ? "greenIconSmall" : "yellowIconSmall"));
-            shortPaths.append(QString("[%1, %2, %3, %4]")
-                                  .arg(myStationGrid.getLatitude())
-                                  .arg(myStationGrid.getLongitude())
-                                  .arg(lat)
-                                  .arg(lon));
+            if ( myStationGrid.isValid() )
+            {
+                // do not wrap the points
+                double delta = lon - myStationGrid.getLongitude();
+                if ( delta > 180 )
+                    lon -= 360;
+                if ( delta < -180 )
+                    lon += 360;
+
+                shortPaths << MapPath(MapCoordinate(myStationGrid.getLatitude(),
+                                                    myStationGrid.getLongitude()),
+                                      MapCoordinate(lat, lon));
+            }
+
+            stations << MapPoint(query.value(0).toString(),
+                                 lat,
+                                 lon,
+                                 (query.value(3).toInt()) > 0 ? QStringLiteral("greenIconSmall")
+                                                               : QStringLiteral("yellowIconSmall"));
         }
     }
 
@@ -641,24 +608,16 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
                                       QMessageBox::Yes|QMessageBox::No);
 
         if ( reply != QMessageBox::Yes )
+        {
             stations.clear();
+            shortPaths.clear();
+        }
     }
 
-    QString javaScript = QString("grids_confirmed = [];"
-                                 "grids_worked = [];"
-                                 "drawPointsBusy([%1], '%2');"
-                                 "drawShortPathsBusy([%3], '%4');"
-                                 "maidenheadConfWorked.redraw();").arg(stations.join(","),
-                                                                       tr("Rendering QSOs..."),
-                                                                       shortPaths.join(","),
-                                                                       tr("Rendering QSOs..."));
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(javaScript);
-    else
-        main_page->runJavaScript(javaScript);
+    mapController->clearGridLayers();
+    mapController->drawPointsBusy(stations, tr("Rendering QSOs..."));
+    mapController->drawShortPathsBusy(shortPaths, tr("Rendering QSOs..."));
+    mapController->redrawGridLayer();
 }
 
 void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
@@ -668,8 +627,8 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
 
     if ( query.lastQuery().isEmpty() ) return;
 
-    QList<QString> confirmedGrids;
-    QList<QString> workedGrids;
+    QStringList confirmedGrids;
+    QStringList workedGrids;
 
     while ( query.next() )
     {
@@ -678,7 +637,7 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
         if ( !grid.isValid() )
             continue;
 
-        const QString gridString = QString("\"" + grid.getGrid() + "\"");
+        const QString gridString = grid.getGrid();
 
         if ( query.value(3).toInt() > 0 )
         {
@@ -693,19 +652,10 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
         }
     }
 
-    QString javaScript = QString("grids_confirmed = [ %1 ]; "
-                                 "grids_worked = [ %2 ];"
-                                 "mylocations = [];"
-                                 "drawPointsBusy([], '');"
-                                 "drawShortPathsBusy([], '');"
-                                 "maidenheadConfWorked.redraw();").arg(confirmedGrids.join(","), workedGrids.join(","));
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(javaScript);
-    else
-        main_page->runJavaScript(javaScript);
+    mapController->setGridLayers(confirmedGrids, workedGrids);
+    mapController->drawPointsBusy(QList<MapPoint>(), QString());
+    mapController->drawShortPathsBusy(QList<MapPath>(), QString());
+    mapController->redrawGridLayer();
 }
 
 void StatisticsWidget::refreshCombos()

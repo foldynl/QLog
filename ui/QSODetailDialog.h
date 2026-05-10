@@ -7,13 +7,12 @@
 #include <QLabel>
 #include <QPointer>
 #include <QCompleter>
-#include <QWebChannel>
+#include <QScopedPointer>
 
 #include "models/LogbookModel.h"
 #include "data/Gridsquare.h"
 #include "core/CallbookManager.h"
-#include "ui/MapWebChannelHandler.h"
-#include "ui/WebEnginePage.h"
+#include "ui/MapPageController.h"
 #include "core/MembershipQE.h"
 #include "core/LogLocale.h"
 #include "ui/component/MultiselectCompleter.h"
@@ -78,7 +77,7 @@ private slots:
     bool doValidation();
     void doValidationDateTime(const QDateTime&);
     void doValidationDouble(double);
-    void mapLoaded(bool);
+    void mapLoaded();
     void myGridChanged(const QString&);
     void DXGridChanged(const QString&);
     void callsignFound(const CallbookResponseData &data);
@@ -141,9 +140,7 @@ private:
     QPointer<QMovie> lookupButtonMovie;
     qint64 timeLockDiff;
     double freqLockDiff;
-    bool isMainPageLoaded;
-    QPointer<WebEnginePage> main_page;
-    QString postponedScripts;
+    QScopedPointer<MapPageController> mapController;
     CallbookManager callbookManager;
     QScopedPointer<QCompleter> iotaCompleter;
     QScopedPointer<QCompleter> myIotaCompleter;
@@ -156,8 +153,6 @@ private:
     QScopedPointer<QCompleter> sigCompleter;
     QScopedPointer<QCompleter> countyCompleter;
     QScopedPointer<ModeSelectionController> modeController;
-    QWebChannel channel;
-    MapWebChannelHandler layerControlHandler;
     LogLocale locale;
 };
 
