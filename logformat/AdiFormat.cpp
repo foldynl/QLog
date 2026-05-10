@@ -36,9 +36,28 @@ void AdiFormat::exportContact(const QSqlRecord& record,
 
     qCDebug(function_parameters)<<record;
 
-    writeSQLRecord(record, applTags);
+    QSqlRecord exportRecord(record);
+    normalizeGridFields(exportRecord);
+
+    writeSQLRecord(exportRecord, applTags);
 
     stream << "<eor>\n\n";
+}
+
+void AdiFormat::normalizeGridFields(QSqlRecord &record)
+{
+    FCT_IDENTIFICATION;
+
+    QString gridsquare = record.value("gridsquare").toString().trimmed().toUpper();
+    if ( gridsquare.isEmpty() )
+        return;
+
+    if ( gridsquare.length() > GRID_BASE_LENGTH )
+    {
+        record.setValue("gridsquare_ext", gridsquare.mid(GRID_BASE_LENGTH));
+        gridsquare = gridsquare.left(GRID_BASE_LENGTH);
+    }
+    record.setValue("gridsquare", gridsquare);
 }
 
 void AdiFormat::writeField(const QString &name, bool presenceCondition,
@@ -502,6 +521,8 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
 
     record.setValue("start_time", start_time);
     record.setValue("end_time", end_time);
+
+    normalizeGridFields(record);
 }
 
 const QString AdiFormat::formatOuput(OutputFieldFormatter formatter, const QVariant &in)

@@ -1975,6 +1975,10 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
             record.setValue("cont", dxcc.cont);
     }
 
+    // Issue #1028: raw WSJT/JTDX messages can
+    // contain GRIDSQUARE + GRIDSQUARE_EXT in one field.
+    AdiFormat::normalizeGridFields(record);
+
     // add information from callbook if it is a known callsign
     // based on the poll #420, QLog adds more information from callbook
     if ( savedCallsign == ui->callsignEdit->text() )
@@ -2004,7 +2008,8 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
             record.setValue("darc_dok", uiDynamic->dokEdit->text());
 
         // information depending on QTH (Grid)
-        const QString &savedGrid = record.value("gridsquare").toString();
+        const QString savedGrid = record.value("gridsquare").toString();
+
         if ( savedGrid.startsWith(uiDynamic->gridEdit->text(), Qt::CaseSensitivity::CaseInsensitive)
              || uiDynamic->gridEdit->text().startsWith(savedGrid, Qt::CaseSensitivity::CaseInsensitive ) )
         {

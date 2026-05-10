@@ -16,6 +16,10 @@ public:
 
     static QMap<QString, QString> fieldname2INTLNameMapping;
 
+    const static int GRID_BASE_LENGTH = 8;
+
+    static void normalizeGridFields(QSqlRecord &record);
+
     template<typename T>
     static void preprocessINTLFields(T &contact)
     {
