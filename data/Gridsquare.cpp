@@ -7,6 +7,49 @@
 
 MODULE_IDENTIFICATION("qlog.core.gridsquare");
 
+static bool gridCharInRange(const QString &grid, int index, char min, char max)
+{
+    const char ch = grid.at(index).toLatin1();
+    return ch >= min && ch <= max;
+}
+
+static bool gridCharIsDigit(const QString &grid, int index)
+{
+    return gridCharInRange(grid, index, '0', '9');
+}
+
+static bool isValidGrid(const QString &grid)
+{
+    const int size = grid.size();
+
+    if ( size != 2 && size != 4 && size != 6 && size != 8 )
+        return false;
+
+    if ( !gridCharInRange(grid, 0, 'A', 'R')
+         || !gridCharInRange(grid, 1, 'A', 'R') )
+        return false;
+
+    if ( size == 2 )
+        return true;
+
+    if ( !gridCharIsDigit(grid, 2)
+         || !gridCharIsDigit(grid, 3) )
+        return false;
+
+    if ( size == 4 )
+        return true;
+
+    if ( !gridCharInRange(grid, 4, 'A', 'X')
+         || !gridCharInRange(grid, 5, 'A', 'X') )
+        return false;
+
+    if ( size == 6 )
+        return true;
+
+    return gridCharIsDigit(grid, 6)
+           && gridCharIsDigit(grid, 7);
+}
+
 Gridsquare::Gridsquare(const QString &in_grid) :
     validGrid(false), lat(qQNaN()), lon(qQNaN())
 {
@@ -16,7 +59,7 @@ Gridsquare::Gridsquare(const QString &in_grid) :
     {
         grid = in_grid.toUpper();
 
-        if ( gridRegEx().match(grid).hasMatch() )
+        if ( isValidGrid(grid) )
         {
             lon = (grid.at(0).toLatin1() - 'A') * 20 - 180;
             lat = (grid.at(1).toLatin1() - 'A') * 10 - 90;
