@@ -54,8 +54,7 @@ static bool isValidGrid(const QString &grid)
            && gridCharIsDigit(grid, 7);
 }
 
-Gridsquare::Gridsquare(const QString &in_grid) :
-    validGrid(false), lat(qQNaN()), lon(qQNaN())
+Gridsquare::Gridsquare(const QString &in_grid)
 {
     FCT_IDENTIFICATION;
 
@@ -119,7 +118,8 @@ Gridsquare::Gridsquare(const QString &in_grid) :
 }
 
 Gridsquare::Gridsquare(double inlat, double inlon) :
-    validGrid(false), lat(inlat), lon(inlon)
+    lat(inlat),
+    lon(inlon)
 {
     FCT_IDENTIFICATION;
 

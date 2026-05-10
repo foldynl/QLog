@@ -33,8 +33,9 @@ public:
 
 private:
     QString grid;
-    bool validGrid;
-    double lat, lon;
+    bool validGrid = false;
+    double lat = qQNaN();
+    double lon = qQNaN();
 };
 
 #endif // QLOG_CORE_GRIDSQUARE_H
