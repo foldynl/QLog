@@ -569,13 +569,13 @@ void StatisticsWidget::drawMyLocationsOnMap(QSqlQuery &query)
     while ( query.next() )
     {
         const QString &loc = query.value(0).toString();
-        const Gridsquare stationGrid(loc);
+        const Gridsquare stationGrid = Gridsquare::mapDisplayGrid(loc);
 
         if ( stationGrid.isValid() )
         {
             double lat = stationGrid.getLatitude();
             double lon = stationGrid.getLongitude();
-            locationIcons.append(QString("[\"%1\", %2, %3, homeIcon]").arg(loc).arg(lat).arg(lon));
+            locationIcons.append(QString("[\"%1\", %2, %3, homeIcon]").arg(stationGrid.getGrid()).arg(lat).arg(lon));
             rawLocationsPoint.append(QString("[%1, %2]").arg(lat).arg(lon));
         }
     }
@@ -608,8 +608,8 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
 
     while ( query.next() )
     {
-        const Gridsquare stationGrid(query.value(1).toString());
-        const Gridsquare myStationGrid(query.value(2).toString());
+        const Gridsquare stationGrid = Gridsquare::mapDisplayGrid(query.value(1).toString());
+        const Gridsquare myStationGrid = Gridsquare::mapDisplayGrid(query.value(2).toString());
         if ( stationGrid.isValid() )
         {
             count++;
@@ -673,10 +673,24 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
 
     while ( query.next() )
     {
-        if ( query.value(3).toInt() > 0 && ! confirmedGrids.contains(query.value(1).toString()) )
-            confirmedGrids << QString("\"" + query.value(1).toString() + "\"");
-        else
-            workedGrids << QString("\"" + query.value(1).toString() + "\"");
+        const Gridsquare grid = Gridsquare::mapDisplayGrid(query.value(1).toString());
+
+        if ( !grid.isValid() )
+            continue;
+
+        const QString gridString = QString("\"" + grid.getGrid() + "\"");
+
+        if ( query.value(3).toInt() > 0 )
+        {
+            if ( !confirmedGrids.contains(gridString) )
+                confirmedGrids << gridString;
+            workedGrids.removeAll(gridString);
+        }
+        else if ( !confirmedGrids.contains(gridString)
+                  && !workedGrids.contains(gridString) )
+        {
+            workedGrids << gridString;
+        }
     }
 
     QString javaScript = QString("grids_confirmed = [ %1 ]; "

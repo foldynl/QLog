@@ -152,6 +152,16 @@ Gridsquare::Gridsquare(double inlat, double inlon) :
     }
 }
 
+Gridsquare Gridsquare::mapDisplayGrid(const QString &grid)
+{
+    FCT_IDENTIFICATION;
+
+    const Gridsquare strictGrid(grid);
+
+    return (strictGrid.isValid() || grid.size() <= 8) ? strictGrid
+                                                      : Gridsquare(grid.left(8));
+}
+
 const QRegularExpression &Gridsquare::gridRegEx()
 {
     FCT_IDENTIFICATION;

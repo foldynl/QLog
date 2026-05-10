@@ -61,7 +61,7 @@ void MapWidget::clear()
         i.remove();
     }
 
-    Gridsquare myGrid(StationProfilesManager::instance()->getCurProfile1().locator);
+    const Gridsquare myGrid = Gridsquare::mapDisplayGrid(StationProfilesManager::instance()->getCurProfile1().locator);
 
     if ( myGrid.isValid() )
     {
@@ -298,7 +298,7 @@ void MapWidget::setTarget(double lat, double lon)
 
     if ( qIsNaN(lat) || qIsNaN(lon) ) return;
 
-    Gridsquare myGrid(StationProfilesManager::instance()->getCurProfile1().locator);
+    const Gridsquare myGrid = Gridsquare::mapDisplayGrid(StationProfilesManager::instance()->getCurProfile1().locator);
 
     QPoint point = coordToPoint(lat, lon);
     drawPoint(point);

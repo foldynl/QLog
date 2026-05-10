@@ -67,7 +67,7 @@ void OnlineMapWidget::setTarget(double lat, double lon)
     if ( ! qIsNaN(lat) && ! qIsNaN(lon) )
     {
         /* Draw a new path */
-        Gridsquare myGrid(StationProfilesManager::instance()->getCurProfile1().locator);
+        const Gridsquare myGrid = Gridsquare::mapDisplayGrid(StationProfilesManager::instance()->getCurProfile1().locator);
 
         if ( myGrid.isValid() )
         {
@@ -185,7 +185,7 @@ void OnlineMapWidget::antPositionChanged(double in_azimuth, double in_elevation)
     lastSeenElevation = in_elevation;
 
     /* Draw a new path */
-    Gridsquare myGrid(StationProfilesManager::instance()->getCurProfile1().locator);
+    const Gridsquare myGrid = Gridsquare::mapDisplayGrid(StationProfilesManager::instance()->getCurProfile1().locator);
 
     if ( myGrid.isValid() )
     {
@@ -298,7 +298,7 @@ void OnlineMapWidget::flyToMyQTH()
     FCT_IDENTIFICATION;
 
     /* focus current location */
-    Gridsquare myGrid(StationProfilesManager::instance()->getCurProfile1().locator);
+    const Gridsquare myGrid = Gridsquare::mapDisplayGrid(StationProfilesManager::instance()->getCurProfile1().locator);
 
     if ( myGrid.isValid() )
     {
@@ -334,7 +334,7 @@ void OnlineMapWidget::drawWSJTXSpot(const WsjtxEntry &spot)
 {
     FCT_IDENTIFICATION;
 
-    Gridsquare spotGrid(spot.grid);
+    const Gridsquare spotGrid = Gridsquare::mapDisplayGrid(spot.grid);
 
     if ( spotGrid.isValid() )
     {

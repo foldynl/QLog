@@ -14,6 +14,7 @@ public:
     explicit Gridsquare(const QString &in_grid = QString());
     explicit Gridsquare(double inlat, double inlon);
     ~Gridsquare() = default;
+    static Gridsquare mapDisplayGrid(const QString &grid);
     static const QRegularExpression &gridRegEx();
     static const QRegularExpression &gridVUCCRegEx();
     static const QRegularExpression &gridExtRegEx();

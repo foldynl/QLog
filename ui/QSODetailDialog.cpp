@@ -410,8 +410,8 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
 
     setReadOnlyMode(true);
 
-    drawDXOnMap(ui->callsignEdit->text(), Gridsquare(ui->gridEdit->text()));
-    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare(ui->myGridEdit->text()));
+    drawDXOnMap(ui->callsignEdit->text(), Gridsquare::mapDisplayGrid(ui->gridEdit->text()));
+    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare::mapDisplayGrid(ui->myGridEdit->text()));
     setStaticMapTime(ui->dateTimeOnEdit->dateTime());
     refreshDXStatTabs();
 
@@ -1127,7 +1127,7 @@ void QSODetailDialog::myGridChanged(const QString &newGrid)
 {
     FCT_IDENTIFICATION;
 
-    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare(newGrid));
+    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare::mapDisplayGrid(newGrid));
 
     return;
 }
@@ -1136,7 +1136,7 @@ void QSODetailDialog::DXGridChanged(const QString &newGrid)
 {
     FCT_IDENTIFICATION;
 
-    drawDXOnMap(ui->callsignEdit->text(), Gridsquare(newGrid));
+    drawDXOnMap(ui->callsignEdit->text(), Gridsquare::mapDisplayGrid(newGrid));
 
     return;
 }
@@ -1392,7 +1392,7 @@ void QSODetailDialog::drawDXOnMap(const QString &label, const Gridsquare &dxGrid
     QString stationString;
     QString popupString = label;
 
-    Gridsquare myGrid = Gridsquare(ui->myGridEdit->text());
+    Gridsquare myGrid = Gridsquare::mapDisplayGrid(ui->myGridEdit->text());
     double distance = 0;
 
     if (dxGrid.distanceTo(myGrid, distance))
