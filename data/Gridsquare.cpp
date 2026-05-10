@@ -71,7 +71,7 @@ Gridsquare::Gridsquare(const QString &in_grid) :
     }
 }
 
-Gridsquare::Gridsquare(const double inlat, const double inlon) :
+Gridsquare::Gridsquare(double inlat, double inlon) :
     validGrid(false), lat(inlat), lon(inlon)
 {
     FCT_IDENTIFICATION;
@@ -105,27 +105,42 @@ Gridsquare::Gridsquare(const double inlat, const double inlon) :
     }
 }
 
-const QRegularExpression Gridsquare::gridRegEx()
+const QRegularExpression &Gridsquare::gridRegEx()
 {
     FCT_IDENTIFICATION;
 
-    return QRegularExpression("^[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}|[0-9]{2}[A-Xa-x]{2}[0-9]{2})?$");
+    static const QRegularExpression regex(QStringLiteral("^[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}[0-9]{2})?$"));
+    return regex;
     //return QRegularExpression("^[A-Ra-r]{2}[0-9]{2}([A-Xa-x]{2})?([0-9]{2})?$");
 }
 
-const QRegularExpression Gridsquare::gridVUCCRegEx()
+const QRegularExpression &Gridsquare::gridVUCCRegEx()
 {
     FCT_IDENTIFICATION;
 
-    return QRegularExpression("^[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2})$|"
-                              "^[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2})$");
+    static const QRegularExpression regex(QStringLiteral("^[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2})$|"
+                                                         "^[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2})$"));
+    return regex;
 }
 
-const QRegularExpression Gridsquare::gridExtRegEx()
+const QRegularExpression &Gridsquare::gridExtRegEx()
 {
     FCT_IDENTIFICATION;
 
-    return QRegularExpression("^[A-Xa-x]{2}?([0-9]{2})?$");
+    static const QRegularExpression regex(QStringLiteral("^[A-Xa-x]{2}?([0-9]{2})?$"));
+    return regex;
 }
 
 double Gridsquare::distance2localeUnitDistance(double km,
