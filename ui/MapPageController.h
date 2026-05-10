@@ -150,7 +150,10 @@ private:
     static QJsonArray pathsArray(const QList<MapPath> &paths);
     static QJsonArray stringArray(const QStringList &strings);
     static QJsonArray heatPointsArray(const QList<MapHeatPoint> &points);
+    static QJsonArray ibpBandsArray();
+    static QJsonArray ibpBeaconsArray();
 
+    QString generateIbpDataJS();
     QString generateLayerControlJS(MapLayer::Layers layers);
     void restoreLayerControlStates();
     void connectWebChannel();

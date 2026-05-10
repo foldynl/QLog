@@ -99,6 +99,7 @@ SOURCES += \
         core/WsjtxUDPReceiver.cpp \
         core/debug.cpp \
         core/EmergencyFrequency.cpp \
+        core/IBPBeacon.cpp \
         core/main.cpp \
         core/zonedetect.c \
         cwkey/CWKeyer.cpp \
@@ -279,6 +280,7 @@ HEADERS += \
         core/csv.hpp \
         core/debug.h \
         core/EmergencyFrequency.h \
+        core/IBPBeacon.h \
         core/zonedetect.h \
         cwkey/CWKeyer.h \
         cwkey/drivers/CWCatKey.h \

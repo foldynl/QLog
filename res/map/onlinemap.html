@@ -533,47 +533,36 @@
          });
      }
 
-    // Definition for IBP
-    const band = [{band_name :"20m", freq : 14.1},
-                  {band_name :"17m", freq : 18.11},
-                  {band_name :"15m", freq : 21.15},
-                  {band_name :"12m", freq : 24.93},
-                  {band_name :"10m", freq : 28.2},
-               ];
-
-    const beacons = [{name: '4U1UN', lat: 40.7501,   lon: -73.9682,  active: true},
-                   {name: 'VE8AT', lat: 79.9949,   lon: -85.8451,  active: true},
-                   {name: 'W6WX',  lat: 37.1599,   lon: -121.9083, active: true},
-                   {name: 'KH6RS', lat: 20.7652,   lon: -156.3502, active: true},
-                   {name: 'ZL6B',  lat: -41.04350, lon: 175.5952,  active: false},
-                   {name: 'VK6RBP',lat: -32.1093,  lon: 116.0712,  active: true},
-                   {name: 'JA2IGY',lat: 34.4613,   lon: 136.7818,  active: true},
-                   {name: 'RR9O',  lat: 55.0484,   lon: 82.9227,   active: true},
-                   {name: 'VR2B',  lat: 22.2705,   lon: 114.1507,  active: true},
-                   {name: '4S7B',  lat: 6.8915,    lon: 79.8559,   active: true},
-                   {name: 'ZS6DN', lat: -26.6531,  lon: 27.9474,   active: true},
-                   {name: '5Z4B',  lat: -1.2687,   lon: 36.8094,   active: false},
-                   {name: '4X6TU', lat: 32.0622,   lon: 34.8069,   active: true},
-                   {name: 'OH2B',  lat: 60.2920,   lon: 24.3942,   active: true},
-                   {name: 'CS3B',  lat: 32.8217,   lon: -17.2325,  active: true},
-                   {name: 'LU4AA', lat: -34.6439,  lon: -58.4138,  active: true},
-                   {name: 'OA4B',  lat: -12.0940,  lon: -77.0165,  active: true},
-                   {name: 'YV5B',  lat: 9.0964,    lon: -67.8239,  active: true}]
-    var currentBand=""; // to control which band is displayed - QLog core sets it.
+    var ibpBands = [];
+    var ibpBeacons = [];
+    var ibpCurrentBand = "";
     var IBPLayer = L.layerGroup().addTo(map);
     var prevStationIndex = -1;
 
+    function configureIbpData(bands, beacons) {
+       ibpBands = Array.isArray(bands) ? bands : [];
+       ibpBeacons = Array.isArray(beacons) ? beacons : [];
+       prevStationIndex = -1;
+       updateBeacon();
+    }
+
+    function setIbpCurrentBand(bandName) {
+       ibpCurrentBand = bandName || "";
+       prevStationIndex = -1;
+       updateBeacon();
+    }
+
     function IBPCallsignPressed(e) {
-       let currentIndex = band.findIndex(object => {return object.band_name === currentBand;});
-       if (currentIndex === -1)
+       const currentBand = ibpBands.find(object => {return object.name === ibpCurrentBand;});
+       if (!currentBand)
          return;
 
-       sendToQt('IBPCallsignClicked', this.callsign, band[currentIndex].freq);
+       sendToQt('IBPCallsignClicked', this.callsign, currentBand.frequency);
      }
 
-    // render IPB Beacon Point
+    // render IBP Beacon Point
     function beaconPoint(beacon, color) {
-       let pointColor = color
+       let pointColor = color;
        if ( !beacon.active ) {
          pointColor = 'red';
        }
@@ -584,32 +573,32 @@
           mirrorLon = beacon.lon + 360;
        }
        let markerMirror = new L.marker([beacon.lat, mirrorLon], {opacity: 0.001 });
-       marker.bindTooltip(beacon.name, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
+       marker.bindTooltip(beacon.callsign, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
        marker.on('dblclick', IBPCallsignPressed);
-       marker.callsign = beacon.name;
-       markerMirror.bindTooltip(beacon.name, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
+       marker.callsign = beacon.callsign;
+       markerMirror.bindTooltip(beacon.callsign, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
        markerMirror.on('dblclick', IBPCallsignPressed);
-       markerMirror.callsign = beacon.name;
+       markerMirror.callsign = beacon.callsign;
        marker.getTooltip().setContent(`<div style="background-color: ${pointColor};border-radius: 20px;padding: 5px;font-weight: bold;">${marker.getTooltip().getContent()}</div>`);
        markerMirror.getTooltip().setContent(`<div style="background-color: ${pointColor};border-radius: 20px;padding: 5px;font-weight: bold;">${markerMirror.getTooltip().getContent()}</div>`);
        IBPLayer.addLayer(marker);
        IBPLayer.addLayer(markerMirror);
     }
 
-    // Update IPB Beacon Points
+    // Update IBP Beacon Points
     function updateBeacon() {
 
-       currentBandIndex = band.findIndex(object => {return object.band_name === currentBand;});
+       const currentBandIndex = ibpBands.findIndex(object => {return object.name === ibpCurrentBand;});
 
-       if ( currentBandIndex == -1 ) {
+       if ( currentBandIndex == -1 || ibpBeacons.length == 0 ) {
            IBPLayer.clearLayers();
            return;
        }
 
        let today = new Date();
-       let n = Math.floor(today.getTime()/10000) % 18;
-       let currentStationIndex = (18 + n - currentBandIndex) % 18;
-       let nextStationIndex = (19 + n - currentBandIndex) % 18;
+       let n = Math.floor(today.getTime()/10000) % ibpBeacons.length;
+       let currentStationIndex = (ibpBeacons.length + n - currentBandIndex) % ibpBeacons.length;
+       let nextStationIndex = (ibpBeacons.length + 1 + n - currentBandIndex) % ibpBeacons.length;
 
        if ( currentStationIndex == prevStationIndex ) {
            return;
@@ -620,11 +609,11 @@
        prevStationIndex = currentStationIndex;
 
        // show current
-       let b = beacons[currentStationIndex]
+       let b = ibpBeacons[currentStationIndex];
        beaconPoint(b, '#FFFF33');
 
        // show next
-       b = beacons[nextStationIndex]
+       b = ibpBeacons[nextStationIndex];
        beaconPoint(b, '#1AA260');
     }
 

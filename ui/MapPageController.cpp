@@ -10,6 +10,7 @@
 #include <QWebEngineView>
 
 #include "core/debug.h"
+#include "core/IBPBeacon.h"
 #include "core/LogParam.h"
 #include "ui/WebEnginePage.h"
 
@@ -117,6 +118,38 @@ QJsonArray MapPageController::heatPointsArray(const QList<MapHeatPoint> &points)
         item.insert(QStringLiteral("lat"), point.coordinate.latitude);
         item.insert(QStringLiteral("lng"), point.coordinate.longitude);
         item.insert(QStringLiteral("count"), point.value);
+        array.append(item);
+    }
+
+    return array;
+}
+
+QJsonArray MapPageController::ibpBandsArray()
+{
+    QJsonArray array;
+
+    for ( const IBPBeacon::Band &band : IBPBeacon::bands() )
+    {
+        QJsonObject item;
+        item.insert(QStringLiteral("name"), band.name);
+        item.insert(QStringLiteral("frequency"), band.frequency);
+        array.append(item);
+    }
+
+    return array;
+}
+
+QJsonArray MapPageController::ibpBeaconsArray()
+{
+    QJsonArray array;
+
+    for ( const IBPBeacon::Station &beacon : IBPBeacon::beacons() )
+    {
+        QJsonObject item;
+        item.insert(QStringLiteral("callsign"), beacon.callsign);
+        item.insert(QStringLiteral("lat"), beacon.latitude);
+        item.insert(QStringLiteral("lon"), beacon.longitude);
+        item.insert(QStringLiteral("active"), beacon.active);
         array.append(item);
     }
 
@@ -354,7 +387,7 @@ void MapPageController::setCurrentBand(const QString &band)
 {
     FCT_IDENTIFICATION;
 
-    runJavaScript(QStringLiteral("currentBand=%1;")
+    runJavaScript(QStringLiteral("setIbpCurrentBand(%1);")
                   .arg(jsonString(band)));
 }
 
@@ -373,6 +406,15 @@ void MapPageController::clearWsjtxSpots()
     FCT_IDENTIFICATION;
 
     runJavaScript(QLatin1String("clearWSJTXSpots();"));
+}
+
+QString MapPageController::generateIbpDataJS()
+{
+    FCT_IDENTIFICATION;
+
+    return QStringLiteral("configureIbpData(%1, %2);")
+           .arg(jsonArray(ibpBandsArray()),
+                jsonArray(ibpBeaconsArray()));
 }
 
 QString MapPageController::generateLayerControlJS(MapLayer::Layers layers)
@@ -510,6 +552,7 @@ void MapPageController::finishLoading(bool ok)
         return;
 
     pageLoaded = true;
+    postponedScripts.append(generateIbpDataJS());
     postponedScripts.append(generateLayerControlJS(mapLayers));
     mainPage->runJavaScript(postponedScripts.join(QLatin1Char('\n')));
     postponedScripts.clear();
