@@ -89,12 +89,25 @@ private:
     void removeDuplicates(DxSpot &spot);
     void spotAging();
 
+    struct FrequencyMarkerStyle
+    {
+        QString label;
+        QColor lineColor;
+        QColor pillColor;
+        QColor glowColor;
+        double glowWidthMHz;
+    };
+
     void determineStepDigits(double &step, int &digits) const;
     void clearAllCallsignFromScene();
     void clearFreqMark(QGraphicsPolygonItem **);
     void drawFreqMark(const double, const double, const QColor&, QGraphicsPolygonItem **);
     void drawTXRXMarks(double);
+    void drawLabeledFrequencyMarker(double frequency,
+                                    double step,
+                                    const FrequencyMarkerStyle &style);
     void drawEmergencyMarkers(double step);
+    void drawIBPMarkers(double step);
     void drawMarkers(double frequency);
     void resizeEvent(QResizeEvent * event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -116,6 +129,7 @@ private:
 private slots:
     void centerRXActionChecked(bool);
     void emergencyMarkersActionChecked(bool);
+    void ibpMarkersActionChecked(bool);
     void spotClicked(const QString&, double, BandPlan::BandPlanMode);
     void showContextMenu(const QPoint&);
     void updateStationTimer();
@@ -141,6 +155,7 @@ private:
     QGraphicsPolygonItem* txMark;
     bool keepRXCenter;
     bool showEmergencyMarkers;
+    bool showIBPMarkers;
     LogLocale locale;
     quint32 pendingSpots;
     qint64 lastStationUpdate;

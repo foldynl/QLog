@@ -44,18 +44,3 @@ const QList<IBPBeacon::Station> &IBPBeacon::beacons()
 
     return beacons;
 }
-
-double IBPBeacon::frequency(const QString &bandName)
-{
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << bandName;
-
-    for ( const Band &band : bands() )
-    {
-        if ( band.name == bandName )
-            return band.frequency;
-    }
-
-    return 0.0;
-}

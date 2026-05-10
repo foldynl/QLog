@@ -43,7 +43,6 @@ public:
 
     static const QList<Band> &bands();
     static const QList<Station> &beacons();
-    static double frequency(const QString &bandName);
 };
 
 #endif // QLOG_CORE_IBPBEACON_H

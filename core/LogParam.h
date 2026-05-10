@@ -77,6 +77,8 @@ public:
     static bool getBandmapCenterRX(const QString& widgetID);
     static bool setBandmapShowEmergency(const QString& widgetID, bool show);
     static bool getBandmapShowEmergency(const QString& widgetID);
+    static bool setBandmapShowIBP(const QString& widgetID, bool show);
+    static bool getBandmapShowIBP(const QString& widgetID);
 
     /*******************
      * UploadQSO Dialog

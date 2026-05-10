@@ -18,6 +18,7 @@
 #include "rig/macros.h"
 #include "core/LogParam.h"
 #include "core/EmergencyFrequency.h"
+#include "core/IBPBeacon.h"
 
 MODULE_IDENTIFICATION("qlog.ui.bandmapwidget");
 
@@ -41,6 +42,7 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
     txMark(nullptr),
     keepRXCenter(true),
     showEmergencyMarkers(true),
+    showIBPMarkers(true),
     pendingSpots(0),
     lastStationUpdate(0),
     bandmapAnimation(true),
@@ -61,6 +63,7 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
 
     keepRXCenter = LogParam::getBandmapCenterRX(objectName());
     showEmergencyMarkers = LogParam::getBandmapShowEmergency(objectName());
+    showIBPMarkers = LogParam::getBandmapShowIBP(objectName());
 
     if ( isNonVfo )
     {
@@ -173,10 +176,11 @@ void BandmapWidget::update()
     /************************/
     drawTXRXMarks(step);
 
-    /*****************************/
-    /* Draw Emergency Freq Marks */
-    /*****************************/
+    /********************************/
+    /* Draw Special Frequency Marks */
+    /********************************/
     drawEmergencyMarkers(step);
+    drawIBPMarkers(step);
 
     /*****************
      * Draw Stations *
@@ -458,6 +462,61 @@ void BandmapWidget::drawTXRXMarks(double step)
     {
         clearFreqMark(&txMark);
     }
+}
+
+void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
+                                               double step,
+                                               const FrequencyMarkerStyle &style)
+{
+    FCT_IDENTIFICATION;
+
+    if ( frequency < currentBand.start || frequency > currentBand.end )
+        return;
+
+    QFont markerFont;
+    markerFont.setPointSize(7);
+    markerFont.setBold(true);
+
+    const qreal pillX = 157.0;
+    const qreal pillH = 14.0;
+    const qreal glowH = qMin((style.glowWidthMHz / step) * PIXELSPERSTEP, 15.0);
+    const qreal y = ((frequency - currentBand.start) / step) * PIXELSPERSTEP;
+
+    QColor glowTransparent(style.glowColor);
+    glowTransparent.setAlpha(0);
+    QColor glowLow(style.glowColor);
+    glowLow.setAlpha(70);
+    QColor glowMid(style.glowColor);
+    glowMid.setAlpha(115);
+
+    QLinearGradient glow(0.0, y - glowH, 0.0, y + glowH);
+    glow.setColorAt(0.0,  glowTransparent);
+    glow.setColorAt(0.35, glowLow);
+    glow.setColorAt(0.5,  glowMid);
+    glow.setColorAt(0.65, glowLow);
+    glow.setColorAt(1.0,  glowTransparent);
+    bandmapScene->addRect(0, y - glowH, pillX, 2.0 * glowH,
+                          QPen(Qt::NoPen), QBrush(glow));
+
+    bandmapScene->addLine(0, y, pillX, y, QPen(style.lineColor, 2));
+
+    QGraphicsSimpleTextItem *textItem = bandmapScene->addSimpleText(style.label, markerFont);
+    textItem->setBrush(QBrush(Qt::white));
+    const QRectF textRect = textItem->boundingRect();
+    const qreal pillW = textRect.width() + 10.0;
+    const qreal pillY = y - pillH / 2.0;
+
+    QPainterPath pillPath;
+    pillPath.addRoundedRect(QRectF(pillX, pillY, pillW, pillH), 4, 4);
+    QGraphicsPathItem *pillItem = bandmapScene->addPath(pillPath,
+                                                        QPen(Qt::NoPen),
+                                                        QBrush(style.pillColor));
+
+    textItem->setPos(pillX + (pillW - textRect.width()) / 2.0,
+                     pillY + (pillH - textRect.height()) / 2.0);
+
+    pillItem->setZValue(1);
+    textItem->setZValue(2);
 }
 
 void BandmapWidget::removeDuplicates(DxSpot &spot)
@@ -975,9 +1034,15 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     emergencyAction->setChecked(showEmergencyMarkers);
     connect(emergencyAction, &QAction::triggered, this, &BandmapWidget::emergencyMarkersActionChecked);
 
+    QAction* ibpAction = new QAction(tr("Show IBP Frequencies"), &contextMenu);
+    ibpAction->setCheckable(true);
+    ibpAction->setChecked(showIBPMarkers);
+    connect(ibpAction, &QAction::triggered, this, &BandmapWidget::ibpMarkersActionChecked);
+
     contextMenu.addMenu(&bandsMenu);
     contextMenu.addAction(centerRXAction);
     contextMenu.addAction(emergencyAction);
+    contextMenu.addAction(ibpAction);
 
     contextMenu.exec(ui->graphicsView->mapToGlobal(point));
 }
@@ -1057,55 +1122,44 @@ void BandmapWidget::drawEmergencyMarkers(double step)
     if ( !showEmergencyMarkers )
         return;
 
-    QFont emergencyFont;
-    emergencyFont.setPointSize(7);
-    emergencyFont.setBold(true);
-
-    const QColor lineColor(220, 40, 40);
-    const QColor pillColor(185, 28, 28);
-    const qreal pillX = 157.0;
-    const qreal pillH = 14.0;
-    const qreal tolerancePx = (EmergencyFrequency::TOLERANCE_MHZ / step) * PIXELSPERSTEP;
-    const qreal glowH = qMin(tolerancePx, 15.0);
-
     const EmergencyFreqEntry *entry = EmergencyFrequency::inBand(currentBand.start,
                                                                  currentBand.end);
 
     if ( !entry ) return;
 
-    const qreal y = ((entry->frequency - currentBand.start) / step) * PIXELSPERSTEP;
+    const FrequencyMarkerStyle style =
+    {
+        tr("SOS"),
+        QColor(220, 40, 40),
+        QColor(185, 28, 28),
+        QColor(220, 30, 30),
+        EmergencyFrequency::TOLERANCE_MHZ
+    };
 
-    // Gradient glow — height proportional to zoom, fades to transparent at edges
-    QLinearGradient glow(0.0, y - glowH, 0.0, y + glowH);
-    glow.setColorAt(0.0,  QColor(220, 30, 30,   0));
-    glow.setColorAt(0.35, QColor(220, 30, 30,  70));
-    glow.setColorAt(0.5,  QColor(220, 30, 30, 115));
-    glow.setColorAt(0.65, QColor(220, 30, 30,  70));
-    glow.setColorAt(1.0,  QColor(220, 30, 30,   0));
-    bandmapScene->addRect(0, y - glowH, pillX, 2.0 * glowH,
-                          QPen(Qt::NoPen), QBrush(glow));
+    drawLabeledFrequencyMarker(entry->frequency, step, style);
+}
 
-    // Sharp centre line — runs from the scale up to the SOS pill
-    bandmapScene->addLine(0, y, pillX, y, QPen(lineColor, 2));
+void BandmapWidget::drawIBPMarkers(double step)
+{
+    FCT_IDENTIFICATION;
 
-    // Pill label — sized dynamically around the text
-    QGraphicsSimpleTextItem *textItem = bandmapScene->addSimpleText(tr("SOS"), emergencyFont);
-    textItem->setBrush(QBrush(Qt::white));
-    const QRectF textRect = textItem->boundingRect();
-    const qreal pillW = textRect.width() + 10.0;
-    const qreal pillY = y - pillH / 2.0;
+    if ( !showIBPMarkers )
+        return;
 
-    QPainterPath pillPath;
-    pillPath.addRoundedRect(QRectF(pillX, pillY, pillW, pillH), 4, 4);
-    QGraphicsPathItem *pillItem = bandmapScene->addPath(pillPath,
-                                                        QPen(Qt::NoPen),
-                                                        QBrush(pillColor));
+    const FrequencyMarkerStyle style =
+    {
+        tr("IBP"),
+        QColor(80, 170, 255),
+        QColor(30, 136, 229),
+        QColor(80, 170, 255),
+        0.001
+    };
 
-    textItem->setPos(pillX + (pillW - textRect.width()) / 2.0,
-                     pillY + (pillH - textRect.height()) / 2.0);
-
-    pillItem->setZValue(1);
-    textItem->setZValue(2);
+    for ( const IBPBeacon::Band &band : IBPBeacon::bands() )
+    {
+        if ( band.frequency >= currentBand.start && band.frequency <= currentBand.end )
+            drawLabeledFrequencyMarker(band.frequency, step, style);
+    }
 }
 
 void BandmapWidget::drawMarkers(double frequency)
@@ -1311,6 +1365,15 @@ void BandmapWidget::emergencyMarkersActionChecked(bool state)
 
     showEmergencyMarkers = state;
     LogParam::setBandmapShowEmergency(objectName(), showEmergencyMarkers);
+    update();
+}
+
+void BandmapWidget::ibpMarkersActionChecked(bool state)
+{
+    FCT_IDENTIFICATION;
+
+    showIBPMarkers = state;
+    LogParam::setBandmapShowIBP(objectName(), showIBPMarkers);
     update();
 }
 

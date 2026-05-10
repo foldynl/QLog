@@ -1,6 +1,7 @@
 TBC - 0.51.0
 - [NEW] - Added a simple QSL Card printing
 - [NEW] - Added virtual column Mode/Submode to Logbook (issue #798)
+- [NEW] - BandMap shows IBP frequencies (issue #1014)
 - Fixed ADIF Export of Gridsqaure too long (issue #1028)
 - Github - Source code is signed (#1018)
 
