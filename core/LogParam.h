@@ -98,6 +98,18 @@ public:
     static QString getUploadLoTWLocation();
     static void setUploadLoTWLocation(const QString &location);
 
+    /*****************
+     * Import Dialog
+     *****************/
+    static QString getImportQslSentStatusPaper();
+    static void setImportQslSentStatusPaper(const QString &status);
+    static QString getImportQslSentStatusLoTW();
+    static void setImportQslSentStatusLoTW(const QString &status);
+    static QString getImportQslSentStatusEQSL();
+    static void setImportQslSentStatusEQSL(const QString &status);
+    static QString getImportQslSentStatusDCL();
+    static void setImportQslSentStatusDCL(const QString &status);
+
     /*********************
      * DownloadQSL Dialog
      *********************/

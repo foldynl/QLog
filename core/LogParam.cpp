@@ -322,6 +322,46 @@ void LogParam::setUploadLoTWLocation(const QString &location)
     setParam("uploadqso/lotw/last_location", location);
 }
 
+QString LogParam::getImportQslSentStatusPaper()
+{
+    return getParam("import/qsl_sent_status/paper", "Q").toString();
+}
+
+void LogParam::setImportQslSentStatusPaper(const QString &status)
+{
+    setParam("import/qsl_sent_status/paper", status);
+}
+
+QString LogParam::getImportQslSentStatusLoTW()
+{
+    return getParam("import/qsl_sent_status/lotw", "Q").toString();
+}
+
+void LogParam::setImportQslSentStatusLoTW(const QString &status)
+{
+    setParam("import/qsl_sent_status/lotw", status);
+}
+
+QString LogParam::getImportQslSentStatusEQSL()
+{
+    return getParam("import/qsl_sent_status/eqsl", "Q").toString();
+}
+
+void LogParam::setImportQslSentStatusEQSL(const QString &status)
+{
+    setParam("import/qsl_sent_status/eqsl", status);
+}
+
+QString LogParam::getImportQslSentStatusDCL()
+{
+    return getParam("import/qsl_sent_status/dcl", "Q").toString();
+}
+
+void LogParam::setImportQslSentStatusDCL(const QString &status)
+{
+    setParam("import/qsl_sent_status/dcl", status);
+}
+
 bool LogParam::getDownloadQSLServiceState(const QString &name)
 {
     return getParam("downloadqsl/" + name + "/enabled", false).toBool();
