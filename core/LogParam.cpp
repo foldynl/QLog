@@ -8,6 +8,7 @@
 #include <QSqlError>
 
 #include "LogParam.h"
+#include "AdifRecovery.h"
 #include "debug.h"
 #include "data/Data.h"
 #include "models/LogbookModel.h"
@@ -360,6 +361,71 @@ QString LogParam::getImportQslSentStatusDCL()
 void LogParam::setImportQslSentStatusDCL(const QString &status)
 {
     setParam("import/qsl_sent_status/dcl", status);
+}
+
+QList<AdifRecoveryConfig> LogParam::getAdifRecoveryFiles()
+{
+    return AdifRecovery::deserializeConfigList(getParam("adifrecovery/files").toString());
+}
+
+void LogParam::setAdifRecoveryFiles(const QList<AdifRecoveryConfig> &files)
+{
+    setParam("adifrecovery/files", AdifRecovery::serializeConfigList(files));
+}
+
+AdifRecoveryState LogParam::getAdifRecoveryState(const QString &fileKey)
+{
+    return AdifRecovery::deserializeState(getParam("adifrecovery/state/" + fileKey).toString());
+}
+
+void LogParam::setAdifRecoveryState(const QString &fileKey, const AdifRecoveryState &state)
+{
+    setParam("adifrecovery/state/" + fileKey, AdifRecovery::serializeState(state));
+}
+
+void LogParam::removeAdifRecoveryState(const QString &fileKey)
+{
+    removeParamGroup("adifrecovery/state/" + fileKey);
+}
+
+QString LogParam::getAdifRecoveryQslSentStatusPaper()
+{
+    return getParam("adifrecovery/qsl_sent_status/paper", "Q").toString();
+}
+
+void LogParam::setAdifRecoveryQslSentStatusPaper(const QString &status)
+{
+    setParam("adifrecovery/qsl_sent_status/paper", status);
+}
+
+QString LogParam::getAdifRecoveryQslSentStatusLoTW()
+{
+    return getParam("adifrecovery/qsl_sent_status/lotw", "Q").toString();
+}
+
+void LogParam::setAdifRecoveryQslSentStatusLoTW(const QString &status)
+{
+    setParam("adifrecovery/qsl_sent_status/lotw", status);
+}
+
+QString LogParam::getAdifRecoveryQslSentStatusEQSL()
+{
+    return getParam("adifrecovery/qsl_sent_status/eqsl", "Q").toString();
+}
+
+void LogParam::setAdifRecoveryQslSentStatusEQSL(const QString &status)
+{
+    setParam("adifrecovery/qsl_sent_status/eqsl", status);
+}
+
+QString LogParam::getAdifRecoveryQslSentStatusDCL()
+{
+    return getParam("adifrecovery/qsl_sent_status/dcl", "Q").toString();
+}
+
+void LogParam::setAdifRecoveryQslSentStatusDCL(const QString &status)
+{
+    setParam("adifrecovery/qsl_sent_status/dcl", status);
 }
 
 bool LogParam::getDownloadQSLServiceState(const QString &name)

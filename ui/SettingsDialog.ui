@@ -4001,6 +4001,138 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="adifFilesSyncQSLTab">
+          <attribute name="title">
+           <string>Startup ADI</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_21">
+           <item>
+            <widget class="QLabel" name="adifRecoveryDescriptionLabel">
+             <property name="text">
+              <string>Configured ADI/ADIF files are checked only at startup. A newly added file starts at its current end, so only later appended QSOs are loaded. This is not a live watcher; if many new QSOs are found, loading stops and the standard Import should be used.</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableView" name="adifFileTableView">
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::ExtendedSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="adifFilesButtonLayout">
+             <item>
+              <spacer name="horizontalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="adifFileAddButton">
+               <property name="text">
+                <string>Add</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="adifFileRemoveButton">
+               <property name="toolTip">
+                <string>Removing a file also forgets its recovery position.</string>
+               </property>
+               <property name="text">
+                <string>Remove</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_16">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="adifRecoveryCustomQslGroupBox">
+             <property name="toolTip">
+              <string>Used when a file row has Missing QSL Sent set to Custom. Explicit ADIF values are kept.</string>
+             </property>
+             <property name="title">
+              <string>Custom QSL Sent Defaults</string>
+             </property>
+             <layout class="QGridLayout" name="adifRecoveryCustomQslLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="adifRecoveryQslSentStatusPaperLabel">
+                <property name="text">
+                 <string>Paper QSL</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="adifRecoveryQslSentStatusEqslLabel">
+                <property name="text">
+                 <string>eQSL</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLabel" name="adifRecoveryQslSentStatusLotwLabel">
+                <property name="text">
+                 <string>LoTW</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QLabel" name="adifRecoveryQslSentStatusDclLabel">
+                <property name="text">
+                 <string>DCL</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QComboBox" name="adifRecoveryQslSentStatusPaperCombo"/>
+              </item>
+              <item row="3" column="0">
+               <widget class="QComboBox" name="adifRecoveryQslSentStatusEqslCombo"/>
+              </item>
+              <item row="1" column="2">
+               <widget class="QComboBox" name="adifRecoveryQslSentStatusLotwCombo"/>
+              </item>
+              <item row="3" column="2">
+               <widget class="QComboBox" name="adifRecoveryQslSentStatusDclCombo"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
          <widget class="QWidget" name="othersTab">
           <attribute name="title">
            <string>Others</string>
@@ -6310,6 +6442,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>adifFileAddButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>addAdifRecoveryFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>407</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>adifFileRemoveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>removeAdifRecoveryFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>407</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
@@ -6383,10 +6547,12 @@
   <slot>showRigctldAdvanced()</slot>
   <slot>onDeleteAllQSOs()</slot>
   <slot>onDeleteAllPasswords()</slot>
+  <slot>addAdifRecoveryFile()</slot>
+  <slot>removeAdifRecoveryFile()</slot>
  </slots>
  <buttongroups>
+  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

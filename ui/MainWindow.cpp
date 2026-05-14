@@ -5,6 +5,7 @@
 #include <QShortcut>
 #include <QDesktopServices>
 #include <QStyleHints>
+#include <QTimer>
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -48,6 +49,7 @@
 #include "ui/PlatformSettingsDialog.h"
 #include "ui/QSLGalleryDialog.h"
 #include "ui/QSLPrintLabelDialog.h"
+#include "ui/AdifRecoveryManager.h"
 #include <QFileDialog>
 #include <QProcess>
 #include <QThread>
@@ -59,7 +61,8 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     stats(new StatisticsWidget),
-    clublogRT(new ClubLogUploader(this))
+    clublogRT(new ClubLogUploader(this)),
+    adifRecoveryManager(new AdifRecoveryManager(this))
 {
     FCT_IDENTIFICATION;
 
@@ -289,6 +292,13 @@ MainWindow::MainWindow(QWidget* parent) :
     FldigiTCPServer* fldigi = new FldigiTCPServer(this);
     connect(fldigi, &FldigiTCPServer::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
 
+    connect(adifRecoveryManager, &AdifRecoveryManager::contactsRecovered, ui->logbookWidget, &LogbookWidget::updateTable);
+    connect(adifRecoveryManager, &AdifRecoveryManager::problem, this, [this](const QString &message)
+    {
+        if ( !message.isEmpty() )
+            QMessageBox::warning(this, tr("Startup ADI"), message);
+    }, Qt::QueuedConnection);
+
     wsjtx = new WsjtxUDPReceiver(this);
     connect(wsjtx, &WsjtxUDPReceiver::statusReceived, ui->wsjtxWidget, &WsjtxWidget::statusReceived);
     connect(wsjtx, &WsjtxUDPReceiver::decodeReceived, ui->wsjtxWidget, &WsjtxWidget::decodeReceived);
@@ -308,6 +318,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->wsjtxWidget, &WsjtxWidget::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
 
     connect(this, &MainWindow::settingsChanged, wsjtx, &WsjtxUDPReceiver::reloadSetting);
+    connect(this, &MainWindow::settingsChanged, adifRecoveryManager, &AdifRecoveryManager::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->rotatorWidget, &RotatorWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->rigWidget, &RigWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->cwconsoleWidget, &CWConsoleWidget::reloadSettings);
@@ -468,6 +479,8 @@ MainWindow::MainWindow(QWidget* parent) :
     //restoreConnectionStates();
 
     setupActivitiesMenu();
+
+    QTimer::singleShot(10000, adifRecoveryManager, &AdifRecoveryManager::startStartupRecovery);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

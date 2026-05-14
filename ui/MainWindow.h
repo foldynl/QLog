@@ -16,6 +16,7 @@ class MainWindow;
 
 class QLabel;
 class WsjtxUDPReceiver;
+class AdifRecoveryManager;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -117,6 +118,7 @@ private:
     PropConditions *conditions;
     bool isFusionStyle;
     ClubLogUploader* clublogRT;
+    AdifRecoveryManager* adifRecoveryManager;
     WsjtxUDPReceiver* wsjtx;
     QActionGroup *seqGroup;
     QActionGroup *dupeGroup;

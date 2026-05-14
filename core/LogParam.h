@@ -7,6 +7,10 @@
 #include <QImage>
 #include <QVariant>
 #include <QMutex>
+#include <QList>
+
+struct AdifRecoveryConfig;
+struct AdifRecoveryState;
 
 class LogParam : public QObject
 {
@@ -109,6 +113,23 @@ public:
     static void setImportQslSentStatusEQSL(const QString &status);
     static QString getImportQslSentStatusDCL();
     static void setImportQslSentStatusDCL(const QString &status);
+
+    /*****************
+     * Startup ADI
+     *****************/
+    static QList<AdifRecoveryConfig> getAdifRecoveryFiles();
+    static void setAdifRecoveryFiles(const QList<AdifRecoveryConfig> &files);
+    static AdifRecoveryState getAdifRecoveryState(const QString &fileKey);
+    static void setAdifRecoveryState(const QString &fileKey, const AdifRecoveryState &state);
+    static void removeAdifRecoveryState(const QString &fileKey);
+    static QString getAdifRecoveryQslSentStatusPaper();
+    static void setAdifRecoveryQslSentStatusPaper(const QString &status);
+    static QString getAdifRecoveryQslSentStatusLoTW();
+    static void setAdifRecoveryQslSentStatusLoTW(const QString &status);
+    static QString getAdifRecoveryQslSentStatusEQSL();
+    static void setAdifRecoveryQslSentStatusEQSL(const QString &status);
+    static QString getAdifRecoveryQslSentStatusDCL();
+    static void setAdifRecoveryQslSentStatusDCL(const QString &status);
 
     /*********************
      * DownloadQSL Dialog

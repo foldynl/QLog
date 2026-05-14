@@ -77,6 +77,7 @@ SOURCES += \
         awards/AwardWWFF.cpp \
         awards/BandTableAward.cpp \
         core/AlertEvaluator.cpp \
+        core/AdifRecovery.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
         core/CredentialStore.cpp \
@@ -169,6 +170,7 @@ SOURCES += \
         service/potaapp/PotaApp.cpp \
         service/qrzcom/QRZ.cpp \
         ui/ActivityEditor.cpp \
+        ui/AdifRecoveryManager.cpp \
         ui/AlertRuleDetail.cpp \
         ui/AlertSettingDialog.cpp \
         ui/AlertWidget.cpp \
@@ -256,6 +258,7 @@ HEADERS += \
         awards/AwardWWFF.h \
         awards/BandTableAward.h \
         core/AlertEvaluator.h \
+        core/AdifRecovery.h \
         core/AppGuard.h \
         core/CallbookManager.h \
         core/CredentialStore.h \
@@ -366,6 +369,7 @@ HEADERS += \
         service/potaapp/PotaApp.h \
         service/qrzcom/QRZ.h \
         ui/ActivityEditor.h \
+        ui/AdifRecoveryManager.h \
         ui/AlertRuleDetail.h \
         ui/AlertSettingDialog.h \
         ui/AlertWidget.h \
