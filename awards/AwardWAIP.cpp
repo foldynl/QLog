@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "awardwaip.h"
+#include "AwardWAIP.h"
 
 QString AwardWAIP::displayName() const
 {

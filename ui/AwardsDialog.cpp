@@ -25,8 +25,8 @@
 #include "awards/AwardNZ.h"
 #include "awards/AwardSpanishDME.h"
 #include "awards/AwardUKD.h"
-#include "awards/awardwaip.h"
-#include "awards/awardwaac.h"
+#include "awards/AwardWAIP.h"
+#include "awards/AwardWAAC.h"
 
 MODULE_IDENTIFICATION("qlog.ui.awardsdialog");
 

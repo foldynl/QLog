@@ -69,6 +69,8 @@ SOURCES += \
         awards/AwardPOTAActivator.cpp \
         awards/AwardPOTAHunter.cpp \
         awards/AwardSOTA.cpp \
+        awards/AwardWAAC.cpp \
+        awards/AwardWAIP.cpp \
         awards/SecondarySubdivisionAward.cpp \
         awards/AwardWAC.cpp \
         awards/AwardWAS.cpp \
@@ -76,8 +78,6 @@ SOURCES += \
         awards/AwardWPX.cpp \
         awards/AwardWWFF.cpp \
         awards/BandTableAward.cpp \
-        awards/awardwaac.cpp \
-        awards/awardwaip.cpp \
         core/AlertEvaluator.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
@@ -247,6 +247,8 @@ HEADERS += \
         awards/AwardPOTAActivator.h \
         awards/AwardPOTAHunter.h \
         awards/AwardSOTA.h \
+        awards/AwardWAAC.h \
+        awards/AwardWAIP.h \
         awards/SecondarySubdivisionAward.h \
         awards/AwardWAC.h \
         awards/AwardWAS.h \
@@ -254,8 +256,6 @@ HEADERS += \
         awards/AwardWPX.h \
         awards/AwardWWFF.h \
         awards/BandTableAward.h \
-        awards/awardwaac.h \
-        awards/awardwaip.h \
         core/AlertEvaluator.h \
         core/AppGuard.h \
         core/CallbookManager.h \

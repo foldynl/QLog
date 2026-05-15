@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "awardwaac.h"
+#include "AwardWAAC.h"
 
 QString AwardWAAC::displayName() const
 {
