@@ -2,7 +2,9 @@
 #include "AwardNZ.h"
 
 AwardNZ::AwardNZ()
-    : SecondarySubdivisionAward(QStringLiteral("nz"), QStringLiteral("170"))
+    : SecondarySubdivisionAward(QStringLiteral("nz"),
+                                QStringLiteral("170"),
+                                QStringLiteral("https://nzart.org.nz/activities/awards/"))
 {
 }
 

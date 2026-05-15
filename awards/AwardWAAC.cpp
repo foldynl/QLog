@@ -6,6 +6,11 @@ QString AwardWAAC::displayName() const
     return QCoreApplication::translate("AwardsDialog", "WAAC");
 }
 
+QString AwardWAAC::rulesUrl() const
+{
+    return QStringLiteral("https://sites.google.com/site/ik7nxm/IK7NXM");
+}
+
 QString AwardWAAC::headersColumns(const QString &) const
 {
     return QStringLiteral("d.name col1, d.id col2 ");

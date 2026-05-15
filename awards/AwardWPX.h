@@ -8,6 +8,7 @@ class AwardWPX : public BandTableAward
 public:
     QString key() const override { return QStringLiteral("wpx"); }
     QString displayName() const override;
+    QString rulesUrl() const override;
     bool notWorkedEnabled() const override { return false; }
 
 protected:

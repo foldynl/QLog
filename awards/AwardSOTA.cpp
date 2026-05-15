@@ -6,6 +6,11 @@ QString AwardSOTA::displayName() const
     return QCoreApplication::translate("AwardsDialog", "SOTA");
 }
 
+QString AwardSOTA::rulesUrl() const
+{
+    return QStringLiteral("https://www.sota.org.uk/Joining-In/General-Rules");
+}
+
 QString AwardSOTA::headersColumns(const QString &) const
 {
     return QStringLiteral("s.summit_code col1, NULL col2 ");

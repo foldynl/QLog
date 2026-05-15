@@ -2,7 +2,9 @@
 #include "AwardUKD.h"
 
 AwardUKD::AwardUKD()
-    : SecondarySubdivisionAward(QStringLiteral("ukd"), QStringLiteral("288"))
+    : SecondarySubdivisionAward(QStringLiteral("ukd"),
+                                QStringLiteral("288"),
+                                "")
 {
 }
 

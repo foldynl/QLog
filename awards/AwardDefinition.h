@@ -37,6 +37,9 @@ public:
     /*Translatable display name shown in the Award combo box. */
     virtual QString displayName() const = 0;
 
+    /* URL with award rules/conditions. Empty means no known rules URL. */
+    virtual QString rulesUrl() const;
+
     /*Whether the "My DXCC Entity" combo is shown. Default: true. */
     virtual bool entityInputEnabled() const;
 

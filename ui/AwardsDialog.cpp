@@ -1,6 +1,8 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QTableView>
+#include <QDesktopServices>
+#include <QUrl>
 #include "AwardsDialog.h"
 #include "ui_AwardsDialog.h"
 #include "models/SqlListModel.h"
@@ -62,6 +64,8 @@ AwardsDialog::AwardsDialog(QWidget *parent) :
                                                                       ui->userFilterComboBox));
     ui->userFilterComboBox->blockSignals(false);
 
+    connect(ui->rulesPushButton, &QPushButton::clicked, this, &AwardsDialog::openRulesUrl);
+
     refreshTable(0);
 }
 
@@ -83,6 +87,7 @@ void AwardsDialog::refreshTable(int)
 
     setEntityInputEnabled(award->entityInputEnabled());
     setNotWorkedEnabled(award->notWorkedEnabled());
+    updateRulesButton(award);
 
     if ( !award->widget() )
     {
@@ -161,6 +166,19 @@ QString AwardsDialog::getSelectedEntity() const
     return comboData;
 }
 
+void AwardsDialog::openRulesUrl() const
+{
+    FCT_IDENTIFICATION;
+
+    const AwardDefinition *award = currentAward();
+    if ( !award )
+        return;
+
+    const QString url = award->rulesUrl();
+    if ( !url.isEmpty() )
+        QDesktopServices::openUrl(QUrl(url));
+}
+
 void AwardsDialog::setEntityInputEnabled(bool enabled)
 {
     FCT_IDENTIFICATION;
@@ -182,6 +200,15 @@ void AwardsDialog::setNotWorkedEnabled(bool enabled)
     ui->notConfirmedCheckBox->setVisible(enabled);
     ui->notConfirmedCheckBox->setChecked(enabled && ui->notConfirmedCheckBox->isChecked());
     ui->notConfirmedCheckBox->blockSignals(false);
+}
+
+void AwardsDialog::updateRulesButton(const AwardDefinition *award)
+{
+    FCT_IDENTIFICATION;
+
+    const bool enabled = award && !award->rulesUrl().isEmpty();
+    ui->rulesPushButton->setEnabled(enabled);
+    ui->rulesPushButton->setToolTip(enabled ? award->rulesUrl() : QString());
 }
 
 QList<AwardDefinition*> AwardsDialog::createAwards()

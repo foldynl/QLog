@@ -6,6 +6,11 @@ QString AwardWAIP::displayName() const
     return QCoreApplication::translate("AwardsDialog", "WAIP");
 }
 
+QString AwardWAIP::rulesUrl() const
+{
+    return QStringLiteral("https://www.ari.it/english-area/awards/1734-waip-worked-all-italian-provinces.html");
+}
+
 QString AwardWAIP::headersColumns(const QString &) const
 {
     return QStringLiteral("d.subdivision_name col1, d.code col2 ");

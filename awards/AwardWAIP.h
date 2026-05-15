@@ -8,6 +8,7 @@ class AwardWAIP : public BandTableAward
 public:
     QString key() const override { return QStringLiteral("WAIP"); }
     QString displayName() const override;
+    QString rulesUrl() const override;
 
 protected:
     QString headersColumns(const QString &entity) const override;

@@ -6,6 +6,11 @@ QString AwardWWFF::displayName() const
     return QCoreApplication::translate("AwardsDialog", "WWFF");
 }
 
+QString AwardWWFF::rulesUrl() const
+{
+    return QStringLiteral("https://wwff.co/awards/");
+}
+
 QString AwardWWFF::headersColumns(const QString &) const
 {
     return QStringLiteral("w.reference col1, w.name col2 ");
