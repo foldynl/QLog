@@ -20,7 +20,7 @@
    <item>
     <widget class="QGroupBox" name="awardGroupBox">
      <property name="title">
-      <string>Options</string>
+      <string/>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <property name="horizontalSpacing">
@@ -61,12 +61,22 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer">
+         <widget class="QPushButton" name="rulesPushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>🌐 Rules</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Maximum</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -84,23 +94,40 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <widget class="QComboBox" name="myEntityComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Minimum</enum>
+           <enum>QSizePolicy::Maximum</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>20</height>
+            <height>10</height>
            </size>
           </property>
          </spacer>
         </item>
         <item>
-         <widget class="QComboBox" name="myEntityComboBox">
+         <widget class="QLabel" name="userFilterLabel">
+          <property name="text">
+           <string>User Filter</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="userFilterComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -116,52 +143,6 @@
           </property>
           <property name="sizeType">
            <enum>QSizePolicy::Maximum</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="userFilterLabel">
-          <property name="text">
-           <string>User Filter</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Maximum</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QComboBox" name="userFilterComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -300,6 +281,13 @@
     <widget class="QStackedWidget" name="stackedWidget"/>
    </item>
    <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Double-click a row/cell to show QSOs</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -313,6 +301,7 @@
  </widget>
  <tabstops>
   <tabstop>awardComboBox</tabstop>
+  <tabstop>rulesPushButton</tabstop>
   <tabstop>myEntityComboBox</tabstop>
   <tabstop>userFilterComboBox</tabstop>
   <tabstop>lotwCheckBox</tabstop>

@@ -6,6 +6,11 @@ QString AwardDXCC::displayName() const
     return QCoreApplication::translate("AwardsDialog", "DXCC");
 }
 
+QString AwardDXCC::rulesUrl() const
+{
+    return QStringLiteral("https://www.arrl.org/dxcc-rules");
+}
+
 QString AwardDXCC::headersColumns(const QString &) const
 {
     return QStringLiteral("translate_to_locale(d.name) col1, d.prefix col2 ");

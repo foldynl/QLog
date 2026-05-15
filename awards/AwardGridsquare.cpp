@@ -22,6 +22,11 @@ QString AwardGridsquare::displayName() const
     }
 }
 
+QString AwardGridsquare::rulesUrl() const
+{
+    return {};
+}
+
 QString AwardGridsquare::headersColumns(const QString &) const
 {
     return QString("substr(c.gridsquare, 1, %1) col1, NULL col2 ").arg(m_chars);

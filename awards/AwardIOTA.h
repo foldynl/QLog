@@ -8,6 +8,7 @@ class AwardIOTA : public BandTableAward
 public:
     QString key() const override { return QStringLiteral("iota"); }
     QString displayName() const override;
+    QString rulesUrl() const override;
     bool notWorkedEnabled() const override { return false; }
 
 protected:
