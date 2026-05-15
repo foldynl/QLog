@@ -3,6 +3,7 @@ TBC - 0.51.0
 - [NEW] - Added virtual column Mode/Submode to Logbook (issue #798)
 - [NEW] - BandMap shows IBP frequencies (issue #1014)
 - [NEW] - Import - Added QSL Sent Status default (issue #1029)
+- [NEW] - Settings - Added StartUp ADI file Import (issue #941 PR #992 @aa5sh @foldynl) 
 - Fixed ADIF Export of Gridsqaure too long (issue #1028)
 - Github - Source code is signed (#1018)
 
