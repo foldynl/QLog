@@ -32,6 +32,7 @@ private slots:
     void start_failsWithInvalidProfile();
     void getConnectHost_returnsLocalhost();
     void getConnectPort_returnsConfiguredPort();
+    void stop_isIdempotentWithoutStart();
 
     // getVersion tests
     void getVersion_returnsInvalidForNonexistentPath();
@@ -40,6 +41,7 @@ private slots:
 
     // Integration test (skipped if rigctld not available)
     void start_stop_integration();
+    void destructor_afterStart_stopsProcess();
 
 private:
     QString findRigctld();
@@ -233,6 +235,18 @@ void RigctldManagerTest::getConnectPort_returnsConfiguredPort()
     QCOMPARE(manager.getConnectPort(), static_cast<quint16>(4532));
 }
 
+void RigctldManagerTest::stop_isIdempotentWithoutStart()
+{
+    RigctldManager manager;
+    QSignalSpy stoppedSpy(&manager, &RigctldManager::stopped);
+
+    manager.stop();
+    manager.stop();
+
+    QVERIFY(!manager.isRunning());
+    QCOMPARE(stoppedSpy.count(), 0);
+}
+
 // ============================================================================
 // getVersion tests
 // ============================================================================
@@ -321,12 +335,52 @@ void RigctldManagerTest::start_stop_integration()
 
     // Stop
     manager.stop();
+    manager.stop();
     QVERIFY(!manager.isRunning());
+    QCOMPARE(stoppedSpy.count(), 1);
 
     // Verify port is no longer listening
     QTcpSocket socket2;
     socket2.connectToHost("127.0.0.1", 14534);
     bool stillConnected = socket2.waitForConnected(1000);
+    QVERIFY(!stillConnected);
+}
+
+void RigctldManagerTest::destructor_afterStart_stopsProcess()
+{
+    if (!rigctldAvailable)
+    {
+        QSKIP("rigctld not available for integration test");
+    }
+
+    constexpr quint16 testPort = 14535;
+
+    {
+        RigctldManager manager;
+        QSignalSpy errorSpy(&manager, &RigctldManager::errorOccurred);
+
+        RigProfile profile;
+        profile.model = 1;  // Dummy rig (Hamlib model 1 = Dummy)
+        profile.rigctldPort = testPort;
+        profile.rigctldPath = rigctldPath;
+
+        bool result = manager.start(profile);
+
+        if (!result)
+        {
+            if (!errorSpy.isEmpty())
+            {
+                qWarning() << "Start failed with error:" << errorSpy.first().first().toString();
+            }
+            QSKIP("Could not start rigctld with dummy rig");
+        }
+
+        QVERIFY(manager.isRunning());
+    }
+
+    QTcpSocket socket;
+    socket.connectToHost("127.0.0.1", testPort);
+    bool stillConnected = socket.waitForConnected(1000);
     QVERIFY(!stillConnected);
 }
 

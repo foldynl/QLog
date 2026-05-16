@@ -91,6 +91,7 @@ public slots:
     void start();
     void open();
     void close();
+    void shutdown();
     void stopTimer();
 
     void setFrequency(double);

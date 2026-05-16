@@ -1,6 +1,9 @@
 #include "Rig.h"
 #include "RigctldManager.h"
 #include "core/debug.h"
+
+#include <QThread>
+
 #include "rig/drivers/HamlibRigDrv.h"
 #ifdef Q_OS_WIN
 #include "rig/drivers/OmnirigRigDrv.h"
@@ -146,6 +149,31 @@ void Rig::stopTimer()
     FCT_IDENTIFICATION;
     bool check = QMetaObject::invokeMethod(Rig::instance(), &Rig::stopTimerImplt,
                                            Qt::QueuedConnection);
+    Q_ASSERT( check );
+}
+
+void Rig::shutdown()
+{
+    FCT_IDENTIFICATION;
+
+    if ( QThread::currentThread() == thread() )
+    {
+        closeImpl();
+        stopTimerImplt();
+        return;
+    }
+
+    if ( !thread() || !thread()->isRunning() )
+    {
+        qCWarning(runtime) << "Cannot synchronously shut down Rig because owner thread is not running";
+        return;
+    }
+
+    bool check = QMetaObject::invokeMethod(this, [this]()
+    {
+        closeImpl();
+        stopTimerImplt();
+    }, Qt::BlockingQueuedConnection);
     Q_ASSERT( check );
 }
 
@@ -759,7 +787,17 @@ Rig::~Rig()
 {
     FCT_IDENTIFICATION;
 
-    __closeRig();
+    if ( !rigDriver && !rigctldManager )
+        return;
+
+    if ( QThread::currentThread() == thread() )
+    {
+        __closeRig();
+    }
+    else
+    {
+        qCWarning(runtime) << "Skipping Rig shutdown from non-owner thread";
+    }
 }
 
 void Rig::sendHeartBeat()

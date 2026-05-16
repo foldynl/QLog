@@ -32,6 +32,7 @@ public slots:
     void update();
     void open();
     void close();
+    void shutdown();
     bool canStopSending();
     bool canEchoChar();
     bool rigMustConnected();

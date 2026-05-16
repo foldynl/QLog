@@ -2,6 +2,7 @@
 #include "core/debug.h"
 #include "rotator/drivers/HamlibRotDrv.h"
 #include "rotator/drivers/PSTRotDrv.h"
+#include <QThread>
 
 MODULE_IDENTIFICATION("qlog.rotator.rotator");
 
@@ -35,7 +36,17 @@ Rotator::~Rotator()
 {
     FCT_IDENTIFICATION;
 
+    if ( !rotDriver )
+        return;
+
+    if ( QThread::currentThread() != thread() )
+    {
+        qCWarning(runtime) << "Skipping Rotator shutdown from non-owner thread";
+        return;
+    }
+
     __closeRot();
+    stopTimerImplt();
 }
 
 double Rotator::getAzimuth()
@@ -111,6 +122,31 @@ void Rotator::stopTimer()
     bool check = QMetaObject::invokeMethod(Rotator::instance(),
                                            &Rotator::stopTimerImplt,
                                            Qt::QueuedConnection);
+    Q_ASSERT( check );
+}
+
+void Rotator::shutdown()
+{
+    FCT_IDENTIFICATION;
+
+    if ( QThread::currentThread() == thread() )
+    {
+        closeImpl();
+        stopTimerImplt();
+        return;
+    }
+
+    if ( !thread() || !thread()->isRunning() )
+    {
+        qCWarning(runtime) << "Cannot synchronously shut down Rotator because owner thread is not running";
+        return;
+    }
+
+    bool check = QMetaObject::invokeMethod(this, [this]()
+    {
+        closeImpl();
+        stopTimerImplt();
+    }, Qt::BlockingQueuedConnection);
     Q_ASSERT( check );
 }
 

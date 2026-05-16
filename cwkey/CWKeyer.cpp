@@ -7,6 +7,7 @@
 #include "cwkey/drivers/CWFldigiKey.h"
 #include "core/debug.h"
 #include "data/CWKeyProfile.h"
+#include <QThread>
 
 MODULE_IDENTIFICATION("qlog.cwkey.cwkeyer");
 
@@ -25,6 +26,31 @@ void CWKeyer::stopTimer()
 {
     FCT_IDENTIFICATION;
     bool check = QMetaObject::invokeMethod(CWKeyer::instance(), &CWKeyer::stopTimerImplt, Qt::QueuedConnection);
+    Q_ASSERT( check );
+}
+
+void CWKeyer::shutdown()
+{
+    FCT_IDENTIFICATION;
+
+    if ( QThread::currentThread() == thread() )
+    {
+        closeImpl();
+        stopTimerImplt();
+        return;
+    }
+
+    if ( !thread() || !thread()->isRunning() )
+    {
+        qCWarning(runtime) << "Cannot synchronously shut down CWKeyer because owner thread is not running";
+        return;
+    }
+
+    bool check = QMetaObject::invokeMethod(this, [this]()
+    {
+        closeImpl();
+        stopTimerImplt();
+    }, Qt::BlockingQueuedConnection);
     Q_ASSERT( check );
 }
 
@@ -276,7 +302,7 @@ void CWKeyer::__closeCWKey()
     if ( cwKey )
     {
         cwKey->close();
-        cwKey->deleteLater();
+        delete cwKey;
         cwKey = nullptr;
     }
 
@@ -419,8 +445,15 @@ CWKeyer::~CWKeyer()
 {
     FCT_IDENTIFICATION;
 
-    if ( cwKey )
+    if ( !cwKey && !timer )
+        return;
+
+    if ( QThread::currentThread() != thread() )
     {
-        cwKey->deleteLater();
+        qCWarning(runtime) << "Skipping CWKeyer shutdown from non-owner thread";
+        return;
     }
+
+    __closeCWKey();
+    stopTimerImplt();
 }
