@@ -31,6 +31,8 @@ public:
     }
 
 protected:
+    virtual bool importNextDXCCCredit(DXCCCreditRecord&) override;
+    virtual void importStart() override;
     virtual void writeField(const QString &name,
                             bool presenceCondition,
                             const QString &value,
@@ -117,6 +119,7 @@ private:
                                     const QString &fieldIntlName,
                                     QSqlRecord &contact);
 
+    QVariantMap headerFields;
     ParserState state = START;
     bool inHeader = false;
 };

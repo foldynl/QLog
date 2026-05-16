@@ -79,6 +79,7 @@ private slots:
     void showEditLayout();
     void showServiceUpload();
     void showServiceDownloadQSL();
+    void showServiceDownloadLotwDXCCCredits();
     void showDumpDB();
     void showLoadDB();
     void showQSLGallery();

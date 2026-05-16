@@ -580,3 +580,258 @@ LotwQSLDownloader::~LotwQSLDownloader()
         currentReply->deleteLater();
     }
 }
+
+LotwDXCCCreditDownloader::LotwDXCCCreditDownloader(QObject *parent) :
+    QObject(parent),
+    LotwBase(),
+    nam(new QNetworkAccessManager(this)),
+    currentReply(nullptr)
+{
+    FCT_IDENTIFICATION;
+
+    connect(nam, &QNetworkAccessManager::finished,
+            this, &LotwDXCCCreditDownloader::processReply);
+}
+
+LotwDXCCCreditDownloader::~LotwDXCCCreditDownloader()
+{
+    FCT_IDENTIFICATION;
+
+    if ( currentReply )
+    {
+        currentReply->abort();
+        currentReply->deleteLater();
+    }
+}
+
+const QString LotwDXCCCreditDownloader::dxccModeGroupFromLotw(const QString &lotwModeGroup)
+{
+    FCT_IDENTIFICATION;
+
+    const QString modeGroup = lotwModeGroup.trimmed().toUpper();
+
+    if ( modeGroup == "DATA" || modeGroup == "IMAGE" )
+        return "DIGITAL";
+
+    if ( modeGroup == "PHONE" || modeGroup == "CW" )
+        return modeGroup;
+
+    return QString();
+}
+
+void LotwDXCCCreditDownloader::downloadCredits(const QString &entity)
+{
+    FCT_IDENTIFICATION;
+
+#if 0
+    // Temporary test hook for LoTW DXCC credit import.
+    QString testFileName = QString::fromLocal8Bit(qgetenv("QLOG_LOTW_DXCC_CREDITS_TEST_FILE"));
+    if ( testFileName.isEmpty() )
+        testFileName = "DXCC_QSLs_20260516_174703.adi";
+
+    if ( QFile::exists(testFileName) )
+    {
+        QFile testFile(testFileName);
+        if ( !testFile.open(QIODevice::ReadOnly) )
+        {
+            emit downloadFailed(tr("Cannot open test LoTW DXCC credit file"));
+            return;
+        }
+
+        const QByteArray data = testFile.readAll();
+        const qint64 size = data.size();
+        qCInfo(runtime) << "Using local LoTW DXCC credit test file:" << testFileName << "size:" << size;
+
+        if ( !containsADIFTag(data, "EOH") )
+        {
+            emit downloadFailed(plainResponseSummary(data));
+            return;
+        }
+
+        if ( !containsADIFTag(data, "APP_LoTW_EOF") )
+        {
+            emit downloadFailed(tr("Incomplete LoTW DXCC credit response"));
+            return;
+        }
+
+        QTemporaryFile tempFile;
+        if ( !tempFile.open() )
+        {
+            emit downloadFailed(tr("Cannot open temporary file"));
+            return;
+        }
+
+        tempFile.write(data);
+        tempFile.flush();
+        tempFile.seek(0);
+
+        emit downloadStarted();
+
+        QTextStream stream(&tempFile);
+        AdiFormat adi(stream);
+
+        connect(&adi, &AdiFormat::importPosition, this, [this, size](qint64 position)
+        {
+            if ( size > 0 )
+            {
+                const double progress = position * 100.0 / size;
+                emit downloadProgress(static_cast<qulonglong>(progress));
+            }
+        });
+
+        connect(&adi, &AdiFormat::QSLMergeFinished, this, [this](QSLMergeStat stats)
+        {
+            emit downloadComplete(stats);
+        });
+
+        adi.runDXCCCreditImport();
+
+        tempFile.close();
+        return;
+    }
+#endif
+    const QString username = getUsername();
+    const QString password = getPasswd();
+
+    if ( username.isEmpty() || password.isEmpty() )
+    {
+        emit downloadFailed(tr("LoTW is not configured properly"));
+        return;
+    }
+
+    QUrlQuery query;
+    query.addQueryItem("login", username);
+    query.addQueryItem("password", password);
+    if ( !entity.isEmpty() )
+        query.addQueryItem("entity", entity);
+
+    QUrl url(DXCC_CREDIT_API);
+    url.setQuery(query);
+
+    qCDebug(runtime) << Data::safeQueryString(query);
+
+    if ( currentReply )
+        qCWarning(runtime) << "processing a new request but the previous one hasn't been completed yet !!!";
+
+    currentReply = nam->get(QNetworkRequest(url));
+}
+
+bool LotwDXCCCreditDownloader::containsADIFTag(const QByteArray &data, const QString &tagName)
+{
+    const QString text = QString::fromLatin1(data);
+    const QRegularExpression tag(QString("<\\s*%1\\s*(:|>)")
+                                  .arg(QRegularExpression::escape(tagName)),
+                                  QRegularExpression::CaseInsensitiveOption);
+    return tag.match(text).hasMatch();
+}
+
+QString LotwDXCCCreditDownloader::plainResponseSummary(const QByteArray &data)
+{
+    QString text = QString::fromLatin1(data);
+    static const QRegularExpression re("<[^>]*>");
+    text.remove(re);
+    text = text.simplified();
+
+    if ( text.isEmpty() )
+        return tr("LoTW returned a non-ADIF response");
+
+    return text.left(500);
+}
+
+void LotwDXCCCreditDownloader::abortDownload()
+{
+    FCT_IDENTIFICATION;
+
+    if ( currentReply )
+    {
+        currentReply->abort();
+        currentReply = nullptr;
+    }
+}
+
+void LotwDXCCCreditDownloader::processReply(QNetworkReply *reply)
+{
+    FCT_IDENTIFICATION;
+
+    currentReply = nullptr;
+
+    const int replyStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    auto fail = [this, reply](const QString &message)
+    {
+        emit downloadFailed(message);
+        reply->deleteLater();
+    };
+
+    if ( reply->error() != QNetworkReply::NoError
+         || replyStatusCode < 200
+         || replyStatusCode >= 300 )
+    {
+        qCInfo(runtime) << "LoTW DXCC credit download error" << reply->errorString();
+        qCDebug(runtime) << "HTTP Status Code" << replyStatusCode;
+        if ( reply->error() != QNetworkReply::OperationCanceledError )
+            fail(reply->errorString());
+        else
+            reply->deleteLater();
+        return;
+    }
+
+    const QByteArray data = reply->readAll();
+    const qint64 size = data.size();
+    qCDebug(runtime) << "LoTW DXCC credit reply received, size:" << size;
+    qCDebug(runtime) << data;
+
+    if ( size < 10000 && data.contains("username/password you entered is not recognized") )
+    {
+        fail(tr("Incorrect login or password"));
+        return;
+    }
+
+    if ( !containsADIFTag(data, "EOH") )
+    {
+        fail(plainResponseSummary(data));
+        return;
+    }
+
+    if ( !containsADIFTag(data, "APP_LoTW_EOF") )
+    {
+        fail(tr("Incomplete LoTW DXCC credit response"));
+        return;
+    }
+
+    QTemporaryFile tempFile;
+
+    if ( !tempFile.open() )
+    {
+        fail(tr("Cannot open temporary file"));
+        return;
+    }
+
+    tempFile.write(data);
+    tempFile.flush();
+    tempFile.seek(0);
+
+    emit downloadStarted();
+
+    QTextStream stream(&tempFile);
+    AdiFormat adi(stream);
+
+    connect(&adi, &AdiFormat::importPosition, this, [this, size](qint64 position)
+    {
+        if ( size > 0 )
+        {
+            const double progress = position * 100.0 / size;
+            emit downloadProgress(static_cast<qulonglong>(progress));
+        }
+    });
+
+    connect(&adi, &AdiFormat::QSLMergeFinished, this, [this](QSLMergeStat stats)
+    {
+        emit downloadComplete(stats);
+    });
+
+    adi.runDXCCCreditImport();
+
+    tempFile.close();
+    reply->deleteLater();
+}

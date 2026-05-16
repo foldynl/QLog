@@ -258,6 +258,7 @@ void AdiFormat::readField(QString& field, QString& value)
             if (!inHeader) {
                 return;
             }
+            headerFields.insert(field.toLower(), value);
             break;
         }
     }
@@ -718,6 +719,41 @@ bool AdiFormat::importNext(QSqlRecord& record)
     }
 
     mapContact2SQLRecord(contact, record);
+
+    return true;
+}
+
+void AdiFormat::importStart()
+{
+    FCT_IDENTIFICATION;
+
+    headerFields.clear();
+    state = START;
+    inHeader = false;
+}
+
+bool AdiFormat::importNextDXCCCredit(DXCCCreditRecord &credit)
+{
+    FCT_IDENTIFICATION;
+
+    QVariantMap adifRecord;
+
+    if ( !readContact(adifRecord) )
+        return false;
+
+    credit.call = adifRecord.value("call").toString().trimmed().toUpper();
+    credit.band = adifRecord.value("band").toString().trimmed().toLower();
+    credit.dxcc = adifRecord.value("dxcc").toString().trimmed();
+    credit.mode = adifRecord.value("mode").toString().trimmed().toUpper();
+    credit.propMode = adifRecord.value("prop_mode").toString().trimmed().toUpper();
+    credit.dxccModeGroup = adifRecord.value("app_lotw_modegroup").toString().trimmed().toUpper();
+
+    if ( credit.dxccModeGroup.isEmpty() )
+        credit.dxccModeGroup = adifRecord.value("app_lotw_mode").toString().trimmed().toUpper();
+
+    credit.creditGranted = adifRecord.value("credit_granted").toString().trimmed().toUpper();
+    credit.awardEntity = headerFields.value("app_lotw_dxccrecord_entity").toString().trimmed();
+    credit.qsoDate = parseDate(adifRecord.value("qso_date").toString());
 
     return true;
 }

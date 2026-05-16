@@ -784,6 +784,366 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
 
 #undef RECORDIDX
 
+QStringList LogFormat::splitCreditValues(const QString &value)
+{
+    QStringList ret;
+    const QStringList values = value.split(',',
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+                                           Qt::SkipEmptyParts);
+#else
+                                           QString::SkipEmptyParts);
+#endif
+
+    for ( const QString &rawValue : values )
+    {
+        const QString trimmed = rawValue.trimmed();
+        if ( !trimmed.isEmpty() )
+            ret << trimmed;
+    }
+
+    return ret;
+}
+
+QString LogFormat::mergeCreditValues(const QString &currentValue, const QString &newValue)
+{
+    QStringList merged;
+    QSet<QString> seen;
+
+    auto appendIfMissing = [&merged, &seen](const QString &value)
+    {
+        const QString key = value.toUpper();
+        if ( !seen.contains(key) )
+        {
+            seen.insert(key);
+            merged << value;
+        }
+    };
+
+    const QStringList currentValues = splitCreditValues(currentValue);
+    for ( const QString &value : currentValues )
+        appendIfMissing(value);
+
+    const QStringList newValues = splitCreditValues(newValue);
+    for ( const QString &value : newValues )
+        appendIfMissing(value);
+
+    return merged.join(',');
+}
+
+bool LogFormat::isSatelliteDXCCCredit(const DXCCCreditRecord &credit)
+{
+    return splitCreditValues(credit.creditGranted).contains("DXCC_SATELLITE",
+                                                            Qt::CaseInsensitive);
+}
+
+bool LogFormat::isDXCCEntityCode(const QString &call)
+{
+    bool ok = false;
+    call.trimmed().toUInt(&ok);
+    return ok;
+}
+
+QString LogFormat::escapeSqlLikePattern(const QString &value)
+{
+    QString ret = value;
+    ret.replace("\\", "\\\\");
+    ret.replace("%", "\\%");
+    ret.replace("_", "\\_");
+    return ret;
+}
+
+QString LogFormat::formatDXCCCreditReport(const DXCCCreditRecord &credit,
+                                          const QStringList &addInfo)
+{
+    QString bandOrPropMode = credit.band;
+    if ( !credit.propMode.isEmpty() )
+        bandOrPropMode = bandOrPropMode.isEmpty() ? credit.propMode : bandOrPropMode + "/" + credit.propMode;
+
+    return QString("%1; %2; %3%4 %5")
+        .arg(credit.qsoDate.isValid() ? credit.qsoDate.toString(Qt::ISODate) : "-",
+             credit.call.isEmpty() ? "-" : credit.call,
+             bandOrPropMode.isEmpty() ? "-" : bandOrPropMode,
+             addInfo.isEmpty() ? "" : ";",
+             addInfo.join(", "));
+}
+
+bool LogFormat::selectDXCCCreditMatches(const DXCCCreditRecord &credit,
+                                        const DXCCCreditCallMatch callMatch,
+                                        const bool matchMode,
+                                        QList<DXCCCreditMatch> &matches,
+                                        QString &error)
+{
+    matches.clear();
+    error.clear();
+
+    QStringList where =
+    {
+        "ABS(JULIANDAY(date(start_time)) - JULIANDAY(date(:qso_date))) <= 1"
+    };
+
+    // DXCC credits can come from LoTW or paper cards, and users may import
+    // credits before importing QSL state. Do not require local QSL received flags.
+
+    if ( !credit.band.isEmpty() )
+        where << "upper(band) = upper(:band)";
+
+    if ( !credit.propMode.isEmpty() )
+    {
+        where << "upper(prop_mode) = upper(:prop_mode)";
+    }
+    else
+    {
+        // LoTW reports satellite credits with PROP_MODE=SAT/DXCC_SATELLITE.
+        // Keep normal DXCC credits from matching satellite QSOs by date/call/band.
+        where << "(prop_mode IS NULL OR upper(prop_mode) <> 'SAT')";
+    }
+
+    if ( !credit.dxcc.isEmpty() )
+        where << "dxcc = :dxcc";
+
+    if ( !credit.awardEntity.isEmpty() )
+        where << "my_dxcc = :award_entity";
+
+    switch ( callMatch )
+    {
+    case EXACT_CALL_MATCH:
+        where << "callsign = upper(:call)";
+        break;
+
+    case PREFIX_CALL_MATCH:
+        where << "upper(callsign) LIKE upper(:call_prefix) ESCAPE '\\'";
+        break;
+
+    case NO_CALL_MATCH:
+        break;
+    }
+
+    if ( matchMode )
+    {
+        if ( !credit.dxccModeGroup.isEmpty() )
+        {
+            QString modeCondition = "(SELECT dxcc FROM modes WHERE upper(name) = upper(contacts.mode) LIMIT 1) = :dxcc_mode_group";
+            if ( !credit.mode.isEmpty() )
+                modeCondition = "(" + modeCondition + " OR upper(mode) = upper(:mode))";
+            where << modeCondition;
+        }
+        else if ( !credit.mode.isEmpty() )
+        {
+            where << "upper(mode) = upper(:mode)";
+        }
+    }
+
+    QSqlQuery query;
+    const QString sql = QString("SELECT id, callsign, band, mode, start_time, prop_mode, credit_granted "
+                                "FROM contacts WHERE %1 ORDER BY start_time, id").arg(where.join(" AND "));
+
+    if ( !query.prepare(sql) )
+    {
+        error = query.lastError().text();
+        return false;
+    }
+
+    query.bindValue(":qso_date", credit.qsoDate.toString(Qt::ISODate));
+
+    if ( !credit.band.isEmpty() )
+        query.bindValue(":band", credit.band);
+
+    if ( !credit.propMode.isEmpty() )
+        query.bindValue(":prop_mode", credit.propMode);
+
+    if ( !credit.dxcc.isEmpty() )
+        query.bindValue(":dxcc", credit.dxcc);
+
+    if ( !credit.awardEntity.isEmpty() )
+        query.bindValue(":award_entity", credit.awardEntity);
+
+    switch ( callMatch )
+    {
+    case EXACT_CALL_MATCH:
+        query.bindValue(":call", credit.call);
+        break;
+
+    case PREFIX_CALL_MATCH:
+        query.bindValue(":call_prefix", escapeSqlLikePattern(credit.call) + "%");
+        break;
+
+    case NO_CALL_MATCH:
+        break;
+    }
+
+    if ( matchMode )
+    {
+        if ( !credit.dxccModeGroup.isEmpty() )
+            query.bindValue(":dxcc_mode_group", credit.dxccModeGroup);
+        if ( !credit.mode.isEmpty() )
+            query.bindValue(":mode", credit.mode);
+    }
+
+    if ( !query.exec() )
+    {
+        error = query.lastError().text();
+        return false;
+    }
+
+    while ( query.next() )
+    {
+        DXCCCreditMatch match;
+        match.id = query.value(0).toULongLong();
+        match.callsign = query.value(1).toString();
+        match.band = query.value(2).toString();
+        match.mode = query.value(3).toString();
+        match.startTime = query.value(4).toDateTime();
+        match.propMode = query.value(5).toString();
+        match.creditGranted = query.value(6).toString();
+        matches << match;
+    }
+
+    return true;
+}
+
+void LogFormat::runDXCCCreditImport()
+{
+    FCT_IDENTIFICATION;
+
+    QSLMergeStat stats = {QStringList(), QStringList(), QStringList(), QStringList(), 0};
+
+    this->importStart();
+
+    while ( true )
+    {
+        DXCCCreditRecord credit;
+
+        if ( !this->importNextDXCCCredit(credit) ) break;
+
+        stats.qsosDownloaded++;
+
+        if ( stats.qsosDownloaded % 100 == 0 )
+            emit importPosition(stream.pos());
+
+        credit.dxccModeGroup = LotwDXCCCreditDownloader::dxccModeGroupFromLotw(credit.dxccModeGroup);
+
+        if ( credit.propMode.isEmpty() && isSatelliteDXCCCredit(credit) )
+            credit.propMode = "SAT";
+
+        const bool callIsDXCCEntityCode = isDXCCEntityCode(credit.call);
+
+        if ( credit.dxcc.isEmpty() && callIsDXCCEntityCode )
+            credit.dxcc = credit.call;
+
+        QStringList validationErrors;
+
+        if ( !credit.qsoDate.isValid() )                      validationErrors << tr("missing QSO_DATE");
+        if ( credit.creditGranted.isEmpty() )                 validationErrors << tr("missing CREDIT_GRANTED");
+        if ( credit.call.isEmpty() && credit.dxcc.isEmpty() ) validationErrors << tr("missing CALL/DXCC");
+
+        if ( !validationErrors.isEmpty() )
+        {
+            stats.errorQSLs.append(formatDXCCCreditReport(credit, validationErrors));
+            continue;
+        }
+
+        const bool hasExactCall = !credit.call.isEmpty() && !callIsDXCCEntityCode;
+        const bool canUseDXCCOnlyMatch = !hasExactCall;
+        const bool hasMode = !credit.dxccModeGroup.isEmpty() || !credit.mode.isEmpty();
+        QList<DXCCCreditMatch> matches;
+        QString sqlError;
+
+        if ( hasExactCall )
+        {
+            if ( !selectDXCCCreditMatches(credit, EXACT_CALL_MATCH, hasMode, matches, sqlError) )
+            {
+                stats.errorQSLs.append(formatDXCCCreditReport(credit, {sqlError}));
+                continue;
+            }
+
+            if ( matches.isEmpty() && hasMode )
+            {
+                if ( !selectDXCCCreditMatches(credit, EXACT_CALL_MATCH, false, matches, sqlError) )
+                {
+                    stats.errorQSLs.append(formatDXCCCreditReport(credit, {sqlError}));
+                    continue;
+                }
+            }
+
+            if ( matches.isEmpty() )
+            {
+                if ( !selectDXCCCreditMatches(credit, PREFIX_CALL_MATCH, hasMode, matches, sqlError) )
+                {
+                    stats.errorQSLs.append(formatDXCCCreditReport(credit, {sqlError}));
+                    continue;
+                }
+
+                if ( matches.isEmpty() && hasMode )
+                {
+                    if ( !selectDXCCCreditMatches(credit, PREFIX_CALL_MATCH, false, matches, sqlError) )
+                    {
+                        stats.errorQSLs.append(formatDXCCCreditReport(credit, {sqlError}));
+                        continue;
+                    }
+                }
+            }
+        }
+
+        if ( matches.isEmpty() && !credit.dxcc.isEmpty() && canUseDXCCOnlyMatch )
+        {
+            if ( !selectDXCCCreditMatches(credit, NO_CALL_MATCH, hasMode, matches, sqlError) )
+            {
+                stats.errorQSLs.append(formatDXCCCreditReport(credit, {sqlError}));
+                continue;
+            }
+
+            if ( matches.isEmpty() && hasMode )
+            {
+                if ( !selectDXCCCreditMatches(credit, NO_CALL_MATCH, false, matches, sqlError) )
+                {
+                    stats.errorQSLs.append(formatDXCCCreditReport(credit, {sqlError}));
+                    continue;
+                }
+            }
+        }
+
+        if ( matches.size() != 1 )
+        {
+            const QString detail = matches.isEmpty() ? tr("no matching QSO")
+                                                     : tr("ambiguous match: %1 QSOs").arg(matches.size());
+            stats.unmatchedQSLs.append(formatDXCCCreditReport(credit, {detail}));
+            continue;
+        }
+
+        const DXCCCreditMatch &match = matches.first();
+        const QString mergedCredits = mergeCreditValues(match.creditGranted, credit.creditGranted);
+        const QString normalizedCurrentCredits = splitCreditValues(match.creditGranted).join(',');
+
+        if ( mergedCredits == normalizedCurrentCredits )
+            continue;
+
+        QSqlQuery updateQuery;
+        if ( !updateQuery.prepare("UPDATE contacts SET credit_granted = :credit_granted WHERE id = :id") )
+        {
+            stats.errorQSLs.append(formatDXCCCreditReport(credit, {updateQuery.lastError().text()}));
+            continue;
+        }
+
+        updateQuery.bindValue(":credit_granted", mergedCredits);
+        updateQuery.bindValue(":id", match.id);
+
+        if ( !updateQuery.exec() )
+        {
+            stats.errorQSLs.append(formatDXCCCreditReport(credit, {updateQuery.lastError().text()}));
+            continue;
+        }
+
+        stats.updatedQSOs.append(formatDXCCCreditReport(credit,
+                                                        {tr("credit_granted:") + " " + credit.creditGranted}));
+    }
+
+    emit importPosition(stream.pos());
+
+    this->importEnd();
+
+    emit QSLMergeFinished(stats);
+}
+
 void LogFormat::runQSLImport(QSLFrom fromService)
 {
     FCT_IDENTIFICATION;

@@ -127,6 +127,8 @@
     </property>
     <addaction name="actionServiceUpload"/>
     <addaction name="actionServiceDownload"/>
+    <addaction name="separator"/>
+    <addaction name="actionServiceDownloadLotwDXCCCredits"/>
    </widget>
    <widget class="QMenu" name="menuContest">
     <property name="title">
@@ -1074,6 +1076,17 @@
     <bool>true</bool>
    </property>
   </action>
+  <action name="actionServiceDownloadLotwDXCCCredits">
+   <property name="text">
+    <string>Download LoTW DXCC Credits</string>
+   </property>
+   <property name="toolTip">
+    <string>Service - Download LoTW DXCC Credits</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
   <action name="actionThemeNative">
    <property name="checkable">
     <bool>true</bool>
@@ -1903,6 +1916,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionServiceDownloadLotwDXCCCredits</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showServiceDownloadLotwDXCCCredits()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>actionWhatsNew</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -2011,6 +2040,7 @@
   <slot>setEquipmentKeepOptions(bool)</slot>
   <slot>stopContest()</slot>
   <slot>showServiceDownloadQSL()</slot>
+  <slot>showServiceDownloadLotwDXCCCredits()</slot>
   <slot>showServiceUpload()</slot>
   <slot>showWhatsNew()</slot>
   <slot>showDumpDB()</slot>
