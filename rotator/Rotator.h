@@ -42,6 +42,7 @@ public slots:
     void start();
     void open();
     void close();
+    void shutdown();
     void stopTimer();
 
     void sendState();
@@ -50,6 +51,7 @@ public slots:
 private slots:
     void setPositionImpl(double azimuth, double elevation);
     void stopTimerImplt();
+    void shutdownImpl();
     void openImpl();
     void closeImpl();
     void sendStateImpl();
@@ -96,6 +98,7 @@ private:
     bool connected;
     double cacheAzimuth;
     double cacheElevation;
+    static const int SHUTDOWN_TIMEOUT_MS = 5000;
 };
 
 #endif // QLOG_ROTATOR_ROTATOR_H

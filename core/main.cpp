@@ -32,6 +32,9 @@ MODULE_IDENTIFICATION("qlog.core.main");
 static QMutex debug_mutex;
 static QFile debugLogFile;
 static QTextStream debugLogStream;
+static QThread *rigThreadHandle = nullptr;
+static QThread *rotThreadHandle = nullptr;
+static QThread *cwKeyerThreadHandle = nullptr;
 
 QTemporaryDir tempDir
 #ifdef QLOG_FLATPAK
@@ -156,32 +159,50 @@ static void createDataDirectory() {
 static void startRigThread() {
     FCT_IDENTIFICATION;
 
-    QThread* rigThread = new QThread;
+    rigThreadHandle = new QThread;
     Rig* rig = Rig::instance();
-    rig->moveToThread(rigThread);
-    QObject::connect(rigThread, SIGNAL(started()), rig, SLOT(start()));
-    rigThread->start();
+    rig->moveToThread(rigThreadHandle);
+    QObject::connect(rigThreadHandle, SIGNAL(started()), rig, SLOT(start()));
+    rigThreadHandle->start();
 }
 
 static void startRotThread() {
     FCT_IDENTIFICATION;
 
-    QThread* rotThread = new QThread;
+    rotThreadHandle = new QThread;
     Rotator* rot = Rotator::instance();
-    rot->moveToThread(rotThread);
-    QObject::connect(rotThread, SIGNAL(started()), rot, SLOT(start()));
-    rotThread->start();
+    rot->moveToThread(rotThreadHandle);
+    QObject::connect(rotThreadHandle, SIGNAL(started()), rot, SLOT(start()));
+    rotThreadHandle->start();
 }
 
 static void startCWKeyerThread()
 {
     FCT_IDENTIFICATION;
 
-    QThread* cwKeyerThread = new QThread;
+    cwKeyerThreadHandle = new QThread;
     CWKeyer* cwKeyer = CWKeyer::instance();
-    cwKeyer->moveToThread(cwKeyerThread);
-    QObject::connect(cwKeyerThread, SIGNAL(started()), cwKeyer, SLOT(start()));
-    cwKeyerThread->start();
+    cwKeyer->moveToThread(cwKeyerThreadHandle);
+    QObject::connect(cwKeyerThreadHandle, SIGNAL(started()), cwKeyer, SLOT(start()));
+    cwKeyerThreadHandle->start();
+}
+
+static void stopWorkerThread(QThread *&threadHandle, const QString &threadName)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !threadHandle )
+        return;
+
+    threadHandle->quit();
+    if ( !threadHandle->wait(5000) )
+    {
+        qCWarning(runtime) << threadName << "thread did not stop within timeout";
+        return;
+    }
+
+    delete threadHandle;
+    threadHandle = nullptr;
 }
 
 void closeDebugLogFile()
@@ -481,19 +502,29 @@ int main(int argc, char* argv[])
     startRotThread();
     startCWKeyerThread();
 
-    MainWindow w;
-    QIcon icon(":/res/qlog.png");
+    int rc = 0;
 
-    w.setWindowIcon(icon);
+    {
+        MainWindow w;
+        QIcon icon(":/res/qlog.png");
 
-    splash.finish(&w);
-    w.show();
+        w.setWindowIcon(icon);
 
-    w.setLayoutGeometry();
+        splash.finish(&w);
+        w.show();
 
-    // check version only for Windows and MacOS. Linux has own distribution points
+        w.setLayoutGeometry();
+
+        // check version only for Windows and MacOS. Linux has own distribution points
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
-    w.checkNewVersion();
+        w.checkNewVersion();
 #endif
-    return app.exec();
+        rc = app.exec();
+    }
+
+    stopWorkerThread(cwKeyerThreadHandle, "CWKeyer");
+    stopWorkerThread(rotThreadHandle, "Rotator");
+    stopWorkerThread(rigThreadHandle, "Rig");
+
+    return rc;
 }

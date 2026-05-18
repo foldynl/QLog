@@ -2090,14 +2090,15 @@ MainWindow::~MainWindow()
 
     //saveEquipmentConnOptions();
 
-    Rig::instance()->close();
-    Rotator::instance()->close();
-    CWKeyer::instance()->close();
-    QThread::msleep(500);
+    // These singletons live on worker threads. Disconnect them before shutdown
+    // so queued signals cannot land on widgets that are about to be deleted.
+    QObject::disconnect(CWKeyer::instance(), nullptr, nullptr, nullptr);
+    QObject::disconnect(Rotator::instance(), nullptr, nullptr, nullptr);
+    QObject::disconnect(Rig::instance(), nullptr, nullptr, nullptr);
 
-    Rig::instance()->stopTimer();
-    Rotator::instance()->stopTimer();
-    CWKeyer::instance()->stopTimer();
+    CWKeyer::instance()->shutdown();
+    Rotator::instance()->shutdown();
+    Rig::instance()->shutdown();
 
     conditions->deleteLater();
     conditionsLabel->deleteLater();

@@ -32,6 +32,7 @@ public slots:
     void update();
     void open();
     void close();
+    void shutdown();
     bool canStopSending();
     bool canEchoChar();
     bool rigMustConnected();
@@ -48,6 +49,7 @@ private slots:
     void sendTextImpl(const QString&);
     void immediatelyStopImpl();
     void stopTimerImplt();
+    void shutdownImpl();
     void keyErrorHandler(const QString&, const QString&);
     void cwKeyWPMChangedHandler(qint32);
     void cwKeyEchoTextHandler(const QString&);
@@ -67,6 +69,7 @@ private:
     CWKeyProfile connectedCWKeyProfile;
     QMutex cwKeyLock;
     QTimer* timer;
+    static const int SHUTDOWN_TIMEOUT_MS = 5000;
 };
 
 #endif // QLOG_CWKEY_CWKEYER_H

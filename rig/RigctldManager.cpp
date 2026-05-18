@@ -20,7 +20,15 @@ RigctldManager::RigctldManager(QObject *parent)
 RigctldManager::~RigctldManager()
 {
     FCT_IDENTIFICATION;
-    stop();
+
+    if ( thread() == QThread::currentThread() )
+    {
+        stop();
+    }
+    else if ( rigctldProcess )
+    {
+        qCWarning(runtime) << "Skipping rigctld shutdown from non-owner thread";
+    }
 }
 
 bool RigctldManager::start(const RigProfile &profile)
@@ -134,28 +142,30 @@ void RigctldManager::stop()
 {
     FCT_IDENTIFICATION;
 
-    if ( !rigctldProcess ) return;
+    if ( !rigctldProcess || stoppingInProgress ) return;
 
     stoppingInProgress = true;
 
-    if ( rigctldProcess->state() != QProcess::NotRunning )
+    QProcess *process = rigctldProcess;
+    rigctldProcess = nullptr;
+
+    // During a normal stop, stop receiving this process's signals here. Leave
+    // any other QProcess connections alone.
+    disconnect(process, nullptr, this, nullptr);
+
+    if ( process->state() != QProcess::NotRunning )
     {
         qCDebug(runtime) << "Stopping rigctld";
-
-        // Disconnect signals to prevent error notifications during controlled shutdown
-        rigctldProcess->disconnect();
-
-        rigctldProcess->terminate();
-        if ( !rigctldProcess->waitForFinished(3000) )
+        process->terminate();
+        if ( !process->waitForFinished(3000) )
         {
             qCWarning(runtime) << "rigctld did not terminate gracefully, killing";
-            rigctldProcess->kill();
-            rigctldProcess->waitForFinished(1000);
+            process->kill();
+            process->waitForFinished(1000);
         }
     }
 
-    delete rigctldProcess;
-    rigctldProcess = nullptr;
+    delete process;
     stoppingInProgress = false;
 
     emit stopped();

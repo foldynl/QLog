@@ -2,6 +2,10 @@
 #include "core/debug.h"
 #include "rotator/drivers/HamlibRotDrv.h"
 #include "rotator/drivers/PSTRotDrv.h"
+#include <QAtomicInt>
+#include <QSemaphore>
+#include <QSharedPointer>
+#include <QThread>
 
 MODULE_IDENTIFICATION("qlog.rotator.rotator");
 
@@ -35,7 +39,17 @@ Rotator::~Rotator()
 {
     FCT_IDENTIFICATION;
 
+    if ( !rotDriver )
+        return;
+
+    if ( QThread::currentThread() != thread() )
+    {
+        qCWarning(runtime) << "Skipping Rotator shutdown from non-owner thread";
+        return;
+    }
+
     __closeRot();
+    stopTimerImplt();
 }
 
 double Rotator::getAzimuth()
@@ -112,6 +126,53 @@ void Rotator::stopTimer()
                                            &Rotator::stopTimerImplt,
                                            Qt::QueuedConnection);
     Q_ASSERT( check );
+}
+
+void Rotator::shutdown()
+{
+    FCT_IDENTIFICATION;
+
+    if ( QThread::currentThread() == thread() )
+    {
+        shutdownImpl();
+        return;
+    }
+
+    if ( !thread() || !thread()->isRunning() )
+    {
+        qCWarning(runtime) << "Cannot shut down Rotator because owner thread is not running";
+        return;
+    }
+
+    QSharedPointer<QSemaphore> shutdownDone = QSharedPointer<QSemaphore>::create();
+    QSharedPointer<QAtomicInt> shutdownCanceled = QSharedPointer<QAtomicInt>::create(0);
+    bool check = QMetaObject::invokeMethod(this, [this, shutdownDone, shutdownCanceled]()
+    {
+        if ( !shutdownCanceled->loadAcquire() )
+        {
+            shutdownImpl();
+        }
+        shutdownDone->release();
+    }, Qt::QueuedConnection);
+    if ( !check )
+    {
+        qCWarning(runtime) << "Failed to queue Rotator shutdown";
+        return;
+    }
+
+    if ( !shutdownDone->tryAcquire(1, SHUTDOWN_TIMEOUT_MS) )
+    {
+        shutdownCanceled->storeRelease(1);
+        qCWarning(runtime) << "Rotator shutdown timed out";
+    }
+}
+
+void Rotator::shutdownImpl()
+{
+    FCT_IDENTIFICATION;
+
+    closeImpl();
+    stopTimerImplt();
 }
 
 void Rotator::stopTimerImplt()
