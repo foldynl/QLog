@@ -2,6 +2,9 @@
 #include "RigctldManager.h"
 #include "core/debug.h"
 
+#include <QAtomicInt>
+#include <QSemaphore>
+#include <QSharedPointer>
 #include <QThread>
 
 #include "rig/drivers/HamlibRigDrv.h"
@@ -158,23 +161,45 @@ void Rig::shutdown()
 
     if ( QThread::currentThread() == thread() )
     {
-        closeImpl();
-        stopTimerImplt();
+        shutdownImpl();
         return;
     }
 
     if ( !thread() || !thread()->isRunning() )
     {
-        qCWarning(runtime) << "Cannot synchronously shut down Rig because owner thread is not running";
+        qCWarning(runtime) << "Cannot shut down Rig because owner thread is not running";
         return;
     }
 
-    bool check = QMetaObject::invokeMethod(this, [this]()
+    QSharedPointer<QSemaphore> shutdownDone = QSharedPointer<QSemaphore>::create();
+    QSharedPointer<QAtomicInt> shutdownCanceled = QSharedPointer<QAtomicInt>::create(0);
+    bool check = QMetaObject::invokeMethod(this, [this, shutdownDone, shutdownCanceled]()
     {
-        closeImpl();
-        stopTimerImplt();
-    }, Qt::BlockingQueuedConnection);
-    Q_ASSERT( check );
+        if ( !shutdownCanceled->loadAcquire() )
+        {
+            shutdownImpl();
+        }
+        shutdownDone->release();
+    }, Qt::QueuedConnection);
+    if ( !check )
+    {
+        qCWarning(runtime) << "Failed to queue Rig shutdown";
+        return;
+    }
+
+    if ( !shutdownDone->tryAcquire(1, SHUTDOWN_TIMEOUT_MS) )
+    {
+        shutdownCanceled->storeRelease(1);
+        qCWarning(runtime) << "Rig shutdown timed out";
+    }
+}
+
+void Rig::shutdownImpl()
+{
+    FCT_IDENTIFICATION;
+
+    closeImpl();
+    stopTimerImplt();
 }
 
 void Rig::stopTimerImplt()

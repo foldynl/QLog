@@ -7,6 +7,9 @@
 #include "cwkey/drivers/CWFldigiKey.h"
 #include "core/debug.h"
 #include "data/CWKeyProfile.h"
+#include <QAtomicInt>
+#include <QSemaphore>
+#include <QSharedPointer>
 #include <QThread>
 
 MODULE_IDENTIFICATION("qlog.cwkey.cwkeyer");
@@ -35,23 +38,45 @@ void CWKeyer::shutdown()
 
     if ( QThread::currentThread() == thread() )
     {
-        closeImpl();
-        stopTimerImplt();
+        shutdownImpl();
         return;
     }
 
     if ( !thread() || !thread()->isRunning() )
     {
-        qCWarning(runtime) << "Cannot synchronously shut down CWKeyer because owner thread is not running";
+        qCWarning(runtime) << "Cannot shut down CWKeyer because owner thread is not running";
         return;
     }
 
-    bool check = QMetaObject::invokeMethod(this, [this]()
+    QSharedPointer<QSemaphore> shutdownDone = QSharedPointer<QSemaphore>::create();
+    QSharedPointer<QAtomicInt> shutdownCanceled = QSharedPointer<QAtomicInt>::create(0);
+    bool check = QMetaObject::invokeMethod(this, [this, shutdownDone, shutdownCanceled]()
     {
-        closeImpl();
-        stopTimerImplt();
-    }, Qt::BlockingQueuedConnection);
-    Q_ASSERT( check );
+        if ( !shutdownCanceled->loadAcquire() )
+        {
+            shutdownImpl();
+        }
+        shutdownDone->release();
+    }, Qt::QueuedConnection);
+    if ( !check )
+    {
+        qCWarning(runtime) << "Failed to queue CWKeyer shutdown";
+        return;
+    }
+
+    if ( !shutdownDone->tryAcquire(1, SHUTDOWN_TIMEOUT_MS) )
+    {
+        shutdownCanceled->storeRelease(1);
+        qCWarning(runtime) << "CWKeyer shutdown timed out";
+    }
+}
+
+void CWKeyer::shutdownImpl()
+{
+    FCT_IDENTIFICATION;
+
+    closeImpl();
+    stopTimerImplt();
 }
 
 void CWKeyer::update()
@@ -100,9 +125,8 @@ void CWKeyer::openImpl()
 {
     FCT_IDENTIFICATION;
 
-    cwKeyLock.lock();
+    QMutexLocker locker(&cwKeyLock);
     __openCWKey();
-    cwKeyLock.unlock();
 }
 
 void CWKeyer::__openCWKey()
@@ -287,10 +311,9 @@ void CWKeyer::closeImpl()
     FCT_IDENTIFICATION;
 
     qCDebug(runtime) << "Waiting for cwkey mutex";
-    cwKeyLock.lock();
+    QMutexLocker locker(&cwKeyLock);
     qCDebug(runtime) << "Using Key";
     __closeCWKey();
-    cwKeyLock.unlock();
 }
 
 void CWKeyer::__closeCWKey()

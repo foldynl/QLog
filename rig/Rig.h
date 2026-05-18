@@ -127,6 +127,7 @@ signals:
 
 private slots:
     void stopTimerImplt();
+    void shutdownImpl();
     void openImpl();
     void closeImpl();
 
@@ -186,6 +187,7 @@ private:
     QTimer *heartBeatTimer;
     const quint16 HEARTBEATPERIOD = 1000; // in ms
     RigctldManager *rigctldManager = nullptr;
+    static const int SHUTDOWN_TIMEOUT_MS = 5000;
 };
 
 Q_DECLARE_METATYPE(Rig::Status);
