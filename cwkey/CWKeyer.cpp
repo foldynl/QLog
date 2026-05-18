@@ -7,6 +7,8 @@
 #include "cwkey/drivers/CWFldigiKey.h"
 #include "core/debug.h"
 #include "data/CWKeyProfile.h"
+#include <QSemaphore>
+#include <QSharedPointer>
 #include <QThread>
 
 MODULE_IDENTIFICATION("qlog.cwkey.cwkeyer");
@@ -35,23 +37,34 @@ void CWKeyer::shutdown()
 
     if ( QThread::currentThread() == thread() )
     {
-        closeImpl();
-        stopTimerImplt();
+        shutdownImpl();
         return;
     }
 
     if ( !thread() || !thread()->isRunning() )
     {
-        qCWarning(runtime) << "Cannot synchronously shut down CWKeyer because owner thread is not running";
+        qCWarning(runtime) << "Cannot shut down CWKeyer because owner thread is not running";
         return;
     }
 
-    bool check = QMetaObject::invokeMethod(this, [this]()
+    QSharedPointer<QSemaphore> shutdownDone = QSharedPointer<QSemaphore>::create();
+    bool check = QMetaObject::invokeMethod(this, [this, shutdownDone]()
     {
-        closeImpl();
-        stopTimerImplt();
-    }, Qt::BlockingQueuedConnection);
-    Q_ASSERT( check );
+        shutdownImpl();
+        shutdownDone->release();
+    }, Qt::QueuedConnection);
+
+    if ( !check )
+    {
+        qCWarning(runtime) << "Cannot queue CWKeyer shutdown";
+        return;
+    }
+
+    if ( !shutdownDone->tryAcquire(1, SHUTDOWN_TIMEOUT_MS) )
+    {
+        qCWarning(runtime) << "CWKeyer shutdown did not finish within"
+                           << SHUTDOWN_TIMEOUT_MS << "ms";
+    }
 }
 
 void CWKeyer::update()
@@ -287,13 +300,23 @@ void CWKeyer::closeImpl()
     FCT_IDENTIFICATION;
 
     qCDebug(runtime) << "Waiting for cwkey mutex";
-    cwKeyLock.lock();
+    QMutexLocker locker(&cwKeyLock);
     qCDebug(runtime) << "Using Key";
     __closeCWKey();
-    cwKeyLock.unlock();
 }
 
-void CWKeyer::__closeCWKey()
+void CWKeyer::shutdownImpl()
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(runtime) << "Waiting for cwkey mutex";
+    QMutexLocker locker(&cwKeyLock);
+    qCDebug(runtime) << "Using Key";
+    __closeCWKey(DeleteNow);
+    stopTimerImplt();
+}
+
+void CWKeyer::__closeCWKey(CloseMode closeMode)
 {
     FCT_IDENTIFICATION;
 
@@ -302,7 +325,10 @@ void CWKeyer::__closeCWKey()
     if ( cwKey )
     {
         cwKey->close();
-        delete cwKey;
+        if ( closeMode == DeleteNow )
+            delete cwKey;
+        else
+            cwKey->deleteLater();
         cwKey = nullptr;
     }
 
@@ -454,6 +480,5 @@ CWKeyer::~CWKeyer()
         return;
     }
 
-    __closeCWKey();
-    stopTimerImplt();
+    shutdownImpl();
 }

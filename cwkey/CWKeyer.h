@@ -45,6 +45,7 @@ public slots:
 private slots:
     void openImpl();
     void closeImpl();
+    void shutdownImpl();
     void setSpeedImpl(const qint16 wpm);
     void sendTextImpl(const QString&);
     void immediatelyStopImpl();
@@ -58,10 +59,18 @@ private slots:
     void cwKeyHWButton4PressedHandler();
 
 private:
+    static const int SHUTDOWN_TIMEOUT_MS = 5000;
+
     explicit CWKeyer(QObject *parent = nullptr);
     ~CWKeyer();
 
-    void __closeCWKey();
+    enum CloseMode
+    {
+        DeferredDelete,
+        DeleteNow
+    };
+
+    void __closeCWKey(CloseMode closeMode = DeferredDelete);
     void __openCWKey();
 
     CWKey *cwKey;

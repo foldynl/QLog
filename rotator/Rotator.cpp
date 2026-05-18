@@ -2,6 +2,8 @@
 #include "core/debug.h"
 #include "rotator/drivers/HamlibRotDrv.h"
 #include "rotator/drivers/PSTRotDrv.h"
+#include <QSemaphore>
+#include <QSharedPointer>
 #include <QThread>
 
 MODULE_IDENTIFICATION("qlog.rotator.rotator");
@@ -131,23 +133,34 @@ void Rotator::shutdown()
 
     if ( QThread::currentThread() == thread() )
     {
-        closeImpl();
-        stopTimerImplt();
+        shutdownImpl();
         return;
     }
 
     if ( !thread() || !thread()->isRunning() )
     {
-        qCWarning(runtime) << "Cannot synchronously shut down Rotator because owner thread is not running";
+        qCWarning(runtime) << "Cannot shut down Rotator because owner thread is not running";
         return;
     }
 
-    bool check = QMetaObject::invokeMethod(this, [this]()
+    QSharedPointer<QSemaphore> shutdownDone = QSharedPointer<QSemaphore>::create();
+    bool check = QMetaObject::invokeMethod(this, [this, shutdownDone]()
     {
-        closeImpl();
-        stopTimerImplt();
-    }, Qt::BlockingQueuedConnection);
-    Q_ASSERT( check );
+        shutdownImpl();
+        shutdownDone->release();
+    }, Qt::QueuedConnection);
+
+    if ( !check )
+    {
+        qCWarning(runtime) << "Cannot queue Rotator shutdown";
+        return;
+    }
+
+    if ( !shutdownDone->tryAcquire(1, SHUTDOWN_TIMEOUT_MS) )
+    {
+        qCWarning(runtime) << "Rotator shutdown did not finish within"
+                           << SHUTDOWN_TIMEOUT_MS << "ms";
+    }
 }
 
 void Rotator::stopTimerImplt()
@@ -293,6 +306,14 @@ void Rotator::closeImpl()
 
     MUTEXLOCKER;
     __closeRot();
+}
+
+void Rotator::shutdownImpl()
+{
+    FCT_IDENTIFICATION;
+
+    closeImpl();
+    stopTimerImplt();
 }
 
 void Rotator::__closeRot()
