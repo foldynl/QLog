@@ -18,6 +18,7 @@ env:
   # this can be removed after Node.js 24 becomes the default runner behavior.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   QT_VERSION: '6.10.2'
+  AQTINSTALL_VERSION: '3.3.0'
   VCPKG_TRIPLET: x64-windows
   HAMLIB_VERSION: '4.7.0'
   QTKEYCHAIN_VERSION: '0.14.3'
@@ -38,7 +39,6 @@ env:
   QTKEYCHAIN_REPO: 'https://github.com/frankosterfeld/qtkeychain.git'
   ZLIB_REPO: 'https://github.com/madler/zlib.git'
 
-  VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\vcpkg-binary-cache
   QTKEYCHAIN_DIR: ${{ github.workspace }}\qtkeychain-install
   ZLIB_DIR: ${{ github.workspace }}\zlib-install
 
@@ -53,24 +53,139 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up MSVC environment (x64)
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
+        shell: pwsh
+        run: |
+          # Use Visual Studio's own developer-environment setup instead of a
+          # third-party wrapper action. This keeps the toolchain source on the
+          # GitHub-hosted runner image while still making cl/link/lib available
+          # to later qmake, CMake, jom, and import-library steps.
+          $vsDevCmd = "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
+          if (-not (Test-Path $vsDevCmd)) {
+            throw "VsDevCmd.bat not found at $vsDevCmd"
+          }
 
-      # source: true is required because QLog.pro compiles sqlite3.c from Qt sources on win32.
+          # Call VsDevCmd in cmd.exe, then print the resulting environment. The
+          # environment changes would normally die with that cmd.exe process, so
+          # the following loop writes the changed variables into GitHub Actions'
+          # cross-step environment files.
+          $dumpEnvCmd = Join-Path $env:RUNNER_TEMP "dump-vs-env.cmd"
+          @"
+          @echo off
+          call "$vsDevCmd" -arch=x64 -host_arch=x64 >nul
+          if errorlevel 1 exit /b %errorlevel%
+          set
+          "@ | Set-Content -Path $dumpEnvCmd -Encoding ascii
+
+          $afterLines = & cmd.exe /d /c "`"$dumpEnvCmd`""
+          if ($LASTEXITCODE -ne 0) {
+            throw "VsDevCmd.bat failed"
+          }
+
+          # Persist only the Visual C++ and Windows SDK variables needed by the
+          # command-line toolchain. This is intentionally narrower than copying
+          # every changed variable from VsDevCmd: it is easier to audit and avoids
+          # leaking unrelated runner/session state into later workflow steps.
+          # .NET Framework variables are omitted because this qmake/jom build uses
+          # native MSVC tools, headers, libraries, and SDK paths only.
+          $varsToPersist = @(
+            "DevEnvDir",
+            "ExtensionSdkDir",
+            "INCLUDE",
+            "LIB",
+            "LIBPATH",
+            "Path",
+            "UCRTVersion",
+            "UniversalCRTSdkDir",
+            "VCIDEInstallDir",
+            "VCINSTALLDIR",
+            "VCToolsInstallDir",
+            "VCToolsRedistDir",
+            "VCToolsVersion",
+            "VisualStudioVersion",
+            "VSINSTALLDIR",
+            "WindowsLibPath",
+            "WindowsSdkBinPath",
+            "WindowsSdkDir",
+            "WindowsSDKLibVersion",
+            "WindowsSdkVerBinPath",
+            "WindowsSDKVersion"
+          )
+
+          foreach ($line in $afterLines) {
+            $name, $value = $line -split "=", 2
+            if (-not $name -or $null -eq $value) { continue }
+
+            $upper = $name.ToUpperInvariant()
+            if (($varsToPersist | ForEach-Object { $_.ToUpperInvariant() }) -notcontains $upper) { continue }
+
+            if ($upper -eq "PATH") {
+              # Persist the complete VsDevCmd PATH order. Using GITHUB_PATH alone
+              # can leave Git/MSYS link.exe ahead of MSVC link.exe in later steps.
+              "Path=$value" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+            } else {
+              "$name=$value" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+            }
+          }
+
+          # Fast sanity check in the current step. Later steps rely on the values
+          # written above to GITHUB_ENV/GITHUB_PATH.
+          $checkCmd = Join-Path $env:RUNNER_TEMP "check-vs-env.cmd"
+          @"
+          @echo off
+          call "$vsDevCmd" -arch=x64 -host_arch=x64 >nul
+          if errorlevel 1 exit /b %errorlevel%
+          where cl
+          where link
+          cl
+          "@ | Set-Content -Path $checkCmd -Encoding ascii
+          & cmd.exe /d /c "`"$checkCmd`""
+
+      # Qt sources are required because QLog.pro compiles sqlite3.c from Qt sources on win32.
       - name: Install Qt ${{ env.QT_VERSION }}
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: ${{ env.QT_VERSION }}
-          host: windows
-          target: desktop
-          arch: win64_msvc2022_64
-          source: true
-          modules: >-
-            qtwebengine qtwebchannel qtwebsockets qtcharts qtserialport
-            qtpositioning qtimageformats
-          tools: 'tools_ifw'
-          cache: true
+        shell: pwsh
+        run: |
+          $qtDir = "${{ github.workspace }}\Qt"
+
+          python -m pip install --upgrade pip
+          python -m pip install "aqtinstall==$env:AQTINSTALL_VERSION"
+
+          python -m aqt install-qt `
+            --outputdir $qtDir `
+            windows desktop "${{ env.QT_VERSION }}" win64_msvc2022_64 `
+            -m qtwebengine qtwebchannel qtwebsockets qtcharts qtserialport qtpositioning qtimageformats
+
+          python -m aqt install-src `
+            --outputdir $qtDir `
+            windows "${{ env.QT_VERSION }}"
+
+          python -m aqt install-tool `
+            --outputdir $qtDir `
+            windows desktop tools_ifw
+
+          $qtRoot = Join-Path $qtDir "${{ env.QT_VERSION }}\msvc2022_64"
+          $binaryCreator = Get-ChildItem -Path (Join-Path $qtDir "Tools") -Filter "binarycreator.exe" -Recurse -File -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          $ifwBin = if ($binaryCreator) { $binaryCreator.Directory } else { $null }
+
+          if (-not (Test-Path (Join-Path $qtRoot "bin\qmake.exe"))) {
+            throw "qmake.exe not found under $qtRoot"
+          }
+          if (-not $ifwBin -or -not (Test-Path (Join-Path $ifwBin.FullName "binarycreator.exe"))) {
+            throw "binarycreator.exe not found under $qtDir\Tools"
+          }
+
+          @(
+            (Join-Path $qtRoot "bin")
+            $ifwBin.FullName
+          ) | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+
+          @(
+            "QT_ROOT_DIR=$qtRoot",
+            "QT_PLUGIN_PATH=$(Join-Path $qtRoot 'plugins')",
+            "QML2_IMPORT_PATH=$(Join-Path $qtRoot 'qml')",
+            "QML_IMPORT_PATH=$(Join-Path $qtRoot 'qml')",
+            "IQTA_TOOLS=$($ifwBin.FullName)"
+          ) | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
 
       - name: Install jom
         shell: pwsh
@@ -86,32 +201,14 @@ jobs:
           Expand-Archive -Path "$jomDir\jom.zip" -DestinationPath $jomDir -Force
           "$jomDir" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
 
-      - name: Prepare vcpkg binary cache directory
-        shell: pwsh
-        run: New-Item -ItemType Directory -Path "${{ env.VCPKG_DEFAULT_BINARY_CACHE }}" -Force | Out-Null
-
-      - name: Restore vcpkg binary packages
-        id: vcpkg-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-          key: vcpkg-binary-${{ env.VCPKG_TRIPLET }}-pthreads-openssl-v1
-
       - name: Install vcpkg dependencies (pthreads + openssl)
         shell: cmd
         env:
           VCPKG_ROOT: C:\vcpkg
         run: |
-          vcpkg install ^
+          C:\vcpkg\vcpkg.exe --vcpkg-root C:\vcpkg install ^
             pthreads:%VCPKG_TRIPLET% ^
             openssl:%VCPKG_TRIPLET%
-
-      - name: Save vcpkg binary packages
-        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-          key: ${{ steps.vcpkg-cache.outputs.cache-primary-key }}
 
       - name: Set vcpkg dependency paths
         shell: pwsh
@@ -138,15 +235,7 @@ jobs:
 
       # zlib is small and deterministic to build from source; avoid relying on a
       # mutable runner package or vcpkg port layout for the Windows DLL/import lib.
-      - name: Restore zlib install
-        id: zlib-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.ZLIB_DIR }}
-          key: zlib-${{ runner.os }}-${{ env.ZLIB_VERSION }}-v1
-
       - name: Build zlib ${{ env.ZLIB_VERSION }} from source
-        if: steps.zlib-cache.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           $src = "${{ github.workspace }}\zlib-src"
@@ -165,13 +254,6 @@ jobs:
             }
           }
 
-      - name: Save zlib install
-        if: steps.zlib-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.ZLIB_DIR }}
-          key: ${{ steps.zlib-cache.outputs.cache-primary-key }}
-
       - name: Verify zlib install
         shell: pwsh
         run: |
@@ -184,15 +266,7 @@ jobs:
       # QLog links QtKeychain. Build the canonical upstream QtKeychain source
       # against the Qt installed above instead of using vcpkg, whose qtkeychain
       # port can rebuild Qt as a dependency.
-      - name: Restore qtkeychain install
-        id: qtkeychain-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.QTKEYCHAIN_DIR }}
-          key: qtkeychain-${{ runner.os }}-qt-${{ env.QT_VERSION }}-qtkeychain-${{ env.QTKEYCHAIN_VERSION }}-v1
-
       - name: Build qtkeychain ${{ env.QTKEYCHAIN_VERSION }} from source
-        if: steps.qtkeychain-cache.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           $src = "${{ github.workspace }}\qtkeychain-src"
@@ -216,13 +290,6 @@ jobs:
               throw "qtkeychain install missing expected file: $f"
             }
           }
-
-      - name: Save qtkeychain install
-        if: steps.qtkeychain-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.QTKEYCHAIN_DIR }}
-          key: ${{ steps.qtkeychain-cache.outputs.cache-primary-key }}
 
       - name: Verify qtkeychain install
         shell: pwsh
@@ -416,13 +483,27 @@ jobs:
             --skip-plugin-types qmltooling,position,qml,qsqlpsql,qsqlodbc,qsqlmimer `
             "$stage\qlog.exe"
 
-      - name: Upload Windows runtime artifact
-        uses: actions/upload-artifact@v5
-        with:
-          name: QLog-Windows-x64
-          path: stage
-          if-no-files-found: error
-          retention-days: 30
+      - name: Scan staged runtime with Microsoft Defender
+        shell: pwsh
+        run: |
+          $scanPath = "${{ github.workspace }}\stage"
+          if (-not (Get-Command Start-MpScan -ErrorAction SilentlyContinue)) {
+            throw "Microsoft Defender PowerShell cmdlets are not available"
+          }
+
+          try {
+            Update-MpSignature -ErrorAction Stop
+          } catch {
+            Write-Warning "Could not update Microsoft Defender signatures: $($_.Exception.Message)"
+          }
+
+          Start-MpScan -ScanType CustomScan -ScanPath $scanPath
+          $detections = @(Get-MpThreatDetection -ErrorAction SilentlyContinue)
+          if ($detections.Count -gt 0) {
+            $detections | Format-List | Out-String | Write-Host
+            throw "Microsoft Defender reported threat detections after scanning staged runtime"
+          }
+          Write-Host "Microsoft Defender completed staged runtime scan with no threat detections."
 
       - name: Build QtIFW installer
         shell: pwsh
@@ -440,10 +521,64 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "binarycreator failed" }
           if (-not (Test-Path "${{ github.workspace }}\qlog-installer.exe")) { throw "qlog-installer.exe not produced" }
 
+      - name: Scan installer with Microsoft Defender
+        shell: pwsh
+        run: |
+          $scanPath = "${{ github.workspace }}\qlog-installer.exe"
+          if (-not (Get-Command Start-MpScan -ErrorAction SilentlyContinue)) {
+            throw "Microsoft Defender PowerShell cmdlets are not available"
+          }
+
+          Start-MpScan -ScanType CustomScan -ScanPath $scanPath
+          $detections = @(Get-MpThreatDetection -ErrorAction SilentlyContinue)
+          if ($detections.Count -gt 0) {
+            $detections | Format-List | Out-String | Write-Host
+            throw "Microsoft Defender reported threat detections after scanning installer"
+          }
+          Write-Host "Microsoft Defender completed installer scan with no threat detections."
+
+      - name: Generate installer SHA256 manifest
+        shell: pwsh
+        run: |
+          $installer = "${{ github.workspace }}\qlog-installer.exe"
+          $manifest = "${{ github.workspace }}\qlog-installer.exe.sha256"
+          if (-not (Test-Path $installer)) { throw "qlog-installer.exe not found" }
+          $hash = (Get-FileHash -Path $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  qlog-installer.exe" | Set-Content -Path $manifest -Encoding ascii
+          if (-not (Test-Path $manifest)) { throw "Installer SHA256 manifest was not generated" }
+
+      - name: Generate staged runtime SHA256 manifest
+        shell: pwsh
+        run: |
+          $stage = "${{ github.workspace }}\stage"
+          $manifest = Join-Path $stage "SHA256SUMS.txt"
+          if (Test-Path $manifest) { Remove-Item $manifest -Force }
+
+          $lines = Get-ChildItem -Path $stage -File -Recurse |
+            Sort-Object FullName |
+            ForEach-Object {
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+              $relative = $_.FullName.Substring($stage.Length).TrimStart('\\') -replace '\\', '/'
+              "$hash  $relative"
+            }
+
+          $lines | Set-Content -Path $manifest -Encoding ascii
+          if (-not (Test-Path $manifest)) { throw "SHA256 manifest was not generated" }
+
+      - name: Upload Windows runtime artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: QLog-Windows-x64
+          path: stage
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Upload Windows installer artifact
         uses: actions/upload-artifact@v5
         with:
           name: QLog-Windows-Installer
-          path: qlog-installer.exe
+          path: |
+            qlog-installer.exe
+            qlog-installer.exe.sha256
           if-no-files-found: error
           retention-days: 30
