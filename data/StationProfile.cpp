@@ -150,6 +150,22 @@ void StationProfilesManager::save()
     saveCurProfile1();
 }
 
+StationProfile StationProfilesManager::findByCallsign(const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << callsign;
+
+    const QStringList &names = profileNameList();
+    for ( const QString &name : names )
+    {
+        StationProfile profile = getProfile(name);
+        if ( profile.callsign.compare(callsign, Qt::CaseInsensitive) == 0 )
+            return profile;
+    }
+
+    return StationProfile();
+}
+
 bool StationProfile::operator==(const StationProfile &profile)
 {
     return (profile.profileName == this->profileName

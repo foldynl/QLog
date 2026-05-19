@@ -1,0 +1,2007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QSLPrintLabelDialog</class>
+ <widget class="QDialog" name="QSLPrintLabelDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1108</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Print QSL Labels</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="mainVerticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="contentLayout">
+     <item>
+      <widget class="QScrollArea" name="settingsScrollArea">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="settingsScrollWidget">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>393</width>
+          <height>1300</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="settingsScrollLayout">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QToolButton" name="filterSectionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Filter</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::DownArrow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="filterSectionContent">
+           <property name="title">
+            <string/>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <layout class="QFormLayout" name="formLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="dateRangeCheckBox">
+              <property name="text">
+               <string>Date Range</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <layout class="QHBoxLayout" name="dateRangeLayout">
+              <item>
+               <widget class="QDateEdit" name="startDateEdit">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDateEdit" name="endDateEdit">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="myCallsignCheckBox">
+              <property name="text">
+               <string>My Callsign</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="myCallsignComboBox">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="stationProfileCheckBox">
+              <property name="text">
+               <string>Station Profile</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QComboBox" name="stationProfileComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QCheckBox" name="qslSentCheckBox">
+              <property name="text">
+               <string>QSL Sent</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QComboBox" name="qslSentComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QCheckBox" name="userFilterCheckBox">
+              <property name="text">
+               <string>User Filter</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QComboBox" name="userFilterComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="templateSectionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Label Template</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::RightArrow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="templateSectionContent">
+           <property name="title">
+            <string/>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <layout class="QVBoxLayout" name="templateSectionLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item>
+             <widget class="QComboBox" name="templateComboBox"/>
+            </item>
+            <item>
+             <layout class="QFormLayout" name="templateDetailsLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="pageSizeLabel">
+                <property name="text">
+                 <string>Page Size:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="pageSizeComboBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="colsLabel">
+                <property name="text">
+                 <string>Columns:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="colsSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="rowsLabel">
+                <property name="text">
+                 <string>Rows:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QSpinBox" name="rowsSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>20</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelWidthLabel">
+                <property name="text">
+                 <string>Label Width:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="BaseDoubleSpinBox" name="labelWidthSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="suffix">
+                 <string notr="true"> mm</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>10.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>300.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="labelHeightLabel">
+                <property name="text">
+                 <string>Label Height:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="BaseDoubleSpinBox" name="labelHeightSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="suffix">
+                 <string notr="true"> mm</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>10.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>300.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="leftMarginLabel">
+                <property name="text">
+                 <string>Left Margin:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="BaseDoubleSpinBox" name="leftMarginSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="suffix">
+                 <string notr="true"> mm</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>100.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="topMarginLabel">
+                <property name="text">
+                 <string>Top Margin:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="BaseDoubleSpinBox" name="topMarginSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="suffix">
+                 <string notr="true"> mm</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>100.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="hSpacingLabel">
+                <property name="text">
+                 <string>H Spacing:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <widget class="BaseDoubleSpinBox" name="hSpacingSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="suffix">
+                 <string notr="true"> mm</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>50.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="vSpacingLabel">
+                <property name="text">
+                 <string>V Spacing:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="BaseDoubleSpinBox" name="vSpacingSpinBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="suffix">
+                 <string notr="true"> mm</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>50.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="printOptionsSectionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Label Appearance</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::RightArrow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="printOptionsSectionContent">
+           <property name="title">
+            <string/>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <layout class="QFormLayout" name="printOptionsLayout">
+            <property name="horizontalSpacing">
+             <number>6</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="printBordersCheckBox">
+              <property name="text">
+               <string>Print Label Borders</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="maxRowsLabel">
+              <property name="text">
+               <string>QSOs per Label:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="maxRowsSpinBox">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>4</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="footerLeftLabel">
+              <property name="text">
+               <string>Footer Left Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="footerLeftEdit"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="footerRightLabel">
+              <property name="text">
+               <string>Footer Right Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="footerRightEdit"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="skipLabelsLabel">
+              <property name="text">
+               <string>Skip Label:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QSpinBox" name="skipSpinBox">
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>99</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="sansFontLabel">
+              <property name="text">
+               <string>Sans Font:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QFontComboBox" name="sansFontComboBox">
+              <property name="editable">
+               <bool>false</bool>
+              </property>
+              <property name="currentText">
+               <string notr="true">Ubuntu Sans</string>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+              </property>
+              <property name="minimumContentsLength">
+               <number>16</number>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="monoFontLabel">
+              <property name="text">
+               <string>Mono Font:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QFontComboBox" name="monoFontComboBox">
+              <property name="editable">
+               <bool>false</bool>
+              </property>
+              <property name="currentText">
+               <string notr="true">Andale Mono</string>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+              </property>
+              <property name="minimumContentsLength">
+               <number>16</number>
+              </property>
+              <property name="fontFilters">
+               <set>QFontComboBox::MonospacedFonts</set>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="callsignSizeLabel">
+              <property name="text">
+               <string>Callsign Size:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="BaseDoubleSpinBox" name="callsignSizeSpinBox">
+              <property name="suffix">
+               <string notr="true"> pt</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>4.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>72.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>14.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="toRadioSizeLabel">
+              <property name="text">
+               <string>&quot;To Radio&quot; Size:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="BaseDoubleSpinBox" name="toRadioSizeSpinBox">
+              <property name="suffix">
+               <string notr="true"> pt</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>4.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>72.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>7.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLabel" name="toRadioTextLabel">
+              <property name="text">
+               <string>&quot;To Radio&quot; Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="1">
+             <widget class="QLineEdit" name="toRadioTextEdit">
+              <property name="placeholderText">
+               <string notr="true">To Radio</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="headerSizeLabel">
+              <property name="text">
+               <string>Header Size:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="1">
+             <widget class="BaseDoubleSpinBox" name="headerSizeSpinBox">
+              <property name="suffix">
+               <string notr="true"> pt</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>4.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>72.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>7.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="dataSizeLabel">
+              <property name="text">
+               <string>Data Size:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1">
+             <widget class="BaseDoubleSpinBox" name="dataSizeSpinBox">
+              <property name="suffix">
+               <string notr="true"> pt</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>4.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>72.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>8.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="0">
+             <widget class="QLabel" name="hdrDateLabel">
+              <property name="text">
+               <string>Date Header Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="1">
+             <widget class="QLineEdit" name="hdrDateEdit">
+              <property name="placeholderText">
+               <string notr="true">Date</string>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="0">
+             <widget class="QLabel" name="dateFormatLabel">
+              <property name="text">
+               <string>Date Format:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="1">
+             <widget class="QLineEdit" name="dateFormatEdit">
+              <property name="placeholderText">
+               <string notr="true">yyyy-MM-dd</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="0">
+             <widget class="QLabel" name="hdrTimeLabel">
+              <property name="text">
+               <string>Time Header Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="1">
+             <widget class="QLineEdit" name="hdrTimeEdit">
+              <property name="placeholderText">
+               <string notr="true">Time</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="0">
+             <widget class="QLabel" name="hdrBandLabel">
+              <property name="text">
+               <string>Band Header Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="1">
+             <widget class="QLineEdit" name="hdrBandEdit">
+              <property name="placeholderText">
+               <string notr="true">Band</string>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="0">
+             <widget class="QLabel" name="hdrModeLabel">
+              <property name="text">
+               <string>Mode Header Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="1">
+             <widget class="QLineEdit" name="hdrModeEdit">
+              <property name="placeholderText">
+               <string notr="true">Mode</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="0">
+             <widget class="QLabel" name="hdrQslLabel">
+              <property name="text">
+               <string>QSL Header Text:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="1">
+             <widget class="QLineEdit" name="hdrQslEdit">
+              <property name="placeholderText">
+               <string notr="true">QSL</string>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="0">
+             <widget class="QLabel" name="extraColumnLabel">
+              <property name="text">
+               <string>Extra Column:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="1">
+             <widget class="QComboBox" name="extraColumnComboBox">
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="0">
+             <widget class="QLabel" name="columnHeaderLabel">
+              <property name="text">
+               <string>Extra Column Text</string>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="1">
+             <widget class="QLineEdit" name="columnHeaderEdit">
+              <property name="placeholderText">
+               <string>(DB column name)</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="settingsVerticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="previewLayout">
+       <item>
+        <widget class="QScrollArea" name="previewScrollArea">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidget">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>671</width>
+            <height>568</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="scrollAreaLayout">
+           <item>
+            <widget class="QLabel" name="previewLabel">
+             <property name="text">
+              <string>No matching QSOs found</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="zoomLayout">
+         <item>
+          <widget class="QLabel" name="zoomLabel">
+           <property name="text">
+            <string notr="true">Zoom:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="zoomSlider">
+           <property name="minimum">
+            <number>25</number>
+           </property>
+           <property name="maximum">
+            <number>200</number>
+           </property>
+           <property name="value">
+            <number>99</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+           <property name="tickInterval">
+            <number>25</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="zoomSpinBox">
+           <property name="suffix">
+            <string notr="true"> %</string>
+           </property>
+           <property name="minimum">
+            <number>25</number>
+           </property>
+           <property name="maximum">
+            <number>200</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="pageNavLayout">
+         <item>
+          <spacer name="pageNavLeftSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="prevPageButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string notr="true">&lt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="pageLabel">
+           <property name="text">
+            <string>Page 0 of 0</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="nextPageButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string notr="true">&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="pageNavRightSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+     <item>
+      <widget class="QLabel" name="statusLabel">
+       <property name="text">
+        <string>Labels: 0 (0 pages)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="buttonSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="printButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Print</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-print">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportPdfButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Export as PDF</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-save-as">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Close</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BaseDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>ui/component/BaseDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>zoomSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>zoomSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1017</x>
+     <y>611</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1095</x>
+     <y>615</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>zoomSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1095</x>
+     <y>615</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1017</x>
+     <y>611</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1057</x>
+     <y>675</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateRangeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>toggleDateRange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>63</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>myCallsignCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>toggleMyCallsign()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stationProfileCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>toggleStationProfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qslSentCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>toggleQslSent()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userFilterCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>toggleUserFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>startDateEdit</sender>
+   <signal>dateChanged(QDate)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>212</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>endDateEdit</sender>
+   <signal>dateChanged(QDate)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>334</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>myCallsignComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stationProfileComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qslSentComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>172</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userFilterComboBox</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>templateComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>templateChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>skipSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>skipChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>819</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>footerLeftEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>749</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>footerRightEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>784</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>prevPageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>prevPage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>673</x>
+     <y>636</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nextPageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>nextPage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>846</x>
+     <y>636</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>printButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>print()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>837</x>
+     <y>675</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportPdfButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>exportPdf()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>947</x>
+     <y>675</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>zoomChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1059</x>
+     <y>598</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>printBordersCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>679</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateFormatEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>columnHeaderEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1349</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toRadioTextEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>997</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hdrDateEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hdrTimeEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1174</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hdrBandEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1209</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hdrModeEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1244</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hdrQslEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>maxRowsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>713</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extraColumnComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sansFontComboBox</sender>
+   <signal>currentFontChanged(QFont)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>855</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>monoFontComboBox</sender>
+   <signal>currentFontChanged(QFont)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>890</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toRadioSizeSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>961</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callsignSizeSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>925</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>headerSizeSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1032</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataSizeSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>updatePreview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>1068</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pageSizeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>352</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rowsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>388</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>labelWidthSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>labelHeightSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>460</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leftMarginSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>496</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>topMarginSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>532</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hSpacingSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>568</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vSpacingSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>customTemplateFieldChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>604</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>toggleDateRange()</slot>
+  <slot>toggleMyCallsign()</slot>
+  <slot>toggleStationProfile()</slot>
+  <slot>toggleQslSent()</slot>
+  <slot>toggleUserFilter()</slot>
+  <slot>refreshData()</slot>
+  <slot>templateChanged(int)</slot>
+  <slot>skipChanged(int)</slot>
+  <slot>updatePreview()</slot>
+  <slot>prevPage()</slot>
+  <slot>nextPage()</slot>
+  <slot>print()</slot>
+  <slot>exportPdf()</slot>
+  <slot>zoomChanged(int)</slot>
+  <slot>customTemplateFieldChanged()</slot>
+ </slots>
+</ui>

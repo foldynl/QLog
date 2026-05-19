@@ -14,9 +14,13 @@
 #include "core/debug.h"
 #include "rig/macros.h"
 
+#if 0
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Drv mutex"; \
                         QMutexLocker locker(&drvLock); \
                         qCDebug(runtime) << "Using Drv"
+#else
+#define MUTEXLOCKER     qCDebug(runtime) << "Mutex-free";
+#endif
 
 MODULE_IDENTIFICATION("qlog.rig.driver.omnirigv2drv");
 
@@ -62,6 +66,7 @@ RigCaps OmnirigV2RigDrv::getCaps(int)
     //ret.canGetRIT = true; // temporary disabled because there is not rig with the implemented RitOffset
     //XIT is not supported by Omnirig lib now
     ret.canGetPTT = true;
+    ret.canGetSplit = true;
 
     return ret;
 }
@@ -70,9 +75,11 @@ OmnirigV2RigDrv::OmnirigV2RigDrv(const RigProfile &profile,
                            QObject *parent)
     : GenericRigDrv(profile, parent),
       currFreq(0),
+      currTxFreq(0),
       currRIT(0),
       currXIT(0),
       currPTT(false),
+      currSplitEnabled(false),
       currModeID(),
       currVFO(),
       omniInterface(nullptr),
@@ -86,7 +93,8 @@ OmnirigV2RigDrv::OmnirigV2RigDrv(const RigProfile &profile,
       VFO_A_MASK(OmnirigV2::PM_VFOA | OmnirigV2::PM_VFOAA | OmnirigV2::PM_VFOAB),
       VFO_B_MASK(OmnirigV2::PM_VFOB | OmnirigV2::PM_VFOBA | OmnirigV2::PM_VFOBB),
       VFO_SPEC_MASK(OmnirigV2::PM_VFOEQUAL | OmnirigV2::PM_VFOSWAP),
-      ALLVFOsMASK(VFO_A_MASK | VFO_B_MASK | VFO_SPEC_MASK)
+      ALLVFOsMASK(VFO_A_MASK | VFO_B_MASK | VFO_SPEC_MASK),
+      SPLIT_MASK(OmnirigV2::PM_SPLITON | OmnirigV2::PM_SPLITOFF)
 {
     FCT_IDENTIFICATION;
 
@@ -328,6 +336,57 @@ void OmnirigV2RigDrv::setFrequency(double newFreq)
     commandSleep();
 }
 
+void OmnirigV2RigDrv::setFrequency(VFOID vfoid, double newFreq)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << vfoid << QSTRING_FREQ(newFreq);
+
+    if ( !rigProfile.getFreqInfo || !rig ) return;
+
+    if ( vfoid == VFO1 )
+    {
+        setFrequency(newFreq);
+        return;
+    }
+
+    // VFO2 — TX frequency (set the non-active VFO)
+    long internalFreq = static_cast<long>(newFreq);
+
+    MUTEXLOCKER;
+
+    OmnirigV2::RigParamX vfo = OmnirigV2::PM_UNKNOWN;
+    rig->get_Vfo(&vfo);
+
+    if ( vfo & VFO_B_MASK )
+    {
+        qCDebug(runtime) << "Active VFO is B, setting TX freq to VFO A";
+        rig->put_FreqA(internalFreq);
+    }
+    else
+    {
+        qCDebug(runtime) << "Active VFO is A, setting TX freq to VFO B";
+        rig->put_FreqB(internalFreq);
+    }
+
+    commandSleep();
+}
+
+void OmnirigV2RigDrv::setSplit(bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << enabled;
+
+    if ( !rigProfile.getSplitInfo || !rig ) return;
+
+    MUTEXLOCKER;
+
+    rig->put_Split(enabled ? OmnirigV2::PM_SPLITON : OmnirigV2::PM_SPLITOFF);
+
+    commandSleep();
+}
+
 void OmnirigV2RigDrv::setRawMode(const QString &rawMode)
 {
     FCT_IDENTIFICATION;
@@ -535,6 +594,7 @@ void OmnirigV2RigDrv::checkChanges(int params, bool force)
 {
     FCT_IDENTIFICATION;
 
+    checkSplitChange(params, force);
     checkFreqChange(params, force);
     checkModeChange(params, force);
     checkPTTChange(params, force);
@@ -594,6 +654,25 @@ bool OmnirigV2RigDrv::checkFreqChange(int params, bool force)
         emit frequencyChanged(Hz2MHz(currFreq),
                               Hz2MHz(getRITFreq()),
                               Hz2MHz(getXITFreq()));
+    }
+
+    // TX frequency (the non-active VFO) when split is active
+    if ( rigProfile.getSplitInfo && currSplitEnabled )
+    {
+        long txTmp = 0L;
+        if ( vfoIsB )
+            rig->get_FreqA(&txTmp);
+        else
+            rig->get_FreqB(&txTmp);
+
+        unsigned int txFreq = static_cast<unsigned int>(txTmp);
+
+        if ( txFreq != currTxFreq || force )
+        {
+            currTxFreq = txFreq;
+            qCDebug(runtime) << "emitting TX FREQ changed" << currTxFreq << Hz2MHz(currTxFreq);
+            emit txFrequencyChanged(Hz2MHz(currTxFreq));
+        }
     }
 
     return true;
@@ -776,6 +855,49 @@ void OmnirigV2RigDrv::checkRITChange(int params, bool force)
             emit frequencyChanged(Hz2MHz(currFreq),
                                   Hz2MHz(getRITFreq()),
                                   Hz2MHz(getXITFreq()));
+        }
+    }
+}
+
+void OmnirigV2RigDrv::checkSplitChange(int params, bool force)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !rig )
+    {
+        qCWarning(runtime) << "Rig is not active";
+        return;
+    }
+
+    if ( !rigProfile.getSplitInfo )
+    {
+        qCDebug(runtime) << "Get SPLIT is disabled";
+        return;
+    }
+
+    if ( (params & SPLIT_MASK) || force )
+    {
+        int inParams = params;
+        if ( force )
+        {
+            OmnirigV2::RigParamX s;
+            rig->get_Split(&s);
+            inParams = s;
+        }
+
+        bool splitEnabled = ( inParams & OmnirigV2::PM_SPLITON ) != 0;
+
+        qCDebug(runtime) << "Rig Split:" << splitEnabled;
+        qCDebug(runtime) << "Object Split:" << currSplitEnabled;
+
+        if ( splitEnabled != currSplitEnabled || force )
+        {
+            currSplitEnabled = splitEnabled;
+            qCDebug(runtime) << "emitting SPLIT changed" << currSplitEnabled;
+            emit splitChanged(currSplitEnabled);
+
+            if ( !currSplitEnabled )
+                currTxFreq = 0;
         }
     }
 }

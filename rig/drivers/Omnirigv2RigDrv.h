@@ -40,6 +40,8 @@ public:
     QStringList getAvailableModes() override;
 
     void setFrequency(double) override;
+    void setFrequency(VFOID, double) override;
+    void setSplit(bool) override;
     void setRawMode(const QString &) override;
     void setMode(const QString &, const QString &, bool digiVariant) override;
     void setPTT(bool) override;
@@ -67,6 +69,7 @@ private:
     void checkPTTChange(int params, bool force);
     void checkVFOChange(int params, bool force);
     void checkRITChange(int params, bool force);
+    void checkSplitChange(int params, bool force);
 
     double getRITFreq();
     void   setRITFreq(double);
@@ -77,9 +80,11 @@ private:
 
 private:
     unsigned int currFreq;
+    unsigned int currTxFreq;
     unsigned int currRIT;
     unsigned int currXIT;
     bool         currPTT;
+    bool         currSplitEnabled;
     QString      currModeID;
     QString      currVFO;
 
@@ -99,11 +104,12 @@ private:
     QMutex drvLock;
     QTimer offlineTimer;
 
-    const int FREQMASK ;
+    const int FREQMASK;
     const int VFO_A_MASK;
     const int VFO_B_MASK;
     const int VFO_SPEC_MASK;
     const int ALLVFOsMASK;
+    const int SPLIT_MASK;
 
     static const uint OFFLINETIMER_TIME_MS = 10000;
 

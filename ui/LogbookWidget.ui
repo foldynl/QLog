@@ -278,6 +278,16 @@
     <string>Add Missing Info</string>
    </property>
   </action>
+  <action name="actionQSLRcvd">
+   <property name="text">
+    <string>Mark QSL RCVD</string>
+   </property>
+  </action>
+  <action name="actionQSLRequested">
+   <property name="text">
+    <string>Mark QSL Requested</string>
+   </property>
+  </action>
   <action name="actionFilter">
    <property name="icon">
     <iconset resource="../res/icons/icons.qrc">
@@ -694,6 +704,8 @@
   <slot>filterSelectedCallsign()</slot>
   <slot>lookupSelectedCallsign()</slot>
   <slot>actionCallbookLookup()</slot>
+  <slot>actionQSLRcvd()</slot>
+  <slot>actionQSLRequested()</slot>
   <slot>modeFilterChanged()</slot>
   <slot>countryFilterChanged()</slot>
   <slot>editContact()</slot>

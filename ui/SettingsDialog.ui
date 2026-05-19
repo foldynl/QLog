@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
-    <height>826</height>
+    <width>800</width>
+    <height>836</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>770</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>16777215</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Settings</string>
@@ -17,21 +29,6 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="leftMargin">
-    <number>6</number>
-   </property>
-   <property name="topMargin">
-    <number>6</number>
-   </property>
-   <property name="rightMargin">
-    <number>6</number>
-   </property>
-   <property name="bottomMargin">
-    <number>6</number>
-   </property>
-   <property name="spacing">
-    <number>4</number>
-   </property>
    <item row="2" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
@@ -58,23 +55,8 @@
           <string> Profiles</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <property name="leftMargin">
-           <number>6</number>
-          </property>
-          <property name="topMargin">
-           <number>6</number>
-          </property>
-          <property name="rightMargin">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
-           <number>6</number>
-          </property>
-          <property name="horizontalSpacing">
-           <number>6</number>
-          </property>
           <property name="verticalSpacing">
-           <number>3</number>
+           <number>2</number>
           </property>
           <item row="10" column="1">
            <widget class="QLabel" name="stationSOTALabel">
@@ -440,8 +422,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -471,7 +453,7 @@
              <property name="title">
               <string>Profiles</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,0" columnstretch="0,0,0,0,0,0">
+             <layout class="QGridLayout" name="gridLayout_7">
               <item row="0" column="4" colspan="2">
                <widget class="QGroupBox" name="antProfileGroup">
                 <property name="minimumSize">
@@ -616,8 +598,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>0</width>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -635,28 +617,6 @@
               <string>Keyer Profiles</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_8">
-              <property name="horizontalSpacing">
-               <number>6</number>
-              </property>
-              <property name="verticalSpacing">
-               <number>2</number>
-              </property>
-              <item row="0" column="0" rowspan="3">
-               <widget class="QListView" name="cwProfilesListView">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>List of all available CW Keyers</string>
-                </property>
-                <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="1" colspan="2">
                <widget class="QGroupBox" name="cwProfileGroup_2">
                 <property name="minimumSize">
@@ -796,20 +756,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="1">
-                  <spacer name="verticalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="6" column="0" colspan="2">
+                 <item row="5" column="0" colspan="2">
                   <widget class="QStackedWidget" name="cwStackedWidget">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -958,14 +905,30 @@
                 </layout>
                </widget>
               </item>
-              <item row="2" column="1">
+              <item row="1" column="1">
                <widget class="QPushButton" name="cwAddProfileButton">
                 <property name="text">
                  <string>Add</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="2">
+              <item row="0" column="0" rowspan="2">
+               <widget class="QListView" name="cwProfilesListView">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+                <property name="toolTip">
+                 <string>List of all available CW Keyers</string>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
                <widget class="QPushButton" name="cwDelProfileButton">
                 <property name="text">
                  <string>Delete</string>
@@ -980,38 +943,22 @@
              <property name="title">
               <string>CW Shortcut Profiles</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_9" rowstretch="0,0" columnstretch="0,0,0,0,0,0">
-              <item row="1" column="4">
-               <widget class="QPushButton" name="cwShortcutAddProfileButton">
-                <property name="text">
-                 <string>Add</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="5">
+             <layout class="QGridLayout" name="gridLayout_9">
+              <item row="1" column="2">
                <widget class="QPushButton" name="cwShortcutDelProfileButton">
                 <property name="text">
                  <string>Delete</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="0" rowspan="2" colspan="4">
-               <widget class="QListView" name="cwShortcutListView">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>List of all available CW Shortcuts Profiles</string>
-                </property>
-                <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
+              <item row="1" column="1">
+               <widget class="QPushButton" name="cwShortcutAddProfileButton">
+                <property name="text">
+                 <string>Add</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="4" colspan="2">
+              <item row="0" column="1" colspan="2">
                <widget class="QGroupBox" name="cwShortcutGroup">
                 <property name="minimumSize">
                  <size>
@@ -1023,9 +970,6 @@
                  <string/>
                 </property>
                 <layout class="QFormLayout" name="formLayout_24">
-                 <property name="horizontalSpacing">
-                  <number>2</number>
-                 </property>
                  <property name="verticalSpacing">
                   <number>2</number>
                  </property>
@@ -1514,6 +1458,22 @@
                 </layout>
                </widget>
               </item>
+              <item row="0" column="0" rowspan="2">
+               <widget class="QListView" name="cwShortcutListView">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+                <property name="toolTip">
+                 <string>List of all available CW Shortcuts Profiles</string>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -1933,6 +1893,13 @@
                     <widget class="QCheckBox" name="rigGetRITCheckBox">
                      <property name="text">
                       <string>RX Offset (RIT)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="rigGetSplitCheckBox">
+                     <property name="text">
+                      <string>Split</string>
                      </property>
                     </widget>
                    </item>
@@ -2567,19 +2534,6 @@
              </layout>
             </widget>
            </item>
-           <item>
-            <spacer name="verticalSpacer_25">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="rotsTab">
@@ -2634,13 +2588,7 @@
                 <property name="title">
                  <string/>
                 </property>
-                <property name="flat">
-                 <bool>false</bool>
-                </property>
                 <layout class="QFormLayout" name="formLayout_18">
-                 <property name="horizontalSpacing">
-                  <number>6</number>
-                 </property>
                  <property name="verticalSpacing">
                   <number>2</number>
                  </property>
@@ -3017,9 +2965,6 @@
                  <string/>
                 </property>
                 <layout class="QFormLayout" name="formLayout_25">
-                 <property name="horizontalSpacing">
-                  <number>2</number>
-                 </property>
                  <property name="verticalSpacing">
                   <number>2</number>
                  </property>
@@ -3500,8 +3445,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -3532,8 +3477,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -3552,20 +3497,14 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
        </item>
        <item row="0" column="0">
         <widget class="QTabWidget" name="tabWidget_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="tabShape">
           <enum>QTabWidget::Rounded</enum>
          </property>
@@ -3620,18 +3559,12 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
-            <spacer name="verticalSpacer_13">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+           <item row="3" column="0">
+            <widget class="QLabel" name="clublogUploadImmediatelyLabel">
+             <property name="text">
+              <string>Immediately Upload</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
+            </widget>
            </item>
            <item row="3" column="1">
             <widget class="QCheckBox" name="clublogUploadImmediatelyCheckbox">
@@ -3643,13 +3576,6 @@
              </property>
              <property name="text">
               <string notr="true"/>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="clublogUploadImmediatelyLabel">
-             <property name="text">
-              <string>Immediately Upload</string>
              </property>
             </widget>
            </item>
@@ -3700,19 +3626,6 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <spacer name="verticalSpacer_15">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="hrdlogSyncQSLTab">
@@ -3720,6 +3633,22 @@
            <string>HRDLog</string>
           </attribute>
           <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="1">
+            <spacer name="verticalSpacer_16">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="hrdlogCallsignLabel">
              <property name="text">
@@ -3773,8 +3702,15 @@
              </property>
             </widget>
            </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="lotwSyncQSLTab">
+          <attribute name="title">
+           <string>LoTW</string>
+          </attribute>
+          <layout class="QFormLayout" name="formLayout_11">
            <item row="0" column="1">
-            <spacer name="verticalSpacer_16">
+            <spacer name="verticalSpacer_18">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -3789,26 +3725,6 @@
              </property>
             </spacer>
            </item>
-           <item row="4" column="1">
-            <spacer name="verticalSpacer_17">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="lotwSyncQSLTab">
-          <attribute name="title">
-           <string>LoTW</string>
-          </attribute>
-          <layout class="QFormLayout" name="formLayout_11">
            <item row="1" column="0">
             <widget class="QLabel" name="lotwUsernameLabel">
              <property name="text">
@@ -3854,12 +3770,6 @@
              </item>
              <item>
               <widget class="QPushButton" name="tqslPathButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="text">
                 <string>Browse</string>
                </property>
@@ -3871,12 +3781,6 @@
              </item>
              <item>
               <widget class="QPushButton" name="tqslAutoButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="toolTip">
                 <string>Auto-detect TQSL path</string>
                </property>
@@ -3887,22 +3791,6 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="1">
-            <spacer name="verticalSpacer_18">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
            <item row="4" column="0">
             <widget class="QLabel" name="tqslVersionLabel">
              <property name="text">
@@ -3912,26 +3800,25 @@
            </item>
            <item row="4" column="1">
             <widget class="QLabel" name="tqslVersionValueLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
-            <spacer name="verticalSpacer_19">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
            <item row="5" column="1">
             <widget class="QLabel" name="lotwTextMessage">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Using an internal TQSL instance</string>
              </property>
@@ -3974,15 +3861,18 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
-            <spacer name="verticalSpacer_11">
+           <item row="2" column="0">
+            <spacer name="verticalSpacer_20">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Maximum</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>40</height>
+               <height>20</height>
               </size>
              </property>
             </spacer>
@@ -4058,22 +3948,6 @@
              </layout>
             </widget>
            </item>
-           <item row="2" column="0">
-            <spacer name="verticalSpacer_20">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Maximum</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="wavelog">
@@ -4081,34 +3955,6 @@
            <string>Wavelog</string>
           </attribute>
           <layout class="QFormLayout" name="formLayout_13">
-           <item row="2" column="0">
-            <widget class="QLabel" name="wavelogApiKeyLabel">
-             <property name="text">
-              <string>API Key</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="wavelogAddQSOEndpointLabel">
-             <property name="text">
-              <string>Endpoint</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="wavelogAddQSOEndpointEdit">
-             <property name="text">
-              <string notr="true">https://localhost/index.php/api/qso</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="wavelogApiKeyEdit">
-             <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="1">
             <spacer name="verticalSpacer_21">
              <property name="orientation">
@@ -4124,6 +3970,34 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="wavelogAddQSOEndpointLabel">
+             <property name="text">
+              <string>Endpoint</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="wavelogAddQSOEndpointEdit">
+             <property name="text">
+              <string notr="true">https://localhost/index.php/api/qso</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="wavelogApiKeyLabel">
+             <property name="text">
+              <string>API Key</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="wavelogApiKeyEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -4187,8 +4061,8 @@
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
                  </spacer>
@@ -4199,7 +4073,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer_8">
+            <spacer name="verticalSpacer_5">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -4282,8 +4156,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>0</width>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -4309,8 +4183,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -4674,8 +4548,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -4916,6 +4790,110 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="dangeZoneTab">
+      <attribute name="title">
+       <string>Danger Zone</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_18">
+       <item>
+        <spacer name="verticalSpacer_15">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="dangerLabel">
+         <property name="text">
+          <string>&lt;b&gt;⚠ This is a danger zone. Proceed with caution, as actions performed here cannot be undone and may have a significant impact on your log.&lt;/b&gt;</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_13">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteAllQSOsButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {background-color: red;}</string>
+         </property>
+         <property name="text">
+          <string>Delete All QSOs</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteAllPasswordsButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {background-color: red;}</string>
+         </property>
+         <property name="text">
+          <string>Delete All Passwords from the Secure Store</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_11">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -5004,6 +4982,7 @@
   <tabstop>rigGetPTTStateCheckBox</tabstop>
   <tabstop>rigGetXITCheckBox</tabstop>
   <tabstop>rigGetRITCheckBox</tabstop>
+  <tabstop>rigGetSplitCheckBox</tabstop>
   <tabstop>rigGetKeySpeedCheckBox</tabstop>
   <tabstop>rigKeySpeedSyncCheckBox</tabstop>
   <tabstop>rigDXSpots2RigCheckBox</tabstop>
@@ -6299,6 +6278,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>deleteAllQSOsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>onDeleteAllQSOs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>421</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>deleteAllPasswordsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>onDeleteAllPasswords()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>611</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
@@ -6370,10 +6381,12 @@
   <slot>rigFlowControlChanged(int)</slot>
   <slot>rigShareChanged(int)</slot>
   <slot>showRigctldAdvanced()</slot>
+  <slot>onDeleteAllQSOs()</slot>
+  <slot>onDeleteAllPasswords()</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

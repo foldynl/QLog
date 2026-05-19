@@ -101,17 +101,20 @@ jobs:
     - name: Install tools and build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get -y install devscripts equivs dpkg-dev fakeroot lintian
+        sudo apt-get -y install devscripts equivs dpkg-dev fakeroot lintian libconfig-model-dpkg-perl licensecheck
         sudo mk-build-deps --install --remove debian/control --tool "apt-get -y --no-install-recommends"
 
+    - name: Check debian/copyright
+      run: cme check dpkg-copyright
+
     - name: Build DEB package
-      run: dpkg-buildpackage -b -us -uc -j2
+      run: dpkg-buildpackage -b -us -uc -j4
 
     - name: Verify DEB was created
       run: ls -la ../qlog_*.deb
 
     - name: Run lintian
-      run: lintian --no-tag-display-limit ../qlog_*.changes || true
+      run: lintian --no-tag-display-limit --fail-on error ../qlog_*.changes 
 
     - name: Upload DEB artifact
       uses: actions/upload-artifact@v5

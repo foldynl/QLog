@@ -5,6 +5,14 @@
 #include "data/RigProfile.h"
 #include "data/DxSpot.h"
 
+enum VFOID
+{
+    VFO1 = 0,
+    VFO2 = 1
+};
+
+Q_DECLARE_METATYPE(VFOID)
+
 class GenericRigDrv : public QObject
 {
     Q_OBJECT
@@ -21,6 +29,8 @@ public:
     virtual QStringList getAvailableModes() = 0;
 
     virtual void setFrequency(double) = 0;
+    virtual void setFrequency(VFOID, double);
+    virtual void setSplit(bool);
     virtual void setRawMode(const QString &) = 0;
     virtual void setMode(const QString &, const QString &, bool) = 0;
     virtual void setPTT(bool) = 0;
@@ -36,6 +46,8 @@ signals:
     // STATE Signals
     void rigIsReady();
     void frequencyChanged(double, double, double);
+    void txFrequencyChanged(double);
+    void splitChanged(bool);
     void pttChanged(bool);
     void modeChanged(QString, QString, QString, qint32);
     void vfoChanged(QString);

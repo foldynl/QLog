@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CabrilloExportDialog</class>
+ <widget class="QDialog" name="CabrilloExportDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>691</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Cabrillo Export</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <item>
+    <layout class="QHBoxLayout" name="fileLayout">
+     <item>
+      <widget class="QLabel" name="fileLabel">
+       <property name="text">
+        <string>File:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="fileEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="browseButton">
+       <property name="text">
+        <string>Browse</string>
+       </property>
+       <property name="icon">
+        <iconset theme="folder-open">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="contestGroup">
+     <property name="title">
+      <string>Contest</string>
+     </property>
+     <layout class="QFormLayout" name="contestFormLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="templateLabel">
+        <property name="text">
+         <string>Format Template:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QComboBox" name="templateCombo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="manageTemplatesButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Manage</string>
+          </property>
+          <property name="icon">
+           <iconset theme="preferences-system">
+            <normaloff>.</normaloff>.</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="userFilterCheckBox">
+        <property name="text">
+         <string>User Filter:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="userFilterCombo">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="dateRangeCheckBox">
+        <property name="text">
+         <string>Date/Time:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="dateRangeLayout">
+        <item>
+         <widget class="QDateTimeEdit" name="startDateEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="displayFormat">
+           <string>yyyy-MM-dd HH:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::UTC</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="dateRangeSeparator">
+          <property name="text">
+           <string> - </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDateTimeEdit" name="endDateEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="displayFormat">
+           <string>yyyy-MM-dd HH:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+          <property name="timeSpec">
+           <enum>Qt::UTC</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="utcLabel">
+          <property name="text">
+           <string>UTC</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="dateRangeSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="middleHLayout">
+     <item>
+      <widget class="QGroupBox" name="stationCategoryGroup">
+       <property name="title">
+        <string>Station &amp; Categories</string>
+       </property>
+       <layout class="QFormLayout" name="stationCategoryFormLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="callsignLabel">
+          <property name="text">
+           <string>Callsign:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="callsignCombo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="operatorsLabel">
+          <property name="text">
+           <string>Operators:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="operatorsEdit"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="catBandLabel">
+          <property name="text">
+           <string>Band:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="catBandCombo"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="catModeLabel">
+          <property name="text">
+           <string>Mode:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="catModeCombo"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="catPowerLabel">
+          <property name="text">
+           <string>Power:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QComboBox" name="catPowerCombo"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="catOperatorLabel">
+          <property name="text">
+           <string>Operator:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QComboBox" name="catOperatorCombo"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="catAssistedLabel">
+          <property name="text">
+           <string>Assisted:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QComboBox" name="catAssistedCombo"/>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="catStationLabel">
+          <property name="text">
+           <string>Station:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QComboBox" name="catStationCombo"/>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="catTransmitterLabel">
+          <property name="text">
+           <string>Transmitter:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QComboBox" name="catTransmitterCombo"/>
+        </item>
+        <item row="9" column="0">
+         <widget class="QLabel" name="catTimeLabel">
+          <property name="text">
+           <string>Time:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="1">
+         <widget class="QComboBox" name="catTimeCombo"/>
+        </item>
+        <item row="10" column="0">
+         <widget class="QLabel" name="catOverlayLabel">
+          <property name="text">
+           <string>Overlay:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QComboBox" name="catOverlayCombo"/>
+        </item>
+        <item row="11" column="0">
+         <widget class="QLabel" name="transmitterIdLabel">
+          <property name="text">
+           <string>Transmitter ID:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="1">
+         <widget class="QSpinBox" name="transmitterIdSpin">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="additionalGroup">
+       <property name="title">
+        <string>Additional</string>
+       </property>
+       <layout class="QFormLayout" name="additionalFormLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="nameLabel">
+          <property name="text">
+           <string>Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="nameValue"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="emailLabel">
+          <property name="text">
+           <string>Email:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="emailEdit"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="addressLabel">
+          <property name="text">
+           <string>Address:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QTextEdit" name="addressEdit">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>80</height>
+           </size>
+          </property>
+          <property name="placeholderText">
+           <string>Max 6 lines</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="gridLocatorLabel">
+          <property name="text">
+           <string>Gridsquare</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="gridLocatorEdit"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="locationLabel">
+          <property name="text">
+           <string>Location:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="locationEdit"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="clubLabel">
+          <property name="text">
+           <string>Club:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="clubEdit"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="soapboxLabel">
+          <property name="text">
+           <string>Soapbox:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QTextEdit" name="soapboxEdit">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="offtimeLabel">
+          <property name="text">
+           <string>Off-Time:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QTextEdit" name="offtimeEdit">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</string>
+          </property>
+          <property name="placeholderText">
+           <string>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="bottomLayout">
+     <item>
+      <widget class="QLabel" name="qsoCountLabel">
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string notr="true">QSOs: ---</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="bottomSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>fileEdit</tabstop>
+  <tabstop>browseButton</tabstop>
+  <tabstop>templateCombo</tabstop>
+  <tabstop>manageTemplatesButton</tabstop>
+  <tabstop>userFilterCheckBox</tabstop>
+  <tabstop>userFilterCombo</tabstop>
+  <tabstop>dateRangeCheckBox</tabstop>
+  <tabstop>startDateEdit</tabstop>
+  <tabstop>endDateEdit</tabstop>
+  <tabstop>callsignCombo</tabstop>
+  <tabstop>operatorsEdit</tabstop>
+  <tabstop>catBandCombo</tabstop>
+  <tabstop>catModeCombo</tabstop>
+  <tabstop>catPowerCombo</tabstop>
+  <tabstop>catOperatorCombo</tabstop>
+  <tabstop>catAssistedCombo</tabstop>
+  <tabstop>catStationCombo</tabstop>
+  <tabstop>catTransmitterCombo</tabstop>
+  <tabstop>catTimeCombo</tabstop>
+  <tabstop>catOverlayCombo</tabstop>
+  <tabstop>transmitterIdSpin</tabstop>
+  <tabstop>nameValue</tabstop>
+  <tabstop>emailEdit</tabstop>
+  <tabstop>addressEdit</tabstop>
+  <tabstop>gridLocatorEdit</tabstop>
+  <tabstop>locationEdit</tabstop>
+  <tabstop>clubEdit</tabstop>
+  <tabstop>soapboxEdit</tabstop>
+  <tabstop>offtimeEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>browseFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>530</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>manageTemplatesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>manageTemplates()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>450</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>templateCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>templateChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>callsignCombo</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>callsignChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>160</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userFilterCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>userFilterCombo</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>80</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userFilterCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>refreshCallsigns()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>80</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userFilterCombo</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>refreshCallsigns()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateRangeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>startDateEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>80</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateRangeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>endDateEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>80</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateRangeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>refreshCallsigns()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>80</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>startDateEdit</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>refreshCallsigns()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>endDateEdit</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>refreshCallsigns()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>catBandCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>scheduleQsoCountUpdate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>catModeCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>CabrilloExportDialog</receiver>
+   <slot>scheduleQsoCountUpdate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>450</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>templateChanged(int)</slot>
+  <slot>manageTemplates()</slot>
+  <slot>browseFile()</slot>
+  <slot>callsignChanged(QString)</slot>
+  <slot>refreshCallsigns()</slot>
+  <slot>scheduleQsoCountUpdate()</slot>
+ </slots>
+</ui>

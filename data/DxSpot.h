@@ -15,6 +15,7 @@ public:
     QString callsign;
     QList<ClubInfo> callsign_member;
     double freq;
+    double freqTX;
     QString band;
     QString modeGroupString;
     BandPlan::BandPlanMode bandPlanMode;
@@ -34,6 +35,7 @@ public:
     bool containsIOTA;
 
     DxSpot() : freq(0.0),
+        freqTX(0.0),
         bandPlanMode(BandPlan::BAND_MODE_UNKNOWN),
         status(DxccStatus::UnknownStatus),
         containsWWFF(false), containsPOTA(false),
@@ -70,6 +72,7 @@ public:
                + "Continent: " + dxcc.cont + " "
                + "Spotter Continent: " + dxcc_spotter.cont + " "
                + "Callsign: " + callsign + " "
+               + "FreqTX: " + QString::number(freqTX) + " "
                + "Message: " + comment + " "
                + "DX Member: " + memberList2StringList().join(", ") + " "
                + "POTA: " + potaRef  + " " + "POTA present: " + (containsPOTA ? "true" : "false") + " "

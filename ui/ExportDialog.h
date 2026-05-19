@@ -80,7 +80,6 @@ private:
     LogbookModel logbookmodel;
     const QList<QSqlRecord> qsos4export;
 
-    void setProgress(float);
     void fillQSLSendViaCombo();
     void fillExportTypeCombo();
     void fillExportedColumnsCombo();

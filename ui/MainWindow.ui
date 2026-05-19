@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>913</width>
-    <height>558</height>
+    <height>625</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,9 +79,11 @@
     <addaction name="actionFindDuplicates"/>
     <addaction name="separator"/>
     <addaction name="actionAwards"/>
+    <addaction name="actionDXCCSubmission"/>
     <addaction name="actionStatistics"/>
     <addaction name="separator"/>
     <addaction name="actionQSLGallery"/>
+    <addaction name="actionPrintQslLabels"/>
    </widget>
    <widget class="QMenu" name="menuEquipment">
     <property name="title">
@@ -100,6 +102,8 @@
     <addaction name="actionMailingList"/>
     <addaction name="separator"/>
     <addaction name="actionWhatsNew"/>
+    <addaction name="separator"/>
+    <addaction name="actionDeveloperTools"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -160,6 +164,8 @@
     <addaction name="menuLinkExchange"/>
     <addaction name="separator"/>
     <addaction name="actionContestStop"/>
+    <addaction name="separator"/>
+    <addaction name="actionExportCabrillo"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuLogbook"/>
@@ -350,10 +356,16 @@
    <property name="text">
     <string>Pack Data &amp;&amp; Settings</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionLoadDB">
    <property name="text">
     <string>Unpack Data &amp;&amp; Settings</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionNewContact">
@@ -382,6 +394,9 @@
    <property name="text">
     <string>&amp;Import</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionExport">
    <property name="icon">
@@ -390,6 +405,9 @@
    </property>
    <property name="text">
     <string>&amp;Export</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionFindDuplicates">
@@ -409,6 +427,9 @@
    </property>
    <property name="shortcut">
     <string notr="true"/>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionAbout">
@@ -449,6 +470,9 @@
    <property name="text">
     <string>DX Cluster</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionMapWindow">
    <property name="icon">
@@ -457,6 +481,9 @@
    </property>
    <property name="text">
     <string>Map</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionStatistics">
@@ -467,15 +494,47 @@
    <property name="text">
     <string>S&amp;tatistics</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionQSLGallery">
    <property name="text">
     <string>QSL &amp;Gallery</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionDeveloperTools">
+   <property name="icon">
+    <iconset theme="applications-science">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Developer Tools</string>
+   </property>
+   <property name="toolTip">
+    <string>Run custom read-only SQL queries against the logbook database</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionPrintQslLabels">
+   <property name="text">
+    <string>Print QSL &amp;Labels</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionWsjtx">
    <property name="text">
     <string>Wsjtx</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionConnectRotator">
@@ -485,25 +544,40 @@
    <property name="text">
     <string>Connect R&amp;otator</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionRotator">
    <property name="text">
     <string>Rotator</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionBandmap">
    <property name="text">
     <string>Bandmap</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionRig">
    <property name="text">
     <string>Rig</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionClock">
    <property name="text">
     <string>Clock</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionQSOFilters">
@@ -514,10 +588,16 @@
    <property name="text">
     <string>QSO &amp;Filters</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionOnlineMap">
    <property name="text">
     <string>Online Map</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionAwards">
@@ -528,10 +608,31 @@
    <property name="text">
     <string>&amp;Awards</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionDXCCSubmission">
+   <property name="icon">
+    <iconset theme="application-certificate">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>DXCC &amp;Submission List</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate a list of contacts to submit for ARRL DXCC award credit</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionEditAlertRules">
    <property name="text">
     <string>Edit Rules</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionBeepSettingAlert">
@@ -554,6 +655,9 @@
    <property name="text">
     <string>CW Console</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionWikiHelp">
    <property name="icon">
@@ -563,10 +667,16 @@
    <property name="text">
     <string>&amp;Wiki</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionReportBug">
    <property name="text">
     <string>Report &amp;Bug...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionManualContact">
@@ -579,10 +689,16 @@
    <property name="toolTip">
     <string>Switch New Contact dialog to the manually entry mode&lt;br/&gt;(time, freq, profiles etc. are not taken from their common sources)</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionMailingList">
    <property name="text">
     <string>Mailing List...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionActivitiesEdit">
@@ -594,6 +710,9 @@
    <property name="text">
     <string>Chat</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionSaveGeometry">
    <property name="text">
@@ -601,6 +720,9 @@
    </property>
    <property name="toolTip">
     <string>Save Arrangement</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionEquipmentKeepOptions">
@@ -617,6 +739,9 @@
   <action name="actionProfileImage">
    <property name="text">
     <string>Profile Image</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionSearchCallsign">
@@ -802,15 +927,24 @@
    <property name="text">
     <string>Alerts</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionClearAlerts">
    <property name="text">
     <string>Clear</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionShowAlerts">
    <property name="text">
     <string>Show Alerts</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionDupeAllBands">
@@ -820,6 +954,9 @@
    <property name="text">
     <string>All Bands</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionDupeEachBand">
    <property name="checkable">
@@ -827,6 +964,9 @@
    </property>
    <property name="text">
     <string>Each Band</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionDupeEachBandMode">
@@ -836,6 +976,9 @@
    <property name="text">
     <string>Each Band &amp;&amp; Mode</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionDupeNoCheck">
    <property name="checkable">
@@ -843,6 +986,9 @@
    </property>
    <property name="text">
     <string>No Check</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionSeqSingle">
@@ -852,6 +998,9 @@
    <property name="text">
     <string>Single</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionSeqPerBand">
    <property name="checkable">
@@ -859,6 +1008,9 @@
    </property>
    <property name="text">
     <string>Per Band</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionContestStop">
@@ -868,10 +1020,16 @@
    <property name="text">
     <string>Stop</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionSeqReset">
    <property name="text">
     <string>Reset</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionLinkExchangeNone">
@@ -880,6 +1038,9 @@
    </property>
    <property name="text">
     <string>None</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionServiceUpload">
@@ -896,6 +1057,9 @@
    <property name="shortcut">
     <string notr="true">Ctrl+Shift+I</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
    </property>
@@ -909,6 +1073,9 @@
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+Shift+D</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
    <property name="changeableshortcut" stdset="0">
     <bool>true</bool>
@@ -950,6 +1117,17 @@
   <action name="actionWhatsNew">
    <property name="text">
     <string>What's New</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionExportCabrillo">
+   <property name="text">
+    <string>Export Cabrillo</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>
@@ -1396,6 +1574,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionDXCCSubmission</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showDXCCSubmission()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>actionAwards</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1759,7 +1953,55 @@
     </hint>
     <hint type="destinationlabel">
      <x>456</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDeveloperTools</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showDevTools()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPrintQslLabels</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>printQslLabels()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
      <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExportCabrillo</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportCabrillo()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>312</y>
     </hint>
    </hints>
   </connection>
@@ -1777,6 +2019,7 @@
   <slot>rotConnect()</slot>
   <slot>QSOFilterSetting()</slot>
   <slot>showAwards()</slot>
+  <slot>showDXCCSubmission()</slot>
   <slot>alertRuleSetting()</slot>
   <slot>showAlerts()</slot>
   <slot>clearAlerts()</slot>
@@ -1797,5 +2040,8 @@
   <slot>showLoadDB()</slot>
   <slot>showQSLGallery()</slot>
   <slot>showDuplicateContacts()</slot>
+  <slot>showDevTools()</slot>
+  <slot>printQslLabels()</slot>
+  <slot>exportCabrillo()</slot>
  </slots>
 </ui>

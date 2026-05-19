@@ -29,7 +29,7 @@ void DxccTableWidget::clear()
 
     dxccTableModel->clear();
     dxccTableModel->setQuery(QString());
-    show();
+    setHidden(true);
 }
 
 void DxccTableWidget::updateDxTable(const QString &condition,
@@ -70,7 +70,7 @@ void DxccTableWidget::updateDxTable(const QString &condition,
                            "		      FROM contacts c"
                            "		           LEFT OUTER JOIN modes m on c.mode = m.name"
                            "		      WHERE %2 AND %3 GROUP BY m.dxcc ) "
-                           " SELECT m.dxcc,"
+                           " SELECT translate_to_locale(m.dxcc),"
                            "	   %4 "
                            " FROM (SELECT DISTINCT dxcc"
                            "	   FROM modes) m"
@@ -95,7 +95,8 @@ void DxccTableWidget::updateDxTable(const QString &condition,
                                                                                                : defaultBrush, Qt::BackgroundRole);
         dxccTableModel->setHeaderData(i+1, Qt::Horizontal, dxccBands.at(i).name);
     }
-    setColumnWidth(0,65);
+
+    horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     show();
 }
 

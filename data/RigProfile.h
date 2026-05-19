@@ -28,7 +28,7 @@ public:
                    getXITInfo = true; defaultPWR = 0.0, getPTTInfo = false;
                    QSYWiping = false, getKeySpeed = false, keySpeedSync = false;
                    driver = 0, dxSpot2Rig = false, civAddr = -1;
-                   shareRigctld = false; rigctldPort = 4532;
+                   shareRigctld = false; rigctldPort = 4532; getSplitInfo = false;
                  };
 
     QString profileName;
@@ -72,6 +72,7 @@ public:
     bool keySpeedSync;
     bool dxSpot2Rig;
     bool shareRigctld;
+    bool getSplitInfo;
 
     bool operator== (const RigProfile &profile);
     bool operator!= (const RigProfile &profile);

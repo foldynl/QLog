@@ -2,28 +2,23 @@
 <ui version="4.0">
  <class>QSODetailDialog</class>
  <widget class="QDialog" name="QSODetailDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1039</width>
-    <height>753</height>
-   </rect>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>764</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>4</number>
-   </property>
    <property name="topMargin">
-    <number>4</number>
-   </property>
-   <property name="rightMargin">
-    <number>4</number>
-   </property>
-   <property name="bottomMargin">
     <number>4</number>
    </property>
    <item>
@@ -728,12 +723,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <layout class="QFormLayout" name="formLayout">
-         <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <property name="horizontalSpacing">
-          <number>6</number>
-         </property>
          <property name="verticalSpacing">
           <number>4</number>
          </property>
@@ -980,12 +969,6 @@
        </item>
        <item>
         <layout class="QFormLayout" name="formLayout_2">
-         <property name="labelAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
          <property name="verticalSpacing">
           <number>4</number>
          </property>
@@ -1158,9 +1141,6 @@
        </item>
        <item>
         <layout class="QFormLayout" name="formLayout_3">
-         <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
          <property name="verticalSpacing">
           <number>4</number>
          </property>
@@ -1293,6 +1273,12 @@
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
         <widget class="QLabel" name="dxccTableLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>&lt;b&gt;DXCC Statistics&lt;/b&gt;</string>
          </property>
@@ -1300,6 +1286,21 @@
        </item>
        <item>
         <widget class="DxccTableWidget" name="dxccTableWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -1319,6 +1320,12 @@
        </item>
        <item>
         <widget class="QLabel" name="stationTableLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>&lt;b&gt;Station Statistics&lt;/b&gt;</string>
          </property>
@@ -1326,6 +1333,21 @@
        </item>
        <item>
         <widget class="DxccTableWidget" name="stationTableWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -1384,9 +1406,6 @@
          </item>
          <item row="4" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_15">
-           <property name="spacing">
-            <number>8</number>
-           </property>
            <item>
             <widget class="QLabel" name="myITULabel">
              <property name="text">
@@ -1501,15 +1520,19 @@
            </property>
           </widget>
          </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
         <layout class="QFormLayout" name="formLayout_4">
          <property name="verticalSpacing">
           <number>4</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
          </property>
          <item row="1" column="0">
           <widget class="QLabel" name="myIOTALabel">
@@ -1926,7 +1949,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="qslReceiveLabel">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1992,7 +2015,7 @@
          <item row="0" column="1">
           <widget class="QLabel" name="paperHeaderLabel">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -2023,7 +2046,7 @@
          <item row="2" column="0">
           <widget class="QLabel" name="qslSentLabel">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -2108,6 +2131,19 @@
          </item>
         </layout>
        </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabContest">
@@ -2119,12 +2155,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <layout class="QFormLayout" name="formLayout_9">
-           <property name="verticalSpacing">
-            <number>4</number>
-           </property>
-           <property name="rightMargin">
-            <number>10</number>
-           </property>
            <item row="0" column="0">
             <widget class="QLabel" name="contestIDLabel">
              <property name="text">

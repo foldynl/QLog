@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CabrilloTemplateDialog</class>
+ <widget class="QDialog" name="CabrilloTemplateDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>850</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Cabrillo Template Manager</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QHBoxLayout" name="mainHLayout">
+   <item>
+    <layout class="QVBoxLayout" name="leftLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="loadTemplateButton">
+         <property name="toolTip">
+          <string>Import template</string>
+         </property>
+         <property name="text">
+          <string>Import</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-open"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportTemplateButton">
+         <property name="toolTip">
+          <string>Export template</string>
+         </property>
+         <property name="text">
+          <string>Export</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-save-as"/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QListWidget" name="templateList">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="listButtonLayout">
+       <item>
+        <widget class="QPushButton" name="newButton">
+         <property name="toolTip">
+          <string>New template</string>
+         </property>
+         <property name="text">
+          <string>New</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-new"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copyButton">
+         <property name="toolTip">
+          <string>Copy existing template</string>
+         </property>
+         <property name="text">
+          <string>Copy</string>
+         </property>
+         <property name="icon">
+          <iconset theme="edit-copy"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteButton">
+         <property name="toolTip">
+          <string>Delete template</string>
+         </property>
+         <property name="text">
+          <string>Delete</string>
+         </property>
+         <property name="icon">
+          <iconset theme="edit-delete"/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="rightLayout">
+     <item>
+      <layout class="QFormLayout" name="editorFormLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="nameEditorLabel">
+         <property name="text">
+          <string>Template Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="nameEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="contestEditorLabel">
+         <property name="text">
+          <string>Contest Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="contestCombo">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="defaultModeEditorLabel">
+         <property name="text">
+          <string>Default Mode:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="defaultModeCombo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="columnsLabel">
+       <property name="text">
+        <string>QSO Line Columns:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTableWidget" name="columnsTable">
+         <property name="toolTip">
+          <string>Contest name as required by the rules. It is possible to enter a custom string if it is not included in the list.</string>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="columnCount">
+          <number>5</number>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Seq.</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>QSO Field</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Formatter</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Width</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Label</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="moveUpButton">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/icons/icons.qrc">
+             <normaloff>:/icons/baseline-play_up-24px.svg</normaloff>:/icons/baseline-play_up-24px.svg</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="moveDownButton">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res/icons/icons.qrc">
+             <normaloff>:/icons/baseline-play_down-24px.svg</normaloff>:/icons/baseline-play_down-24px.svg</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="colButtonLayout">
+       <item>
+        <spacer name="colButtonSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addColumnButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Add line</string>
+         </property>
+         <property name="text">
+          <string>Add</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="removeColumnButton">
+         <property name="toolTip">
+          <string>Remove selected line</string>
+         </property>
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>contestCombo</tabstop>
+  <tabstop>defaultModeCombo</tabstop>
+  <tabstop>newButton</tabstop>
+  <tabstop>copyButton</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>addColumnButton</tabstop>
+  <tabstop>removeColumnButton</tabstop>
+  <tabstop>templateList</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../res/icons/icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>425</x>
+     <y>530</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>425</x>
+     <y>530</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>templateList</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>templateSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>newTemplate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>copyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>copyTemplate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>120</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>deleteButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>deleteTemplate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>160</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addColumnButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>addColumn()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>removeColumnButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>removeColumn()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moveUpButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>moveColumnUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>500</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moveDownButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>moveColumnDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>600</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>425</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>loadTemplateButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>loadTemplate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>424</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportTemplateButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CabrilloTemplateDialog</receiver>
+   <slot>exportTemplate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>424</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>templateSelectionChanged()</slot>
+  <slot>newTemplate()</slot>
+  <slot>copyTemplate()</slot>
+  <slot>deleteTemplate()</slot>
+  <slot>addColumn()</slot>
+  <slot>removeColumn()</slot>
+  <slot>moveColumnUp()</slot>
+  <slot>moveColumnDown()</slot>
+  <slot>loadTemplate()</slot>
+  <slot>exportTemplate()</slot>
+ </slots>
+</ui>

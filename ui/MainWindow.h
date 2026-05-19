@@ -59,6 +59,7 @@ private slots:
     void importLog();
     void exportLog();
     void showAwards();
+    void showDXCCSubmission();
     void showAbout();
     void showWhatsNew();
     void showWikiHelp();
@@ -81,6 +82,8 @@ private slots:
     void showLoadDB();
     void showQSLGallery();
     void showDuplicateContacts();
+    void showDevTools();
+    void printQslLabels();
 
     void saveProfileLayoutGeometry();
     void setEquipmentKeepOptions(bool);
@@ -90,6 +93,7 @@ private slots:
     void saveContestMenuLinkExchangeType(QAction *action);
     void startContest(const QString contestID, const QDateTime);
     void stopContest();
+    void exportCabrillo();
     void setContestMode(const QString &contestID);
 
     void handleActivityChange(const QString name);

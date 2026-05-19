@@ -244,6 +244,7 @@ public slots:
 
     // to receive RIG instructions
     void changeFrequency(VFOID, double, double, double);
+    void changeSplit(VFOID, bool);
     void changeModeWithoutSignals(const QString &mode, const QString &subMode);
     void changeModefromRig(VFOID, const QString &rawMode, const QString &mode,
                     const QString &subMode, qint32 width);
@@ -378,6 +379,8 @@ private:
     QCompleter *contestCompleter;
     QTimeZone partnerTimeZone;
     double QSOFreq;
+    double QSOTxFreq;
+    double prevQSOTxFreq;
     qint32 bandwidthFilter;
     bool rigOnline;
     CallbookResponseData lastCallbookQueryData;
@@ -385,6 +388,7 @@ private:
     POTAEntity lastPOTA;
     WWFFEntity lastWWFF;
     bool isManualEnterMode;
+    bool rigSplitEnabled;
     LogLocale locale;
     QDateTime timeOff;
     bool callbookSearchPaused;

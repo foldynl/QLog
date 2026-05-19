@@ -71,7 +71,7 @@ public:
     QString getWhereClause();
     void bindWhereClause(QSqlQuery &);
     void setExportedFields(const QStringList& fieldsList);
-    void setUpdateDxcc(bool updateDxcc);
+    void setFillMissingDxcc(bool fillMissingDxcc);
     void setDuplicateQSOCallback(duplicateQSOBehaviour (*func)(QSqlRecord *, QSqlRecord *));
 
     virtual void importStart() {}
@@ -126,7 +126,7 @@ private:
     QStringList exportedFields;
     QString userFilter;
     bool filterPOTAOnly = false;
-    bool updateDxcc = false;
+    bool fillMissingDxcc = false;
     duplicateQSOBehaviour (*duplicateQSOFunc)(QSqlRecord *, QSqlRecord *);
     LogLocale locale;
 };

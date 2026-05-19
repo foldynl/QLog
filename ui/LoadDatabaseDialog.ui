@@ -58,7 +58,10 @@
         <item>
          <widget class="QPushButton" name="browseButton">
           <property name="text">
-           <string>Browse...</string>
+           <string>Browse</string>
+          </property>
+          <property name="icon">
+           <iconset theme="folder-open"/>
           </property>
          </widget>
         </item>

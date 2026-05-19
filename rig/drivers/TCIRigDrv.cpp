@@ -43,6 +43,7 @@ RigCaps TCIRigDrv::getCaps(int)
     ret.canGetKeySpeed = true;
     ret.canGetPWR = true;
     ret.canProcessDXSpot = true;
+    ret.canGetSplit = true;
 
     return ret;
 }
@@ -52,10 +53,12 @@ TCIRigDrv::TCIRigDrv(const RigProfile &profile, QObject *parent)
       ready(false),
       receivedOnly(false),
       currFreq(0.0),
+      currTxFreq(0.0),
       currRIT(0.0),
       currXIT(0.0),
       RITEnabled(false),
-      XITEnabled(false)
+      XITEnabled(false),
+      currSplitEnabled(false)
 {
     FCT_IDENTIFICATION;
 
@@ -121,6 +124,47 @@ void TCIRigDrv::setFrequency(double newFreq)
                         QString::number(internalFreq)
                        };
     sendCmd("vfo", true, args);
+}
+
+void TCIRigDrv::setFrequency(VFOID vfoid, double newFreq)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << vfoid << newFreq;
+
+    if ( !rigProfile.getFreqInfo )
+        return;
+
+    if ( vfoid == VFO1 )
+    {
+        setFrequency(newFreq);
+        return;
+    }
+
+    // VFO2 — TX frequency
+    unsigned long long internalFreq = static_cast<unsigned long long>(newFreq);
+    QStringList args = {"1", //VFO2
+                        QString::number(internalFreq)
+                       };
+    sendCmd("vfo", true, args);
+}
+
+void TCIRigDrv::setSplit(bool enabled)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << enabled;
+
+    if ( !rigProfile.getSplitInfo ) return;
+
+    if ( receivedOnly )
+    {
+        qCDebug(runtime) << "Only receiver - no action";
+        return;
+    }
+
+    QStringList args = {enabled ? "true" : "false"};
+    sendCmd("split_enable", true, args);
 }
 
 void TCIRigDrv::setRawMode(const QString &rawMode)
@@ -252,6 +296,7 @@ void TCIRigDrv::sendState()
     sendCmd("rit_enable", true);
     sendCmd("xit_offset", true);
     sendCmd("xit_enable", true);
+    sendCmd("split_enable", true);
     sendCmd("cw_macros_speed", false);
 }
 
@@ -613,6 +658,32 @@ void TCIRigDrv::rspVFO(const QStringList &cmdArgs)
         return;
     }
 
+    if ( cmdArgs.at(1) == "1" )
+    {
+        // VFO 1 — TX frequency (relevant when split is active)
+        if ( !rigProfile.getSplitInfo )
+            return;
+
+        bool ok;
+        double txFreq = cmdArgs.at(2).toDouble(&ok);
+        if ( ok )
+        {
+            double txFreqMHz = Hz2MHz(txFreq);
+            qCDebug(runtime) << "Rig TX Freq" << QSTRING_FREQ(txFreqMHz);
+            if ( txFreqMHz != currTxFreq )
+            {
+                currTxFreq = txFreqMHz;
+                qCDebug(runtime) << "emitting TX FREQ changed";
+                emit txFrequencyChanged(currTxFreq);
+            }
+        }
+        else
+        {
+            qCDebug(runtime) << "Received TX Freq is not double" << cmdArgs.at(2);
+        }
+        return;
+    }
+
     if ( cmdArgs.at(1) != "0" )
     {
         qCDebug(runtime) << "Skipping info from VFO" << cmdArgs.at(1);
@@ -889,6 +960,46 @@ void TCIRigDrv::rspXIT_ENABLE(const QStringList &cmdArgs)
     emit frequencyChanged(Hz2MHz(currFreq),
                           Hz2MHz(getRITFreq()),
                           Hz2MHz(getXITFreq()));
+}
+
+void TCIRigDrv::rspSPLIT_ENABLE(const QStringList &cmdArgs)
+{
+    FCT_IDENTIFICATION;
+
+    // arg0 - rigid
+    // arg1 - status indicator.
+
+    CHECK_PARAMS_COUNT(cmdArgs.size(), 2);
+
+    if ( !rigProfile.getSplitInfo )
+        return;
+
+    if ( cmdArgs.at(0) != QString::number(rigProfile.model - 1) )
+    {
+        qCDebug(runtime) << "Command is not for QLog";
+        return;
+    }
+
+    bool newSplitEnabled = ( cmdArgs.at(1).toLower() == "true" );
+
+    qCDebug(runtime) << "Rig Split status changed" << newSplitEnabled;
+
+    if ( newSplitEnabled != currSplitEnabled )
+    {
+        currSplitEnabled = newSplitEnabled;
+        qCDebug(runtime) << "emitting SPLIT changed" << currSplitEnabled;
+        emit splitChanged(currSplitEnabled);
+    }
+
+    if ( currSplitEnabled )
+    {
+        // request TX VFO frequency when split is active
+        sendCmd("vfo", true, QStringList("1"));
+    }
+    else if ( currTxFreq != 0.0 )
+    {
+        currTxFreq = 0.0;
+    }
 }
 
 #undef CHECK_PARAMS_COUNT

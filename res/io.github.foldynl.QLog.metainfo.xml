@@ -51,6 +51,31 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.50.0" date="2026-04-26">
+      <description>
+        <ul>
+          <li>[NEW] - Added Split detection</li>
+          <li>[NEW] - Added Developer and Support tools (PR #991 @aa5sh @foldynl)</li>
+          <li>[NEW] - Added a simple QSL label printing dialog (issue #562)</li>
+          <li>[NEW] - Added Cabrillo contest export</li>
+          <li>[NEW] - Added direct labeling of QSL Requested and QSL Received to the QSO context menu (PR #982 @aa5sh)</li>
+          <li>[NEW] - DXCC Submission Report (PR #967 @aa5sh)</li>
+          <li>[NEW] - DXC - Search pre-fills the callsign from New Contact if callsign is present</li>
+          <li>[NEW] - Settings - Added Danger Zone tab with Delete all passwords and QSOs</li>
+          <li>[CHANGED] - Mutex-free Omnirig1 and Omnirig2</li>
+          <li>[CHANGED] - POTA/SOTA/WWFF/SAT list are download from QLog LOV-repo</li>
+          <li>[CHANGED] - Used an external lib for CSV parsing for LOV Download</li>
+          <li>[CHANGED] - Import - ADIF import updates DXCC only if it is missing in the QSO (issue #983)</li>
+          <li>[REMOVED] - Import - ADIF import does not include the option to update DXCC during the import - no longer needed</li>
+          <li>Fixed Callsign disappears when calling a DX in a split via VFO-B (issue #799)</li>
+          <li>Fixing Rendering issue (issue #989)</li>
+          <li>Updated debian packaging (PR @979 thx @dawkagaming)</li>
+          <li>Hamlib rigctld switching between VFO A/B doesnt change the band mode - added workaround (issue #999)</li>
+          <li>Awards internal redesign</li>
+          <li>Removed AN from the WAC award (issue #1010)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.49.1" date="2026-03-19">
       <description>
         <ul>

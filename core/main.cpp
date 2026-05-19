@@ -30,7 +30,8 @@
 MODULE_IDENTIFICATION("qlog.core.main");
 
 static QMutex debug_mutex;
-static bool logToFile = false;
+static QFile debugLogFile;
+static QTextStream debugLogStream;
 
 QTemporaryDir tempDir
 #ifdef QLOG_FLATPAK
@@ -183,32 +184,43 @@ static void startCWKeyerThread()
     cwKeyerThread->start();
 }
 
-static void debugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void closeDebugLogFile()
 {
-    static QFile logFile;
-    static QTextStream logStream;
-
     QMutexLocker locker(&debug_mutex);
 
-    if ( logToFile && !logFile.isOpen() )
+    if ( debugLogFile.isOpen() )
     {
-        logFile.setFileName(Data::debugFilename());
+        debugLogStream.flush();
+        debugLogStream.setDevice(nullptr);
+        debugLogFile.close();
+    }
+}
 
-        if ( logFile.open(QIODevice::WriteOnly | QIODevice::Text) )
+static void debugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QMutexLocker locker(&debug_mutex);
+
+    if ( isLogToFileEnabled() && !debugLogFile.isOpen() )
+    {
+        const QString filename = Data::debugFilename();
+        debugLogFile.setFileName(filename);
+
+        if ( debugLogFile.open(QIODevice::WriteOnly | QIODevice::Text) )
         {
-            logStream.setDevice(&logFile);
-            logStream << "App: " << QCoreApplication::applicationVersion() << "\n"
+            setCurrentDebugLogFilename(filename);
+            debugLogStream.setDevice(&debugLogFile);
+            debugLogStream << "App: " << QCoreApplication::applicationVersion() << "\n"
 #ifdef QLOG_FLATPAK
-                      << "Flatpak" << "\n"
+                           << "Flatpak" << "\n"
 #endif
-                      << "QT: " << qVersion() << "\n"
-                      << "OS: " << QString("%1 %2 (%3)").arg(QSysInfo::prettyProductName(), QSysInfo::currentCpuArchitecture(), QGuiApplication::platformName() ) << "\n"
-                      << "SSL: " << QSslSocket::sslLibraryVersionString() << "\n\n";
+                           << "QT: " << qVersion() << "\n"
+                           << "OS: " << QString("%1 %2 (%3)").arg(QSysInfo::prettyProductName(), QSysInfo::currentCpuArchitecture(), QGuiApplication::platformName() ) << "\n"
+                           << "SSL: " << QSslSocket::sslLibraryVersionString() << "\n\n";
         }
         else
         {
             qWarning() << "Cannot open the file for log";
-            logToFile = false;
+            setLogToFile(false);
         }
     }
 
@@ -235,17 +247,17 @@ static void debugMessageOutput(QtMsgType type, const QMessageLogContext &context
                            .arg(context.file ? context.file : "unknown")
                            .arg(context.line);
 
-    if ( logToFile && logFile.isOpen() )
+    if ( isLogToFileEnabled() && debugLogFile.isOpen() )
     {
-        logStream << logEntry;
-        logStream.flush();
+        debugLogStream << logEntry;
+        debugLogStream.flush();
     }
 
     fprintf(stderr, "%s", logEntry.toUtf8().constData());
 
     if ( type == QtFatalMsg )
     {
-        if (logFile.isOpen()) logFile.close();
+        if (debugLogFile.isOpen()) debugLogFile.close();
         abort();
     }
 }
@@ -337,7 +349,7 @@ int main(int argc, char* argv[])
     QString environment = parser.value(environmentName);
     QString translation_file = parser.value(translationFilename);
     QString lang = parser.value(forceLanguage);
-    logToFile = parser.isSet(debugFile);
+    setLogToFile(parser.isSet(debugFile));
     bool isImportPending = parser.isSet(importPending);
     bool isForceLOVUpdate = parser.isSet(forceLOVUpdate);
 

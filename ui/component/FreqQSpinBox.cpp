@@ -48,25 +48,37 @@ void FreqQSpinBox::loadBands()
 }
 
 void FreqQSpinBox::keyPressEvent(QKeyEvent *event)
-{    
-        if ( event->key() == Qt::Key_PageUp )
-        {
-            increaseByBand();
-            event->accept();
-            return;
-        }
-        else if ( event->key() == Qt::Key_PageDown )
-        {
-            decreaseByBand();
-            event->accept();
-            return;
-        }
+{
+    if ( isReadOnly() )
+    {
+        BaseDoubleSpinBox::keyPressEvent(event);
+        return;
+    }
+
+    if ( event->key() == Qt::Key_PageUp )
+    {
+        increaseByBand();
+        event->accept();
+        return;
+    }
+    else if ( event->key() == Qt::Key_PageDown )
+    {
+        decreaseByBand();
+        event->accept();
+        return;
+    }
 
     BaseDoubleSpinBox::keyPressEvent(event);
 }
 
 void FreqQSpinBox::wheelEvent(QWheelEvent *event)
 {
+    if ( isReadOnly() )
+    {
+        BaseDoubleSpinBox::wheelEvent(event);
+        return;
+    }
+
     if ( event->modifiers() & Qt::ControlModifier )
     {
         if ( event->angleDelta().y() > 0 )

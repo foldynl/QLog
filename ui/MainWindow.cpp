@@ -12,6 +12,8 @@
 #include "ui/ImportDialog.h"
 #include "ui/DuplicateContactsDialog.h"
 #include "ui/ExportDialog.h"
+#include "ui/DevToolsDialog.h"
+#include "ui/CabrilloExportDialog.h"
 #include "core/FldigiTCPServer.h"
 #include "rig/Rig.h"
 #include "rotator/Rotator.h"
@@ -21,6 +23,7 @@
 #include "ui/NewContactWidget.h"
 #include "ui/QSOFilterDialog.h"
 #include "ui/AwardsDialog.h"
+#include "ui/DXCCSubmissionDialog.h"
 #include "core/PropConditions.h"
 #include "data/MainLayoutProfile.h"
 #include "ui/EditActivitiesDialog.h"
@@ -45,6 +48,7 @@
 #include "ui/LoadDatabaseDialog.h"
 #include "ui/PlatformSettingsDialog.h"
 #include "ui/QSLGalleryDialog.h"
+#include "ui/QSLPrintLabelDialog.h"
 #include <QFileDialog>
 #include <QProcess>
 #include <QThread>
@@ -262,6 +266,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(Rig::instance(), &Rig::xitChanged, ui->rigWidget, &RigWidget::updateXIT);
     connect(Rig::instance(), &Rig::ritChanged, ui->rigWidget, &RigWidget::updateRIT);
     connect(Rig::instance(), &Rig::pttChanged, ui->rigWidget, &RigWidget::updatePTT);
+    connect(Rig::instance(), &Rig::splitChanged, ui->rigWidget, &RigWidget::updateSplit);
+    connect(Rig::instance(), &Rig::splitChanged, ui->newContactWidget, &NewContactWidget::changeSplit);
     connect(Rig::instance(), &Rig::rigStatusChanged, &networknotification, &NetworkNotification::rigStatus);
     connect(Rig::instance(), &Rig::rigStatusHeartBeat, &networknotification, &NetworkNotification::rigStatus);
 
@@ -379,6 +385,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->dxWidget, &DxWidget::newToAllSpot, &networknotification, &NetworkNotification::toAllSpot);
     connect(ui->dxWidget, &DxWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
     connect(ui->dxWidget, &DxWidget::tuneBand, ui->rigWidget, &RigWidget::setBand);
+    ui->dxWidget->registerContactWidget(ui->newContactWidget);
 
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, this, &MainWindow::processSpotAlert);
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, &networknotification, &NetworkNotification::spotAlert);
@@ -1110,6 +1117,22 @@ void MainWindow::showDuplicateContacts()
     ui->logbookWidget->updateTable();
 }
 
+void MainWindow::showDevTools()
+{
+    FCT_IDENTIFICATION;
+
+    DevToolsDialog dialog(this);
+    dialog.exec();
+}
+
+void MainWindow::printQslLabels()
+{
+    FCT_IDENTIFICATION;
+
+    QSLPrintLabelDialog dialog(this);
+    dialog.exec();
+}
+
 void MainWindow::showDumpDB()
 {
     FCT_IDENTIFICATION;
@@ -1644,7 +1667,7 @@ void MainWindow::restoreContestMenuLinkExchange()
     addActionToMenu(LogbookModel::COLUMN_RX_PWR);
     addActionToMenu(LogbookModel::COLUMN_STATE);
 
-    std::sort(actions.begin(), actions.end(), [](QAction *a, QAction *b)
+    std::sort(actions.begin(), actions.end(), [](const QAction *a, const QAction *b)
     {
         return a->text().localeAwareCompare(b->text()) < 0;
     });
@@ -1878,15 +1901,32 @@ void MainWindow::exportLog() {
     ui->logbookWidget->updateTable();
 }
 
+void MainWindow::exportCabrillo()
+{
+    FCT_IDENTIFICATION;
+
+    CabrilloExportDialog dialog(this);
+    dialog.exec();
+}
+
 void MainWindow::showAwards()
 {
     FCT_IDENTIFICATION;
 
-    AwardsDialog dialog(this);
-    connect(&dialog, &AwardsDialog::AwardConditionSelected,
+    AwardsDialog* dialog = new AwardsDialog (this);
+    connect(dialog, &AwardsDialog::awardConditionSelected,
             ui->logbookWidget, &LogbookWidget::filterCountryBand);
-    connect(&dialog, &AwardsDialog::finished,
+    connect(dialog, &AwardsDialog::finished,
             ui->logbookWidget, &LogbookWidget::restoreFilters);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
+}
+
+void MainWindow::showDXCCSubmission()
+{
+    FCT_IDENTIFICATION;
+
+    DXCCSubmissionDialog dialog(this);
     dialog.exec();
 }
 

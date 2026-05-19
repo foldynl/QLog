@@ -22,7 +22,7 @@ QDataStream& operator<<(QDataStream& out, const RigProfile& v)
         << v.getKeySpeed << v.assignedCWKey << v.keySpeedSync
         << v.driver << v.dxSpot2Rig << v.pttType << v.pttPortPath
         << v.rts << v.dtr << v.civAddr
-        << v.shareRigctld << v.rigctldPort << v.rigctldPath << v.rigctldArgs;
+        << v.shareRigctld << v.rigctldPort << v.rigctldPath << v.rigctldArgs << v.getSplitInfo;
 
     return out;
 }
@@ -67,6 +67,7 @@ QDataStream& operator>>(QDataStream& in, RigProfile& v)
     in >> v.rigctldPort;
     in >> v.rigctldPath;
     in >> v.rigctldArgs;
+    in >> v.getSplitInfo;
 
     return in;
 }
@@ -86,7 +87,7 @@ RigProfilesManager::RigProfilesManager() :
                                 "key_speed_sync, driver, dxspot2rig, ptt_type, ptt_port_pathname, "
                                 "IFNULL(rts, '%0'), IFNULL(dtr, '%0'), IFNULL(civaddr, -1), "
                                 "IFNULL(share_rigctld, 0), IFNULL(rigctld_port, 4532), "
-                                "IFNULL(rigctld_path, ''), IFNULL(rigctld_args, '') "
+                                "IFNULL(rigctld_path, ''), IFNULL(rigctld_args, ''), get_split "
                                 "FROM rig_profiles").arg(SerialPort::SERIAL_SIGNAL_NONE)))
     {
         qWarning()<< "Cannot prepare select";
@@ -135,6 +136,7 @@ RigProfilesManager::RigProfilesManager() :
             profileDB.rigctldPort = profileQuery.value(35).toUInt();
             profileDB.rigctldPath = profileQuery.value(36).toString();
             profileDB.rigctldArgs = profileQuery.value(37).toString();
+            profileDB.getSplitInfo = profileQuery.value(38).toBool();
 
             addProfile(profileDB.profileName, profileDB);
         }
@@ -163,13 +165,13 @@ void RigProfilesManager::save()
                                "txfreq_end, get_freq, get_mode, get_vfo, get_pwr, rit_offset, xit_offset, get_rit, "
                                "get_xit, default_pwr, get_ptt, qsy_wiping, get_key_speed, assigned_cw_key, key_speed_sync, "
                                "driver, dxSpot2Rig, ptt_type, ptt_port_pathname, rts, dtr, civaddr, "
-                               "share_rigctld, rigctld_port, rigctld_path, rigctld_args ) "
+                               "share_rigctld, rigctld_port, rigctld_path, rigctld_args, get_split ) "
                         "VALUES (:profile_name, :model, :port_pathname, :hostname, :netport, "
                                ":baudrate, :databits, :stopbits, :flowcontrol, :parity, :pollinterval, :txfreq_start, "
                                ":txfreq_end, :get_freq, :get_mode, :get_vfo, :get_pwr, :rit_offset, :xit_offset, :get_rit, "
                                ":get_xit, :default_pwr, :get_ptt, :qsy_wiping, :get_key_speed, :assigned_cw_key, :key_speed_sync, "
                                ":driver, :dxSpot2Rig, :ptt_type, :ptt_port_pathname, :rts, :dtr, :civaddr, "
-                               ":share_rigctld, :rigctld_port, :rigctld_path, :rigctld_args )") )
+                               ":share_rigctld, :rigctld_port, :rigctld_path, :rigctld_args, :get_split )") )
     {
         qWarning() << "cannot prepare Insert statement";
         return;
@@ -220,6 +222,7 @@ void RigProfilesManager::save()
             insertQuery.bindValue(":rigctld_port", rigProfile.rigctldPort);
             insertQuery.bindValue(":rigctld_path", rigProfile.rigctldPath);
             insertQuery.bindValue(":rigctld_args", rigProfile.rigctldArgs);
+            insertQuery.bindValue(":get_split", rigProfile.getSplitInfo);
 
             if ( ! insertQuery.exec() )
             {
@@ -275,6 +278,7 @@ bool RigProfile::operator==(const RigProfile &profile)
             && profile.rigctldPort == this->rigctldPort
             && profile.rigctldPath == this->rigctldPath
             && profile.rigctldArgs == this->rigctldArgs
+            && profile.getSplitInfo == this->getSplitInfo
             );
 }
 

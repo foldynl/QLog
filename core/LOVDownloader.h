@@ -6,6 +6,11 @@
 #include <QRegularExpression>
 #include "service/clublog/ClubLog.h"
 
+namespace csv
+{
+class CSVFormat;
+}
+
 class LOVDownloader : public QObject
 {
     Q_OBJECT
@@ -77,20 +82,20 @@ private:
                                "dxcc_entities_clublog",
                                7)},
         {SATLIST, SourceDefinition(SATLIST,
-                                   "https://foldynl.github.io/QLog/data/satslist.csv",
+                                   "https://raw.githubusercontent.com/foldynl/hamradio-value-lists/main/lists/satellites/satslist.csv",
                                    "satslist.csv",
                                    "LOV/last_sat_update",
                                    "sat_info",
                                    10)},
         {SOTASUMMITS, SourceDefinition(SOTASUMMITS,
-                                   "https://mapping.sota.org.uk/summitslist.csv",
-                                   "summitslist.csv",
+                                   "https://raw.githubusercontent.com/foldynl/hamradio-value-lists/main/lists/SOTA/summitslist.csv.gz",
+                                   "summitslist.csv.gz",
                                    "LOV/last_sotasummits_update",
                                    "sota_summits",
                                    30)},
         {WWFFDIRECTORY, SourceDefinition(WWFFDIRECTORY,
-                                   "https://wwff.co/wwff-data/wwff_directory.csv",
-                                   "wwff_directory.csv",
+                                   "https://raw.githubusercontent.com/foldynl/hamradio-value-lists/main/lists/WWFF/wwff_directory.csv.gz",
+                                   "wwff_directory.csv.gz",
                                    "LOV/last_wwffdirectory_update",
                                    "wwff_directory",
                                    21)},
@@ -101,8 +106,8 @@ private:
                                    "iota",
                                    30)},
         {POTADIRECTORY, SourceDefinition(POTADIRECTORY,
-                                   "https://pota.app/all_parks_ext.csv",
-                                   "all_parks_ext.csv",
+                                   "https://raw.githubusercontent.com/foldynl/hamradio-value-lists/main/lists/POTA/all_parks_ext.csv.gz",
+                                   "all_parks_ext.csv.gz",
                                    "LOV/last_pota_update",
                                    "pota_directory",
                                    30)},
@@ -118,7 +123,6 @@ private:
     QNetworkAccessManager* nam;
     QNetworkReply *currentReply;
     bool abortRequested;
-    QRegularExpression CSVRe;
     QRegularExpression CTYPrefixSeperatorRe;
     QRegularExpression CTYPrefixFormatRe;
 
@@ -136,7 +140,12 @@ private:
     void parsePOTA(const SourceDefinition &sourceDef, QTextStream& data);
     void parseMembershipContent(const SourceDefinition &sourceDef, QTextStream& data);
     void parseClubLogCTY(const SourceDefinition &sourceDef, QTextStream &data);
-
+    bool parseCSVGeneric(const SourceDefinition &sourceDef,
+                         QTextStream &data,
+                         const QString &insertSQL,
+                         const QStringList &csvColumns,
+                         csv::CSVFormat format,
+                         const QString &preValidateContains = QString());
 private slots:
     void processReply(QNetworkReply*);
     void loadData(const LOVDownloader::SourceDefinition &);

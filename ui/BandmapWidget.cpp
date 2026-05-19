@@ -982,11 +982,15 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     contextMenu.exec(ui->graphicsView->mapToGlobal(point));
 }
 
-void BandmapWidget::updateTunedFrequency(VFOID, double vfoFreq, double ritFreq, double xitFreq)
+void BandmapWidget::updateTunedFrequency(VFOID vfoid, double vfoFreq, double ritFreq, double xitFreq)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << vfoFreq << ritFreq << xitFreq;
+    qCDebug(function_parameters) << vfoid << vfoFreq << ritFreq << xitFreq;
+
+    // Bandmap tracks the RX frequency only
+    if ( vfoid == VFO2 )
+        return;
 
     lastSeenVFOFreq = vfoFreq;
 

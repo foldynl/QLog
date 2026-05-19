@@ -1169,7 +1169,7 @@ bool DBSchemaMigration::setSelectedProfile(const QString &tablename, const QStri
     return true;
 }
 
-QString DBSchemaMigration::fixIntlField(QSqlQuery &query, const QString &columName, const QString &columnNameIntl)
+QString DBSchemaMigration::fixIntlField(const QSqlQuery &query, const QString &columName, const QString &columnNameIntl)
 {
     FCT_IDENTIFICATION;
 

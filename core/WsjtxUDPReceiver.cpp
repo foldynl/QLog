@@ -20,6 +20,8 @@
 
 MODULE_IDENTIFICATION("qlog.core.wsjtx");
 
+// https://github.com/saitohirga/WSJT-X/blob/master/Network/NetworkMessage.hpp
+
 WsjtxUDPReceiver::WsjtxUDPReceiver(QObject *parent) :
     QObject(parent),
     socket(new QUdpSocket(this)),

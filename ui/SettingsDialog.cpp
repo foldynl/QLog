@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QStandardItemModel>
+#include <QProgressDialog>
+
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 #include "models/RigTypeModel.h"
@@ -41,30 +43,76 @@
 #include "ui/RigctldAdvancedDialog.h"
 #include "cwkey/drivers/CWWinKey.h"
 
-#define STACKED_WIDGET_SERIAL_SETTING  0
-#define STACKED_WIDGET_NETWORK_SETTING 1
-#define STACKED_WIDGET_SPECIAL_OMNIRIG_SETTING 2
+MODULE_IDENTIFICATION("qlog.ui.settingsdialog");
 
-#define RIGPORT_SERIAL_INDEX 0
-#define RIGPORT_NETWORK_INDEX 1
-#define RIGPORT_SPECIAL_OMNIRIG_INDEX 2
+void SettingsDialog::refreshProfileView(QAbstractItemView *view, const QStringList &names)
+{
+    QStringListModel *model = static_cast<QStringListModel*>(view->model());
+    if ( model ) model->setStringList(names);
+}
 
-#define ROTPORT_SERIAL_INDEX 0
-#define ROTPORT_NETWORK_INDEX 1
+void SettingsDialog::disableCapCheckbox(QCheckBox *checkbox)
+{
+    checkbox->setChecked(false);
+    checkbox->setEnabled(false);
+}
 
-#define EMPTY_CWKEY_PROFILE " "
+void SettingsDialog::initProfileListView(QAbstractItemView *view)
+{
+    view->setModel(new QStringListModel(view));
+}
 
-MODULE_IDENTIFICATION("qlog.ui.settingdialog");
+void SettingsDialog::populateFlowControlCombo(QComboBox *combo)
+{
+    combo->addItem(tr("None"), SerialPort::SERIAL_FLOWCONTROL_NONE);
+    combo->addItem(tr("Hardware"), SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
+    combo->addItem(tr("Software"), SerialPort::SERIAL_FLOWCONTROL_SOFTWARE);
+}
 
-#define RIG_NET_DEFAULT_PORT 4532
-#define ROT_NET_DEFAULT_PORT 4533
-#define ROT_NET_DEFAULT_PSTROT 12000
-#define CW_NET_CWDAEMON_PORT 6789
-#define CW_NET_FLDIGI_PORT 7362
-#define CW_DEFAULT_KEY_SPEED 20
-#define CW_KEY_SPEED_DISABLED 0
-#define PTT_TYPE_NONE_INDEX 0
-#define PTT_TYPE_CAT_INDEX 1
+void SettingsDialog::populateParityCombo(QComboBox *combo)
+{
+    combo->addItem(tr("No"), SerialPort::SERIAL_PARITY_NO);
+    combo->addItem(tr("Even"), SerialPort::SERIAL_PARITY_EVEN);
+    combo->addItem(tr("Odd"), SerialPort::SERIAL_PARITY_ODD);
+    combo->addItem(tr("Mark"), SerialPort::SERIAL_PARITY_MARK);
+    combo->addItem(tr("Space"), SerialPort::SERIAL_PARITY_SPACE);
+}
+
+void SettingsDialog::populateSignalCombo(QComboBox *combo)
+{
+    combo->addItem(tr("None"), SerialPort::SERIAL_SIGNAL_NONE);
+    combo->addItem(tr("High"), SerialPort::SERIAL_SIGNAL_HIGH);
+    combo->addItem(tr("Low"), SerialPort::SERIAL_SIGNAL_LOW);
+}
+
+void SettingsDialog::setComboByData(QComboBox *combo, const QVariant &data, int fallback)
+{
+    const int idx = combo->findData(data);
+    combo->setCurrentIndex((idx < 0) ? fallback : idx);
+}
+
+void SettingsDialog::updateOffsetSpinBox(QCheckBox *checkbox, QDoubleSpinBox *spinBox)
+{
+    if ( checkbox->isChecked() )
+    {
+        spinBox->setValue(0.0);
+        spinBox->setEnabled(false);
+    }
+    else
+        spinBox->setEnabled(true);
+}
+
+void SettingsDialog::deleteSelectedProfiles(QAbstractItemView *view,
+                                            const std::function<void(const QString &)> &removeProfile)
+{
+    const QModelIndexList selectedRows = view->selectionModel()->selectedRows();
+    for ( const QModelIndex &index : selectedRows )
+    {
+        removeProfile(view->model()->data(index).toString());
+        view->model()->removeRow(index.row());
+    }
+    view->clearSelection();
+}
 
 SettingsDialog::SettingsDialog(MainWindow *parent) :
     QDialog(parent),
@@ -80,7 +128,7 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     sotaFallback(false),
     potaFallback(false),
     wwffFallback(false),
-    m_tqslVersionTimer(new QTimer(this))
+    tqslVersionTimer(new QTimer(this))
 {
     FCT_IDENTIFICATION;
 
@@ -104,33 +152,22 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->lotwTextMessage->setVisible(false);
 #endif
 
-    m_tqslVersionTimer->setSingleShot(true);
-    m_tqslVersionTimer->setInterval(500);
-    connect(m_tqslVersionTimer, &QTimer::timeout, this, &SettingsDialog::updateTQSLVersionLabel);
+    tqslVersionTimer->setSingleShot(true);
+    tqslVersionTimer->setInterval(500);
+    connect(tqslVersionTimer, &QTimer::timeout, this, &SettingsDialog::updateTQSLVersionLabel);
     connect(ui->tqslPathEdit, &QLineEdit::textChanged, this, [this]() {
-        m_tqslVersionTimer->start();
+        tqslVersionTimer->start();
     });
 
     RotTypeModel* rotTypeModel = new RotTypeModel(ui->rotModelSelect);
     ui->rotModelSelect->setModel(rotTypeModel);
 
-    QStringListModel* rotModel = new QStringListModel(ui->rotProfilesListView);
-    ui->rotProfilesListView->setModel(rotModel);
-
-    QStringListModel* rotUsrButtonModel = new QStringListModel(ui->rotUsrButtonListView);
-    ui->rotUsrButtonListView->setModel(rotUsrButtonModel);
-
-    QStringListModel* antModel = new QStringListModel(ui->antProfilesListView);
-    ui->antProfilesListView->setModel(antModel);
-
-    QStringListModel* cwKeyModel = new QStringListModel(ui->cwProfilesListView);
-    ui->cwProfilesListView->setModel(cwKeyModel);
-
-    QStringListModel* cwShortcutModel = new QStringListModel(ui->cwShortcutListView);
-    ui->cwShortcutListView->setModel(cwShortcutModel);
-
-    QStringListModel* profilesModes = new QStringListModel(ui->stationProfilesListView);
-    ui->stationProfilesListView->setModel(profilesModes);
+    initProfileListView(ui->rotProfilesListView);
+    initProfileListView(ui->rotUsrButtonListView);
+    initProfileListView(ui->antProfilesListView);
+    initProfileListView(ui->cwProfilesListView);
+    initProfileListView(ui->cwShortcutListView);
+    initProfileListView(ui->stationProfilesListView);
 
     QStringListModel* cwKeysModel = new QStringListModel(ui->rigAssignedCWKeyCombo);
     ui->rigAssignedCWKeyCombo->setModel(cwKeysModel);
@@ -142,17 +179,12 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->rigModelSelect->setModel(rigTypeModel);
 
     for ( const QPair<int, QString> &driver : Rig::instance()->getDriverList() )
-    {
         ui->rigInterfaceCombo->addItem(driver.second, driver.first);
-    }
 
     for ( const QPair<int, QString> &driver : Rotator::instance()->getDriverList() )
-    {
         ui->rotInterfaceCombo->addItem(driver.second, driver.first);
-    }
 
-    QStringListModel* rigModel = new QStringListModel(ui->rigProfilesListView);
-    ui->rigProfilesListView->setModel(rigModel);
+    initProfileListView(ui->rigProfilesListView);
 
     /* Country Combo */
     SqlListModel* countryModel = new SqlListModel("SELECT id, translate_to_locale(name), name  "
@@ -231,12 +263,16 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     static QRegularExpression multicastAddress("^2(?:2[4-9]|3\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d?|0)){3}$");
 
     ui->wsjtMulticastAddressEdit->setValidator(new QRegularExpressionValidator(multicastAddress, ui->wsjtMulticastAddressEdit));
-    ui->wsjtForwardEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->wsjtForwardEdit));
-    ui->notifQSOEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifQSOEdit));
-    ui->notifDXSpotsEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifDXSpotsEdit));
-    ui->notifWSJTXCQSpotsEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifWSJTXCQSpotsEdit));
-    ui->notifSpotAlertEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifSpotAlertEdit));
-    ui->notifRigEdit->setValidator(new QRegularExpressionValidator(HostsPortString::hostsPortRegEx(), ui->notifRigEdit));
+    const QRegularExpression hostsPortRe = HostsPortString::hostsPortRegEx();
+    QLineEdit * const hostsPortEdits[] =
+    {
+        ui->wsjtForwardEdit, ui->notifQSOEdit,
+        ui->notifDXSpotsEdit, ui->notifWSJTXCQSpotsEdit,
+        ui->notifSpotAlertEdit, ui->notifRigEdit
+    };
+
+    for ( QLineEdit *edit : hostsPortEdits )
+        edit->setValidator(new QRegularExpressionValidator(hostsPortRe, edit));
 
     iotaCompleter = new QCompleter(Data::instance()->iotaIDList(), ui->stationIOTAEdit);
     iotaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -279,26 +315,11 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->primaryCallbookCombo->addItem(tr("HamQTH"),   QVariant(HamQTHCallbook::CALLBOOK_NAME));
     ui->primaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZCallbook::CALLBOOK_NAME));
 
-    ui->rigFlowControlSelect->addItem(tr("None"), SerialPort::SERIAL_FLOWCONTROL_NONE);
-    ui->rigFlowControlSelect->addItem(tr("Hardware"), SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
-    ui->rigFlowControlSelect->addItem(tr("Software"), SerialPort::SERIAL_FLOWCONTROL_SOFTWARE);
+    populateFlowControlCombo(ui->rigFlowControlSelect);
+    populateParityCombo(ui->rigParitySelect);
+    populateFlowControlCombo(ui->rotFlowControlSelect);
+    populateParityCombo(ui->rotParitySelect);
 
-    ui->rigParitySelect->addItem(tr("No"), SerialPort::SERIAL_PARITY_NO);
-    ui->rigParitySelect->addItem(tr("Even"), SerialPort::SERIAL_PARITY_EVEN);
-    ui->rigParitySelect->addItem(tr("Odd"), SerialPort::SERIAL_PARITY_ODD);
-    ui->rigParitySelect->addItem(tr("Mark"), SerialPort::SERIAL_PARITY_MARK);
-    ui->rigParitySelect->addItem(tr("Space"), SerialPort::SERIAL_PARITY_SPACE);
-
-    ui->rotFlowControlSelect->addItem(tr("None"), SerialPort::SERIAL_FLOWCONTROL_NONE);
-    ui->rotFlowControlSelect->addItem(tr("Hardware"), SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
-    ui->rotFlowControlSelect->addItem(tr("Software"), SerialPort::SERIAL_FLOWCONTROL_SOFTWARE);
-
-    ui->rotParitySelect->addItem(tr("No"), SerialPort::SERIAL_PARITY_NO);
-    ui->rotParitySelect->addItem(tr("Even"), SerialPort::SERIAL_PARITY_EVEN);
-    ui->rotParitySelect->addItem(tr("Odd"), SerialPort::SERIAL_PARITY_ODD);
-    ui->rotParitySelect->addItem(tr("Mark"), SerialPort::SERIAL_PARITY_MARK);
-    ui->rotParitySelect->addItem(tr("Space"), SerialPort::SERIAL_PARITY_SPACE);
-;
     ui->cwModelSelect->addItem(tr("Dummy"), CWKey::DUMMY_KEYER);
     ui->cwModelSelect->addItem(tr("Morse Over CAT"), CWKey::MORSEOVERCAT);
     ui->cwModelSelect->addItem(tr("WinKey"), CWKey::WINKEY_KEYER);
@@ -312,17 +333,13 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->cwKeyModeSelect->addItem(tr("Ultimate"), CWKey::ULTIMATE);
     ui->cwKeyModeSelect->setCurrentIndex(ui->cwKeyModeSelect->findData(CWKey::IAMBIC_B));
 
-    for ( const QPair<QString, int> &f : CWWinKey::sidetoneFrequencies() )
+    const QList<QPair<QString, int>> sideToneFreqsList = CWWinKey::sidetoneFrequencies();
+    for ( const QPair<QString, int> &f : sideToneFreqsList )
         ui->cwSidetoneFreqCombo->addItem(f.first, f.second);
     ui->cwSidetoneFreqCombo->setCurrentIndex(ui->cwSidetoneFreqCombo->findData(CWWinKey::defaultSidetoneFrequency()));
 
-    ui->rigDTRCombo->addItem(tr("None"), SerialPort::SERIAL_SIGNAL_NONE);
-    ui->rigDTRCombo->addItem(tr("High"), SerialPort::SERIAL_SIGNAL_HIGH);
-    ui->rigDTRCombo->addItem(tr("Low"), SerialPort::SERIAL_SIGNAL_LOW);
-
-    ui->rigRTSCombo->addItem(tr("None"), SerialPort::SERIAL_SIGNAL_NONE);
-    ui->rigRTSCombo->addItem(tr("High"), SerialPort::SERIAL_SIGNAL_HIGH);
-    ui->rigRTSCombo->addItem(tr("Low"), SerialPort::SERIAL_SIGNAL_LOW);
+    populateSignalCombo(ui->rigDTRCombo);
+    populateSignalCombo(ui->rigRTSCombo);
 
     /* disable WSJTX Multicast by default */
     joinMulticastChanged(false);
@@ -332,7 +349,8 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     readSettings();
 }
 
-void SettingsDialog::save() {
+void SettingsDialog::save()
+{
     FCT_IDENTIFICATION;
 
     if ( stationProfManager->profileNameList().isEmpty() )
@@ -342,72 +360,38 @@ void SettingsDialog::save() {
         return;
     }
 
-    QString pleaseModifyTXT = tr("Press <b>Modify</b> to confirm the profile changes or <b>Cancel</b>.");
+    const QString pleaseModifyTXT = tr("Press <b>Modify</b> to confirm the profile changes or <b>Cancel</b>.");
 
-    if ( ui->stationAddProfileButton->text() == tr("Modify") )
+    struct PendingModify { QPushButton *button; int tabIndex; int equipTabIndex; };
+    const PendingModify modifyChecks[] =
     {
-        ui->tabWidget->setCurrentIndex(0);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
-        return;
-    }
-
-    if ( ui->antAddProfileButton->text() == tr("Modify") )
+        {ui->stationAddProfileButton,       0, -1},
+        {ui->antAddProfileButton,           1,  0},
+        {ui->cwAddProfileButton,            1,  1},
+        {ui->cwShortcutAddProfileButton,    1,  1},
+        {ui->rigAddProfileButton,           1,  2},
+        {ui->rotAddProfileButton,           1,  3},
+        {ui->rotUsrButtonAddProfileButton,  1,  3},
+    };
+    for ( const PendingModify &check : modifyChecks )
     {
-        ui->tabWidget->setCurrentIndex(1);
-        ui->equipmentTabWidget->setCurrentIndex(0);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
-        return;
-    }
-
-    if ( ui->cwAddProfileButton->text() == tr("Modify") )
-    {
-        ui->tabWidget->setCurrentIndex(1);
-        ui->equipmentTabWidget->setCurrentIndex(1);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
-        return;
-    }
-
-    if ( ui->cwShortcutAddProfileButton->text() == tr("Modify") )
-    {
-        ui->tabWidget->setCurrentIndex(1);
-        ui->equipmentTabWidget->setCurrentIndex(1);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
-        return;
-    }
-
-    if ( ui->rigAddProfileButton->text() == tr("Modify") )
-    {
-        ui->tabWidget->setCurrentIndex(1);
-        ui->equipmentTabWidget->setCurrentIndex(2);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
-        return;
-    }
-
-    if ( ui->rotAddProfileButton->text() == tr("Modify") )
-    {
-        ui->tabWidget->setCurrentIndex(1);
-        ui->equipmentTabWidget->setCurrentIndex(3);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
-        return;
-    }
-
-    if ( ui->rotUsrButtonAddProfileButton->text() == tr("Modify") )
-    {
-        ui->tabWidget->setCurrentIndex(1);
-        ui->equipmentTabWidget->setCurrentIndex(3);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),pleaseModifyTXT);
-        return;
-    }
-
-    if ( ui->wsjtMulticastCheckbox->isChecked() )
-    {
-        if ( ! ui->wsjtMulticastAddressEdit->hasAcceptableInput() )
+        if ( check.button->text() == tr("Modify") )
         {
-            ui->tabWidget->setCurrentIndex(8);
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
-                                 QMessageBox::tr("WSJTX Multicast is enabled but the Address is not a multicast address."));
+            ui->tabWidget->setCurrentIndex(check.tabIndex);
+            if ( check.equipTabIndex >= 0 )
+                ui->equipmentTabWidget->setCurrentIndex(check.equipTabIndex);
+            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"), pleaseModifyTXT);
             return;
         }
+    }
+
+    if ( ui->wsjtMulticastCheckbox->isChecked()
+         && ! ui->wsjtMulticastAddressEdit->hasAcceptableInput())
+    {
+        ui->tabWidget->setCurrentIndex(8);
+        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+                             QMessageBox::tr("WSJTX Multicast is enabled but the Address is not a multicast address."));
+        return;
     }
 
     if ( !ui->wsjtForwardEdit->text().isEmpty() )
@@ -436,14 +420,12 @@ void SettingsDialog::addRigProfile()
         return;
     }
 
-    if ( ! ui->rigPortEdit->text().isEmpty() )
+    if ( ! ui->rigPortEdit->text().isEmpty()
+         && ! ui->rigPortEdit->hasAcceptableInput())
     {
-        if ( ! ui->rigPortEdit->hasAcceptableInput() )
-        {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
-                                 QMessageBox::tr("Rig port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
-            return;
-        }
+        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+                             QMessageBox::tr("Rig port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
+        return;
     }
 
     if ( ui->rigStackedWidget->currentIndex() == STACKED_WIDGET_SERIAL_SETTING )
@@ -482,18 +464,13 @@ void SettingsDialog::addRigProfile()
     }
 
     if ( ui->rigAddProfileButton->text() == tr("Modify"))
-    {
         ui->rigAddProfileButton->setText(tr("Add"));
-    }
 
     RigProfile profile;
 
     profile.profileName = ui->rigProfileNameEdit->text();
-
     profile.driver = ui->rigInterfaceCombo->currentData().toInt();
-
     profile.model = ui->rigModelSelect->currentData().toInt();
-
     profile.txFreqStart = ui->rigTXFreqMinSpinBox->value();
     profile.txFreqEnd = ui->rigTXFreqMaxSpinBox->value();
 
@@ -539,6 +516,7 @@ void SettingsDialog::addRigProfile()
     profile.getKeySpeed = ui->rigGetKeySpeedCheckBox->isChecked();
     profile.keySpeedSync = ui->rigKeySpeedSyncCheckBox->isChecked();
     profile.dxSpot2Rig = ui->rigDXSpots2RigCheckBox->isChecked();
+    profile.getSplitInfo = ui->rigGetSplitCheckBox->isChecked();
 
     // Rigctld sharing settings
     profile.shareRigctld = ui->rigShareCheckBox->isChecked();
@@ -556,14 +534,9 @@ void SettingsDialog::addRigProfile()
 void SettingsDialog::delRigProfile()
 {
     FCT_IDENTIFICATION;
-
-    foreach (QModelIndex index, ui->rigProfilesListView->selectionModel()->selectedRows())
-    {
-        rigProfManager->removeProfile(ui->rigProfilesListView->model()->data(index).toString());
-        ui->rigProfilesListView->model()->removeRow(index.row());
-    }
-    ui->rigProfilesListView->clearSelection();
-
+    deleteSelectedProfiles(ui->rigProfilesListView, [this](const QString &name) {
+        rigProfManager->removeProfile(name);
+    });
     clearRigProfileForm();
 }
 
@@ -621,24 +594,17 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     ui->rigGetKeySpeedCheckBox->setChecked(profile.getKeySpeed);
     ui->rigKeySpeedSyncCheckBox->setChecked(profile.keySpeedSync);
     ui->rigDXSpots2RigCheckBox->setChecked(profile.dxSpot2Rig);
+    ui->rigGetSplitCheckBox->setChecked(profile.getSplitInfo);
 
-    int flowControlIndex = ui->rigFlowControlSelect->findData(profile.flowcontrol.toLower());
-    ui->rigFlowControlSelect->setCurrentIndex((flowControlIndex < 0) ? 0 : flowControlIndex);
-
-    int parityIndex = ui->rigParitySelect->findData(profile.parity.toLower());
-    ui->rigParitySelect->setCurrentIndex((parityIndex < 0) ? 0 : parityIndex);
+    setComboByData(ui->rigFlowControlSelect, profile.flowcontrol.toLower());
+    setComboByData(ui->rigParitySelect, profile.parity.toLower());
 
     const RigCaps &caps = Rig::instance()->getRigCaps(static_cast<Rig::DriverID>(profile.driver), profile.model);
 
-    int pttIndex = ui->rigPTTTypeCombo->findData(profile.pttType);
-    ui->rigPTTTypeCombo->setCurrentIndex(( pttIndex < 0 ) ? PTT_TYPE_CAT_INDEX : pttIndex);
+    setComboByData(ui->rigPTTTypeCombo, profile.pttType, PTT_TYPE_CAT_INDEX);
     ui->rigPTTPortEdit->setText(profile.pttPortPath);
-
-    int rtsIndex = ui->rigRTSCombo->findData(profile.rts);
-    ui->rigRTSCombo->setCurrentIndex(( rtsIndex < 0 ) ? PTT_TYPE_CAT_INDEX : rtsIndex);
-
-    int dtrIndex = ui->rigDTRCombo->findData(profile.dtr);
-    ui->rigDTRCombo->setCurrentIndex(( dtrIndex < 0 ) ? PTT_TYPE_CAT_INDEX : dtrIndex);
+    setComboByData(ui->rigRTSCombo, profile.rts, PTT_TYPE_CAT_INDEX);
+    setComboByData(ui->rigDTRCombo, profile.dtr, PTT_TYPE_CAT_INDEX);
 
     ui->rigCIVAddrSpinBox->setValue(( profile.civAddr >= 0 ) ? profile.civAddr : CIVADDR_DISABLED_VALUE);
 
@@ -695,6 +661,7 @@ void SettingsDialog::clearRigProfileForm()
     ui->rigAddProfileButton->setText(tr("Add"));
     ui->rigPTTPortEdit->clear();
     ui->rigCIVAddrSpinBox->setValue(CIVADDR_DISABLED_VALUE);
+    ui->rigGetSplitCheckBox->setChecked(false);
 
     // Rigctld sharing settings
     ui->rigShareCheckBox->setChecked(false);
@@ -709,31 +676,13 @@ void SettingsDialog::clearRigProfileForm()
 void SettingsDialog::rigRXOffsetChanged(int)
 {
     FCT_IDENTIFICATION;
-
-    if ( ui->rigGetRITCheckBox->isChecked() )
-    {
-        ui->rigRXOffsetSpinBox->setValue(0.0);
-        ui->rigRXOffsetSpinBox->setEnabled(false);
-    }
-    else
-    {
-        ui->rigRXOffsetSpinBox->setEnabled(true);
-    }
+    updateOffsetSpinBox(ui->rigGetRITCheckBox, ui->rigRXOffsetSpinBox);
 }
 
 void SettingsDialog::rigTXOffsetChanged(int)
 {
     FCT_IDENTIFICATION;
-
-    if ( ui->rigGetXITCheckBox->isChecked() )
-    {
-        ui->rigTXOffsetSpinBox->setValue(0.0);
-        ui->rigTXOffsetSpinBox->setEnabled(false);
-    }
-    else
-    {
-        ui->rigTXOffsetSpinBox->setEnabled(true);
-    }
+    updateOffsetSpinBox(ui->rigGetXITCheckBox, ui->rigTXOffsetSpinBox);
 }
 
 void SettingsDialog::rigGetFreqChanged(int)
@@ -805,11 +754,8 @@ void SettingsDialog::rigInterfaceChanged(int)
     ui->rigModelSelect->setCurrentIndex(( driverID == Rig::HAMLIB_DRIVER ) ? ui->rigModelSelect->findData(Rig::DEFAULT_MODEL)
                                                                            : 0 );
     ui->rigPTTTypeCombo->clear();
-    int noneIndex = ui->rigRTSCombo->findData(SerialPort::SERIAL_SIGNAL_NONE);
-    ui->rigRTSCombo->setCurrentIndex((noneIndex < 0) ? 0 : noneIndex);
-
-    noneIndex = ui->rigDTRCombo->findData(SerialPort::SERIAL_SIGNAL_NONE);
-    ui->rigDTRCombo->setCurrentIndex((noneIndex < 0) ? 0 : noneIndex);
+    setComboByData(ui->rigRTSCombo, SerialPort::SERIAL_SIGNAL_NONE);
+    setComboByData(ui->rigDTRCombo, SerialPort::SERIAL_SIGNAL_NONE);
 
     const QList<QPair<QString, QString>> &pttTypes = Rig::instance()->getPTTTypeList(static_cast<Rig::DriverID>(driverID));
 
@@ -845,27 +791,21 @@ void SettingsDialog::addRotProfile()
         return;
     }
 
-    if ( ! ui->rotPortEdit->text().isEmpty() )
+    if ( ! ui->rotPortEdit->text().isEmpty()
+         && ! ui->rotPortEdit->hasAcceptableInput() )
     {
-        if ( ! ui->rotPortEdit->hasAcceptableInput() )
-        {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
-                                 QMessageBox::tr("Rotator port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
-            return;
-        }
+        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+                             QMessageBox::tr("Rotator port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
+        return;
     }
 
     if ( ui->rotAddProfileButton->text() == tr("Modify"))
-    {
         ui->rotAddProfileButton->setText(tr("Add"));
-    }
 
     RotProfile profile;
 
     profile.profileName = ui->rotProfileNameEdit->text();
-
     profile.driver = ui->rotInterfaceCombo->currentData().toInt();
-
     profile.model = ui->rotModelSelect->currentData().toInt();
 
     if ( ui->rotStackedWidget->currentIndex() == STACKED_WIDGET_NETWORK_SETTING )
@@ -894,26 +834,16 @@ void SettingsDialog::addRotProfile()
 void SettingsDialog::delRotProfile()
 {
     FCT_IDENTIFICATION;
-
-    foreach (QModelIndex index, ui->rotProfilesListView->selectionModel()->selectedRows())
-    {
-        rotProfManager->removeProfile(ui->rotProfilesListView->model()->data(index).toString());
-        ui->rotProfilesListView->model()->removeRow(index.row());
-    }
-    ui->rotProfilesListView->clearSelection();
-
+    deleteSelectedProfiles(ui->rotProfilesListView, [this](const QString &name) {
+        rotProfManager->removeProfile(name);
+    });
     clearRotProfileForm();
 }
 
 void SettingsDialog::refreshRotProfilesView()
 {
     FCT_IDENTIFICATION;
-
-    QStringList profiles;
-    profiles << rotProfManager->profileNameList();
-
-    QStringListModel* model = static_cast<QStringListModel*>(ui->rotProfilesListView->model());
-    if ( model ) model->setStringList(profiles);
+    refreshProfileView(ui->rotProfilesListView, rotProfManager->profileNameList());
 }
 
 void SettingsDialog::doubleClickRotProfile(QModelIndex i)
@@ -937,11 +867,8 @@ void SettingsDialog::doubleClickRotProfile(QModelIndex i)
     ui->rotDataBitsSelect->setCurrentText(QString::number(profile.databits));
     ui->rotStopBitsSelect->setCurrentText(QString::number(profile.stopbits));
 
-    int flowControlIndex = ui->rotFlowControlSelect->findData(profile.flowcontrol.toLower());
-    ui->rotFlowControlSelect->setCurrentIndex((flowControlIndex < 0) ? 0 : flowControlIndex);
-
-    int parityIndex = ui->rotParitySelect->findData(profile.parity.toLower());
-    ui->rotParitySelect->setCurrentIndex((parityIndex < 0) ? 0 : parityIndex);
+    setComboByData(ui->rotFlowControlSelect, profile.flowcontrol.toLower());
+    setComboByData(ui->rotParitySelect, profile.parity.toLower());
 
     ui->rotAddProfileButton->setText(tr("Modify"));
 }
@@ -1040,17 +967,13 @@ void SettingsDialog::addRotUsrButtonsProfile()
 
     profile.profileName = ui->rotUsrButtonProfileNameEdit->text();
 
-    profile.shortDescs[0] = ui->rotUsrButton1Edit->text();
-    profile.bearings[0] = ui->rotUsrButtonSpinBox1->value();
-
-    profile.shortDescs[1] = ui->rotUsrButton2Edit->text();
-    profile.bearings[1] = ui->rotUsrButtonSpinBox2->value();
-
-    profile.shortDescs[2] = ui->rotUsrButton3Edit->text();
-    profile.bearings[2] = ui->rotUsrButtonSpinBox3->value();
-
-    profile.shortDescs[3] = ui->rotUsrButton4Edit->text();
-    profile.bearings[3] = ui->rotUsrButtonSpinBox4->value();
+    QLineEdit * const buttonEdits[] = { ui->rotUsrButton1Edit, ui->rotUsrButton2Edit, ui->rotUsrButton3Edit, ui->rotUsrButton4Edit };
+    QSpinBox * const spinBoxes[]   = { ui->rotUsrButtonSpinBox1, ui->rotUsrButtonSpinBox2, ui->rotUsrButtonSpinBox3, ui->rotUsrButtonSpinBox4 };
+    for ( int i = 0; i < 4; ++i )
+    {
+        profile.shortDescs[i] = buttonEdits[i]->text();
+        profile.bearings[i]   = spinBoxes[i]->value();
+    }
 
     rotUsrButtonsProfManager->addProfile(profile.profileName, profile);
 
@@ -1062,51 +985,33 @@ void SettingsDialog::addRotUsrButtonsProfile()
 void SettingsDialog::delRotUsrButtonsProfile()
 {
     FCT_IDENTIFICATION;
-
-    foreach (QModelIndex index, ui->rotUsrButtonListView->selectionModel()->selectedRows())
-    {
-        rotUsrButtonsProfManager->removeProfile(ui->rotUsrButtonListView->model()->data(index).toString());
-        ui->rotUsrButtonListView->model()->removeRow(index.row());
-    }
-    ui->rotUsrButtonListView->clearSelection();
-
+    deleteSelectedProfiles(ui->rotUsrButtonListView, [this](const QString &name) {
+        rotUsrButtonsProfManager->removeProfile(name);
+    });
     clearRotUsrButtonsProfileForm();
-
 }
 
 void SettingsDialog::refreshRotUsrButtonsProfilesView()
 {
     FCT_IDENTIFICATION;
-
-    QStringList profiles;
-    profiles << rotUsrButtonsProfManager->profileNameList();
-
-    QStringListModel* model = static_cast<QStringListModel*>(ui->rotUsrButtonListView->model());
-    if ( model ) model->setStringList(profiles);
-
+    refreshProfileView(ui->rotUsrButtonListView, rotUsrButtonsProfManager->profileNameList());
 }
 
 void SettingsDialog::doubleClickRotUsrButtonsProfile(QModelIndex i)
 {
     FCT_IDENTIFICATION;
 
-    RotUsrButtonsProfile profile;
-
-    profile = rotUsrButtonsProfManager->getProfile(ui->rotUsrButtonListView->model()->data(i).toString());
+    RotUsrButtonsProfile profile = rotUsrButtonsProfManager->getProfile(ui->rotUsrButtonListView->model()->data(i).toString());
 
     ui->rotUsrButtonProfileNameEdit->setText(profile.profileName);
 
-    ui->rotUsrButton1Edit->setText(profile.shortDescs[0]);
-    ui->rotUsrButtonSpinBox1->setValue(profile.bearings[0]);
-
-    ui->rotUsrButton2Edit->setText(profile.shortDescs[1]);
-    ui->rotUsrButtonSpinBox2->setValue(profile.bearings[1]);
-
-    ui->rotUsrButton3Edit->setText(profile.shortDescs[2]);
-    ui->rotUsrButtonSpinBox3->setValue(profile.bearings[2]);
-
-    ui->rotUsrButton4Edit->setText(profile.shortDescs[3]);
-    ui->rotUsrButtonSpinBox4->setValue(profile.bearings[3]);
+    QLineEdit * const buttonEdits[] = { ui->rotUsrButton1Edit, ui->rotUsrButton2Edit, ui->rotUsrButton3Edit, ui->rotUsrButton4Edit };
+    QSpinBox * const spinBoxes[]   = { ui->rotUsrButtonSpinBox1, ui->rotUsrButtonSpinBox2, ui->rotUsrButtonSpinBox3, ui->rotUsrButtonSpinBox4 };
+    for ( int i = 0; i < 4; ++i )
+    {
+        buttonEdits[i]->setText(profile.shortDescs[i]);
+        spinBoxes[i]->setValue(profile.bearings[i]);
+    }
 
     ui->rotUsrButtonAddProfileButton->setText(tr("Modify"));
 }
@@ -1118,17 +1023,13 @@ void SettingsDialog::clearRotUsrButtonsProfileForm()
     ui->rotUsrButtonProfileNameEdit->setPlaceholderText(QString());
     ui->rotUsrButtonProfileNameEdit->clear();
 
-    ui->rotUsrButton1Edit->clear();
-    ui->rotUsrButtonSpinBox1->setValue(-1);
-
-    ui->rotUsrButton2Edit->clear();
-    ui->rotUsrButtonSpinBox2->setValue(-1);
-
-    ui->rotUsrButton3Edit->clear();
-    ui->rotUsrButtonSpinBox3->setValue(-1);
-
-    ui->rotUsrButton4Edit->clear();
-    ui->rotUsrButtonSpinBox4->setValue(-1);
+    QLineEdit * const buttonEdits[] = { ui->rotUsrButton1Edit, ui->rotUsrButton2Edit, ui->rotUsrButton3Edit, ui->rotUsrButton4Edit };
+    QSpinBox * const spinBoxes[]   = { ui->rotUsrButtonSpinBox1, ui->rotUsrButtonSpinBox2, ui->rotUsrButtonSpinBox3, ui->rotUsrButtonSpinBox4 };
+    for ( int i = 0; i < 4; ++i )
+    {
+        buttonEdits[i]->clear();
+        spinBoxes[i]->setValue(-1);
+    }
 
     ui->rotUsrButtonAddProfileButton->setText(tr("Add"));
 }
@@ -1166,33 +1067,21 @@ void SettingsDialog::addAntProfile()
 void SettingsDialog::delAntProfile()
 {
     FCT_IDENTIFICATION;
-
-    foreach (QModelIndex index, ui->antProfilesListView->selectionModel()->selectedRows())
-    {
-        antProfManager->removeProfile(ui->antProfilesListView->model()->data(index).toString());
-        ui->antProfilesListView->model()->removeRow(index.row());
-    }
-    ui->antProfilesListView->clearSelection();
-
+    deleteSelectedProfiles(ui->antProfilesListView, [this](const QString &name) {
+        antProfManager->removeProfile(name);
+    });
     clearAntProfileForm();
 }
 
 void SettingsDialog::refreshAntProfilesView()
 {
     FCT_IDENTIFICATION;
-
-    QStringList profiles;
-    profiles << antProfManager->profileNameList();
-
-    QStringListModel* model = static_cast<QStringListModel*>(ui->antProfilesListView->model());
-    if ( model ) model->setStringList(profiles);
+    refreshProfileView(ui->antProfilesListView, antProfManager->profileNameList());
 }
 
 void SettingsDialog::doubleClickAntProfile(QModelIndex i)
 {
-    AntProfile profile;
-
-    profile = antProfManager->getProfile(ui->antProfilesListView->model()->data(i).toString());
+    AntProfile profile = antProfManager->getProfile(ui->antProfilesListView->model()->data(i).toString());
 
     ui->antProfileNameEdit->setText(profile.profileName);
     ui->antDescEdit->setPlainText(profile.description);
@@ -1227,14 +1116,12 @@ void SettingsDialog::addCWKeyProfile()
         return;
     }
 
-    if ( ! ui->cwPortEdit->text().isEmpty() )
+    if ( ! ui->cwPortEdit->text().isEmpty()
+         && ! ui->cwPortEdit->hasAcceptableInput() )
     {
-        if ( ! ui->cwPortEdit->hasAcceptableInput() )
-        {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
-                                 QMessageBox::tr("CW Keyer port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
-            return;
-        }
+        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+                             QMessageBox::tr("CW Keyer port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
+        return;
     }
 
     CWKeyProfile cwKeyNewProfile;
@@ -1327,7 +1214,8 @@ void SettingsDialog::delCWKeyProfile()
     FCT_IDENTIFICATION;
 
 
-    foreach (QModelIndex index, ui->cwProfilesListView->selectionModel()->selectedRows())
+    const QModelIndexList cwSelectedRows = ui->cwProfilesListView->selectionModel()->selectedRows();
+    for ( const QModelIndex &index : cwSelectedRows )
     {
         QStringList  dependentRigs;
         QString removedCWProfile = ui->cwProfilesListView->model()->data(index).toString();
@@ -1339,9 +1227,7 @@ void SettingsDialog::delCWKeyProfile()
             qCDebug(runtime) << "Checking Rig Profile" << rigProfileName;
             RigProfile testedRig = rigProfManager->getProfile(rigProfileName);
             if ( testedRig.assignedCWKey == removedCWProfile )
-            {
                 dependentRigs << testedRig.profileName;
-            }
         }
 
         if ( dependentRigs.isEmpty() )
@@ -1367,21 +1253,14 @@ void SettingsDialog::delCWKeyProfile()
 void SettingsDialog::refreshCWKeyProfilesView()
 {
     FCT_IDENTIFICATION;
-
-    QStringList profiles;
-    profiles << cwKeyProfManager->profileNameList();
-
-    QStringListModel* model = static_cast<QStringListModel*>(ui->cwProfilesListView->model());
-    if ( model ) model->setStringList(profiles);
+    refreshProfileView(ui->cwProfilesListView, cwKeyProfManager->profileNameList());
 }
 
 void SettingsDialog::doubleClickCWKeyProfile(QModelIndex i)
 {
     FCT_IDENTIFICATION;
 
-    CWKeyProfile profile;
-
-    profile = cwKeyProfManager->getProfile(ui->cwProfilesListView->model()->data(i).toString());
+    CWKeyProfile profile = cwKeyProfManager->getProfile(ui->cwProfilesListView->model()->data(i).toString());
 
     ui->cwProfileNameEdit->setText(profile.profileName);
     ui->cwModelSelect->setCurrentIndex(ui->cwModelSelect->findData(profile.model));
@@ -1432,34 +1311,19 @@ void SettingsDialog::addCWShortcutProfile()
     }
 
     if ( ui->cwShortcutAddProfileButton->text() == tr("Modify"))
-    {
         ui->cwShortcutAddProfileButton->setText(tr("Add"));
-    }
 
     CWShortcutProfile profile;
 
     profile.profileName = ui->cwShortcutProfileNameEdit->text();
 
-    profile.shortDescs[0] = ui->cwShortcutF1ShortEdit->text();
-    profile.macros[0] = ui->cwShortcutF1MacroEdit->text();
-
-    profile.shortDescs[1] = ui->cwShortcutF2ShortEdit->text();
-    profile.macros[1] = ui->cwShortcutF2MacroEdit->text();
-
-    profile.shortDescs[2] = ui->cwShortcutF3ShortEdit->text();
-    profile.macros[2] = ui->cwShortcutF3MacroEdit->text();
-
-    profile.shortDescs[3] = ui->cwShortcutF4ShortEdit->text();
-    profile.macros[3] = ui->cwShortcutF4MacroEdit->text();
-
-    profile.shortDescs[4] = ui->cwShortcutF5ShortEdit->text();
-    profile.macros[4] = ui->cwShortcutF5MacroEdit->text();
-
-    profile.shortDescs[5] = ui->cwShortcutF6ShortEdit->text();
-    profile.macros[5] = ui->cwShortcutF6MacroEdit->text();
-
-    profile.shortDescs[6] = ui->cwShortcutF7ShortEdit->text();
-    profile.macros[6] = ui->cwShortcutF7MacroEdit->text();
+    QLineEdit * const shortEdits[] = { ui->cwShortcutF1ShortEdit, ui->cwShortcutF2ShortEdit, ui->cwShortcutF3ShortEdit, ui->cwShortcutF4ShortEdit, ui->cwShortcutF5ShortEdit, ui->cwShortcutF6ShortEdit, ui->cwShortcutF7ShortEdit };
+    QLineEdit * const macroEdits[] = { ui->cwShortcutF1MacroEdit, ui->cwShortcutF2MacroEdit, ui->cwShortcutF3MacroEdit, ui->cwShortcutF4MacroEdit, ui->cwShortcutF5MacroEdit, ui->cwShortcutF6MacroEdit, ui->cwShortcutF7MacroEdit };
+    for ( int i = 0; i < 7; ++i )
+    {
+        profile.shortDescs[i] = shortEdits[i]->text();
+        profile.macros[i]     = macroEdits[i]->text();
+    }
 
     cwShortcutProfManager->addProfile(profile.profileName, profile);
 
@@ -1471,58 +1335,33 @@ void SettingsDialog::addCWShortcutProfile()
 void SettingsDialog::delCWShortcutProfile()
 {
     FCT_IDENTIFICATION;
-
-    foreach (QModelIndex index, ui->cwShortcutListView->selectionModel()->selectedRows())
-    {
-        cwShortcutProfManager->removeProfile(ui->cwShortcutListView->model()->data(index).toString());
-        ui->cwShortcutListView->model()->removeRow(index.row());
-    }
-    ui->cwShortcutListView->clearSelection();
-
+    deleteSelectedProfiles(ui->cwShortcutListView, [this](const QString &name) {
+        cwShortcutProfManager->removeProfile(name);
+    });
     clearCWShortcutProfileForm();
 }
 
 void SettingsDialog::refreshCWShortcutProfilesView()
 {
     FCT_IDENTIFICATION;
-
-    QStringList profiles;
-    profiles << cwShortcutProfManager->profileNameList();
-
-    QStringListModel* model = static_cast<QStringListModel*>(ui->cwShortcutListView->model());
-    if ( model ) model->setStringList(profiles);
+    refreshProfileView(ui->cwShortcutListView, cwShortcutProfManager->profileNameList());
 }
 
 void SettingsDialog::doubleClickCWShortcutProfile(QModelIndex i)
 {
     FCT_IDENTIFICATION;
 
-    CWShortcutProfile profile;
-
-    profile = cwShortcutProfManager->getProfile(ui->cwShortcutListView->model()->data(i).toString());
+    CWShortcutProfile profile = cwShortcutProfManager->getProfile(ui->cwShortcutListView->model()->data(i).toString());
 
     ui->cwShortcutProfileNameEdit->setText(profile.profileName);
 
-    ui->cwShortcutF1ShortEdit->setText(profile.shortDescs[0]);
-    ui->cwShortcutF1MacroEdit->setText(profile.macros[0]);
-
-    ui->cwShortcutF2ShortEdit->setText(profile.shortDescs[1]);
-    ui->cwShortcutF2MacroEdit->setText(profile.macros[1]);
-
-    ui->cwShortcutF3ShortEdit->setText(profile.shortDescs[2]);
-    ui->cwShortcutF3MacroEdit->setText(profile.macros[2]);
-
-    ui->cwShortcutF4ShortEdit->setText(profile.shortDescs[3]);
-    ui->cwShortcutF4MacroEdit->setText(profile.macros[3]);
-
-    ui->cwShortcutF5ShortEdit->setText(profile.shortDescs[4]);
-    ui->cwShortcutF5MacroEdit->setText(profile.macros[4]);
-
-    ui->cwShortcutF6ShortEdit->setText(profile.shortDescs[5]);
-    ui->cwShortcutF6MacroEdit->setText(profile.macros[5]);
-
-    ui->cwShortcutF7ShortEdit->setText(profile.shortDescs[6]);
-    ui->cwShortcutF7MacroEdit->setText(profile.macros[6]);
+    QLineEdit * const shortEdits[] = { ui->cwShortcutF1ShortEdit, ui->cwShortcutF2ShortEdit, ui->cwShortcutF3ShortEdit, ui->cwShortcutF4ShortEdit, ui->cwShortcutF5ShortEdit, ui->cwShortcutF6ShortEdit, ui->cwShortcutF7ShortEdit };
+    QLineEdit * const macroEdits[] = { ui->cwShortcutF1MacroEdit, ui->cwShortcutF2MacroEdit, ui->cwShortcutF3MacroEdit, ui->cwShortcutF4MacroEdit, ui->cwShortcutF5MacroEdit, ui->cwShortcutF6MacroEdit, ui->cwShortcutF7MacroEdit };
+    for ( int i = 0; i < 7; ++i )
+    {
+        shortEdits[i]->setText(profile.shortDescs[i]);
+        macroEdits[i]->setText(profile.macros[i]);
+    }
 
     ui->cwShortcutAddProfileButton->setText(tr("Modify"));
 }
@@ -1534,26 +1373,13 @@ void SettingsDialog::clearCWShortcutProfileForm()
     ui->cwShortcutProfileNameEdit->setPlaceholderText(QString());
     ui->cwShortcutProfileNameEdit->clear();
 
-    ui->cwShortcutF1ShortEdit->clear();
-    ui->cwShortcutF1MacroEdit->clear();
-
-    ui->cwShortcutF2ShortEdit->clear();
-    ui->cwShortcutF2MacroEdit->clear();
-
-    ui->cwShortcutF3ShortEdit->clear();
-    ui->cwShortcutF3MacroEdit->clear();
-
-    ui->cwShortcutF4ShortEdit->clear();
-    ui->cwShortcutF4MacroEdit->clear();
-
-    ui->cwShortcutF5ShortEdit->clear();
-    ui->cwShortcutF5MacroEdit->clear();
-
-    ui->cwShortcutF6ShortEdit->clear();
-    ui->cwShortcutF6MacroEdit->clear();
-
-    ui->cwShortcutF7ShortEdit->clear();
-    ui->cwShortcutF7MacroEdit->clear();
+    QLineEdit * const shortEdits[] = { ui->cwShortcutF1ShortEdit, ui->cwShortcutF2ShortEdit, ui->cwShortcutF3ShortEdit, ui->cwShortcutF4ShortEdit, ui->cwShortcutF5ShortEdit, ui->cwShortcutF6ShortEdit, ui->cwShortcutF7ShortEdit };
+    QLineEdit * const macroEdits[] = { ui->cwShortcutF1MacroEdit, ui->cwShortcutF2MacroEdit, ui->cwShortcutF3MacroEdit, ui->cwShortcutF4MacroEdit, ui->cwShortcutF5MacroEdit, ui->cwShortcutF6MacroEdit, ui->cwShortcutF7MacroEdit };
+    for ( int i = 0; i < 7; ++i )
+    {
+        shortEdits[i]->clear();
+        macroEdits[i]->clear();
+    }
 
     ui->cwShortcutAddProfileButton->setText(tr("Add"));
 }
@@ -1561,23 +1387,13 @@ void SettingsDialog::clearCWShortcutProfileForm()
 void SettingsDialog::refreshRigProfilesView()
 {
     FCT_IDENTIFICATION;
-
-    QStringList profiles;
-    profiles << rigProfManager->profileNameList();
-
-    QStringListModel* model = static_cast<QStringListModel*>(ui->rigProfilesListView->model());
-    if ( model ) model->setStringList(profiles);
+    refreshProfileView(ui->rigProfilesListView, rigProfManager->profileNameList());
 }
 
 void SettingsDialog::refreshStationProfilesView()
 {
     FCT_IDENTIFICATION;
-
-    QStringList profiles;
-    profiles << stationProfManager->profileNameList();
-
-    QStringListModel* model = static_cast<QStringListModel*>(ui->stationProfilesListView->model());
-    if ( model ) model->setStringList(profiles);
+    refreshProfileView(ui->stationProfilesListView, stationProfManager->profileNameList());
 }
 
 void SettingsDialog::addStationProfile()
@@ -1699,13 +1515,9 @@ void SettingsDialog::addStationProfile()
 void SettingsDialog::deleteStationProfile()
 {
     FCT_IDENTIFICATION;
-
-    foreach (QModelIndex index, ui->stationProfilesListView->selectionModel()->selectedRows()) {
-        stationProfManager->removeProfile(ui->stationProfilesListView->model()->data(index).toString());
-        ui->stationProfilesListView->model()->removeRow(index.row());
-    }
-    ui->stationProfilesListView->clearSelection();
-
+    deleteSelectedProfiles(ui->stationProfilesListView, [this](const QString &name) {
+        stationProfManager->removeProfile(name);
+    });
     clearStationProfileForm();
 }
 
@@ -1713,9 +1525,7 @@ void SettingsDialog::doubleClickStationProfile(QModelIndex i)
 {
     FCT_IDENTIFICATION;
 
-    StationProfile profile;
-
-    profile = stationProfManager->getProfile(ui->stationProfilesListView->model()->data(i).toString());
+    StationProfile profile = stationProfManager->getProfile(ui->stationProfilesListView->model()->data(i).toString());
 
     ui->stationProfileNameEdit->setText(profile.profileName);
     ui->stationCallsignEdit->blockSignals(true);
@@ -1798,27 +1608,17 @@ void SettingsDialog::rigChanged(int index)
     const RigCaps &caps = Rig::instance()->getRigCaps(driverID, rigID);
 
     if ( driverID == Rig::OMNIRIG_DRIVER
-         || driverID == Rig::OMNIRIGV2_DRIVER)
+         || driverID == Rig::OMNIRIGV2_DRIVER )
     {
         ui->rigPortTypeCombo->setCurrentIndex(RIGPORT_SPECIAL_OMNIRIG_INDEX);
         ui->rigPortTypeCombo->setEnabled(false);
     }
     else
     {
-        ui->rigPortTypeCombo->setEnabled(true);
+        ui->rigPortTypeCombo->setCurrentIndex(caps.isNetworkOnly ? RIGPORT_NETWORK_INDEX : RIGPORT_SERIAL_INDEX);
+        ui->rigPortTypeCombo->setEnabled(!caps.isNetworkOnly);
 
-        if ( caps.isNetworkOnly )
-        {
-            ui->rigPortTypeCombo->setCurrentIndex(RIGPORT_NETWORK_INDEX);
-            ui->rigPortTypeCombo->setEnabled(false);
-        }
-        else
-        {
-            ui->rigPortTypeCombo->setCurrentIndex(RIGPORT_SERIAL_INDEX);
-            ui->rigPortTypeCombo->setEnabled(true);
-        }
-
-        if ( ui->rigPortTypeCombo->currentIndex() == RIGPORT_SERIAL_INDEX )
+        if ( !caps.isNetworkOnly )
         {
             ui->rigDataBitsSelect->setCurrentText(QString::number(caps.serialDataBits));
             ui->rigStopBitsSelect->setCurrentText(QString::number(caps.serialStopBits));
@@ -1865,6 +1665,9 @@ void SettingsDialog::rigChanged(int index)
     ui->rigDXSpots2RigCheckBox->setEnabled(true);
     ui->rigDXSpots2RigCheckBox->setChecked(false);
 
+    ui->rigGetSplitCheckBox->setEnabled(true);
+    ui->rigGetSplitCheckBox->setChecked(true);
+
     setUIBasedOnRigCaps(caps);
 }
 
@@ -1885,9 +1688,7 @@ void SettingsDialog::rotChanged(int index)
         ui->rotPortTypeCombo->setEnabled(false);
     }
     else
-    {
         ui->rotPortTypeCombo->setEnabled(true);
-    }
 
     if ( ui->rotPortTypeCombo->currentIndex() == RIGPORT_SERIAL_INDEX )
     {
@@ -2112,7 +1913,7 @@ void SettingsDialog::adjustRotCOMPortTextColor()
 {
     FCT_IDENTIFICATION;
 
-    setValidationResultColor(ui->cwPortEdit);
+    setValidationResultColor(ui->rotPortEdit);
 }
 
 void SettingsDialog::adjustRigCOMPortTextColor()
@@ -2154,15 +1955,7 @@ void SettingsDialog::sotaChanged(const QString &newSOTA)
 {
     FCT_IDENTIFICATION;
 
-    if ( newSOTA.length() >= 3 )
-    {
-        ui->stationSOTAEdit->setCompleter(sotaCompleter);
-    }
-    else
-    {
-        ui->stationSOTAEdit->setCompleter(nullptr);
-    }
-
+    ui->stationSOTAEdit->setCompleter(( newSOTA.length() >= 3 ) ? sotaCompleter : nullptr);
     ui->stationQTHEdit->clear();
     ui->stationLocatorEdit->clear();
 }
@@ -2180,9 +1973,7 @@ void SettingsDialog::sotaEditFinished()
         ui->stationQTHEdit->setText(sotaInfo.summitName);
         Gridsquare SOTAGrid(sotaInfo.latitude, sotaInfo.longitude);
         if ( SOTAGrid.isValid() )
-        {
             ui->stationLocatorEdit->setText(SOTAGrid.getGrid());
-        }
     }
     else if ( !ui->stationPOTAEdit->text().isEmpty() && !potaFallback )
     {
@@ -2200,15 +1991,7 @@ void SettingsDialog::potaChanged(const QString &newPOTA)
 {
     FCT_IDENTIFICATION;
 
-    if ( newPOTA.length() >= 3 )
-    {
-        ui->stationPOTAEdit->setCompleter(potaCompleter);
-    }
-    else
-    {
-        ui->stationPOTAEdit->setCompleter(nullptr);
-    }
-
+    ui->stationPOTAEdit->setCompleter(( newPOTA.length() >= 3 ) ? potaCompleter : nullptr);
     ui->stationQTHEdit->clear();
     ui->stationLocatorEdit->clear();
 }
@@ -2220,14 +2003,10 @@ void SettingsDialog::potaEditFinished()
     QStringList potaList = ui->stationPOTAEdit->text().split("@");
     QString potaString;
 
-    if ( potaList.size() > 0 )
-    {
+    if ( !potaList.isEmpty() )
         potaString = potaList[0];
-    }
     else
-    {
         potaString = ui->stationPOTAEdit->text();
-    }
 
     POTAEntity potaInfo = Data::instance()->lookupPOTA(potaString);
 
@@ -2238,9 +2017,7 @@ void SettingsDialog::potaEditFinished()
         ui->stationQTHEdit->setText(potaInfo.name);
         Gridsquare POTAGrid(potaInfo.grid);
         if ( POTAGrid.isValid() )
-        {
             ui->stationLocatorEdit->setText(POTAGrid.getGrid());
-        }
     }
     else if ( !ui->stationSOTAEdit->text().isEmpty() && !sotaFallback )
     {
@@ -2256,14 +2033,7 @@ void SettingsDialog::wwffChanged(const QString &newWWFF)
 {
     FCT_IDENTIFICATION;
 
-    if ( newWWFF.length() >= 3 )
-    {
-        ui->stationWWFFEdit->setCompleter(wwffCompleter);
-    }
-    else
-    {
-        ui->stationWWFFEdit->setCompleter(nullptr);
-    }
+    ui->stationWWFFEdit->setCompleter(( newWWFF.length() >= 3 ) ? wwffCompleter : nullptr);
 
     if ( ui->stationSOTAEdit->text().isEmpty() )
     {
@@ -2382,9 +2152,7 @@ void SettingsDialog::hrdlogSettingChanged()
     ui->hrdlogOnAirCheckBox->setEnabled(!ui->hrdlogCallsignEdit->text().isEmpty()
                                          && !ui->hrdlogUploadCodeEdit->text().isEmpty());
     if ( !ui->hrdlogOnAirCheckBox->isEnabled() )
-    {
         ui->hrdlogOnAirCheckBox->setChecked(false);
-    }
 }
 
 void SettingsDialog::clublogSettingChanged()
@@ -2394,9 +2162,7 @@ void SettingsDialog::clublogSettingChanged()
     ui->clublogUploadImmediatelyCheckbox->setEnabled(!ui->clublogEmailEdit->text().isEmpty()
                                                  && !ui->clublogPasswordEdit->text().isEmpty());
     if ( !ui->clublogUploadImmediatelyCheckbox->isEnabled() )
-    {
         ui->clublogUploadImmediatelyCheckbox->setChecked(false);
-    }
 }
 
 void SettingsDialog::updateDateFormatResult()
@@ -2414,10 +2180,7 @@ void SettingsDialog::rigFlowControlChanged(int)
     bool isHWControlEnabled = (ui->rigFlowControlSelect->currentData().toString() == SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
 
     if ( isHWControlEnabled )
-    {
-        int rstNoneIndex = ui->rigRTSCombo->findData(SerialPort::SERIAL_SIGNAL_NONE);
-        ui->rigRTSCombo->setCurrentIndex((rstNoneIndex < 0) ? 0 : rstNoneIndex);
-    }
+        setComboByData(ui->rigRTSCombo, SerialPort::SERIAL_SIGNAL_NONE);
     ui->rigRTSCombo->setEnabled(!isHWControlEnabled);
 }
 
@@ -2457,23 +2220,17 @@ void SettingsDialog::updateRigShareEnabled()
     ui->rigSharePortSpinBox->setEnabled(canShare && ui->rigShareCheckBox->isChecked());
     ui->rigShareAdvancedButton->setEnabled(canShare && ui->rigShareCheckBox->isChecked());
 
-    if (!canShare)
+    if ( !canShare )
     {
         ui->rigShareCheckBox->setChecked(false);
 
         if (driverID != Rig::HAMLIB_DRIVER)
-        {
             ui->rigShareCheckBox->setToolTip(tr("Rig sharing is only available for Hamlib driver"));
-        }
         else
-        {
             ui->rigShareCheckBox->setToolTip(tr("Rig sharing is not available for network connection"));
-        }
     }
     else
-    {
         ui->rigShareCheckBox->setToolTip(tr("Start rigctld daemon to share rig with other applications (e.g. WSJT-X)"));
-    }
 }
 
 void SettingsDialog::qrzAddCallsignAPIKey()
@@ -2499,31 +2256,55 @@ void SettingsDialog::qrzDelCallsignAPIKey()
     ui->qrzCallsignApiKeyTableView->model()->removeRow(index.row());
 }
 
+void SettingsDialog::onDeleteAllPasswords()
+{
+    FCT_IDENTIFICATION;
+
+    CredentialStore::instance()->deleteAllPasswords();
+    QMessageBox::information(this, tr("Delete Passwords"), tr("All passwords have been deleted"));
+
+    // It is necessary to close the dialog, because we would have to delete
+    // all the passwords in the dialog. It would be safer to close it.
+    reject();
+}
+
+void SettingsDialog::onDeleteAllQSOs()
+{
+    FCT_IDENTIFICATION;
+
+    QProgressDialog *progress = new QProgressDialog(tr("Deleting all QSOs..."), QString(), 0, 0, this);
+    progress->setWindowModality(Qt::ApplicationModal);
+    progress->setMinimumDuration(0);
+    progress->setAttribute(Qt::WA_DeleteOnClose, true);
+    progress->show();
+
+    QTimer::singleShot(0, this, [this, progress]()
+    {
+        QSqlQuery query;
+        bool ok = query.exec(QStringLiteral("DELETE FROM contacts"));
+
+        if (!ok)
+            qCDebug(runtime) << "Cannot delete QSOs:" << query.lastError().text();
+
+        progress->close();
+
+        if (!ok)
+            QMessageBox::warning(this, tr("Error"), tr("Failed to delete all QSOs."));
+        accept();
+    });
+}
+
 void SettingsDialog::readSettings()
 {
     FCT_IDENTIFICATION;
 
-    QStringList profiles = stationProfManager->profileNameList();
-    (static_cast<QStringListModel*>(ui->stationProfilesListView->model()))->setStringList(profiles);
-
-    QStringList rigs = rigProfManager->profileNameList();
-    (static_cast<QStringListModel*>(ui->rigProfilesListView->model()))->setStringList(rigs);
-
-    QStringList rots = rotProfManager->profileNameList();
-    (static_cast<QStringListModel*>(ui->rotProfilesListView->model()))->setStringList(rots);
-
-    QStringList rotButtons = rotUsrButtonsProfManager->profileNameList();
-    (static_cast<QStringListModel*>(ui->rotUsrButtonListView->model()))->setStringList(rotButtons);
-
-    QStringList ants = antProfManager->profileNameList();
-    (static_cast<QStringListModel*>(ui->antProfilesListView->model()))->setStringList(ants);
-
-    QStringList cwKeys = cwKeyProfManager->profileNameList();
-    (static_cast<QStringListModel*>(ui->cwProfilesListView->model()))->setStringList(cwKeys);
-
-    QStringList cwShortcut = cwShortcutProfManager->profileNameList();
-    (static_cast<QStringListModel*>(ui->cwShortcutListView->model()))->setStringList(cwShortcut);
-
+    refreshStationProfilesView();
+    refreshRigProfilesView();
+    refreshRotProfilesView();
+    refreshRotUsrButtonsProfilesView();
+    refreshAntProfilesView();
+    refreshCWKeyProfilesView();
+    refreshCWShortcutProfilesView();
     refreshRigAssignedCWKeyCombo();
 
     /************/
@@ -2774,69 +2555,21 @@ void SettingsDialog::setUIBasedOnRigCaps(const RigCaps &caps)
 {
     FCT_IDENTIFICATION;
 
-    if ( ! caps.canGetFreq )
+    if ( !caps.canGetFreq ) disableCapCheckbox(ui->rigGetFreqCheckBox);
+    if ( !caps.canGetMode ) disableCapCheckbox(ui->rigGetModeCheckBox);
+    if ( !caps.canGetVFO ) disableCapCheckbox(ui->rigGetVFOCheckBox);
+    if ( !caps.canGetPWR )disableCapCheckbox(ui->rigGetPWRCheckBox);
+    if ( !caps.canGetRIT )disableCapCheckbox(ui->rigGetRITCheckBox);
+    if ( !caps.canGetXIT )disableCapCheckbox(ui->rigGetXITCheckBox);
+    if ( !caps.canGetPTT )disableCapCheckbox(ui->rigGetPTTStateCheckBox);
+    if ( !ui->rigGetFreqCheckBox->isChecked() )disableCapCheckbox(ui->rigQSYWipingCheckBox);
+    if ( !caps.canGetKeySpeed )
     {
-        ui->rigGetFreqCheckBox->setChecked(false);
-        ui->rigGetFreqCheckBox->setEnabled(false);
+        disableCapCheckbox(ui->rigGetKeySpeedCheckBox);
+        disableCapCheckbox(ui->rigKeySpeedSyncCheckBox);
     }
-
-    if ( ! caps.canGetMode )
-    {
-        ui->rigGetModeCheckBox->setChecked(false);
-        ui->rigGetModeCheckBox->setEnabled(false);
-    }
-
-    if ( ! caps.canGetVFO )
-    {
-        ui->rigGetVFOCheckBox->setChecked(false);
-        ui->rigGetVFOCheckBox->setEnabled(false);
-    }
-
-    if ( ! caps.canGetPWR )
-    {
-        ui->rigGetPWRCheckBox->setChecked(false);
-        ui->rigGetPWRCheckBox->setEnabled(false);
-    }
-
-
-    if ( ! caps.canGetRIT )
-    {
-        ui->rigGetRITCheckBox->setChecked(false);
-        ui->rigGetRITCheckBox->setEnabled(false);
-    }
-
-    if ( ! caps.canGetXIT )
-    {
-        ui->rigGetXITCheckBox->setChecked(false);
-        ui->rigGetXITCheckBox->setEnabled(false);
-    }
-
-    if ( ! caps.canGetPTT)
-    {
-        ui->rigGetPTTStateCheckBox->setChecked(false);
-        ui->rigGetPTTStateCheckBox->setEnabled(false);
-    }
-
-    if ( ! ui->rigGetFreqCheckBox->isChecked() )
-    {
-        ui->rigQSYWipingCheckBox->setChecked(false);
-        ui->rigQSYWipingCheckBox->setEnabled(false);
-    }
-
-    if ( ! caps.canGetKeySpeed )
-    {
-        ui->rigGetKeySpeedCheckBox->setChecked(false);
-        ui->rigGetKeySpeedCheckBox->setEnabled(false);
-        ui->rigKeySpeedSyncCheckBox->setChecked(false);
-        ui->rigKeySpeedSyncCheckBox->setEnabled(false);
-    }
-
-    if ( ! caps.canProcessDXSpot )
-    {
-        ui->rigDXSpots2RigCheckBox->setChecked(false);
-        ui->rigDXSpots2RigCheckBox->setEnabled(false);
-    }
-
+    if ( !caps.canProcessDXSpot )disableCapCheckbox(ui->rigDXSpots2RigCheckBox);
+    if ( !caps.canGetSplit )disableCapCheckbox(ui->rigGetSplitCheckBox);
     if ( ui->rigAssignedCWKeyCombo->currentText() != EMPTY_CWKEY_PROFILE )
     {
         CWKeyProfile selectedKeyProfile;
@@ -2848,10 +2581,7 @@ void SettingsDialog::setUIBasedOnRigCaps(const RigCaps &caps)
             ui->rigKeySpeedSyncCheckBox->setEnabled(false);
         }
     }
-
-
-    if ( !caps.isCIVAddrSupported )
-        ui->rigCIVAddrSpinBox->setValue(CIVADDR_DISABLED_VALUE);
+    if ( !caps.isCIVAddrSupported )ui->rigCIVAddrSpinBox->setValue(CIVADDR_DISABLED_VALUE);
 
     ui->rigCIVAddrLabel->setVisible(caps.isCIVAddrSupported);
     ui->rigCIVAddrSpinBox->setVisible(caps.isCIVAddrSupported);
@@ -2894,32 +2624,6 @@ void SettingsDialog::refreshRigAssignedCWKeyCombo()
         }
     }
 
- /*
-    for (const QString &cwProfileName : qAsConst(availableCWProfileNames))
-    {
-        CWKeyProfile testedKey = cwKeyProfManager->getProfile(cwProfileName);
-
-        if ( testedKey.model == CWKey::MORSEOVERCAT )
-        {
-            //need to check whether selected rig support Morse over CAT
-            if ( selectedRigCaps
-                 && selectedRigCaps->send_morse )
-            {
-                // the rig has Morse Send function
-                approvedCWProfiles << cwProfileName;
-            }
-            else
-            {
-                // do not add it because we know nothing about the rig
-            }
-        }
-        else
-        {
-            // it is not Morse Over CAT key therefore add it automatically
-            approvedCWProfiles << cwProfileName;
-        }
-    }
-*/
     QStringListModel* model = static_cast<QStringListModel*>(ui->rigAssignedCWKeyCombo->model());
     if ( model ) model->setStringList(approvedCWProfiles);
 
@@ -2933,28 +2637,10 @@ void SettingsDialog::setValidationResultColor(QLineEdit *editBox)
     QPalette p;
 
     if ( ! editBox )
-    {
         return;
-    }
 
-    if ( ! editBox->hasAcceptableInput() )
-    {
-        p.setColor(QPalette::Text,Qt::red);
-    }
-    else
-    {
-        p.setColor(QPalette::Text,qApp->palette().text().color());
-    }
+    p.setColor( QPalette::Text, ( ! editBox->hasAcceptableInput() ) ? Qt::red : qApp->palette().text().color());
     editBox->setPalette(p);
-}
-
-QString SettingsDialog::getMemberListComboValue(const QComboBox *combo)
-{
-    FCT_IDENTIFICATION;
-
-    QSqlTableModel *model = static_cast<QSqlTableModel*>(combo->model());
-    QModelIndex index = model->index(combo->currentIndex(), 0);
-    return model->data(index).toString();
 }
 
 void SettingsDialog::generateMembershipCheckboxes()
@@ -2967,35 +2653,23 @@ void SettingsDialog::generateMembershipCheckboxes()
     membershipDirectoryModel.select();
     QStringList currentlyEnabledLists = MembershipQE::getEnabledClubLists();
 
-    for ( int i = 0 ; i < membershipDirectoryModel.rowCount(); i++)
+    for ( int i = 0 ; i < membershipDirectoryModel.rowCount(); i++ )
     {
         QCheckBox *columnCheckbox = new QCheckBox(this);
 
-        QString shortDesc = membershipDirectoryModel.data(membershipDirectoryModel.index(i, membershipDirectoryModel.fieldIndex("short_desc"))).toString();
-        QString longDesc = membershipDirectoryModel.data(membershipDirectoryModel.index(i, membershipDirectoryModel.fieldIndex("long_desc"))).toString();
-        QString records = membershipDirectoryModel.data(membershipDirectoryModel.index(i, membershipDirectoryModel.fieldIndex("num_records"))).toString();
+        const QString shortDesc = membershipDirectoryModel.data(membershipDirectoryModel.index(i, membershipDirectoryModel.fieldIndex("short_desc"))).toString();
+        const QString longDesc = membershipDirectoryModel.data(membershipDirectoryModel.index(i, membershipDirectoryModel.fieldIndex("long_desc"))).toString();
+        const QString records = membershipDirectoryModel.data(membershipDirectoryModel.index(i, membershipDirectoryModel.fieldIndex("num_records"))).toString();
 
         columnCheckbox->setText(shortDesc);
         columnCheckbox->setToolTip(longDesc + QString(" (" + tr("members") + ": %1)").arg(records));
         columnCheckbox->setChecked(currentlyEnabledLists.contains(shortDesc));
         memberListCheckBoxes.append(columnCheckbox);
+        ui->clubListGrig->addWidget(columnCheckbox, i / 6, i % 6);
     }
 
-
-    if ( memberListCheckBoxes.size() == 0 )
-    {
+    if ( memberListCheckBoxes.isEmpty() )
         ui->clubListGrig->addWidget(new QLabel(tr("Required internet connection during application start")));
-    }
-    else
-    {
-        int elementIndex = 0;
-
-        for ( QCheckBox* item: static_cast<const QList<QCheckBox*>&>(memberListCheckBoxes) )
-        {
-            ui->clubListGrig->addWidget(item, elementIndex / 6, elementIndex % 6);
-            elementIndex++;
-        }
-    }
 }
 
 void SettingsDialog::generateQRZAPICallsignTable()
@@ -3006,7 +2680,6 @@ void SettingsDialog::generateQRZAPICallsignTable()
     tableModel->setHorizontalHeaderLabels({tr("Callsign"), tr("API Key")});
 
     const QStringList &addlCallsign = QRZBase::getLogbookAPIAddlCallsigns();
-
 
     for ( const QString &callsign : addlCallsign )
     {
@@ -3068,8 +2741,6 @@ void SettingsDialog::updateCountyCompleter(int dxcc)
 SettingsDialog::~SettingsDialog() {
     FCT_IDENTIFICATION;
 
-    modeTableModel->deleteLater();
-    bandTableModel->deleteLater();
     sotaCompleter->deleteLater();
     iotaCompleter->deleteLater();
     sigCompleter->deleteLater();

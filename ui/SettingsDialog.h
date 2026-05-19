@@ -1,7 +1,9 @@
 #ifndef QLOG_UI_SETTINGSDIALOG_H
 #define QLOG_UI_SETTINGSDIALOG_H
 
+#include <QAbstractItemView>
 #include <QDialog>
+#include <functional>
 #include <QModelIndex>
 #include <QSqlTableModel>
 #include <QCompleter>
@@ -10,6 +12,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QDoubleSpinBox>
 
 #include "data/StationProfile.h"
 #include "data/RigProfile.h"
@@ -129,6 +132,9 @@ public slots:
     void qrzAddCallsignAPIKey();
     void qrzDelCallsignAPIKey();
 
+    void onDeleteAllPasswords();
+    void onDeleteAllQSOs();
+
 private:
     void readSettings();
     void writeSettings();
@@ -136,13 +142,45 @@ private:
     void refreshRigAssignedCWKeyCombo();
     void updateRigShareEnabled();
     void setValidationResultColor(QLineEdit *);
-    QString getMemberListComboValue(const QComboBox *);
     void generateMembershipCheckboxes();
+    static void refreshProfileView(QAbstractItemView *view, const QStringList &names);
+    static void disableCapCheckbox(QCheckBox *checkbox);
+    static void initProfileListView(QAbstractItemView *view);
+    static void populateFlowControlCombo(QComboBox *combo);
+    static void populateParityCombo(QComboBox *combo);
+    static void populateSignalCombo(QComboBox *combo);
+    static void setComboByData(QComboBox *combo, const QVariant &data, int fallback = 0);
+    static void updateOffsetSpinBox(QCheckBox *checkbox, QDoubleSpinBox *spinBox);
+    static void deleteSelectedProfiles(QAbstractItemView *view,
+                                       const std::function<void(const QString &)> &removeProfile);
     void generateQRZAPICallsignTable();
     void saveQRZAPICallsignTable();
     void updateCountyCompleter(int dxcc);
 
-    const int CIVADDR_DISABLED_VALUE = -1;
+    static constexpr int STACKED_WIDGET_SERIAL_SETTING          = 0;
+    static constexpr int STACKED_WIDGET_NETWORK_SETTING         = 1;
+    static constexpr int STACKED_WIDGET_SPECIAL_OMNIRIG_SETTING = 2;
+
+    static constexpr int RIGPORT_SERIAL_INDEX          = 0;
+    static constexpr int RIGPORT_NETWORK_INDEX         = 1;
+    static constexpr int RIGPORT_SPECIAL_OMNIRIG_INDEX = 2;
+
+    static constexpr int ROTPORT_SERIAL_INDEX  = 0;
+    static constexpr int ROTPORT_NETWORK_INDEX = 1;
+
+    static constexpr int RIG_NET_DEFAULT_PORT   = 4532;
+    static constexpr int ROT_NET_DEFAULT_PORT   = 4533;
+    static constexpr int ROT_NET_DEFAULT_PSTROT = 12000;
+    static constexpr int CW_NET_CWDAEMON_PORT   = 6789;
+    static constexpr int CW_NET_FLDIGI_PORT     = 7362;
+    static constexpr int CW_DEFAULT_KEY_SPEED   = 20;
+    static constexpr int CW_KEY_SPEED_DISABLED  = 0;
+
+    static constexpr int PTT_TYPE_NONE_INDEX    = 0;
+    static constexpr int PTT_TYPE_CAT_INDEX     = 1;
+    static constexpr int CIVADDR_DISABLED_VALUE = -1;
+
+    static constexpr const char* EMPTY_CWKEY_PROFILE = " ";
 
     QSqlTableModel* modeTableModel;
     QSqlTableModel* bandTableModel;
@@ -167,7 +205,7 @@ private:
     bool wwffFallback;
     QString rigctldPath;
     QString rigctldArgs;
-    QTimer *m_tqslVersionTimer;
+    QTimer *tqslVersionTimer;
 };
 
 #endif // QLOG_UI_SETTINGSDIALOG_H

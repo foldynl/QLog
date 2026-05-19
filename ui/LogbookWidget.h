@@ -79,6 +79,8 @@ public slots:
     void displayedColumns();
     void saveTableHeaderState();
     void showTableHeaderContextMenu(const QPoint& point);
+    void markQslReceived();
+    void markQslRequested();
     void doubleClickColumn(QModelIndex);
     void handleBeforeUpdate(int, QSqlRecord&);
     void handleBeforeDelete(int);
@@ -129,6 +131,7 @@ private:
     void finishQSOLookupBatch();
     void clearSearchText();
     void setupSearchMenu();
+    void updateSelectedRows(std::function<void(int row)> updater);
     QModelIndexList callbookLookupBatch;
     QModelIndex currLookupIndex;
     CallbookManager callbookManager;

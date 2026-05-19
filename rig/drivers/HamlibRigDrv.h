@@ -27,6 +27,8 @@ public:
     virtual QStringList getAvailableModes() override;
 
     virtual void setFrequency(double) override;
+    virtual void setFrequency(VFOID, double) override;
+    virtual void setSplit(bool) override;
     virtual void setRawMode(const QString &) override;
     virtual void setMode(const QString &, const QString &, bool) override;
     virtual void setPTT(bool) override;
@@ -55,6 +57,7 @@ private:
     bool checkFreqChange();
     bool checkModeChange();
     void checkVFOChange();
+    void checkSplitChange();
     void checkPWRChange();
     void checkRITChange();
     void checkXITChange();
@@ -77,9 +80,10 @@ private:
                                         QString &submode) const;
     const QString hamlibMode2String(const rmode_t mode) const;
     const QString hamlibVFO2String(const vfo_t vfo) const;
+    vfo_t getTxVfo() const;
     serial_handshake_e stringToHamlibFlowControl(const QString &in_flowcontrol);
     serial_parity_e stringToHamlibParity(const QString &in_parity);
-    serial_control_state_e stringToHamlibSerialSignal(const QString &flowcontrol);
+    serial_control_state_e stringToHamlibSerialSignal(const QString &signalString);
     QString hamlibErrorString(int);
     RIG* rig;
     QTimer timer;
@@ -96,6 +100,9 @@ private:
     double currXIT;
     unsigned int keySpeed;
     bool morseOverCatSupported;
+    bool currSplitEnabled;
+    bool futureSplit;
+    double currTxFreq;
     QMutex drvLock;
     QHash<QString, QString>postponedErrors;
     QStringList modeList;

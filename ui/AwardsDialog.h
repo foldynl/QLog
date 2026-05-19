@@ -2,9 +2,8 @@
 #define QLOG_UI_AWARDSDIALOG_H
 
 #include <QDialog>
-#include <QSqlQueryModel>
 #include <QComboBox>
-#include "models/AwardsTableModel.h"
+#include "awards/AwardDefinition.h"
 #include "models/SqlListModel.h"
 
 namespace Ui {
@@ -18,23 +17,25 @@ class AwardsDialog : public QDialog
 public:
     explicit AwardsDialog(QWidget *parent = nullptr);
     ~AwardsDialog();
+
 public slots:
     void refreshTable(int);
-    void awardTableDoubleClicked(QModelIndex);
 
 signals:
-    void AwardConditionSelected(QString, QString, QString);
+    void awardConditionSelected(QString, QString, QString);
 
 private:
     Ui::AwardsDialog *ui;
-    AwardsTableModel *detailedViewModel;
+    QList<AwardDefinition*> m_awards;
     SqlListModel* entityCallsignModel;
-    QString selectedAward;
 
-    const QString getSelectedEntity() const;
-    const QString getSelectedAward() const;
+    AwardDefinition* currentAward() const;
+    AwardFilterParams buildFilterParams() const;
+    QString getSelectedEntity() const;
     void setEntityInputEnabled(bool);
     void setNotWorkedEnabled(bool);
+
+    static QList<AwardDefinition*> createAwards();
 };
 
 #endif // QLOG_UI_AWARDSDIALOG_H

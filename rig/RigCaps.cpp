@@ -14,7 +14,8 @@ RigCaps::RigCaps(bool canGetFreq,
                  bool canProcessDXSpot,
                  int serial_data_bits,
                  int serial_stop_bits,
-                 bool isCIVAddrSupported
+                 bool isCIVAddrSupported,
+                 bool canGetSplit
                  ) :
     canGetFreq(canGetFreq),
     canGetMode(canGetMode),
@@ -30,7 +31,8 @@ RigCaps::RigCaps(bool canGetFreq,
     isNetworkOnly(isNetworkOnly),
     needPolling(needPolling),
     canProcessDXSpot(canProcessDXSpot),
-    isCIVAddrSupported(isCIVAddrSupported)
+    isCIVAddrSupported(isCIVAddrSupported),
+    canGetSplit(canGetSplit)
 {
 
 }

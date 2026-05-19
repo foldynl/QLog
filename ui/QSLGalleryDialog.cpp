@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <QScrollBar>
-#include <QMimeDatabase>
 #include <QDesktopServices>
 #include <QUrl>
 #include <QFile>
@@ -124,38 +123,30 @@ QSLGalleryDialog::QSLGalleryDialog(QWidget *parent) :
 
     ui->cardListWidget->setItemDelegate(new QSLCardDelegate(ui->cardListWidget));
 
-    connect(ui->filterTree, &QTreeWidget::currentItemChanged,
-            this, [this]() { filterTreeSelectionChanged(); });
-    connect(ui->cardListWidget, &QListWidget::itemDoubleClicked,
-            this, &QSLGalleryDialog::cardDoubleClicked);
+    connect(ui->filterTree, &QTreeWidget::currentItemChanged, this, [this]() { filterTreeSelectionChanged(); });
+    connect(ui->cardListWidget, &QListWidget::itemDoubleClicked, this, &QSLGalleryDialog::cardDoubleClicked);
 
     ui->cardListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->cardListWidget, &QWidget::customContextMenuRequested,
-            this, &QSLGalleryDialog::showContextMenu);
+    connect(ui->cardListWidget, &QWidget::customContextMenuRequested, this, &QSLGalleryDialog::showContextMenu);
 
     // Lazy loading
     scrollTimer->setSingleShot(true);
     scrollTimer->setInterval(150);
-    connect(scrollTimer, &QTimer::timeout,
-            this, &QSLGalleryDialog::loadVisibleThumbnails);
-
-    connect(ui->cardListWidget->verticalScrollBar(), &QScrollBar::valueChanged,
-            this, [this]() { scrollTimer->start(); });
-
-    connect(ui->exportFilteredButton, &QPushButton::clicked,
-            this, &QSLGalleryDialog::exportFiltered);
+    connect(scrollTimer, &QTimer::timeout, this, &QSLGalleryDialog::loadVisibleThumbnails);
+    connect(ui->cardListWidget->verticalScrollBar(), &QScrollBar::valueChanged, this, [this]() { scrollTimer->start(); });
+    connect(ui->exportFilteredButton, &QPushButton::clicked, this, &QSLGalleryDialog::exportFiltered);
 
     ui->sortCombo->addItem(tr("Date (Newest)"), SORT_DATE_DESC);
     ui->sortCombo->addItem(tr("Date (Oldest)"), SORT_DATE_ASC);
     ui->sortCombo->addItem(tr("Callsign (A-Z)"), SORT_CALLSIGN_ASC);
     ui->sortCombo->addItem(tr("Callsign (Z-A)"), SORT_CALLSIGN_DESC);
 
-    connect(ui->sortCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, [this]() { loadGallery(); });
+    connect(ui->sortCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { loadGallery(); });
 
     searchTimer = new QTimer(this);
     searchTimer->setSingleShot(true);
     searchTimer->setInterval(300);
+
     connect(searchTimer, &QTimer::timeout, this, [this]()
     {
         const QString text = ui->searchEdit->text().trimmed().toUpper();
@@ -164,8 +155,7 @@ QSLGalleryDialog::QSLGalleryDialog(QWidget *parent) :
         for ( int i = 0; i < ui->cardListWidget->count(); ++i )
         {
             QListWidgetItem *item = ui->cardListWidget->item(i);
-            const bool match = text.isEmpty()
-                               || item->data(CallsignRole).toString().toUpper().contains(text);
+            const bool match = text.isEmpty() || item->data(CallsignRole).toString().toUpper().contains(text);
             item->setHidden(!match);
 
             if ( match )
@@ -176,8 +166,7 @@ QSLGalleryDialog::QSLGalleryDialog(QWidget *parent) :
         ui->exportFilteredButton->setEnabled(visibleCount > 0);
     });
 
-    connect(ui->searchEdit, &QLineEdit::textChanged,
-            this, [this]() { searchTimer->start(); });
+    connect(ui->searchEdit, &QLineEdit::textChanged, this, [this]() { searchTimer->start(); });
 
     buildFilterTree();
 }
@@ -320,7 +309,7 @@ void QSLGalleryDialog::loadGallery()
 {
     FCT_IDENTIFICATION;
 
-    QTreeWidgetItem *current = ui->filterTree->currentItem();
+    const QTreeWidgetItem *current = ui->filterTree->currentItem();
 
     if ( !current )
         return;
@@ -442,7 +431,7 @@ void QSLGalleryDialog::loadVisibleThumbnails()
 {
     FCT_IDENTIFICATION;
 
-    QListWidget *lw = ui->cardListWidget;
+    const QListWidget *lw = ui->cardListWidget;
     const int totalCount = lw->count();
 
     if ( totalCount == 0 )
@@ -489,14 +478,12 @@ void QSLGalleryDialog::loadVisibleThumbnails()
         const qulonglong contactId = item->data(ContactIdRole).toULongLong();
         const int source = item->data(SourceRole).toInt();
         const QString name = item->data(NameRole).toString();
-
         const QByteArray data = qslStorage.getQSLData(contactId, source, name);
 
         if ( !data.isEmpty() )
         {
             item->setIcon(QIcon(createThumbnail(data, name)));
 
-            QMimeDatabase mimeDb;
             const QMimeType mimeType = mimeDb.mimeTypeForData(data);
 
             if ( mimeType.name().startsWith("image/") )
@@ -514,7 +501,6 @@ QPixmap QSLGalleryDialog::createThumbnail(const QByteArray &data, const QString 
 {
     FCT_IDENTIFICATION;
 
-    QMimeDatabase mimeDb;
     const QMimeType mimeType = mimeDb.mimeTypeForData(data);
 
     if ( mimeType.name().startsWith("image/") )
@@ -576,22 +562,17 @@ void QSLGalleryDialog::showContextMenu(const QPoint &pos)
     QMenu menu(this);
 
     const bool isFav = item->data(FavoriteRole).toBool();
-    QAction *favAction = menu.addAction(isFav ? tr("Remove from Favorites") : tr("Add to Favorites"));
+
+    menu.addAction(isFav ? tr("Remove from Favorites") : tr("Add to Favorites"),
+                   this, [this, item] { toggleFavorite(item); });
     menu.addSeparator();
-    QAction *openAction = menu.addAction(tr("Open"));
-    QAction *saveAction = menu.addAction(tr("Save..."));
+    menu.addAction(tr("Open"),    this, [this, item] { openItem(item); });
+    menu.addAction(tr("Save..."), this, [this, item] { saveItem(item); });
 
-    QAction *selected = menu.exec(ui->cardListWidget->viewport()->mapToGlobal(pos));
-
-    if ( selected == favAction )
-        toggleFavorite(item);
-    else if ( selected == openAction )
-        openItem(item);
-    else if ( selected == saveAction )
-        saveItem(item);
+    menu.exec(ui->cardListWidget->viewport()->mapToGlobal(pos));
 }
 
-void QSLGalleryDialog::openItem(QListWidgetItem *item)
+void QSLGalleryDialog::openItem(const QListWidgetItem *item)
 {
     FCT_IDENTIFICATION;
 
@@ -601,7 +582,6 @@ void QSLGalleryDialog::openItem(QListWidgetItem *item)
     const qulonglong contactId = item->data(ContactIdRole).toULongLong();
     const int source = item->data(SourceRole).toInt();
     const QString name = item->data(NameRole).toString();
-
     const QByteArray data = qslStorage.getQSLData(contactId, source, name);
 
     if ( data.isEmpty() )
@@ -636,7 +616,7 @@ void QSLGalleryDialog::openItem(QListWidgetItem *item)
     QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
 }
 
-void QSLGalleryDialog::saveItem(QListWidgetItem *item)
+void QSLGalleryDialog::saveItem(const QListWidgetItem *item)
 {
     FCT_IDENTIFICATION;
 
@@ -646,7 +626,6 @@ void QSLGalleryDialog::saveItem(QListWidgetItem *item)
     const qulonglong contactId = item->data(ContactIdRole).toULongLong();
     const int source = item->data(SourceRole).toInt();
     const QString name = item->data(NameRole).toString();
-
     const QByteArray data = qslStorage.getQSLData(contactId, source, name);
 
     if ( data.isEmpty() )
@@ -714,7 +693,7 @@ void QSLGalleryDialog::exportFiltered()
 
     for ( int i = 0; i < count; ++i )
     {
-        QListWidgetItem *item = ui->cardListWidget->item(i);
+        const QListWidgetItem *item = ui->cardListWidget->item(i);
 
         if ( item->isHidden() )
             continue;
@@ -724,7 +703,6 @@ void QSLGalleryDialog::exportFiltered()
         const qulonglong contactId = item->data(ContactIdRole).toULongLong();
         const int source = item->data(SourceRole).toInt();
         const QString name = item->data(NameRole).toString();
-
         const QByteArray data = qslStorage.getQSLData(contactId, source, name);
 
         if ( data.isEmpty() )
@@ -733,8 +711,7 @@ void QSLGalleryDialog::exportFiltered()
             continue;
         }
 
-        const QString filePath = dir + QDir::separator() + name;
-
+        const QString filePath = QDir(dir).filePath(name);
         QFile file(filePath);
 
         if ( !file.open(QIODevice::WriteOnly) )
@@ -744,7 +721,6 @@ void QSLGalleryDialog::exportFiltered()
         }
 
         file.write(data);
-        file.close();
         ++saved;
     }
 

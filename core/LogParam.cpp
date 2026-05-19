@@ -1247,6 +1247,316 @@ void LogParam::removeMainWindowBandmapWidgets()
     removeParamGroup("mainwindow/bandmapwidgets");
 }
 
+int LogParam::getQslLabelTemplate()
+{
+    return getParam("qsllabel/template", 0).toInt();
+}
+
+void LogParam::setQslLabelTemplate(int index)
+{
+    setParam("qsllabel/template", index);
+}
+
+QString LogParam::getQslLabelFooterLeft()
+{
+    return getParam("qsllabel/footerleft", "").toString();
+}
+
+void LogParam::setQslLabelFooterLeft(const QString &text)
+{
+    setParam("qsllabel/footerleft", text);
+}
+
+QString LogParam::getQslLabelFooterRight()
+{
+    return getParam("qsllabel/footerright", "TNX & 73").toString();
+}
+
+void LogParam::setQslLabelFooterRight(const QString &text)
+{
+    setParam("qsllabel/footerright", text);
+}
+
+int LogParam::getQslLabelSkip()
+{
+    return getParam("qsllabel/skip", 0).toInt();
+}
+
+void LogParam::setQslLabelSkip(int count)
+{
+    setParam("qsllabel/skip", count);
+}
+
+int LogParam::getQslLabelZoom()
+{
+    return getParam("qsllabel/zoom", 100).toInt();
+}
+
+void LogParam::setQslLabelZoom(int zoom)
+{
+    setParam("qsllabel/zoom", zoom);
+}
+
+int LogParam::getQslLabelCustomPageSize()
+{
+    return getParam("qsllabel/custom_pagesize", 0).toInt();
+}
+
+void LogParam::setQslLabelCustomPageSize(int pageSizeIndex)
+{
+    setParam("qsllabel/custom_pagesize", pageSizeIndex);
+}
+
+int LogParam::getQslLabelCustomCols()
+{
+    return getParam("qsllabel/custom_cols", 3).toInt();
+}
+
+void LogParam::setQslLabelCustomCols(int cols)
+{
+    setParam("qsllabel/custom_cols", cols);
+}
+
+int LogParam::getQslLabelCustomRows()
+{
+    return getParam("qsllabel/custom_rows", 8).toInt();
+}
+
+void LogParam::setQslLabelCustomRows(int rows)
+{
+    setParam("qsllabel/custom_rows", rows);
+}
+
+double LogParam::getQslLabelCustomLabelWidth()
+{
+    return getParam("qsllabel/custom_labelwidth", 70.0).toDouble();
+}
+
+void LogParam::setQslLabelCustomLabelWidth(double width)
+{
+    setParam("qsllabel/custom_labelwidth", width);
+}
+
+double LogParam::getQslLabelCustomLabelHeight()
+{
+    return getParam("qsllabel/custom_labelheight", 35.0).toDouble();
+}
+
+void LogParam::setQslLabelCustomLabelHeight(double height)
+{
+    setParam("qsllabel/custom_labelheight", height);
+}
+
+double LogParam::getQslLabelCustomLeftMargin()
+{
+    return getParam("qsllabel/custom_leftmargin", 0.0).toDouble();
+}
+
+void LogParam::setQslLabelCustomLeftMargin(double margin)
+{
+    setParam("qsllabel/custom_leftmargin", margin);
+}
+
+double LogParam::getQslLabelCustomTopMargin()
+{
+    return getParam("qsllabel/custom_topmargin", 0.0).toDouble();
+}
+
+void LogParam::setQslLabelCustomTopMargin(double margin)
+{
+    setParam("qsllabel/custom_topmargin", margin);
+}
+
+double LogParam::getQslLabelCustomHSpacing()
+{
+    return getParam("qsllabel/custom_hspacing", 0.0).toDouble();
+}
+
+void LogParam::setQslLabelCustomHSpacing(double spacing)
+{
+    setParam("qsllabel/custom_hspacing", spacing);
+}
+
+double LogParam::getQslLabelCustomVSpacing()
+{
+    return getParam("qsllabel/custom_vspacing", 0.0).toDouble();
+}
+
+void LogParam::setQslLabelCustomVSpacing(double spacing)
+{
+    setParam("qsllabel/custom_vspacing", spacing);
+}
+
+bool LogParam::getQslLabelPrintBorders()
+{
+    return getParam("qsllabel/print_borders", false).toBool();
+}
+
+void LogParam::setQslLabelPrintBorders(bool enabled)
+{
+    setParam("qsllabel/print_borders", enabled);
+}
+
+QString LogParam::getQslLabelDateFormat()
+{
+    return getParam("qsllabel/date_format", "yyyy-MM-dd").toString();
+}
+
+void LogParam::setQslLabelDateFormat(const QString &format)
+{
+    setParam("qsllabel/date_format", format);
+}
+
+QString LogParam::getQslLabelSansFont()
+{
+    return getParam("qsllabel/sans_font", QString()).toString();
+}
+
+void LogParam::setQslLabelSansFont(const QString &family)
+{
+    setParam("qsllabel/sans_font", family);
+}
+
+QString LogParam::getQslLabelMonoFont()
+{
+    return getParam("qsllabel/mono_font", QString()).toString();
+}
+
+void LogParam::setQslLabelMonoFont(const QString &family)
+{
+    setParam("qsllabel/mono_font", family);
+}
+
+QString LogParam::getQslLabelExtraColumn()
+{
+    return getParam("qsllabel/extra_column", QString()).toString();
+}
+
+void LogParam::setQslLabelExtraColumn(const QString &column)
+{
+    setParam("qsllabel/extra_column", column);
+}
+
+QString LogParam::getQslLabelExtraColumnHeader()
+{
+    return getParam("qsllabel/extra_column_header", QString()).toString();
+}
+
+void LogParam::setQslLabelExtraColumnHeader(const QString &header)
+{
+    setParam("qsllabel/extra_column_header", header);
+}
+
+QString LogParam::getQslLabelToRadioText()
+{
+    return getParam("qsllabel/to_radio_text", QString()).toString();
+}
+
+void LogParam::setQslLabelToRadioText(const QString &text)
+{
+    setParam("qsllabel/to_radio_text", text);
+}
+
+QString LogParam::getQslLabelHdrDate()
+{
+    return getParam("qsllabel/hdr_date", QString()).toString();
+}
+
+void LogParam::setQslLabelHdrDate(const QString &text)
+{
+    setParam("qsllabel/hdr_date", text);
+}
+
+QString LogParam::getQslLabelHdrTime()
+{
+    return getParam("qsllabel/hdr_time", QString()).toString();
+}
+
+void LogParam::setQslLabelHdrTime(const QString &text)
+{
+    setParam("qsllabel/hdr_time", text);
+}
+
+QString LogParam::getQslLabelHdrBand()
+{
+    return getParam("qsllabel/hdr_band", QString()).toString();
+}
+
+void LogParam::setQslLabelHdrBand(const QString &text)
+{
+    setParam("qsllabel/hdr_band", text);
+}
+
+QString LogParam::getQslLabelHdrMode()
+{
+    return getParam("qsllabel/hdr_mode", QString()).toString();
+}
+
+void LogParam::setQslLabelHdrMode(const QString &text)
+{
+    setParam("qsllabel/hdr_mode", text);
+}
+
+QString LogParam::getQslLabelHdrQsl()
+{
+    return getParam("qsllabel/hdr_qsl", QString()).toString();
+}
+
+void LogParam::setQslLabelHdrQsl(const QString &text)
+{
+    setParam("qsllabel/hdr_qsl", text);
+}
+
+int LogParam::getQslLabelMaxRows()
+{
+    return getParam("qsllabel/max_rows", 4).toInt();
+}
+
+void LogParam::setQslLabelMaxRows(int rows)
+{
+    setParam("qsllabel/max_rows", rows);
+}
+
+double LogParam::getQslLabelFontSizeToRadio()
+{
+    return getParam("qsllabel/font_size_to_radio", 7.5).toDouble();
+}
+
+void LogParam::setQslLabelFontSizeToRadio(double size)
+{
+    setParam("qsllabel/font_size_to_radio", size);
+}
+
+double LogParam::getQslLabelFontSizeCallsign()
+{
+    return getParam("qsllabel/font_size_callsign", 14.0).toDouble();
+}
+
+void LogParam::setQslLabelFontSizeCallsign(double size)
+{
+    setParam("qsllabel/font_size_callsign", size);
+}
+
+double LogParam::getQslLabelFontSizeHeader()
+{
+    return getParam("qsllabel/font_size_header", 7.0).toDouble();
+}
+
+void LogParam::setQslLabelFontSizeHeader(double size)
+{
+    setParam("qsllabel/font_size_header", size);
+}
+
+double LogParam::getQslLabelFontSizeData()
+{
+    return getParam("qsllabel/font_size_data", 8.0).toDouble();
+}
+
+void LogParam::setQslLabelFontSizeData(double size)
+{
+    setParam("qsllabel/font_size_data", size);
+}
+
 bool LogParam::setParam(const QString &name, const QVariant &value)
 {
     FCT_IDENTIFICATION;

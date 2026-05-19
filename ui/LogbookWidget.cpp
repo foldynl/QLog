@@ -1,4 +1,5 @@
 #include <QtSql>
+#include <QDate>
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QMenu>
@@ -123,6 +124,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     QAction *separator2 = new QAction(ui->contactTable);
     separator2->setSeparator(true);
 
+    QAction *separator3 = new QAction(ui->contactTable);
+    separator3->setSeparator(true);
+
     ui->contactTable->addAction(ui->actionEditContact);
     ui->contactTable->addAction(ui->actionFilter);
     ui->contactTable->addAction(ui->actionLookup);
@@ -133,7 +137,13 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->addAction(separator1);
     ui->contactTable->addAction(ui->actionDisplayedColumns);
     ui->contactTable->addAction(separator2);
+    ui->contactTable->addAction(ui->actionQSLRcvd);
+    ui->contactTable->addAction(ui->actionQSLRequested);
+    ui->contactTable->addAction(separator3);
     ui->contactTable->addAction(ui->actionDeleteContact);
+
+    connect(ui->actionQSLRcvd, &QAction::triggered, this, &LogbookWidget::markQslReceived);
+    connect(ui->actionQSLRequested, &QAction::triggered, this, &LogbookWidget::markQslRequested);
 
     ui->contactTable->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->contactTable->horizontalHeader(), &QHeaderView::customContextMenuRequested,
@@ -1079,6 +1089,45 @@ void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
     }
 
     contextMenu->exec(point);
+}
+
+void LogbookWidget::updateSelectedRows(std::function<void(int row)> updater)
+{
+    FCT_IDENTIFICATION;
+
+    const QModelIndexList selectedRows = ui->contactTable->selectionModel()->selectedRows();
+    if (selectedRows.isEmpty()) return;
+
+    const LogbookModel::EditStrategy originEditStrategy = model->editStrategy();
+    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+    for ( const QModelIndex &index : selectedRows )
+        updater(index.row());
+
+    model->submitAll();
+    model->setEditStrategy(originEditStrategy);
+    updateTable();
+}
+
+void LogbookWidget::markQslReceived()
+{
+    FCT_IDENTIFICATION;
+
+    updateSelectedRows([this](int row)
+    {
+        model->setData(model->index(row, LogbookModel::COLUMN_QSL_RCVD), "Y", Qt::EditRole);
+        model->setData(model->index(row, LogbookModel::COLUMN_QSL_RCVD_DATE), QDate::currentDate(), Qt::EditRole);
+    });
+}
+
+void LogbookWidget::markQslRequested()
+{
+    FCT_IDENTIFICATION;
+
+    updateSelectedRows([this](int row)
+    {
+        model->setData(model->index(row, LogbookModel::COLUMN_QSL_SENT), "R", Qt::EditRole);
+    });
 }
 
 void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)

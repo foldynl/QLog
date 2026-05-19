@@ -21,6 +21,8 @@ public:
     virtual QStringList getAvailableModes() override;
 
     virtual void setFrequency(double) override;
+    virtual void setFrequency(VFOID, double) override;
+    virtual void setSplit(bool) override;
     virtual void setRawMode(const QString &) override;
     virtual void setMode(const QString &, const QString &, bool) override;
     virtual void setPTT(bool) override;
@@ -43,6 +45,8 @@ private slots:
     void reqGET_AB();
     void reqGET_PTT();
     void reqCWIO_GET_WPM();
+    void reqGET_SPLIT();
+    void reqGET_TX_FREQ();
 
 private:
     struct RigMode
@@ -77,9 +81,13 @@ private:
     void rspGET_AB(const QVariant &value);
     void rspGET_PTT(const QVariant &value);
     void rspCWIO_GET_WPM(const QVariant &value);
+    void rspGET_SPLIT(const QVariant &value);
+    void rspGET_TX_FREQ(const QVariant &value);
 
     QNetworkAccessManager *networkManager;
     double currFreq;
+    double currTxFreq;
+    bool currSplitEnabled;
     QString currVFO;
     QString currRawMode;
     qint32 currBW;
@@ -100,7 +108,9 @@ private:
         {"rig.get_power", &FlrigRigDrv::rspGET_POWER},
         {"rig.get_AB", &FlrigRigDrv::rspGET_AB},
         {"rig.get_ptt", &FlrigRigDrv::rspGET_PTT},
-        {"rig.cwio_get_wpm", &FlrigRigDrv::rspCWIO_GET_WPM}
+        {"rig.cwio_get_wpm", &FlrigRigDrv::rspCWIO_GET_WPM},
+        {"rig.get_split", &FlrigRigDrv::rspGET_SPLIT},
+        {"rig.get_vfoB", &FlrigRigDrv::rspGET_TX_FREQ}
     };
 
     const uint RESPONSE_TIMEOUT = 5000; // in secs
