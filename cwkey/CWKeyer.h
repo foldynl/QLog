@@ -32,6 +32,7 @@ public slots:
     void update();
     void open();
     void close();
+    void shutdown();
     bool canStopSending();
     bool canEchoChar();
     bool rigMustConnected();
@@ -44,6 +45,7 @@ public slots:
 private slots:
     void openImpl();
     void closeImpl();
+    void shutdownImpl();
     void setSpeedImpl(const qint16 wpm);
     void sendTextImpl(const QString&);
     void immediatelyStopImpl();
@@ -57,6 +59,8 @@ private slots:
     void cwKeyHWButton4PressedHandler();
 
 private:
+    static const int SHUTDOWN_TIMEOUT_MS = 5000;
+
     explicit CWKeyer(QObject *parent = nullptr);
     ~CWKeyer();
 

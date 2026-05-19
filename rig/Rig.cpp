@@ -1,6 +1,11 @@
 #include "Rig.h"
 #include "RigctldManager.h"
 #include "core/debug.h"
+
+#include <QSemaphore>
+#include <QSharedPointer>
+#include <QThread>
+
 #include "rig/drivers/HamlibRigDrv.h"
 #ifdef Q_OS_WIN
 #include "rig/drivers/OmnirigRigDrv.h"
@@ -147,6 +152,42 @@ void Rig::stopTimer()
     bool check = QMetaObject::invokeMethod(Rig::instance(), &Rig::stopTimerImplt,
                                            Qt::QueuedConnection);
     Q_ASSERT( check );
+}
+
+void Rig::shutdown()
+{
+    FCT_IDENTIFICATION;
+
+    if ( QThread::currentThread() == thread() )
+    {
+        shutdownImpl();
+        return;
+    }
+
+    if ( !thread() || !thread()->isRunning() )
+    {
+        qCWarning(runtime) << "Cannot shut down Rig because owner thread is not running";
+        return;
+    }
+
+    QSharedPointer<QSemaphore> shutdownDone = QSharedPointer<QSemaphore>::create();
+    bool check = QMetaObject::invokeMethod(this, [this, shutdownDone]()
+    {
+        shutdownImpl();
+        shutdownDone->release();
+    }, Qt::QueuedConnection);
+
+    if ( !check )
+    {
+        qCWarning(runtime) << "Cannot queue Rig shutdown";
+        return;
+    }
+
+    if ( !shutdownDone->tryAcquire(1, SHUTDOWN_TIMEOUT_MS) )
+    {
+        qCWarning(runtime) << "Rig shutdown did not finish within"
+                           << SHUTDOWN_TIMEOUT_MS << "ms";
+    }
 }
 
 void Rig::stopTimerImplt()
@@ -363,6 +404,14 @@ void Rig::closeImpl()
 
     MUTEXLOCKER;
     __closeRig();
+}
+
+void Rig::shutdownImpl()
+{
+    FCT_IDENTIFICATION;
+
+    closeImpl();
+    stopTimerImplt();
 }
 
 void Rig::__closeRig()
@@ -759,7 +808,17 @@ Rig::~Rig()
 {
     FCT_IDENTIFICATION;
 
-    __closeRig();
+    if ( !rigDriver && !rigctldManager )
+        return;
+
+    if ( QThread::currentThread() == thread() )
+    {
+        __closeRig();
+    }
+    else
+    {
+        qCWarning(runtime) << "Skipping Rig shutdown from non-owner thread";
+    }
 }
 
 void Rig::sendHeartBeat()
