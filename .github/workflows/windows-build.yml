@@ -1,0 +1,449 @@
+name: Windows Build
+
+on:
+  pull_request:
+    branches:
+      - master
+      - 'testing_*'
+  push:
+    branches:
+      - 'testing_*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Opt into GitHub Actions' upcoming Node.js 24 JavaScript action runtime now;
+  # this can be removed after Node.js 24 becomes the default runner behavior.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  QT_VERSION: '6.10.2'
+  VCPKG_TRIPLET: x64-windows
+  HAMLIB_VERSION: '4.7.0'
+  QTKEYCHAIN_VERSION: '0.14.3'
+  ZLIB_VERSION: 'v1.3.1'
+
+  # Direct third-party downloads are pinned by SHA256. OmniRig EXEs are extracted
+  # only so MSVC #import can read their embedded type libraries at compile time.
+  JOM_URL: 'https://download.qt.io/official_releases/jom/jom_1_1_4.zip'
+  JOM_SHA256: 'D533C1EF49214229681E90196ED2094691E8C4A0A0BEF0B2C901DEBCB562682B'
+  HAMLIB_ZIP_URL: 'https://github.com/Hamlib/Hamlib/releases/download/4.7.0/hamlib-w64-4.7.0.zip'
+  HAMLIB_ZIP_SHA256: 'F8854BA06BE5EAC851113FD849B0737AE77E02EA78DA246B469483E18B6483E0'
+  INNOEXTRACT_URL: 'https://github.com/dscharrer/innoextract/releases/download/1.8/innoextract-1.8-windows.zip'
+  INNOEXTRACT_SHA256: '8BDF6D5BFC46417D1BFF4A760B232173788363F12A5A7EACB7D780177CE21D4E'
+  OMNIRIG_V1_URL: 'https://www.dxatlas.com/OmniRig/Files/OmniRig.zip'
+  OMNIRIG_V1_SHA256: '46654EC3BA2FE9FF23A21EDAA657C46E0E9867B62B254968A3C4436DD81531A8'
+  OMNIRIG_V2_URL: 'https://www.hb9ryz.ch/downloads/install_omnirigv21.zip'
+  OMNIRIG_V2_SHA256: '81974066EF8A2EE50EFE5CADC3163518E77BCB01D083B287AB171926F0F8F60C'
+  QTKEYCHAIN_REPO: 'https://github.com/frankosterfeld/qtkeychain.git'
+  ZLIB_REPO: 'https://github.com/madler/zlib.git'
+
+  VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\vcpkg-binary-cache
+  QTKEYCHAIN_DIR: ${{ github.workspace }}\qtkeychain-install
+  ZLIB_DIR: ${{ github.workspace }}\zlib-install
+
+jobs:
+  build:
+    name: Build (Windows x64)
+    runs-on: windows-2022
+    timeout-minutes: 240
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Set up MSVC environment (x64)
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # source: true is required because QLog.pro compiles sqlite3.c from Qt sources on win32.
+      - name: Install Qt ${{ env.QT_VERSION }}
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          source: true
+          modules: >-
+            qtwebengine qtwebchannel qtwebsockets qtcharts qtserialport
+            qtpositioning qtimageformats
+          tools: 'tools_ifw'
+          cache: true
+
+      - name: Install jom
+        shell: pwsh
+        run: |
+          $jomDir = "${{ github.workspace }}\jom"
+          New-Item -ItemType Directory -Path $jomDir -Force | Out-Null
+          Invoke-WebRequest -Uri "$env:JOM_URL" -OutFile "$jomDir\jom.zip"
+          $expectedHash = "$env:JOM_SHA256"
+          $actualHash = (Get-FileHash -Path "$jomDir\jom.zip" -Algorithm SHA256).Hash
+          if ($actualHash -ne $expectedHash) {
+            throw "jom zip SHA256 mismatch. Expected $expectedHash, got $actualHash"
+          }
+          Expand-Archive -Path "$jomDir\jom.zip" -DestinationPath $jomDir -Force
+          "$jomDir" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+
+      - name: Prepare vcpkg binary cache directory
+        shell: pwsh
+        run: New-Item -ItemType Directory -Path "${{ env.VCPKG_DEFAULT_BINARY_CACHE }}" -Force | Out-Null
+
+      - name: Restore vcpkg binary packages
+        id: vcpkg-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: vcpkg-binary-${{ env.VCPKG_TRIPLET }}-pthreads-openssl-v1
+
+      - name: Install vcpkg dependencies (pthreads + openssl)
+        shell: cmd
+        env:
+          VCPKG_ROOT: C:\vcpkg
+        run: |
+          vcpkg install ^
+            pthreads:%VCPKG_TRIPLET% ^
+            openssl:%VCPKG_TRIPLET%
+
+      - name: Save vcpkg binary packages
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: ${{ steps.vcpkg-cache.outputs.cache-primary-key }}
+
+      - name: Set vcpkg dependency paths
+        shell: pwsh
+        run: |
+          $vcpkgRoot = "C:\vcpkg"
+          $tripletRoot = Join-Path $vcpkgRoot "installed\${{ env.VCPKG_TRIPLET }}"
+          $includeDir = Join-Path $tripletRoot "include"
+          $libDir = Join-Path $tripletRoot "lib"
+          $binDir = Join-Path $tripletRoot "bin"
+
+          if (-not (Test-Path (Join-Path $includeDir "pthread.h"))) {
+            throw "pthread.h not found at $includeDir"
+          }
+
+          if (-not (Get-ChildItem -Path $libDir -Filter "pthreadVC*.lib" -File -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+            throw "pthreadVC*.lib not found at $libDir"
+          }
+
+          @(
+            "VCPKG_PTHREAD_LIB_DIR=$libDir",
+            "VCPKG_PTHREAD_INC_DIR=$includeDir",
+            "VCPKG_PTHREAD_BIN_DIR=$binDir"
+          ) | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+
+      # zlib is small and deterministic to build from source; avoid relying on a
+      # mutable runner package or vcpkg port layout for the Windows DLL/import lib.
+      - name: Restore zlib install
+        id: zlib-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.ZLIB_DIR }}
+          key: zlib-${{ runner.os }}-${{ env.ZLIB_VERSION }}-v1
+
+      - name: Build zlib ${{ env.ZLIB_VERSION }} from source
+        if: steps.zlib-cache.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $src = "${{ github.workspace }}\zlib-src"
+          git clone --depth 1 --branch "${{ env.ZLIB_VERSION }}" "$env:ZLIB_REPO" $src
+          New-Item -ItemType Directory -Path "$src\build" -Force | Out-Null
+          Push-Location "$src\build"
+          cmake .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release "-DCMAKE_INSTALL_PREFIX=${{ env.ZLIB_DIR }}"
+          if ($LASTEXITCODE -ne 0) { throw "zlib cmake configure failed" }
+          jom install
+          if ($LASTEXITCODE -ne 0) { throw "zlib build/install failed" }
+          Pop-Location
+
+          foreach ($f in @("include\zlib.h", "include\zconf.h", "lib\zlib.lib", "bin\zlib.dll")) {
+            if (-not (Test-Path "${{ env.ZLIB_DIR }}\$f")) {
+              throw "zlib install missing expected file: $f"
+            }
+          }
+
+      - name: Save zlib install
+        if: steps.zlib-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.ZLIB_DIR }}
+          key: ${{ steps.zlib-cache.outputs.cache-primary-key }}
+
+      - name: Verify zlib install
+        shell: pwsh
+        run: |
+          foreach ($f in @("include\zlib.h", "include\zconf.h", "lib\zlib.lib", "bin\zlib.dll")) {
+            if (-not (Test-Path "${{ env.ZLIB_DIR }}\$f")) {
+              throw "zlib install missing expected file: $f"
+            }
+          }
+
+      # QLog links QtKeychain. Build the canonical upstream QtKeychain source
+      # against the Qt installed above instead of using vcpkg, whose qtkeychain
+      # port can rebuild Qt as a dependency.
+      - name: Restore qtkeychain install
+        id: qtkeychain-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.QTKEYCHAIN_DIR }}
+          key: qtkeychain-${{ runner.os }}-qt-${{ env.QT_VERSION }}-qtkeychain-${{ env.QTKEYCHAIN_VERSION }}-v1
+
+      - name: Build qtkeychain ${{ env.QTKEYCHAIN_VERSION }} from source
+        if: steps.qtkeychain-cache.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $src = "${{ github.workspace }}\qtkeychain-src"
+          git clone --depth 1 --branch "${{ env.QTKEYCHAIN_VERSION }}" "$env:QTKEYCHAIN_REPO" $src
+          New-Item -ItemType Directory -Path "$src\build" -Force | Out-Null
+          Push-Location "$src\build"
+          cmake .. -G "NMake Makefiles JOM" `
+            -DCMAKE_BUILD_TYPE=Release `
+            "-DCMAKE_INSTALL_PREFIX=${{ env.QTKEYCHAIN_DIR }}" `
+            "-DCMAKE_PREFIX_PATH=$env:QT_ROOT_DIR" `
+            -DBUILD_WITH_QT6=ON `
+            -DBUILD_TEST_APPLICATION=OFF `
+            -DBUILD_TRANSLATIONS=OFF
+          if ($LASTEXITCODE -ne 0) { throw "qtkeychain cmake configure failed" }
+          jom install
+          if ($LASTEXITCODE -ne 0) { throw "qtkeychain build/install failed" }
+          Pop-Location
+
+          foreach ($f in @("include\qt6keychain\keychain.h", "lib\qt6keychain.lib", "bin\qt6keychain.dll")) {
+            if (-not (Test-Path "${{ env.QTKEYCHAIN_DIR }}\$f")) {
+              throw "qtkeychain install missing expected file: $f"
+            }
+          }
+
+      - name: Save qtkeychain install
+        if: steps.qtkeychain-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.QTKEYCHAIN_DIR }}
+          key: ${{ steps.qtkeychain-cache.outputs.cache-primary-key }}
+
+      - name: Verify qtkeychain install
+        shell: pwsh
+        run: |
+          foreach ($f in @("include\qt6keychain\keychain.h", "lib\qt6keychain.lib", "bin\qt6keychain.dll")) {
+            if (-not (Test-Path "${{ env.QTKEYCHAIN_DIR }}\$f")) {
+              throw "qtkeychain install missing expected file: $f"
+            }
+          }
+
+      # QLog's local Windows script expects a prebuilt Hamlib tree. Use the
+      # official Windows package, then generate the MSVC import lib from its .def.
+      - name: Download Hamlib ${{ env.HAMLIB_VERSION }}
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "$env:HAMLIB_ZIP_URL" -OutFile hamlib.zip
+          $expectedHash = "$env:HAMLIB_ZIP_SHA256"
+          $actualHash = (Get-FileHash -Path hamlib.zip -Algorithm SHA256).Hash
+          if ($actualHash -ne $expectedHash) {
+            throw "Hamlib zip SHA256 mismatch. Expected $expectedHash, got $actualHash"
+          }
+          Expand-Archive -Path hamlib.zip -DestinationPath ${{ github.workspace }} -Force
+          "HAMLIB_DIR=${{ github.workspace }}\hamlib-w64-${{ env.HAMLIB_VERSION }}" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+
+      - name: Generate Hamlib MSVC import library
+        shell: cmd
+        working-directory: ${{ env.HAMLIB_DIR }}\lib\msvc
+        run: lib /machine:X64 /def:libhamlib-4.def /out:libhamlib-4.lib
+
+      - name: Install innoextract for OmniRig type-library staging
+        shell: pwsh
+        run: |
+          $innoZip = "$env:RUNNER_TEMP\innoextract-1.8-windows.zip"
+          $innoDir = "$env:RUNNER_TEMP\innoextract"
+
+          Invoke-WebRequest -Uri "$env:INNOEXTRACT_URL" -OutFile $innoZip -TimeoutSec 120
+          $expectedInnoHash = "$env:INNOEXTRACT_SHA256"
+          $actualInnoHash = (Get-FileHash -Path $innoZip -Algorithm SHA256).Hash
+          if ($actualInnoHash -ne $expectedInnoHash) {
+            throw "innoextract zip SHA256 mismatch. Expected $expectedInnoHash, got $actualInnoHash"
+          }
+
+          New-Item -ItemType Directory -Path $innoDir -Force | Out-Null
+          Expand-Archive -Path $innoZip -DestinationPath $innoDir -Force
+          $innoextract = Get-ChildItem -Path $innoDir -Filter "innoextract.exe" -Recurse | Select-Object -First 1
+          if (-not $innoextract) { throw "innoextract.exe not found" }
+          "INNOEXTRACT_EXE=$($innoextract.FullName)" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+
+      - name: Stage OmniRig v1 exe for MSVC #import path
+        shell: pwsh
+        timeout-minutes: 12
+        run: |
+          # This is compile-time only: MSVC #import reads the type library from
+          # the hard-coded exe path; OmniRig itself is not executed in CI.
+          $zipPath = "$env:RUNNER_TEMP\OmniRig.zip"
+          $zipExtract = "$env:RUNNER_TEMP\omnirig1-zip"
+          $payloadExtract = "$env:RUNNER_TEMP\omnirig1-payload"
+          $targetDir = "C:\Program Files (x86)\Afreet\OmniRig"
+          $targetExe = "$targetDir\OmniRig.exe"
+
+          Invoke-WebRequest -Uri "$env:OMNIRIG_V1_URL" -OutFile $zipPath -TimeoutSec 120
+          $expectedZipHash = "$env:OMNIRIG_V1_SHA256"
+          $actualZipHash = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash
+          if ($actualZipHash -ne $expectedZipHash) {
+            throw "OmniRig-v1: installer zip SHA256 mismatch. Expected $expectedZipHash, got $actualZipHash"
+          }
+
+          New-Item -ItemType Directory -Path $zipExtract -Force | Out-Null
+          Expand-Archive -Path $zipPath -DestinationPath $zipExtract -Force
+
+          $installer = Get-ChildItem -Path $zipExtract -Filter "OmniRigSetup.exe" -Recurse | Select-Object -First 1
+          if (-not $installer) { throw "OmniRig-v1: installer .exe not found in zip" }
+
+          New-Item -ItemType Directory -Path $payloadExtract -Force | Out-Null
+          & $env:INNOEXTRACT_EXE --output-dir $payloadExtract $installer.FullName
+          if ($LASTEXITCODE -ne 0) { throw "OmniRig-v1: payload extraction failed" }
+
+          $payloadExe = Get-ChildItem -Path $payloadExtract -Filter "OmniRig.exe" -Recurse | Select-Object -First 1
+          if (-not $payloadExe) { throw "OmniRig-v1: OmniRig.exe not found in extracted payload" }
+
+          New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+          Copy-Item -Path $payloadExe.FullName -Destination $targetExe -Force
+
+          if (-not (Test-Path $targetExe)) {
+            throw "OmniRig-v1: expected path not found after staging: $targetExe"
+          }
+
+      - name: Stage OmniRig v2 exe for MSVC #import path
+        shell: pwsh
+        timeout-minutes: 12
+        run: |
+          # This is compile-time only: MSVC #import reads the type library from
+          # the hard-coded exe path; OmniRig itself is not executed in CI.
+          $zipPath = "$env:RUNNER_TEMP\install_omnirigv21.zip"
+          $zipExtract = "$env:RUNNER_TEMP\omnirig2-zip"
+          $payloadExtract = "$env:RUNNER_TEMP\omnirig2-payload"
+          $targetDir = "C:\Program Files (x86)\Omni-Rig V2"
+          $targetExe = "$targetDir\omnirig2.exe"
+
+          Invoke-WebRequest -Uri "$env:OMNIRIG_V2_URL" -OutFile $zipPath -TimeoutSec 120
+          $expectedZipHash = "$env:OMNIRIG_V2_SHA256"
+          $actualZipHash = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash
+          if ($actualZipHash -ne $expectedZipHash) {
+            throw "OmniRig-v2: installer zip SHA256 mismatch. Expected $expectedZipHash, got $actualZipHash"
+          }
+
+          New-Item -ItemType Directory -Path $zipExtract -Force | Out-Null
+          Expand-Archive -Path $zipPath -DestinationPath $zipExtract -Force
+
+          $installer = Get-ChildItem -Path $zipExtract -Filter "Install_OmniRigV21.exe" -Recurse | Select-Object -First 1
+          if (-not $installer) {
+            $installer = Get-ChildItem -Path $zipExtract -Filter "*.exe" -Recurse | Select-Object -First 1
+          }
+          if (-not $installer) { throw "OmniRig-v2: installer .exe not found in archive" }
+
+          New-Item -ItemType Directory -Path $payloadExtract -Force | Out-Null
+          & $env:INNOEXTRACT_EXE --output-dir $payloadExtract $installer.FullName
+          if ($LASTEXITCODE -ne 0) { throw "OmniRig-v2: payload extraction failed" }
+
+          $payloadExe = Get-ChildItem -Path $payloadExtract -Filter "omnirig2.exe" -Recurse | Select-Object -First 1
+          if (-not $payloadExe) {
+            throw "OmniRig-v2: omnirig2.exe not found in extracted payload"
+          }
+
+          New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+          Copy-Item -Path $payloadExe.FullName -Destination $targetExe -Force
+
+          if (-not (Test-Path $targetExe)) {
+            throw "OmniRig-v2: expected path not found after staging: $targetExe"
+          }
+
+      - name: Split Hamlib version into env vars
+        shell: pwsh
+        run: |
+          $parts = "${{ env.HAMLIB_VERSION }}".Split('.')
+          "HAMLIB_MAJOR=$($parts[0])" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "HAMLIB_MINOR=$($parts[1])" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+          "HAMLIB_PATCH=$($parts[2])" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+
+      - name: Run qmake
+        shell: cmd
+        run: |
+          qmake QLog.pro -spec win32-msvc ^
+            "CONFIG+=qtquickcompiler" ^
+            "HAMLIBINCLUDEPATH=%HAMLIB_DIR%\include" ^
+            "HAMLIBLIBPATH=%HAMLIB_DIR%\lib\msvc" ^
+            "HAMLIBVERSION_MAJOR=%HAMLIB_MAJOR%" ^
+            "HAMLIBVERSION_MINOR=%HAMLIB_MINOR%" ^
+            "HAMLIBVERSION_PATCH=%HAMLIB_PATCH%" ^
+            "QTKEYCHAININCLUDEPATH=%QTKEYCHAIN_DIR%\include" ^
+            "QTKEYCHAINLIBPATH=%QTKEYCHAIN_DIR%\lib" ^
+            "PTHREADINCLUDEPATH=%VCPKG_PTHREAD_INC_DIR%" ^
+            "PTHREADLIBPATH=%VCPKG_PTHREAD_LIB_DIR%" ^
+            "ZLIBINCLUDEPATH=%ZLIB_DIR%\include" ^
+            "ZLIBLIBPATH=%ZLIB_DIR%\lib" ^
+            "OPENSSLINCLUDEPATH=C:\vcpkg\installed\%VCPKG_TRIPLET%\include" ^
+            "OPENSSLLIBPATH=C:\vcpkg\installed\%VCPKG_TRIPLET%\lib"
+
+      - name: jom qmake_all
+        shell: cmd
+        run: jom qmake_all
+
+      - name: Build Release (jom)
+        shell: cmd
+        run: jom -f Makefile.Release
+
+      - name: Stage runtime and run windeployqt
+        shell: pwsh
+        run: |
+          $stage = "${{ github.workspace }}\stage"
+          New-Item -ItemType Directory -Path $stage -Force | Out-Null
+
+          $exe = "release\qlog.exe"
+          if (-not (Test-Path $exe)) { throw "qlog.exe not produced" }
+          Copy-Item $exe "$stage\qlog.exe" -Force
+
+          Copy-Item "${{ env.HAMLIB_DIR }}\bin\*.dll" $stage -Force
+          Copy-Item "${{ env.HAMLIB_DIR }}\bin\rigctld.exe" $stage -Force -ErrorAction SilentlyContinue
+          Copy-Item "${{ env.ZLIB_DIR }}\bin\zlib.dll" $stage -Force
+          Copy-Item "${{ env.QTKEYCHAIN_DIR }}\bin\qt6keychain.dll" $stage -Force
+          if ($env:VCPKG_PTHREAD_BIN_DIR) { Copy-Item "$env:VCPKG_PTHREAD_BIN_DIR\*.dll" $stage -Force -ErrorAction SilentlyContinue }
+          Copy-Item "C:\vcpkg\installed\${{ env.VCPKG_TRIPLET }}\bin\libssl*.dll" $stage -Force -ErrorAction SilentlyContinue
+          Copy-Item "C:\vcpkg\installed\${{ env.VCPKG_TRIPLET }}\bin\libcrypto*.dll" $stage -Force -ErrorAction SilentlyContinue
+
+          # windeployqt resolves Qt-style DLL dependencies from Qt's bin dir;
+          # copy the self-built qtkeychain DLL there before dependency scanning.
+          Copy-Item "${{ env.QTKEYCHAIN_DIR }}\bin\qt6keychain.dll" "$env:QT_ROOT_DIR\bin\" -Force
+
+          windeployqt -release `
+            --openssl-root "C:\vcpkg\installed\${{ env.VCPKG_TRIPLET }}" `
+            --skip-plugin-types qmltooling,position,qml,qsqlpsql,qsqlodbc,qsqlmimer `
+            "$stage\qlog.exe"
+
+      - name: Upload Windows runtime artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: QLog-Windows-x64
+          path: stage
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build QtIFW installer
+        shell: pwsh
+        run: |
+          $dataDir = "${{ github.workspace }}\installer\packages\de.dl2ic.qlog\data"
+          New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+          Copy-Item -Recurse -Force "${{ github.workspace }}\stage\*" $dataDir
+
+          $bc = Get-ChildItem -Path "$env:IQTA_TOOLS" -Filter "binarycreator.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $bc) {
+            throw "binarycreator.exe not found under IQTA_TOOLS=$env:IQTA_TOOLS"
+          }
+
+          & $bc.FullName -f -c "${{ github.workspace }}\installer\config\config.xml" -p "${{ github.workspace }}\installer\packages" "${{ github.workspace }}\qlog-installer.exe"
+          if ($LASTEXITCODE -ne 0) { throw "binarycreator failed" }
+          if (-not (Test-Path "${{ github.workspace }}\qlog-installer.exe")) { throw "qlog-installer.exe not produced" }
+
+      - name: Upload Windows installer artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: QLog-Windows-Installer
+          path: qlog-installer.exe
+          if-no-files-found: error
+          retention-days: 30
