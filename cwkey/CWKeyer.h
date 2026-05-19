@@ -64,13 +64,7 @@ private:
     explicit CWKeyer(QObject *parent = nullptr);
     ~CWKeyer();
 
-    enum CloseMode
-    {
-        DeferredDelete,
-        DeleteNow
-    };
-
-    void __closeCWKey(CloseMode closeMode = DeferredDelete);
+    void __closeCWKey();
     void __openCWKey();
 
     CWKey *cwKey;

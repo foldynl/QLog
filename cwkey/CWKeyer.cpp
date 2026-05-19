@@ -113,9 +113,8 @@ void CWKeyer::openImpl()
 {
     FCT_IDENTIFICATION;
 
-    cwKeyLock.lock();
+    QMutexLocker locker(&cwKeyLock);
     __openCWKey();
-    cwKeyLock.unlock();
 }
 
 void CWKeyer::__openCWKey()
@@ -312,11 +311,11 @@ void CWKeyer::shutdownImpl()
     qCDebug(runtime) << "Waiting for cwkey mutex";
     QMutexLocker locker(&cwKeyLock);
     qCDebug(runtime) << "Using Key";
-    __closeCWKey(DeleteNow);
+    __closeCWKey();
     stopTimerImplt();
 }
 
-void CWKeyer::__closeCWKey(CloseMode closeMode)
+void CWKeyer::__closeCWKey()
 {
     FCT_IDENTIFICATION;
 
@@ -325,10 +324,7 @@ void CWKeyer::__closeCWKey(CloseMode closeMode)
     if ( cwKey )
     {
         cwKey->close();
-        if ( closeMode == DeleteNow )
-            delete cwKey;
-        else
-            cwKey->deleteLater();
+        delete cwKey;
         cwKey = nullptr;
     }
 
