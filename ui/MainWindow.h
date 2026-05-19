@@ -81,6 +81,7 @@ private slots:
     void showDumpDB();
     void showLoadDB();
     void showQSLGallery();
+    void showDuplicateContacts();
     void showDevTools();
     void printQslLabels();
 

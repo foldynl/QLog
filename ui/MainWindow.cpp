@@ -10,6 +10,7 @@
 #include "ui_MainWindow.h"
 #include "ui/SettingsDialog.h"
 #include "ui/ImportDialog.h"
+#include "ui/DuplicateContactsDialog.h"
 #include "ui/ExportDialog.h"
 #include "ui/DevToolsDialog.h"
 #include "ui/CabrilloExportDialog.h"
@@ -1105,6 +1106,15 @@ void MainWindow::showQSLGallery()
 
     QSLGalleryDialog dialog(this);
     dialog.exec();
+}
+
+void MainWindow::showDuplicateContacts()
+{
+    FCT_IDENTIFICATION;
+
+    DuplicateContactsDialog dialog(this);
+    dialog.exec();
+    ui->logbookWidget->updateTable();
 }
 
 void MainWindow::showDevTools()

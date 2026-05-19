@@ -76,6 +76,8 @@
     <addaction name="actionImport"/>
     <addaction name="actionExport"/>
     <addaction name="separator"/>
+    <addaction name="actionFindDuplicates"/>
+    <addaction name="separator"/>
     <addaction name="actionAwards"/>
     <addaction name="actionDXCCSubmission"/>
     <addaction name="actionStatistics"/>
@@ -406,6 +408,14 @@
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionFindDuplicates">
+   <property name="text">
+    <string>Find &amp;&amp; Remove Duplicates</string>
+   </property>
+   <property name="toolTip">
+    <string>Search the logbook for duplicate contacts and optionally remove them</string>
    </property>
   </action>
   <action name="actionConnectRig">
@@ -1932,6 +1942,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionFindDuplicates</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showDuplicateContacts()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>actionDeveloperTools</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -2013,6 +2039,7 @@
   <slot>showDumpDB()</slot>
   <slot>showLoadDB()</slot>
   <slot>showQSLGallery()</slot>
+  <slot>showDuplicateContacts()</slot>
   <slot>showDevTools()</slot>
   <slot>printQslLabels()</slot>
   <slot>exportCabrillo()</slot>
