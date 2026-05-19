@@ -114,6 +114,7 @@ SOURCES += \
         cwkey/drivers/CWWinKey.cpp \
         data/ActivityProfile.cpp \
         data/AntProfile.cpp \
+        data/BandmapGuide.cpp \
         data/BandPlan.cpp \
         data/Accents.cpp \
         data/CWKeyProfile.cpp \
@@ -179,6 +180,7 @@ SOURCES += \
         ui/AwardsDialog.cpp \
         ui/DXCCSubmissionDialog.cpp \
         ui/BandmapWidget.cpp \
+        ui/BandmapGuideDialog.cpp \
         ui/CWConsoleWidget.cpp \
         ui/ChatWidget.cpp \
         ui/ClockWidget.cpp \
@@ -299,6 +301,7 @@ HEADERS += \
         data/ActivityProfile.h \
         data/AntProfile.h \
         data/Band.h \
+        data/BandmapGuide.h \
         data/BandPlan.h \
         data/CWKeyProfile.h \
         data/CWShortcutProfile.h \
@@ -380,6 +383,7 @@ HEADERS += \
         ui/AwardsDialog.h \
         ui/DXCCSubmissionDialog.h \
         ui/BandmapWidget.h \
+        ui/BandmapGuideDialog.h \
         ui/CWConsoleWidget.h \
         ui/ChatWidget.h \
         ui/ClockWidget.h \
@@ -453,6 +457,7 @@ FORMS += \
         ui/AwardsDialog.ui \
         ui/DXCCSubmissionDialog.ui \
         ui/BandmapWidget.ui \
+        ui/BandmapGuideDialog.ui \
         ui/CWConsoleWidget.ui \
         ui/ChatWidget.ui \
         ui/ClockWidget.ui \

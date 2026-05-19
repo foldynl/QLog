@@ -6,16 +6,10 @@
 
 MODULE_IDENTIFICATION("qlog.data.bandplan");
 
-struct BandModeRange {
-    double start;
-    double end;
-    BandPlan::BandPlanMode mode;
-};
-
 // currectly only IARU Region 1 is implemented
 // https://www.iaru-r1.org/wp-content/uploads/2019/08/hf_r1_bandplan.pdf
 // https://www.oevsv.at/export/shared/.content/.galleries/pdf-Downloads/OVSV-Bandplan_05-2019.pdf
-static const BandModeRange r1BandModeTable[] =
+static const BandPlan::BandModeRange r1BandModeTable[] =
 {
     // 2200m
     {0.1357, 0.1378, BandPlan::BAND_MODE_CW},
@@ -163,6 +157,19 @@ static const BandModeRange r1BandModeTable[] =
 };
 
 static int bandModeTableSize = sizeof(r1BandModeTable) / sizeof(r1BandModeTable[0]);
+
+const QList<BandPlan::BandModeRange> BandPlan::r1BandModeRanges()
+{
+    FCT_IDENTIFICATION;
+
+    QList<BandModeRange> ret;
+    ret.reserve(bandModeTableSize);
+
+    for ( int i = 0; i < bandModeTableSize; i++ )
+        ret.append(r1BandModeTable[i]);
+
+    return ret;
+}
 
 BandPlan::BandPlanMode BandPlan::freq2BandMode(const double freq)
 {

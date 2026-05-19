@@ -83,6 +83,12 @@ public:
     static bool getBandmapShowEmergency(const QString& widgetID);
     static bool setBandmapShowIBP(const QString& widgetID, bool show);
     static bool getBandmapShowIBP(const QString& widgetID);
+    static bool setBandmapGuideProfiles(const QString &json);
+    static QString getBandmapGuideProfiles();
+    static bool setBandmapGuideCurrentProfile(const QString &id);
+    static QString getBandmapGuideCurrentProfile();
+    static bool setBandmapGuideEnabled(bool state);
+    static bool getBandmapGuideEnabled();
 
     /*******************
      * UploadQSO Dialog

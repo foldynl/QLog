@@ -9,16 +9,19 @@
 #include <QPainterPath>
 #include <algorithm>
 #include <QWheelEvent>
+#include <QFontMetrics>
 
 #include "BandmapWidget.h"
 #include "ui_BandmapWidget.h"
 #include "data/Data.h"
 #include "data/BandPlan.h"
+#include "data/BandmapGuide.h"
 #include "core/debug.h"
 #include "rig/macros.h"
 #include "core/LogParam.h"
 #include "core/EmergencyFrequency.h"
 #include "core/IBPBeacon.h"
+#include "ui/BandmapGuideDialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.bandmapwidget");
 
@@ -132,6 +135,7 @@ void BandmapWidget::update()
     determineStepDigits(step, digits);
 
     const int steps = static_cast<int>(round((currentBand.end - currentBand.start) / step));
+    const QString endFreqDigits = QString::number(currentBand.end + step * steps, 'f', digits);
 
     minHeight = steps * PIXELSPERSTEP + 30;
     ui->graphicsView->setFixedSize(270, minHeight);
@@ -141,6 +145,8 @@ void BandmapWidget::update()
     /****************/
     const QPen gridPen(QColor(192, 192, 192));
     const QBrush highlightBrush(QColor(102, 153, 255, 100));
+
+    drawGuideOverlay(step, endFreqDigits);
 
     for ( int i = 0; i <= steps; i++ )
     {
@@ -165,7 +171,6 @@ void BandmapWidget::update()
         }
     }
 
-    const QString &endFreqDigits= QString::number(currentBand.end + step*steps, 'f', digits);
     bandmapScene->setSceneRect(135 - (endFreqDigits.size() * PIXELSPERSTEP),
                                0,
                                0,
@@ -517,6 +522,57 @@ void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
 
     pillItem->setZValue(1);
     textItem->setZValue(2);
+}
+
+void BandmapWidget::drawGuideOverlay(double step, const QString &widestFreqText)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !BandmapGuide::isEnabled() )
+        return;
+
+    const BandmapGuide::Profile profile = BandmapGuide::currentProfile();
+    if ( profile.ranges.isEmpty() )
+        return;
+
+    QFontMetrics metrics(qApp->font());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+    const qreal labelWidth = metrics.horizontalAdvance(widestFreqText) + 8.0;
+#else
+    const qreal labelWidth = metrics.width(widestFreqText) + 8.0;
+#endif
+    const qreal guideRight = -12.0;
+    const qreal guideX = guideRight - labelWidth;
+
+    for ( const BandmapGuide::Range &range : profile.ranges )
+    {
+        if ( range.to <= currentBand.start || range.from >= currentBand.end )
+            continue;
+
+        const double from = qMax(range.from, currentBand.start);
+        const double to = qMin(range.to, currentBand.end);
+        const qreal y1 = ((from - currentBand.start) / step) * PIXELSPERSTEP;
+        const qreal y2 = ((to - currentBand.start) / step) * PIXELSPERSTEP;
+
+        QColor color(range.color);
+        color.setAlpha(100);
+
+        QGraphicsRectItem *item = bandmapScene->addRect(guideX,
+                                                        y1,
+                                                        labelWidth,
+                                                        qMax(y2 - y1, 1.0),
+                                                        QPen(Qt::NoPen),
+                                                        QBrush(color));
+        item->setZValue(-20);
+
+        if ( !range.label.isEmpty() )
+        {
+            item->setToolTip(QString("%1<br/>%2 - %3 MHz")
+                             .arg(range.label,
+                                  QString::number(range.from, 'f', 6),
+                                  QString::number(range.to, 'f', 6)));
+        }
+    }
 }
 
 void BandmapWidget::removeDuplicates(DxSpot &spot)
@@ -1039,10 +1095,57 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     ibpAction->setChecked(showIBPMarkers);
     connect(ibpAction, &QAction::triggered, this, &BandmapWidget::ibpMarkersActionChecked);
 
+    QMenu guideMenu(tr("Show Guide"), &contextMenu);
+
+    QAction* guideOffAction = new QAction(tr("Off"), &guideMenu);
+    guideOffAction->setCheckable(true);
+    guideOffAction->setChecked(!BandmapGuide::isEnabled());
+    connect(guideOffAction, &QAction::triggered, this, [this]()
+    {
+        BandmapGuide::setEnabled(false);
+        refreshAllBandmaps();
+    });
+    guideMenu.addAction(guideOffAction);
+
+    const QList<BandmapGuide::Profile> guides = BandmapGuide::profiles();
+    QString currentGuideId = BandmapGuide::currentProfileId();
+    if ( currentGuideId.isEmpty() && !guides.isEmpty() )
+        currentGuideId = guides.first().id;
+
+    if ( guides.isEmpty() )
+    {
+        QAction* noGuideAction = new QAction(tr("No Guide"), &guideMenu);
+        noGuideAction->setEnabled(false);
+        guideMenu.addAction(noGuideAction);
+    }
+    else
+    {
+        guideMenu.addSeparator();
+        for ( const BandmapGuide::Profile &guide : guides )
+        {
+            QAction* action = new QAction(guide.name, &guideMenu);
+            action->setCheckable(true);
+            action->setChecked(BandmapGuide::isEnabled() && guide.id == currentGuideId);
+            connect(action, &QAction::triggered, this, [this, guide]()
+            {
+                BandmapGuide::setCurrentProfileId(guide.id);
+                BandmapGuide::setEnabled(true);
+                refreshAllBandmaps();
+            });
+            guideMenu.addAction(action);
+        }
+    }
+
+    QAction* editGuideAction = new QAction(tr("Edit Guide..."), &contextMenu);
+    connect(editGuideAction, &QAction::triggered, this, &BandmapWidget::editGuide);
+
     contextMenu.addMenu(&bandsMenu);
     contextMenu.addAction(centerRXAction);
     contextMenu.addAction(emergencyAction);
     contextMenu.addAction(ibpAction);
+    contextMenu.addSeparator();
+    contextMenu.addMenu(&guideMenu);
+    contextMenu.addAction(editGuideAction);
 
     contextMenu.exec(ui->graphicsView->mapToGlobal(point));
 }
@@ -1375,6 +1478,27 @@ void BandmapWidget::ibpMarkersActionChecked(bool state)
     showIBPMarkers = state;
     LogParam::setBandmapShowIBP(objectName(), showIBPMarkers);
     update();
+}
+
+void BandmapWidget::editGuide()
+{
+    FCT_IDENTIFICATION;
+
+    BandmapGuideDialog dialog(this);
+    if ( dialog.exec() == QDialog::Accepted )
+        refreshAllBandmaps();
+}
+
+void BandmapWidget::refreshAllBandmaps()
+{
+    FCT_IDENTIFICATION;
+
+    if ( vfoWidget )
+        vfoWidget->update();
+
+    for ( BandmapWidget *widget : static_cast<const QList<BandmapWidget *>>(nonVfoWidgets) )
+        if ( widget )
+            widget->update();
 }
 
 

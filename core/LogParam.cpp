@@ -185,7 +185,9 @@ void LogParam::removeDXCTrendContinent()
 
 QStringList LogParam::bandmapsWidgets()
 {
-    return getKeys("bandmap/");
+    QStringList keys = getKeys("bandmap/");
+    keys.removeAll("guide");
+    return keys;
 }
 
 void LogParam::removeBandmapWidgetGroup(const QString &group)
@@ -251,6 +253,36 @@ bool LogParam::setBandmapShowIBP(const QString &widgetID, bool show)
 bool LogParam::getBandmapShowIBP(const QString &widgetID)
 {
     return getParam("bandmap/" + widgetID + "/showibp", true).toBool();
+}
+
+bool LogParam::setBandmapGuideProfiles(const QString &json)
+{
+    return setParam("bandmap/guide/profiles", json);
+}
+
+QString LogParam::getBandmapGuideProfiles()
+{
+    return getParam("bandmap/guide/profiles", QString()).toString();
+}
+
+bool LogParam::setBandmapGuideCurrentProfile(const QString &id)
+{
+    return setParam("bandmap/guide/currentprofile", id);
+}
+
+QString LogParam::getBandmapGuideCurrentProfile()
+{
+    return getParam("bandmap/guide/currentprofile", QString()).toString();
+}
+
+bool LogParam::setBandmapGuideEnabled(bool state)
+{
+    return setParam("bandmap/guide/enabled", state);
+}
+
+bool LogParam::getBandmapGuideEnabled()
+{
+    return getParam("bandmap/guide/enabled", false).toBool();
 }
 
 QString LogParam::getUploadQSOLastCall()

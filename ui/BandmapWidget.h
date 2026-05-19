@@ -106,6 +106,8 @@ private:
     void drawLabeledFrequencyMarker(double frequency,
                                     double step,
                                     const FrequencyMarkerStyle &style);
+    void drawGuideOverlay(double step, const QString &widestFreqText);
+    void refreshAllBandmaps();
     void drawEmergencyMarkers(double step);
     void drawIBPMarkers(double step);
     void drawMarkers(double frequency);
@@ -130,6 +132,7 @@ private slots:
     void centerRXActionChecked(bool);
     void emergencyMarkersActionChecked(bool);
     void ibpMarkersActionChecked(bool);
+    void editGuide();
     void spotClicked(const QString&, double, BandPlan::BandPlanMode);
     void showContextMenu(const QPoint&);
     void updateStationTimer();
