@@ -90,6 +90,20 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QLabel" name="emergencyFrequencyLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="ibpBeaconLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

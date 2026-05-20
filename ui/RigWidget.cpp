@@ -2,6 +2,8 @@
 #include "ui_RigWidget.h"
 #include "rig/macros.h"
 #include "core/debug.h"
+#include "core/EmergencyFrequency.h"
+#include "core/IBPBeacon.h"
 #include "data/Data.h"
 #include "service/hrdlog/HRDLog.h"
 #include "data/BandmapGuide.h"
@@ -21,8 +23,10 @@ RigWidget::RigWidget(QWidget *parent) :
 
     ui->setupUi(this);
     ui->bandmapGuideLabel->setVisible(false);
+    ui->emergencyFrequencyLabel->setVisible(false);
+    ui->ibpBeaconLabel->setVisible(false);
     connect(BandmapGuide::instance(), &BandmapGuide::changed,
-            this, [this]() { updateBandmapGuideLabel(lastSeenFreq); });
+            this, [this]() { updateFrequencyInfoLabels(lastSeenFreq); });
 
     ui->freqLabel->setSelectionModeEnabled(false);
     ui->freqLabel->setDebounceEnabled(true);
@@ -106,7 +110,7 @@ void RigWidget::updateFrequency(VFOID vfoid, double vfoFreq, double ritFreq, dou
         ui->bandComboBox->blockSignals(false);
     }
     lastSeenFreq = vfoFreq;
-    updateBandmapGuideLabel(vfoFreq);
+    updateFrequencyInfoLabels(vfoFreq);
 }
 
 void RigWidget::updateSplit(VFOID, bool enabled)
@@ -326,7 +330,7 @@ void RigWidget::reloadSettings()
     FCT_IDENTIFICATION;
 
     refreshRigProfileCombo();
-    updateBandmapGuideLabel(lastSeenFreq);
+    updateFrequencyInfoLabels(lastSeenFreq);
 }
 
 void RigWidget::rigConnected()
@@ -345,7 +349,7 @@ void RigWidget::rigConnected()
     ui->txFreqLabel->setReadOnly(false);
     ui->pttLabel->setVisible(RigProfilesManager::instance()->getCurProfile1().getPTTInfo);
     refreshModeCombo();
-    updateBandmapGuideLabel(lastSeenFreq);
+    updateFrequencyInfoLabels(lastSeenFreq);
 }
 
 void RigWidget::rigDisconnected()
@@ -369,7 +373,7 @@ void RigWidget::rigDisconnected()
     ui->freqLabel->setReadOnly(true);
     ui->txFreqLabel->setReadOnly(true);
     ui->pttLabel->setVisible(false);
-    updateBandmapGuideLabel(0.0);
+    updateFrequencyInfoLabels(0.0);
 }
 
 void RigWidget::bandUp()
@@ -452,7 +456,7 @@ void RigWidget::resetRigInfo()
     updatePTT(VFO1, false);
 }
 
-QString RigWidget::readableGuideTextColor(const QColor &background) const
+QString RigWidget::readableLabelTextColor(const QColor &background) const
 {
     const int brightness = (background.red() * 299
                             + background.green() * 587
@@ -461,16 +465,29 @@ QString RigWidget::readableGuideTextColor(const QColor &background) const
     return (brightness > 150) ? QStringLiteral("#000000") : QStringLiteral("#ffffff");
 }
 
+void RigWidget::clearFrequencyInfoLabel(QLabel *label)
+{
+    label->clear();
+    label->setToolTip(QString());
+    label->setStyleSheet(QString());
+    label->setVisible(false);
+}
+
+void RigWidget::updateFrequencyInfoLabels(double frequency)
+{
+    FCT_IDENTIFICATION;
+
+    updateBandmapGuideLabel(frequency);
+    updateImportantFrequencyLabels(frequency);
+}
+
 void RigWidget::updateBandmapGuideLabel(double frequency)
 {
     FCT_IDENTIFICATION;
 
     if ( !rigOnline || frequency <= 0.0 || !BandmapGuide::isEnabled() )
     {
-        ui->bandmapGuideLabel->clear();
-        ui->bandmapGuideLabel->setToolTip(QString());
-        ui->bandmapGuideLabel->setStyleSheet(QString());
-        ui->bandmapGuideLabel->setVisible(false);
+        clearFrequencyInfoLabel(ui->bandmapGuideLabel);
         return;
     }
 
@@ -499,7 +516,7 @@ void RigWidget::updateBandmapGuideLabel(double frequency)
                                                QString::number(range.from, 'f', 6),
                                                QString::number(range.to, 'f', 6)));
         ui->bandmapGuideLabel->setStyleSheet(QString("QLabel { color: %1; background-color: %2; border-radius: 3px; padding: 1px 5px; font-weight: bold; }")
-                                             .arg(readableGuideTextColor(range.color),
+                                             .arg(readableLabelTextColor(range.color),
                                                   range.color.name()));
         ui->bandmapGuideLabel->setVisible(true);
         return;
@@ -507,18 +524,66 @@ void RigWidget::updateBandmapGuideLabel(double frequency)
 
     if ( hasValidRange && !insideGuideRange )
     {
+        const QColor outColor(QStringLiteral("#ffd45a"));
         ui->bandmapGuideLabel->setText(tr("OUT"));
         ui->bandmapGuideLabel->setToolTip(tr("Outside Bandmap Guide range"));
-        ui->bandmapGuideLabel->setStyleSheet(QStringLiteral("QLabel { background-color: #ffd45a; border-radius: 3px; padding: 1px 5px; font-weight: bold; }"));
+        ui->bandmapGuideLabel->setStyleSheet(QString("QLabel { color: %1; background-color: %2; border-radius: 3px; padding: 1px 5px; font-weight: bold; }")
+                                             .arg(readableLabelTextColor(outColor),
+                                                  outColor.name()));
         ui->bandmapGuideLabel->setVisible(true);
     }
     else
     {
-        ui->bandmapGuideLabel->clear();
-        ui->bandmapGuideLabel->setToolTip(QString());
-        ui->bandmapGuideLabel->setStyleSheet(QString());
-        ui->bandmapGuideLabel->setVisible(false);
+        clearFrequencyInfoLabel(ui->bandmapGuideLabel);
     }
+}
+
+void RigWidget::updateImportantFrequencyLabels(double frequency)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !rigOnline || frequency <= 0.0 )
+    {
+        clearFrequencyInfoLabel(ui->emergencyFrequencyLabel);
+        clearFrequencyInfoLabel(ui->ibpBeaconLabel);
+        return;
+    }
+
+    const EmergencyFreqEntry *emergency = EmergencyFrequency::findEmergency(frequency);
+    if ( emergency )
+    {
+        const QColor emergencyColor(QStringLiteral("#b91c1c"));
+        ui->emergencyFrequencyLabel->setText(tr("SOS"));
+        ui->emergencyFrequencyLabel->setToolTip(tr("Emergency frequency: %1 MHz")
+                                                .arg(QString::number(emergency->frequency, 'f', 3)));
+        ui->emergencyFrequencyLabel->setStyleSheet(QString("QLabel { color: %1; background-color: %2; border-radius: 3px; padding: 1px 5px; font-weight: bold; }")
+                                                   .arg(readableLabelTextColor(emergencyColor),
+                                                        emergencyColor.name()));
+        ui->emergencyFrequencyLabel->setVisible(true);
+    }
+    else
+    {
+        clearFrequencyInfoLabel(ui->emergencyFrequencyLabel);
+    }
+
+    const double ibpToleranceMHz = 0.001;
+    for ( const IBPBeacon::Band &band : IBPBeacon::bands() )
+    {
+        if ( qAbs(frequency - band.frequency) > ibpToleranceMHz )
+            continue;
+
+        const QColor ibpColor(QStringLiteral("#1e88e5"));
+        ui->ibpBeaconLabel->setText(tr("IBP"));
+        ui->ibpBeaconLabel->setToolTip(tr("International Beacon Project: %1 MHz")
+                                       .arg(QString::number(band.frequency, 'f', 3)));
+        ui->ibpBeaconLabel->setStyleSheet(QString("QLabel { color: %1; background-color: %2; border-radius: 3px; padding: 1px 5px; font-weight: bold; }")
+                                          .arg(readableLabelTextColor(ibpColor),
+                                               ibpColor.name()));
+        ui->ibpBeaconLabel->setVisible(true);
+        return;
+    }
+
+    clearFrequencyInfoLabel(ui->ibpBeaconLabel);
 }
 
 void RigWidget::saveLastSeenFreq()

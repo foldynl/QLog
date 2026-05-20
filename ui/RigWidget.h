@@ -6,6 +6,7 @@
 #include "service/hrdlog/HRDLog.h"
 
 class QColor;
+class QLabel;
 
 namespace Ui {
 class RigWidget;
@@ -57,8 +58,11 @@ private:
 
     void resetRigInfo();
     void saveLastSeenFreq();
+    void updateFrequencyInfoLabels(double frequency);
     void updateBandmapGuideLabel(double frequency);
-    QString readableGuideTextColor(const QColor &background) const;
+    void updateImportantFrequencyLabels(double frequency);
+    void clearFrequencyInfoLabel(QLabel *label);
+    QString readableLabelTextColor(const QColor &background) const;
 
     double lastSeenFreq;
     QString lastSeenMode;

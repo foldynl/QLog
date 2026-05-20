@@ -107,6 +107,7 @@ private:
     void drawLabeledFrequencyMarker(double frequency,
                                     double step,
                                     const FrequencyMarkerStyle &style);
+    QColor readableMarkerTextColor(const QColor &background) const;
     void drawGuideOverlay(double step, const QString &widestFreqText);
     void drawEmergencyMarkers(double step);
     void drawIBPMarkers(double step);

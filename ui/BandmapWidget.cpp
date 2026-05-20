@@ -506,7 +506,7 @@ void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
     bandmapScene->addLine(0, y, pillX, y, QPen(style.lineColor, 2));
 
     QGraphicsSimpleTextItem *textItem = bandmapScene->addSimpleText(style.label, markerFont);
-    textItem->setBrush(QBrush(Qt::white));
+    textItem->setBrush(QBrush(readableMarkerTextColor(style.pillColor)));
     const QRectF textRect = textItem->boundingRect();
     const qreal pillW = textRect.width() + 10.0;
     const qreal pillY = y - pillH / 2.0;
@@ -522,6 +522,15 @@ void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
 
     pillItem->setZValue(1);
     textItem->setZValue(2);
+}
+
+QColor BandmapWidget::readableMarkerTextColor(const QColor &background) const
+{
+    const int brightness = (background.red() * 299
+                            + background.green() * 587
+                            + background.blue() * 114) / 1000;
+
+    return (brightness > 150) ? QColor(Qt::black) : QColor(Qt::white);
 }
 
 void BandmapWidget::drawGuideOverlay(double step, const QString &widestFreqText)
