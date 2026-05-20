@@ -112,7 +112,9 @@ QString LotwBase::findTQSLPath()
         QDir::homePath() + "/AppData/Local/Programs/TQSL/tqsl.exe"
 #elif defined(Q_OS_MACOS)
         "/Applications/tqsl.app/Contents/MacOS/tqsl",
-        "/Applications/TQSL.app/Contents/MacOS/tqsl"
+        "/Applications/TQSL.app/Contents/MacOS/tqsl",
+        "/Applications/TrustedQSL/tqsl.app/Contents/MacOS/tqsl",
+        "/Applications/TrustedQSL/TQSL.app/Contents/MacOS/tqsl"
 #else
         "/usr/bin/tqsl",
         "/usr/local/bin/tqsl",

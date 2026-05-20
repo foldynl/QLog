@@ -81,10 +81,11 @@ Prerequisites:
 
 **DEB packages** for currently supported Ubuntu versions are available for amd64, arm64 platforms via [Ubuntu PPA](https://launchpad.net/~foldyna/+archive/ubuntu/qlog). Ubuntu users can use following commands:
 
-```bash
-sudo add-apt-repository ppa:foldyna/qlog
-sudo apt -U install qlog
-```
+`sudo add-apt-repository ppa:foldyna/qlog`
+
+`sudo apt update`
+
+`sudo apt install qlog`
 
 Fedora **RPM packages** are available via GitHub [Releases](https://github.com/foldynl/QLog/releases/latest)
 
@@ -92,22 +93,7 @@ Fedora **RPM packages** are available via GitHub [Releases](https://github.com/f
 
 **Flatpak** package is available via [Flathub](https://flathub.org/apps/io.github.foldynl.QLog). The package contains built-in TrustedQSL.
 
-The above packages are maintained by the application maintainer. If your distribution is neither Ubuntu or Fedora, Flatpak is the recommended way of getting QLog.
-
-However, there are many other unofficial packages available for other distributions — see the Unofficial Repositories on [QLog Wiki](https://github.com/foldynl/QLog/wiki) or [Repology](https://repology.org/project/qlog/versions).
-
-> [!CAUTION]
-> Beware that these are unofficial packages!
-
-On **Debian** forky or newer:
-```bash
-sudo apt -U install qlog
-```
-
-On **openSUSE** Tumbleweed:
-```bash
-sudo zypper install QLog
-```
+The above packages are maintained by the application maintainer. However, there are many other unofficial packages available for other distributions — see the Unofficial Repositories on [QLog Wiki](https://github.com/foldynl/QLog/wiki).
 
 ### Windows
 
