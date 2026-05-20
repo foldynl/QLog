@@ -11,6 +11,7 @@
 #include "service/eqsl/Eqsl.h"
 #include "service/lotw/Lotw.h"
 #include "service/qrzcom/QRZ.h"
+#include "service/qrzcalleu/QRZCallEU.h"
 #include "service/hrdlog/HRDLog.h"
 #include "service/cloudlog/Cloudlog.h"
 
@@ -79,6 +80,15 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
                                          ui->wavelogCheckbox,
                                          ui->wavelogNumberLabel,
                                         !CloudlogBase::getLogbookAPIKey().isEmpty()));
+
+    onlineServices.insert(QRZCALLEUID, UploadTask(QRZCALLEUID,
+                                         tr("QRZCALL.EU"),
+                                         new QRZCallEUUploader(this),
+                                         "qrzcalleu_qso_upload_status",
+                                         "qrzcalleu_qso_upload_date",
+                                         ui->qrzcalleuCheckbox,
+                                         ui->qrzcalleuNumberLabel,
+                                        !QRZCallEUBase::getPAT().isEmpty()));
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Upload"));
 
@@ -195,6 +205,7 @@ void UploadQSODialog::loadDialogState()
     ui->hrdlogCheckbox->setChecked(ui->hrdlogCheckbox->isEnabled() && LogParam::getUploadServiceState("hrdlog"));
     ui->qrzCheckbox->setChecked(ui->qrzCheckbox->isEnabled() && LogParam::getUploadServiceState("qrzcom"));
     ui->wavelogCheckbox->setChecked(ui->wavelogCheckbox->isEnabled() && LogParam::getUploadServiceState("wavelog"));
+    ui->qrzcalleuCheckbox->setChecked(ui->qrzcalleuCheckbox->isEnabled() && LogParam::getUploadServiceState("qrzcalleu"));
 
     int index = ui->myCallsignCombo->findText(profile.callsign);
 
@@ -232,6 +243,7 @@ void UploadQSODialog::saveDialogState()
     LogParam::setUploadServiceState("hrdlog", ui->hrdlogCheckbox->isChecked());
     LogParam::setUploadServiceState("qrzcom", ui->qrzCheckbox->isChecked());
     LogParam::setUploadServiceState("wavelog", ui->wavelogCheckbox->isChecked());
+    LogParam::setUploadServiceState("qrzcalleu", ui->qrzcalleuCheckbox->isChecked());
     LogParam::setUploadQSOLastCall(ui->myCallsignCombo->currentText());
     LogParam::setUploadeqslQSLComment(ui->eqslQSLComment->isChecked());
     LogParam::setUploadeqslQSLMessage(ui->eqslQSLMessage->isChecked());
@@ -336,7 +348,8 @@ void UploadQSODialog::processNextUploader()
         dialog->done(QDialog::Accepted);
         if ( currentTask.getServiceID() != HRDLOGID
              && currentTask.getServiceID() != QRZCOMID
-             && currentTask.getServiceID() != WAVELOGID )
+             && currentTask.getServiceID() != WAVELOGID
+             && currentTask.getServiceID() != QRZCALLEUID )
         {
 
             const QString statusField = currentTask.getDBUploadStatusFieldName();
@@ -414,7 +427,8 @@ void UploadQSODialog::processNextUploader()
     // set progress bar range for services that do not support the batch upload
     if ( currentTask.getServiceID() == HRDLOGID
          || currentTask.getServiceID() == QRZCOMID
-         || currentTask.getServiceID() == WAVELOGID )
+         || currentTask.getServiceID() == WAVELOGID
+         || currentTask.getServiceID() == QRZCALLEUID )
         dialog->setRange(0, list.size());
 
     uploader->uploadQSOList(list, uploadConfig);
@@ -639,6 +653,7 @@ void UploadQSODialog::executeQuery()
             case CLUBLOGID: forUploadMarked = lotwUploadStatus || rec->value("status_" + QString::number(taskID)).toBool(); break; // depends on the LoTW Receive field
             case HRDLOGID: forUploadMarked = eqslUploadStatus || lotwUploadStatus || rec->value("status_" + QString::number(taskID)).toBool(); break; //depends on EQSL and LoTW fields
             case QRZCOMID: forUploadMarked = (! serviceNames.empty()) || rec->value("status_" + QString::number(taskID)).toBool(); break; // all fields are sent
+            case QRZCALLEUID: forUploadMarked = (! serviceNames.empty()) || rec->value("status_" + QString::number(taskID)).toBool(); break; // all fields are sent
             case WAVELOGID: forUploadMarked = rec->value("status_" + QString::number(taskID)).toBool(); break;
             default: forUploadMarked = false;
             }

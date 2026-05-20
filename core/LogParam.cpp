@@ -417,6 +417,16 @@ void LogParam::setClublogUploadImmediatelyEnabled(bool state)
     setParam("services/clublog/logbook/uploadimmediately", state);
 }
 
+bool LogParam::getQRZCallEUUploadImmediatelyEnabled()
+{
+    return getParam("services/qrzcalleu/logbook/uploadimmediately", false).toBool();
+}
+
+void LogParam::setQRZCallEUUploadImmediatelyEnabled(bool state)
+{
+    setParam("services/qrzcalleu/logbook/uploadimmediately", state);
+}
+
 QString LogParam::getEQSLLogbookUsername()
 {
     return getParam("services/eqsl/logbook/username").toString().trimmed();

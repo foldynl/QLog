@@ -200,6 +200,27 @@
          </item>
         </layout>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_qrzcalleu">
+         <item>
+          <widget class="QCheckBox" name="qrzcalleuCheckbox">
+           <property name="text">
+            <string>QRZCALL.EU</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">uploadButtonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="qrzcalleuNumberLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
     </layout>
@@ -669,6 +690,7 @@
   <tabstop>lotwCheckbox</tabstop>
   <tabstop>clublogCheckbox</tabstop>
   <tabstop>wavelogCheckbox</tabstop>
+  <tabstop>qrzcalleuCheckbox</tabstop>
   <tabstop>myStationProfileCheckbox</tabstop>
   <tabstop>myStationProfileCombo</tabstop>
   <tabstop>myCallsignCheckbox</tabstop>

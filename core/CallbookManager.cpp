@@ -3,6 +3,7 @@
 #include "core/debug.h"
 #include "service/hamqth/HamQTH.h"
 #include "service/qrzcom/QRZ.h"
+#include "service/qrzcalleu/QRZCallEU.h"
 #include "data/Callsign.h"
 #include "LogParam.h"
 
@@ -69,6 +70,10 @@ GenericCallbook *CallbookManager::createCallbook(const QString &callbookID)
     else if ( callbookID == QRZCallbook::CALLBOOK_NAME )
     {
         ret = new QRZCallbook(this);
+    }
+    else if ( callbookID == QRZCallEUCallbook::CALLBOOK_NAME )
+    {
+        ret = new QRZCallEUCallbook(this);
     }
 
     if ( ret )

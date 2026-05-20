@@ -9,6 +9,7 @@
 #include "core/AlertEvaluator.h"
 #include "core/PropConditions.h"
 #include "service/clublog/ClubLog.h"
+#include "service/qrzcalleu/QRZCallEU.h"
 
 namespace Ui {
 class MainWindow;
@@ -117,6 +118,7 @@ private:
     PropConditions *conditions;
     bool isFusionStyle;
     ClubLogUploader* clublogRT;
+    QRZCallEUUploader* qrzcalleuRT;
     WsjtxUDPReceiver* wsjtx;
     QActionGroup *seqGroup;
     QActionGroup *dupeGroup;

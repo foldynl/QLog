@@ -131,6 +131,8 @@ public:
     static void setClublogLogbookReqEmail(const QString& email);
     static bool getClublogUploadImmediatelyEnabled();
     static void setClublogUploadImmediatelyEnabled(bool state);
+    static bool getQRZCallEUUploadImmediatelyEnabled();
+    static void setQRZCallEUUploadImmediatelyEnabled(bool state);
 
     /*********
      * eQSL
