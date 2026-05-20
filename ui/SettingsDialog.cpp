@@ -38,6 +38,7 @@
 #include "core/LogParam.h"
 #include "data/Callsign.h"
 #include "core/MembershipQE.h"
+#include "data/BandmapGuide.h"
 #include "models/SqlListModel.h"
 #include "service/kstchat/KSTChat.h"
 #include "data/HostsPortString.h"
@@ -45,6 +46,8 @@
 #include "ui/component/StyleItemDelegate.h"
 #include "data/SerialPort.h"
 #include "service/cloudlog/Cloudlog.h"
+#include "ui/BandmapGuideDialog.h"
+#include "ui/BandmapWidget.h"
 #include "ui/RigctldAdvancedDialog.h"
 #include "cwkey/drivers/CWWinKey.h"
 
@@ -168,6 +171,7 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
 
     ui->setupUi(this);
     setupAdifRecoveryTab();
+    refreshBandmapGuideCombo();
 
     ui->dateFormatResultLabel->setVisible(false);
     ui->dateFormatStringEdit->setVisible(false);
@@ -2236,6 +2240,39 @@ void SettingsDialog::showRigctldAdvanced()
     }
 }
 
+void SettingsDialog::editBandmapGuide()
+{
+    FCT_IDENTIFICATION;
+
+    BandmapGuideDialog dialog(this);
+    if ( dialog.exec() == QDialog::Accepted )
+    {
+        refreshBandmapGuideCombo();
+        BandmapWidget::refreshAllBandmaps();
+    }
+}
+
+void SettingsDialog::bandmapGuideChanged(int index)
+{
+    FCT_IDENTIFICATION;
+
+    if ( index < 0 )
+        return;
+
+    const QString profileId = ui->bandmapGuideComboBox->itemData(index).toString();
+    if ( profileId.isEmpty() )
+    {
+        BandmapGuide::setEnabled(false);
+    }
+    else
+    {
+        BandmapGuide::setCurrentProfileId(profileId);
+        BandmapGuide::setEnabled(true);
+    }
+
+    BandmapWidget::refreshAllBandmaps();
+}
+
 void SettingsDialog::rigShareChanged(int)
 {
     FCT_IDENTIFICATION;
@@ -2268,6 +2305,45 @@ void SettingsDialog::updateRigShareEnabled()
     }
     else
         ui->rigShareCheckBox->setToolTip(tr("Start rigctld daemon to share rig with other applications (e.g. WSJT-X)"));
+}
+
+void SettingsDialog::refreshBandmapGuideCombo()
+{
+    FCT_IDENTIFICATION;
+
+    QSignalBlocker blocker(ui->bandmapGuideComboBox);
+    const QList<BandmapGuide::Profile> profiles = BandmapGuide::profiles();
+    const QString currentProfileId = BandmapGuide::currentProfileId();
+    const bool enabled = BandmapGuide::isEnabled();
+    int selectedIndex = 0;
+    int firstProfileIndex = -1;
+
+    ui->bandmapGuideComboBox->clear();
+    ui->bandmapGuideComboBox->addItem(tr("Off"), QString());
+
+    for ( const BandmapGuide::Profile &profile : profiles )
+    {
+        ui->bandmapGuideComboBox->addItem(profile.name, profile.id);
+
+        const int itemIndex = ui->bandmapGuideComboBox->count() - 1;
+        if ( firstProfileIndex < 0 )
+            firstProfileIndex = itemIndex;
+        if ( enabled && profile.id == currentProfileId )
+            selectedIndex = itemIndex;
+    }
+
+    if ( enabled && selectedIndex == 0 && firstProfileIndex > 0 )
+        selectedIndex = firstProfileIndex;
+
+    ui->bandmapGuideComboBox->setCurrentIndex(selectedIndex);
+
+    if ( enabled )
+    {
+        if ( selectedIndex > 0 )
+            BandmapGuide::setCurrentProfileId(ui->bandmapGuideComboBox->itemData(selectedIndex).toString());
+        else
+            BandmapGuide::setEnabled(false);
+    }
 }
 
 void SettingsDialog::qrzAddCallsignAPIKey()

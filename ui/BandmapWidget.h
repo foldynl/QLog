@@ -48,6 +48,7 @@ public:
     ~BandmapWidget();
     const Band& getBand() const {return currentBand;};
     const QList<BandmapWidget *> getNonVfoWidgetList() {return nonVfoWidgets;};
+    static void refreshAllBandmaps();
     enum BandmapZoom {
         ZOOM_100HZ = 6,
         ZOOM_250HZ = 5,
@@ -107,7 +108,6 @@ private:
                                     double step,
                                     const FrequencyMarkerStyle &style);
     void drawGuideOverlay(double step, const QString &widestFreqText);
-    void refreshAllBandmaps();
     void drawEmergencyMarkers(double step);
     void drawIBPMarkers(double step);
     void drawMarkers(double frequency);

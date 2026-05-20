@@ -132,6 +132,8 @@ public slots:
     void rigFlowControlChanged(int);
     void showRigctldAdvanced();
     void rigShareChanged(int);
+    void editBandmapGuide();
+    void bandmapGuideChanged(int);
 
     void qrzAddCallsignAPIKey();
     void qrzDelCallsignAPIKey();
@@ -147,6 +149,7 @@ private:
     void writeSettings();
     void setUIBasedOnRigCaps(const RigCaps&);
     void refreshRigAssignedCWKeyCombo();
+    void refreshBandmapGuideCombo();
     void updateRigShareEnabled();
     void setValidationResultColor(QLineEdit *);
     void generateMembershipCheckboxes();

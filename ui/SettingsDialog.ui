@@ -4329,6 +4329,59 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <layout class="QHBoxLayout" name="bandmapGuideLayout">
+         <item>
+          <widget class="QLabel" name="bandmapGuideLabel">
+           <property name="text">
+            <string>Select the &lt;b&gt;Bandmap Guide&lt;/b&gt; profile shown as visual frequency hints. It does not affect mode identification.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="bandmapGuideComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="editBandmapGuideButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Manage</string>
+           </property>
+           <property name="icon">
+            <iconset theme="preferences-system"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="bandTableHelpLabel">
+         <property name="text">
+          <string>Double-click cells to edit start/end frequency, enabled state, or SAT mode. Band names are fixed; new bands cannot be added here.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QTableView" name="bandTableView">
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -5194,6 +5247,8 @@
   <tabstop>dxccConfirmedByLotwCheckBox</tabstop>
   <tabstop>dxccConfirmedByPaperCheckBox</tabstop>
   <tabstop>dxccConfirmedByEqslCheckBox</tabstop>
+  <tabstop>bandmapGuideComboBox</tabstop>
+  <tabstop>editBandmapGuideButton</tabstop>
   <tabstop>bandTableView</tabstop>
   <tabstop>modeTableView</tabstop>
   <tabstop>wsjtForwardEdit</tabstop>
@@ -6474,6 +6529,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>editBandmapGuideButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>editBandmapGuide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>600</x>
+     <y>420</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandmapGuideComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>bandmapGuideChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>520</x>
+     <y>420</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
@@ -6549,10 +6636,12 @@
   <slot>onDeleteAllPasswords()</slot>
   <slot>addAdifRecoveryFile()</slot>
   <slot>removeAdifRecoveryFile()</slot>
+  <slot>editBandmapGuide()</slot>
+  <slot>bandmapGuideChanged(int)</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>
