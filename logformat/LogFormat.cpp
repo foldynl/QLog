@@ -1102,20 +1102,11 @@ void LogFormat::runDXCCCreditImport()
             }
         }
 
-        if ( matches.size() != 1 )
+        if ( matches.isEmpty() )
         {
-            const QString detail = matches.isEmpty() ? tr("no matching QSO")
-                                                     : tr("ambiguous match: %1 QSOs").arg(matches.size());
-            stats.unmatchedQSLs.append(formatDXCCCreditReport(credit, {detail}));
+            stats.unmatchedQSLs.append(formatDXCCCreditReport(credit, {tr("no matching QSO")}));
             continue;
         }
-
-        const DXCCCreditMatch &match = matches.first();
-        const QString mergedCredits = mergeCreditValues(match.creditGranted, credit.creditGranted);
-        const QString normalizedCurrentCredits = splitCreditValues(match.creditGranted).join(',');
-
-        if ( mergedCredits == normalizedCurrentCredits )
-            continue;
 
         QSqlQuery updateQuery;
         if ( !updateQuery.prepare("UPDATE contacts SET credit_granted = :credit_granted WHERE id = :id") )
@@ -1124,17 +1115,36 @@ void LogFormat::runDXCCCreditImport()
             continue;
         }
 
-        updateQuery.bindValue(":credit_granted", mergedCredits);
-        updateQuery.bindValue(":id", match.id);
-
-        if ( !updateQuery.exec() )
+        for ( const DXCCCreditMatch &match : static_cast<const QList<DXCCCreditMatch>&>(matches) )
         {
-            stats.errorQSLs.append(formatDXCCCreditReport(credit, {updateQuery.lastError().text()}));
-            continue;
-        }
+            const QString mergedCredits = mergeCreditValues(match.creditGranted, credit.creditGranted);
+            const QString normalizedCurrentCredits = splitCreditValues(match.creditGranted).join(',');
 
-        stats.updatedQSOs.append(formatDXCCCreditReport(credit,
-                                                        {tr("credit_granted:") + " " + credit.creditGranted}));
+            if ( mergedCredits == normalizedCurrentCredits )
+                continue;
+
+            updateQuery.bindValue(":credit_granted", mergedCredits);
+            updateQuery.bindValue(":id", match.id);
+
+            if ( !updateQuery.exec() )
+            {
+                stats.errorQSLs.append(formatDXCCCreditReport(credit,
+                                                              {tr("cannot update QSO %1: %2")
+                                                                   .arg(match.id)
+                                                                   .arg(updateQuery.lastError().text())}));
+                continue;
+            }
+
+            QStringList details;
+            if ( matches.size() > 1 && match.startTime.isValid() )
+            {
+                details << tr("matched QSO:") + " "
+                           + match.startTime.toTimeZone(QTimeZone::utc()).toString("yyyy-MM-dd hh:mm:ss");
+            }
+            details << tr("credit_granted:") + " " + credit.creditGranted;
+
+            stats.updatedQSOs.append(formatDXCCCreditReport(credit, details));
+        }
     }
 
     emit importPosition(stream.pos());
