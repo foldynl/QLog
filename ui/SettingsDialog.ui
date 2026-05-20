@@ -3402,6 +3402,25 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="groupBox_qrzcalleu">
+         <property name="title">
+          <string>QRZCALL.EU</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_qrzcalleu">
+          <item>
+           <widget class="QLabel" name="qrzcalleuCallbookNotice">
+            <property name="text">
+             <string>&lt;b&gt;Notice:&lt;/b&gt; QRZCALL.EU uses a single Personal Access Token for both callbook lookup and QSO upload. Enter it on the &lt;b&gt;Sync &amp; QSL&lt;/b&gt; tab (&lt;b&gt;QRZCALL.EU&lt;/b&gt; page). A Data or Extra subscription is required.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
           <string>Web Lookup Button</string>
@@ -3996,6 +4015,76 @@
             <widget class="QLineEdit" name="wavelogApiKeyEdit">
              <property name="echoMode">
               <enum>QLineEdit::Password</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="qrzcalleuSyncQSLTab">
+          <attribute name="title">
+           <string>QRZCALL.EU</string>
+          </attribute>
+          <layout class="QFormLayout" name="formLayout_qrzcalleuSync">
+           <item row="0" column="1">
+            <spacer name="verticalSpacer_qrzcalleu">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="qrzcalleuPatLabel">
+             <property name="text">
+              <string>API Token</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="qrzcalleuPatEdit">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="placeholderText">
+              <string notr="true">pat_…</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="qrzcalleuUploadImmediatelyLabel">
+             <property name="text">
+              <string>Immediately Upload</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="qrzcalleuUploadImmediatelyCheckbox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>QSOs are uploaded to QRZCALL.EU immediately when logged or edited</string>
+             </property>
+             <property name="text">
+              <string notr="true"/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QLabel" name="qrzcalleuSyncNotice">
+             <property name="text">
+              <string>This QRZCALL.EU Personal Access Token is used for QSO upload and for callbook lookup. Generate it at qrzcall.eu (My Profile, Account, API Tokens). A Data or Extra subscription is required.</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -5057,6 +5146,8 @@
   <tabstop>qrzCallsignApiKeyTableView</tabstop>
   <tabstop>qrzCallsignApiKeyAddButton</tabstop>
   <tabstop>qrzCallsignApiKeyDelButton</tabstop>
+  <tabstop>qrzcalleuPatEdit</tabstop>
+  <tabstop>qrzcalleuUploadImmediatelyCheckbox</tabstop>
   <tabstop>wavelogAddQSOEndpointEdit</tabstop>
   <tabstop>wavelogApiKeyEdit</tabstop>
   <tabstop>dxccConfirmedByLotwCheckBox</tabstop>

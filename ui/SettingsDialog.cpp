@@ -12,6 +12,7 @@
 #include "models/RotTypeModel.h"
 #include "service/GenericCallbook.h"
 #include "service/qrzcom/QRZ.h"
+#include "service/qrzcalleu/QRZCallEU.h"
 #include "service/hamqth/HamQTH.h"
 #include "service/lotw/Lotw.h"
 #include "service/clublog/ClubLog.h"
@@ -314,6 +315,15 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->primaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
     ui->primaryCallbookCombo->addItem(tr("HamQTH"),   QVariant(HamQTHCallbook::CALLBOOK_NAME));
     ui->primaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZCallbook::CALLBOOK_NAME));
+    ui->primaryCallbookCombo->addItem(tr("QRZCALL.EU"), QVariant(QRZCallEUCallbook::CALLBOOK_NAME));
+
+    // QRZCALL.EU "Immediately Upload" requires a token to be set.
+    connect(ui->qrzcalleuPatEdit, &QLineEdit::textChanged, this, [this](const QString &token)
+    {
+        ui->qrzcalleuUploadImmediatelyCheckbox->setEnabled(!token.isEmpty());
+        if ( token.isEmpty() )
+            ui->qrzcalleuUploadImmediatelyCheckbox->setChecked(false);
+    });
 
     populateFlowControlCombo(ui->rigFlowControlSelect);
     populateParityCombo(ui->rigParitySelect);
@@ -2088,6 +2098,7 @@ void SettingsDialog::primaryCallbookChanged(int index)
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
         ui->secondaryCallbookCombo->addItem(tr("QRZ.com"),  QVariant(QRZCallbook::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("QRZCALL.EU"), QVariant(QRZCallEUCallbook::CALLBOOK_NAME));
     }
     else if ( primaryCallbookSelection == QRZCallbook::CALLBOOK_NAME )
     {
@@ -2095,6 +2106,15 @@ void SettingsDialog::primaryCallbookChanged(int index)
         ui->secondaryCallbookCombo->clear();
         ui->secondaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
         ui->secondaryCallbookCombo->addItem(tr("HamQTH"),  QVariant(HamQTHCallbook::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("QRZCALL.EU"), QVariant(QRZCallEUCallbook::CALLBOOK_NAME));
+    }
+    else if ( primaryCallbookSelection == QRZCallEUCallbook::CALLBOOK_NAME )
+    {
+        ui->secondaryCallbookCombo->setEnabled(true);
+        ui->secondaryCallbookCombo->clear();
+        ui->secondaryCallbookCombo->addItem(tr("Disabled"), QVariant(GenericCallbook::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("HamQTH"),  QVariant(HamQTHCallbook::CALLBOOK_NAME));
+        ui->secondaryCallbookCombo->addItem(tr("QRZ.com"), QVariant(QRZCallbook::CALLBOOK_NAME));
     }
 }
 
@@ -2361,6 +2381,14 @@ void SettingsDialog::readSettings()
     ui->qrzApiKeyEdit->setText(QRZBase::getLogbookAPIKey(QRZBase::getInternalAPIUsername()));
     generateQRZAPICallsignTable();
 
+    /***************/
+    /* QRZCALL.EU  */
+    /***************/
+    ui->qrzcalleuPatEdit->setText(QRZCallEUBase::getPAT());
+    ui->qrzcalleuUploadImmediatelyCheckbox->setEnabled(!QRZCallEUBase::getPAT().isEmpty());
+    ui->qrzcalleuUploadImmediatelyCheckbox->setChecked(QRZCallEUBase::isUploadImmediatelyEnabled()
+                                                       && !QRZCallEUBase::getPAT().isEmpty());
+
     /***********/
     /* Wavelog */
     /***********/
@@ -2484,6 +2512,12 @@ void SettingsDialog::writeSettings()
     /***********/
     QRZBase::saveLogbookAPIKey(ui->qrzApiKeyEdit->text(), QRZBase::getInternalAPIUsername());
     saveQRZAPICallsignTable();
+
+    /***************/
+    /* QRZCALL.EU  */
+    /***************/
+    QRZCallEUBase::savePAT(ui->qrzcalleuPatEdit->text());
+    QRZCallEUBase::saveUploadImmediatelyConfig(ui->qrzcalleuUploadImmediatelyCheckbox->isChecked());
 
     /***********/
     /* Wavelog */

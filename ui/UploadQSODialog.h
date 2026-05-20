@@ -50,6 +50,7 @@ private:
         HRDLOGID = 4,   // depends on EQSL and LoTW fields
         QRZCOMID = 5,   // all fields are sent
         WAVELOGID = 6,    // all fiedls are sent
+        QRZCALLEUID = 7,  // all fields are sent
     };
 
     class UploadTask

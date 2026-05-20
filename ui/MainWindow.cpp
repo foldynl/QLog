@@ -59,7 +59,8 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     stats(new StatisticsWidget),
-    clublogRT(new ClubLogUploader(this))
+    clublogRT(new ClubLogUploader(this)),
+    qrzcalleuRT(new QRZCallEUUploader(this))
 {
     FCT_IDENTIFICATION;
 
@@ -339,6 +340,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshWidget);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
+    connect(ui->logbookWidget, &LogbookWidget::contactUpdated, qrzcalleuRT, &QRZCallEUUploader::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->bandmapWidget, &BandmapWidget::updateSpotsDupeWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->bandmapWidget, &BandmapWidget::updateSpotsDxccStatusWhenQSODeleted);
@@ -360,6 +362,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->wsjtxWidget, &WsjtxWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->dxWidget, &DxWidget::setLastQSO);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, clublogRT, &ClubLogUploader::insertQSOImmediately);
+    connect(ui->newContactWidget, &NewContactWidget::contactAdded, qrzcalleuRT, &QRZCallEUUploader::insertQSOImmediately);
     connect(ui->newContactWidget, &NewContactWidget::contestStarted, this, &MainWindow::startContest);
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->mapWidget, &MapWidget::setTarget);
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->onlineMapWidget, &OnlineMapWidget::setTarget);
@@ -424,6 +427,14 @@ MainWindow::MainWindow(QWidget* parent) :
     });
 
     connect(clublogRT, &ClubLogUploader::uploadedQSO, ui->logbookWidget, &LogbookWidget::updateTable);
+
+    connect(qrzcalleuRT, &QRZCallEUUploader::uploadError, this, [this](const QString &msg)
+    {
+        qCInfo(runtime) << "QRZCALL.EU RT Upload Error: " << msg;
+        QMessageBox::warning(this, tr("QRZCALL.EU Immediately Upload Error"), msg);
+    });
+
+    connect(qrzcalleuRT, &QRZCallEUUploader::uploadedQSO, ui->logbookWidget, &LogbookWidget::updateTable);
 
     if ( StationProfilesManager::instance()->profileNameList().isEmpty() )
         firstRun = true;
@@ -2106,6 +2117,7 @@ MainWindow::~MainWindow()
     locatorLabel->deleteLater();
     QSqlDatabase::database().close();
     clublogRT->deleteLater();
+    qrzcalleuRT->deleteLater();
     if ( wsjtx )
         wsjtx->deleteLater();
 

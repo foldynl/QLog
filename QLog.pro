@@ -167,6 +167,7 @@ SOURCES += \
         service/lotw/Lotw.cpp \
         service/potaapp/PotaApp.cpp \
         service/qrzcom/QRZ.cpp \
+        service/qrzcalleu/QRZCallEU.cpp \
         ui/ActivityEditor.cpp \
         ui/AlertRuleDetail.cpp \
         ui/AlertSettingDialog.cpp \
@@ -361,6 +362,7 @@ HEADERS += \
         service/lotw/Lotw.h \
         service/potaapp/PotaApp.h \
         service/qrzcom/QRZ.h \
+        service/qrzcalleu/QRZCallEU.h \
         ui/ActivityEditor.h \
         ui/AlertRuleDetail.h \
         ui/AlertSettingDialog.h \
