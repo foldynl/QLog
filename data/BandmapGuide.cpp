@@ -104,6 +104,21 @@ BandmapGuide::Profile BandmapGuide::currentProfile()
     return Profile();
 }
 
+bool BandmapGuide::profileExists(const QString &id)
+{
+    FCT_IDENTIFICATION;
+
+    if ( id.isEmpty() )
+        return false;
+
+    const QList<Profile> profileList = profiles();
+    for ( const Profile &profile : profileList )
+        if ( profile.id == id )
+            return true;
+
+    return false;
+}
+
 bool BandmapGuide::isEnabled()
 {
     FCT_IDENTIFICATION;

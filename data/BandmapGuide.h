@@ -46,6 +46,7 @@ public:
     static QString currentProfileId();
     static void setCurrentProfileId(const QString &id);
     static Profile currentProfile();
+    static bool profileExists(const QString &id);
 
     static bool isEnabled();
     static void setEnabled(bool state);

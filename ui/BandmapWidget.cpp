@@ -90,6 +90,8 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
             this, &BandmapWidget::spotClicked);
     connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged,
             this, &BandmapWidget::focusZoomFreq);
+    connect(BandmapGuide::instance(), &BandmapGuide::changed,
+            this, [this]() { update(); });
 
     ui->graphicsView->setScene(bandmapScene);
     ui->graphicsView->installEventFilter(this);
