@@ -3,13 +3,18 @@
 
 #include <QColor>
 #include <QList>
+#include <QObject>
 #include <QString>
 
 class QJsonObject;
 
-class BandmapGuide
+class BandmapGuide : public QObject
 {
+    Q_OBJECT
+
 public:
+    static BandmapGuide *instance();
+
     struct Range
     {
         double from = 0.0;
@@ -55,7 +60,13 @@ public:
     static Profile readProfileFromFile(const QString &filePath,
                                        QString *error = nullptr);
 
+signals:
+    void changed();
+
 private:
+    explicit BandmapGuide(QObject *parent = nullptr);
+    static void notifyChanged();
+
     static QString profilesToJson(const QList<Profile> &profiles);
     static QList<Profile> profilesFromJson(const QString &json);
     static QJsonObject profileToJsonObject(const Profile &profile,

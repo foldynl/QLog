@@ -14,6 +14,25 @@
 
 MODULE_IDENTIFICATION("qlog.data.bandmapguide");
 
+BandmapGuide::BandmapGuide(QObject *parent) :
+    QObject(parent)
+{
+}
+
+BandmapGuide *BandmapGuide::instance()
+{
+    static BandmapGuide guide;
+
+    return &guide;
+}
+
+void BandmapGuide::notifyChanged()
+{
+    FCT_IDENTIFICATION;
+
+    emit instance()->changed();
+}
+
 BandmapGuide::Range::Range(double rangeFrom,
                            double rangeTo,
                            const QColor &rangeColor,
@@ -47,6 +66,7 @@ void BandmapGuide::saveProfiles(const QList<Profile> &profiles)
     FCT_IDENTIFICATION;
 
     LogParam::setBandmapGuideProfiles(profilesToJson(profiles));
+    notifyChanged();
 }
 
 QString BandmapGuide::currentProfileId()
@@ -60,7 +80,11 @@ void BandmapGuide::setCurrentProfileId(const QString &id)
 {
     FCT_IDENTIFICATION;
 
+    if ( LogParam::getBandmapGuideCurrentProfile() == id )
+        return;
+
     LogParam::setBandmapGuideCurrentProfile(id);
+    notifyChanged();
 }
 
 BandmapGuide::Profile BandmapGuide::currentProfile()
@@ -91,7 +115,11 @@ void BandmapGuide::setEnabled(bool state)
 {
     FCT_IDENTIFICATION;
 
+    if ( LogParam::getBandmapGuideEnabled() == state )
+        return;
+
     LogParam::setBandmapGuideEnabled(state);
+    notifyChanged();
 }
 
 QString BandmapGuide::newProfileId()

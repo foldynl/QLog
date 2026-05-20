@@ -4,6 +4,7 @@
 #include "core/debug.h"
 #include "data/Data.h"
 #include "service/hrdlog/HRDLog.h"
+#include "data/BandmapGuide.h"
 #include "data/BandPlan.h"
 
 MODULE_IDENTIFICATION("qlog.ui.rigwidget");
@@ -19,6 +20,10 @@ RigWidget::RigWidget(QWidget *parent) :
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+    ui->bandmapGuideLabel->setVisible(false);
+    connect(BandmapGuide::instance(), &BandmapGuide::changed,
+            this, [this]() { updateBandmapGuideLabel(lastSeenFreq); });
+
     ui->freqLabel->setSelectionModeEnabled(false);
     ui->freqLabel->setDebounceEnabled(true);
     ui->freqLabel->setDebounceIntervalMs(250);
@@ -101,6 +106,7 @@ void RigWidget::updateFrequency(VFOID vfoid, double vfoFreq, double ritFreq, dou
         ui->bandComboBox->blockSignals(false);
     }
     lastSeenFreq = vfoFreq;
+    updateBandmapGuideLabel(vfoFreq);
 }
 
 void RigWidget::updateSplit(VFOID, bool enabled)
@@ -320,6 +326,7 @@ void RigWidget::reloadSettings()
     FCT_IDENTIFICATION;
 
     refreshRigProfileCombo();
+    updateBandmapGuideLabel(lastSeenFreq);
 }
 
 void RigWidget::rigConnected()
@@ -338,6 +345,7 @@ void RigWidget::rigConnected()
     ui->txFreqLabel->setReadOnly(false);
     ui->pttLabel->setVisible(RigProfilesManager::instance()->getCurProfile1().getPTTInfo);
     refreshModeCombo();
+    updateBandmapGuideLabel(lastSeenFreq);
 }
 
 void RigWidget::rigDisconnected()
@@ -361,6 +369,7 @@ void RigWidget::rigDisconnected()
     ui->freqLabel->setReadOnly(true);
     ui->txFreqLabel->setReadOnly(true);
     ui->pttLabel->setVisible(false);
+    updateBandmapGuideLabel(0.0);
 }
 
 void RigWidget::bandUp()
@@ -441,6 +450,75 @@ void RigWidget::resetRigInfo()
     updateRIT(VFO1, RigProfilesManager::instance()->getCurProfile1().ritOffset);
     updateXIT(VFO1, RigProfilesManager::instance()->getCurProfile1().xitOffset);
     updatePTT(VFO1, false);
+}
+
+QString RigWidget::readableGuideTextColor(const QColor &background) const
+{
+    const int brightness = (background.red() * 299
+                            + background.green() * 587
+                            + background.blue() * 114) / 1000;
+
+    return (brightness > 150) ? QStringLiteral("#000000") : QStringLiteral("#ffffff");
+}
+
+void RigWidget::updateBandmapGuideLabel(double frequency)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !rigOnline || frequency <= 0.0 || !BandmapGuide::isEnabled() )
+    {
+        ui->bandmapGuideLabel->clear();
+        ui->bandmapGuideLabel->setToolTip(QString());
+        ui->bandmapGuideLabel->setStyleSheet(QString());
+        ui->bandmapGuideLabel->setVisible(false);
+        return;
+    }
+
+    const BandmapGuide::Profile profile = BandmapGuide::currentProfile();
+    bool hasValidRange = false;
+    bool insideGuideRange = false;
+    for ( const BandmapGuide::Range &range : profile.ranges )
+    {
+        if ( !range.isValid() )
+            continue;
+
+        hasValidRange = true;
+
+        if ( frequency < range.from || frequency > range.to )
+            continue;
+
+        insideGuideRange = true;
+
+        const QString label = range.label.trimmed();
+        if ( label.isEmpty() )
+            continue;
+
+        ui->bandmapGuideLabel->setText(label);
+        ui->bandmapGuideLabel->setToolTip(QString("%1: %2 - %3 MHz")
+                                          .arg(label,
+                                               QString::number(range.from, 'f', 6),
+                                               QString::number(range.to, 'f', 6)));
+        ui->bandmapGuideLabel->setStyleSheet(QString("QLabel { color: %1; background-color: %2; border-radius: 3px; padding: 1px 5px; font-weight: bold; }")
+                                             .arg(readableGuideTextColor(range.color),
+                                                  range.color.name()));
+        ui->bandmapGuideLabel->setVisible(true);
+        return;
+    }
+
+    if ( hasValidRange && !insideGuideRange )
+    {
+        ui->bandmapGuideLabel->setText(tr("OUT"));
+        ui->bandmapGuideLabel->setToolTip(tr("Outside Bandmap Guide range"));
+        ui->bandmapGuideLabel->setStyleSheet(QStringLiteral("QLabel { background-color: #ffd45a; border-radius: 3px; padding: 1px 5px; font-weight: bold; }"));
+        ui->bandmapGuideLabel->setVisible(true);
+    }
+    else
+    {
+        ui->bandmapGuideLabel->clear();
+        ui->bandmapGuideLabel->setToolTip(QString());
+        ui->bandmapGuideLabel->setStyleSheet(QString());
+        ui->bandmapGuideLabel->setVisible(false);
+    }
 }
 
 void RigWidget::saveLastSeenFreq()

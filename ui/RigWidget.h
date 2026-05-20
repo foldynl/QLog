@@ -5,6 +5,8 @@
 #include "rig/Rig.h"
 #include "service/hrdlog/HRDLog.h"
 
+class QColor;
+
 namespace Ui {
 class RigWidget;
 }
@@ -55,6 +57,9 @@ private:
 
     void resetRigInfo();
     void saveLastSeenFreq();
+    void updateBandmapGuideLabel(double frequency);
+    QString readableGuideTextColor(const QColor &background) const;
+
     double lastSeenFreq;
     QString lastSeenMode;
     bool rigOnline;
