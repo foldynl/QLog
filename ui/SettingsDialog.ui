@@ -6790,6 +6790,7 @@
   <slot>onDeleteAllPasswords()</slot>
   <slot>addAdifRecoveryFile()</slot>
   <slot>removeAdifRecoveryFile()</slot>
+  <slot>restoreDefaultQsoStatusColors()</slot>
   <slot>editBandmapGuide()</slot>
   <slot>bandmapGuideChanged(int)</slot>
  </slots>
