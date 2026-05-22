@@ -406,7 +406,7 @@ void BandmapGuideDialog::setColorButton(QPushButton *button, const QColor &color
 {
     FCT_IDENTIFICATION;
 
-    const QColor safeColor = color.isValid() ? color : QColor("#4d8ef7");
+    const QColor safeColor = color.isValid() ? color : QColor(0x4d8ef7);
     button->setProperty("color", safeColor);
 
     const QColor textColor = Data::textColorForBackground(safeColor,

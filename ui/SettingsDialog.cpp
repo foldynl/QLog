@@ -258,10 +258,11 @@ void SettingsDialog::chooseQsoStatusColor(QPushButton *button)
     FCT_IDENTIFICATION;
 
     QMenu menu(this);
-    QAction *chooseColorAction = menu.addAction(tr("Choose Color..."));
-    QAction *defaultColorAction = menu.addAction(tr("Default"));
-    QAction *noColorAction = menu.addAction(tr("No Color"));
-    QAction *selectedAction = menu.exec(button->mapToGlobal(QPoint(0, button->height())));
+    const QAction *chooseColorAction = menu.addAction(tr("Choose Color..."));
+    const QAction *defaultColorAction = menu.addAction(tr("Default"));
+    const QAction *noColorAction = menu.addAction(tr("No Color"));
+    const QAction *selectedAction = menu.exec(button->mapToGlobal(QPoint(0, button->height())));
+
     if ( !selectedAction )
         return;
 
@@ -1286,10 +1287,10 @@ void SettingsDialog::doubleClickRotUsrButtonsProfile(QModelIndex i)
 
     QLineEdit * const buttonEdits[] = { ui->rotUsrButton1Edit, ui->rotUsrButton2Edit, ui->rotUsrButton3Edit, ui->rotUsrButton4Edit };
     QSpinBox * const spinBoxes[]   = { ui->rotUsrButtonSpinBox1, ui->rotUsrButtonSpinBox2, ui->rotUsrButtonSpinBox3, ui->rotUsrButtonSpinBox4 };
-    for ( int i = 0; i < 4; ++i )
+    for ( int x = 0; x < 4; ++x )
     {
-        buttonEdits[i]->setText(profile.shortDescs[i]);
-        spinBoxes[i]->setValue(profile.bearings[i]);
+        buttonEdits[x]->setText(profile.shortDescs[x]);
+        spinBoxes[x]->setValue(profile.bearings[x]);
     }
 
     ui->rotUsrButtonAddProfileButton->setText(tr("Modify"));
@@ -1636,10 +1637,10 @@ void SettingsDialog::doubleClickCWShortcutProfile(QModelIndex i)
 
     QLineEdit * const shortEdits[] = { ui->cwShortcutF1ShortEdit, ui->cwShortcutF2ShortEdit, ui->cwShortcutF3ShortEdit, ui->cwShortcutF4ShortEdit, ui->cwShortcutF5ShortEdit, ui->cwShortcutF6ShortEdit, ui->cwShortcutF7ShortEdit };
     QLineEdit * const macroEdits[] = { ui->cwShortcutF1MacroEdit, ui->cwShortcutF2MacroEdit, ui->cwShortcutF3MacroEdit, ui->cwShortcutF4MacroEdit, ui->cwShortcutF5MacroEdit, ui->cwShortcutF6MacroEdit, ui->cwShortcutF7MacroEdit };
-    for ( int i = 0; i < 7; ++i )
+    for ( int x = 0; x < 7; ++x )
     {
-        shortEdits[i]->setText(profile.shortDescs[i]);
-        macroEdits[i]->setText(profile.macros[i]);
+        shortEdits[x]->setText(profile.shortDescs[x]);
+        macroEdits[x]->setText(profile.macros[x]);
     }
 
     ui->cwShortcutAddProfileButton->setText(tr("Modify"));

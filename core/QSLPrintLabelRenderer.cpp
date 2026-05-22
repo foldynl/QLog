@@ -374,7 +374,7 @@ void QSLPrintLabelRenderer::drawLabelSheetPage(QPainter *painter, int pageIndex)
     if ( !painter )
         return;
 
-    QPaintDevice *device = painter->device();
+    const QPaintDevice *device = painter->device();
 
     if ( !device )
         return;

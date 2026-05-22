@@ -104,9 +104,14 @@ void SubmodeDelegate::setEditorData(QWidget *editor, const QModelIndex &index) c
 {
     ModeSubmodeEditor *modeSubmodeEditor = static_cast<ModeSubmodeEditor *>(editor);
 
-    const QString mode = index.model()->data(index.sibling(index.row(), LogbookModel::COLUMN_MODE),
+    const QAbstractItemModel *model = index.model();
+
+    if ( !model )
+        return;
+
+    const QString mode = model->data(index.sibling(index.row(), LogbookModel::COLUMN_MODE),
                                              Qt::DisplayRole).toString();
-    const QString submode = index.model()->data(index, Qt::EditRole).toString();
+    const QString submode = model->data(index, Qt::EditRole).toString();
 
     modeSubmodeEditor->setModeSubmode(mode, submode);
 }
