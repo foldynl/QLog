@@ -13,6 +13,7 @@ class ClockWidget;
 }
 
 class QGraphicsScene;
+class QTimer;
 
 class SunTimelineWidget : public QWidget
 {
@@ -54,8 +55,10 @@ public slots:
 
 private:
     static QTime timeFromJulianDayFraction(double julianDay);
+    void scheduleClockUpdate();
 
     Ui::ClockWidget *ui;
+    QTimer *timer;
     QScopedPointer<QGraphicsScene> clockScene;
     QScopedPointer<QGraphicsTextItem> clockItem;
     LogLocale locale;

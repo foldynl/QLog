@@ -117,6 +117,7 @@ void SunTimelineWidget::paintEvent(QPaintEvent *event)
 ClockWidget::ClockWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ClockWidget),
+    timer(new QTimer(this)),
     clockScene(new QGraphicsScene(this)),
     clockItem(new QGraphicsTextItem),
     sunState(SunTimelineWidget::NoSunTimes)
@@ -125,9 +126,9 @@ ClockWidget::ClockWidget(QWidget *parent) :
 
     ui->setupUi(this);
 
-    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setTimerType(Qt::PreciseTimer);
     connect(timer, &QTimer::timeout, this, &ClockWidget::updateClock);
-    timer->start(500);
 
     QFont font = clockItem->font();
     font.setPointSize(20);
@@ -135,9 +136,18 @@ ClockWidget::ClockWidget(QWidget *parent) :
     clockScene->addItem(clockItem.data());
     ui->clockGraphicsView->setScene(clockScene.data());
 
-    updateClock();
     updateSun();
     updateSunGraph();
+    updateClock();
+}
+
+void ClockWidget::scheduleClockUpdate()
+{
+    FCT_IDENTIFICATION;
+
+    const QTime now = QDateTime::currentDateTimeUtc().time();
+    int msecsToNextSecond = 1000 - now.msec();
+    timer->start(msecsToNextSecond);
 }
 
 void ClockWidget::updateClock()
@@ -149,11 +159,13 @@ void ClockWidget::updateClock()
     clockItem->setDefaultTextColor(textColor);
     clockItem->setPlainText(locale.toString(now, locale.formatTimeLongWithoutTZ()));
 
-    if (now.time().second() == 0)
+    if ( now.time().second() == 0 )
     {
         updateSun();
         updateSunGraph();
     }
+
+    scheduleClockUpdate();
 
     /* Use only in case when you want to debug which widget is focussed*/
 //#define SHOW_FOCUS
