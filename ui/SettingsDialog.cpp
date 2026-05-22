@@ -2918,7 +2918,7 @@ void SettingsDialog::setupAdifRecoveryTab()
     FCT_IDENTIFICATION;
 
     adifRecoveryModel = new QStandardItemModel(this);
-    adifRecoveryModel->setHorizontalHeaderLabels({tr("Enable"),
+    adifRecoveryModel->setHorizontalHeaderLabels({tr("Enabled"),
                                                   tr("Path"),
                                                   tr("Station Profile"), tr("Missing QSL Sent"),
                                                   tr("Last Recovery")});
