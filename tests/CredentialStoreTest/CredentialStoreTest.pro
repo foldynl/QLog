@@ -10,11 +10,13 @@ SOURCES += \
     test_stubs.cpp \
     ../../core/CredentialStore.cpp \
     ../../core/PasswordCipher.cpp \
+    ../../core/AdifRecovery.cpp \
     ../../core/LogParam.cpp
 
 HEADERS += \
     ../../core/CredentialStore.h \
     ../../core/PasswordCipher.h \
+    ../../core/AdifRecovery.h \
     ../../core/LogParam.h
 
 # QtKeychain
