@@ -123,7 +123,7 @@ private:
     };
 
     void drawLabel(QPainter *painter, const QRectF &labelRect,
-                   const QSLLabelData &label, const QColor &textColor = QColor());
+                   const QSLLabelData &label);
     void drawPage(QPainter *painter, int pageIndex);
     void drawLabelSheetPage(QPainter *painter, int pageIndex);
     void drawDirectCardPage(QPainter *painter, int pageIndex);

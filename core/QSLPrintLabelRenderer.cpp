@@ -140,8 +140,7 @@ qreal QSLPrintLabelRenderer::mmToUnits(const qreal mm,
 
 void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
                                       const QRectF &labelRect,
-                                      const QSLLabelData &label,
-                                      const QColor &textColor)
+                                      const QSLLabelData &label)
 {
     FCT_IDENTIFICATION;
 
@@ -169,12 +168,6 @@ void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
 
     if ( contentRect.width() <= 0 || contentRect.height() <= 0 )
         return;
-
-    const QColor effectiveTextColor = textColor.isValid()
-                                      ? textColor
-                                      : (styleOptions.textColor.isValid()
-                                         ? styleOptions.textColor
-                                         : QColor(Qt::black));
 
     // Fonts from style options
     QFont fontToRadio(styleOptions.sansFontFamily);
@@ -217,7 +210,7 @@ void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
 
     // --- Line 1: "To Radio" + Callsign ---
     painter->setFont(fontToRadio);
-    painter->setPen(effectiveTextColor);
+    painter->setPen(styleOptions.textColor.isValid() ? styleOptions.textColor : QColor(Qt::black));
     const QRectF toRadioRect(contentRect.left(), currentY,
                              contentRect.width(), line1Height);
     const QString toRadioText = styleOptions.toRadioText.isEmpty() ? "To Radio" : styleOptions.toRadioText;
@@ -514,21 +507,12 @@ void QSLPrintLabelRenderer::drawDirectCardPage(QPainter *painter, int pageIndex)
             {
                 painter->save();
                 painter->setPen(Qt::NoPen);
-                painter->setBrush(cardLayout.labelBackgroundColor.isValid()
-                                  ? cardLayout.labelBackgroundColor
-                                  : QColor(Qt::white));
+                painter->setBrush(cardLayout.labelBackgroundColor);
                 painter->drawRect(labelRect);
                 painter->restore();
             }
 
-            const QColor cardLabelTextColor = cardLayout.labelOpaqueBackground
-                                              ? ((cardLayout.labelBackgroundColor.isValid()
-                                                  ? cardLayout.labelBackgroundColor
-                                                  : QColor(Qt::white)).lightness() < 128
-                                                 ? QColor(Qt::white)
-                                                 : QColor(Qt::black))
-                                              : QColor();
-            drawLabel(painter, labelRect, labels.at(labelIndex), cardLabelTextColor);
+            drawLabel(painter, labelRect, labels.at(labelIndex));
             painter->restore();
         }
     }
