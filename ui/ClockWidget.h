@@ -3,14 +3,32 @@
 
 #include <QWidget>
 #include <QTime>
-#include "core/LogLocale.h"
+#include <QScopedPointer>
 #include <QGraphicsItem>
+
+#include "core/LogLocale.h"
 
 namespace Ui {
 class ClockWidget;
 }
 
 class QGraphicsScene;
+
+class SunTimelineWidget : public QWidget
+{
+public:
+    explicit SunTimelineWidget(QWidget *parent = nullptr);
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
+    void setSunTimes(const QTime &sunrise, const QTime &sunset);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    QTime sunrise;
+    QTime sunset;
+};
 
 class ClockWidget : public QWidget
 {
@@ -27,7 +45,6 @@ public slots:
 
 private:
     Ui::ClockWidget *ui;
-    QScopedPointer<QGraphicsScene> sunScene;
     QScopedPointer<QGraphicsScene> clockScene;
     QScopedPointer<QGraphicsTextItem> clockItem;
     LogLocale locale;

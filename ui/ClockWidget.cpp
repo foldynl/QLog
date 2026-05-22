@@ -1,5 +1,7 @@
 #include <QTimer>
 #include <QDateTime>
+#include <QPainter>
+#include <QPainterPath>
 #include <QtMath>
 #include "ClockWidget.h"
 #include "ui_ClockWidget.h"
@@ -7,16 +9,105 @@
 #include "data/Gridsquare.h"
 #include "data/StationProfile.h"
 
-#define EARTH_RADIUS 6371
-#define EARTH_CIRCUM 40075
-
 #define MSECS_PER_DAY (24.0 * 60.0 * 60.0 * 1000.0)
+
 MODULE_IDENTIFICATION("qlog.ui.clockwidget");
+
+SunTimelineWidget::SunTimelineWidget(QWidget *parent) :
+    QWidget(parent)
+{
+    setMinimumHeight(18);
+}
+
+QSize SunTimelineWidget::sizeHint() const
+{
+    return QSize(200, 18);
+}
+
+QSize SunTimelineWidget::minimumSizeHint() const
+{
+    return QSize(120, 18);
+}
+
+void SunTimelineWidget::setSunTimes(const QTime &newSunrise, const QTime &newSunset)
+{
+    sunrise = newSunrise;
+    sunset = newSunset;
+    update();
+}
+
+void SunTimelineWidget::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    const QRectF bar = rect().adjusted(4.0, 5.0, -4.0, -5.0);
+    if ( bar.width() <= 0.0 || bar.height() <= 0.0 )
+        return;
+
+    const QColor nightColor(42, 68, 90);
+    const QColor dayColor(255, 255, 0);
+    const QColor twilightColor(232, 105, 72);
+    const QColor currentColor(220, 60, 55);
+
+    QPainterPath clipPath;
+    clipPath.addRoundedRect(bar, bar.height() / 2.0, bar.height() / 2.0);
+
+    painter.fillPath(clipPath, nightColor);
+    painter.setClipPath(clipPath);
+
+    const auto drawDaySegment = [&](qreal start, qreal end, bool sunriseAtStart, bool sunsetAtEnd)
+    {
+        if ( end <= start )
+            return;
+
+        const qreal width = end - start;
+        const qreal edge = qMin(0.35, 9.0 / width);
+
+        QLinearGradient gradient(start, 0.0, end, 0.0);
+        gradient.setColorAt(0.0, sunriseAtStart ? twilightColor : dayColor);
+        gradient.setColorAt(edge, dayColor);
+        gradient.setColorAt(1.0 - edge, dayColor);
+        gradient.setColorAt(1.0, sunsetAtEnd ? twilightColor : dayColor);
+
+        painter.fillRect(QRectF(start, bar.top(), width, bar.height()), gradient);
+    };
+
+    if ( sunrise.isValid() && sunset.isValid() )
+    {
+        const qreal rise = bar.left() + sunrise.msecsSinceStartOfDay() / MSECS_PER_DAY * bar.width();
+        const qreal set = bar.left() + sunset.msecsSinceStartOfDay() / MSECS_PER_DAY * bar.width();
+
+        if ( set > rise )
+        {
+            drawDaySegment(rise, set, true, true);
+        }
+        else
+        {
+            drawDaySegment(bar.left(), set, false, true);
+            drawDaySegment(rise, bar.right(), true, false);
+        }
+    }
+
+    painter.setClipping(false);
+    painter.setPen(QPen(palette().color(QPalette::Mid), 1.0));
+    painter.drawPath(clipPath);
+
+    const qreal current = bar.left()
+                          + QDateTime::currentDateTimeUtc().time().msecsSinceStartOfDay()
+                            / MSECS_PER_DAY * bar.width();
+    QPen currentPen(currentColor);
+    currentPen.setWidthF(1.5);
+    painter.setPen(currentPen);
+    painter.drawLine(QPointF(current, bar.top() - 3.0),
+                     QPointF(current, bar.bottom() + 3.0));
+}
 
 ClockWidget::ClockWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ClockWidget),
-    sunScene(new QGraphicsScene(this)),
     clockScene(new QGraphicsScene(this)),
     clockItem(new QGraphicsTextItem)
 {
@@ -27,9 +118,6 @@ ClockWidget::ClockWidget(QWidget *parent) :
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &ClockWidget::updateClock);
     timer->start(500);
-
-    sunScene->setSceneRect(0, 0, 200, 10);
-    ui->sunGraphicsView->setScene(sunScene.data());
 
     QFont font = clockItem->font();
     font.setPointSize(20);
@@ -102,6 +190,8 @@ void ClockWidget::updateSun()
     {
         ui->sunRiseLabel->setText(tr("N/A"));
         ui->sunSetLabel->setText(tr("N/A"));
+        sunrise = QTime();
+        sunset = QTime();
     }
 }
 
@@ -109,34 +199,7 @@ void ClockWidget::updateSunGraph()
 {
     FCT_IDENTIFICATION;
 
-    QColor dayColor(255, 253, 59);
-    QColor nightColor(33, 150, 243);
-    QColor currentColor(229, 57, 53);
-
-    qreal width = sunScene->width();
-
-    double rise = sunrise.msecsSinceStartOfDay() / MSECS_PER_DAY * width;
-    double set = sunset.msecsSinceStartOfDay() / MSECS_PER_DAY * width;
-    double cur = QDateTime::currentDateTimeUtc().time().msecsSinceStartOfDay() / MSECS_PER_DAY * width;
-
-    sunScene->clear();
-
-    if ( set > rise )
-    {
-        sunScene->addRect(0, 0, rise, 10, QPen(Qt::NoPen), QBrush(nightColor, Qt::SolidPattern));
-        sunScene->addRect(rise, 0, set-rise, 10, QPen(Qt::NoPen), QBrush(dayColor, Qt::SolidPattern));
-        sunScene->addRect(set, 0, width-set, 10, QPen(Qt::NoPen), QBrush(nightColor, Qt::SolidPattern));
-    }
-    else
-    {
-        sunScene->addRect(0, 0, set, 10, QPen(Qt::NoPen), QBrush(dayColor, Qt::SolidPattern));
-        sunScene->addRect(set, 0, rise-set, 10, QPen(Qt::NoPen), QBrush(nightColor, Qt::SolidPattern));
-        sunScene->addRect(rise, 0, width-rise, 10, QPen(Qt::NoPen), QBrush(dayColor, Qt::SolidPattern));
-    }
-
-    QPen currentPen(currentColor);
-    currentPen.setWidthF(2.0);
-    sunScene->addLine(cur, 0, cur, 10, currentPen);
+    ui->sunTimelineWidget->setSunTimes(sunrise, sunset);
 }
 
 ClockWidget::~ClockWidget()
