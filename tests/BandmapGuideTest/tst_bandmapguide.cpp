@@ -37,6 +37,7 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
+    void profilesUseExampleGuideOnFirstRun();
     void saveProfilesRoundTripFiltersInvalidData();
     void currentProfileFallsBackToFirstProfile();
     void profileExistsRejectsEmptyAndMissingId();
@@ -128,6 +129,18 @@ void BandmapGuideTest::saveProfilesRoundTripFiltersInvalidData()
                  14.070,
                  QColor(QStringLiteral("#204080")),
                  QStringLiteral("CW"));
+}
+
+void BandmapGuideTest::profilesUseExampleGuideOnFirstRun()
+{
+    const QList<BandmapGuide::Profile> profiles = BandmapGuide::profiles();
+
+    QCOMPARE(profiles.size(), 1);
+    QCOMPARE(profiles.first().id, QStringLiteral("iaru-region-1"));
+    QCOMPARE(profiles.first().name, QStringLiteral("IARU Region 1"));
+    QVERIFY(!profiles.first().ranges.isEmpty());
+    QVERIFY(BandmapGuide::profileExists(QStringLiteral("iaru-region-1")));
+    QCOMPARE(BandmapGuide::currentProfile().id, profiles.first().id);
 }
 
 void BandmapGuideTest::currentProfileFallsBackToFirstProfile()

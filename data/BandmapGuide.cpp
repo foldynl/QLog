@@ -58,7 +58,13 @@ QList<BandmapGuide::Profile> BandmapGuide::profiles()
 {
     FCT_IDENTIFICATION;
 
-    return profilesFromJson(LogParam::getBandmapGuideProfiles());
+    const QString storedProfiles = LogParam::getBandmapGuideProfiles();
+    QList<Profile> profileList = profilesFromJson(storedProfiles);
+
+    if ( profileList.isEmpty() && storedProfiles.trimmed().isEmpty() )
+        profileList.append(exampleProfile());
+
+    return profileList;
 }
 
 void BandmapGuide::saveProfiles(const QList<Profile> &profiles)
@@ -160,7 +166,7 @@ BandmapGuide::Profile BandmapGuide::exampleProfile()
     const QColor phoneColor = QColor::fromRgb(0xd92f2f);
 
     Profile profile;
-    profile.id = newProfileId();
+    profile.id = QStringLiteral("iaru-region-1");
     profile.name = QObject::tr("IARU Region 1");
 
     const QList<BandPlan::BandModeRange> bandRanges = BandPlan::r1BandModeRanges();
