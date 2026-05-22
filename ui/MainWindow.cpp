@@ -1205,7 +1205,7 @@ void MainWindow::showServiceDownloadLotwDXCCCredits()
     connect(downloader, &LotwDXCCCreditDownloader::downloadProgress,
             progressDialog, &QProgressDialog::setValue);
 
-    connect(downloader, &LotwDXCCCreditDownloader::downloadStarted, this, [this, progressDialog]
+    connect(downloader, &LotwDXCCCreditDownloader::downloadStarted, this, [progressDialog]
     {
         progressDialog->setLabelText(tr("Processing LoTW DXCC credits"));
         progressDialog->setRange(0, 100);

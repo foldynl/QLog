@@ -1109,7 +1109,7 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     QAction* guideOffAction = new QAction(tr("Off"), &guideMenu);
     guideOffAction->setCheckable(true);
     guideOffAction->setChecked(!BandmapGuide::isEnabled());
-    connect(guideOffAction, &QAction::triggered, this, [this]()
+    connect(guideOffAction, &QAction::triggered, this, []()
     {
         BandmapGuide::setEnabled(false);
         refreshAllBandmaps();
@@ -1135,7 +1135,7 @@ void BandmapWidget::showContextMenu(const QPoint &point)
             QAction* action = new QAction(guide.name, &guideMenu);
             action->setCheckable(true);
             action->setChecked(BandmapGuide::isEnabled() && guide.id == currentGuideId);
-            connect(action, &QAction::triggered, this, [this, guide]()
+            connect(action, &QAction::triggered, this, [guide]()
             {
                 BandmapGuide::setCurrentProfileId(guide.id);
                 BandmapGuide::setEnabled(true);
