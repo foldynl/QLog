@@ -105,25 +105,77 @@ QColor Data::effectiveBackgroundColor(const QColor &background, const QColor &ba
                   (background.blue() * alpha + base.blue() * (255 - alpha)) / 255);
 }
 
-int Data::colorBrightness(const QColor &color)
-{
-    return (color.red() * 299
-            + color.green() * 587
-            + color.blue() * 114) / 1000;
-}
 
 QColor Data::textColorForBackground(const QColor &background,
                                     const QColor &defaultColor,
                                     const QColor &baseColor)
 {
+    static const QColor textDark(0x11, 0x11, 0x11);
+    static const QColor textLight(0xF0, 0xF0, 0xF0);
+
     if ( !background.isValid() || background.alpha() == 0 )
         return defaultColor.isValid()
                ? defaultColor
                : QGuiApplication::palette().color(QPalette::Text);
 
-    return (colorBrightness(effectiveBackgroundColor(background, baseColor)) > 150)
-           ? QColor(Qt::black)
-           : QColor(Qt::white);
+    // Cache: keyed by effective background color, invalidated on palette change.
+    // Most views repeat a small set of row colors, so the hit rate is very high.
+    static QHash<QRgb, QColor> cache;
+    static QRgb baseCacheKey = 0;
+
+    const QColor effective = effectiveBackgroundColor(background, baseColor);
+    const QRgb   effectiveRgb = effective.rgba();
+
+    // Invalidate cache if the base color changes (theme/palette switch).
+    const QRgb currentBaseKey = baseColor.isValid() ? baseColor.rgba()
+                                                    : QGuiApplication::palette().color(QPalette::Base).rgba();
+    if ( currentBaseKey != baseCacheKey )
+    {
+        cache.clear();
+        baseCacheKey = currentBaseKey;
+    }
+
+    if ( cache.contains(effectiveRgb) )
+        return cache.value(effectiveRgb);
+
+    // Converts a single sRGB channel [0.0, 1.0] to linear light intensity.
+    // sRGB is gamma-compressed — using raw values directly would underestimate
+    // the brightness of dark shades. The threshold 0.04045 and coefficients
+    // 12.92 / 1.055 / 0.055 / 2.4 are defined by the sRGB standard IEC 61966-2-1.
+    auto relativeLuminance = [](const QColor &color)
+    {
+        auto linearize = [](double c)
+        {
+            return (c <= 0.04045) ? c / 12.92
+                                  : std::pow((c + 0.055) / 1.055, 2.4);
+        };
+        // Weights 0.2126 / 0.7152 / 0.0722 reflect the human eye's sensitivity
+        // to red, green, and blue respectively (green dominates perceived brightness).
+        // Defined by WCAG 2.1 / ITU-R BT.709.
+        return 0.2126 * linearize(color.redF())
+                + 0.7152 * linearize(color.greenF())
+                + 0.0722 * linearize(color.blueF());
+    };
+
+    // Computes the WCAG 2.1 contrast ratio between two colors, range [1, 21].
+    // The +0.05 offsets prevent division by zero and model the ambient light
+    // reflected by a real display (black is never perfect black).
+    auto contrastRatio = [&relativeLuminance](const QColor &a, const QColor &b)
+    {
+        const double la = relativeLuminance(a);
+        const double lb = relativeLuminance(b);
+        return (std::max(la, lb) + 0.05) / (std::min(la, lb) + 0.05);
+    };
+
+    // Pick whichever of white or black yields the higher contrast ratio
+    // against the effective (alpha-composited) background color.
+    // WCAG AA requires >= 4.5:1 for normal text; this always picks the best available.
+    const QColor result = (contrastRatio(effective, textLight) >= contrastRatio(effective, textDark))
+            ? textLight
+            : textDark;
+
+    cache.insert(effectiveRgb, result);
+    return result;
 }
 
 QColor Data::qsoStatusColorFromConfig(const QVariantMap &colors, const QString &key)
