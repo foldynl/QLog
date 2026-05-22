@@ -14,6 +14,7 @@ TBC - 0.51.0
 - [NEW] - Awards - Added Open Rule Button
 - [NEW] - Download - Added LoTW DXCC credits import (based on PR #965 @aa5sh @foldynl)
 - [CHANGED] - Added more built-in macOS TQSL search paths (PR #1041 @aa5sh)
+- [CHANGED] - Clock - Improved timing
 - Workaround for #1017: FT-950 was reported to jump to VFO-B
 - Fixed ADIF Export of Gridsqaure too long (issue #1028)
 - Fixed Shutdown: synchronize station-device teardown (PR #1035 @VA3THP @foldynl)
