@@ -28,9 +28,16 @@ class GraphicsScene : public QGraphicsScene
 
 public:
     explicit GraphicsScene(QObject *parent = nullptr) : QGraphicsScene(parent){};
+    enum
+    {
+        MarkerFrequencyRole = Qt::UserRole + 1,
+        MarkerModeRole,
+        MarkerSubmodeRole
+    };
 
 signals:
     void spotClicked(QString, double, BandPlan::BandPlanMode mode);
+    void markerClicked(double frequency, const QString &mode, const QString &submode);
 
 protected:
     void mousePressEvent (QGraphicsSceneMouseEvent *evt) override;
@@ -106,7 +113,13 @@ private:
     void drawTXRXMarks(double);
     void drawLabeledFrequencyMarker(double frequency,
                                     double step,
-                                    const FrequencyMarkerStyle &style);
+                                    const FrequencyMarkerStyle &style,
+                                    const QString &mode,
+                                    const QString &submode = QString());
+    void setMarkerTuneData(QGraphicsItem *item,
+                           double frequency,
+                           const QString &mode,
+                           const QString &submode) const;
     QColor readableMarkerTextColor(const QColor &background) const;
     void drawGuideOverlay(double step, const QString &widestFreqText);
     void drawEmergencyMarkers(double step);
@@ -135,6 +148,7 @@ private slots:
     void ibpMarkersActionChecked(bool);
     void editGuide();
     void spotClicked(const QString&, double, BandPlan::BandPlanMode);
+    void markerClicked(double frequency, const QString &mode, const QString &submode);
     void showContextMenu(const QPoint&);
     void updateStationTimer();
     void focusZoomFreq(int, int);

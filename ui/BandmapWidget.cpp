@@ -88,6 +88,8 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
 
     connect(bandmapScene, &GraphicsScene::spotClicked,
             this, &BandmapWidget::spotClicked);
+    connect(bandmapScene, &GraphicsScene::markerClicked,
+            this, &BandmapWidget::markerClicked);
     connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged,
             this, &BandmapWidget::focusZoomFreq);
     connect(BandmapGuide::instance(), &BandmapGuide::changed,
@@ -270,6 +272,7 @@ void BandmapWidget::updateStations()
 
         QGraphicsTextItem* text = bandmapScene->addText(callsignTmp + " @ " + timeTmp);
         text->document()->setDocumentMargin(0);
+        text->setCursor(Qt::PointingHandCursor);
 
         qreal halfHeight = text->boundingRect().height() / 2;
         text->setPos(40, text_y - halfHeight);
@@ -473,7 +476,9 @@ void BandmapWidget::drawTXRXMarks(double step)
 
 void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
                                                double step,
-                                               const FrequencyMarkerStyle &style)
+                                               const FrequencyMarkerStyle &style,
+                                               const QString &mode,
+                                               const QString &submode)
 {
     FCT_IDENTIFICATION;
 
@@ -524,6 +529,25 @@ void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
 
     pillItem->setZValue(1);
     textItem->setZValue(2);
+
+    setMarkerTuneData(pillItem, frequency, mode, submode);
+    setMarkerTuneData(textItem, frequency, mode, submode);
+}
+
+void BandmapWidget::setMarkerTuneData(QGraphicsItem *item,
+                                      double frequency,
+                                      const QString &mode,
+                                      const QString &submode) const
+{
+    FCT_IDENTIFICATION;
+
+    if ( !item )
+        return;
+
+    item->setCursor(Qt::PointingHandCursor);
+    item->setData(GraphicsScene::MarkerFrequencyRole, frequency);
+    item->setData(GraphicsScene::MarkerModeRole, mode);
+    item->setData(GraphicsScene::MarkerSubmodeRole, submode);
 }
 
 QColor BandmapWidget::readableMarkerTextColor(const QColor &background) const
@@ -1248,7 +1272,12 @@ void BandmapWidget::drawEmergencyMarkers(double step)
         EmergencyFrequency::TOLERANCE_MHZ
     };
 
-    drawLabeledFrequencyMarker(entry->frequency, step, style);
+    const QString mode = (entry->mode == QLatin1String("LSB")
+                          || entry->mode == QLatin1String("USB"))
+                         ? QStringLiteral("SSB")
+                         : entry->mode;
+    const QString submode = (mode == QLatin1String("SSB")) ? entry->mode : QString();
+    drawLabeledFrequencyMarker(entry->frequency, step, style, mode, submode);
 }
 
 void BandmapWidget::drawIBPMarkers(double step)
@@ -1270,8 +1299,21 @@ void BandmapWidget::drawIBPMarkers(double step)
     for ( const IBPBeacon::Band &band : IBPBeacon::bands() )
     {
         if ( band.frequency >= currentBand.start && band.frequency <= currentBand.end )
-            drawLabeledFrequencyMarker(band.frequency, step, style);
+            drawLabeledFrequencyMarker(band.frequency,
+                                       step,
+                                       style,
+                                       QStringLiteral("CW"));
     }
+}
+
+void BandmapWidget::markerClicked(double frequency, const QString &mode, const QString &submode)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << frequency << mode << submode;
+
+    Rig::instance()->setFrequency(MHz(frequency));
+    Rig::instance()->setMode(mode, submode);
 }
 
 void BandmapWidget::drawMarkers(double frequency)
@@ -1518,12 +1560,22 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *evt)
     if ( evt->button() & Qt::LeftButton )
     {
         QGraphicsItem *item = itemAt(evt->scenePos(), QTransform());
-        QGraphicsTextItem *focusedSpot = dynamic_cast<QGraphicsTextItem*>(item);
 
-        if ( focusedSpot && focusedSpot->property("freq").isValid() )
-            emit spotClicked(focusedSpot->toPlainText().split(" ").first(),
-                             focusedSpot->property("freq").toDouble(),
-                             static_cast<BandPlan::BandPlanMode>(focusedSpot->property("bandmode").toInt()));
+        if ( item && item->data(MarkerFrequencyRole).isValid() )
+        {
+            emit markerClicked(item->data(MarkerFrequencyRole).toDouble(),
+                               item->data(MarkerModeRole).toString(),
+                               item->data(MarkerSubmodeRole).toString());
+        }
+        else
+        {
+            QGraphicsTextItem *focusedSpot = dynamic_cast<QGraphicsTextItem*>(item);
+
+            if ( focusedSpot && focusedSpot->property("freq").isValid() )
+                emit spotClicked(focusedSpot->toPlainText().split(" ").first(),
+                                 focusedSpot->property("freq").toDouble(),
+                                 static_cast<BandPlan::BandPlanMode>(focusedSpot->property("bandmode").toInt()));
+        }
     }
     evt->accept();
 }

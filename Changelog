@@ -3,6 +3,7 @@ TBC - 0.51.0
 - [NEW] - Added virtual column Mode/Submode to Logbook (issue #798)
 - [NEW] - BandMap shows IBP frequencies (issue #1014)
 - [NEW] - BandMap - Added Bandmap Guide (issue #1039)
+- [NEW] - BandMap - Tune rig from IBP and SOS markers
 - [NEW] - Settings - Added Bandmap Guide Setting
 - [NEW] - Settings - Added user defined colors for DXCC Statuses
 - [NEW] - Settings - Added StartUp ADI file Import (issue #941 PR #992 @aa5sh @foldynl)
