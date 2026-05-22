@@ -44,6 +44,7 @@ public:
                   double dedup_freq_tolerance = DEDUPLICATION_FREQ_TOLERANCE);
     const DxSpot getSpot(const QModelIndex& index) const {return dxData.at(index.row());};
     void clear();
+    void refreshStatusColors();
 
 private:
     QList<DxSpot> dxData;
@@ -141,6 +142,7 @@ public slots:
     void serverSelectChanged(int);
     void setLastQSO(QSqlRecord);
     void reloadSetting();
+    void refreshStatusColors();
     void prepareQSOSpot(QSqlRecord);
     void setSearch(const QString &);
     void setSearchStatus(bool);

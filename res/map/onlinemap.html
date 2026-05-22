@@ -647,7 +647,7 @@
     var wsjtxStationsLayer = L.layerGroup();
 
     // this function show WSJTX spots
-    function addWSJTXSpot(point, color) {
+    function addWSJTXSpot(point, color, textColor) {
         const spot = normalizePoint(point);
         const fadeSchedule = [
             { timeout: 30000, className: 'fade-out75' },
@@ -655,7 +655,7 @@
         ];
 
         const tooltipHTML = content =>
-            `<div style="background-color: ${color};border-radius:20px;padding:5px;font-weight:bold;">${content}</div>`;
+            `<div style="background-color: ${color};color: ${textColor};border-radius:20px;padding:5px;font-weight:bold;">${content}</div>`;
 
         function createSpotMarker(latitude, longitude) {
             const marker = new L.marker([latitude, longitude], { opacity: 0.001 });

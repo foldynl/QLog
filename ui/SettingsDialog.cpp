@@ -2,13 +2,17 @@
 #include <QSqlTableModel>
 #include <QDir>
 #include <QFileDialog>
+#include <QColorDialog>
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QFileInfo>
+#include <QMenu>
 #include <QStandardItemModel>
 #include <QProgressDialog>
+#include <QApplication>
 #include <QHeaderView>
 #include <QSignalBlocker>
+#include <QTableWidgetItem>
 #include <algorithm>
 
 #include "SettingsDialog.h"
@@ -150,6 +154,241 @@ void SettingsDialog::deleteSelectedProfiles(QAbstractItemView *view,
     view->clearSelection();
 }
 
+QList<SettingsDialog::QsoStatusColorRow> SettingsDialog::qsoStatusColorRows() const
+{
+    return QList<QsoStatusColorRow>
+    {
+        {Data::QSO_STATUS_COLOR_DUPE_KEY, tr("Duplicate"), tr("Already worked QSO")},
+        {Data::QSO_STATUS_COLOR_NEW_ENTITY_KEY, tr("New Entity"), tr("DXCC entity not worked yet")},
+        {Data::QSO_STATUS_COLOR_NEW_BAND_MODE_KEY, tr("New Band / Mode"), tr("New band, mode, or band and mode")},
+        {Data::QSO_STATUS_COLOR_NEW_SLOT_KEY, tr("New Slot"), tr("New band and mode combination")},
+        {Data::QSO_STATUS_COLOR_WORKED_KEY, tr("Worked"), tr("Worked but not confirmed")},
+        {Data::QSO_STATUS_COLOR_CONFIRMED_KEY, tr("Confirmed"), tr("Confirmed QSO; no highlight by default")}
+    };
+}
+
+void SettingsDialog::setupQsoStatusColorsTable()
+{
+    FCT_IDENTIFICATION;
+
+    ui->qsoStatusColorsTable->setColumnCount(QsoStatusColorColumnCount);
+    ui->qsoStatusColorsTable->setHorizontalHeaderLabels(QStringList() << tr("Status")
+                                                                      << tr("Description")
+                                                                      << tr("Color"));
+    ui->qsoStatusColorsTable->verticalHeader()->setVisible(false);
+    ui->qsoStatusColorsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->qsoStatusColorsTable->horizontalHeader()->setSectionResizeMode(QsoStatusColumn, QHeaderView::ResizeToContents);
+    ui->qsoStatusColorsTable->horizontalHeader()->setSectionResizeMode(QsoStatusMeaningColumn, QHeaderView::Stretch);
+    ui->qsoStatusColorsTable->horizontalHeader()->setSectionResizeMode(QsoStatusColorColumn, QHeaderView::ResizeToContents);
+
+    const QList<QsoStatusColorRow> rows = qsoStatusColorRows();
+    ui->qsoStatusColorsTable->setRowCount(rows.size());
+
+    for ( int row = 0; row < rows.size(); ++row )
+    {
+        const QsoStatusColorRow &colorRow = rows.at(row);
+
+        QTableWidgetItem *statusItem = new QTableWidgetItem(colorRow.status);
+        statusItem->setFlags(Qt::ItemIsEnabled);
+        ui->qsoStatusColorsTable->setItem(row, QsoStatusColumn, statusItem);
+
+        QTableWidgetItem *meaningItem = new QTableWidgetItem(colorRow.meaning);
+        meaningItem->setFlags(Qt::ItemIsEnabled);
+        ui->qsoStatusColorsTable->setItem(row, QsoStatusMeaningColumn, meaningItem);
+
+        QPushButton *button = new QPushButton(ui->qsoStatusColorsTable);
+        button->setMinimumWidth(75);
+        button->setProperty("qsoStatusColorKey", colorRow.key);
+        connect(button, &QPushButton::clicked, this, [this, button]()
+        {
+            chooseQsoStatusColor(button);
+        });
+        ui->qsoStatusColorsTable->setCellWidget(row, QsoStatusColorColumn, button);
+    }
+
+    const int tableHeight = ui->qsoStatusColorsTable->horizontalHeader()->sizeHint().height()
+                            + ui->qsoStatusColorsTable->verticalHeader()->length()
+                            + ui->qsoStatusColorsTable->frameWidth() * 2;
+
+    ui->qsoStatusColorsTable->setFixedHeight(tableHeight);
+}
+
+void SettingsDialog::loadQsoStatusColors()
+{
+    FCT_IDENTIFICATION;
+
+    const QVariantMap colors = LogParam::getQsoStatusColors();
+    for ( int row = 0; row < ui->qsoStatusColorsTable->rowCount(); ++row )
+    {
+        QPushButton *button = qsoStatusColorButton(row);
+        if ( !button )
+            continue;
+
+        setQsoStatusColorButton(button, qsoStatusColorFromSettings(qsoStatusColorKey(button), colors));
+    }
+}
+
+void SettingsDialog::saveQsoStatusColors() const
+{
+    FCT_IDENTIFICATION;
+
+    QVariantMap colors;
+    for ( int row = 0; row < ui->qsoStatusColorsTable->rowCount(); ++row )
+    {
+        QPushButton *button = qsoStatusColorButton(row);
+        if ( !button )
+            continue;
+
+        const QString key = qsoStatusColorKey(button);
+        const QColor color = qsoStatusColorFromButton(button);
+        const QColor defaultColor = Data::defaultQsoStatusColor(key);
+
+        if ( !color.isValid() )
+            continue;
+
+        if ( !qsoStatusColorsEqual(color, defaultColor) )
+            colors.insert(key, color.name(QColor::HexArgb));
+    }
+
+    LogParam::setQsoStatusColors(colors);
+}
+
+void SettingsDialog::chooseQsoStatusColor(QPushButton *button)
+{
+    FCT_IDENTIFICATION;
+
+    QMenu menu(this);
+    QAction *chooseColorAction = menu.addAction(tr("Choose Color..."));
+    QAction *defaultColorAction = menu.addAction(tr("Default"));
+    QAction *noColorAction = menu.addAction(tr("No Color"));
+    QAction *selectedAction = menu.exec(button->mapToGlobal(QPoint(0, button->height())));
+    if ( !selectedAction )
+        return;
+
+    const QString key = qsoStatusColorKey(button);
+
+    if ( selectedAction == defaultColorAction )
+    {
+        setQsoStatusColorButton(button, Data::defaultQsoStatusColor(key));
+        return;
+    }
+
+    if ( selectedAction == noColorAction )
+    {
+        setQsoStatusColorButton(button, qsoStatusNoColor());
+        return;
+    }
+
+    if ( selectedAction != chooseColorAction )
+        return;
+
+    const QColor currentColor = qsoStatusColorFromButton(button);
+    const QColor defaultColor = Data::defaultQsoStatusColor(key);
+    const QColor initialColor = (currentColor.isValid() && currentColor.alpha() > 0)
+                                ? currentColor
+                                : (defaultColor.isValid() && defaultColor.alpha() > 0)
+                                  ? defaultColor
+                                  : qApp->palette().highlight().color();
+    const QColor selected = QColorDialog::getColor(initialColor,
+                                                   this,
+                                                   tr("Status Color"),
+                                                   QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
+    if ( selected.isValid() )
+        setQsoStatusColorButton(button, selected);
+}
+
+QColor SettingsDialog::qsoStatusNoColor() const
+{
+    return QColor(0, 0, 0, 0);
+}
+
+void SettingsDialog::setQsoStatusColorButton(QPushButton *button, const QColor &color) const
+{
+    FCT_IDENTIFICATION;
+
+    button->setProperty("color", color);
+
+    if ( !color.isValid() || color.alpha() == 0 )
+    {
+        button->setText(tr("No color"));
+        button->setToolTip(tr("No highlight. Click to choose a color or set no color."));
+        button->setStyleSheet(QString());
+        return;
+    }
+
+    const QColor textColor = Data::textColorForBackground(color,
+                                                          button->palette().color(QPalette::ButtonText),
+                                                          button->palette().color(QPalette::Button));
+    button->setText(QString());
+    button->setToolTip(tr("Click to change color or set no color."));
+    button->setStyleSheet(QStringLiteral("QPushButton { background-color: %1; color: %2; }")
+                          .arg(qsoStatusColorStyleValue(color), textColor.name(QColor::HexRgb)));
+}
+
+QColor SettingsDialog::qsoStatusColorFromButton(QPushButton *button) const
+{
+    FCT_IDENTIFICATION;
+
+    return button->property("color").value<QColor>();
+}
+
+void SettingsDialog::restoreDefaultQsoStatusColors()
+{
+    FCT_IDENTIFICATION;
+
+    for ( int row = 0; row < ui->qsoStatusColorsTable->rowCount(); ++row )
+    {
+        QPushButton *button = qsoStatusColorButton(row);
+        if ( !button )
+            continue;
+
+        setQsoStatusColorButton(button, Data::defaultQsoStatusColor(qsoStatusColorKey(button)));
+    }
+}
+
+QPushButton *SettingsDialog::qsoStatusColorButton(int row) const
+{
+    return qobject_cast<QPushButton *>(ui->qsoStatusColorsTable->cellWidget(row, QsoStatusColorColumn));
+}
+
+QString SettingsDialog::qsoStatusColorKey(QPushButton *button) const
+{
+    return button ? button->property("qsoStatusColorKey").toString() : QString();
+}
+
+QColor SettingsDialog::qsoStatusColorFromSettings(const QString &key, const QVariantMap &colors) const
+{
+    const QString value = colors.value(key).toString().trimmed();
+    if ( !value.isEmpty() )
+    {
+        const QColor color(value);
+        if ( color.isValid() )
+            return color;
+    }
+
+    return Data::defaultQsoStatusColor(key);
+}
+
+bool SettingsDialog::qsoStatusColorsEqual(const QColor &left, const QColor &right) const
+{
+    const bool leftEmpty = !left.isValid() || left.alpha() == 0;
+    const bool rightEmpty = !right.isValid() || right.alpha() == 0;
+
+    if ( leftEmpty || rightEmpty )
+        return leftEmpty == rightEmpty;
+
+    return left.rgba() == right.rgba();
+}
+
+QString SettingsDialog::qsoStatusColorStyleValue(const QColor &color) const
+{
+    return QStringLiteral("rgba(%1, %2, %3, %4)")
+            .arg(color.red())
+            .arg(color.green())
+            .arg(color.blue())
+            .arg(color.alpha());
+}
+
 SettingsDialog::SettingsDialog(MainWindow *parent) :
     QDialog(parent),
     stationProfManager(StationProfilesManager::instance()),
@@ -171,6 +410,7 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
 
     ui->setupUi(this);
     setupAdifRecoveryTab();
+    setupQsoStatusColorsTable();
     refreshBandmapGuideCombo();
 
     ui->dateFormatResultLabel->setVisible(false);
@@ -2536,6 +2776,7 @@ void SettingsDialog::readSettings()
     bool unitFormatMetric =  locale.getSettingUseMetric();
     ui->unitFormatMetricRadioButton->setChecked(unitFormatMetric);
     ui->unitFormatImperialRadioButton->setChecked(!unitFormatMetric);
+    loadQsoStatusColors();
 
     /******************/
     /* END OF Reading */
@@ -2668,6 +2909,8 @@ void SettingsDialog::writeSettings()
         locale.setSettingDateFormat(ui->dateFormatStringEdit->text());
 
     locale.setSettingUseMetric(ui->unitFormatMetricRadioButton->isChecked());
+    saveQsoStatusColors();
+    Data::reloadQsoStatusColors();
 }
 
 void SettingsDialog::setupAdifRecoveryTab()

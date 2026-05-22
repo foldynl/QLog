@@ -4365,7 +4365,8 @@
             <string>Manage</string>
            </property>
            <property name="icon">
-            <iconset theme="preferences-system"/>
+            <iconset theme="preferences-system">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -4942,11 +4943,111 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="shortcutInfoLabel">
-         <property name="text">
-          <string/>
+        <widget class="QGroupBox" name="qsoStatusColorsGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
+         <property name="title">
+          <string>QSO DXCC Status Colors</string>
+         </property>
+         <layout class="QVBoxLayout" name="qsoStatusColorsLayout">
+          <item>
+           <widget class="QLabel" name="qsoStatusColorsInfoLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Used for DX spots, Bandmap, WSJT-X and QSO status hints. Confirmed has no highlight by default. Click a color cell to choose a color or set No color.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="qsoStatusColorsTable">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>220</height>
+             </size>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>20</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>20</number>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="qsoStatusColorsButtonLayout">
+            <item>
+             <spacer name="qsoStatusColorsButtonSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="qsoStatusColorsDefaultsButton">
+              <property name="text">
+               <string>Restore Defaults</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_44">
+         <property name="spacing">
+          <number>20</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="shortcutTitleLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Shortcuts</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="shortcutInfoLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QTableView" name="shortcutsTableView">
@@ -5277,10 +5378,28 @@
   <tabstop>timeFormat12RadioButton</tabstop>
   <tabstop>unitFormatMetricRadioButton</tabstop>
   <tabstop>unitFormatImperialRadioButton</tabstop>
+  <tabstop>qsoStatusColorsTable</tabstop>
+  <tabstop>qsoStatusColorsDefaultsButton</tabstop>
   <tabstop>shortcutsTableView</tabstop>
  </tabstops>
  <resources/>
  <connections>
+  <connection>
+   <sender>qsoStatusColorsDefaultsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>restoreDefaultQsoStatusColors()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>607</x>
+     <y>430</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>stationWWFFEdit</sender>
    <signal>editingFinished()</signal>
@@ -6641,7 +6760,7 @@
  </slots>
  <buttongroups>
   <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

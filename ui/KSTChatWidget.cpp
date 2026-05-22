@@ -707,6 +707,12 @@ QVariant UserListModel::data(const QModelIndex &index, int role) const
     {
         return Data::statusToColor(userInfo.status, userInfo.dupeCount, QColor(Qt::transparent));
     }
+    else if ( index.column() == 0 && role == Qt::ForegroundRole)
+    {
+        return Data::textColorForBackground(Data::statusToColor(userInfo.status,
+                                                                userInfo.dupeCount,
+                                                                QColor(Qt::transparent)));
+    }
     else if (index.column() == 0 && role == Qt::ToolTipRole)
     {
         return QCoreApplication::translate("DBStrings", userInfo.dxcc.country.toUtf8().constData()) + " [" + Data::statusToText(userInfo.status) + "]";

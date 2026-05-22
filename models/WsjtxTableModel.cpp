@@ -39,6 +39,12 @@ QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
     {
         return Data::statusToColor(entry.status, entry.dupeCount, QColor(Qt::transparent));
     }
+    else if (index.column() == COLUMN_CALLSIGN && role == Qt::ForegroundRole)
+    {
+        return Data::textColorForBackground(Data::statusToColor(entry.status,
+                                                                entry.dupeCount,
+                                                                QColor(Qt::transparent)));
+    }
     else if (index.column() > COLUMN_CALLSIGN && role == Qt::BackgroundRole)
     {
         if ( entry.receivedTime.secsTo(QDateTime::currentDateTimeUtc()) >= spotPeriod * 0.8)
@@ -46,10 +52,6 @@ QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
         {
             return QColor(Qt::darkGray);
         }
-    }
-    else if (index.column() == COLUMN_CALLSIGN && role == Qt::ForegroundRole)
-    {
-        //return Data::statusToInverseColor(entry.status, QColor(Qt::black));
     }
     else if (index.column() == COLUMN_CALLSIGN && role == Qt::ToolTipRole)
     {
@@ -184,3 +186,17 @@ void WsjtxTableModel::removeSpot(const QString &callsign)
     endResetModel();
 }
 
+void WsjtxTableModel::refreshStatusColors()
+{
+    if ( wsjtxData.isEmpty() )
+        return;
+
+    emit dataChanged(createIndex(0, COLUMN_CALLSIGN),
+                     createIndex(wsjtxData.size() - 1, COLUMN_CALLSIGN),
+                     {Qt::BackgroundRole, Qt::ForegroundRole});
+}
+
+QList<WsjtxEntry> WsjtxTableModel::entries() const
+{
+    return wsjtxData;
+}

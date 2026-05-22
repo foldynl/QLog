@@ -528,11 +528,9 @@ void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
 
 QColor BandmapWidget::readableMarkerTextColor(const QColor &background) const
 {
-    const int brightness = (background.red() * 299
-                            + background.green() * 587
-                            + background.blue() * 114) / 1000;
-
-    return (brightness > 150) ? QColor(Qt::black) : QColor(Qt::white);
+    return Data::textColorForBackground(background,
+                                        palette().color(QPalette::Text),
+                                        palette().color(QPalette::Base));
 }
 
 void BandmapWidget::drawGuideOverlay(double step, const QString &widestFreqText)

@@ -32,6 +32,8 @@ public:
     void setCurrentSpotPeriod(float);
     void clear();
     void removeSpot(const QString &callsign);
+    void refreshStatusColors();
+    QList<WsjtxEntry> entries() const;
 
 private:
     QList<WsjtxEntry> wsjtxData;

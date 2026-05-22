@@ -4,6 +4,8 @@
 #include <QColor>
 #include <QImage>
 #include <QIODevice>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QPageSize>
 #include <QSqlError>
 
@@ -1363,6 +1365,23 @@ int LogParam::getMainWindowDarkMode()
 void LogParam::setMainWindowDarkMode(int state)
 {
     setParam("mainwindow/darkmode", state);
+}
+
+QVariantMap LogParam::getQsoStatusColors()
+{
+    const QByteArray json = getParam("gui/qso_status_colors", QByteArray()).toByteArray();
+    const QJsonDocument doc = QJsonDocument::fromJson(json);
+
+    return doc.isObject() ? doc.object().toVariantMap() : QVariantMap();
+}
+
+void LogParam::setQsoStatusColors(const QVariantMap &colors)
+{
+    QJsonObject object;
+    for ( auto i = colors.constBegin(); i != colors.constEnd(); ++i )
+        object.insert(i.key(), i.value().toString());
+
+    setParam("gui/qso_status_colors", QJsonDocument(object).toJson(QJsonDocument::Compact));
 }
 
 QByteArray LogParam::getMainWindowGeometry()

@@ -15,6 +15,7 @@
 #include <QTableWidgetItem>
 #include "ui/component/BaseDoubleSpinBox.h"
 #include "core/debug.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.ui.bandmapguidedialog");
 
@@ -408,8 +409,9 @@ void BandmapGuideDialog::setColorButton(QPushButton *button, const QColor &color
     const QColor safeColor = color.isValid() ? color : QColor("#4d8ef7");
     button->setProperty("color", safeColor);
 
-    const int gray = qGray(safeColor.rgb());
-    const QColor textColor = (gray < 128) ? QColor(Qt::white) : QColor(Qt::black);
+    const QColor textColor = Data::textColorForBackground(safeColor,
+                                                          button->palette().color(QPalette::ButtonText),
+                                                          button->palette().color(QPalette::Button));
     button->setStyleSheet(QString("QPushButton { background-color: %1; color: %2; }")
                           .arg(safeColor.name(QColor::HexRgb), textColor.name(QColor::HexRgb)));
 }

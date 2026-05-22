@@ -299,10 +299,13 @@ void OnlineMapWidget::drawWSJTXSpot(const WsjtxEntry &spot)
 
     if ( spotGrid.isValid() )
     {
+        const QColor background = Data::statusToColor(spot.status, spot.dupeCount, QColor(Qt::white));
         mapController->addWsjtxSpot(MapPoint(spot.callsign,
                                              spotGrid.getLatitude(),
                                              spotGrid.getLongitude()),
-                                    Data::colorToHTMLColor(Data::statusToColor(spot.status, spot.dupeCount, QColor(Qt::white))));
+                                    Data::colorToHTMLColor(background),
+                                    Data::colorToHTMLColor(Data::textColorForBackground(background,
+                                                                                       QColor(Qt::black))));
     }
 }
 

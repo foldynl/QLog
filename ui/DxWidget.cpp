@@ -178,6 +178,12 @@ QVariant DxTableModel::data(const QModelIndex& index, int role) const
     {
         return Data::statusToColor(spot.status, spot.dupeCount, QColor(Qt::transparent));
     }
+    else if (index.column() == 1 && role == Qt::ForegroundRole)
+    {
+        return Data::textColorForBackground(Data::statusToColor(spot.status,
+                                                                spot.dupeCount,
+                                                                QColor(Qt::transparent)));
+    }
     else if (index.column() == 1 && role == Qt::ToolTipRole)
     {
         return QCoreApplication::translate("DBStrings", spot.dxcc.country.toUtf8().constData()) + " [" + Data::statusToText(spot.status) + "]";
@@ -243,6 +249,16 @@ void DxTableModel::clear()
     beginResetModel();
     dxData.clear();
     endResetModel();
+}
+
+void DxTableModel::refreshStatusColors()
+{
+    if ( dxData.isEmpty() )
+        return;
+
+    emit dataChanged(createIndex(0, 1),
+                     createIndex(dxData.size() - 1, 1),
+                     {Qt::BackgroundRole, Qt::ForegroundRole});
 }
 
 int WCYTableModel::rowCount(const QModelIndex&) const
@@ -1371,6 +1387,13 @@ void DxWidget::reloadSetting()
 #endif
 
     ui->filteredLabel->setHidden(!isFilterEnabled());
+}
+
+void DxWidget::refreshStatusColors()
+{
+    FCT_IDENTIFICATION;
+
+    dxTableModel->refreshStatusColors();
 }
 
 void DxWidget::prepareQSOSpot(QSqlRecord qso)

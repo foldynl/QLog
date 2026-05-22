@@ -458,11 +458,9 @@ void RigWidget::resetRigInfo()
 
 QString RigWidget::readableLabelTextColor(const QColor &background) const
 {
-    const int brightness = (background.red() * 299
-                            + background.green() * 587
-                            + background.blue() * 114) / 1000;
-
-    return (brightness > 150) ? QStringLiteral("#000000") : QStringLiteral("#ffffff");
+    return Data::textColorForBackground(background,
+                                        palette().color(QPalette::WindowText),
+                                        palette().color(QPalette::Window)).name(QColor::HexRgb);
 }
 
 void RigWidget::clearFrequencyInfoLabel(QLabel *label)

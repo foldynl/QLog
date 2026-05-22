@@ -2,6 +2,7 @@
 #define QLOG_DATA_DATA_H
 
 #include <QtCore>
+#include <QColor>
 #include <QSqlQuery>
 #include "Dxcc.h"
 #include "SOTAEntity.h"
@@ -126,6 +127,17 @@ public:
                                                   const QString &deletedMode);
 
     static QColor statusToColor(const DxccStatus &status, bool isDupe, const QColor &defaultColor);
+    static const QString QSO_STATUS_COLOR_DUPE_KEY;
+    static const QString QSO_STATUS_COLOR_NEW_ENTITY_KEY;
+    static const QString QSO_STATUS_COLOR_NEW_BAND_MODE_KEY;
+    static const QString QSO_STATUS_COLOR_NEW_SLOT_KEY;
+    static const QString QSO_STATUS_COLOR_WORKED_KEY;
+    static const QString QSO_STATUS_COLOR_CONFIRMED_KEY;
+    static QColor defaultQsoStatusColor(const QString &key);
+    static QColor textColorForBackground(const QColor &background,
+                                         const QColor &defaultColor = QColor(),
+                                         const QColor &baseColor = QColor());
+    static void reloadQsoStatusColors();
     static QString colorToHTMLColor(const QColor&);
     static QString statusToText(const DxccStatus &status);
     static QString removeAccents(const QString &input);
@@ -226,6 +238,26 @@ private:
 
     static const char translitTab[];
     static const int tranlitIndexMap[];
+
+    struct StatusColorRuntime
+    {
+        StatusColorRuntime();
+        void reset();
+        void setStatusColor(DxccStatus status, const QColor &color);
+
+        QHash<int, QRgb> colors;
+        QRgb dupeColor;
+    };
+
+    static StatusColorRuntime &statusColorRuntime();
+    static void setRuntimeStatusColor(DxccStatus status, const QColor &color);
+    static void setRuntimeBandModeStatusColor(const QColor &color);
+    static void setRuntimeDupeColor(const QColor &color);
+    static QColor qsoStatusColorFromConfig(const QVariantMap &colors, const QString &key);
+    static void applyConfiguredStatusColor(const QVariantMap &colors, const QString &key, DxccStatus status);
+    static void applyConfiguredBandModeStatusColor(const QVariantMap &colors);
+    static QColor effectiveBackgroundColor(const QColor &background, const QColor &baseColor);
+    static int colorBrightness(const QColor &color);
 };
 
 #endif // QLOG_DATA_DATA_H

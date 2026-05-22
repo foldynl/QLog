@@ -407,6 +407,8 @@ public:
     static void setMainWindowAlertBeep(bool state);
     static int getMainWindowDarkMode();
     static void setMainWindowDarkMode(int state);
+    static QVariantMap getQsoStatusColors();
+    static void setQsoStatusColors(const QVariantMap &colors);
     static QByteArray getMainWindowGeometry();
     static void setMainWindowGeometry(const QByteArray &state);
     static QByteArray getMainWindowState();

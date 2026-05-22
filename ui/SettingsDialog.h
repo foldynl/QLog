@@ -12,6 +12,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QColor>
 #include <QDoubleSpinBox>
 #include <QSet>
 
@@ -143,14 +144,43 @@ public slots:
 
     void addAdifRecoveryFile();
     void removeAdifRecoveryFile();
+    void restoreDefaultQsoStatusColors();
 
 private:
+    enum QsoStatusColorColumn
+    {
+        QsoStatusColumn,
+        QsoStatusMeaningColumn,
+        QsoStatusColorColumn,
+        QsoStatusColorColumnCount
+    };
+
+    struct QsoStatusColorRow
+    {
+        QString key;
+        QString status;
+        QString meaning;
+    };
+
     void readSettings();
     void writeSettings();
     void setUIBasedOnRigCaps(const RigCaps&);
     void refreshRigAssignedCWKeyCombo();
     void refreshBandmapGuideCombo();
     void updateRigShareEnabled();
+    QList<QsoStatusColorRow> qsoStatusColorRows() const;
+    void setupQsoStatusColorsTable();
+    void loadQsoStatusColors();
+    void saveQsoStatusColors() const;
+    void chooseQsoStatusColor(QPushButton *button);
+    QColor qsoStatusNoColor() const;
+    void setQsoStatusColorButton(QPushButton *button, const QColor &color) const;
+    QColor qsoStatusColorFromButton(QPushButton *button) const;
+    QPushButton *qsoStatusColorButton(int row) const;
+    QString qsoStatusColorKey(QPushButton *button) const;
+    QColor qsoStatusColorFromSettings(const QString &key, const QVariantMap &colors) const;
+    bool qsoStatusColorsEqual(const QColor &left, const QColor &right) const;
+    QString qsoStatusColorStyleValue(const QColor &color) const;
     void setValidationResultColor(QLineEdit *);
     void generateMembershipCheckboxes();
     static void refreshProfileView(QAbstractItemView *view, const QStringList &names);

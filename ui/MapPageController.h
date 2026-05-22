@@ -121,7 +121,8 @@ public:
     void setCurrentBand(const QString &band);
 
     void addWsjtxSpot(const MapPoint &point,
-                      const QString &color);
+                      const QString &color,
+                      const QString &textColor);
     void clearWsjtxSpots();
 
 signals:

@@ -1289,14 +1289,16 @@ void QSODetailDialog::clubQueryResult(const QString &in_callsign,
 
     QMapIterator<QString, ClubStatusQuery::ClubInfo> clubs(data);
 
-    QPalette palette;
-
-    //"<font color='red'>Hello</font> <font color='green'>World</font>"
     while ( clubs.hasNext() )
     {
         clubs.next();
-        QColor color = Data::statusToColor(static_cast<DxccStatus>(clubs.value().status), false, palette.color(QPalette::Text));
-        memberText.append(QString("<font color='%1'>%2</font>&nbsp;&nbsp;&nbsp;").arg(Data::colorToHTMLColor(color), clubs.key()));
+        const QColor color = Data::statusToColor(static_cast<DxccStatus>(clubs.value().status), false, QColor());
+        const QString clubName = clubs.key().toHtmlEscaped();
+
+        if ( color.isValid() && color.alpha() > 0 )
+            memberText.append(QString("<font color='%1'>%2</font>&nbsp;&nbsp;&nbsp;").arg(Data::colorToHTMLColor(color), clubName));
+        else
+            memberText.append(QString("%1&nbsp;&nbsp;&nbsp;").arg(clubName));
     }
     ui->memberListLabel->setText(memberText);
 }
