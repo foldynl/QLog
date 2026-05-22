@@ -10,11 +10,13 @@
 #include "data/StationProfile.h"
 
 #define MSECS_PER_DAY (24.0 * 60.0 * 60.0 * 1000.0)
+#define MSECS_PER_DAY_INT (24 * 60 * 60 * 1000)
 
 MODULE_IDENTIFICATION("qlog.ui.clockwidget");
 
 SunTimelineWidget::SunTimelineWidget(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    sunState(NoSunTimes)
 {
     setMinimumHeight(18);
 }
@@ -29,10 +31,13 @@ QSize SunTimelineWidget::minimumSizeHint() const
     return QSize(120, 18);
 }
 
-void SunTimelineWidget::setSunTimes(const QTime &newSunrise, const QTime &newSunset)
+void SunTimelineWidget::setSunTimes(const QTime &newSunrise,
+                                    const QTime &newSunset,
+                                    SunState newSunState)
 {
     sunrise = newSunrise;
     sunset = newSunset;
+    sunState = newSunState;
     update();
 }
 
@@ -75,7 +80,11 @@ void SunTimelineWidget::paintEvent(QPaintEvent *event)
         painter.fillRect(QRectF(start, bar.top(), width, bar.height()), gradient);
     };
 
-    if ( sunrise.isValid() && sunset.isValid() )
+    if ( sunState == AllDay )
+    {
+        painter.fillRect(bar, dayColor);
+    }
+    else if ( sunState == NormalSunTimes && sunrise.isValid() && sunset.isValid() )
     {
         const qreal rise = bar.left() + sunrise.msecsSinceStartOfDay() / MSECS_PER_DAY * bar.width();
         const qreal set = bar.left() + sunset.msecsSinceStartOfDay() / MSECS_PER_DAY * bar.width();
@@ -109,7 +118,8 @@ ClockWidget::ClockWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ClockWidget),
     clockScene(new QGraphicsScene(this)),
-    clockItem(new QGraphicsTextItem)
+    clockItem(new QGraphicsTextItem),
+    sunState(SunTimelineWidget::NoSunTimes)
 {
     FCT_IDENTIFICATION;
 
@@ -165,7 +175,7 @@ void ClockWidget::updateSun()
         double lat = myGrid.getLatitude();
         double lon = myGrid.getLongitude();
 
-        qint64 julianDay = QDate::currentDate().toJulianDay();
+        qint64 julianDay = QDateTime::currentDateTimeUtc().date().toJulianDay();
         double n = static_cast<double>(julianDay) - 2451545.0 + 0.0008;
 
         double Js = n - lon / 360.0;
@@ -175,13 +185,42 @@ void ClockWidget::updateSun()
         double Jt = 2451545.0 + Js + 0.0053 * sin(M / 180.0 * M_PI) - 0.0069 * sin(2 * L / 180.0 * M_PI);
         double sind = sin(L / 180.0 * M_PI) * sin(23.44 / 180.0 * M_PI);
         double cosd = cos(asin(sind));
-        double w = acos((sin(-0.83 / 180.0 * M_PI) - sin(lat / 180.0 * M_PI) * sind) / (cos(lat / 180.0 * M_PI) * cosd));
+        const double cosHourAngleNumerator = sin(-0.83 / 180.0 * M_PI)
+                                             - sin(lat / 180.0 * M_PI) * sind;
+        const double cosHourAngleDenominator = cos(lat / 180.0 * M_PI) * cosd;
+        double cosHourAngle = cosHourAngleNumerator / cosHourAngleDenominator;
+
+        if ( !qIsFinite(cosHourAngle) )
+            cosHourAngle = (cosHourAngleNumerator <= 0.0) ? -2.0 : 2.0;
+
+        if ( cosHourAngle > 1.0 )
+        {
+            sunrise = QTime();
+            sunset = QTime();
+            sunState = SunTimelineWidget::AllNight;
+            ui->sunRiseLabel->setText(tr("N/A"));
+            ui->sunSetLabel->setText(tr("N/A"));
+            return;
+        }
+
+        if ( cosHourAngle < -1.0 )
+        {
+            sunrise = QTime();
+            sunset = QTime();
+            sunState = SunTimelineWidget::AllDay;
+            ui->sunRiseLabel->setText(tr("N/A"));
+            ui->sunSetLabel->setText(tr("N/A"));
+            return;
+        }
+
+        double w = acos(qBound(-1.0, cosHourAngle, 1.0));
 
         double Jrise = Jt - w / (2*M_PI) + 0.5;
         double Jset = Jt + w / (2*M_PI) + 0.5;
 
-        sunrise = QTime::fromMSecsSinceStartOfDay(static_cast<int>(fmod(Jrise, 1.0) * MSECS_PER_DAY));
-        sunset = QTime::fromMSecsSinceStartOfDay(static_cast<int>(fmod(Jset, 1.0) * MSECS_PER_DAY));
+        sunrise = timeFromJulianDayFraction(Jrise);
+        sunset = timeFromJulianDayFraction(Jset);
+        sunState = SunTimelineWidget::NormalSunTimes;
 
         ui->sunRiseLabel->setText(locale.toString(sunrise, locale.formatTimeShort()));
         ui->sunSetLabel->setText(locale.toString(sunset, locale.formatTimeShort()));
@@ -192,14 +231,29 @@ void ClockWidget::updateSun()
         ui->sunSetLabel->setText(tr("N/A"));
         sunrise = QTime();
         sunset = QTime();
+        sunState = SunTimelineWidget::NoSunTimes;
     }
+}
+
+QTime ClockWidget::timeFromJulianDayFraction(double julianDay)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !qIsFinite(julianDay) )
+        return QTime();
+
+    const double fraction = julianDay - qFloor(julianDay);
+    qint64 msecs = qRound64(fraction * MSECS_PER_DAY);
+    msecs %= MSECS_PER_DAY_INT;
+
+    return QTime::fromMSecsSinceStartOfDay(static_cast<int>(msecs));
 }
 
 void ClockWidget::updateSunGraph()
 {
     FCT_IDENTIFICATION;
 
-    ui->sunTimelineWidget->setSunTimes(sunrise, sunset);
+    ui->sunTimelineWidget->setSunTimes(sunrise, sunset, sunState);
 }
 
 ClockWidget::~ClockWidget()
