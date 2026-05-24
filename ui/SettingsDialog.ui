@@ -4027,6 +4027,15 @@
              <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
+             <property name="verticalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="horizontalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
              </attribute>
@@ -6795,8 +6804,8 @@
   <slot>bandmapGuideChanged(int)</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>
