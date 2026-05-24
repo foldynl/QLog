@@ -221,8 +221,8 @@ void MapPageController::setDarkTheme(bool isDark)
     FCT_IDENTIFICATION;
 
     const QString js = isDark
-                           ? QLatin1String("map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\"; if (typeof setTerminatorTheme === \"function\") setTerminatorTheme(true);")
-                           : QLatin1String("map.getPanes().tilePane.style.webkitFilter=\"\"; if (typeof setTerminatorTheme === \"function\") setTerminatorTheme(false);");
+                           ? QLatin1String("if (typeof setMapDarkMode === \"function\") setMapDarkMode(true);")
+                           : QLatin1String("if (typeof setMapDarkMode === \"function\") setMapDarkMode(false);");
     runJavaScript(js);
 }
 

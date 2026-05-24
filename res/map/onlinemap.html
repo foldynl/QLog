@@ -16,9 +16,36 @@
     body {
       padding: 0;
       margin: 0;
+      background: #f3f4f6;
     }
     html, body, #map {
       height: 100%;
+    }
+    body.qlog-map-dark {
+      background: #454d55;
+    }
+    body.qlog-map-dark .leaflet-control-layers,
+    body.qlog-map-dark .leaflet-bar a,
+    body.qlog-map-dark .leaflet-control-attribution {
+      background: rgba(70, 78, 87, 0.92);
+      color: #f3f5f7;
+      border-color: rgba(148, 156, 166, 0.58);
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.18);
+    }
+    body.qlog-map-dark .leaflet-bar a {
+      border-bottom-color: rgba(148, 156, 166, 0.58);
+    }
+    body.qlog-map-dark .leaflet-bar a:hover,
+    body.qlog-map-dark .leaflet-control-layers-expanded {
+      background: rgba(82, 91, 101, 0.96);
+    }
+    body.qlog-map-dark .leaflet-control-attribution a {
+      color: #d6dbe0;
+    }
+    body.qlog-map-dark .leaflet-popup-content-wrapper,
+    body.qlog-map-dark .leaflet-popup-tip {
+      background: #4c5560;
+      color: #eceff2;
     }
     .leaflet-tooltip {
         border: 0px;
@@ -71,6 +98,9 @@
       z-index: 9999;
     }
     .busy.hidden{ display:none; }
+    body.qlog-map-dark .busy {
+      background: rgba(62, 70, 79, 0.46);
+    }
 
     .spinner{
       width: 42px;
@@ -80,9 +110,14 @@
       border-radius: 50%;
       animation: spin 0.9s linear infinite;
     }
+    body.qlog-map-dark .spinner {
+      border-color: rgba(255,255,255,0.18);
+      border-top-color: rgba(255,255,255,0.72);
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .label{ margin-top: 10px; font: 14px sans-serif; color:#333; }
+    body.qlog-map-dark .label{ color:#d7dce2; }
 
   </style>
 </head>
@@ -311,7 +346,19 @@
       });
     }
 
-    setTerminatorTheme(false);
+    function setMapDarkMode(isDark) {
+      document.body.classList.toggle('qlog-map-dark', isDark);
+
+      const tileFilter = isDark
+        ? 'invert(1) hue-rotate(180deg) brightness(1.42) contrast(0.70) saturate(0.62)'
+        : '';
+      map.getPanes().tilePane.style.filter = tileFilter;
+      map.getPanes().tilePane.style.webkitFilter = tileFilter;
+
+      setTerminatorTheme(isDark);
+    }
+
+    setMapDarkMode(false);
 
     setInterval(function(){updateTerminator(grayline)}, 60000);
 
