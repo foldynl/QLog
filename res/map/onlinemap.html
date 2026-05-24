@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
   <script src="https://foldynl.github.io/QLog/js/L.MaidenheadConfWorked.js"></script>
-  <script src="https://unpkg.com/@joergdietrich/leaflet.terminator"></script>
+  <script src="https://foldynl.github.io/QLog/js/L.Terminator.js"></script>
   <script src="https://foldynl.github.io/QLog/js/heatmap.js"></script>
   <script src="https://foldynl.github.io/QLog/js/leaflet-heatmap.js"></script>
   <script src="https://unpkg.com/leaflet.geodesic@2.6.1/dist/leaflet.geodesic.umd.min.js"></script>
@@ -289,7 +289,29 @@
     }).addTo(map);
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
-    var grayline = L.terminator({fillOpacity: 0.2})
+    var grayline = L.terminator()
+
+    function setTerminatorTheme(isDark) {
+      const styles = isDark
+        ? {
+            civil: { fillColor: '#c8c8c8', fillOpacity: 0.13, stroke: true, color: '#d6d6d6', opacity: 0.26, weight: 1 },
+            nautical: { fillColor: '#aeaeae', fillOpacity: 0.16, stroke: true, color: '#c2c2c2', opacity: 0.24, weight: 1 },
+            astronomical: { fillColor: '#949494', fillOpacity: 0.19, stroke: true, color: '#adadad', opacity: 0.22, weight: 1 }
+          }
+        : {
+            civil: { fillColor: '#767676', fillOpacity: 0.14, stroke: true, color: '#5f5f5f', opacity: 0.18, weight: 1 },
+            nautical: { fillColor: '#626262', fillOpacity: 0.17, stroke: true, color: '#555', opacity: 0.16, weight: 1 },
+            astronomical: { fillColor: '#4e4e4e', fillOpacity: 0.20, stroke: true, color: '#484848', opacity: 0.14, weight: 1 }
+          };
+
+      Object.keys(styles).forEach(function(name) {
+        const terminator = grayline.getTerminator(name);
+        if (terminator)
+          terminator.setStyle(styles[name]);
+      });
+    }
+
+    setTerminatorTheme(false);
 
     setInterval(function(){updateTerminator(grayline)}, 60000);
 
