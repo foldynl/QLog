@@ -48,11 +48,17 @@ private:
     void refreshCombos();
     void setSubTypesCombo(int mainTypeIdx);
     void refreshCombo(QComboBox * combo, const QString &sqlQeury);
+    void initializeWidget();
+    QString currentMapRenderKey(const QStringList &genericFilter) const;
 
 private:
     Ui::StatisticsWidget *ui;
     QScopedPointer<MapPageController> mapController;
     LogLocale locale;
+    bool initialized = false;
+    bool pendingRefresh = true;
+    bool mapRenderDirty = true;
+    QString mapRenderKey;
 
 
     // default statistics interval [in days]

@@ -252,6 +252,18 @@ void MapPageController::drawPointsBusy(const QList<MapPoint> &points,
                        jsonString(text)));
 }
 
+void MapPageController::drawPointsAndShortPathsBusy(const QList<MapPoint> &points,
+                                                    const QList<MapPath> &paths,
+                                                    const QString &text)
+{
+    FCT_IDENTIFICATION;
+
+    runJavaScript(QStringLiteral("drawPointsAndShortPathsBusy(%1, %2, %3);")
+                  .arg(jsonArray(pointsArray(points)),
+                       jsonArray(pathsArray(paths)),
+                       jsonString(text)));
+}
+
 void MapPageController::drawHomePoints(const QList<MapPoint> &points)
 {
     FCT_IDENTIFICATION;
@@ -354,6 +366,16 @@ void MapPageController::redrawGridLayer()
     FCT_IDENTIFICATION;
 
     runJavaScript(QLatin1String("maidenheadConfWorked.redraw();"));
+}
+
+void MapPageController::invalidateSize()
+{
+    FCT_IDENTIFICATION;
+
+    runJavaScript(QLatin1String("if (typeof map !== 'undefined') "
+                                "setTimeout(function() { "
+                                "map.invalidateSize({pan: false, animate: false}); "
+                                "}, 0);"));
 }
 
 void MapPageController::panToBoundsLongitudeCenter(const QList<MapCoordinate> &coordinates)

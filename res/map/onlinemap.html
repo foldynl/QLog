@@ -273,6 +273,10 @@
       homeIcon: homeIcon
     };
 
+    const fastMarkerThreshold = 2000;
+    var fastMarkersLayer = null;
+    const fastMarkerImages = {};
+
     function resolveIcon(icon) {
       return mapIcons[icon] || null;
     }
@@ -293,6 +297,209 @@
     function markerOptions(point) {
       const icon = resolveIcon(point.icon);
       return icon ? {icon: icon} : {};
+    }
+
+    function fastMarkerImage(url, onLoad) {
+      if (!url)
+        return null;
+
+      if (fastMarkerImages[url]) {
+        if (onLoad && !fastMarkerImages[url].loaded)
+          fastMarkerImages[url].callbacks.push(onLoad);
+        return fastMarkerImages[url];
+      }
+
+      const image = new Image();
+      fastMarkerImages[url] = { image: image, loaded: false, callbacks: onLoad ? [onLoad] : [] };
+      image.onload = function() {
+        const entry = fastMarkerImages[url];
+        entry.loaded = true;
+        const callbacks = entry.callbacks;
+        entry.callbacks = [];
+        callbacks.forEach(callback => callback());
+      };
+      image.src = url;
+
+      return fastMarkerImages[url];
+    }
+
+    function fastMarkerPoint(point) {
+      const mapPoint = normalizePoint(point);
+      const icon = resolveIcon(mapPoint.icon);
+      if (!icon)
+        return mapPoint;
+
+      const iconOptions = icon.options || {};
+      const iconSize = iconOptions.iconSize || [25, 41];
+      mapPoint.iconOptions = iconOptions;
+      mapPoint.iconSize = iconSize;
+      mapPoint.iconAnchor = iconOptions.iconAnchor || [Math.floor(iconSize[0] / 2), iconSize[1]];
+
+      return mapPoint;
+    }
+
+    const FastMarkerLayer = L.Layer.extend({
+      initialize: function(points) {
+        this.points = points.map(fastMarkerPoint);
+        this.pendingImageUrls = {};
+      },
+
+      onAdd: function(map) {
+        this.map = map;
+        this.shadowCanvas = L.DomUtil.create('canvas', 'qlog-fast-marker-shadows');
+        this.iconCanvas = L.DomUtil.create('canvas', 'qlog-fast-markers');
+        this.shadowCanvas.style.pointerEvents = 'none';
+        this.iconCanvas.style.pointerEvents = 'none';
+        map.getPane('shadowPane').appendChild(this.shadowCanvas);
+        map.getPane('markerPane').appendChild(this.iconCanvas);
+        map.on('moveend zoomend resize', this.reset, this);
+        map.on('click', this.handleClick, this);
+        this.reset();
+      },
+
+      onRemove: function(map) {
+        map.off('moveend zoomend resize', this.reset, this);
+        map.off('click', this.handleClick, this);
+        L.DomUtil.remove(this.shadowCanvas);
+        L.DomUtil.remove(this.iconCanvas);
+        this.shadowCanvas = null;
+        this.iconCanvas = null;
+        this.map = null;
+      },
+
+      reset: function() {
+        if (!this.map || !this.shadowCanvas || !this.iconCanvas)
+          return;
+
+        const size = this.map.getSize();
+        const topLeft = this.map.containerPointToLayerPoint([0, 0]);
+        [this.shadowCanvas, this.iconCanvas].forEach(canvas => {
+          L.DomUtil.setPosition(canvas, topLeft);
+          canvas.width = size.x;
+          canvas.height = size.y;
+        });
+        this.draw();
+      },
+
+      drawMarkerImage: function(ctx, iconOptions, markerPoint, imageKey, sizeKey, anchorKey, drawnKeys) {
+        const url = iconOptions[imageKey];
+        const size = iconOptions[sizeKey];
+        const anchor = iconOptions[anchorKey] || iconOptions.iconAnchor;
+        if (!url || !size || !anchor)
+          return;
+
+        const imageEntry = fastMarkerImage(url, this.pendingImageUrls[url] ? null : () => {
+          delete this.pendingImageUrls[url];
+          this.draw();
+        });
+        if (!imageEntry || !imageEntry.loaded) {
+          this.pendingImageUrls[url] = true;
+          return;
+        }
+
+        const x = markerPoint.x - anchor[0];
+        const y = markerPoint.y - anchor[1];
+
+        if (drawnKeys) {
+          const key = [url, size[0], size[1], Math.round(x), Math.round(y)].join('|');
+          if (drawnKeys[key])
+            return;
+          drawnKeys[key] = true;
+        }
+
+        ctx.drawImage(imageEntry.image, x, y, size[0], size[1]);
+      },
+
+      visiblePoints: function() {
+        const size = this.map.getSize();
+        const visible = [];
+
+        this.points.forEach(point => {
+          if (!point.iconOptions)
+            return;
+
+          const markerPoint = this.map.latLngToContainerPoint([point.lat, point.lng]);
+          if (markerPoint.x < -point.iconSize[0]
+              || markerPoint.y < -point.iconSize[1]
+              || markerPoint.x > size.x + point.iconSize[0]
+              || markerPoint.y > size.y + point.iconSize[1])
+            return;
+
+          visible.push({
+            point: point,
+            markerPoint: markerPoint
+          });
+        });
+
+        return visible;
+      },
+
+      draw: function() {
+        if (!this.map || !this.shadowCanvas || !this.iconCanvas)
+          return;
+
+        const shadowCtx = this.shadowCanvas.getContext('2d');
+        const iconCtx = this.iconCanvas.getContext('2d');
+        const size = this.map.getSize();
+        shadowCtx.clearRect(0, 0, size.x, size.y);
+        iconCtx.clearRect(0, 0, size.x, size.y);
+        const visible = this.visiblePoints();
+        const drawnShadows = {};
+
+        visible.forEach(item => {
+          this.drawMarkerImage(shadowCtx, item.point.iconOptions, item.markerPoint,
+                               'shadowUrl', 'shadowSize', 'shadowAnchor', drawnShadows);
+        });
+
+        visible.forEach(item => {
+          this.drawMarkerImage(iconCtx, item.point.iconOptions, item.markerPoint,
+                               'iconUrl', 'iconSize', 'iconAnchor');
+        });
+      },
+
+      handleClick: function(event) {
+        const clickPoint = this.map.latLngToContainerPoint(event.latlng);
+        let bestPoint = null;
+        let bestDistance = Number.MAX_VALUE;
+
+        this.points.forEach(point => {
+          if (!point.iconOptions)
+            return;
+
+          const markerPoint = this.map.latLngToContainerPoint([point.lat, point.lng]);
+          const left = markerPoint.x - point.iconAnchor[0];
+          const top = markerPoint.y - point.iconAnchor[1];
+          const right = left + point.iconSize[0];
+          const bottom = top + point.iconSize[1];
+
+          if (clickPoint.x < left || clickPoint.x > right
+              || clickPoint.y < top || clickPoint.y > bottom)
+            return;
+
+          const dx = markerPoint.x - clickPoint.x;
+          const dy = markerPoint.y - clickPoint.y;
+          const distance = dx * dx + dy * dy;
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestPoint = point;
+          }
+        });
+
+        if (bestPoint) {
+          L.popup()
+            .setLatLng([bestPoint.lat, bestPoint.lng])
+            .setContent(bestPoint.label)
+            .openOn(this.map);
+        }
+      }
+    });
+
+    function clearFastMarkerLayer() {
+      if (!fastMarkersLayer)
+        return;
+
+      map.removeLayer(fastMarkersLayer);
+      fastMarkersLayer = null;
     }
 
     function normalizePath(path) {
@@ -383,16 +590,20 @@
     }
 
     async function runBusy(msg, fn) {
+      if (!msg) {
+        fn();
+        return;
+      }
+
       const token = ++busyToken;
       busyShow(msg);
 
       await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
       fn();
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
 
-      if (token === busyToken) busyHide();
+      setTimeout(function() {
+        if (token === busyToken) busyHide();
+      }, 0);
     }
 
     // Configuration for Aurora Heatmap
@@ -419,7 +630,9 @@
     // Path 1 - usually used for rendering Path between my station and QSO station
     var pathLayer = L.layerGroup().addTo(map);
     const geodesic = new L.Geodesic([],{ wrap: false, color: "Fuchsia", steps: 5});
+    const shortPathsGeodesic = new L.Geodesic([],{ wrap: false, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
     pathLayer.addLayer(geodesic);
+    pathLayer.addLayer(shortPathsGeodesic);
 
     var antPathLayer = L.layerGroup().addTo(map);
     var antGeodesic1 = new L.Geodesic([],{ wrap: false, color: "orange", steps: 5,
@@ -431,6 +644,7 @@
 
     function drawPath(points) {
         geodesic.setLatLngs([]);
+        shortPathsGeodesic.setLatLngs([]);
 
         if (points.length != 2)
             return;
@@ -439,17 +653,24 @@
     }
 
     function drawShortPaths(coords) {
-        pathLayer.clearLayers();
+        const paths = [];
+        geodesic.setLatLngs([]);
         coords.forEach(function(rawPath) {
             const path = normalizePath(rawPath);
-            let geodesic = new L.Geodesic([],{ wrap: false, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
-            pathLayer.addLayer(geodesic);
-            geodesic.setLatLngs([path.from, path.to]);
+            paths.push([path.from, path.to]);
         });
+        shortPathsGeodesic.setLatLngs(paths);
     }
 
     function drawShortPathsBusy(coords, text) {
       return runBusy(text, () => drawShortPaths(coords));
+    }
+
+    function drawPointsAndShortPathsBusy(points, coords, text) {
+      return runBusy(text, function() {
+        drawPoints(points);
+        drawShortPaths(coords);
+      });
     }
 
     // function computes a destination point based on distance and azimuth
@@ -505,6 +726,14 @@
 
     // generic function to render point on the map
     function drawPoints(points) {
+        markersLayer.clearLayers();
+        clearFastMarkerLayer();
+
+        if (points.length > fastMarkerThreshold) {
+          fastMarkersLayer = new FastMarkerLayer(points).addTo(map);
+          return;
+        }
+
         drawPointMarkers(markersLayer, points);
      }
 

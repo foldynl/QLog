@@ -95,6 +95,9 @@ public:
     void drawPoints(const QList<MapPoint> &points);
     void drawPointsBusy(const QList<MapPoint> &points,
                         const QString &text);
+    void drawPointsAndShortPathsBusy(const QList<MapPoint> &points,
+                                     const QList<MapPath> &paths,
+                                     const QString &text);
     void drawHomePoints(const QList<MapPoint> &points);
     void drawChatPoints(const QList<MapPoint> &points);
     void flyToPoint(const MapPoint &point, int zoom);
@@ -114,6 +117,7 @@ public:
                        const QStringList &workedGrids);
     void clearGridLayers();
     void redrawGridLayer();
+    void invalidateSize();
     void panToBoundsLongitudeCenter(const QList<MapCoordinate> &coordinates);
 
     void setAuroraData(const QList<MapHeatPoint> &points);

@@ -34,10 +34,14 @@ void StatisticsWidget::refreshWidget()
 {
     FCT_IDENTIFICATION;
 
-    if ( !isVisible() )
+    pendingRefresh = true;
+    mapRenderDirty = true;
+
+    if ( !isVisible() || !initialized )
         return;
 
     refreshCombos();
+    pendingRefresh = false;
     refreshGraph();
 }
 
@@ -308,6 +312,8 @@ void StatisticsWidget::refreshGraph()
      /***************/
      else if ( ui->statTypeMainCombo->currentIndex() == 4 )
      {
+         ui->stackedWidget->setCurrentIndex(1);
+
          QStringList confirmed("1=2 ");
 
          if ( ui->eqslCheckBox->isChecked() )
@@ -318,6 +324,15 @@ void StatisticsWidget::refreshGraph()
 
          if ( ui->paperCheckBox->isChecked() )
              confirmed << " qsl_rcvd = 'Y' ";
+
+         const QString currentRenderKey = currentMapRenderKey(genericFilter);
+         if ( !mapRenderKey.isEmpty()
+              && !mapRenderDirty
+              && currentRenderKey == mapRenderKey )
+         {
+             mapController->invalidateSize();
+             return;
+         }
 
          QString innerCase = " CASE WHEN (" + confirmed.join("or") + ") THEN 1 ELSE 0 END ";
          QString stmtMyLocations = "SELECT DISTINCT my_gridsquare FROM contacts WHERE " + genericFilter.join(" AND ");
@@ -364,7 +379,9 @@ void StatisticsWidget::refreshGraph()
              break;
          }
 
-         ui->stackedWidget->setCurrentIndex(1);
+         mapRenderKey = currentRenderKey;
+         mapRenderDirty = false;
+         mapController->invalidateSize();
      }
 }
 
@@ -437,25 +454,12 @@ bool StatisticsWidget::event(QEvent *event)
 {
     if (event->type() == QEvent::Show)
     {
-        // We will not use refreshWidget here, even though at first glance it appears
-        // to do the same thing. The difference is that we want class constructor to be as fast as possible.
-        // Therefore, in the constructor, we do not populate the combo boxes. As a result, they are empty
-        // when first displayed and need to be loaded and then combos for Rig, Ant, etc., can be set.
-        refreshCombos();
-        ui->statTypeMainCombo->blockSignals(true);
-        ui->statTypeMainCombo->setCurrentIndex(0);
-        ui->statTypeMainCombo->blockSignals(false);
-        setSubTypesCombo(ui->statTypeMainCombo->currentIndex());
-        ui->myRigCombo->blockSignals(true);
-        ui->myRigCombo->setCurrentIndex(0);
-        ui->myRigCombo->blockSignals(false);
-        ui->myAntennaCombo->blockSignals(true);
-        ui->myAntennaCombo->setCurrentIndex(0);
-        ui->myAntennaCombo->blockSignals(false);
-        ui->userFilterCombo->blockSignals(true);
-        ui->userFilterCombo->setCurrentIndex(0);
-        ui->userFilterCombo->blockSignals(false);
-        refreshGraph();
+        if ( !initialized )
+            initializeWidget();
+        else if ( pendingRefresh )
+            refreshWidget();
+        else if ( ui->stackedWidget->currentWidget() == ui->mapPage )
+            mapController->invalidateSize();
     }
     return QWidget::event(event);  // Propagate the event further
 }
@@ -615,8 +619,7 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
     }
 
     mapController->clearGridLayers();
-    mapController->drawPointsBusy(stations, tr("Rendering QSOs..."));
-    mapController->drawShortPathsBusy(shortPaths, tr("Rendering QSOs..."));
+    mapController->drawPointsAndShortPathsBusy(stations, shortPaths, tr("Rendering QSOs..."));
     mapController->redrawGridLayer();
 }
 
@@ -750,4 +753,44 @@ void StatisticsWidget::refreshCombo(QComboBox * combo,
     combo->setModel(new SqlListModel(sqlQeury,tr("All"), this));
     combo->setCurrentText(currSelection);
     combo->blockSignals(false);
+}
+
+void StatisticsWidget::initializeWidget()
+{
+    FCT_IDENTIFICATION;
+
+    // We will not initialize the combos in the constructor. The constructor should
+    // stay fast, so the first real show populates them and sets default selections.
+    refreshCombos();
+    ui->statTypeMainCombo->blockSignals(true);
+    ui->statTypeMainCombo->setCurrentIndex(0);
+    ui->statTypeMainCombo->blockSignals(false);
+    setSubTypesCombo(ui->statTypeMainCombo->currentIndex());
+    ui->myRigCombo->blockSignals(true);
+    ui->myRigCombo->setCurrentIndex(0);
+    ui->myRigCombo->blockSignals(false);
+    ui->myAntennaCombo->blockSignals(true);
+    ui->myAntennaCombo->setCurrentIndex(0);
+    ui->myAntennaCombo->blockSignals(false);
+    ui->userFilterCombo->blockSignals(true);
+    ui->userFilterCombo->setCurrentIndex(0);
+    ui->userFilterCombo->blockSignals(false);
+
+    initialized = true;
+    pendingRefresh = false;
+    refreshGraph();
+}
+
+QString StatisticsWidget::currentMapRenderKey(const QStringList &genericFilter) const
+{
+    QStringList key;
+
+    key << QString::number(ui->statTypeMainCombo->currentIndex())
+        << QString::number(ui->statTypeSecCombo->currentIndex())
+        << genericFilter.join(QLatin1String(" AND "))
+        << QString::number(ui->eqslCheckBox->isChecked())
+        << QString::number(ui->lotwCheckBox->isChecked())
+        << QString::number(ui->paperCheckBox->isChecked());
+
+    return key.join(QLatin1Char('\n'));
 }
