@@ -30,7 +30,8 @@
           <string>Import</string>
          </property>
          <property name="icon">
-          <iconset theme="document-open"/>
+          <iconset theme="document-open">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -43,7 +44,8 @@
           <string>Export</string>
          </property>
          <property name="icon">
-          <iconset theme="document-save-as"/>
+          <iconset theme="document-save-as">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -70,7 +72,8 @@
           <string>New</string>
          </property>
          <property name="icon">
-          <iconset theme="document-new"/>
+          <iconset theme="document-new">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -83,7 +86,8 @@
           <string>Copy</string>
          </property>
          <property name="icon">
-          <iconset theme="edit-copy"/>
+          <iconset theme="edit-copy">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -96,7 +100,8 @@
           <string>Delete</string>
          </property>
          <property name="icon">
-          <iconset theme="edit-delete"/>
+          <iconset theme="edit-delete">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -188,6 +193,12 @@
          </property>
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderMinimumSectionSize">
+          <number>25</number>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>25</number>
          </attribute>
          <column>
           <property name="text">
