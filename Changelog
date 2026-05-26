@@ -16,6 +16,7 @@ TBC - 0.51.0
 - [NEW] - Online Map - Added civil, nautical, and astronomical twilight
 - [CHANGED] - Added more built-in macOS TQSL search paths (PR #1041 @aa5sh)
 - [CHANGED] - Clock - Improved timing
+- [CHANGED] - IBP - Updated Beacon statuses, enabled ZL6B 5Z4B, disabled 4S7B OH2B YV5B
 - Workaround for #1017: FT-950 was reported to jump to VFO-B
 - Fixed ADIF Export of Gridsqaure too long (issue #1028)
 - Fixed Shutdown: synchronize station-device teardown (PR #1035 @VA3THP @foldynl)
