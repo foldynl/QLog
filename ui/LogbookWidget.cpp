@@ -240,10 +240,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     else
     {
         /* Hide all */
-        for ( int i = 0; i < LogbookModel::COLUMN_LAST_ELEMENT; i++ )
-        {
+        for ( int i = 0; i < model->columnCount(); i++ )
             ui->contactTable->hideColumn(i);
-        }
+
         /* Set a basic set of columns */
         ui->contactTable->showColumn(LogbookModel::COLUMN_TIME_ON);
         ui->contactTable->showColumn(LogbookModel::COLUMN_CALL);
