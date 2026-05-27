@@ -434,6 +434,8 @@ public:
     static void setQslLabelPrintMode(int mode);
     static int getQslLabelPageSize();
     static void setQslLabelPageSize(int pageSize);
+    static QString getQslLabelImageExportPath(const QString &defaultPath);
+    static void setQslLabelImageExportPath(const QString &path);
     static int getQslLabelCustomPageSize();
     static void setQslLabelCustomPageSize(int pageSizeIndex);
     static int getQslLabelCustomCols();

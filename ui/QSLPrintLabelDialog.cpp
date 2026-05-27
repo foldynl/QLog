@@ -131,6 +131,8 @@ QSLPrintLabelDialog::QSLPrintLabelDialog(QWidget *parent) :
 
     QScroller::grabGesture(ui->previewScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     ui->previewScrollArea->viewport()->installEventFilter(this);
+
+    connect(ui->exportImagesButton, &QPushButton::clicked, this, &QSLPrintLabelDialog::exportCardImages);
 }
 
 QSLPrintLabelDialog::~QSLPrintLabelDialog()
@@ -447,6 +449,51 @@ QString QSLPrintLabelDialog::buttonContrastTextColor(const QColor &backgroundCol
     return backgroundColor.lightness() < 128 ? QStringLiteral("white") : QStringLiteral("black");
 }
 
+QString QSLPrintLabelDialog::imageExportFileName(const QSLLabelData &label, int index) const
+{
+    FCT_IDENTIFICATION;
+
+    QString base = label.callsign.trimmed().toUpper();
+
+    if ( base.isEmpty() )
+        base = QStringLiteral("qsl_card");
+
+    if ( !label.qsos.isEmpty() )
+    {
+        const QSLLabelData::QsoRow &firstQso = label.qsos.first();
+
+        if ( !firstQso.date.isEmpty() )
+            base += "_" + firstQso.date;
+        if ( !firstQso.time.isEmpty() )
+            base += "_" + firstQso.time;
+    }
+
+    QString sanitized;
+    sanitized.reserve(base.size());
+
+    for ( const QChar &ch : base )
+    {
+        if ( ch.isLetterOrNumber() || ch == '_' || ch == '-' )
+            sanitized += ch;
+        else if ( ch.isSpace() || ch == '/' || ch == ':' || ch == '.' )
+            sanitized += '_';
+    }
+
+    while ( sanitized.contains("__") )
+        sanitized.replace("__", "_");
+
+    sanitized = sanitized.trimmed();
+
+    if ( sanitized.startsWith("_") )
+        sanitized.remove(0, 1);
+    if ( sanitized.endsWith("_") )
+        sanitized.chop(1);
+    if ( sanitized.isEmpty() )
+        sanitized = QStringLiteral("qsl_card");
+
+    return QString("%1_%2.jpg").arg(sanitized, QString::number(index + 1).rightJustified(3, '0'));
+}
+
 void QSLPrintLabelDialog::updateRendererOptions()
 {
     FCT_IDENTIFICATION;
@@ -473,6 +520,7 @@ void QSLPrintLabelDialog::updatePrintModeUi()
     ui->cardSectionContent->setEnabled(directCard);
     ui->templateSectionButton->setChecked(!directCard);
     ui->cardSectionButton->setChecked(directCard);
+    ui->exportImagesButton->setVisible(directCard);
 
     ui->templateSectionButton->setArrowType(ui->templateSectionButton->isChecked() ? Qt::DownArrow : Qt::RightArrow);
     ui->templateSectionContent->setMaximumHeight((!directCard && ui->templateSectionButton->isChecked()) ? QWIDGETSIZE_MAX : 0);
@@ -993,6 +1041,7 @@ void QSLPrintLabelDialog::updatePreview()
     bool hasLabels = ( totalLabels > 0 );
     ui->printButton->setEnabled(hasLabels);
     ui->exportPdfButton->setEnabled(hasLabels);
+    ui->exportImagesButton->setEnabled(hasLabels && currentPrintMode() == QSLPrintMode::DirectCard);
 
     if ( currentPrintMode() == QSLPrintMode::DirectCard )
         ui->statusLabel->setText(tr("Cards: %1 (%2 pages)")
@@ -1108,6 +1157,101 @@ void QSLPrintLabelDialog::exportPdf()
     updateRendererOptions();
     renderer.printAll(&printer);
     askAndMarkQslSent();
+}
+
+void QSLPrintLabelDialog::exportCardImages()
+{
+    FCT_IDENTIFICATION;
+
+    if ( currentPrintMode() != QSLPrintMode::DirectCard || labelsData.isEmpty() )
+        return;
+
+    const QString lastPath = LogParam::getQslLabelImageExportPath(QDir::homePath());
+    const QString dirPath = QFileDialog::getExistingDirectory(this,
+                                                              tr("Export QSL Card Images"),
+                                                              lastPath);
+
+    if ( dirPath.isEmpty() )
+        return;
+
+    LogParam::setQslLabelImageExportPath(dirPath);
+
+    updateRendererOptions();
+
+    const QDir dir(dirPath);
+    QStringList fileNames;
+    bool hasExistingFiles = false;
+
+    for ( int i = 0; i < labelsData.size(); ++i )
+    {
+        const QString fileName = imageExportFileName(labelsData.at(i), i);
+        fileNames.append(fileName);
+
+        if ( QFileInfo::exists(dir.filePath(fileName)) )
+            hasExistingFiles = true;
+    }
+
+    if ( hasExistingFiles )
+    {
+        const QMessageBox::StandardButton answer = QMessageBox::question(
+            this,
+            tr("Export QSL Card Images"),
+            tr("Some image files already exist. Overwrite them?"),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::No);
+
+        if ( answer != QMessageBox::Yes )
+            return;
+    }
+
+    int saved = 0;
+    QStringList failedFiles;
+
+    for ( int i = 0; i < labelsData.size(); ++i )
+    {
+        const QImage cardImage = renderer.renderDirectCard(i);
+        const QString fileName = fileNames.at(i);
+
+        if ( cardImage.isNull() )
+        {
+            failedFiles.append(fileName);
+            continue;
+        }
+
+        const QString filePath = dir.filePath(fileName);
+
+        if ( cardImage.save(filePath, "JPG", 95) )
+        {
+            ++saved;
+        }
+        else
+        {
+            failedFiles.append(fileName);
+            qCWarning(runtime) << "Cannot save QSL card image" << filePath;
+        }
+    }
+
+    const QString dialogTitle = tr("Export QSL Card Images");
+
+    if ( failedFiles.isEmpty() )
+    {
+        QMessageBox::information(this,
+                                 dialogTitle,
+                                 tr("Exported %n QSL card image(s).", "", saved));
+        askAndMarkQslSent();
+        return;
+    }
+
+    QMessageBox messageBox(QMessageBox::Warning,
+                           dialogTitle,
+                           tr("Exported %1 of %2 QSL card images.")
+                               .arg(saved)
+                               .arg(labelsData.size()),
+                           QMessageBox::Ok,
+                           this);
+    messageBox.setInformativeText(tr("QSOs were not marked as sent."));
+    messageBox.setDetailedText(failedFiles.join('\n'));
+    messageBox.exec();
 }
 
 void QSLPrintLabelDialog::askAndMarkQslSent()

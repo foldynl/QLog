@@ -1489,6 +1489,17 @@ void LogParam::setQslLabelPageSize(int pageSize)
     setParam("qsllabel/page_size", pageSize);
 }
 
+QString LogParam::getQslLabelImageExportPath(const QString &defaultPath)
+{
+    const QString path = getParam("qsllabel/image_export_path", defaultPath).toString();
+    return path.isEmpty() ? defaultPath : path;
+}
+
+void LogParam::setQslLabelImageExportPath(const QString &path)
+{
+    setParam("qsllabel/image_export_path", path);
+}
+
 int LogParam::getQslLabelCustomPageSize()
 {
     return getParam("qsllabel/custom_pagesize", 0).toInt();

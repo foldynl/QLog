@@ -104,6 +104,7 @@ public:
     int pageCount() const;
     int labelCount() const;
     QImage renderPage(int pageIndex, int dpi = 150);
+    QImage renderDirectCard(int labelIndex, int dpi = 300);
     void printAll(QPrinter *printer);
 
     static QList<LabelTemplate> predefinedTemplates();
@@ -127,12 +128,16 @@ private:
     void drawPage(QPainter *painter, int pageIndex);
     void drawLabelSheetPage(QPainter *painter, int pageIndex);
     void drawDirectCardPage(QPainter *painter, int pageIndex);
+    void drawDirectCard(QPainter *painter, const QSLLabelData &label);
     QSizeF pageSizeMm() const;
     QSizeF directCardPrintableSize(const QSizeF &pageSize) const;
     DirectCardGrid directCardGrid() const;
     int directCardCols(const QSizeF &printableSize, bool rotateCard) const;
     int directCardRows(const QSizeF &printableSize, bool rotateCard) const;
+    qreal mmToUnits(const qreal mm, const qreal dpi) const;
     qreal mmToUnits(const qreal mm, const QPaintDevice *device, bool yAxis = false) const;
+    int mmToPixels(const qreal mm, int dpi) const;
+    int dotsPerMeter(int dpi) const;
     int labelsPerPage() const;
 
     LabelTemplate labelTemplate;
@@ -147,6 +152,7 @@ private:
     QSLCardLayout cardLayout;
     QImage cardBackgroundImage;
 
+    static const double MILLIMETERS_PER_INCH;
     const int PRINTER_RESOLUTION = 300;
     const double directCardPageMarginMm = 5.0;
 };

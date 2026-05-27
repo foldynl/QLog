@@ -11,6 +11,8 @@
 
 MODULE_IDENTIFICATION("qlog.core.qslprintlabelrenderer");
 
+const double QSLPrintLabelRenderer::MILLIMETERS_PER_INCH = 25.4;
+
 QSLPrintLabelRenderer::QSLPrintLabelRenderer()
 {
     FCT_IDENTIFICATION;
@@ -129,13 +131,28 @@ int QSLPrintLabelRenderer::pageCount() const
     return ( perPage > 0 ) ? (totalSlots + perPage - 1) / perPage : 0;
 }
 
+qreal QSLPrintLabelRenderer::mmToUnits(const qreal mm, const qreal dpi) const
+{
+    return mm * dpi / MILLIMETERS_PER_INCH;
+}
+
 qreal QSLPrintLabelRenderer::mmToUnits(const qreal mm,
                                        const QPaintDevice *device,
                                        bool yAxis) const
 {
     FCT_IDENTIFICATION;
 
-    return mm * (yAxis ? device->logicalDpiY() : device->logicalDpiX()) / 25.4; // to inch - DPI (px/inch)
+    return mmToUnits(mm, yAxis ? device->logicalDpiY() : device->logicalDpiX());
+}
+
+int QSLPrintLabelRenderer::mmToPixels(const qreal mm, int dpi) const
+{
+    return qRound(mmToUnits(mm, dpi));
+}
+
+int QSLPrintLabelRenderer::dotsPerMeter(int dpi) const
+{
+    return mmToPixels(1000.0, dpi);
 }
 
 void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
@@ -483,39 +500,55 @@ void QSLPrintLabelRenderer::drawDirectCardPage(QPainter *painter, int pageIndex)
                 painter->translate(slotRect.left(), slotRect.top());
             }
 
-            const QRectF cardRect(0, 0,
-                                  mmToUnits(cardLayout.cardWidthMm, device),
-                                  mmToUnits(cardLayout.cardHeightMm, device, true));
-            if ( !cardBackgroundImage.isNull() )
-                painter->drawImage(cardRect, cardBackgroundImage);
-
-            if ( printBorders )
-            {
-                painter->save();
-                painter->setPen(QPen(Qt::black, 0.5));
-                painter->setBrush(Qt::NoBrush);
-                painter->drawRect(cardRect);
-                painter->restore();
-            }
-
-            const QRectF labelRect(cardRect.left() + mmToUnits(cardLayout.labelOffsetXMm, device),
-                                   cardRect.top() + mmToUnits(cardLayout.labelOffsetYMm, device, true),
-                                   mmToUnits(cardLayout.labelWidthMm, device),
-                                   mmToUnits(cardLayout.labelHeightMm, device, true));
-
-            if ( cardLayout.labelOpaqueBackground )
-            {
-                painter->save();
-                painter->setPen(Qt::NoPen);
-                painter->setBrush(cardLayout.labelBackgroundColor);
-                painter->drawRect(labelRect);
-                painter->restore();
-            }
-
-            drawLabel(painter, labelRect, labels.at(labelIndex));
+            drawDirectCard(painter, labels.at(labelIndex));
             painter->restore();
         }
     }
+}
+
+void QSLPrintLabelRenderer::drawDirectCard(QPainter *painter, const QSLLabelData &label)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !painter )
+        return;
+
+    QPaintDevice *device = painter->device();
+
+    if ( !device )
+        return;
+
+    const QRectF cardRect(0, 0,
+                          mmToUnits(cardLayout.cardWidthMm, device),
+                          mmToUnits(cardLayout.cardHeightMm, device, true));
+
+    if ( !cardBackgroundImage.isNull() )
+        painter->drawImage(cardRect, cardBackgroundImage);
+
+    if ( printBorders )
+    {
+        painter->save();
+        painter->setPen(QPen(Qt::black, 0.5));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRect(cardRect);
+        painter->restore();
+    }
+
+    const QRectF labelRect(cardRect.left() + mmToUnits(cardLayout.labelOffsetXMm, device),
+                           cardRect.top() + mmToUnits(cardLayout.labelOffsetYMm, device, true),
+                           mmToUnits(cardLayout.labelWidthMm, device),
+                           mmToUnits(cardLayout.labelHeightMm, device, true));
+
+    if ( cardLayout.labelOpaqueBackground )
+    {
+        painter->save();
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(cardLayout.labelBackgroundColor);
+        painter->drawRect(labelRect);
+        painter->restore();
+    }
+
+    drawLabel(painter, labelRect, label);
 }
 
 QSizeF QSLPrintLabelRenderer::pageSizeMm() const
@@ -635,12 +668,12 @@ QImage QSLPrintLabelRenderer::renderPage(int pageIndex, int dpi)
 
     QSizeF pageSizeMm = this->pageSizeMm();
 
-    const int widthPx = qRound(pageSizeMm.width() * dpi / 25.4);
-    const int heightPx = qRound(pageSizeMm.height() * dpi / 25.4);
+    const int widthPx = mmToPixels(pageSizeMm.width(), dpi);
+    const int heightPx = mmToPixels(pageSizeMm.height(), dpi);
 
     QImage image(widthPx, heightPx, QImage::Format_ARGB32_Premultiplied);
-    image.setDotsPerMeterX(qRound(dpi / 25.4 * 1000.0));
-    image.setDotsPerMeterY(qRound(dpi / 25.4 * 1000.0));
+    image.setDotsPerMeterX(dotsPerMeter(dpi));
+    image.setDotsPerMeterY(dotsPerMeter(dpi));
     image.fill(Qt::white);
 
     QPainter painter(&image);
@@ -648,6 +681,41 @@ QImage QSLPrintLabelRenderer::renderPage(int pageIndex, int dpi)
     painter.setRenderHint(QPainter::TextAntialiasing, true);
 
     drawPage(&painter, pageIndex);
+
+    painter.end();
+    return image;
+}
+
+QImage QSLPrintLabelRenderer::renderDirectCard(int labelIndex, int dpi)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << labelIndex << dpi;
+
+    if ( dpi <= 0 )
+    {
+        qCWarning(runtime) << "Invalid DPI" << dpi;
+        return QImage();
+    }
+
+    if ( labelIndex < 0 || labelIndex >= labels.size() )
+    {
+        qCWarning(runtime) << "Invalid label index" << labelIndex;
+        return QImage();
+    }
+
+    const int widthPx = mmToPixels(cardLayout.cardWidthMm, dpi);
+    const int heightPx = mmToPixels(cardLayout.cardHeightMm, dpi);
+
+    QImage image(widthPx, heightPx, QImage::Format_ARGB32_Premultiplied);
+    image.setDotsPerMeterX(dotsPerMeter(dpi));
+    image.setDotsPerMeterY(dotsPerMeter(dpi));
+    image.fill(Qt::white);
+
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+
+    drawDirectCard(&painter, labels.at(labelIndex));
 
     painter.end();
     return image;

@@ -34,6 +34,7 @@ private slots:
     void nextPage();
     void print();
     void exportPdf();
+    void exportCardImages();
     void templateChanged(int index);
     void skipChanged(int value);
     void zoomChanged(int value);
@@ -76,6 +77,7 @@ private:
     QSLCardLayout buildCardLayout() const;
     LabelStyleOptions buildStyleOptions() const;
     QString buttonContrastTextColor(const QColor &backgroundColor) const;
+    QString imageExportFileName(const QSLLabelData &label, int index) const;
     void updateRendererOptions();
     void updatePrintModeUi();
     void updateLabelTextColorUi();
