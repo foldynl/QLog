@@ -84,6 +84,7 @@ SOURCES += \
         core/FldigiTCPServer.cpp \
         core/LOVDownloader.cpp \
         core/LogDatabase.cpp \
+        core/ContactSync.cpp \
         core/LogLocale.cpp \
         core/LogParam.cpp \
         core/MembershipQE.cpp \
@@ -173,6 +174,7 @@ SOURCES += \
         ui/AlertWidget.cpp \
         ui/AwardsDialog.cpp \
         ui/DXCCSubmissionDialog.cpp \
+        ui/SyncDialog.cpp \
         ui/BandmapWidget.cpp \
         ui/CWConsoleWidget.cpp \
         ui/ChatWidget.cpp \
@@ -260,6 +262,7 @@ HEADERS += \
         core/FldigiTCPServer.h \
         core/LOVDownloader.h \
         core/LogDatabase.h \
+        core/ContactSync.h \
         core/LogLocale.h \
         core/LogParam.h \
         core/MembershipQE.h \
@@ -367,6 +370,7 @@ HEADERS += \
         ui/AlertWidget.h \
         ui/AwardsDialog.h \
         ui/DXCCSubmissionDialog.h \
+        ui/SyncDialog.h \
         ui/BandmapWidget.h \
         ui/CWConsoleWidget.h \
         ui/ChatWidget.h \
@@ -437,6 +441,7 @@ FORMS += \
         ui/AlertWidget.ui \
         ui/AwardsDialog.ui \
         ui/DXCCSubmissionDialog.ui \
+        ui/SyncDialog.ui \
         ui/BandmapWidget.ui \
         ui/CWConsoleWidget.ui \
         ui/ChatWidget.ui \

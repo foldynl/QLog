@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SyncDialog</class>
+ <widget class="QDialog" name="SyncDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>560</width>
+    <height>340</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Contact Sync</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <item>
+    <widget class="QGroupBox" name="settingsGroup">
+     <property name="title">
+      <string>Settings</string>
+     </property>
+     <layout class="QFormLayout" name="settingsFormLayout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QCheckBox" name="enabledCheckBox">
+        <property name="text">
+         <string>Enable contact sync</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="folderLabel">
+        <property name="text">
+         <string>Sync folder:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="folderRowLayout">
+        <item>
+         <widget class="QLineEdit" name="folderLineEdit">
+          <property name="placeholderText">
+           <string>e.g. ~/Dropbox/QLogSync</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="browseButton">
+          <property name="text">
+           <string>Browse…</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="dupePolicyLabel">
+        <property name="text">
+         <string>Duplicate handling:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="dupePolicyComboBox">
+        <property name="toolTip">
+         <string>How to handle a remote QSO that matches an existing local QSO by callsign, mode, band, sat, and start time (±30 min) but has a different UUID — typically because both peers logged the QSO before sync was set up.</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>Merge (converge on shared UUID)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Skip (keep both rows independent)</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="nodeIdLabel">
+        <property name="text">
+         <string>Node ID:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="nodeIdRowLayout">
+        <item>
+         <widget class="QLineEdit" name="nodeIdLineEdit">
+          <property name="placeholderText">
+           <string>hostname or any unique label</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="saveNodeIdButton">
+          <property name="text">
+           <string>Save</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="statusGroup">
+     <property name="title">
+      <string>Status</string>
+     </property>
+     <layout class="QFormLayout" name="statusFormLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="lastFlushLabel">
+        <property name="text">
+         <string>Last flush:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="lastFlushValueLabel">
+        <property name="text">
+         <string>never</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lastPullLabel">
+        <property name="text">
+         <string>Last pull:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="lastPullValueLabel">
+        <property name="text">
+         <string>never</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="pendingLabel">
+        <property name="text">
+         <string>Pending changes:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="pendingValueLabel">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="buttonsRowLayout">
+        <item>
+         <widget class="QPushButton" name="flushNowButton">
+          <property name="text">
+           <string>Flush Now</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pullNowButton">
+          <property name="text">
+           <string>Pull Now</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SyncDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>0</x>
+     <y>0</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

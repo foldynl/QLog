@@ -82,6 +82,8 @@
     <addaction name="separator"/>
     <addaction name="actionQSLGallery"/>
     <addaction name="actionPrintQslLabels"/>
+    <addaction name="separator"/>
+    <addaction name="actionContactSync"/>
    </widget>
    <widget class="QMenu" name="menuEquipment">
     <property name="title">
@@ -612,6 +614,17 @@
    </property>
    <property name="toolTip">
     <string>Generate a list of contacts to submit for ARRL DXCC award credit</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionContactSync">
+   <property name="text">
+    <string>Contact &amp;Sync…</string>
+   </property>
+   <property name="toolTip">
+    <string>Configure contact sync between QLog installs</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -1580,6 +1593,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionContactSync</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showSyncDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>456</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>actionAwards</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1994,6 +2023,7 @@
   <slot>QSOFilterSetting()</slot>
   <slot>showAwards()</slot>
   <slot>showDXCCSubmission()</slot>
+  <slot>showSyncDialog()</slot>
   <slot>alertRuleSetting()</slot>
   <slot>showAlerts()</slot>
   <slot>clearAlerts()</slot>

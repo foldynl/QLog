@@ -3,6 +3,7 @@
 #include <QtSql>
 #include <QDebug>
 #include <QUuid>
+#include <QHostInfo>
 #include "core/Migration.h"
 #include "debug.h"
 #include "data/Data.h"
@@ -329,6 +330,9 @@ bool DBSchemaMigration::functionMigration(int version)
     case 35:
         ret = removeSettings2DB();
         break;
+    case 39:
+        ret = setupContactSync();
+        break;
     default:
         ret = true;
     }
@@ -622,6 +626,146 @@ bool DBSchemaMigration::createTriggers()
                               "END;")))
     {
         qWarning() << "Cannot create trigger update_callsign_contacts_autovalue " << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+bool DBSchemaMigration::setupContactSync()
+{
+    FCT_IDENTIFICATION;
+
+    // Seed sync_runtime with a human-readable node id (hostname, falling
+    // back to the existing log GUID). The triggers below read the current
+    // value at fire time, so the user can later change it via the Sync
+    // dialog without rebuilding any trigger.
+    QString defaultNodeId = QHostInfo::localHostName().trimmed();
+    if ( defaultNodeId.isEmpty() )
+        defaultNodeId = LogParam::getLogID();
+
+    QSqlQuery seed;
+    if ( !seed.prepare("INSERT OR REPLACE INTO sync_runtime (key, value) "
+                       "VALUES ('self_node_id', :v)") )
+    {
+        qWarning() << "Cannot prepare sync_runtime seed" << seed.lastError();
+        return false;
+    }
+    seed.bindValue(":v", defaultNodeId);
+    if ( !seed.exec() )
+    {
+        qWarning() << "Cannot seed sync_runtime" << seed.lastError();
+        return false;
+    }
+
+    // SQL fragments reused below. uuidExpr generates a v4-shaped UUID purely
+    // in SQLite so each row gets a distinct value in a single UPDATE.
+    static const QString uuidExpr =
+        "lower(hex(randomblob(4))) || '-' || "
+        "lower(hex(randomblob(2))) || '-4' || "
+        "substr(lower(hex(randomblob(2))), 2) || '-' || "
+        "substr('89ab', abs(random()) % 4 + 1, 1) || "
+        "substr(lower(hex(randomblob(2))), 2) || '-' || "
+        "lower(hex(randomblob(6)))";
+
+    static const QString nodeSelect =
+        "(SELECT value FROM sync_runtime WHERE key = 'self_node_id')";
+
+    // Backfill sync metadata for existing contacts. Done before any sync
+    // trigger exists, so no AFTER UPDATE bumper fires during the mass write.
+    QSqlQuery backfill;
+    if ( !backfill.prepare(QStringLiteral(
+            "UPDATE contacts SET "
+            "    qso_uuid    = COALESCE(qso_uuid, ") + uuidExpr +
+            QStringLiteral("), "
+            "    updated_at  = COALESCE(updated_at, end_time, start_time, "
+            "                           strftime('%Y-%m-%dT%H:%M:%fZ', 'now')), "
+            "    origin_node = COALESCE(origin_node, :node)")) )
+    {
+        qWarning() << "Cannot prepare contacts backfill" << backfill.lastError();
+        return false;
+    }
+    backfill.bindValue(":node", defaultNodeId);
+    if ( !backfill.exec() )
+    {
+        qWarning() << "Cannot backfill contacts" << backfill.lastError();
+        return false;
+    }
+
+    QSqlQuery q;
+
+    // AFTER INSERT: auto-fill qso_uuid / updated_at / origin_node when the
+    // caller didn't pre-set them. WHEN guard skips the inner UPDATE when all
+    // three are already set, so a future sync-apply path won't cascade into
+    // the AFTER UPDATE bumper. Built via concatenation (not arg) so % in the
+    // strftime format reaches SQLite verbatim.
+    const QString insertTrigger =
+        QStringLiteral("CREATE TRIGGER contacts_sync_insert "
+                       "AFTER INSERT ON contacts "
+                       "FOR EACH ROW "
+                       "WHEN NEW.qso_uuid IS NULL "
+                       "  OR NEW.updated_at IS NULL "
+                       "  OR NEW.origin_node IS NULL "
+                       "BEGIN "
+                       "  UPDATE contacts "
+                       "     SET qso_uuid    = COALESCE(NEW.qso_uuid, ") + uuidExpr +
+        QStringLiteral("), "
+                       "         updated_at  = COALESCE(NEW.updated_at, "
+                       "                                strftime('%Y-%m-%dT%H:%M:%fZ', 'now')), "
+                       "         origin_node = COALESCE(NEW.origin_node, ") + nodeSelect +
+        QStringLiteral(") "
+                       "   WHERE id = NEW.id; "
+                       "END");
+
+    if ( !q.exec(insertTrigger) )
+    {
+        qWarning() << "Cannot create contacts_sync_insert" << q.lastError();
+        return false;
+    }
+
+    // AFTER UPDATE: bump updated_at and re-stamp origin_node on every local
+    // edit, unless the caller already set updated_at explicitly (the sync
+    // apply path). origin_node has to follow the editor: a row pulled from
+    // a peer keeps that peer's id, so a later local edit would otherwise
+    // stay invisible to the writer's "origin_node = self" filter and never
+    // get journaled out. The IS-distinct-from check on NEW vs OLD also
+    // prevents the inner UPDATE from re-triggering itself.
+    if ( !q.exec(QStringLiteral("CREATE TRIGGER contacts_sync_update "
+                                "AFTER UPDATE ON contacts "
+                                "FOR EACH ROW "
+                                "WHEN NEW.updated_at IS OLD.updated_at "
+                                "BEGIN "
+                                "  UPDATE contacts "
+                                "     SET updated_at  = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), "
+                                "         origin_node = ") + nodeSelect +
+                 QStringLiteral(" "
+                                "   WHERE id = NEW.id; "
+                                "END")) )
+    {
+        qWarning() << "Cannot create contacts_sync_update" << q.lastError();
+        return false;
+    }
+
+    // BEFORE DELETE: record a tombstone so the sync layer can propagate the
+    // delete to peers. Origin is this install's node id (the deleter), not
+    // the row's original creator.
+    const QString tombTrigger =
+        QStringLiteral("CREATE TRIGGER contacts_record_tombstone "
+                       "BEFORE DELETE ON contacts "
+                       "FOR EACH ROW "
+                       "WHEN OLD.qso_uuid IS NOT NULL "
+                       "BEGIN "
+                       "  INSERT OR REPLACE INTO contacts_tombstones "
+                       "    (qso_uuid, deleted_at, origin_node) "
+                       "  VALUES "
+                       "    (OLD.qso_uuid, "
+                       "     strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), ") + nodeSelect +
+        QStringLiteral("); "
+                       "END");
+
+    if ( !q.exec(tombTrigger) )
+    {
+        qWarning() << "Cannot create contacts_record_tombstone" << q.lastError();
         return false;
     }
 
@@ -1204,7 +1348,10 @@ bool DBSchemaMigration::refreshUploadStatusTrigger()
                     "                     'hamlogeu_qso_upload_date', "
                     "                     'hamlogeu_qso_upload_status', "
                     "                     'hamqth_qso_upload_date', "
-                    "                     'hamqth_qso_upload_status')");
+                    "                     'hamqth_qso_upload_status', "
+                    "                     'qso_uuid', "
+                    "                     'updated_at', "
+                    "                     'origin_node')");
 
     if ( !query.exec() )
     {
