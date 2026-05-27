@@ -31,6 +31,24 @@ public:
     static QString getLogID();
 
     /*********
+     * Contact Sync
+     ********/
+    static bool    setSyncEnabled(bool enabled);
+    static bool    getSyncEnabled();
+    static bool    setSyncFolder(const QString &path);
+    static QString getSyncFolder();
+    static bool    setSyncLastFlush(const QString &iso);
+    static QString getSyncLastFlush();
+    static bool    setSyncLastPull(const QString &iso);
+    static QString getSyncLastPull();
+    static bool    setSyncDuplicatePolicy(int value);
+    static int     getSyncDuplicatePolicy();
+    static bool    setSyncUpsertWatermark(const QString &iso);
+    static QString getSyncUpsertWatermark();
+    static bool    setSyncDeleteWatermark(const QString &iso);
+    static QString getSyncDeleteWatermark();
+
+    /*********
      * Contest
      ********/
     static bool setContestSeqnoType(const QVariant &data);

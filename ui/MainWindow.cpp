@@ -23,6 +23,8 @@
 #include "ui/QSOFilterDialog.h"
 #include "ui/AwardsDialog.h"
 #include "ui/DXCCSubmissionDialog.h"
+#include "ui/SyncDialog.h"
+#include "core/ContactSync.h"
 #include "core/PropConditions.h"
 #include "data/MainLayoutProfile.h"
 #include "ui/EditActivitiesDialog.h"
@@ -468,6 +470,44 @@ MainWindow::MainWindow(QWidget* parent) :
     //restoreConnectionStates();
 
     setupActivitiesMenu();
+
+    // Journal local changes within milliseconds — these signals only fire from
+    // UI-driven write paths (manual log entry, edit, delete). The 30 s timer
+    // in ContactSync still catches ADIF imports and digital-mode auto-logs.
+    //
+    // We can't use Qt::QueuedConnection here: contactUpdated carries a
+    // QSqlRecord& and contactDeleted a const QSqlRecord&, and Qt's queue
+    // can't copy reference arguments without an explicit metatype. Instead
+    // we accept the signal directly and schedule the flush onto the next
+    // event-loop iteration via QTimer::singleShot(0). That gives us the
+    // same "fire after submitAll() commits" semantics — which matters
+    // because contactUpdated / contactDeleted are emitted from QSqlTable
+    // Model::beforeUpdate / beforeDelete, before the SQL is actually sent.
+    ContactSync *sync = ContactSync::instance();
+    auto deferredFlush = [sync]()
+    {
+        QTimer::singleShot(0, sync, &ContactSync::requestFlush);
+    };
+    connect(ui->newContactWidget, &NewContactWidget::contactAdded,
+            sync, [deferredFlush](QSqlRecord) { deferredFlush(); });
+    connect(ui->logbookWidget, &LogbookWidget::contactUpdated,
+            sync, [deferredFlush](QSqlRecord&) { deferredFlush(); });
+    connect(ui->logbookWidget, &LogbookWidget::contactDeleted,
+            sync, [deferredFlush](const QSqlRecord&) { deferredFlush(); });
+
+    // When a pull applies remote inserts / updates / deletes to the
+    // contacts table, the LogbookWidget's QSqlTableModel doesn't auto-
+    // refresh — it only sees changes that go through its own setData /
+    // submitAll. Hook ContactSync::pulled so any non-zero apply triggers
+    // a refresh of the logbook view.
+    connect(sync, &ContactSync::pulled,
+            this, [this](int applied)
+            {
+                if ( applied > 0 )
+                    ui->logbookWidget->updateTable();
+            });
+
+    sync->start();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -1917,6 +1957,14 @@ void MainWindow::showDXCCSubmission()
     FCT_IDENTIFICATION;
 
     DXCCSubmissionDialog dialog(this);
+    dialog.exec();
+}
+
+void MainWindow::showSyncDialog()
+{
+    FCT_IDENTIFICATION;
+
+    SyncDialog dialog(this);
     dialog.exec();
 }
 
