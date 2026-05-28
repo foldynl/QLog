@@ -728,7 +728,7 @@ bool AdiFormat::readContact(QMap<QString, QVariant>& contact)
             return true;
         }
 
-        if (!value.isEmpty())
+        if (!field.isEmpty())
         {
             contact[field] = QVariant(value);
         }

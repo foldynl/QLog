@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS += CallsignTest \
+           AdiFormatTest \
            AdifRecoveryTest \
            CredentialStoreTest \
            DataTest \
