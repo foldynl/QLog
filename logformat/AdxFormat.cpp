@@ -7,7 +7,7 @@
 MODULE_IDENTIFICATION("qlog.logformat.adxformat");
 
 AdxFormat::AdxFormat(QTextStream &stream) :
-    AdiFormat(stream),
+    AdiFormat(stream, false),
     writer(nullptr),
     reader(nullptr)
 {
@@ -130,9 +130,13 @@ void AdxFormat::writeField(const QString &name,
                                 << value
                                 << type;
 
-    if (value.isEmpty() || !presenceCondition ) return;
+    const QString outputValue(normalizeLineBreaks(value,
+                                                  preserveFieldLineBreaks(name, type),
+                                                  QStringLiteral("\n")));
 
-    writer->writeTextElement(name.toUpper(), value);
+    if (outputValue.isEmpty() || !presenceCondition ) return;
+
+    writer->writeTextElement(name.toUpper(), outputValue);
 }
 
 void AdxFormat::writeSQLRecord(const QSqlRecord &record, QMap<QString, QString> *applTags)

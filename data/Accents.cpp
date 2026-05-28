@@ -13302,6 +13302,12 @@ QString Data::removeAccents(const QString &input)
     {
         const char16_t charInt = character.unicode();
 
+        if ( charInt == '\r' || charInt == '\n' )
+        {
+            ret.append(character);
+            continue;
+        }
+
         // skip the non-printable chars
         if ( charInt < 32 )
             continue;

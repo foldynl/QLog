@@ -6,7 +6,8 @@
 class AdiFormat : public LogFormat
 {
 public:
-    explicit AdiFormat(QTextStream& stream);
+    explicit AdiFormat(QTextStream& stream,
+                       bool preserveFieldLengths = true);
 
     virtual bool importNext(QSqlRecord& ) override;
 
@@ -44,6 +45,10 @@ protected:
                               QSqlRecord &record);
     void contactFields2SQLRecord(QMap<QString, QVariant> &contact,
                               QSqlRecord &record);
+    static bool preserveFieldLineBreaks(const QString &name, const QString &type);
+    static QString normalizeLineBreaks(const QString &value,
+                                       bool preserveLineBreaks,
+                                       const QString &lineBreak);
 
     enum OutputFieldFormatter
     {
@@ -118,6 +123,7 @@ private:
     static void preprocessINTLField(const QString &fieldName,
                                     const QString &fieldIntlName,
                                     QSqlRecord &contact);
+    static bool isMultilineField(const QString &name);
 
     QVariantMap headerFields;
     ParserState state = START;

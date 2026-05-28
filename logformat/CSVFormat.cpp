@@ -94,5 +94,12 @@ QString CSVFormat::csvStringValue(const QString &value)
 {
     FCT_IDENTIFICATION;
 
-    return ((value.contains(delimiter))? "\"" + value + "\"" : value);
+    QString csvValue(value);
+    csvValue.replace("\"", "\"\"");
+
+    return ( csvValue.contains(delimiter)
+             || csvValue.contains('\n')
+             || csvValue.contains('\r')
+             || csvValue.contains('"') ) ? "\"" + csvValue + "\""
+                                        : csvValue;
 }

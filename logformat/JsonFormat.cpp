@@ -51,13 +51,16 @@ void JsonFormat::writeField(const QString &name,
                                 << value
                                 << type;
 
-    if (value.isEmpty() || !presenceCondition) return;
+    const QString outputValue(normalizeLineBreaks(value,
+                                                  preserveFieldLineBreaks(name, type),
+                                                  QStringLiteral("\n")));
 
-    contact[name] = value;
+    if (outputValue.isEmpty() || !presenceCondition) return;
+
+    contact[name] = outputValue;
 }
 
 bool JsonFormat::importNext(QSqlRecord&)
 {
     return false;
 }
-

@@ -73,7 +73,9 @@ void AdiFormat::writeField(const QString &name, bool presenceCondition,
     if (!presenceCondition) return;
 
     /* ADIF does not support UTF-8 characterset therefore the Accents are remove */
-    QString accentless(Data::removeAccents(value));
+    const QString accentless(normalizeLineBreaks(Data::removeAccents(value),
+                                                 preserveFieldLineBreaks(name, type),
+                                                 QStringLiteral("\r\n")));
 
     qCDebug(runtime) << "Accentless: " << accentless;
 
@@ -667,6 +669,48 @@ void AdiFormat::preprocessINTLField(const QString &fieldName,
     }
 }
 
+bool AdiFormat::isMultilineField(const QString &name)
+{
+    static const QSet<QString> multilineFields({
+        QStringLiteral("address"),
+        QStringLiteral("address_intl"),
+        QStringLiteral("notes"),
+        QStringLiteral("notes_intl"),
+        QStringLiteral("qslmsg"),
+        QStringLiteral("qslmsg_intl"),
+        QStringLiteral("qslmsg_rcvd"),
+        QStringLiteral("rig"),
+        QStringLiteral("rig_intl")
+    });
+
+    const QString lowerName = name.toLower();
+
+    return multilineFields.contains(lowerName)
+           || lowerName.startsWith(QStringLiteral("app_"));
+}
+
+bool AdiFormat::preserveFieldLineBreaks(const QString &name, const QString &type)
+{
+    return type.compare(QStringLiteral("M"), Qt::CaseInsensitive) == 0
+           || (type.isEmpty() && isMultilineField(name));
+}
+
+QString AdiFormat::normalizeLineBreaks(const QString &value,
+                                       bool preserveLineBreaks,
+                                       const QString &lineBreak)
+{
+    QString normalized(value);
+    normalized.replace(QStringLiteral("\r\n"), QStringLiteral("\n"));
+    normalized.replace(QLatin1Char('\r'), QLatin1Char('\n'));
+
+    if ( preserveLineBreaks )
+        normalized.replace(QLatin1Char('\n'), lineBreak);
+    else
+        normalized.remove(QLatin1Char('\n'));
+
+    return normalized;
+}
+
 bool AdiFormat::readContact(QMap<QString, QVariant>& contact)
 {
     FCT_IDENTIFICATION;
@@ -693,10 +737,13 @@ bool AdiFormat::readContact(QMap<QString, QVariant>& contact)
     return false;
 }
 
-AdiFormat::AdiFormat(QTextStream &stream) :
+AdiFormat::AdiFormat(QTextStream &stream, bool preserveFieldLengths) :
     LogFormat(stream)
 {
     FCT_IDENTIFICATION;
+
+    if ( preserveFieldLengths && stream.device() )
+        stream.device()->setTextModeEnabled(false);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
     stream.setEncoding(QStringConverter::Latin1);
