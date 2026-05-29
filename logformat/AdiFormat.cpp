@@ -132,7 +132,19 @@ void AdiFormat::writeSQLRecord(const QSqlRecord &record,
     const QStringList &keys = fields.keys();
     for (const QString &key : keys)
     {
-        writeField(key, ALWAYS_PRESENT, fields.value(key).toString());
+        const QJsonValue fieldValue = fields.value(key);
+        if ( fieldValue.isObject() )
+        {
+            const QJsonObject fieldObject = fieldValue.toObject();
+            writeField(key,
+                       ALWAYS_PRESENT,
+                       fieldObject.value(QStringLiteral("value")).toString(),
+                       fieldObject.value(QStringLiteral("type")).toString());
+        }
+        else
+        {
+            writeField(key, ALWAYS_PRESENT, fieldValue.toString());
+        }
     }
 
     /* Add application-specific tags */

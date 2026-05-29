@@ -113,9 +113,79 @@ void AdxFormat::exportContact(const QSqlRecord& record, QMap<QString, QString> *
 
     writer->writeStartElement("RECORD");
 
-    writeSQLRecord(record, applTags);
+    QSqlRecord exportRecord(record);
+    normalizeGridFields(exportRecord);
+
+    writeSQLRecord(exportRecord, applTags);
 
     writer->writeEndElement();
+}
+
+QString AdxFormat::applicationFieldKey(const QString &programId,
+                                       const QString &fieldName)
+{
+    return QStringLiteral("app_%1_%2").arg(programId, fieldName).toLower();
+}
+
+QString AdxFormat::attributeValue(const QXmlStreamAttributes &attributes,
+                                  const QString &name)
+{
+    for (const QXmlStreamAttribute &attribute : attributes)
+    {
+        if ( attribute.name().compare(name, Qt::CaseInsensitive) == 0 )
+            return attribute.value().toString();
+    }
+
+    return QString();
+}
+
+bool AdxFormat::splitApplicationFieldName(const QString &name,
+                                          QString &programId,
+                                          QString &fieldName)
+{
+    const QString prefix(QStringLiteral("app_"));
+    if ( !name.startsWith(prefix, Qt::CaseInsensitive) )
+        return false;
+
+    const int fieldStart = name.indexOf(QLatin1Char('_'), prefix.length());
+    if ( fieldStart <= prefix.length() )
+        return false;
+
+    programId = name.mid(prefix.length(), fieldStart - prefix.length());
+    fieldName = name.mid(fieldStart + 1);
+
+    return !programId.isEmpty() && !fieldName.isEmpty();
+}
+
+bool AdxFormat::writeApplicationField(const QString &name,
+                                      bool presenceCondition,
+                                      const QString &value,
+                                      const QString &type)
+{
+    QString programId;
+    QString fieldName;
+    if ( !splitApplicationFieldName(name, programId, fieldName) )
+        return false;
+
+    if ( !presenceCondition )
+        return true;
+
+    const QString outputType = type.isEmpty() ? QStringLiteral("M") : type.toUpper();
+    const QString outputValue(normalizeLineBreaks(value,
+                                                  preserveFieldLineBreaks(name, outputType),
+                                                  QStringLiteral("\n")));
+
+    if ( outputValue.isEmpty() )
+        return true;
+
+    writer->writeStartElement("APP");
+    writer->writeAttribute("PROGRAMID", programId);
+    writer->writeAttribute("FIELDNAME", fieldName);
+    writer->writeAttribute("TYPE", outputType);
+    writer->writeCharacters(outputValue);
+    writer->writeEndElement();
+
+    return true;
 }
 
 void AdxFormat::writeField(const QString &name,
@@ -129,6 +199,9 @@ void AdxFormat::writeField(const QString &name,
                                 << presenceCondition
                                 << value
                                 << type;
+
+    if ( writeApplicationField(name, presenceCondition, value, type) )
+        return;
 
     const QString outputValue(normalizeLineBreaks(value,
                                                   preserveFieldLineBreaks(name, type),
@@ -175,7 +248,31 @@ bool AdxFormat::readContact(QVariantMap & contact)
             while (reader->readNextStartElement() )
             {
                 qCDebug(runtime)<<"adding element " << reader->name();
-                contact[reader->name().toLatin1().toLower()] = QVariant(reader->readElementText());
+                if ( reader->name().compare(QStringLiteral("APP"), Qt::CaseInsensitive) == 0 )
+                {
+                    const QXmlStreamAttributes attributes = reader->attributes();
+                    const QString programId = attributeValue(attributes, QStringLiteral("PROGRAMID"));
+                    const QString fieldName = attributeValue(attributes, QStringLiteral("FIELDNAME"));
+                    const QString type = attributeValue(attributes, QStringLiteral("TYPE"));
+                    const QString value = reader->readElementText();
+
+                    if ( !programId.isEmpty() && !fieldName.isEmpty() )
+                    {
+                        QVariantMap appField;
+                        appField.insert(QStringLiteral("value"), value);
+                        if ( !type.isEmpty() )
+                            appField.insert(QStringLiteral("type"), type.toUpper());
+                        contact[applicationFieldKey(programId, fieldName)] = appField;
+                    }
+                    else
+                    {
+                        contact[reader->name().toLatin1().toLower()] = QVariant(value);
+                    }
+                }
+                else
+                {
+                    contact[reader->name().toLatin1().toLower()] = QVariant(reader->readElementText());
+                }
             }
             return true;
         }
