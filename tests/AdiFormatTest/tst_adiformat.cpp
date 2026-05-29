@@ -1,5 +1,7 @@
 #include <QtTest>
 #include <QBuffer>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QSqlField>
 #include <QSqlRecord>
 
@@ -49,6 +51,7 @@ private slots:
     void exportStartWritesAdifHeader();
     void writeSqlRecordMapsKnownFields();
     void writeSqlRecordExportsApplicationTags();
+    void writeSqlRecordExportsRawFieldsFiltersInvalidNames();
     void exportContactNormalizesGridAndTerminatesRecord();
     void importNextMapsAdiFieldsAndStoresUnknownFields();
     void importNextStoresZeroLengthFields();
@@ -317,6 +320,41 @@ void AdiFormatTest::writeSqlRecordExportsApplicationTags()
 
     QVERIFY(output.contains("<APP_QLOG_NOTE:12>Line1\r\nLine2\n"));
     QVERIFY(output.contains("<APP_QLOG_FLAG:1>Y\n"));
+}
+
+void AdiFormatTest::writeSqlRecordExportsRawFieldsFiltersInvalidNames()
+{
+    QSqlRecord record;
+    QJsonObject fields;
+    fields.insert(QStringLiteral("UNKNOWN_FIELD"), QStringLiteral("ok"));
+    fields.insert(QStringLiteral("APP_QLOG_RAW"), QStringLiteral("Line1\nLine2"));
+    fields.insert(QStringLiteral("BAD-NAME"), QStringLiteral("dash"));
+    fields.insert(QStringLiteral("1BAD"), QStringLiteral("digit"));
+    fields.insert(QStringLiteral("xmlBAD"), QStringLiteral("xml"));
+    fields.insert(QStringLiteral("BAD NAME"), QStringLiteral("space"));
+    fields.insert(QStringLiteral("BAD<NAME"), QStringLiteral("angle"));
+    fields.insert(QStringLiteral("APP_BAD"), QStringLiteral("shortapp"));
+    appendField(record,
+                QStringLiteral("fields"),
+                QString(QJsonDocument(fields).toJson(QJsonDocument::Compact)));
+
+    QByteArray output;
+    QBuffer buffer(&output);
+    QVERIFY(buffer.open(QIODevice::WriteOnly | QIODevice::Text));
+    QTextStream stream(&buffer);
+    TestAdiFormat format(stream);
+
+    format.writeRecordForTest(record);
+    stream.flush();
+
+    QVERIFY(output.contains("<UNKNOWN_FIELD:2>ok\n"));
+    QVERIFY(output.contains("<APP_QLOG_RAW:12>Line1\r\nLine2\n"));
+    QVERIFY(!output.contains("dash"));
+    QVERIFY(!output.contains("digit"));
+    QVERIFY(!output.contains("xml"));
+    QVERIFY(!output.contains("space"));
+    QVERIFY(!output.contains("angle"));
+    QVERIFY(!output.contains("shortapp"));
 }
 
 void AdiFormatTest::exportContactNormalizesGridAndTerminatesRecord()

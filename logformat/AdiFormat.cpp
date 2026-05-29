@@ -132,6 +132,12 @@ void AdiFormat::writeSQLRecord(const QSqlRecord &record,
     const QStringList &keys = fields.keys();
     for (const QString &key : keys)
     {
+        if ( !isExportableFieldName(key) )
+        {
+            qCDebug(runtime) << "Skipping invalid ADIF field from fields JSON:" << key;
+            continue;
+        }
+
         const QJsonValue fieldValue = fields.value(key);
         if ( fieldValue.isObject() )
         {
@@ -156,6 +162,37 @@ void AdiFormat::writeSQLRecord(const QSqlRecord &record,
            writeField(appkey, ALWAYS_PRESENT, applTags->value(appkey));
        }
     }
+}
+
+bool AdiFormat::isExportableFieldName(const QString &name)
+{
+    const int length = name.length();
+    if ( length == 0 )
+        return false;
+
+    const QChar * const data = name.constData();
+    const ushort first = data[0].unicode();
+    if ( !((first >= 'A' && first <= 'Z') || (first >= 'a' && first <= 'z')) )
+        return false;
+
+    if ( name.startsWith(QStringLiteral("xml"), Qt::CaseInsensitive) )
+        return false;
+
+    for ( int i = 0; i < length; ++i )
+    {
+        const ushort c = data[i].unicode();
+        const bool isLetter = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+        const bool isDigit = c >= '0' && c <= '9';
+
+        if ( !isLetter && !isDigit && c != '_' )
+            return false;
+    }
+
+    if ( !name.startsWith(QStringLiteral("APP_"), Qt::CaseInsensitive) )
+        return true;
+
+    const int fieldStart = name.indexOf(QLatin1Char('_'), 4);
+    return fieldStart > 4 && fieldStart < length - 1;
 }
 
 void AdiFormat::readField(QString& field, QString& value)

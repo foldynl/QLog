@@ -123,6 +123,7 @@ private:
     static void preprocessINTLField(const QString &fieldName,
                                     const QString &fieldIntlName,
                                     QSqlRecord &contact);
+    static bool isExportableFieldName(const QString &name);
     static bool isMultilineField(const QString &name);
 
     QVariantMap headerFields;

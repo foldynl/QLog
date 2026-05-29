@@ -17,6 +17,7 @@ private slots:
     void initTestCase();
     void exportStartWritesAdxHeader();
     void writeSqlRecordExportsApplicationTags();
+    void writeSqlRecordExportsRawFieldsFiltersInvalidNames();
     void exportContactNormalizesGridAndTerminatesRecord();
     void importNextMapsAdxFieldsAndStoresUnknownFields();
     void importNextStoresZeroLengthApplicationFields();
@@ -157,6 +158,55 @@ void AdxFormatTest::writeSqlRecordExportsApplicationTags()
     QCOMPARE(types.value(QStringLiteral("QLOG/NOTE")), QStringLiteral("M"));
     QCOMPARE(values.value(QStringLiteral("LoTW/MODEGROUP")), QStringLiteral("DATA"));
     QCOMPARE(types.value(QStringLiteral("LoTW/MODEGROUP")), QStringLiteral("S"));
+}
+
+void AdxFormatTest::writeSqlRecordExportsRawFieldsFiltersInvalidNames()
+{
+    QSqlRecord record;
+    QJsonObject fields;
+    fields.insert(QStringLiteral("UNKNOWN_FIELD"), QStringLiteral("ok"));
+    fields.insert(QStringLiteral("APP_QLOG_RAW"), QStringLiteral("Line1\nLine2"));
+    fields.insert(QStringLiteral("BAD-NAME"), QStringLiteral("dash"));
+    fields.insert(QStringLiteral("1BAD"), QStringLiteral("digit"));
+    fields.insert(QStringLiteral("xmlBAD"), QStringLiteral("xml"));
+    fields.insert(QStringLiteral("BAD NAME"), QStringLiteral("space"));
+    fields.insert(QStringLiteral("BAD<NAME"), QStringLiteral("angle"));
+    fields.insert(QStringLiteral("APP_BAD"), QStringLiteral("shortapp"));
+    appendField(record,
+                QStringLiteral("fields"),
+                QString(QJsonDocument(fields).toJson(QJsonDocument::Compact)));
+
+    const QByteArray output = exportRecord(record);
+
+    QXmlStreamReader reader(output);
+    QMap<QString, QString> values;
+    QMap<QString, QString> appValues;
+    while ( !reader.atEnd() )
+    {
+        reader.readNext();
+        if ( reader.isStartElement() && reader.name() == QStringLiteral("UNKNOWN_FIELD") )
+        {
+            values.insert(reader.name().toString(), reader.readElementText());
+        }
+        else if ( reader.isStartElement() && reader.name() == QStringLiteral("APP") )
+        {
+            const QXmlStreamAttributes attributes = reader.attributes();
+            const QString key = attributes.value(QStringLiteral("PROGRAMID")).toString()
+                                + QLatin1Char('/')
+                                + attributes.value(QStringLiteral("FIELDNAME")).toString();
+            appValues.insert(key, reader.readElementText());
+        }
+    }
+    QVERIFY(!reader.hasError());
+
+    QCOMPARE(values.value(QStringLiteral("UNKNOWN_FIELD")), QStringLiteral("ok"));
+    QCOMPARE(appValues.value(QStringLiteral("QLOG/RAW")), QStringLiteral("Line1\nLine2"));
+    QVERIFY(!output.contains("dash"));
+    QVERIFY(!output.contains("digit"));
+    QVERIFY(!output.contains(">xml<"));
+    QVERIFY(!output.contains("space"));
+    QVERIFY(!output.contains("angle"));
+    QVERIFY(!output.contains("shortapp"));
 }
 
 void AdxFormatTest::exportContactNormalizesGridAndTerminatesRecord()
