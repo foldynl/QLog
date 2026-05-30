@@ -24,7 +24,7 @@ public:
     void readSettings();
     void writeSettings();
 
-    // Render card using the current UI state (not saved QSettings).
+    // Render card using the current UI state (not saved LogParam values).
     // Used by the preview dialog so the user can see results before saving.
     QPixmap renderPreviewPixmap(const QSqlRecord &record);
 

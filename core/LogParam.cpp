@@ -622,6 +622,106 @@ void LogParam::setKSTChatUsername(const QString &username)
     setParam("services/kst/chat/username", username);
 }
 
+QString LogParam::getEmailQSLSmtpHost()
+{
+    return getParam("services/emailqsl/smtpHost").toString();
+}
+
+void LogParam::setEmailQSLSmtpHost(const QString &host)
+{
+    setParam("services/emailqsl/smtpHost", host);
+}
+
+int LogParam::getEmailQSLSmtpPort()
+{
+    return getParam("services/emailqsl/smtpPort", 587).toInt();
+}
+
+void LogParam::setEmailQSLSmtpPort(int port)
+{
+    setParam("services/emailqsl/smtpPort", port);
+}
+
+int LogParam::getEmailQSLSmtpEncryption()
+{
+    return getParam("services/emailqsl/smtpEncryption", 2).toInt();
+}
+
+void LogParam::setEmailQSLSmtpEncryption(int enc)
+{
+    setParam("services/emailqsl/smtpEncryption", enc);
+}
+
+QString LogParam::getEmailQSLSmtpUsername()
+{
+    return getParam("services/emailqsl/smtpUsername").toString();
+}
+
+void LogParam::setEmailQSLSmtpUsername(const QString &username)
+{
+    setParam("services/emailqsl/smtpUsername", username);
+}
+
+QString LogParam::getEmailQSLFromAddress()
+{
+    return getParam("services/emailqsl/fromAddress").toString();
+}
+
+void LogParam::setEmailQSLFromAddress(const QString &addr)
+{
+    setParam("services/emailqsl/fromAddress", addr);
+}
+
+QString LogParam::getEmailQSLFromName()
+{
+    return getParam("services/emailqsl/fromName").toString();
+}
+
+void LogParam::setEmailQSLFromName(const QString &name)
+{
+    setParam("services/emailqsl/fromName", name);
+}
+
+QString LogParam::getEmailQSLSubjectTemplate(const QString &defaultValue)
+{
+    return getParam("services/emailqsl/subjectTemplate", defaultValue).toString();
+}
+
+void LogParam::setEmailQSLSubjectTemplate(const QString &tmpl)
+{
+    setParam("services/emailqsl/subjectTemplate", tmpl);
+}
+
+QString LogParam::getEmailQSLBodyTemplate(const QString &defaultValue)
+{
+    return getParam("services/emailqsl/bodyTemplate", defaultValue).toString();
+}
+
+void LogParam::setEmailQSLBodyTemplate(const QString &tmpl)
+{
+    setParam("services/emailqsl/bodyTemplate", tmpl);
+}
+
+QString LogParam::getEmailQSLCardImagePath()
+{
+    return getParam("services/emailqsl/cardImagePath").toString();
+}
+
+void LogParam::setEmailQSLCardImagePath(const QString &path)
+{
+    setParam("services/emailqsl/cardImagePath", path);
+}
+
+QByteArray LogParam::getEmailQSLCardOverlays()
+{
+    return getParam("services/emailqsl/cardOverlays").toByteArray();
+}
+
+void LogParam::setEmailQSLCardOverlays(const QByteArray &json)
+{
+    setParam("services/emailqsl/cardOverlays", json);
+}
+
 QString LogParam::getLoTWCallbookUsername()
 {
     return getParam("services/lotw/callbook/username").toString().trimmed();

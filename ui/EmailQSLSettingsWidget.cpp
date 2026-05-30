@@ -903,7 +903,7 @@ void EmailQSLSettingsWidget::removeOverlay()
 }
 
 // ---------------------------------------------------------------------------
-// Full-size preview — renders using current UI state (not QSettings)
+// Full-size preview — renders using current UI state (not saved LogParam values)
 // ---------------------------------------------------------------------------
 
 QPixmap EmailQSLSettingsWidget::renderPreviewPixmap(const QSqlRecord &record)

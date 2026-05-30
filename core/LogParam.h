@@ -202,6 +202,30 @@ public:
     static void setKSTChatUsername(const QString& username);
 
     /*********
+     * Email QSL
+     ********/
+    static QString getEmailQSLSmtpHost();
+    static void    setEmailQSLSmtpHost(const QString &host);
+    static int     getEmailQSLSmtpPort();
+    static void    setEmailQSLSmtpPort(int port);
+    static int     getEmailQSLSmtpEncryption();
+    static void    setEmailQSLSmtpEncryption(int enc);
+    static QString getEmailQSLSmtpUsername();
+    static void    setEmailQSLSmtpUsername(const QString &username);
+    static QString getEmailQSLFromAddress();
+    static void    setEmailQSLFromAddress(const QString &addr);
+    static QString getEmailQSLFromName();
+    static void    setEmailQSLFromName(const QString &name);
+    static QString getEmailQSLSubjectTemplate(const QString &defaultValue);
+    static void    setEmailQSLSubjectTemplate(const QString &tmpl);
+    static QString getEmailQSLBodyTemplate(const QString &defaultValue);
+    static void    setEmailQSLBodyTemplate(const QString &tmpl);
+    static QString getEmailQSLCardImagePath();
+    static void    setEmailQSLCardImagePath(const QString &path);
+    static QByteArray getEmailQSLCardOverlays();
+    static void       setEmailQSLCardOverlays(const QByteArray &json);
+
+    /*********
      * LoTW
      ********/
     static QString getLoTWCallbookUsername();

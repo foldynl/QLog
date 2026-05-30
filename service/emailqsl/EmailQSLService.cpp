@@ -1,4 +1,3 @@
-#include <QSettings>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QPainter>
@@ -13,6 +12,7 @@
 
 #include "EmailQSLService.h"
 #include "core/debug.h"
+#include "core/LogParam.h"
 
 MODULE_IDENTIFICATION("qlog.service.emailqsl");
 
@@ -79,56 +79,47 @@ void EmailQSLBase::registerCredentials()
 }
 
 // ---------------------------------------------------------------------------
-// EmailQSLBase — QSettings helpers
+// EmailQSLBase — settings persisted via LogParam (log_param DB table)
 // ---------------------------------------------------------------------------
-
-#define EMAILQSL_SETTINGS_GROUP "emailqsl"
-
-static QSettings &cfg()
-{
-    static QSettings s;
-    return s;
-}
 
 QString EmailQSLBase::getSmtpHost()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpHost")).toString();
+    return LogParam::getEmailQSLSmtpHost();
 }
 
 void EmailQSLBase::setSmtpHost(const QString &host)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpHost"), host);
+    LogParam::setEmailQSLSmtpHost(host);
 }
 
 int EmailQSLBase::getSmtpPort()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpPort"), 587).toInt();
+    return LogParam::getEmailQSLSmtpPort();
 }
 
 void EmailQSLBase::setSmtpPort(int port)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpPort"), port);
+    LogParam::setEmailQSLSmtpPort(port);
 }
 
 int EmailQSLBase::getSmtpEncryption()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpEncryption"),
-                       ENCRYPTION_STARTTLS).toInt();
+    return LogParam::getEmailQSLSmtpEncryption();
 }
 
 void EmailQSLBase::setSmtpEncryption(int enc)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpEncryption"), enc);
+    LogParam::setEmailQSLSmtpEncryption(enc);
 }
 
 QString EmailQSLBase::getSmtpUsername()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpUsername")).toString();
+    return LogParam::getEmailQSLSmtpUsername();
 }
 
 void EmailQSLBase::setSmtpUsername(const QString &username)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/smtpUsername"), username);
+    LogParam::setEmailQSLSmtpUsername(username);
 }
 
 QString EmailQSLBase::getSmtpPassword()
@@ -147,67 +138,65 @@ void EmailQSLBase::saveSmtpCredentials(const QString &username, const QString &p
 
 QString EmailQSLBase::getFromAddress()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/fromAddress")).toString();
+    return LogParam::getEmailQSLFromAddress();
 }
 
 void EmailQSLBase::setFromAddress(const QString &addr)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/fromAddress"), addr);
+    LogParam::setEmailQSLFromAddress(addr);
 }
 
 QString EmailQSLBase::getFromName()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/fromName")).toString();
+    return LogParam::getEmailQSLFromName();
 }
 
 void EmailQSLBase::setFromName(const QString &name)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/fromName"), name);
+    LogParam::setEmailQSLFromName(name);
 }
 
 QString EmailQSLBase::getSubjectTemplate()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/subjectTemplate"),
-                       QStringLiteral("QSL Card from {MY_CALLSIGN} for our QSO on {QSO_DATE}")).toString();
+    return LogParam::getEmailQSLSubjectTemplate(
+        QStringLiteral("QSL Card from {MY_CALLSIGN} for our QSO on {QSO_DATE}"));
 }
 
 void EmailQSLBase::setSubjectTemplate(const QString &tmpl)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/subjectTemplate"), tmpl);
+    LogParam::setEmailQSLSubjectTemplate(tmpl);
 }
 
 QString EmailQSLBase::getBodyTemplate()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/bodyTemplate"),
-                       QStringLiteral("Dear {NAME},\n\nPlease find my QSL card attached confirming our contact.\n\n"
-                                      "Callsign: {MY_CALLSIGN}\n"
-                                      "Date: {QSO_DATE}\nTime: {TIME_ON} UTC\n"
-                                      "Band: {BAND}\nMode: {MODE}\n"
-                                      "RST Sent: {RST_SENT}\nRST Rcvd: {RST_RCVD}\n\n"
-                                      "73,\n{MY_CALLSIGN}")).toString();
+    return LogParam::getEmailQSLBodyTemplate(
+        QStringLiteral("Dear {NAME},\n\nPlease find my QSL card attached confirming our contact.\n\n"
+                       "Callsign: {MY_CALLSIGN}\n"
+                       "Date: {QSO_DATE}\nTime: {TIME_ON} UTC\n"
+                       "Band: {BAND}\nMode: {MODE}\n"
+                       "RST Sent: {RST_SENT}\nRST Rcvd: {RST_RCVD}\n\n"
+                       "73,\n{MY_CALLSIGN}"));
 }
 
 void EmailQSLBase::setBodyTemplate(const QString &tmpl)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/bodyTemplate"), tmpl);
+    LogParam::setEmailQSLBodyTemplate(tmpl);
 }
 
 QString EmailQSLBase::getCardImagePath()
 {
-    return cfg().value(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/cardImagePath")).toString();
+    return LogParam::getEmailQSLCardImagePath();
 }
 
 void EmailQSLBase::setCardImagePath(const QString &path)
 {
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/cardImagePath"), path);
+    LogParam::setEmailQSLCardImagePath(path);
 }
 
 QList<EmailQSLFieldOverlay> EmailQSLBase::getCardFieldOverlays()
 {
     QList<EmailQSLFieldOverlay> result;
-    const QByteArray json = cfg().value(
-        QStringLiteral(EMAILQSL_SETTINGS_GROUP "/cardOverlays")).toByteArray();
-    const QJsonArray arr  = QJsonDocument::fromJson(json).array();
+    const QJsonArray arr = QJsonDocument::fromJson(LogParam::getEmailQSLCardOverlays()).array();
     for (const QJsonValue &v : arr)
         result.append(EmailQSLFieldOverlay::fromJson(v.toObject()));
     return result;
@@ -218,8 +207,7 @@ void EmailQSLBase::setCardFieldOverlays(const QList<EmailQSLFieldOverlay> &overl
     QJsonArray arr;
     for (const EmailQSLFieldOverlay &o : overlays)
         arr.append(o.toJson());
-    cfg().setValue(QStringLiteral(EMAILQSL_SETTINGS_GROUP "/cardOverlays"),
-                   QJsonDocument(arr).toJson(QJsonDocument::Compact));
+    LogParam::setEmailQSLCardOverlays(QJsonDocument(arr).toJson(QJsonDocument::Compact));
 }
 
 // ---------------------------------------------------------------------------

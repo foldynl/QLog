@@ -14,7 +14,7 @@ public:
     bool run(bool force = false);
     static bool backupAllQSOsToADX(bool force = false);
 
-    static constexpr int latestVersion = 39;
+    static constexpr int latestVersion = 40;
 
 private:
     bool functionMigration(int version);
@@ -39,6 +39,7 @@ private:
     bool profiles2DB();
     bool settings2DB();
     bool removeSettings2DB();
+    bool emailQSLSettings2DB();
     bool setSelectedProfile(const QString &tablename, const QString &profileName);
     QString fixIntlField(const QSqlQuery &query, const QString &columName, const QString &columnNameIntl);
     bool refreshUploadStatusTrigger();

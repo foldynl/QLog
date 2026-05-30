@@ -44,7 +44,7 @@ struct EmailQSLFieldOverlay
 
 // Static helpers for reading/writing all Email QSL settings.
 // The SMTP password is kept in the secure credential store;
-// everything else lives in QSettings under the "emailqsl/" group.
+// everything else is persisted via LogParam (log_param DB table).
 class EmailQSLBase : public SecureServiceBase<EmailQSLBase>
 {
 public:
@@ -92,7 +92,7 @@ public:
     static void      recordEmailSent(int contactId, const QSqlRecord &currentRecord);
 
     // --- Rendering helpers ---
-    // Full render using saved QSettings (used when sending).
+    // Full render using saved settings from LogParam (used when sending).
     static QPixmap  renderCard(const QSqlRecord &record);
     // Full render using an explicit image path and overlay list
     // (used by settings preview so unsaved changes are shown).
