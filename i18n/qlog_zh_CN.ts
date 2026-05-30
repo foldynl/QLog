@@ -1614,7 +1614,7 @@
     <message>
         <location filename="../ui/CabrilloExportDialog.ui" line="25"/>
         <source>File:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">文件:</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloExportDialog.ui" line="39"/>
@@ -4877,7 +4877,7 @@
     <message>
         <location filename="../ui/DevToolsDialog.ui" line="14"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">开发者工具</translation>
     </message>
     <message>
         <location filename="../ui/DevToolsDialog.ui" line="26"/>
@@ -8313,7 +8313,7 @@ Submode: %2</source>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="788"/>
         <source>Incorrect login or password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">登录名或密码不正确</translation>
     </message>
 </context>
 <context>
@@ -12681,7 +12681,7 @@ Please install Hamlib or specify the path manually.</source>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3764"/>
         <source>Leave empty for auto-detection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">留空以进行自动检测</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3785"/>
@@ -12691,7 +12691,7 @@ Please install Hamlib or specify the path manually.</source>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3788"/>
         <source>Auto-Detect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">自动检测</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3797"/>
@@ -13606,7 +13606,7 @@ Please install Hamlib or specify the path manually.</source>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="428"/>
         <source>Cannot be changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">无法被更改</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="501"/>
@@ -13898,7 +13898,7 @@ Please install Hamlib or specify the path manually.</source>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="2109"/>
         <source>Auto Detect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">自动检测</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="2110"/>
@@ -14365,7 +14365,7 @@ Please install TQSL or specify the path manually.</source>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="388"/>
         <source>Error Occurred</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">发生错误</translation>
     </message>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="618"/>
