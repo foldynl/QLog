@@ -650,7 +650,17 @@ macx: {
    LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
-   DISTFILES +=
+
+   # Custom Info.plist — sets a real bundle identifier
+   # (io.github.foldynl.qlog) and declares NSLocalNetworkUsageDescription
+   # so macOS 14+ will actually prompt for / grant LAN access (needed
+   # for WSJT-X UDP, network rigs, rotators, etc.). Without this, qmake
+   # generates a default Info.plist with CFBundleIdentifier =
+   # com.yourcompany.qlog and no local-network key.
+   QMAKE_INFO_PLIST = $$PWD/res/macos/Info.plist
+   QMAKE_TARGET_BUNDLE_PREFIX = io.github.foldynl
+
+   DISTFILES += res/macos/Info.plist
 }
 
 win32: {
