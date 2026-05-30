@@ -6,6 +6,11 @@ QString AwardWPX::displayName() const
     return QCoreApplication::translate("AwardsDialog", "WPX");
 }
 
+QString AwardWPX::rulesUrl() const
+{
+    return QStringLiteral("https://sites.google.com/site/cqwpxawards/");
+}
+
 QString AwardWPX::headersColumns(const QString &) const
 {
     return QStringLiteral("c.pfx col1, null col2 ");

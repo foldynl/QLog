@@ -91,6 +91,7 @@ public slots:
     void start();
     void open();
     void close();
+    void shutdown();
     void stopTimer();
 
     void setFrequency(double);
@@ -128,6 +129,7 @@ private slots:
     void stopTimerImplt();
     void openImpl();
     void closeImpl();
+    void shutdownImpl();
 
     void setVFOFrequencyImpl(VFOID, double);
     void setSplitImpl(bool);
@@ -143,6 +145,8 @@ private slots:
     void sendHeartBeat();
 
 private:
+    static const int SHUTDOWN_TIMEOUT_MS = 5000;
+
     class DrvParams
     {
     public:

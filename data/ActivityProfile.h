@@ -14,7 +14,8 @@ public:
         STATION_PROFILE = 1,
         RIG_PROFILE = 2,
         ROT_PROFILE = 3,
-        MAIN_LAYOUT_PROFILE = 4
+        MAIN_LAYOUT_PROFILE = 4,
+        BANDMAP_GUIDE_PROFILE = 5
     };
 
     enum ProfileParamType
@@ -85,6 +86,8 @@ public:
     };
     void save();
 
+private:
+    void applyBandmapGuideProfile(const QString &profileId);
 };
 
 #endif // Q_LOG_DATA_ACTIVITYPROFILE_H

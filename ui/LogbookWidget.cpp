@@ -1,6 +1,8 @@
 #include <QtSql>
 #include <QDate>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QAbstractButton>
 #include <QDesktopServices>
 #include <QMenu>
 #include <QProgressDialog>
@@ -11,6 +13,7 @@
 #include <QKeyEvent>
 #include <QProgressDialog>
 #include <QActionGroup>
+#include <QHeaderView>
 
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
@@ -24,6 +27,7 @@
 #include "ui/ColumnSettingDialog.h"
 #include "data/Data.h"
 #include "ui/ExportDialog.h"
+#include "ui/component/ModeSubmodeDelegate.h"
 #include "service/eqsl/Eqsl.h"
 #include "ui/PaperQSLDialog.h"
 #include "ui/QSODetailDialog.h"
@@ -31,6 +35,7 @@
 #include "service/GenericCallbook.h"
 #include "core/QSOFilterManager.h"
 #include "core/LogParam.h"
+#include "ui/EmailQSLDialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.logbookwidget");
 
@@ -131,6 +136,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->addAction(ui->actionFilter);
     ui->contactTable->addAction(ui->actionLookup);
     ui->contactTable->addAction(ui->actionSendDXCSpot);
+    ui->contactTable->addAction(ui->actionSendEmailQSL);
     ui->contactTable->addAction(separator);
     ui->contactTable->addAction(ui->actionExportAs);
     ui->contactTable->addAction(ui->actionCallbookLookup);
@@ -155,6 +161,8 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_FREQUENCY, new UnitFormatDelegate("", 6, 0.001, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_BAND, new ComboFormatDelegate(new SqlListModel("SELECT name FROM bands ORDER BY start_freq", " ", ui->contactTable), ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_MODE, new ComboFormatDelegate(new SqlListModel("SELECT name FROM modes", " ", ui->contactTable), ui->contactTable));
+    ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_SUBMODE, new SubmodeDelegate(ui->contactTable));
+    ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_MODE_SUBMODE, new ModeSubmodeDelegate(ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_CONTINENT, new ComboFormatDelegate(QStringList() << " " << Data::getContinentList(), ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_QSL_SENT, new ComboFormatDelegate(Data::instance()->qslSentEnum, ui->contactTable));
     ui->contactTable->setItemDelegateForColumn(LogbookModel::COLUMN_QSL_SENT_VIA, new ComboFormatDelegate(Data::instance()->qslSentViaEnum, ui->contactTable));
@@ -236,10 +244,9 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     else
     {
         /* Hide all */
-        for ( int i = 0; i < LogbookModel::COLUMN_LAST_ELEMENT; i++ )
-        {
+        for ( int i = 0; i < model->columnCount(); i++ )
             ui->contactTable->hideColumn(i);
-        }
+
         /* Set a basic set of columns */
         ui->contactTable->showColumn(LogbookModel::COLUMN_TIME_ON);
         ui->contactTable->showColumn(LogbookModel::COLUMN_CALL);
@@ -247,6 +254,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
         ui->contactTable->showColumn(LogbookModel::COLUMN_RST_SENT);
         ui->contactTable->showColumn(LogbookModel::COLUMN_FREQUENCY);
         ui->contactTable->showColumn(LogbookModel::COLUMN_MODE);
+        ui->contactTable->showColumn(LogbookModel::COLUMN_SUBMODE);
         ui->contactTable->showColumn(LogbookModel::COLUMN_NAME_INTL);
         ui->contactTable->showColumn(LogbookModel::COLUMN_QTH_INTL);
         ui->contactTable->showColumn(LogbookModel::COLUMN_COMMENT_INTL);
@@ -1067,6 +1075,14 @@ void LogbookWidget::saveTableHeaderState()
     LogParam::setLogbookState(ui->contactTable->horizontalHeader()->saveState());
 }
 
+void LogbookWidget::setContactTableColumnVisible(int columnIndex, bool visible)
+{
+    ui->contactTable->setColumnHidden(columnIndex, !visible);
+
+    if ( visible && ui->contactTable->columnWidth(columnIndex) == 0 )
+        ui->contactTable->setColumnWidth(columnIndex, ui->contactTable->horizontalHeader()->defaultSectionSize());
+}
+
 void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
 {
     FCT_IDENTIFICATION;
@@ -1079,9 +1095,9 @@ void LogbookWidget::showTableHeaderContextMenu(const QPoint& point)
         action->setCheckable(true);
         action->setChecked(!ui->contactTable->isColumnHidden(i));
 
-        connect(action, &QAction::triggered, this, [this, i]()
+        connect(action, &QAction::triggered, this, [this, i](bool checked)
         {
-            ui->contactTable->setColumnHidden(i, !ui->contactTable->isColumnHidden(i));
+            setContactTableColumnVisible(i, checked);
             saveTableHeaderState();
         });
 
@@ -1242,6 +1258,131 @@ void LogbookWidget::sendDXCSpot()
         return;
 
     emit sendDXSpotContactReq(model->record(selectedIndexes.at(0).row()));
+}
+
+void LogbookWidget::sendEmailQSL()
+{
+    FCT_IDENTIFICATION;
+
+    const QModelIndexList selectedIndexes = ui->contactTable->selectionModel()->selectedRows();
+    if (selectedIndexes.isEmpty())
+        return;
+
+    // Collect records, skip those without an email address silently (report at end)
+    QList<QSqlRecord> toSend;
+    int skippedNoEmail = 0;
+
+    // Single resend decision covers both "already sent for this QSO" and
+    // "already sent to this callsign for a different QSO" — one prompt per
+    // batch regardless of the mix of duplicate types.
+    // -1 = undecided, 0 = skip all duplicates, 1 = resend all duplicates
+    int resendDecision = -1;
+
+    const bool batchMode = (selectedIndexes.count() > 1);
+
+    for (const QModelIndex &idx : selectedIndexes)
+    {
+        const QSqlRecord rec = model->record(idx.row());
+        const QString email  = rec.value(QStringLiteral("email")).toString().trimmed();
+
+        if (email.isEmpty())
+        {
+            ++skippedNoEmail;
+            continue;
+        }
+
+        const QString   callsign = rec.value(QStringLiteral("callsign")).toString().toUpper();
+        const int       id       = rec.value(QStringLiteral("id")).toInt();
+        const QDateTime prevSent = EmailQSLBase::getEmailSentDateTime(rec);
+        const bool      sentQso  = prevSent.isValid();
+        const bool      sentCall = !sentQso && EmailQSLBase::hasEmailBeenSentToCallsign(callsign, id);
+
+        if (sentQso || sentCall)
+        {
+            if (resendDecision == 0)
+            {
+                continue; // "No to All" already chosen
+            }
+            else if (resendDecision == -1)
+            {
+                QString detail = sentQso
+                    ? tr("An Email QSL was already sent for <b>%1</b> on %2 UTC.")
+                        .arg(callsign, prevSent.toString(Qt::RFC2822Date))
+                    : tr("An Email QSL was previously sent to <b>%1</b> for a different QSO.")
+                        .arg(callsign);
+
+                QString msg = detail + QStringLiteral("<br><br>") + tr("Do you want to send again?");
+                if (batchMode)
+                    msg += QStringLiteral("<br><i>") +
+                           tr("\"Yes to All\" / \"No to All\" applies to every duplicate in this batch.") +
+                           QStringLiteral("</i>");
+
+                QMessageBox mb(this);
+                mb.setWindowTitle(tr("Already Sent — Send Again?"));
+                mb.setTextFormat(Qt::RichText);
+                mb.setText(msg);
+                mb.setIcon(QMessageBox::Question);
+
+                QPushButton *yesBtn    = mb.addButton(tr("Yes"),        QMessageBox::YesRole);
+                QPushButton *yesAllBtn = batchMode ? mb.addButton(tr("Yes to All"), QMessageBox::YesRole) : nullptr;
+                QPushButton *noBtn     = mb.addButton(tr("No"),         QMessageBox::NoRole);
+                QPushButton *noAllBtn  = batchMode ? mb.addButton(tr("No to All"),  QMessageBox::NoRole)  : nullptr;
+                Q_UNUSED(yesBtn)
+
+                mb.exec();
+                QAbstractButton *clicked = mb.clickedButton();
+
+                if      (clicked == noAllBtn)  { resendDecision = 0; continue; }
+                else if (clicked == noBtn)     { continue; }
+                else if (clicked == yesAllBtn) { resendDecision = 1; }
+                // else "Yes" — include this one, leave decision open for next
+            }
+            // resendDecision == 1 → fall through and add
+        }
+
+        toSend.append(rec);
+    }
+
+    if (toSend.isEmpty())
+    {
+        if (skippedNoEmail > 0)
+            QMessageBox::information(this, tr("Email QSL"),
+                tr("%n contact(s) skipped — no email address on file.", "", skippedNoEmail));
+        return;
+    }
+
+    // Show dialogs one at a time so they never pile up behind the main window
+    showNextEmailQSLDialog(new QList<QSqlRecord>(toSend));
+
+    if (skippedNoEmail > 0)
+        QMessageBox::information(this, tr("Email QSL"),
+            tr("%n contact(s) skipped — no email address on file.", "", skippedNoEmail));
+}
+
+void LogbookWidget::showNextEmailQSLDialog(QList<QSqlRecord> *queue)
+{
+    FCT_IDENTIFICATION;
+
+    if (queue->isEmpty())
+    {
+        delete queue;
+        model->select(); // refresh the log table once the whole batch is done
+        return;
+    }
+
+    const QSqlRecord rec = queue->takeFirst();
+    EmailQSLDialog *dialog = new EmailQSLDialog(rec, this);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+
+    // When this dialog closes (for any reason), open the next one
+    connect(dialog, &QDialog::finished, this, [this, queue]()
+    {
+        showNextEmailQSLDialog(queue);
+    });
+
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
 }
 
 void LogbookWidget::setDefaultSort()

@@ -16,6 +16,7 @@ class MainWindow;
 
 class QLabel;
 class WsjtxUDPReceiver;
+class AdifRecoveryManager;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -78,6 +79,7 @@ private slots:
     void showEditLayout();
     void showServiceUpload();
     void showServiceDownloadQSL();
+    void showServiceDownloadLotwDXCCCredits();
     void showDumpDB();
     void showLoadDB();
     void showQSLGallery();
@@ -117,6 +119,7 @@ private:
     PropConditions *conditions;
     bool isFusionStyle;
     ClubLogUploader* clublogRT;
+    AdifRecoveryManager* adifRecoveryManager;
     WsjtxUDPReceiver* wsjtx;
     QActionGroup *seqGroup;
     QActionGroup *dupeGroup;

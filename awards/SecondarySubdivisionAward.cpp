@@ -1,9 +1,15 @@
 #include "SecondarySubdivisionAward.h"
 
-SecondarySubdivisionAward::SecondarySubdivisionAward(const QString &key, const QString &dxccFilter)
+SecondarySubdivisionAward::SecondarySubdivisionAward(const QString &key, const QString &dxccFilter, const QString &rulesUrl)
     : m_key(key),
-      m_dxccFilter(dxccFilter)
+      m_dxccFilter(dxccFilter),
+      m_rulesUrl(rulesUrl)
 {
+}
+
+QString SecondarySubdivisionAward::rulesUrl() const
+{
+    return m_rulesUrl;
 }
 
 QString SecondarySubdivisionAward::headersColumns(const QString &) const

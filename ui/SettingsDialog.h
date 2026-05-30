@@ -12,7 +12,9 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QColor>
 #include <QDoubleSpinBox>
+#include <QSet>
 
 #include "data/StationProfile.h"
 #include "data/RigProfile.h"
@@ -22,6 +24,7 @@
 #include "data/CWShortcutProfile.h"
 #include "data/RotUsrButtonsProfile.h"
 #include "core/LogLocale.h"
+#include "core/AdifRecovery.h"
 #include "ui/MainWindow.h"
 #include "ui/component/MultiselectCompleter.h"
 #include "rig/RigCaps.h"
@@ -31,6 +34,8 @@ class SettingsDialog;
 }
 
 class QSqlTableModel;
+class QStandardItem;
+class QStandardItemModel;
 
 class SettingsDialog : public QDialog {
     Q_OBJECT
@@ -128,6 +133,8 @@ public slots:
     void rigFlowControlChanged(int);
     void showRigctldAdvanced();
     void rigShareChanged(int);
+    void editBandmapGuide();
+    void bandmapGuideChanged(int);
 
     void qrzAddCallsignAPIKey();
     void qrzDelCallsignAPIKey();
@@ -135,12 +142,45 @@ public slots:
     void onDeleteAllPasswords();
     void onDeleteAllQSOs();
 
+    void addAdifRecoveryFile();
+    void removeAdifRecoveryFile();
+    void restoreDefaultQsoStatusColors();
+
 private:
+    enum QsoStatusColorColumn
+    {
+        QsoStatusColumn,
+        QsoStatusMeaningColumn,
+        QsoStatusColorColumn,
+        QsoStatusColorColumnCount
+    };
+
+    struct QsoStatusColorRow
+    {
+        QString key;
+        QString status;
+        QString meaning;
+    };
+
     void readSettings();
     void writeSettings();
     void setUIBasedOnRigCaps(const RigCaps&);
     void refreshRigAssignedCWKeyCombo();
+    void refreshBandmapGuideCombo();
     void updateRigShareEnabled();
+    QList<QsoStatusColorRow> qsoStatusColorRows() const;
+    void setupQsoStatusColorsTable();
+    void loadQsoStatusColors();
+    void saveQsoStatusColors() const;
+    void chooseQsoStatusColor(QPushButton *button);
+    QColor qsoStatusNoColor() const;
+    void setQsoStatusColorButton(QPushButton *button, const QColor &color) const;
+    QColor qsoStatusColorFromButton(QPushButton *button) const;
+    QPushButton *qsoStatusColorButton(int row) const;
+    QString qsoStatusColorKey(QPushButton *button) const;
+    QColor qsoStatusColorFromSettings(const QString &key, const QVariantMap &colors) const;
+    bool qsoStatusColorsEqual(const QColor &left, const QColor &right) const;
+    QString qsoStatusColorStyleValue(const QColor &color) const;
     void setValidationResultColor(QLineEdit *);
     void generateMembershipCheckboxes();
     static void refreshProfileView(QAbstractItemView *view, const QStringList &names);
@@ -156,6 +196,20 @@ private:
     void generateQRZAPICallsignTable();
     void saveQRZAPICallsignTable();
     void updateCountyCompleter(int dxcc);
+    void setupAdifRecoveryTab();
+    void loadAdifRecoveryTable();
+    void saveAdifRecoveryTable();
+    QList<AdifRecoveryConfig> adifRecoveryFilesFromTable() const;
+    void appendAdifRecoveryRow(const AdifRecoveryConfig &config);
+    void refreshAdifRecoveryStationProfileDelegate();
+    void validateAdifRecoveryStationProfiles();
+    void updateAdifRecoveryPathItem(QStandardItem *item) const;
+    void setupAdifRecoveryQslSentComboData();
+    void loadAdifRecoveryQslSentCustomDefaults();
+    void saveAdifRecoveryQslSentCustomDefaults() const;
+    QString adifRecoveryQslSentStatusFromItem(const QStandardItem *item) const;
+    QString adifRecoveryQslSentStatusFromText(const QString &text) const;
+    QString adifRecoveryQslSentStatusToText(const QString &status) const;
 
     static constexpr int STACKED_WIDGET_SERIAL_SETTING          = 0;
     static constexpr int STACKED_WIDGET_NETWORK_SETTING         = 1;
@@ -179,6 +233,12 @@ private:
     static constexpr int PTT_TYPE_NONE_INDEX    = 0;
     static constexpr int PTT_TYPE_CAT_INDEX     = 1;
     static constexpr int CIVADDR_DISABLED_VALUE = -1;
+
+    static constexpr int ADIF_FILE_COLUMN_ENABLED = 0;
+    static constexpr int ADIF_FILE_COLUMN_PATH = 1;
+    static constexpr int ADIF_FILE_COLUMN_STATION_PROFILE = 2;
+    static constexpr int ADIF_FILE_COLUMN_QSL_SENT = 3;
+    static constexpr int ADIF_FILE_COLUMN_LAST_RECOVERY = 4;
 
     static constexpr const char* EMPTY_CWKEY_PROFILE = " ";
 
@@ -206,6 +266,9 @@ private:
     QString rigctldPath;
     QString rigctldArgs;
     QTimer *tqslVersionTimer;
+    QStandardItemModel *adifRecoveryModel;
+    QSet<QString> loadedAdifRecoveryKeys;
+    QSet<QString> removedAdifRecoveryKeys;
 };
 
 #endif // QLOG_UI_SETTINGSDIALOG_H

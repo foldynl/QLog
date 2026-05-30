@@ -11,9 +11,10 @@
 class SecondarySubdivisionAward : public BandTableAward
 {
 public:
-    SecondarySubdivisionAward(const QString &key, const QString &dxccFilter);
+    SecondarySubdivisionAward(const QString &key, const QString &dxccFilter, const QString &rulesUrl);
 
     QString key() const override { return m_key; }
+    QString rulesUrl() const override;
     bool entityInputEnabled() const override { return false; }
 
 protected:
@@ -25,6 +26,7 @@ protected:
 private:
     QString m_key;
     QString m_dxccFilter;
+    QString m_rulesUrl;
 };
 
 #endif // QLOG_AWARDS_SECONDARYSUBDIVISIONAWARD_H

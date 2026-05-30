@@ -30,12 +30,15 @@ QVariant DxccTableModel::data(const QModelIndex &index, int role) const
         if ( (LogParam::getDxccConfirmedByLotwState() && containsL)
              || (LogParam::getDxccConfirmedByPaperState() && containsP)
              || (LogParam::getDxccConfirmedByEqslState() && containsE) )
-            return Data::statusToColor(DxccStatus::NewMode, false, Qt::green);
+            return Data::statusToColor(DxccStatus::NewMode, false, Qt::transparent);
 
         if ( containsL || containsP ||containsE || currData.contains("W") )
             return Data::statusToColor(DxccStatus::Worked, false, Qt::transparent);
     }
         break;
+
+    case Qt::ForegroundRole:
+        return Data::textColorForBackground(data(index, Qt::BackgroundRole).value<QColor>());
 
     case Qt::DisplayRole:
     {

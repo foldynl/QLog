@@ -1,7 +1,7 @@
-#include <QJsonDocument>
 #include <QSignalBlocker>
 #include "ModeSelectionController.h"
 #include "core/debug.h"
+#include "data/Data.h"
 
 MODULE_IDENTIFICATION("qlog.ui.modeselectioncontroller");
 
@@ -66,8 +66,7 @@ void ModeSelectionController::applyCurrentMode()
         return;
     }
 
-    const QString submodes = record.value("submodes").toString();
-    const QStringList submodeList = QJsonDocument::fromJson(submodes.toUtf8()).toVariant().toStringList();
+    const QStringList submodeList = Data::instance()->submodesForMode(record.value("name").toString());
 
     applySubmodes(submodeList);
     emit defaultReportChanged(record.value("rprt").toString());

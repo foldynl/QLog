@@ -9,6 +9,11 @@ QString AwardWAC::displayName() const
     return QCoreApplication::translate("AwardsDialog", "WAC");
 }
 
+QString AwardWAC::rulesUrl() const
+{
+    return QStringLiteral("https://www.arrl.org/wac");
+}
+
 QString AwardWAC::headersColumns(const QString &) const
 {
     return QStringLiteral("d.column2 col1, d.column1 col2 ");

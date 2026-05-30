@@ -3,6 +3,8 @@
 #include <QSqlError>
 #include <QCompleter>
 #include <QColor>
+#include <QGuiApplication>
+#include <QPalette>
 #include "Data.h"
 #include "data/Callsign.h"
 #include "core/debug.h"
@@ -12,6 +14,216 @@
 
 MODULE_IDENTIFICATION("qlog.data.data");
 
+const QString Data::QSO_STATUS_COLOR_DUPE_KEY = QStringLiteral("dupe");
+const QString Data::QSO_STATUS_COLOR_NEW_ENTITY_KEY = QStringLiteral("newEntity");
+const QString Data::QSO_STATUS_COLOR_NEW_BAND_MODE_KEY = QStringLiteral("newBandMode");
+const QString Data::QSO_STATUS_COLOR_NEW_SLOT_KEY = QStringLiteral("newSlot");
+const QString Data::QSO_STATUS_COLOR_WORKED_KEY = QStringLiteral("worked");
+const QString Data::QSO_STATUS_COLOR_CONFIRMED_KEY = QStringLiteral("confirmed");
+
+Data::StatusColorRuntime::StatusColorRuntime()
+{
+    reset();
+}
+
+void Data::StatusColorRuntime::reset()
+{
+    colors.clear();
+
+    dupeColor = defaultQsoStatusColor(QSO_STATUS_COLOR_DUPE_KEY).rgba();
+    const QColor bandModeColor = defaultQsoStatusColor(QSO_STATUS_COLOR_NEW_BAND_MODE_KEY);
+
+    setStatusColor(DxccStatus::NewEntity, defaultQsoStatusColor(QSO_STATUS_COLOR_NEW_ENTITY_KEY));
+    setStatusColor(DxccStatus::NewBand, bandModeColor);
+    setStatusColor(DxccStatus::NewMode, bandModeColor);
+    setStatusColor(DxccStatus::NewBandMode, bandModeColor);
+    setStatusColor(DxccStatus::NewSlot, defaultQsoStatusColor(QSO_STATUS_COLOR_NEW_SLOT_KEY));
+    setStatusColor(DxccStatus::Worked, defaultQsoStatusColor(QSO_STATUS_COLOR_WORKED_KEY));
+    setStatusColor(DxccStatus::Confirmed, defaultQsoStatusColor(QSO_STATUS_COLOR_CONFIRMED_KEY));
+}
+
+void Data::StatusColorRuntime::setStatusColor(DxccStatus status, const QColor &color)
+{
+    if ( color.isValid() && color.alpha() > 0 )
+        colors.insert(static_cast<int>(status), color.rgba());
+    else
+        colors.remove(static_cast<int>(status));
+}
+
+Data::StatusColorRuntime &Data::statusColorRuntime()
+{
+    static StatusColorRuntime runtime;
+    return runtime;
+}
+
+void Data::setRuntimeStatusColor(DxccStatus status, const QColor &color)
+{
+    statusColorRuntime().setStatusColor(status, color);
+}
+
+void Data::setRuntimeBandModeStatusColor(const QColor &color)
+{
+    setRuntimeStatusColor(DxccStatus::NewBand, color);
+    setRuntimeStatusColor(DxccStatus::NewMode, color);
+    setRuntimeStatusColor(DxccStatus::NewBandMode, color);
+}
+
+void Data::setRuntimeDupeColor(const QColor &color)
+{
+    if ( !color.isValid() )
+        return;
+
+    statusColorRuntime().dupeColor = color.rgba();
+}
+
+QColor Data::defaultQsoStatusColor(const QString &key)
+{
+    if ( key == QSO_STATUS_COLOR_DUPE_KEY )           return QColor(109, 109, 109, 100);
+    if ( key == QSO_STATUS_COLOR_NEW_ENTITY_KEY )     return QColor(255, 58, 9);
+    if ( key == QSO_STATUS_COLOR_NEW_BAND_MODE_KEY )  return QColor(76, 200, 80);
+    if ( key == QSO_STATUS_COLOR_NEW_SLOT_KEY )       return QColor(30, 180, 230);
+    if ( key == QSO_STATUS_COLOR_WORKED_KEY )         return QColor(255, 165, 0);
+
+    return QColor();
+}
+
+QColor Data::effectiveBackgroundColor(const QColor &background, const QColor &baseColor)
+{
+    const QColor base = baseColor.isValid()
+                        ? baseColor
+                        : QGuiApplication::palette().color(QPalette::Base);
+
+    if ( !background.isValid() )
+        return base;
+
+    if ( background.alpha() == 255 )
+        return background;
+
+    const int alpha = background.alpha();
+    return QColor((background.red() * alpha + base.red() * (255 - alpha)) / 255,
+                  (background.green() * alpha + base.green() * (255 - alpha)) / 255,
+                  (background.blue() * alpha + base.blue() * (255 - alpha)) / 255);
+}
+
+
+QColor Data::textColorForBackground(const QColor &background,
+                                    const QColor &defaultColor,
+                                    const QColor &baseColor)
+{
+    static const QColor textDark(0x11, 0x11, 0x11);
+    static const QColor textLight(0xF0, 0xF0, 0xF0);
+
+    if ( !background.isValid() || background.alpha() == 0 )
+        return defaultColor.isValid()
+               ? defaultColor
+               : QGuiApplication::palette().color(QPalette::Text);
+
+    // Cache: keyed by effective background color, invalidated on palette change.
+    // Most views repeat a small set of row colors, so the hit rate is very high.
+    static QHash<QRgb, QColor> cache;
+    static QRgb baseCacheKey = 0;
+
+    const QColor effective = effectiveBackgroundColor(background, baseColor);
+    const QRgb   effectiveRgb = effective.rgba();
+
+    // Invalidate cache if the base color changes (theme/palette switch).
+    const QRgb currentBaseKey = baseColor.isValid() ? baseColor.rgba()
+                                                    : QGuiApplication::palette().color(QPalette::Base).rgba();
+    if ( currentBaseKey != baseCacheKey )
+    {
+        cache.clear();
+        baseCacheKey = currentBaseKey;
+    }
+
+    if ( cache.contains(effectiveRgb) )
+        return cache.value(effectiveRgb);
+
+    // Converts a single sRGB channel [0.0, 1.0] to linear light intensity.
+    // sRGB is gamma-compressed — using raw values directly would underestimate
+    // the brightness of dark shades. The threshold 0.04045 and coefficients
+    // 12.92 / 1.055 / 0.055 / 2.4 are defined by the sRGB standard IEC 61966-2-1.
+    auto relativeLuminance = [](const QColor &color)
+    {
+        auto linearize = [](double c)
+        {
+            return (c <= 0.04045) ? c / 12.92
+                                  : std::pow((c + 0.055) / 1.055, 2.4);
+        };
+        // Weights 0.2126 / 0.7152 / 0.0722 reflect the human eye's sensitivity
+        // to red, green, and blue respectively (green dominates perceived brightness).
+        // Defined by WCAG 2.1 / ITU-R BT.709.
+        return 0.2126 * linearize(color.redF())
+                + 0.7152 * linearize(color.greenF())
+                + 0.0722 * linearize(color.blueF());
+    };
+
+    // Computes the WCAG 2.1 contrast ratio between two colors, range [1, 21].
+    // The +0.05 offsets prevent division by zero and model the ambient light
+    // reflected by a real display (black is never perfect black).
+    auto contrastRatio = [&relativeLuminance](const QColor &a, const QColor &b)
+    {
+        const double la = relativeLuminance(a);
+        const double lb = relativeLuminance(b);
+        return (std::max(la, lb) + 0.05) / (std::min(la, lb) + 0.05);
+    };
+
+    // Pick whichever of white or black yields the higher contrast ratio
+    // against the effective (alpha-composited) background color.
+    // WCAG AA requires >= 4.5:1 for normal text; this always picks the best available.
+    const QColor result = (contrastRatio(effective, textLight) >= contrastRatio(effective, textDark))
+            ? textLight
+            : textDark;
+
+    cache.insert(effectiveRgb, result);
+    return result;
+}
+
+QColor Data::qsoStatusColorFromConfig(const QVariantMap &colors, const QString &key)
+{
+    FCT_IDENTIFICATION;
+
+    const QString value = colors.value(key).toString().trimmed();
+    if ( value.isEmpty() )
+        return QColor();
+
+    const QColor color(value);
+    return color.isValid() ? color : QColor();
+}
+
+void Data::applyConfiguredStatusColor(const QVariantMap &colors, const QString &key, DxccStatus status)
+{
+    FCT_IDENTIFICATION;
+
+    const QColor color = qsoStatusColorFromConfig(colors, key);
+    if ( color.isValid() )
+        setRuntimeStatusColor(status, color);
+}
+
+void Data::applyConfiguredBandModeStatusColor(const QVariantMap &colors)
+{
+    FCT_IDENTIFICATION;
+
+    const QColor color = qsoStatusColorFromConfig(colors, QSO_STATUS_COLOR_NEW_BAND_MODE_KEY);
+    if ( color.isValid() )
+        setRuntimeBandModeStatusColor(color);
+}
+
+void Data::reloadQsoStatusColors()
+{
+    FCT_IDENTIFICATION;
+
+    StatusColorRuntime &runtime = statusColorRuntime();
+    runtime.reset();
+
+    const QVariantMap colors = LogParam::getQsoStatusColors();
+    setRuntimeDupeColor(qsoStatusColorFromConfig(colors, QSO_STATUS_COLOR_DUPE_KEY));
+    applyConfiguredStatusColor(colors, QSO_STATUS_COLOR_NEW_ENTITY_KEY, DxccStatus::NewEntity);
+    applyConfiguredBandModeStatusColor(colors);
+    applyConfiguredStatusColor(colors, QSO_STATUS_COLOR_NEW_SLOT_KEY, DxccStatus::NewSlot);
+    applyConfiguredStatusColor(colors, QSO_STATUS_COLOR_WORKED_KEY, DxccStatus::Worked);
+    applyConfiguredStatusColor(colors, QSO_STATUS_COLOR_CONFIRMED_KEY, DxccStatus::Confirmed);
+}
+
 Data::Data(QObject *parent) :
    QObject(parent),
    zd(nullptr),
@@ -19,6 +231,7 @@ Data::Data(QObject *parent) :
 {
     FCT_IDENTIFICATION;
 
+    reloadQsoStatusColors();
     loadContests();
     loadPropagationModes();
     loadLegacyModes();
@@ -527,28 +740,20 @@ qulonglong Data::dupeNewCountWhenQSODelected(qulonglong oldCounter,
 
 #undef RETURNCODE
 
-QColor Data::statusToColor(const DxccStatus &status, bool isDupe, const QColor &defaultColor) {
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << status << isDupe;
+QColor Data::statusToColor(const DxccStatus &status, bool isDupe, const QColor &defaultColor)
+{
+    // Keep this hot path to an indexed lookup; settings are folded into the runtime table.
+    const StatusColorRuntime &runtime = statusColorRuntime();
 
     if ( isDupe )
-        return QColor(109, 109, 109, 100);
+        return QColor::fromRgba(runtime.dupeColor);
 
-    switch (status) {
-        case DxccStatus::NewEntity:
-            return QColor(255, 58, 9);
-        case DxccStatus::NewBand:
-        case DxccStatus::NewMode:
-        case DxccStatus::NewBandMode:
-            return QColor(76, 200, 80);
-        case DxccStatus::NewSlot:
-            return QColor(30, 180, 230);
-        case DxccStatus::Worked:
-            return QColor(255,165,0);
-        default:
-            return defaultColor;
-    }
+    const int index = static_cast<int>(status);
+    const auto color = runtime.colors.constFind(index);
+    if ( color != runtime.colors.constEnd() )
+        return QColor::fromRgba(color.value());
+
+    return defaultColor;
 }
 
 QString Data::colorToHTMLColor(const QColor &in_color)
@@ -673,6 +878,34 @@ QPair<QString, QString> Data::legacyMode(const QString &mode)
 
     qCDebug(function_parameters) << mode;
     return legacyModes.value(mode);
+}
+
+QStringList Data::submodesForMode(const QString &mode) const
+{
+    FCT_IDENTIFICATION;
+
+    if ( mode.isEmpty() )
+        return QStringList();
+
+    QSqlQuery query;
+    query.prepare("SELECT submodes FROM modes WHERE name = :mode");
+    query.bindValue(":mode", mode);
+
+    if ( !query.exec() || !query.next() )
+        return QStringList();
+
+    return QJsonDocument::fromJson(query.value(0).toString().toUtf8()).toVariant().toStringList();
+}
+
+bool Data::isSubmodeForMode(const QString &mode, const QString &submode) const
+{
+    FCT_IDENTIFICATION;
+
+    // Empty submode is a valid way to store a plain ADIF mode without subtype.
+    if ( submode.isEmpty() )
+        return true;
+
+    return submodesForMode(mode).contains(submode);
 }
 
 QString Data::getIANATimeZone(double lat, double lon)
@@ -1518,4 +1751,3 @@ WWFFEntity Data::lookupWWFF(const QString &reference)
 
     return WWFFRet;
 }
-

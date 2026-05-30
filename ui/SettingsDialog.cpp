@@ -1,10 +1,19 @@
 #include <QStringListModel>
 #include <QSqlTableModel>
+#include <QDir>
 #include <QFileDialog>
+#include <QColorDialog>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <QFileInfo>
+#include <QMenu>
 #include <QStandardItemModel>
 #include <QProgressDialog>
+#include <QApplication>
+#include <QHeaderView>
+#include <QSignalBlocker>
+#include <QTableWidgetItem>
+#include <algorithm>
 
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
@@ -33,6 +42,7 @@
 #include "core/LogParam.h"
 #include "data/Callsign.h"
 #include "core/MembershipQE.h"
+#include "data/BandmapGuide.h"
 #include "models/SqlListModel.h"
 #include "service/kstchat/KSTChat.h"
 #include "data/HostsPortString.h"
@@ -40,10 +50,41 @@
 #include "ui/component/StyleItemDelegate.h"
 #include "data/SerialPort.h"
 #include "service/cloudlog/Cloudlog.h"
+#include "ui/BandmapGuideDialog.h"
+#include "ui/BandmapWidget.h"
 #include "ui/RigctldAdvancedDialog.h"
 #include "cwkey/drivers/CWWinKey.h"
+#include "ui/EmailQSLSettingsWidget.h"
 
 MODULE_IDENTIFICATION("qlog.ui.settingsdialog");
+
+namespace
+{
+    constexpr int ADIF_FILE_EXISTS_ROLE = Qt::UserRole + 1;
+
+    class AdifRecoveryPathDelegate : public QStyledItemDelegate
+    {
+    public:
+        using QStyledItemDelegate::QStyledItemDelegate;
+
+        void paint(QPainter *painter,
+                   const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const override
+        {
+            QStyleOptionViewItem opt(option);
+            initStyleOption(&opt, index);
+
+            const bool exists = index.data(ADIF_FILE_EXISTS_ROLE).toBool();
+            opt.text = QStringLiteral("%1 %2").arg(QString(QChar(exists ? 0x2713 : 0x2717)),
+                                                   index.data(Qt::EditRole).toString());
+            opt.palette.setColor(QPalette::Text, exists ? Qt::darkGreen : Qt::red);
+            opt.palette.setColor(QPalette::HighlightedText, exists ? Qt::darkGreen : Qt::red);
+
+            QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
+            style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+        }
+    };
+}
 
 void SettingsDialog::refreshProfileView(QAbstractItemView *view, const QStringList &names)
 {
@@ -114,6 +155,242 @@ void SettingsDialog::deleteSelectedProfiles(QAbstractItemView *view,
     view->clearSelection();
 }
 
+QList<SettingsDialog::QsoStatusColorRow> SettingsDialog::qsoStatusColorRows() const
+{
+    return QList<QsoStatusColorRow>
+    {
+        {Data::QSO_STATUS_COLOR_DUPE_KEY, tr("Duplicate"), tr("Already worked QSO")},
+        {Data::QSO_STATUS_COLOR_NEW_ENTITY_KEY, tr("New Entity"), tr("DXCC entity not worked yet")},
+        {Data::QSO_STATUS_COLOR_NEW_BAND_MODE_KEY, tr("New Band / Mode"), tr("New band, mode, or band and mode")},
+        {Data::QSO_STATUS_COLOR_NEW_SLOT_KEY, tr("New Slot"), tr("New band and mode combination")},
+        {Data::QSO_STATUS_COLOR_WORKED_KEY, tr("Worked"), tr("Worked but not confirmed")},
+        {Data::QSO_STATUS_COLOR_CONFIRMED_KEY, tr("Confirmed"), tr("Confirmed QSO; no highlight by default")}
+    };
+}
+
+void SettingsDialog::setupQsoStatusColorsTable()
+{
+    FCT_IDENTIFICATION;
+
+    ui->qsoStatusColorsTable->setColumnCount(QsoStatusColorColumnCount);
+    ui->qsoStatusColorsTable->setHorizontalHeaderLabels(QStringList() << tr("Status")
+                                                                      << tr("Description")
+                                                                      << tr("Color"));
+    ui->qsoStatusColorsTable->verticalHeader()->setVisible(false);
+    ui->qsoStatusColorsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->qsoStatusColorsTable->horizontalHeader()->setSectionResizeMode(QsoStatusColumn, QHeaderView::ResizeToContents);
+    ui->qsoStatusColorsTable->horizontalHeader()->setSectionResizeMode(QsoStatusMeaningColumn, QHeaderView::Stretch);
+    ui->qsoStatusColorsTable->horizontalHeader()->setSectionResizeMode(QsoStatusColorColumn, QHeaderView::ResizeToContents);
+
+    const QList<QsoStatusColorRow> rows = qsoStatusColorRows();
+    ui->qsoStatusColorsTable->setRowCount(rows.size());
+
+    for ( int row = 0; row < rows.size(); ++row )
+    {
+        const QsoStatusColorRow &colorRow = rows.at(row);
+
+        QTableWidgetItem *statusItem = new QTableWidgetItem(colorRow.status);
+        statusItem->setFlags(Qt::ItemIsEnabled);
+        ui->qsoStatusColorsTable->setItem(row, QsoStatusColumn, statusItem);
+
+        QTableWidgetItem *meaningItem = new QTableWidgetItem(colorRow.meaning);
+        meaningItem->setFlags(Qt::ItemIsEnabled);
+        ui->qsoStatusColorsTable->setItem(row, QsoStatusMeaningColumn, meaningItem);
+
+        QPushButton *button = new QPushButton(ui->qsoStatusColorsTable);
+        button->setMinimumWidth(75);
+        button->setProperty("qsoStatusColorKey", colorRow.key);
+        connect(button, &QPushButton::clicked, this, [this, button]()
+        {
+            chooseQsoStatusColor(button);
+        });
+        ui->qsoStatusColorsTable->setCellWidget(row, QsoStatusColorColumn, button);
+    }
+
+    const int tableHeight = ui->qsoStatusColorsTable->horizontalHeader()->sizeHint().height()
+                            + ui->qsoStatusColorsTable->verticalHeader()->length()
+                            + ui->qsoStatusColorsTable->frameWidth() * 2;
+
+    ui->qsoStatusColorsTable->setFixedHeight(tableHeight);
+}
+
+void SettingsDialog::loadQsoStatusColors()
+{
+    FCT_IDENTIFICATION;
+
+    const QVariantMap colors = LogParam::getQsoStatusColors();
+    for ( int row = 0; row < ui->qsoStatusColorsTable->rowCount(); ++row )
+    {
+        QPushButton *button = qsoStatusColorButton(row);
+        if ( !button )
+            continue;
+
+        setQsoStatusColorButton(button, qsoStatusColorFromSettings(qsoStatusColorKey(button), colors));
+    }
+}
+
+void SettingsDialog::saveQsoStatusColors() const
+{
+    FCT_IDENTIFICATION;
+
+    QVariantMap colors;
+    for ( int row = 0; row < ui->qsoStatusColorsTable->rowCount(); ++row )
+    {
+        QPushButton *button = qsoStatusColorButton(row);
+        if ( !button )
+            continue;
+
+        const QString key = qsoStatusColorKey(button);
+        const QColor color = qsoStatusColorFromButton(button);
+        const QColor defaultColor = Data::defaultQsoStatusColor(key);
+
+        if ( !color.isValid() )
+            continue;
+
+        if ( !qsoStatusColorsEqual(color, defaultColor) )
+            colors.insert(key, color.name(QColor::HexArgb));
+    }
+
+    LogParam::setQsoStatusColors(colors);
+}
+
+void SettingsDialog::chooseQsoStatusColor(QPushButton *button)
+{
+    FCT_IDENTIFICATION;
+
+    QMenu menu(this);
+    const QAction *chooseColorAction = menu.addAction(tr("Choose Color..."));
+    const QAction *defaultColorAction = menu.addAction(tr("Default"));
+    const QAction *noColorAction = menu.addAction(tr("No Color"));
+    const QAction *selectedAction = menu.exec(button->mapToGlobal(QPoint(0, button->height())));
+
+    if ( !selectedAction )
+        return;
+
+    const QString key = qsoStatusColorKey(button);
+
+    if ( selectedAction == defaultColorAction )
+    {
+        setQsoStatusColorButton(button, Data::defaultQsoStatusColor(key));
+        return;
+    }
+
+    if ( selectedAction == noColorAction )
+    {
+        setQsoStatusColorButton(button, qsoStatusNoColor());
+        return;
+    }
+
+    if ( selectedAction != chooseColorAction )
+        return;
+
+    const QColor currentColor = qsoStatusColorFromButton(button);
+    const QColor defaultColor = Data::defaultQsoStatusColor(key);
+    const QColor initialColor = (currentColor.isValid() && currentColor.alpha() > 0)
+                                ? currentColor
+                                : (defaultColor.isValid() && defaultColor.alpha() > 0)
+                                  ? defaultColor
+                                  : qApp->palette().highlight().color();
+    const QColor selected = QColorDialog::getColor(initialColor,
+                                                   this,
+                                                   tr("Status Color"),
+                                                   QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
+    if ( selected.isValid() )
+        setQsoStatusColorButton(button, selected);
+}
+
+QColor SettingsDialog::qsoStatusNoColor() const
+{
+    return QColor(0, 0, 0, 0);
+}
+
+void SettingsDialog::setQsoStatusColorButton(QPushButton *button, const QColor &color) const
+{
+    FCT_IDENTIFICATION;
+
+    button->setProperty("color", color);
+
+    if ( !color.isValid() || color.alpha() == 0 )
+    {
+        button->setText(tr("No color"));
+        button->setToolTip(tr("No highlight. Click to choose a color or set no color."));
+        button->setStyleSheet(QString());
+        return;
+    }
+
+    const QColor textColor = Data::textColorForBackground(color,
+                                                          button->palette().color(QPalette::ButtonText),
+                                                          button->palette().color(QPalette::Button));
+    button->setText(QString());
+    button->setToolTip(tr("Click to change color or set no color."));
+    button->setStyleSheet(QStringLiteral("QPushButton { background-color: %1; color: %2; }")
+                          .arg(qsoStatusColorStyleValue(color), textColor.name(QColor::HexRgb)));
+}
+
+QColor SettingsDialog::qsoStatusColorFromButton(QPushButton *button) const
+{
+    FCT_IDENTIFICATION;
+
+    return button->property("color").value<QColor>();
+}
+
+void SettingsDialog::restoreDefaultQsoStatusColors()
+{
+    FCT_IDENTIFICATION;
+
+    for ( int row = 0; row < ui->qsoStatusColorsTable->rowCount(); ++row )
+    {
+        QPushButton *button = qsoStatusColorButton(row);
+        if ( !button )
+            continue;
+
+        setQsoStatusColorButton(button, Data::defaultQsoStatusColor(qsoStatusColorKey(button)));
+    }
+}
+
+QPushButton *SettingsDialog::qsoStatusColorButton(int row) const
+{
+    return qobject_cast<QPushButton *>(ui->qsoStatusColorsTable->cellWidget(row, QsoStatusColorColumn));
+}
+
+QString SettingsDialog::qsoStatusColorKey(QPushButton *button) const
+{
+    return button ? button->property("qsoStatusColorKey").toString() : QString();
+}
+
+QColor SettingsDialog::qsoStatusColorFromSettings(const QString &key, const QVariantMap &colors) const
+{
+    const QString value = colors.value(key).toString().trimmed();
+    if ( !value.isEmpty() )
+    {
+        const QColor color(value);
+        if ( color.isValid() )
+            return color;
+    }
+
+    return Data::defaultQsoStatusColor(key);
+}
+
+bool SettingsDialog::qsoStatusColorsEqual(const QColor &left, const QColor &right) const
+{
+    const bool leftEmpty = !left.isValid() || left.alpha() == 0;
+    const bool rightEmpty = !right.isValid() || right.alpha() == 0;
+
+    if ( leftEmpty || rightEmpty )
+        return leftEmpty == rightEmpty;
+
+    return left.rgba() == right.rgba();
+}
+
+QString SettingsDialog::qsoStatusColorStyleValue(const QColor &color) const
+{
+    return QStringLiteral("rgba(%1, %2, %3, %4)")
+            .arg(color.red())
+            .arg(color.green())
+            .arg(color.blue())
+            .arg(color.alpha());
+}
+
 SettingsDialog::SettingsDialog(MainWindow *parent) :
     QDialog(parent),
     stationProfManager(StationProfilesManager::instance()),
@@ -128,11 +405,15 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     sotaFallback(false),
     potaFallback(false),
     wwffFallback(false),
-    tqslVersionTimer(new QTimer(this))
+    tqslVersionTimer(new QTimer(this)),
+    adifRecoveryModel(nullptr)
 {
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+    setupAdifRecoveryTab();
+    setupQsoStatusColorsTable();
+    refreshBandmapGuideCombo();
 
     ui->dateFormatResultLabel->setVisible(false);
     ui->dateFormatStringEdit->setVisible(false);
@@ -280,19 +561,19 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     iotaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationIOTAEdit->setCompleter(iotaCompleter);
 
-    sotaCompleter = new QCompleter(Data::instance()->sotaIDList(), ui->stationSOTAEdit);
+    sotaCompleter = new QCompleter(Data::instance()->sotaIDList(), this);
     sotaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     sotaCompleter->setFilterMode(Qt::MatchStartsWith);
     sotaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationSOTAEdit->setCompleter(nullptr);
 
-    wwffCompleter = new QCompleter(Data::instance()->wwffIDList(), ui->stationWWFFEdit);
+    wwffCompleter = new QCompleter(Data::instance()->wwffIDList(), this);
     wwffCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     wwffCompleter->setFilterMode(Qt::MatchStartsWith);
     wwffCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationWWFFEdit->setCompleter(nullptr);
 
-    potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), ui->stationPOTAEdit);
+    potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), this);
     potaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     potaCompleter->setFilterMode(Qt::MatchStartsWith);
     potaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
@@ -1007,10 +1288,10 @@ void SettingsDialog::doubleClickRotUsrButtonsProfile(QModelIndex i)
 
     QLineEdit * const buttonEdits[] = { ui->rotUsrButton1Edit, ui->rotUsrButton2Edit, ui->rotUsrButton3Edit, ui->rotUsrButton4Edit };
     QSpinBox * const spinBoxes[]   = { ui->rotUsrButtonSpinBox1, ui->rotUsrButtonSpinBox2, ui->rotUsrButtonSpinBox3, ui->rotUsrButtonSpinBox4 };
-    for ( int i = 0; i < 4; ++i )
+    for ( int x = 0; x < 4; ++x )
     {
-        buttonEdits[i]->setText(profile.shortDescs[i]);
-        spinBoxes[i]->setValue(profile.bearings[i]);
+        buttonEdits[x]->setText(profile.shortDescs[x]);
+        spinBoxes[x]->setValue(profile.bearings[x]);
     }
 
     ui->rotUsrButtonAddProfileButton->setText(tr("Modify"));
@@ -1357,10 +1638,10 @@ void SettingsDialog::doubleClickCWShortcutProfile(QModelIndex i)
 
     QLineEdit * const shortEdits[] = { ui->cwShortcutF1ShortEdit, ui->cwShortcutF2ShortEdit, ui->cwShortcutF3ShortEdit, ui->cwShortcutF4ShortEdit, ui->cwShortcutF5ShortEdit, ui->cwShortcutF6ShortEdit, ui->cwShortcutF7ShortEdit };
     QLineEdit * const macroEdits[] = { ui->cwShortcutF1MacroEdit, ui->cwShortcutF2MacroEdit, ui->cwShortcutF3MacroEdit, ui->cwShortcutF4MacroEdit, ui->cwShortcutF5MacroEdit, ui->cwShortcutF6MacroEdit, ui->cwShortcutF7MacroEdit };
-    for ( int i = 0; i < 7; ++i )
+    for ( int x = 0; x < 7; ++x )
     {
-        shortEdits[i]->setText(profile.shortDescs[i]);
-        macroEdits[i]->setText(profile.macros[i]);
+        shortEdits[x]->setText(profile.shortDescs[x]);
+        macroEdits[x]->setText(profile.macros[x]);
     }
 
     ui->cwShortcutAddProfileButton->setText(tr("Modify"));
@@ -1394,6 +1675,8 @@ void SettingsDialog::refreshStationProfilesView()
 {
     FCT_IDENTIFICATION;
     refreshProfileView(ui->stationProfilesListView, stationProfManager->profileNameList());
+    refreshAdifRecoveryStationProfileDelegate();
+    validateAdifRecoveryStationProfiles();
 }
 
 void SettingsDialog::addStationProfile()
@@ -2199,6 +2482,39 @@ void SettingsDialog::showRigctldAdvanced()
     }
 }
 
+void SettingsDialog::editBandmapGuide()
+{
+    FCT_IDENTIFICATION;
+
+    BandmapGuideDialog dialog(this);
+    if ( dialog.exec() == QDialog::Accepted )
+    {
+        refreshBandmapGuideCombo();
+        BandmapWidget::refreshAllBandmaps();
+    }
+}
+
+void SettingsDialog::bandmapGuideChanged(int index)
+{
+    FCT_IDENTIFICATION;
+
+    if ( index < 0 )
+        return;
+
+    const QString profileId = ui->bandmapGuideComboBox->itemData(index).toString();
+    if ( profileId.isEmpty() )
+    {
+        BandmapGuide::setEnabled(false);
+    }
+    else
+    {
+        BandmapGuide::setCurrentProfileId(profileId);
+        BandmapGuide::setEnabled(true);
+    }
+
+    BandmapWidget::refreshAllBandmaps();
+}
+
 void SettingsDialog::rigShareChanged(int)
 {
     FCT_IDENTIFICATION;
@@ -2231,6 +2547,45 @@ void SettingsDialog::updateRigShareEnabled()
     }
     else
         ui->rigShareCheckBox->setToolTip(tr("Start rigctld daemon to share rig with other applications (e.g. WSJT-X)"));
+}
+
+void SettingsDialog::refreshBandmapGuideCombo()
+{
+    FCT_IDENTIFICATION;
+
+    QSignalBlocker blocker(ui->bandmapGuideComboBox);
+    const QList<BandmapGuide::Profile> profiles = BandmapGuide::profiles();
+    const QString currentProfileId = BandmapGuide::currentProfileId();
+    const bool enabled = BandmapGuide::isEnabled();
+    int selectedIndex = 0;
+    int firstProfileIndex = -1;
+
+    ui->bandmapGuideComboBox->clear();
+    ui->bandmapGuideComboBox->addItem(tr("Off"), QString());
+
+    for ( const BandmapGuide::Profile &profile : profiles )
+    {
+        ui->bandmapGuideComboBox->addItem(profile.name, profile.id);
+
+        const int itemIndex = ui->bandmapGuideComboBox->count() - 1;
+        if ( firstProfileIndex < 0 )
+            firstProfileIndex = itemIndex;
+        if ( enabled && profile.id == currentProfileId )
+            selectedIndex = itemIndex;
+    }
+
+    if ( enabled && selectedIndex == 0 && firstProfileIndex > 0 )
+        selectedIndex = firstProfileIndex;
+
+    ui->bandmapGuideComboBox->setCurrentIndex(selectedIndex);
+
+    if ( enabled )
+    {
+        if ( selectedIndex > 0 )
+            BandmapGuide::setCurrentProfileId(ui->bandmapGuideComboBox->itemData(selectedIndex).toString());
+        else
+            BandmapGuide::setEnabled(false);
+    }
 }
 
 void SettingsDialog::qrzAddCallsignAPIKey()
@@ -2355,6 +2710,11 @@ void SettingsDialog::readSettings()
     ui->hrdlogUploadCodeEdit->setText(HRDLogBase::getUploadCode());
     ui->hrdlogOnAirCheckBox->setChecked(HRDLogBase::getOnAirEnabled());
 
+    /*****************/
+    /* Startup ADI */
+    /*****************/
+    loadAdifRecoveryTable();
+
     /***********/
     /* QRZ.COM */
     /***********/
@@ -2418,6 +2778,12 @@ void SettingsDialog::readSettings()
     bool unitFormatMetric =  locale.getSettingUseMetric();
     ui->unitFormatMetricRadioButton->setChecked(unitFormatMetric);
     ui->unitFormatImperialRadioButton->setChecked(!unitFormatMetric);
+    loadQsoStatusColors();
+
+    /***************/
+    /* Email QSL   */
+    /***************/
+    ui->emailQSLSettingsWidget->readSettings();
 
     /******************/
     /* END OF Reading */
@@ -2478,6 +2844,11 @@ void SettingsDialog::writeSettings()
     HRDLogBase::saveUploadCode(ui->hrdlogCallsignEdit->text(),
                            ui->hrdlogUploadCodeEdit->text());
     HRDLogBase::saveOnAirEnabled(ui->hrdlogOnAirCheckBox->isChecked());
+
+    /*****************/
+    /* Startup ADI */
+    /*****************/
+    saveAdifRecoveryTable();
 
     /***********/
     /* QRZ.COM */
@@ -2545,6 +2916,382 @@ void SettingsDialog::writeSettings()
         locale.setSettingDateFormat(ui->dateFormatStringEdit->text());
 
     locale.setSettingUseMetric(ui->unitFormatMetricRadioButton->isChecked());
+    saveQsoStatusColors();
+    Data::reloadQsoStatusColors();
+
+    /***************/
+    /* Email QSL   */
+    /***************/
+    ui->emailQSLSettingsWidget->writeSettings();
+}
+
+void SettingsDialog::setupAdifRecoveryTab()
+{
+    FCT_IDENTIFICATION;
+
+    adifRecoveryModel = new QStandardItemModel(this);
+    adifRecoveryModel->setHorizontalHeaderLabels({tr("Enabled"),
+                                                  tr("Path"),
+                                                  tr("Station Profile"), tr("Missing QSL Sent"),
+                                                  tr("Last Recovery")});
+    connect(adifRecoveryModel, &QStandardItemModel::itemChanged, this, [this](QStandardItem *item)
+    {
+        if ( !item )
+            return;
+
+        if ( item->column() == ADIF_FILE_COLUMN_QSL_SENT )
+        {
+            const QString status = adifRecoveryQslSentStatusFromText(item->text());
+            if ( item->data(Qt::UserRole).toString() != status )
+                item->setData(status, Qt::UserRole);
+        }
+        else if ( item->column() == ADIF_FILE_COLUMN_PATH )
+        {
+            updateAdifRecoveryPathItem(item);
+        }
+        else if ( item->column() == ADIF_FILE_COLUMN_STATION_PROFILE )
+        {
+            validateAdifRecoveryStationProfiles();
+        }
+    });
+
+    ui->adifFileTableView->setModel(adifRecoveryModel);
+
+    ui->adifFileTableView->horizontalHeader()->setSectionResizeMode(ADIF_FILE_COLUMN_ENABLED, QHeaderView::ResizeToContents);
+    ui->adifFileTableView->horizontalHeader()->setSectionResizeMode(ADIF_FILE_COLUMN_PATH, QHeaderView::Stretch);
+    ui->adifFileTableView->horizontalHeader()->setSectionResizeMode(ADIF_FILE_COLUMN_STATION_PROFILE, QHeaderView::ResizeToContents);
+    ui->adifFileTableView->horizontalHeader()->setSectionResizeMode(ADIF_FILE_COLUMN_QSL_SENT, QHeaderView::ResizeToContents);
+    ui->adifFileTableView->horizontalHeader()->setSectionResizeMode(ADIF_FILE_COLUMN_LAST_RECOVERY, QHeaderView::ResizeToContents);
+
+    refreshAdifRecoveryStationProfileDelegate();
+    ui->adifFileTableView->setItemDelegateForColumn(ADIF_FILE_COLUMN_QSL_SENT,
+                                                    new ComboFormatDelegate(QStringList()
+                                                                            << tr("Queued")
+                                                                            << tr("Ignored")
+                                                                            << tr("Requested")
+                                                                            << tr("No")
+                                                                            << tr("Yes")
+                                                                            << tr("Custom"),
+                                                                            ui->adifFileTableView));
+    ui->adifFileTableView->setItemDelegateForColumn(ADIF_FILE_COLUMN_PATH,
+                                                    new AdifRecoveryPathDelegate(ui->adifFileTableView));
+
+    setupAdifRecoveryQslSentComboData();
+    loadAdifRecoveryQslSentCustomDefaults();
+}
+
+void SettingsDialog::refreshAdifRecoveryStationProfileDelegate()
+{
+    if ( !adifRecoveryModel )
+        return;
+
+    ui->adifFileTableView->setItemDelegateForColumn(ADIF_FILE_COLUMN_STATION_PROFILE,
+                                                    new ComboFormatDelegate(stationProfManager->profileNameList(),
+                                                                            ui->adifFileTableView));
+}
+
+void SettingsDialog::validateAdifRecoveryStationProfiles()
+{
+    if ( !adifRecoveryModel )
+        return;
+
+    const QSignalBlocker blocker(adifRecoveryModel);
+    const QStringList stationProfiles = stationProfManager->profileNameList();
+
+    for ( int row = 0; row < adifRecoveryModel->rowCount(); ++row )
+    {
+        QStandardItem *enabledItem = adifRecoveryModel->item(row, ADIF_FILE_COLUMN_ENABLED);
+        QStandardItem *stationProfileItem = adifRecoveryModel->item(row, ADIF_FILE_COLUMN_STATION_PROFILE);
+        if ( !enabledItem || !stationProfileItem )
+            continue;
+
+        const QString stationProfileName = stationProfileItem->text().trimmed();
+        const bool valid = !stationProfileName.isEmpty() && stationProfiles.contains(stationProfileName);
+
+        stationProfileItem->setForeground(valid ? QBrush() : QBrush(Qt::red));
+        stationProfileItem->setToolTip(valid ? QString()
+                                             : tr("Station Profile does not exist. Select another profile and enable this row again."));
+
+        if ( !valid )
+            enabledItem->setCheckState(Qt::Unchecked);
+    }
+
+    ui->adifFileTableView->viewport()->update();
+}
+
+void SettingsDialog::updateAdifRecoveryPathItem(QStandardItem *item) const
+{
+    if ( !item )
+        return;
+
+    const QString path = item->text().trimmed();
+    const bool exists = QFileInfo::exists(path);
+    const QString toolTip = exists ? tr("File exists") : tr("File does not exist");
+
+    if ( item->data(ADIF_FILE_EXISTS_ROLE).toBool() != exists )
+        item->setData(exists, ADIF_FILE_EXISTS_ROLE);
+
+    if ( item->toolTip() != toolTip )
+        item->setToolTip(toolTip);
+}
+
+void SettingsDialog::appendAdifRecoveryRow(const AdifRecoveryConfig &config)
+{
+    QStandardItem *enabledItem = new QStandardItem();
+
+    enabledItem->setCheckable(true);
+    enabledItem->setEditable(false);
+    enabledItem->setCheckState(config.enabled ? Qt::Checked : Qt::Unchecked);
+
+    QStandardItem *stationProfileItem = new QStandardItem(config.stationProfileName);
+    stationProfileItem->setEditable(true);
+
+    const QString qslSentStatus = config.qslSentStatusDefault.isEmpty()
+                                  ? QStringLiteral("Q")
+                                  : config.qslSentStatusDefault;
+    QStandardItem *qslSentItem = new QStandardItem(adifRecoveryQslSentStatusToText(qslSentStatus));
+    qslSentItem->setEditable(true);
+    qslSentItem->setData(qslSentStatus, Qt::UserRole);
+
+    const AdifRecoveryState state = LogParam::getAdifRecoveryState(AdifRecovery::fileKey(config.path,
+                                                                                        config.stationProfileName));
+    QStandardItem *lastRecoveryItem = new QStandardItem(state.lastRecoveryAt.isValid()
+                                                       ? state.lastRecoveryAt.toLocalTime().toString(locale.formatDateShortWithYYYY()
+                                                                                                     + QStringLiteral(" ")
+                                                                                                     + locale.formatTimeLongWithoutTZ())
+                                                       : QString());
+    lastRecoveryItem->setEditable(false);
+
+    QStandardItem *pathItem = new QStandardItem(config.path);
+    pathItem->setEditable(true);
+    updateAdifRecoveryPathItem(pathItem);
+
+    adifRecoveryModel->appendRow({enabledItem,
+                                  pathItem,
+                                  stationProfileItem,
+                                  qslSentItem,
+                                  lastRecoveryItem});
+}
+
+void SettingsDialog::loadAdifRecoveryTable()
+{
+    FCT_IDENTIFICATION;
+
+    adifRecoveryModel->removeRows(0, adifRecoveryModel->rowCount());
+    loadedAdifRecoveryKeys.clear();
+    removedAdifRecoveryKeys.clear();
+
+    const QList<AdifRecoveryConfig> files = LogParam::getAdifRecoveryFiles();
+
+    for ( const AdifRecoveryConfig &file : files )
+    {
+        appendAdifRecoveryRow(file);
+        loadedAdifRecoveryKeys.insert(AdifRecovery::fileKey(file.path, file.stationProfileName));
+    }
+    validateAdifRecoveryStationProfiles();
+}
+
+QList<AdifRecoveryConfig> SettingsDialog::adifRecoveryFilesFromTable() const
+{
+    QList<AdifRecoveryConfig> files;
+    QSet<QString> seenPaths;
+    const QStringList stationProfiles = stationProfManager->profileNameList();
+
+    for ( int row = 0; row < adifRecoveryModel->rowCount(); ++row )
+    {
+        const QString path = adifRecoveryModel->item(row, ADIF_FILE_COLUMN_PATH)->text().trimmed();
+
+        if ( path.isEmpty() )
+            continue;
+
+        const QString normalizedPath = AdifRecovery::normalizePath(path);
+        const QStandardItem *stationProfileItem = adifRecoveryModel->item(row, ADIF_FILE_COLUMN_STATION_PROFILE);
+        const QString stationProfileName = stationProfileItem->text().trimmed();
+
+        if ( stationProfileName.isEmpty() )
+            continue;
+
+        const QString duplicateKey = normalizedPath + QChar(0x1f) + stationProfileName;
+
+        if ( seenPaths.contains(duplicateKey) )
+            continue;
+
+        AdifRecoveryConfig config;
+        config.stationProfileName = stationProfileName;
+        config.enabled = adifRecoveryModel->item(row, ADIF_FILE_COLUMN_ENABLED)->checkState() == Qt::Checked
+                         && stationProfiles.contains(stationProfileName);
+        config.qslSentStatusDefault = adifRecoveryQslSentStatusFromItem(adifRecoveryModel->item(row, ADIF_FILE_COLUMN_QSL_SENT));
+        config.path = normalizedPath;
+        files.append(config);
+        seenPaths.insert(duplicateKey);
+    }
+
+    return files;
+}
+
+void SettingsDialog::saveAdifRecoveryTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QList<AdifRecoveryConfig> files = adifRecoveryFilesFromTable();
+    QSet<QString> currentKeys;
+
+    for ( const AdifRecoveryConfig &file : files )
+        currentKeys.insert(AdifRecovery::fileKey(file.path, file.stationProfileName));
+
+    for ( const QString &oldKey : static_cast<const QSet<QString>&>(loadedAdifRecoveryKeys) )
+        if ( !currentKeys.contains(oldKey) )
+            LogParam::removeAdifRecoveryState(oldKey);
+
+    for ( const QString &removedKey : static_cast<const QSet<QString>&>(removedAdifRecoveryKeys) )
+        LogParam::removeAdifRecoveryState(removedKey);
+
+    for ( const AdifRecoveryConfig &file : files )
+    {
+        const QString key = AdifRecovery::fileKey(file.path, file.stationProfileName);
+        AdifRecoveryState state = LogParam::getAdifRecoveryState(key);
+        if ( state.offset < 0 )
+        {
+            state.path = file.path;
+            state.offset = QFileInfo::exists(file.path) ? QFileInfo(file.path).size() : -1;
+            state.lastRecoveryAt = QDateTime::currentDateTimeUtc();
+            state.lastMessage = tr("Startup ADI initialized");
+            LogParam::setAdifRecoveryState(key, state);
+        }
+    }
+
+    LogParam::setAdifRecoveryFiles(files);
+    saveAdifRecoveryQslSentCustomDefaults();
+}
+
+void SettingsDialog::addAdifRecoveryFile()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList files = QFileDialog::getOpenFileNames(this,
+                                                            tr("Select ADIF File"),
+                                                            QDir::homePath(),
+                                                            tr("ADIF Files (*.adi *.adif);;All Files (*)"));
+    const QString defaultProfile = StationProfilesManager::instance()->getCurProfile1().profileName;
+    for ( const QString &file : files )
+    {
+        AdifRecoveryConfig config;
+        config.enabled = true;
+        config.stationProfileName = defaultProfile;
+        config.qslSentStatusDefault = QStringLiteral("Q");
+        config.path = AdifRecovery::normalizePath(file);
+        appendAdifRecoveryRow(config);
+    }
+}
+
+void SettingsDialog::removeAdifRecoveryFile()
+{
+    FCT_IDENTIFICATION;
+
+    const QModelIndexList selectedRows = ui->adifFileTableView->selectionModel()->selectedRows();
+    QList<int> rows;
+    for ( const QModelIndex &index : selectedRows )
+        rows.append(index.row());
+
+    std::sort(rows.begin(), rows.end(), std::greater<int>());
+    for ( int row : static_cast<const QList<int>&>(rows) )
+    {
+        const QStandardItem *pathItem = adifRecoveryModel->item(row, ADIF_FILE_COLUMN_PATH);
+        if ( pathItem )
+        {
+            const QString path = pathItem->text().trimmed();
+            if ( !path.isEmpty() )
+            {
+                const QStandardItem *stationProfileItem = adifRecoveryModel->item(row, ADIF_FILE_COLUMN_STATION_PROFILE);
+                const QString stationProfileName = stationProfileItem ? stationProfileItem->text().trimmed() : QString();
+                removedAdifRecoveryKeys.insert(AdifRecovery::fileKey(path, stationProfileName));
+            }
+        }
+        adifRecoveryModel->removeRow(row);
+    }
+}
+
+void SettingsDialog::setupAdifRecoveryQslSentComboData()
+{
+    const QList<QComboBox*> combos = {
+        ui->adifRecoveryQslSentStatusPaperCombo,
+        ui->adifRecoveryQslSentStatusLotwCombo,
+        ui->adifRecoveryQslSentStatusEqslCombo,
+        ui->adifRecoveryQslSentStatusDclCombo
+    };
+
+    for ( QComboBox *combo : combos )
+    {
+        combo->clear();
+        combo->addItem(tr("Queued"), "Q");
+        combo->addItem(tr("Requested"), "R");
+        combo->addItem(tr("Ignored"), "I");
+        combo->addItem(tr("No"), "N");
+        combo->addItem(tr("Yes"), "Y");
+    }
+}
+
+void SettingsDialog::loadAdifRecoveryQslSentCustomDefaults()
+{
+    setComboByData(ui->adifRecoveryQslSentStatusPaperCombo,
+                   LogParam::getAdifRecoveryQslSentStatusPaper(),
+                   0);
+    setComboByData(ui->adifRecoveryQslSentStatusLotwCombo,
+                   LogParam::getAdifRecoveryQslSentStatusLoTW(),
+                   0);
+    setComboByData(ui->adifRecoveryQslSentStatusEqslCombo,
+                   LogParam::getAdifRecoveryQslSentStatusEQSL(),
+                   0);
+    setComboByData(ui->adifRecoveryQslSentStatusDclCombo,
+                   LogParam::getAdifRecoveryQslSentStatusDCL(),
+                   0);
+}
+
+void SettingsDialog::saveAdifRecoveryQslSentCustomDefaults() const
+{
+    LogParam::setAdifRecoveryQslSentStatusPaper(ui->adifRecoveryQslSentStatusPaperCombo->currentData().toString());
+    LogParam::setAdifRecoveryQslSentStatusLoTW(ui->adifRecoveryQslSentStatusLotwCombo->currentData().toString());
+    LogParam::setAdifRecoveryQslSentStatusEQSL(ui->adifRecoveryQslSentStatusEqslCombo->currentData().toString());
+    LogParam::setAdifRecoveryQslSentStatusDCL(ui->adifRecoveryQslSentStatusDclCombo->currentData().toString());
+}
+
+QString SettingsDialog::adifRecoveryQslSentStatusFromItem(const QStandardItem *item) const
+{
+    if ( !item )
+        return QStringLiteral("Q");
+
+    const QString status = item->data(Qt::UserRole).toString();
+    return status.isEmpty() ? adifRecoveryQslSentStatusFromText(item->text()) : status;
+}
+
+QString SettingsDialog::adifRecoveryQslSentStatusFromText(const QString &text) const
+{
+    if ( text == tr("Ignored") )
+        return QStringLiteral("I");
+    if ( text == tr("Requested") )
+        return QStringLiteral("R");
+    if ( text == tr("No") )
+        return QStringLiteral("N");
+    if ( text == tr("Yes") )
+        return QStringLiteral("Y");
+    if ( text == tr("Custom") )
+        return QStringLiteral("custom");
+    return QStringLiteral("Q");
+}
+
+QString SettingsDialog::adifRecoveryQslSentStatusToText(const QString &status) const
+{
+    if ( status == QLatin1String("I") )
+        return tr("Ignored");
+    if ( status == QLatin1String("R") )
+        return tr("Requested");
+    if ( status == QLatin1String("N") )
+        return tr("No");
+    if ( status == QLatin1String("Y") )
+        return tr("Yes");
+    if ( status == QLatin1String("custom") )
+        return tr("Custom");
+    return tr("Queued");
 }
 
 /* this function is called when user modify rig progile

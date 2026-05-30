@@ -2,6 +2,7 @@
 #include "core/debug.h"
 #include "data/ProfileManager.h"
 #include "data/AntProfile.h"
+#include "data/BandmapGuide.h"
 #include "data/MainLayoutProfile.h"
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
@@ -212,11 +213,32 @@ void ActivityProfilesManager::setAllProfiles()
         case ActivityProfile::MAIN_LAYOUT_PROFILE:
             MainLayoutProfilesManager::instance()->setCurProfile1(i.value().name);
             break;
+        case ActivityProfile::BANDMAP_GUIDE_PROFILE:
+            applyBandmapGuideProfile(i.value().name);
+            break;
         default:
             qWarning() << "Unknown Activity profile" << i.key();
         }
     }
+
     emit changeFinished(currActivity.profileName);
+}
+
+void ActivityProfilesManager::applyBandmapGuideProfile(const QString &profileId)
+{
+    FCT_IDENTIFICATION;
+
+    if ( profileId.isEmpty() )
+    {
+        BandmapGuide::setEnabled(false);
+        return;
+    }
+
+    if ( !BandmapGuide::profileExists(profileId) )
+        return;
+
+    BandmapGuide::setCurrentProfileId(profileId);
+    BandmapGuide::setEnabled(true);
 }
 
 ActivityProfilesManager::ActivityProfilesManager() :

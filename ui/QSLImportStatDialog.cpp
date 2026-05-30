@@ -72,32 +72,22 @@ void QSLImportStatDialog::showStat(const quint64 updated,
     ui->unmatchedNumber->setText(QString::number(unmatched));
     ui->errorsNumber->setText(QString::number(errors));
 
-    if ( !newQSLText.isEmpty() )
-    {
-        ui->detailsText->moveCursor(QTextCursor::End);
-        ui->detailsText->insertPlainText("*** " + tr("New QSLs: ") + "\n");
-        ui->detailsText->moveCursor(QTextCursor::End);
-        ui->detailsText->insertPlainText(newQSLText);
-        ui->detailsText->moveCursor(QTextCursor::End);
-        ui->detailsText->moveCursor(QTextCursor::End);
-    }
+    QStringList sections;
 
-    if ( !updatedQSLText.isEmpty() )
+    auto appendSection = [&sections](const QString &title, const QString &text)
     {
-        ui->detailsText->insertPlainText("*** " + tr("Updated QSOs: ") + "\n");
-        ui->detailsText->moveCursor(QTextCursor::End);
-        ui->detailsText->insertPlainText(updatedQSLText);
-        ui->detailsText->moveCursor(QTextCursor::End);
-        ui->detailsText->moveCursor(QTextCursor::End);
-    }
+        const QString body = text.trimmed();
+        if ( body.isEmpty() )
+            return;
 
-    if ( !unmatchedQSLText.isEmpty() )
-    {
-        ui->detailsText->insertPlainText("*** " + tr("Unmatched QSLs: ") + "\n");
-        ui->detailsText->moveCursor(QTextCursor::End);
-        ui->detailsText->insertPlainText (unmatchedQSLText);
-        ui->detailsText->moveCursor(QTextCursor::End);
-    }
+        sections << "*** " + title + "\n" + body;
+    };
+
+    appendSection(tr("New QSLs:"), newQSLText);
+    appendSection(tr("Updated QSOs:"), updatedQSLText);
+    appendSection(tr("Unmatched QSLs:"), unmatchedQSLText);
+
+    ui->detailsText->setPlainText(sections.join("\n\n"));
 }
 
 QSLImportStatDialog::~QSLImportStatDialog()

@@ -108,4 +108,34 @@ private:
     void get(QList<QPair<QString, QString>> params);
 };
 
+class LotwDXCCCreditDownloader : public QObject, private LotwBase
+{
+    Q_OBJECT
+
+public:
+    explicit LotwDXCCCreditDownloader(QObject *parent = nullptr);
+    virtual ~LotwDXCCCreditDownloader();
+
+    static const QString dxccModeGroupFromLotw(const QString &lotwModeGroup);
+    void downloadCredits(const QString &entity = QString());
+
+signals:
+    void downloadProgress(qulonglong value);
+    void downloadStarted();
+    void downloadComplete(QSLMergeStat);
+    void downloadFailed(QString);
+
+public slots:
+    void abortDownload();
+
+private:
+    QNetworkAccessManager *nam;
+    QNetworkReply *currentReply;
+    const QString DXCC_CREDIT_API = "https://lotw.arrl.org/lotwuser/logbook/qslcards.php";
+
+    static bool containsADIFTag(const QByteArray &data, const QString &tagName);
+    static QString plainResponseSummary(const QByteArray &data);
+    void processReply(QNetworkReply *reply);
+};
+
 #endif // QLOG_SERVISE_LOTW_LOTW_H

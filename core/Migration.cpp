@@ -329,6 +329,9 @@ bool DBSchemaMigration::functionMigration(int version)
     case 35:
         ret = removeSettings2DB();
         break;
+    case 40:
+        ret = emailQSLSettings2DB();
+        break;
     default:
         ret = true;
     }
@@ -904,6 +907,37 @@ bool DBSchemaMigration::removeSettings2DB()
     settings.remove("geometry");
     settings.remove("windowState");
     settings.remove("bandmapwidgets");
+    return true;
+}
+
+bool DBSchemaMigration::emailQSLSettings2DB()
+{
+    FCT_IDENTIFICATION;
+
+    QSettings settings;
+
+    if (settings.contains("emailqsl/smtpHost"))
+        LogParam::setEmailQSLSmtpHost(settings.value("emailqsl/smtpHost").toString());
+    if (settings.contains("emailqsl/smtpPort"))
+        LogParam::setEmailQSLSmtpPort(settings.value("emailqsl/smtpPort").toInt());
+    if (settings.contains("emailqsl/smtpEncryption"))
+        LogParam::setEmailQSLSmtpEncryption(settings.value("emailqsl/smtpEncryption").toInt());
+    if (settings.contains("emailqsl/smtpUsername"))
+        LogParam::setEmailQSLSmtpUsername(settings.value("emailqsl/smtpUsername").toString());
+    if (settings.contains("emailqsl/fromAddress"))
+        LogParam::setEmailQSLFromAddress(settings.value("emailqsl/fromAddress").toString());
+    if (settings.contains("emailqsl/fromName"))
+        LogParam::setEmailQSLFromName(settings.value("emailqsl/fromName").toString());
+    if (settings.contains("emailqsl/subjectTemplate"))
+        LogParam::setEmailQSLSubjectTemplate(settings.value("emailqsl/subjectTemplate").toString());
+    if (settings.contains("emailqsl/bodyTemplate"))
+        LogParam::setEmailQSLBodyTemplate(settings.value("emailqsl/bodyTemplate").toString());
+    if (settings.contains("emailqsl/cardImagePath"))
+        LogParam::setEmailQSLCardImagePath(settings.value("emailqsl/cardImagePath").toString());
+    if (settings.contains("emailqsl/cardOverlays"))
+        LogParam::setEmailQSLCardOverlays(settings.value("emailqsl/cardOverlays").toByteArray());
+
+    settings.remove("emailqsl");
     return true;
 }
 

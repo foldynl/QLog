@@ -3,8 +3,14 @@
 
 #include <QObject>
 #include <QDate>
+#include <QColor>
+#include <QImage>
 #include <QVariant>
 #include <QMutex>
+#include <QList>
+
+struct AdifRecoveryConfig;
+struct AdifRecoveryState;
 
 class LogParam : public QObject
 {
@@ -75,6 +81,14 @@ public:
     static bool getBandmapCenterRX(const QString& widgetID);
     static bool setBandmapShowEmergency(const QString& widgetID, bool show);
     static bool getBandmapShowEmergency(const QString& widgetID);
+    static bool setBandmapShowIBP(const QString& widgetID, bool show);
+    static bool getBandmapShowIBP(const QString& widgetID);
+    static bool setBandmapGuideProfiles(const QString &json);
+    static QString getBandmapGuideProfiles();
+    static bool setBandmapGuideCurrentProfile(const QString &id);
+    static QString getBandmapGuideCurrentProfile();
+    static bool setBandmapGuideEnabled(bool state);
+    static bool getBandmapGuideEnabled();
 
     /*******************
      * UploadQSO Dialog
@@ -93,6 +107,35 @@ public:
     static void setUploadQSOFilterType(int filterID);
     static QString getUploadLoTWLocation();
     static void setUploadLoTWLocation(const QString &location);
+
+    /*****************
+     * Import Dialog
+     *****************/
+    static QString getImportQslSentStatusPaper();
+    static void setImportQslSentStatusPaper(const QString &status);
+    static QString getImportQslSentStatusLoTW();
+    static void setImportQslSentStatusLoTW(const QString &status);
+    static QString getImportQslSentStatusEQSL();
+    static void setImportQslSentStatusEQSL(const QString &status);
+    static QString getImportQslSentStatusDCL();
+    static void setImportQslSentStatusDCL(const QString &status);
+
+    /*****************
+     * Startup ADI
+     *****************/
+    static QList<AdifRecoveryConfig> getAdifRecoveryFiles();
+    static void setAdifRecoveryFiles(const QList<AdifRecoveryConfig> &files);
+    static AdifRecoveryState getAdifRecoveryState(const QString &fileKey);
+    static void setAdifRecoveryState(const QString &fileKey, const AdifRecoveryState &state);
+    static void removeAdifRecoveryState(const QString &fileKey);
+    static QString getAdifRecoveryQslSentStatusPaper();
+    static void setAdifRecoveryQslSentStatusPaper(const QString &status);
+    static QString getAdifRecoveryQslSentStatusLoTW();
+    static void setAdifRecoveryQslSentStatusLoTW(const QString &status);
+    static QString getAdifRecoveryQslSentStatusEQSL();
+    static void setAdifRecoveryQslSentStatusEQSL(const QString &status);
+    static QString getAdifRecoveryQslSentStatusDCL();
+    static void setAdifRecoveryQslSentStatusDCL(const QString &status);
 
     /*********************
      * DownloadQSL Dialog
@@ -157,6 +200,30 @@ public:
      ********/
     static QString getKSTChatUsername();
     static void setKSTChatUsername(const QString& username);
+
+    /*********
+     * Email QSL
+     ********/
+    static QString getEmailQSLSmtpHost();
+    static void    setEmailQSLSmtpHost(const QString &host);
+    static int     getEmailQSLSmtpPort();
+    static void    setEmailQSLSmtpPort(int port);
+    static int     getEmailQSLSmtpEncryption();
+    static void    setEmailQSLSmtpEncryption(int enc);
+    static QString getEmailQSLSmtpUsername();
+    static void    setEmailQSLSmtpUsername(const QString &username);
+    static QString getEmailQSLFromAddress();
+    static void    setEmailQSLFromAddress(const QString &addr);
+    static QString getEmailQSLFromName();
+    static void    setEmailQSLFromName(const QString &name);
+    static QString getEmailQSLSubjectTemplate(const QString &defaultValue);
+    static void    setEmailQSLSubjectTemplate(const QString &tmpl);
+    static QString getEmailQSLBodyTemplate(const QString &defaultValue);
+    static void    setEmailQSLBodyTemplate(const QString &tmpl);
+    static QString getEmailQSLCardImagePath();
+    static void    setEmailQSLCardImagePath(const QString &path);
+    static QByteArray getEmailQSLCardOverlays();
+    static void       setEmailQSLCardOverlays(const QByteArray &json);
 
     /*********
      * LoTW
@@ -364,6 +431,8 @@ public:
     static void setMainWindowAlertBeep(bool state);
     static int getMainWindowDarkMode();
     static void setMainWindowDarkMode(int state);
+    static QVariantMap getQsoStatusColors();
+    static void setQsoStatusColors(const QVariantMap &colors);
     static QByteArray getMainWindowGeometry();
     static void setMainWindowGeometry(const QByteArray &state);
     static QByteArray getMainWindowState();
@@ -385,6 +454,12 @@ public:
     static void setQslLabelSkip(int count);
     static int getQslLabelZoom();
     static void setQslLabelZoom(int zoom);
+    static int getQslLabelPrintMode();
+    static void setQslLabelPrintMode(int mode);
+    static int getQslLabelPageSize();
+    static void setQslLabelPageSize(int pageSize);
+    static QString getQslLabelImageExportPath(const QString &defaultPath);
+    static void setQslLabelImageExportPath(const QString &path);
     static int getQslLabelCustomPageSize();
     static void setQslLabelCustomPageSize(int pageSizeIndex);
     static int getQslLabelCustomCols();
@@ -403,6 +478,26 @@ public:
     static void setQslLabelCustomHSpacing(double spacing);
     static double getQslLabelCustomVSpacing();
     static void setQslLabelCustomVSpacing(double spacing);
+    static double getQslLabelCardWidth();
+    static void setQslLabelCardWidth(double width);
+    static double getQslLabelCardHeight();
+    static void setQslLabelCardHeight(double height);
+    static double getQslLabelCardGap();
+    static void setQslLabelCardGap(double gap);
+    static double getQslLabelCardLabelWidth();
+    static void setQslLabelCardLabelWidth(double width);
+    static double getQslLabelCardLabelHeight();
+    static void setQslLabelCardLabelHeight(double height);
+    static double getQslLabelCardLabelOffsetX();
+    static void setQslLabelCardLabelOffsetX(double offset);
+    static double getQslLabelCardLabelOffsetY();
+    static void setQslLabelCardLabelOffsetY(double offset);
+    static bool getQslLabelCardLabelOpaqueBackground();
+    static void setQslLabelCardLabelOpaqueBackground(bool enabled);
+    static QColor getQslLabelCardLabelBackgroundColor();
+    static void setQslLabelCardLabelBackgroundColor(const QColor &color);
+    static QImage getQslLabelCardBackgroundImage();
+    static void setQslLabelCardBackgroundImage(const QImage &image);
     static bool getQslLabelPrintBorders();
     static void setQslLabelPrintBorders(bool enabled);
     static QString getQslLabelDateFormat();
@@ -411,6 +506,8 @@ public:
     static void setQslLabelSansFont(const QString &family);
     static QString getQslLabelMonoFont();
     static void setQslLabelMonoFont(const QString &family);
+    static QColor getQslLabelTextColor();
+    static void setQslLabelTextColor(const QColor &color);
     static QString getQslLabelExtraColumn();
     static void setQslLabelExtraColumn(const QString &column);
     static QString getQslLabelExtraColumnHeader();

@@ -115,6 +115,7 @@ private slots:
     void removeAccents_basic();
     void removeAccents_asciiPrintable();
     void removeAccents_nonPrintable();
+    void removeAccents_preservesLineBreaks();
     void removeAccents_limits();
     void removeAccents_benchmark();
 };
@@ -162,6 +163,12 @@ void DataTest::removeAccents_nonPrintable()
         const QString expected = expectedExtendedChar(static_cast<unsigned char>(i));
         QCOMPARE(Data::removeAccents(input), expected);
     }
+}
+
+void DataTest::removeAccents_preservesLineBreaks()
+{
+    QCOMPARE(Data::removeAccents(QStringLiteral("řádek 1\nřádek 2\r\nřádek 3")),
+             QStringLiteral("radek 1\nradek 2\r\nradek 3"));
 }
 
 void DataTest::removeAccents_limits()

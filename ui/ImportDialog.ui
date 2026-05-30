@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>ImportDialog</class>
  <widget class="QDialog" name="ImportDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>560</width>
+    <height>660</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Import</string>
   </property>
@@ -11,6 +19,12 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QGroupBox" name="groupBox_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>File</string>
      </property>
@@ -61,6 +75,12 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="toolTip">
       <string/>
      </property>
@@ -136,11 +156,30 @@
         </property>
        </widget>
       </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="toolTip">
       <string>The value is used when an input record does not contain the ADIF value</string>
      </property>
@@ -148,7 +187,36 @@
       <string>Defaults</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="defaultTextLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Values are used only for fields that are missing in the import file. Existing values are preserved.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="defaultQSLSentTextLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>&lt;p&gt;⚠ Missing QSL Sent fields are set to &lt;b&gt;&quot;N&quot;&lt;/b&gt; (do not send) by default in ADIF.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <widget class="QCheckBox" name="profileCheckBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -164,7 +232,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="1">
+       <widget class="QComboBox" name="profileSelect">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
        <widget class="QCheckBox" name="rigCheckBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -177,7 +252,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="3" column="1">
        <widget class="QComboBox" name="rigSelect">
         <property name="enabled">
          <bool>false</bool>
@@ -193,7 +268,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="4" column="0">
        <widget class="QCheckBox" name="commentCheckBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -206,7 +281,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="4" column="1">
        <widget class="QLineEdit" name="commentEdit">
         <property name="enabled">
          <bool>false</bool>
@@ -222,11 +297,119 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="profileSelect">
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="qslSentStatusCheckBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Used only for missing QSL_SENT, LOTW_QSL_SENT, EQSL_QSL_SENT, and DCL_QSL_SENT fields where default is &quot;N&quot;; otherwise, the value from the input is used.</string>
+        </property>
+        <property name="text">
+         <string>QSL Sent status</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QComboBox" name="qslSentStatusCombo">
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Used only for missing QSL_SENT, LOTW_QSL_SENT, EQSL_QSL_SENT, and DCL_QSL_SENT fields where default is &quot;N&quot;; otherwise, the value from the input is used.&lt;p&gt;&lt;b&gt;Queued&lt;/b&gt; (ready), &lt;b&gt;No&lt;/b&gt; (do not send), &lt;b&gt;Ignore&lt;/b&gt; (do not track), &lt;b&gt;Requested&lt;/b&gt; (requested), &lt;b&gt;Yes&lt;/b&gt; (already sent).</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QWidget" name="qslSentStatusCustomWidget" native="true">
+        <property name="toolTip">
+         <string>Used only when the imported ADIF record does not contain the selected field. Explicit ADIF values are kept.</string>
+        </property>
+        <layout class="QGridLayout" name="qslSentStatusCustomLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing">
+          <number>12</number>
+         </property>
+         <item row="2" column="3">
+          <widget class="QComboBox" name="qslSentStatusDclCombo">
+           <property name="toolTip">
+            <string>Default value for missing DCL_QSL_SENT. &lt;p&gt;&lt;b&gt;Queued&lt;/b&gt; (ready), &lt;b&gt;No&lt;/b&gt; (do not send), &lt;b&gt;Ignore&lt;/b&gt; (do not track), &lt;b&gt;Requested&lt;/b&gt; (requested), &lt;b&gt;Yes&lt;/b&gt; (already sent).</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="qslSentStatusEqslCombo">
+           <property name="toolTip">
+            <string>Default value for missing EQSL_QSL_SENT. &lt;p&gt;&lt;b&gt;Queued&lt;/b&gt; (ready), &lt;b&gt;No&lt;/b&gt; (do not send), &lt;b&gt;Ignore&lt;/b&gt; (do not track), &lt;b&gt;Requested&lt;/b&gt; (requested), &lt;b&gt;Yes&lt;/b&gt; (already sent).</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QComboBox" name="qslSentStatusLotwCombo">
+           <property name="toolTip">
+            <string>Default value for missing LOTW_QSL_SENT. &lt;p&gt;&lt;b&gt;Queued&lt;/b&gt; (ready), &lt;b&gt;No&lt;/b&gt; (do not send), &lt;b&gt;Ignore&lt;/b&gt; (do not track), &lt;b&gt;Requested&lt;/b&gt; (requested), &lt;b&gt;Yes&lt;/b&gt; (already sent).</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="qslSentStatusLotwLabel">
+           <property name="text">
+            <string>LoTW</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="qslSentStatusDclLabel">
+           <property name="text">
+            <string>DCL</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="qslSentStatusPaperLabel">
+           <property name="text">
+            <string>Paper QSL</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="qslSentStatusEqslLabel">
+           <property name="text">
+            <string>eQSL</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="qslSentStatusPaperCombo">
+           <property name="toolTip">
+            <string>Default value for missing QSL_SENT.&lt;p&gt;&lt;b&gt;Queued&lt;/b&gt; (ready), &lt;b&gt;No&lt;/b&gt; (do not send), &lt;b&gt;Ignore&lt;/b&gt; (do not track), &lt;b&gt;Requested&lt;/b&gt; (requested), &lt;b&gt;Yes&lt;/b&gt; (already sent).</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -297,6 +480,12 @@
   <tabstop>rigSelect</tabstop>
   <tabstop>commentCheckBox</tabstop>
   <tabstop>commentEdit</tabstop>
+  <tabstop>qslSentStatusCheckBox</tabstop>
+  <tabstop>qslSentStatusCombo</tabstop>
+  <tabstop>qslSentStatusPaperCombo</tabstop>
+  <tabstop>qslSentStatusLotwCombo</tabstop>
+  <tabstop>qslSentStatusEqslCombo</tabstop>
+  <tabstop>qslSentStatusDclCombo</tabstop>
   <tabstop>fillMissingDxccCheckBox</tabstop>
  </tabstops>
  <resources/>
@@ -461,6 +650,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>qslSentStatusCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ImportDialog</receiver>
+   <slot>qslSentStatusDefaultChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>306</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qslSentStatusCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>ImportDialog</receiver>
+   <slot>qslSentStatusDefaultChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>306</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>browse()</slot>
@@ -473,5 +694,6 @@
   <slot>stationProfileTextChanged(QString)</slot>
   <slot>rigProfileTextChanged(QString)</slot>
   <slot>commentChanged(QString)</slot>
+  <slot>qslSentStatusDefaultChanged(int)</slot>
  </slots>
 </ui>

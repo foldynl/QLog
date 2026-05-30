@@ -2,7 +2,9 @@
 #include "AwardUSCounty.h"
 
 AwardUSCounty::AwardUSCounty()
-    : SecondarySubdivisionAward(QStringLiteral("uscounty"), QStringLiteral("291, 6, 110"))
+    : SecondarySubdivisionAward(QStringLiteral("uscounty"),
+                                QStringLiteral("291, 6, 110"),
+                                QStringLiteral("https://countyhunter.com/cq.htm"))
 {
 }
 

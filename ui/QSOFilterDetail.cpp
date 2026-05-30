@@ -7,6 +7,7 @@
 #include "core/debug.h"
 #include "data/Data.h"
 #include "core/QSOFilterManager.h"
+#include "ui/component/LogbookFieldComboBox.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qsofilterdetail");
 
@@ -48,7 +49,7 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     /***************/
     /* Field Combo */
     /***************/
-    QComboBox* fieldNameCombo = new QComboBox(this);
+    LogbookFieldComboBox* fieldNameCombo = new LogbookFieldComboBox(this);
     fieldNameCombo->setObjectName(QString::fromUtf8("fieldNameCombo%1").arg(condCount));
     QSizePolicy sizePolicy1(QSizePolicy::Maximum, QSizePolicy::Fixed);
     sizePolicy1.setHorizontalStretch(0);
@@ -56,22 +57,7 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     sizePolicy1.setHeightForWidth(fieldNameCombo->sizePolicy().hasHeightForWidth());
     fieldNameCombo->setSizePolicy(sizePolicy1);
 
-    QList<QPair<LogbookModel::ColumnID, QString>> items;
-
-    for ( int i = LogbookModel::ColumnID::COLUMN_ID; i < LogbookModel::ColumnID::COLUMN_LAST_ELEMENT; ++i )
-    {
-        LogbookModel::ColumnID columnID = static_cast<LogbookModel::ColumnID>(i);
-        items.append({columnID, LogbookModel::getFieldNameTranslation(columnID)});
-    }
-
-    std::sort(items.begin(), items.end(), [](const QPair<LogbookModel::ColumnID, QString>& a,
-                                             const QPair<LogbookModel::ColumnID, QString>& b)
-    {
-        return a.second.localeAwareCompare(b.second) < 0;
-    });
-
-    for (const auto& item : items)
-        fieldNameCombo->addItem(item.second, item.first);
+    fieldNameCombo->populate(LogbookFieldComboBox::ValueMode::ColumnId);
 
     /* Do not set combo value here because we will connect signal Change later */
     conditionLayout->addWidget(fieldNameCombo);

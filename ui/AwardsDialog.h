@@ -32,8 +32,10 @@ private:
     AwardDefinition* currentAward() const;
     AwardFilterParams buildFilterParams() const;
     QString getSelectedEntity() const;
+    void openRulesUrl() const;
     void setEntityInputEnabled(bool);
     void setNotWorkedEnabled(bool);
+    void updateRulesButton(const AwardDefinition *award);
 
     static QList<AwardDefinition*> createAwards();
 };

@@ -8,6 +8,7 @@ class AwardWAS : public BandTableAward
 public:
     QString key() const override { return QStringLiteral("was"); }
     QString displayName() const override;
+    QString rulesUrl() const override;
 
 protected:
     QString headersColumns(const QString &entity) const override;

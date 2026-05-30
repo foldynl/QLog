@@ -41,6 +41,12 @@ QVariant AlertTableModel::data(const QModelIndex& index, int role) const
     {
         return Data::statusToColor(selectedRecord.alert.spot.status, selectedRecord.alert.spot.dupeCount, QColor(Qt::transparent));
     }
+    else if ( index.column() == COLUMN_CALLSIGN && role == Qt::ForegroundRole )
+    {
+        return Data::textColorForBackground(Data::statusToColor(selectedRecord.alert.spot.status,
+                                                                selectedRecord.alert.spot.dupeCount,
+                                                                QColor(Qt::transparent)));
+    }
     else if ( role == Qt::UserRole )
     {
         switch ( index.column() )

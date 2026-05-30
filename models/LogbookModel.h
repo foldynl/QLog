@@ -11,7 +11,11 @@ class LogbookModel : public QSqlTableModel
 public:
     explicit LogbookModel(QObject* parent = nullptr, QSqlDatabase db = QSqlDatabase());
 
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    void sort(int column, Qt::SortOrder order) override;
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     void updateExternalServicesUploadStatus( const QModelIndex &index, int role, bool &updateResult );
     void updateUploadToModified( const QModelIndex &index, int role, int column, bool &updateResult );
@@ -199,11 +203,19 @@ public:
         COLUMN_QRZCOM_QSO_DOWNLOAD_STATUS = 178,
         COLUMN_QSLMSG_RCVD = 179,
         COLUMN_EQSL_AG = 180,
-        COLUMN_LAST_ELEMENT = 181
+        COLUMN_LAST_ELEMENT = 181,
+
+        // Virtual UI-only column. Keep it equal to COLUMN_LAST_ELEMENT so existing
+        // loops over real contacts fields (`i < COLUMN_LAST_ELEMENT`) do not treat
+        // it as an ADIF/DB field.
+        COLUMN_MODE_SUBMODE = COLUMN_LAST_ELEMENT
     };
 
 private:
     static QMap<LogbookModel::ColumnID, QString> fieldNameTranslationMap;
+    QVariant modeSubmodeData(int row, int role) const;
+    bool setModeSubmodeData(int row, const QString &newMode, const QString &newSubmode, int role);
+    void emitModeSubmodeChanged(int row);
 
 public:
     static const QString getFieldNameTranslation(const LogbookModel::ColumnID key)

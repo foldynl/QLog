@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
   <script src="https://foldynl.github.io/QLog/js/L.MaidenheadConfWorked.js"></script>
-  <script src="https://unpkg.com/@joergdietrich/leaflet.terminator"></script>
+  <script src="https://foldynl.github.io/QLog/js/L.Terminator.js"></script>
   <script src="https://foldynl.github.io/QLog/js/heatmap.js"></script>
   <script src="https://foldynl.github.io/QLog/js/leaflet-heatmap.js"></script>
   <script src="https://unpkg.com/leaflet.geodesic@2.6.1/dist/leaflet.geodesic.umd.min.js"></script>
@@ -16,9 +16,36 @@
     body {
       padding: 0;
       margin: 0;
+      background: #f3f4f6;
     }
     html, body, #map {
       height: 100%;
+    }
+    body.qlog-map-dark {
+      background: #454d55;
+    }
+    body.qlog-map-dark .leaflet-control-layers,
+    body.qlog-map-dark .leaflet-bar a,
+    body.qlog-map-dark .leaflet-control-attribution {
+      background: rgba(70, 78, 87, 0.92);
+      color: #f3f5f7;
+      border-color: rgba(148, 156, 166, 0.58);
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.18);
+    }
+    body.qlog-map-dark .leaflet-bar a {
+      border-bottom-color: rgba(148, 156, 166, 0.58);
+    }
+    body.qlog-map-dark .leaflet-bar a:hover,
+    body.qlog-map-dark .leaflet-control-layers-expanded {
+      background: rgba(82, 91, 101, 0.96);
+    }
+    body.qlog-map-dark .leaflet-control-attribution a {
+      color: #d6dbe0;
+    }
+    body.qlog-map-dark .leaflet-popup-content-wrapper,
+    body.qlog-map-dark .leaflet-popup-tip {
+      background: #4c5560;
+      color: #eceff2;
     }
     .leaflet-tooltip {
         border: 0px;
@@ -71,6 +98,9 @@
       z-index: 9999;
     }
     .busy.hidden{ display:none; }
+    body.qlog-map-dark .busy {
+      background: rgba(62, 70, 79, 0.46);
+    }
 
     .spinner{
       width: 42px;
@@ -80,9 +110,14 @@
       border-radius: 50%;
       animation: spin 0.9s linear infinite;
     }
+    body.qlog-map-dark .spinner {
+      border-color: rgba(255,255,255,0.18);
+      border-top-color: rgba(255,255,255,0.72);
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .label{ margin-top: 10px; font: 14px sans-serif; color:#333; }
+    body.qlog-map-dark .label{ color:#d7dce2; }
 
   </style>
 </head>
@@ -105,6 +140,80 @@
     var staticMapTime = null;
 
     var map = L.map('map', {center: [0,0], zoom: 2, minZoom: 1});
+    var layerControl = null;
+    var mapBridge = null;
+    const qlogLayerStateKeys = new Map();
+    let qlogLayerStateBridgeConnected = false;
+
+    function mapLayerByKey(key) {
+      return window[key] || null;
+    }
+
+    function sendToQt(method) {
+      if (!window.mapBridge || typeof window.mapBridge[method] !== 'function')
+        return;
+
+      window.mapBridge[method].apply(window.mapBridge, Array.prototype.slice.call(arguments, 1));
+    }
+
+    function setQLogLayerVisibility(key, visible) {
+      const layer = mapLayerByKey(key);
+      if (!layer)
+        return;
+
+      if (visible)
+        map.addLayer(layer);
+      else
+        map.removeLayer(layer);
+    }
+
+    function restoreQLogLayerStates(states) {
+      states.forEach(function(state) {
+        setQLogLayerVisibility(state.key, state.visible);
+      });
+    }
+
+    function configureLayerControl(layers) {
+      const overlays = {};
+      qlogLayerStateKeys.clear();
+
+      layers.forEach(function(layerSpec) {
+        const layer = mapLayerByKey(layerSpec.key);
+        if (!layer)
+          return;
+
+        overlays[layerSpec.label] = layer;
+        qlogLayerStateKeys.set(layer, layerSpec.key);
+      });
+
+      if (layerControl)
+        map.removeControl(layerControl);
+
+      layerControl = new L.Control.Layers(null, overlays, {}).addTo(map);
+    }
+
+    function handleQLogLayerStateChanged(layer, state) {
+      const key = qlogLayerStateKeys.get(layer);
+      if (!key)
+        return;
+
+      sendToQt('handleLayerSelectionChanged', key, state);
+    }
+
+    function connectQtMapBridge(handler) {
+      window.mapBridge = handler;
+
+      if (qlogLayerStateBridgeConnected)
+        return;
+
+      map.on('overlayadd', function(e) {
+        handleQLogLayerStateChanged(e.layer, 'on');
+      });
+      map.on('overlayremove', function(e) {
+        handleQLogLayerStateChanged(e.layer, 'off');
+      });
+      qlogLayerStateBridgeConnected = true;
+    }
 
     map.createPane('lowestPane');
     map.getPane('lowestPane').style.zIndex = 200;
@@ -156,6 +265,254 @@
       popupAnchor: [1, -14]
     });
 
+    const mapIcons = {
+      greenIcon: greenIcon,
+      greenIconSmall: greenIconSmall,
+      yellowIcon: yellowIcon,
+      yellowIconSmall: yellowIconSmall,
+      homeIcon: homeIcon
+    };
+
+    const fastMarkerThreshold = 2000;
+    var fastMarkersLayer = null;
+    const fastMarkerImages = {};
+
+    function resolveIcon(icon) {
+      return mapIcons[icon] || null;
+    }
+
+    function normalizePoint(point) {
+      if (Array.isArray(point)) {
+        return {
+          label: point[0],
+          lat: point[1],
+          lng: point[2],
+          icon: point[3]
+        };
+      }
+
+      return point;
+    }
+
+    function markerOptions(point) {
+      const icon = resolveIcon(point.icon);
+      return icon ? {icon: icon} : {};
+    }
+
+    function fastMarkerImage(url, onLoad) {
+      if (!url)
+        return null;
+
+      if (fastMarkerImages[url]) {
+        if (onLoad && !fastMarkerImages[url].loaded)
+          fastMarkerImages[url].callbacks.push(onLoad);
+        return fastMarkerImages[url];
+      }
+
+      const image = new Image();
+      fastMarkerImages[url] = { image: image, loaded: false, callbacks: onLoad ? [onLoad] : [] };
+      image.onload = function() {
+        const entry = fastMarkerImages[url];
+        entry.loaded = true;
+        const callbacks = entry.callbacks;
+        entry.callbacks = [];
+        callbacks.forEach(callback => callback());
+      };
+      image.src = url;
+
+      return fastMarkerImages[url];
+    }
+
+    function fastMarkerPoint(point) {
+      const mapPoint = normalizePoint(point);
+      const icon = resolveIcon(mapPoint.icon);
+      if (!icon)
+        return mapPoint;
+
+      const iconOptions = icon.options || {};
+      const iconSize = iconOptions.iconSize || [25, 41];
+      mapPoint.iconOptions = iconOptions;
+      mapPoint.iconSize = iconSize;
+      mapPoint.iconAnchor = iconOptions.iconAnchor || [Math.floor(iconSize[0] / 2), iconSize[1]];
+
+      return mapPoint;
+    }
+
+    const FastMarkerLayer = L.Layer.extend({
+      initialize: function(points) {
+        this.points = points.map(fastMarkerPoint);
+        this.pendingImageUrls = {};
+      },
+
+      onAdd: function(map) {
+        this.map = map;
+        this.shadowCanvas = L.DomUtil.create('canvas', 'qlog-fast-marker-shadows');
+        this.iconCanvas = L.DomUtil.create('canvas', 'qlog-fast-markers');
+        this.shadowCanvas.style.pointerEvents = 'none';
+        this.iconCanvas.style.pointerEvents = 'none';
+        map.getPane('shadowPane').appendChild(this.shadowCanvas);
+        map.getPane('markerPane').appendChild(this.iconCanvas);
+        map.on('moveend zoomend resize', this.reset, this);
+        map.on('click', this.handleClick, this);
+        this.reset();
+      },
+
+      onRemove: function(map) {
+        map.off('moveend zoomend resize', this.reset, this);
+        map.off('click', this.handleClick, this);
+        L.DomUtil.remove(this.shadowCanvas);
+        L.DomUtil.remove(this.iconCanvas);
+        this.shadowCanvas = null;
+        this.iconCanvas = null;
+        this.map = null;
+      },
+
+      reset: function() {
+        if (!this.map || !this.shadowCanvas || !this.iconCanvas)
+          return;
+
+        const size = this.map.getSize();
+        const topLeft = this.map.containerPointToLayerPoint([0, 0]);
+        [this.shadowCanvas, this.iconCanvas].forEach(canvas => {
+          L.DomUtil.setPosition(canvas, topLeft);
+          canvas.width = size.x;
+          canvas.height = size.y;
+        });
+        this.draw();
+      },
+
+      drawMarkerImage: function(ctx, iconOptions, markerPoint, imageKey, sizeKey, anchorKey, drawnKeys) {
+        const url = iconOptions[imageKey];
+        const size = iconOptions[sizeKey];
+        const anchor = iconOptions[anchorKey] || iconOptions.iconAnchor;
+        if (!url || !size || !anchor)
+          return;
+
+        const imageEntry = fastMarkerImage(url, this.pendingImageUrls[url] ? null : () => {
+          delete this.pendingImageUrls[url];
+          this.draw();
+        });
+        if (!imageEntry || !imageEntry.loaded) {
+          this.pendingImageUrls[url] = true;
+          return;
+        }
+
+        const x = markerPoint.x - anchor[0];
+        const y = markerPoint.y - anchor[1];
+
+        if (drawnKeys) {
+          const key = [url, size[0], size[1], Math.round(x), Math.round(y)].join('|');
+          if (drawnKeys[key])
+            return;
+          drawnKeys[key] = true;
+        }
+
+        ctx.drawImage(imageEntry.image, x, y, size[0], size[1]);
+      },
+
+      visiblePoints: function() {
+        const size = this.map.getSize();
+        const visible = [];
+
+        this.points.forEach(point => {
+          if (!point.iconOptions)
+            return;
+
+          const markerPoint = this.map.latLngToContainerPoint([point.lat, point.lng]);
+          if (markerPoint.x < -point.iconSize[0]
+              || markerPoint.y < -point.iconSize[1]
+              || markerPoint.x > size.x + point.iconSize[0]
+              || markerPoint.y > size.y + point.iconSize[1])
+            return;
+
+          visible.push({
+            point: point,
+            markerPoint: markerPoint
+          });
+        });
+
+        return visible;
+      },
+
+      draw: function() {
+        if (!this.map || !this.shadowCanvas || !this.iconCanvas)
+          return;
+
+        const shadowCtx = this.shadowCanvas.getContext('2d');
+        const iconCtx = this.iconCanvas.getContext('2d');
+        const size = this.map.getSize();
+        shadowCtx.clearRect(0, 0, size.x, size.y);
+        iconCtx.clearRect(0, 0, size.x, size.y);
+        const visible = this.visiblePoints();
+        const drawnShadows = {};
+
+        visible.forEach(item => {
+          this.drawMarkerImage(shadowCtx, item.point.iconOptions, item.markerPoint,
+                               'shadowUrl', 'shadowSize', 'shadowAnchor', drawnShadows);
+        });
+
+        visible.forEach(item => {
+          this.drawMarkerImage(iconCtx, item.point.iconOptions, item.markerPoint,
+                               'iconUrl', 'iconSize', 'iconAnchor');
+        });
+      },
+
+      handleClick: function(event) {
+        const clickPoint = this.map.latLngToContainerPoint(event.latlng);
+        let bestPoint = null;
+        let bestDistance = Number.MAX_VALUE;
+
+        this.points.forEach(point => {
+          if (!point.iconOptions)
+            return;
+
+          const markerPoint = this.map.latLngToContainerPoint([point.lat, point.lng]);
+          const left = markerPoint.x - point.iconAnchor[0];
+          const top = markerPoint.y - point.iconAnchor[1];
+          const right = left + point.iconSize[0];
+          const bottom = top + point.iconSize[1];
+
+          if (clickPoint.x < left || clickPoint.x > right
+              || clickPoint.y < top || clickPoint.y > bottom)
+            return;
+
+          const dx = markerPoint.x - clickPoint.x;
+          const dy = markerPoint.y - clickPoint.y;
+          const distance = dx * dx + dy * dy;
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestPoint = point;
+          }
+        });
+
+        if (bestPoint) {
+          L.popup()
+            .setLatLng([bestPoint.lat, bestPoint.lng])
+            .setContent(bestPoint.label)
+            .openOn(this.map);
+        }
+      }
+    });
+
+    function clearFastMarkerLayer() {
+      if (!fastMarkersLayer)
+        return;
+
+      map.removeLayer(fastMarkersLayer);
+      fastMarkersLayer = null;
+    }
+
+    function normalizePath(path) {
+      if (Array.isArray(path)) {
+        return {
+          from: {lat: path[0], lng: path[1]},
+          to: {lat: path[2], lng: path[3]}
+        };
+      }
+
+      return path;
+    }
+
 
     var language = navigator.language || navigator.userLanguage;
     var mapUrl;
@@ -174,7 +531,41 @@
     }).addTo(map);
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
-    var grayline = L.terminator({fillOpacity: 0.2})
+    var grayline = L.terminator()
+
+    function setTerminatorTheme(isDark) {
+      const styles = isDark
+        ? {
+            civil: { fillColor: '#c8c8c8', fillOpacity: 0.13, stroke: true, color: '#d6d6d6', opacity: 0.26, weight: 1 },
+            nautical: { fillColor: '#aeaeae', fillOpacity: 0.16, stroke: true, color: '#c2c2c2', opacity: 0.24, weight: 1 },
+            astronomical: { fillColor: '#949494', fillOpacity: 0.19, stroke: true, color: '#adadad', opacity: 0.22, weight: 1 }
+          }
+        : {
+            civil: { fillColor: '#767676', fillOpacity: 0.14, stroke: true, color: '#5f5f5f', opacity: 0.18, weight: 1 },
+            nautical: { fillColor: '#626262', fillOpacity: 0.17, stroke: true, color: '#555', opacity: 0.16, weight: 1 },
+            astronomical: { fillColor: '#4e4e4e', fillOpacity: 0.20, stroke: true, color: '#484848', opacity: 0.14, weight: 1 }
+          };
+
+      Object.keys(styles).forEach(function(name) {
+        const terminator = grayline.getTerminator(name);
+        if (terminator)
+          terminator.setStyle(styles[name]);
+      });
+    }
+
+    function setMapDarkMode(isDark) {
+      document.body.classList.toggle('qlog-map-dark', isDark);
+
+      const tileFilter = isDark
+        ? 'invert(1) hue-rotate(180deg) brightness(1.42) contrast(0.70) saturate(0.62)'
+        : '';
+      map.getPanes().tilePane.style.filter = tileFilter;
+      map.getPanes().tilePane.style.webkitFilter = tileFilter;
+
+      setTerminatorTheme(isDark);
+    }
+
+    setMapDarkMode(false);
 
     setInterval(function(){updateTerminator(grayline)}, 60000);
 
@@ -199,16 +590,20 @@
     }
 
     async function runBusy(msg, fn) {
+      if (!msg) {
+        fn();
+        return;
+      }
+
       const token = ++busyToken;
       busyShow(msg);
 
       await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
       fn();
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
 
-      if (token === busyToken) busyHide();
+      setTimeout(function() {
+        if (token === busyToken) busyHide();
+      }, 0);
     }
 
     // Configuration for Aurora Heatmap
@@ -235,7 +630,9 @@
     // Path 1 - usually used for rendering Path between my station and QSO station
     var pathLayer = L.layerGroup().addTo(map);
     const geodesic = new L.Geodesic([],{ wrap: false, color: "Fuchsia", steps: 5});
+    const shortPathsGeodesic = new L.Geodesic([],{ wrap: false, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
     pathLayer.addLayer(geodesic);
+    pathLayer.addLayer(shortPathsGeodesic);
 
     var antPathLayer = L.layerGroup().addTo(map);
     var antGeodesic1 = new L.Geodesic([],{ wrap: false, color: "orange", steps: 5,
@@ -247,6 +644,7 @@
 
     function drawPath(points) {
         geodesic.setLatLngs([]);
+        shortPathsGeodesic.setLatLngs([]);
 
         if (points.length != 2)
             return;
@@ -255,16 +653,24 @@
     }
 
     function drawShortPaths(coords) {
-        pathLayer.clearLayers();
-        coords.forEach(function(coord) {
-            let geodesic = new L.Geodesic([],{ wrap: false, color: "#cc2e41", steps: 5, opacity: 0.7, weight: 1});
-            pathLayer.addLayer(geodesic);
-            geodesic.setLatLngs([{lat: coord[0], lng: coord[1]}, {lat: coord[2], lng: coord[3]}]);
+        const paths = [];
+        geodesic.setLatLngs([]);
+        coords.forEach(function(rawPath) {
+            const path = normalizePath(rawPath);
+            paths.push([path.from, path.to]);
         });
+        shortPathsGeodesic.setLatLngs(paths);
     }
 
     function drawShortPathsBusy(coords, text) {
       return runBusy(text, () => drawShortPaths(coords));
+    }
+
+    function drawPointsAndShortPathsBusy(points, coords, text) {
+      return runBusy(text, function() {
+        drawPoints(points);
+        drawShortPaths(coords);
+      });
     }
 
     // function computes a destination point based on distance and azimuth
@@ -308,15 +714,27 @@
 
     var markersLayer = L.layerGroup().addTo(map);
 
+    function drawPointMarkers(layer, points) {
+        layer.clearLayers();
+        points.forEach(function(point) {
+           const mapPoint = normalizePoint(point);
+           let marker = L.marker([mapPoint.lat, mapPoint.lng], markerOptions(mapPoint))
+                         .bindPopup(mapPoint.label);
+           layer.addLayer(marker);
+        });
+    }
+
     // generic function to render point on the map
     function drawPoints(points) {
         markersLayer.clearLayers();
-        points.forEach(function(point) {
-           let marker = L.marker([point[1], point[2]], {
-                        icon: point[3]})
-                        .bindPopup(point[0]);
-           markersLayer.addLayer(marker);
-        });
+        clearFastMarkerLayer();
+
+        if (points.length > fastMarkerThreshold) {
+          fastMarkersLayer = new FastMarkerLayer(points).addTo(map);
+          return;
+        }
+
+        drawPointMarkers(markersLayer, points);
      }
 
     function drawPointsBusy(points, text) {
@@ -325,7 +743,8 @@
 
      // generic function for flying to the point
      function flyToPoint(point, zoom) {
-        map.flyTo([point[1], point[2]],zoom);
+        const mapPoint = normalizePoint(point);
+        map.flyTo([mapPoint.lat, mapPoint.lng], zoom);
      }
 
      var markersLayer2 = L.layerGroup().addTo(map);
@@ -333,13 +752,7 @@
      // generic function to render the sencond layer of the points
      // It is usually used to render My QTHs
      function drawPointsGroup2(points) {
-        markersLayer2.clearLayers();
-        points.forEach(function(point) {
-           let marker = L.marker([point[1], point[2]], {
-                        icon: point[3]})
-                        .bindPopup(point[0]);
-           markersLayer2.addLayer(marker);
-        });
+        drawPointMarkers(markersLayer2, points);
      }
 
     // compute 3-color gradient
@@ -400,13 +813,14 @@
 
        mufLayer.clearLayers();
        points.forEach(function(point) {
-            let marker = new L.marker([point[1], point[2]], {opacity: 0.001 });
-            marker.bindTooltip(point[0], {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
+            const mapPoint = normalizePoint(point);
+            let marker = new L.marker([mapPoint.lat, mapPoint.lng], {opacity: 0.001 });
+            marker.bindTooltip(mapPoint.label, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
             // color gradient is calculated for number interval 0 - 1.
             // MUF value is a fgrequency. Threfore is it needed to recalculate Freq to interval 0 - 1
             // QLog currently recalculate the interval 0 - 50 MHz. This is due to the fact that
             // most of the values move in this interval and it is easy to see the individual frequency ranges
-            const oldValue = parseFloat(point[0]);
+            const oldValue = parseFloat(mapPoint.label);
             const oldMin = 0; const oldMax = 50; //frequency input range (0 - 50MHz)
             const newMin = 0; const newMax = 1; //mapped to range 0 - 1
             const newValue = (oldValue - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin;
@@ -417,44 +831,36 @@
          });
      }
 
-    // Definition for IBP
-    const band = [{band_name :"20m", freq : 14.1},
-                  {band_name :"17m", freq : 18.11},
-                  {band_name :"15m", freq : 21.15},
-                  {band_name :"12m", freq : 24.93},
-                  {band_name :"10m", freq : 28.2},
-               ];
-
-    const beacons = [{name: '4U1UN', lat: 40.7501,   lon: -73.9682,  active: true},
-                   {name: 'VE8AT', lat: 79.9949,   lon: -85.8451,  active: true},
-                   {name: 'W6WX',  lat: 37.1599,   lon: -121.9083, active: true},
-                   {name: 'KH6RS', lat: 20.7652,   lon: -156.3502, active: true},
-                   {name: 'ZL6B',  lat: -41.04350, lon: 175.5952,  active: false},
-                   {name: 'VK6RBP',lat: -32.1093,  lon: 116.0712,  active: true},
-                   {name: 'JA2IGY',lat: 34.4613,   lon: 136.7818,  active: true},
-                   {name: 'RR9O',  lat: 55.0484,   lon: 82.9227,   active: true},
-                   {name: 'VR2B',  lat: 22.2705,   lon: 114.1507,  active: true},
-                   {name: '4S7B',  lat: 6.8915,    lon: 79.8559,   active: true},
-                   {name: 'ZS6DN', lat: -26.6531,  lon: 27.9474,   active: true},
-                   {name: '5Z4B',  lat: -1.2687,   lon: 36.8094,   active: false},
-                   {name: '4X6TU', lat: 32.0622,   lon: 34.8069,   active: true},
-                   {name: 'OH2B',  lat: 60.2920,   lon: 24.3942,   active: true},
-                   {name: 'CS3B',  lat: 32.8217,   lon: -17.2325,  active: true},
-                   {name: 'LU4AA', lat: -34.6439,  lon: -58.4138,  active: true},
-                   {name: 'OA4B',  lat: -12.0940,  lon: -77.0165,  active: true},
-                   {name: 'YV5B',  lat: 9.0964,    lon: -67.8239,  active: true}]
-    var currentBand=""; // to control which band is displayed - QLog core sets it.
+    var ibpBands = [];
+    var ibpBeacons = [];
+    var ibpCurrentBand = "";
     var IBPLayer = L.layerGroup().addTo(map);
     var prevStationIndex = -1;
 
+    function configureIbpData(bands, beacons) {
+       ibpBands = Array.isArray(bands) ? bands : [];
+       ibpBeacons = Array.isArray(beacons) ? beacons : [];
+       prevStationIndex = -1;
+       updateBeacon();
+    }
+
+    function setIbpCurrentBand(bandName) {
+       ibpCurrentBand = bandName || "";
+       prevStationIndex = -1;
+       updateBeacon();
+    }
+
     function IBPCallsignPressed(e) {
-       let currentIndex = band.findIndex(object => {return object.band_name === currentBand;});
-       foo.IBPCallsignClicked(this.callsign, band[currentIndex].freq);
+       const currentBand = ibpBands.find(object => {return object.name === ibpCurrentBand;});
+       if (!currentBand)
+         return;
+
+       sendToQt('IBPCallsignClicked', this.callsign, currentBand.frequency);
      }
 
-    // render IPB Beacon Point
+    // render IBP Beacon Point
     function beaconPoint(beacon, color) {
-       let pointColor = color
+       let pointColor = color;
        if ( !beacon.active ) {
          pointColor = 'red';
        }
@@ -465,32 +871,32 @@
           mirrorLon = beacon.lon + 360;
        }
        let markerMirror = new L.marker([beacon.lat, mirrorLon], {opacity: 0.001 });
-       marker.bindTooltip(beacon.name, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
+       marker.bindTooltip(beacon.callsign, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
        marker.on('dblclick', IBPCallsignPressed);
-       marker.callsign = beacon.name;
-       markerMirror.bindTooltip(beacon.name, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
+       marker.callsign = beacon.callsign;
+       markerMirror.bindTooltip(beacon.callsign, {permanent: true, direction : 'bottom', offset: [-16, 8], className: 'muf-tooltip' });
        markerMirror.on('dblclick', IBPCallsignPressed);
-       markerMirror.callsign = beacon.name;
+       markerMirror.callsign = beacon.callsign;
        marker.getTooltip().setContent(`<div style="background-color: ${pointColor};border-radius: 20px;padding: 5px;font-weight: bold;">${marker.getTooltip().getContent()}</div>`);
        markerMirror.getTooltip().setContent(`<div style="background-color: ${pointColor};border-radius: 20px;padding: 5px;font-weight: bold;">${markerMirror.getTooltip().getContent()}</div>`);
        IBPLayer.addLayer(marker);
        IBPLayer.addLayer(markerMirror);
     }
 
-    // Update IPB Beacon Points
+    // Update IBP Beacon Points
     function updateBeacon() {
 
-       currentBandIndex = band.findIndex(object => {return object.band_name === currentBand;});
+       const currentBandIndex = ibpBands.findIndex(object => {return object.name === ibpCurrentBand;});
 
-       if ( currentBandIndex == -1 ) {
+       if ( currentBandIndex == -1 || ibpBeacons.length == 0 ) {
            IBPLayer.clearLayers();
            return;
        }
 
        let today = new Date();
-       let n = Math.floor(today.getTime()/10000) % 18;
-       let currentStationIndex = (18 + n - currentBandIndex) % 18;
-       let nextStationIndex = (19 + n - currentBandIndex) % 18;
+       let n = Math.floor(today.getTime()/10000) % ibpBeacons.length;
+       let currentStationIndex = (ibpBeacons.length + n - currentBandIndex) % ibpBeacons.length;
+       let nextStationIndex = (ibpBeacons.length + 1 + n - currentBandIndex) % ibpBeacons.length;
 
        if ( currentStationIndex == prevStationIndex ) {
            return;
@@ -501,18 +907,18 @@
        prevStationIndex = currentStationIndex;
 
        // show current
-       let b = beacons[currentStationIndex]
+       let b = ibpBeacons[currentStationIndex];
        beaconPoint(b, '#FFFF33');
 
        // show next
-       b = beacons[nextStationIndex]
+       b = ibpBeacons[nextStationIndex];
        beaconPoint(b, '#1AA260');
     }
 
     var chatStationsLayer = L.layerGroup().addTo(map);
 
     function chatCallsignPressed(e) {
-       foo.chatCallsignClicked(this.callsign);
+       sendToQt('chatCallsignClicked', this.callsign);
     }
 
     // generic function to render the third layer of the points
@@ -520,10 +926,11 @@
     function drawPointsGroup3(points) {
        chatStationsLayer.clearLayers();
        points.forEach(function(point) {
-          let marker = new L.marker([point[1], point[2]], {opacity: 0.001 });
-          marker.bindTooltip(point[0], {pane: 'lowestPane', permanent: true, direction : 'bottom', offset: [-16, 8], className: 'chat-tooltip' });
+          const mapPoint = normalizePoint(point);
+          let marker = new L.marker([mapPoint.lat, mapPoint.lng], {opacity: 0.001 });
+          marker.bindTooltip(mapPoint.label, {pane: 'lowestPane', permanent: true, direction : 'bottom', offset: [-16, 8], className: 'chat-tooltip' });
           marker.on('dblclick', chatCallsignPressed);
-          marker.callsign = point[0];
+          marker.callsign = mapPoint.label;
           marker.getTooltip().setContent(`<div style="background-color: aqua;border-radius: 20px;padding: 5px;font-weight: bold;">${marker.getTooltip().getContent()}</div>`);
           chatStationsLayer.addLayer(marker);
        });
@@ -532,26 +939,27 @@
     setInterval(function(){updateBeacon()}, 250);
 
     function wsjtxCallsignPressed(e) {
-       foo.wsjtxCallsignClicked(this.callsign);
+       sendToQt('wsjtxCallsignClicked', this.callsign);
     }
 
     var wsjtxStationsLayer = L.layerGroup();
 
     // this function show WSJTX spots
-    function addWSJTXSpot(lat, lng, callsign, color) {
+    function addWSJTXSpot(point, color, textColor) {
+        const spot = normalizePoint(point);
         const fadeSchedule = [
             { timeout: 30000, className: 'fade-out75' },
             { timeout: 45000, className: 'fade-out50' },
         ];
 
         const tooltipHTML = content =>
-            `<div style="background-color: ${color};border-radius:20px;padding:5px;font-weight:bold;">${content}</div>`;
+            `<div style="background-color: ${color};color: ${textColor};border-radius:20px;padding:5px;font-weight:bold;">${content}</div>`;
 
         function createSpotMarker(latitude, longitude) {
             const marker = new L.marker([latitude, longitude], { opacity: 0.001 });
-            marker.callsign = callsign;
+            marker.callsign = spot.label;
 
-            marker.bindTooltip(callsign, {
+            marker.bindTooltip(spot.label, {
                 pane: 'lowestPane',
                 permanent: true,
                 direction: 'bottom',
@@ -568,11 +976,11 @@
         }
 
         // the main marker
-        const marker = createSpotMarker(lat, lng);
+        const marker = createSpotMarker(spot.lat, spot.lng);
 
         // mirror marker
-        const mirrorLon = lng >= 0 ? lng - 360 : lng + 360;
-        const markerMirror = createSpotMarker(lat, mirrorLon);
+        const mirrorLon = spot.lng >= 0 ? spot.lng - 360 : spot.lng + 360;
+        const markerMirror = createSpotMarker(spot.lat, mirrorLon);
 
         wsjtxStationsLayer.addLayer(marker);
         wsjtxStationsLayer.addLayer(markerMirror);

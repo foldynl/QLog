@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Print QSL Labels</string>
+   <string>Print QSL Labels / Cards</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -48,7 +48,7 @@
           <x>0</x>
           <y>0</y>
           <width>393</width>
-          <height>1300</height>
+          <height>1778</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="settingsScrollLayout">
@@ -217,6 +217,361 @@
                <bool>false</bool>
               </property>
              </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="printModeSectionContent">
+           <property name="title">
+            <string>Print Mode</string>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <layout class="QFormLayout" name="printModeLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="printModeLabel">
+              <property name="text">
+               <string>Mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="printModeComboBox"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="printPageSizeLabel">
+              <property name="text">
+               <string>Page Size:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="printPageSizeComboBox"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="cardSectionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>QSL Card</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::RightArrow</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="cardSectionContent">
+           <property name="title">
+            <string/>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <layout class="QFormLayout" name="cardLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="cardWidthLabel">
+              <property name="text">
+               <string>Card Width:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="BaseDoubleSpinBox" name="cardWidthSpinBox">
+              <property name="suffix">
+               <string notr="true"> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>50.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>300.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>140.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="cardHeightLabel">
+              <property name="text">
+               <string>Card Height:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="BaseDoubleSpinBox" name="cardHeightSpinBox">
+              <property name="suffix">
+               <string notr="true"> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>50.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>300.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>90.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="cardGapLabel">
+              <property name="text">
+               <string>Card Gap:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="BaseDoubleSpinBox" name="cardGapSpinBox">
+              <property name="suffix">
+               <string notr="true"> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>20.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>2.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="cardLabelWidthLabel">
+              <property name="text">
+               <string>Label Width:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="BaseDoubleSpinBox" name="cardLabelWidthSpinBox">
+              <property name="suffix">
+               <string notr="true"> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>300.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>70.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="cardLabelHeightLabel">
+              <property name="text">
+               <string>Label Height:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="BaseDoubleSpinBox" name="cardLabelHeightSpinBox">
+              <property name="suffix">
+               <string notr="true"> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>300.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>35.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="cardLabelOffsetXLabel">
+              <property name="text">
+               <string>Label X Offset:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="BaseDoubleSpinBox" name="cardLabelOffsetXSpinBox">
+              <property name="suffix">
+               <string notr="true"> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>-300.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>300.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>5.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="cardLabelOffsetYLabel">
+              <property name="text">
+               <string>Label Y Offset:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="BaseDoubleSpinBox" name="cardLabelOffsetYSpinBox">
+              <property name="suffix">
+               <string notr="true"> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>-300.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>300.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>5.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="cardLabelBackgroundLabel">
+              <property name="text">
+               <string>Label Background:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <layout class="QHBoxLayout" name="cardLabelBackgroundLayout">
+              <item>
+               <widget class="QCheckBox" name="cardLabelOpaqueBackgroundCheckBox">
+                <property name="text">
+                 <string>Fill under label</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="cardLabelBackgroundColorButton">
+                <property name="text">
+                 <string>Color</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="cardBackgroundImageLabel">
+              <property name="text">
+               <string>Background Image:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <layout class="QHBoxLayout" name="cardBackgroundButtonsLayout">
+              <item>
+               <widget class="QPushButton" name="selectCardBackgroundButton">
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="folder-open"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="clearCardBackgroundButton">
+                <property name="text">
+                 <string>Clear</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="edit-delete"/>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -668,13 +1023,27 @@
              </widget>
             </item>
             <item row="7" column="0">
+             <widget class="QLabel" name="labelTextColorLabel">
+              <property name="text">
+               <string>Text Color:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QPushButton" name="labelTextColorButton">
+              <property name="text">
+               <string>Color</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
              <widget class="QLabel" name="callsignSizeLabel">
               <property name="text">
                <string>Callsign Size:</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
+            <item row="8" column="1">
              <widget class="BaseDoubleSpinBox" name="callsignSizeSpinBox">
               <property name="suffix">
                <string notr="true"> pt</string>
@@ -696,14 +1065,14 @@
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
+            <item row="9" column="0">
              <widget class="QLabel" name="toRadioSizeLabel">
               <property name="text">
                <string>&quot;To Radio&quot; Size:</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="9" column="1">
              <widget class="BaseDoubleSpinBox" name="toRadioSizeSpinBox">
               <property name="suffix">
                <string notr="true"> pt</string>
@@ -725,28 +1094,28 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
+            <item row="10" column="0">
              <widget class="QLabel" name="toRadioTextLabel">
               <property name="text">
                <string>&quot;To Radio&quot; Text:</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
+            <item row="10" column="1">
              <widget class="QLineEdit" name="toRadioTextEdit">
               <property name="placeholderText">
                <string notr="true">To Radio</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="0">
+            <item row="11" column="0">
              <widget class="QLabel" name="headerSizeLabel">
               <property name="text">
                <string>Header Size:</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
+            <item row="11" column="1">
              <widget class="BaseDoubleSpinBox" name="headerSizeSpinBox">
               <property name="suffix">
                <string notr="true"> pt</string>
@@ -768,14 +1137,14 @@
               </property>
              </widget>
             </item>
-            <item row="11" column="0">
+            <item row="12" column="0">
              <widget class="QLabel" name="dataSizeLabel">
               <property name="text">
                <string>Data Size:</string>
               </property>
              </widget>
             </item>
-            <item row="11" column="1">
+            <item row="12" column="1">
              <widget class="BaseDoubleSpinBox" name="dataSizeSpinBox">
               <property name="suffix">
                <string notr="true"> pt</string>
@@ -797,112 +1166,112 @@
               </property>
              </widget>
             </item>
-            <item row="12" column="0">
+            <item row="13" column="0">
              <widget class="QLabel" name="hdrDateLabel">
               <property name="text">
                <string>Date Header Text:</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="1">
+            <item row="13" column="1">
              <widget class="QLineEdit" name="hdrDateEdit">
               <property name="placeholderText">
                <string notr="true">Date</string>
               </property>
              </widget>
             </item>
-            <item row="13" column="0">
+            <item row="14" column="0">
              <widget class="QLabel" name="dateFormatLabel">
               <property name="text">
                <string>Date Format:</string>
               </property>
              </widget>
             </item>
-            <item row="13" column="1">
+            <item row="14" column="1">
              <widget class="QLineEdit" name="dateFormatEdit">
               <property name="placeholderText">
                <string notr="true">yyyy-MM-dd</string>
               </property>
              </widget>
             </item>
-            <item row="14" column="0">
+            <item row="15" column="0">
              <widget class="QLabel" name="hdrTimeLabel">
               <property name="text">
                <string>Time Header Text:</string>
               </property>
              </widget>
             </item>
-            <item row="14" column="1">
+            <item row="15" column="1">
              <widget class="QLineEdit" name="hdrTimeEdit">
               <property name="placeholderText">
                <string notr="true">Time</string>
               </property>
              </widget>
             </item>
-            <item row="15" column="0">
+            <item row="16" column="0">
              <widget class="QLabel" name="hdrBandLabel">
               <property name="text">
                <string>Band Header Text:</string>
               </property>
              </widget>
             </item>
-            <item row="15" column="1">
+            <item row="16" column="1">
              <widget class="QLineEdit" name="hdrBandEdit">
               <property name="placeholderText">
                <string notr="true">Band</string>
               </property>
              </widget>
             </item>
-            <item row="16" column="0">
+            <item row="17" column="0">
              <widget class="QLabel" name="hdrModeLabel">
               <property name="text">
                <string>Mode Header Text:</string>
               </property>
              </widget>
             </item>
-            <item row="16" column="1">
+            <item row="17" column="1">
              <widget class="QLineEdit" name="hdrModeEdit">
               <property name="placeholderText">
                <string notr="true">Mode</string>
               </property>
              </widget>
             </item>
-            <item row="17" column="0">
+            <item row="18" column="0">
              <widget class="QLabel" name="hdrQslLabel">
               <property name="text">
                <string>QSL Header Text:</string>
               </property>
              </widget>
             </item>
-            <item row="17" column="1">
+            <item row="18" column="1">
              <widget class="QLineEdit" name="hdrQslEdit">
               <property name="placeholderText">
                <string notr="true">QSL</string>
               </property>
              </widget>
             </item>
-            <item row="18" column="0">
+            <item row="19" column="0">
              <widget class="QLabel" name="extraColumnLabel">
               <property name="text">
                <string>Extra Column:</string>
               </property>
              </widget>
             </item>
-            <item row="18" column="1">
+            <item row="19" column="1">
              <widget class="QComboBox" name="extraColumnComboBox">
               <property name="sizeAdjustPolicy">
                <enum>QComboBox::AdjustToContents</enum>
               </property>
              </widget>
             </item>
-            <item row="19" column="0">
+            <item row="20" column="0">
              <widget class="QLabel" name="columnHeaderLabel">
               <property name="text">
                <string>Extra Column Text</string>
               </property>
              </widget>
             </item>
-            <item row="19" column="1">
+            <item row="20" column="1">
              <widget class="QLineEdit" name="columnHeaderEdit">
               <property name="placeholderText">
                <string>(DB column name)</string>
@@ -1159,6 +1528,36 @@
        </property>
        <property name="icon">
         <iconset theme="document-save-as">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportImagesButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Export as Images</string>
+       </property>
+       <property name="icon">
+        <iconset theme="image-x-generic">
          <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
@@ -1779,6 +2178,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>labelTextColorButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>selectLabelTextColor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>925</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>toRadioSizeSpinBox</sender>
    <signal>valueChanged(double)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
@@ -1986,6 +2401,214 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>printModeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>printModeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>244</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>printPageSizeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardWidthSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardGapSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>388</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardLabelOpaqueBackgroundCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>532</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardLabelBackgroundColorButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>selectCardLabelBackgroundColor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>532</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardHeightSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>352</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardLabelWidthSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>388</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardLabelHeightSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardLabelOffsetXSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>460</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cardLabelOffsetYSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>cardLayoutChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>496</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectCardBackgroundButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>selectCardBackgroundImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>250</x>
+     <y>532</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clearCardBackgroundButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>clearCardBackgroundImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>330</x>
+     <y>532</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>toggleDateRange()</slot>
@@ -2003,5 +2626,11 @@
   <slot>exportPdf()</slot>
   <slot>zoomChanged(int)</slot>
   <slot>customTemplateFieldChanged()</slot>
+  <slot>printModeChanged(int)</slot>
+  <slot>cardLayoutChanged()</slot>
+  <slot>selectLabelTextColor()</slot>
+  <slot>selectCardLabelBackgroundColor()</slot>
+  <slot>selectCardBackgroundImage()</slot>
+  <slot>clearCardBackgroundImage()</slot>
  </slots>
 </ui>

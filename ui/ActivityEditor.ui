@@ -1401,6 +1401,25 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="bandmapGuideGroupBox">
+         <property name="title">
+          <string>Bandmap Guide</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="bandmapGuideLabel">
+            <property name="text">
+             <string>Guide</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="bandmapGuideCombo"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="fieldsGroupBox">
          <property name="title">
           <string>Fields</string>
@@ -1549,6 +1568,7 @@
   <tabstop>rotatorProfileCheckbox</tabstop>
   <tabstop>rotatorProfileCombo</tabstop>
   <tabstop>rotatorAutoconnectCheckbox</tabstop>
+  <tabstop>bandmapGuideCombo</tabstop>
   <tabstop>contestIDCheckbox</tabstop>
   <tabstop>contestIDEdit</tabstop>
   <tabstop>stxStringCheckbox</tabstop>

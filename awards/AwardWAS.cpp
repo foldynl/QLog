@@ -6,6 +6,11 @@ QString AwardWAS::displayName() const
     return QCoreApplication::translate("AwardsDialog", "WAS");
 }
 
+QString AwardWAS::rulesUrl() const
+{
+    return QStringLiteral("https://www.arrl.org/was");
+}
+
 QString AwardWAS::headersColumns(const QString &) const
 {
     return QStringLiteral("d.subdivision_name col1, d.code col2 ");

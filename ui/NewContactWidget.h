@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QHash>
 #include <QFormLayout>
+#include <QList>
 #include <QToolButton>
 
 #include "data/DxSpot.h"

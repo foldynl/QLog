@@ -42,6 +42,7 @@ public:
     ~ColumnSettingSimpleDialog();
 
 private:
+    void setColumnVisible(int columnIndex, bool visible);
     Ui::ColumnSettingSimpleDialog *ui;
     QTableView *table;
 };
@@ -62,6 +63,7 @@ public:
 
 private:
     void setupDialog();
+    void setColumnVisible(int columnIndex, bool visible);
     Ui::ColumnSettingDialog *ui;
     QTableView *table;
     QSet<int> defaultColumnsState;

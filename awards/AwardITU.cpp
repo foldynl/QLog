@@ -6,6 +6,11 @@ QString AwardITU::displayName() const
     return QCoreApplication::translate("AwardsDialog", "ITU");
 }
 
+QString AwardITU::rulesUrl() const
+{
+    return QStringLiteral("https://www.rsgbshop.org/acatalog/PDF/Worked_ITU_Zones_Award_Information.pdf");
+}
+
 QString AwardITU::headersColumns(const QString &) const
 {
     return QStringLiteral("d.n col1, null col2 ");

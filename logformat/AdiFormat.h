@@ -6,7 +6,8 @@
 class AdiFormat : public LogFormat
 {
 public:
-    explicit AdiFormat(QTextStream& stream);
+    explicit AdiFormat(QTextStream& stream,
+                       bool preserveFieldLengths = true);
 
     virtual bool importNext(QSqlRecord& ) override;
 
@@ -15,6 +16,10 @@ public:
     virtual void exportStart() override;
 
     static QMap<QString, QString> fieldname2INTLNameMapping;
+
+    const static int GRID_BASE_LENGTH = 8;
+
+    static void normalizeGridFields(QSqlRecord &record);
 
     template<typename T>
     static void preprocessINTLFields(T &contact)
@@ -27,6 +32,8 @@ public:
     }
 
 protected:
+    virtual bool importNextDXCCCredit(DXCCCreditRecord&) override;
+    virtual void importStart() override;
     virtual void writeField(const QString &name,
                             bool presenceCondition,
                             const QString &value,
@@ -38,6 +45,10 @@ protected:
                               QSqlRecord &record);
     void contactFields2SQLRecord(QMap<QString, QVariant> &contact,
                               QSqlRecord &record);
+    static bool preserveFieldLineBreaks(const QString &name, const QString &type);
+    static QString normalizeLineBreaks(const QString &value,
+                                       bool preserveLineBreaks,
+                                       const QString &lineBreak);
 
     enum OutputFieldFormatter
     {
@@ -112,7 +123,10 @@ private:
     static void preprocessINTLField(const QString &fieldName,
                                     const QString &fieldIntlName,
                                     QSqlRecord &contact);
+    static bool isExportableFieldName(const QString &name);
+    static bool isMultilineField(const QString &name);
 
+    QVariantMap headerFields;
     ParserState state = START;
     bool inHeader = false;
 };

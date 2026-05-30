@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 TARGET = qlog
 TEMPLATE = app
-VERSION = 0.50.0
+VERSION = 0.51.0dev
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
@@ -69,6 +69,8 @@ SOURCES += \
         awards/AwardPOTAActivator.cpp \
         awards/AwardPOTAHunter.cpp \
         awards/AwardSOTA.cpp \
+        awards/AwardWAAC.cpp \
+        awards/AwardWAIP.cpp \
         awards/SecondarySubdivisionAward.cpp \
         awards/AwardWAC.cpp \
         awards/AwardWAS.cpp \
@@ -77,6 +79,7 @@ SOURCES += \
         awards/AwardWWFF.cpp \
         awards/BandTableAward.cpp \
         core/AlertEvaluator.cpp \
+        core/AdifRecovery.cpp \
         core/AppGuard.cpp \
         core/CallbookManager.cpp \
         core/CredentialStore.cpp \
@@ -99,6 +102,7 @@ SOURCES += \
         core/WsjtxUDPReceiver.cpp \
         core/debug.cpp \
         core/EmergencyFrequency.cpp \
+        core/IBPBeacon.cpp \
         core/main.cpp \
         core/zonedetect.c \
         cwkey/CWKeyer.cpp \
@@ -110,6 +114,7 @@ SOURCES += \
         cwkey/drivers/CWWinKey.cpp \
         data/ActivityProfile.cpp \
         data/AntProfile.cpp \
+        data/BandmapGuide.cpp \
         data/BandPlan.cpp \
         data/Accents.cpp \
         data/CWKeyProfile.cpp \
@@ -158,6 +163,7 @@ SOURCES += \
         service/GenericCallbook.cpp \
         service/GenericQSLDownloader.cpp \
         service/GenericQSOUploader.cpp \
+        service/emailqsl/EmailQSLService.cpp \
         service/cloudlog/Cloudlog.cpp \
         service/clublog/ClubLog.cpp \
         service/eqsl/Eqsl.cpp \
@@ -168,12 +174,14 @@ SOURCES += \
         service/potaapp/PotaApp.cpp \
         service/qrzcom/QRZ.cpp \
         ui/ActivityEditor.cpp \
+        ui/AdifRecoveryManager.cpp \
         ui/AlertRuleDetail.cpp \
         ui/AlertSettingDialog.cpp \
         ui/AlertWidget.cpp \
         ui/AwardsDialog.cpp \
         ui/DXCCSubmissionDialog.cpp \
         ui/BandmapWidget.cpp \
+        ui/BandmapGuideDialog.cpp \
         ui/CWConsoleWidget.cpp \
         ui/ChatWidget.cpp \
         ui/ClockWidget.cpp \
@@ -200,11 +208,13 @@ SOURCES += \
         ui/KSTHighlighterSettingDialog.cpp \
         ui/LogbookWidget.cpp \
         ui/MainWindow.cpp \
-        ui/MapWebChannelHandler.cpp \
+        ui/MapPageController.cpp \
         ui/MapWidget.cpp \
         ui/ModeSelectionController.cpp \
         ui/NewContactWidget.cpp \
         ui/OnlineMapWidget.cpp \
+        ui/EmailQSLDialog.cpp \
+        ui/EmailQSLSettingsWidget.cpp \
         ui/PaperQSLDialog.cpp \
         ui/ProfileImageWidget.cpp \
         ui/QSLImportStatDialog.cpp \
@@ -222,8 +232,11 @@ SOURCES += \
         ui/WsjtxFilterDialog.cpp \
         ui/WsjtxWidget.cpp \
         ui/component/BaseDoubleSpinBox.cpp \
+        ui/component/CardEditorWidget.cpp \
         ui/component/EditLine.cpp \
         ui/component/FreqQSpinBox.cpp \
+        ui/component/ModeSubmodeDelegate.cpp \
+        ui/component/LogbookFieldComboBox.cpp \
         ui/component/MultiselectCompleter.cpp \
         ui/component/RepeatButton.cpp \
         ui/component/SmartSearchBox.cpp \
@@ -245,6 +258,8 @@ HEADERS += \
         awards/AwardPOTAActivator.h \
         awards/AwardPOTAHunter.h \
         awards/AwardSOTA.h \
+        awards/AwardWAAC.h \
+        awards/AwardWAIP.h \
         awards/SecondarySubdivisionAward.h \
         awards/AwardWAC.h \
         awards/AwardWAS.h \
@@ -253,6 +268,7 @@ HEADERS += \
         awards/AwardWWFF.h \
         awards/BandTableAward.h \
         core/AlertEvaluator.h \
+        core/AdifRecovery.h \
         core/AppGuard.h \
         core/CallbookManager.h \
         core/CredentialStore.h \
@@ -277,6 +293,7 @@ HEADERS += \
         core/csv.hpp \
         core/debug.h \
         core/EmergencyFrequency.h \
+        core/IBPBeacon.h \
         core/zonedetect.h \
         cwkey/CWKeyer.h \
         cwkey/drivers/CWCatKey.h \
@@ -288,6 +305,7 @@ HEADERS += \
         data/ActivityProfile.h \
         data/AntProfile.h \
         data/Band.h \
+        data/BandmapGuide.h \
         data/BandPlan.h \
         data/CWKeyProfile.h \
         data/CWShortcutProfile.h \
@@ -352,6 +370,7 @@ HEADERS += \
         service/GenericCallbook.h \
         service/GenericQSLDownloader.h \
         service/GenericQSOUploader.h \
+        service/emailqsl/EmailQSLService.h \
         service/cloudlog/Cloudlog.h \
         service/clublog/ClubLog.h \
         service/eqsl/Eqsl.h \
@@ -362,12 +381,14 @@ HEADERS += \
         service/potaapp/PotaApp.h \
         service/qrzcom/QRZ.h \
         ui/ActivityEditor.h \
+        ui/AdifRecoveryManager.h \
         ui/AlertRuleDetail.h \
         ui/AlertSettingDialog.h \
         ui/AlertWidget.h \
         ui/AwardsDialog.h \
         ui/DXCCSubmissionDialog.h \
         ui/BandmapWidget.h \
+        ui/BandmapGuideDialog.h \
         ui/CWConsoleWidget.h \
         ui/ChatWidget.h \
         ui/ClockWidget.h \
@@ -375,6 +396,8 @@ HEADERS += \
         ui/DevToolsDialog.h \
         ui/DownloadQSLDialog.h \
         ui/DxFilterDialog.h \
+        ui/EmailQSLDialog.h \
+        ui/EmailQSLSettingsWidget.h \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
         ui/EditActivitiesDialog.h \
@@ -394,7 +417,8 @@ HEADERS += \
         ui/KSTHighlighterSettingDialog.h \
         ui/LogbookWidget.h \
         ui/MainWindow.h \
-        ui/MapWebChannelHandler.h \
+        ui/MapLayer.h \
+        ui/MapPageController.h \
         ui/MapWidget.h \
         ui/ModeSelectionController.h \
         ui/NewContactWidget.h \
@@ -420,8 +444,11 @@ HEADERS += \
         i18n/datastrings.tri \
         ui/component/BaseDoubleSpinBox.h \
         ui/component/ButtonStyle.h \
+        ui/component/CardEditorWidget.h \
         ui/component/EditLine.h \
         ui/component/FreqQSpinBox.h \
+        ui/component/ModeSubmodeDelegate.h \
+        ui/component/LogbookFieldComboBox.h \
         ui/component/MultiselectCompleter.h \
         ui/component/RepeatButton.h \
         ui/component/ShutdownAwareWidget.h \
@@ -438,6 +465,7 @@ FORMS += \
         ui/AwardsDialog.ui \
         ui/DXCCSubmissionDialog.ui \
         ui/BandmapWidget.ui \
+        ui/BandmapGuideDialog.ui \
         ui/CWConsoleWidget.ui \
         ui/ChatWidget.ui \
         ui/ClockWidget.ui \
@@ -446,6 +474,8 @@ FORMS += \
         ui/DevToolsDialog.ui \
         ui/DownloadQSLDialog.ui \
         ui/DxFilterDialog.ui \
+        ui/EmailQSLDialog.ui \
+        ui/EmailQSLSettingsWidget.ui \
         ui/DxWidget.ui \
         ui/EditActivitiesDialog.ui \
         ui/CabrilloExportDialog.ui \
@@ -620,7 +650,17 @@ macx: {
    LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
-   DISTFILES +=
+
+   # Custom Info.plist — sets a real bundle identifier
+   # (io.github.foldynl.qlog) and declares NSLocalNetworkUsageDescription
+   # so macOS 14+ will actually prompt for / grant LAN access (needed
+   # for WSJT-X UDP, network rigs, rotators, etc.). Without this, qmake
+   # generates a default Info.plist with CFBundleIdentifier =
+   # com.yourcompany.qlog and no local-network key.
+   QMAKE_INFO_PLIST = $$PWD/res/macos/Info.plist
+   QMAKE_TARGET_BUNDLE_PREFIX = io.github.foldynl
+
+   DISTFILES += res/macos/Info.plist
 }
 
 win32: {

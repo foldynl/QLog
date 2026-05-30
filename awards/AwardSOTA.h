@@ -8,6 +8,7 @@ class AwardSOTA : public BandTableAward
 public:
     QString key() const override { return QStringLiteral("sota"); }
     QString displayName() const override;
+    QString rulesUrl() const override;
     bool entityInputEnabled() const override { return false; }
     bool notWorkedEnabled() const override { return false; }
 
