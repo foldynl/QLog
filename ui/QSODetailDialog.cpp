@@ -1238,7 +1238,7 @@ void QSODetailDialog::mySotaChanged(const QString &newSOTA)
 
     if ( newSOTA.length() >= 3 )
     {
-        ui->mySOTAEdit->setCompleter(sotaCompleter.data());
+        ui->mySOTAEdit->setCompleter(mySotaCompleter.data());
     }
     else
     {
@@ -1252,7 +1252,7 @@ void QSODetailDialog::myPOTAChanged(const QString &newPOTA)
 
     if ( newPOTA.length() >= 3 )
     {
-        ui->myPOTAEdit->setCompleter(potaCompleter.data());
+        ui->myPOTAEdit->setCompleter(myPotaCompleter.data());
     }
     else
     {
@@ -1266,7 +1266,7 @@ void QSODetailDialog::myWWFFChanged(const QString &newWWFF)
 
     if ( newWWFF.length() >= 3 )
     {
-        ui->myWWFFEdit->setCompleter(wwffCompleter.data());
+        ui->myWWFFEdit->setCompleter(myWWFFCompleter.data());
     }
     else
     {
