@@ -648,7 +648,7 @@
     <message>
         <location filename="../ui/AwardsDialog.ui" line="277"/>
         <source>Not-Confirmed Only</source>
-        <translation type="unfinished"></translation>
+        <translation>未确认</translation>
     </message>
     <message>
         <location filename="../ui/AwardsDialog.ui" line="261"/>
@@ -6424,7 +6424,7 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="14"/>
         <source>Unpack Data &amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>解压数据 &amp; 设置</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="23"/>
@@ -6439,42 +6439,42 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="39"/>
         <source>Select Database</source>
-        <translation type="unfinished"></translation>
+        <translation>选择数据库</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="47"/>
         <source>File:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件:</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="61"/>
         <source>Browse</source>
-        <translation type="unfinished">浏览</translation>
+        <translation>浏览</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="73"/>
         <source>Status: No file selected</source>
-        <translation type="unfinished"></translation>
+        <translation>状态: 未选择文件</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="86"/>
         <source>Decrypt Credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>解密凭据</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="92"/>
         <source>Enter password to decrypt credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>输入密码以解密凭据</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="101"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>密码:</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.cpp" line="29"/>
         <source>Load &amp;&amp; Restart</source>
-        <translation type="unfinished"></translation>
+        <translation>加载 &amp;&amp; 重启</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.cpp" line="115"/>
@@ -7442,7 +7442,7 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../models/LogbookModel.cpp" line="752"/>
         <source>Silent Key</source>
-        <translation>静默电键</translation>
+        <translation>Silent Key</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="753"/>
@@ -7583,12 +7583,12 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="283"/>
         <source>Mark QSL RCVD</source>
-        <translation type="unfinished"></translation>
+        <translation>标记QSL已接收</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="288"/>
         <source>Mark QSL Requested</source>
-        <translation type="unfinished"></translation>
+        <translation>标记QSL已请求</translation>
     </message>
     <message>
         <location filename="../ui/LogbookWidget.ui" line="297"/>
@@ -7794,7 +7794,7 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../service/lotw/Lotw.cpp" line="515"/>
         <source>Incorrect login or password</source>
-        <translation type="unfinished"></translation>
+        <translation>登录名或密码不正确</translation>
     </message>
 </context>
 <context>
@@ -8121,43 +8121,43 @@ The password will be needed to restore them later.</source>
         <location filename="../ui/MainWindow.cpp" line="1198"/>
         <location filename="../ui/MainWindow.cpp" line="1204"/>
         <source>Pack Data &amp;&amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>打包数据 &amp;&amp; 设置</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="363"/>
         <location filename="../ui/MainWindow.cpp" line="1271"/>
         <source>Unpack Data &amp;&amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>解压数据 &amp;&amp; 设置</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="493"/>
         <source>QSL &amp;Gallery</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL展廊</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="505"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>开发者工具</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="508"/>
         <source>Run custom read-only SQL queries against the logbook database</source>
-        <translation type="unfinished"></translation>
+        <translation>对日志数据库运行自定义只读SQL查询</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="516"/>
         <source>Print QSL &amp;Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>打印QSL  &amp;标签</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="611"/>
         <source>DXCC &amp;Submission List</source>
-        <translation type="unfinished"></translation>
+        <translation>DXCC &amp;提交列表</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="614"/>
         <source>Generate a list of contacts to submit for ARRL DXCC award credit</source>
-        <translation type="unfinished"></translation>
+        <translation>生成要提交以获得ARRL DXCC奖项积分的联系人列表</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="641"/>
@@ -8309,32 +8309,32 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../ui/MainWindow.ui" line="1079"/>
         <source>Theme: Native</source>
-        <translation type="unfinished"></translation>
+        <translation>主题: 原生</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="1090"/>
         <source>Theme: QLog Light</source>
-        <translation type="unfinished"></translation>
+        <translation>主题: QLog Light</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="1101"/>
         <source>Theme: QLog Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>主题: QLog Dark</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="1109"/>
         <source>What&apos;s New</source>
-        <translation type="unfinished"></translation>
+        <translation>新功能</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="1117"/>
         <source>Export Cabrillo</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 Cabrillo</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="75"/>
         <source>Color Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色主题</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="98"/>
@@ -8386,43 +8386,44 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1140"/>
         <source>Failed to encrypt credentials.</source>
-        <translation type="unfinished"></translation>
+        <translation>加密凭据失败。</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1149"/>
         <source>Database files (*.dbe);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库文件 (*.dbe);;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1169"/>
         <source>Failed to create temporary file.</source>
-        <translation type="unfinished"></translation>
+        <translation>创建临时文件失败。</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1185"/>
         <source>Failed to dump the database.</source>
-        <translation type="unfinished"></translation>
+        <translation>转储数据库失败。</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1190"/>
         <source>Compressing database...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在压缩数据库...</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1199"/>
         <source>Database successfully dumped to
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库成功转储到
+%1</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1205"/>
         <source>Failed to compress the database.</source>
-        <translation type="unfinished"></translation>
+        <translation>压缩数据库失败。   </translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1272"/>
         <source>Failed to prepare database for import.</source>
-        <translation type="unfinished"></translation>
+        <translation>准备数据库导入失败。</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="1449"/>
@@ -8992,7 +8993,7 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../rotator/drivers/PSTRotDrv.cpp" line="107"/>
         <source>Error Occurred</source>
-        <translation type="unfinished"></translation>
+        <translation>发生错误</translation>
     </message>
     <message>
         <location filename="../rotator/drivers/PSTRotDrv.cpp" line="108"/>
@@ -9050,7 +9051,7 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../ui/PaperQSLDialog.cpp" line="161"/>
         <source>Toggle Favorite</source>
-        <translation type="unfinished"></translation>
+        <translation>切换收藏</translation>
     </message>
 </context>
 <context>
@@ -9058,39 +9059,41 @@ The password will be needed to restore them later.</source>
     <message>
         <location filename="../ui/PlatformSettingsDialog.ui" line="14"/>
         <source>Platform-specific Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>平台特定设置</translation>
     </message>
     <message>
         <location filename="../ui/PlatformSettingsDialog.ui" line="23"/>
         <source>The database was exported from a different platform.
 Please verify or update the following settings.
 You can leave fields empty and configure them later in Settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库是从不同平台导出的。
+请验证或更新以下设置。
+您可以将字段留空，并在“设置”中稍后配置它们。</translation>
     </message>
     <message>
         <location filename="../ui/PlatformSettingsDialog.ui" line="54"/>
         <source>Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>设置</translation>
     </message>
     <message>
         <location filename="../ui/PlatformSettingsDialog.ui" line="59"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>值</translation>
     </message>
     <message>
         <location filename="../ui/PlatformSettingsDialog.cpp" line="28"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>继续</translation>
     </message>
     <message>
         <location filename="../ui/PlatformSettingsDialog.cpp" line="178"/>
         <source>Select File</source>
-        <translation type="unfinished">选择文件</translation>
+        <translation>选择文件</translation>
     </message>
     <message>
         <location filename="../ui/PlatformSettingsDialog.cpp" line="180"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>所有文件 (*)</translation>
     </message>
 </context>
 <context>
@@ -9211,12 +9214,12 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../core/main.cpp" line="428"/>
         <source>Failed to process pending database import.</source>
-        <translation type="unfinished"></translation>
+        <translation>处理待处理的数据库导入失败。</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="435"/>
         <source>The database was imported successfully, but the stored passwords could not be restored (decryption failed or the data is corrupted). All service passwords have been cleared and must be re-entered in Settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库导入成功，但存储的密码无法恢复（解密失败或数据已损坏）。所有服务密码已被清除，必须在“设置”中重新输入。</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="449"/>
@@ -9372,7 +9375,7 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="404"/>
         <source>Loop detected. Raw UDP forward uses the same port as the WSJT-X receiving port.</source>
-        <translation type="unfinished"></translation>
+        <translation>检测到循环。原始 UDP 转发使用与 WSJT-X 接收端口相同的端口。</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="427"/>
@@ -9512,7 +9515,7 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../core/main.cpp" line="422"/>
         <source>Importing Database</source>
-        <translation type="unfinished"></translation>
+        <translation>导入数据库</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="442"/>
@@ -9658,33 +9661,33 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../core/LogDatabase.cpp" line="300"/>
         <source>Not a valid QLog database</source>
-        <translation type="unfinished"></translation>
+        <translation>不是有效的 QLog 数据库</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="310"/>
         <source>Database version too new (requires newer QLog version)</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库版本过新（需要更新的 QLog 版本）</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="323"/>
         <source>Database is not QLog Export file</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库不是 QLog 导出文件</translation>
     </message>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="25"/>
         <source>TQSL Path</source>
-        <translation type="unfinished">TQSL路径</translation>
+        <translation>TQSL路径</translation>
     </message>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="89"/>
         <location filename="../core/PlatformParameterManager.cpp" line="228"/>
         <source>(Flatpak internal path)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Flatpak 内部路径)</translation>
     </message>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="192"/>
         <source>Rig</source>
-        <translation type="unfinished">设备</translation>
+        <translation>设备</translation>
     </message>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="193"/>
@@ -9704,27 +9707,27 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="196"/>
         <source>CW Keyer</source>
-        <translation type="unfinished"></translation>
+        <translation>CW 电键</translation>
     </message>
     <message>
         <location filename="../awards/BandTableAward.cpp" line="165"/>
         <source>TOTAL Worked</source>
-        <translation type="unfinished">全部已通联</translation>
+        <translation>全部已通联</translation>
     </message>
     <message>
         <location filename="../awards/BandTableAward.cpp" line="172"/>
         <source>TOTAL Confirmed</source>
-        <translation type="unfinished">全部已确认</translation>
+        <translation>全部已确认</translation>
     </message>
     <message>
         <location filename="../awards/BandTableAward.cpp" line="174"/>
         <source>Confirmed</source>
-        <translation type="unfinished">已确认</translation>
+        <translation>已确认</translation>
     </message>
     <message>
         <location filename="../awards/BandTableAward.cpp" line="181"/>
         <source>Worked</source>
-        <translation type="unfinished">已通联</translation>
+        <translation>已通联</translation>
     </message>
 </context>
 <context>
@@ -9748,42 +9751,42 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/QSLGalleryDialog.ui" line="14"/>
         <source>QSL Card Gallery</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL 卡片画廊</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.ui" line="22"/>
         <source>Search by callsign...</source>
-        <translation type="unfinished"></translation>
+        <translation>按呼号搜索...</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.ui" line="32"/>
         <source>Sort by:</source>
-        <translation type="unfinished"></translation>
+        <translation>排序方式：</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.ui" line="121"/>
         <source>Export Filtered</source>
-        <translation type="unfinished"></translation>
+        <translation>导出筛选结果</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="148"/>
         <source>Date (Newest)</source>
-        <translation type="unfinished"></translation>
+        <translation>日期（最新）</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="149"/>
         <source>Date (Oldest)</source>
-        <translation type="unfinished"></translation>
+        <translation>日期（最旧）</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="150"/>
         <source>Callsign (A-Z)</source>
-        <translation type="unfinished"></translation>
+        <translation>呼号（A-Z）</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="151"/>
         <source>Callsign (Z-A)</source>
-        <translation type="unfinished"></translation>
+        <translation>呼号（Z-A）</translation>
     </message>
     <message numerus="yes">
         <location filename="../ui/QSLGalleryDialog.cpp" line="175"/>
@@ -9796,12 +9799,12 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="201"/>
         <source>All QSL Cards</source>
-        <translation type="unfinished"></translation>
+        <translation>所有 QSL 卡片</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="207"/>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>收藏</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="215"/>
@@ -9831,37 +9834,37 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="579"/>
         <source>Remove from Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>从收藏中移除</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="579"/>
         <source>Add to Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到收藏</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="581"/>
         <source>Open</source>
-        <translation type="unfinished">打开</translation>
+        <translation>打开</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="582"/>
         <source>Save...</source>
-        <translation type="unfinished"></translation>
+        <translation>保存...</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="659"/>
         <source>Save QSL Card</source>
-        <translation type="unfinished"></translation>
+        <translation>保存 QSL 卡片</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="707"/>
         <source>Export QSL Cards</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 QSL 卡片</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="751"/>
         <source>Exported %1 of %2 cards</source>
-        <translation type="unfinished"></translation>
+        <translation>已导出 %1 / %2 张卡片</translation>
     </message>
 </context>
 <context>
@@ -9923,270 +9926,270 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="14"/>
         <source>Print QSL Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>打印QSL标签</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="79"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤器</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="119"/>
         <source>Date Range</source>
-        <translation type="unfinished"></translation>
+        <translation>日期范围</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="162"/>
         <source>My Callsign</source>
-        <translation type="unfinished">我的呼号</translation>
+        <translation>我的呼号</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="182"/>
         <source>Station Profile</source>
-        <translation type="unfinished">台站配置</translation>
+        <translation>台站配置</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="196"/>
         <source>QSL Sent</source>
-        <translation type="unfinished">QSL 已发送</translation>
+        <translation>QSL 已发送</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="210"/>
         <source>User Filter</source>
-        <translation type="unfinished">用户过滤器</translation>
+        <translation>用户过滤器</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="233"/>
         <source>Label Template</source>
-        <translation type="unfinished"></translation>
+        <translation>标签模板</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="278"/>
         <source>Page Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>页面大小:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="292"/>
         <source>Columns:</source>
-        <translation type="unfinished"></translation>
+        <translation>列数:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="312"/>
         <source>Rows:</source>
-        <translation type="unfinished"></translation>
+        <translation>行数:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="332"/>
         <source>Label Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>标签宽度:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="361"/>
         <source>Label Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>标签高度:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="390"/>
         <source>Left Margin:</source>
-        <translation type="unfinished"></translation>
+        <translation>左边界:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="419"/>
         <source>Top Margin:</source>
-        <translation type="unfinished"></translation>
+        <translation>上边界:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="448"/>
         <source>H Spacing:</source>
-        <translation type="unfinished"></translation>
+        <translation>水平间距:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="477"/>
         <source>V Spacing:</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直间距:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="517"/>
         <source>Label Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>标签外观:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="560"/>
         <source>Print Label Borders</source>
-        <translation type="unfinished"></translation>
+        <translation>打印标签边框</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="567"/>
         <source>QSOs per Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>每个标签的QSO数量:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="587"/>
         <source>Footer Left Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>页脚左文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="597"/>
         <source>Footer Right Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>页脚右文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="607"/>
         <source>Skip Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>跳过标签:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="624"/>
         <source>Sans Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>无衬线字体:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="647"/>
         <source>Mono Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>等宽字体:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="673"/>
         <source>Callsign Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>呼号大小:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="702"/>
         <source>&quot;To Radio&quot; Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;To Radio&quot; 大小:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="731"/>
         <source>&quot;To Radio&quot; Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;To Radio&quot; 文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="745"/>
         <source>Header Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>页眉大小:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="774"/>
         <source>Data Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>数据大小:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="803"/>
         <source>Date Header Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>日期页眉文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="817"/>
         <source>Date Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>日期格式:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="831"/>
         <source>Time Header Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>时间页眉文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="845"/>
         <source>Band Header Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>波段页眉文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="859"/>
         <source>Mode Header Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>模式页眉文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="873"/>
         <source>QSL Header Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>QSL页眉文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="887"/>
         <source>Extra Column:</source>
-        <translation type="unfinished"></translation>
+        <translation>额外列:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="901"/>
         <source>Extra Column Text</source>
-        <translation type="unfinished"></translation>
+        <translation>额外列文本:</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="908"/>
         <source>(DB column name)</source>
-        <translation type="unfinished"></translation>
+        <translation>(数据库列名)</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="952"/>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="797"/>
         <source>No matching QSOs found</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到匹配的 QSO</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1052"/>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="814"/>
         <source>Page 0 of 0</source>
-        <translation type="unfinished"></translation>
+        <translation>第 0 页，共 0 页</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1105"/>
         <source>Labels: 0 (0 pages)</source>
-        <translation type="unfinished"></translation>
+        <translation>标签: 0 (0 页)</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1128"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation>打印</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1158"/>
         <source>Export as PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为 PDF</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="49"/>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="297"/>
         <source>Custom</source>
-        <translation type="unfinished">自定义</translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="315"/>
         <source>Empty</source>
-        <translation type="unfinished"></translation>
+        <translation>空</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="388"/>
         <source>QSOs matching this station profile</source>
-        <translation type="unfinished"></translation>
+        <translation>匹配此台站配置的 QSO</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="769"/>
         <source>Labels: %1 (%2 pages)</source>
-        <translation type="unfinished"></translation>
+        <translation>标签: %1 (%2 页)</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="812"/>
         <source>Page %1 of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>第 %1 页，共 %2 页</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="862"/>
         <source>Export PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 PDF</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="864"/>
         <source>PDF Files (*.pdf)</source>
-        <translation type="unfinished"></translation>
+        <translation>PDF 文件 (*.pdf)</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="884"/>
         <source>Mark as Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>标记为已发送</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="885"/>
         <source>Mark printed/exported QSOs as sent?</source>
-        <translation type="unfinished"></translation>
+        <translation>标记打印/导出的 QSO 为已发送？</translation>
     </message>
 </context>
 <context>
@@ -11040,7 +11043,7 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/QSOFilterDetail.cpp" line="90"/>
         <source>RegExp</source>
-        <translation type="unfinished"></translation>
+        <translation>正则表达式</translation>
     </message>
     <message>
         <location filename="../ui/QSOFilterDetail.cpp" line="177"/>
@@ -11091,7 +11094,7 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../rig/Rig.cpp" line="215"/>
         <source>Rigctld Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Rigctld 错误</translation>
     </message>
     <message>
         <location filename="../rig/Rig.cpp" line="236"/>
@@ -11168,47 +11171,47 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.ui" line="31"/>
         <source>Leave empty for auto-detection</source>
-        <translation type="unfinished"></translation>
+        <translation>留空以进行自动检测</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.ui" line="47"/>
         <source>Browse</source>
-        <translation type="unfinished">浏览</translation>
+        <translation>浏览</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.ui" line="64"/>
         <source>Auto-detect Rigctld path</source>
-        <translation type="unfinished"></translation>
+        <translation>自动检测 Rigctld 路径</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.ui" line="67"/>
         <source>Auto-Detect</source>
-        <translation type="unfinished"></translation>
+        <translation>自动检测</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.ui" line="76"/>
         <source>Rigctld Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rigctld 版本:</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.ui" line="90"/>
         <source>Additional Arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>额外参数:</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.ui" line="97"/>
         <source>e.g. -v -v for verbose logging</source>
-        <translation type="unfinished"></translation>
+        <translation>例如 -v -v 用于详细日志记录</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.cpp" line="24"/>
         <source>Cannot be changed</source>
-        <translation type="unfinished"></translation>
+        <translation>无法被更改</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.cpp" line="75"/>
         <source>Auto Detect</source>
-        <translation type="unfinished"></translation>
+        <translation>自动检测</translation>
     </message>
     <message>
         <location filename="../ui/RigctldAdvancedDialog.cpp" line="76"/>
@@ -13474,7 +13477,7 @@ Please install TQSL or specify the path manually.</source>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="103"/>
         <source>Unspecified</source>
-        <translation type="unfinished">未指定</translation>
+        <translation>未指定</translation>
     </message>
     <message>
         <location filename="../ui/UploadQSODialog.cpp" line="182"/>
