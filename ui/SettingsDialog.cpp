@@ -560,19 +560,19 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     iotaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationIOTAEdit->setCompleter(iotaCompleter);
 
-    sotaCompleter = new QCompleter(Data::instance()->sotaIDList(), ui->stationSOTAEdit);
+    sotaCompleter = new QCompleter(Data::instance()->sotaIDList(), this);
     sotaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     sotaCompleter->setFilterMode(Qt::MatchStartsWith);
     sotaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationSOTAEdit->setCompleter(nullptr);
 
-    wwffCompleter = new QCompleter(Data::instance()->wwffIDList(), ui->stationWWFFEdit);
+    wwffCompleter = new QCompleter(Data::instance()->wwffIDList(), this);
     wwffCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     wwffCompleter->setFilterMode(Qt::MatchStartsWith);
     wwffCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
     ui->stationWWFFEdit->setCompleter(nullptr);
 
-    potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), ui->stationPOTAEdit);
+    potaCompleter = new MultiselectCompleter(Data::instance()->potaIDList(), this);
     potaCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     potaCompleter->setFilterMode(Qt::MatchStartsWith);
     potaCompleter->setModelSorting(QCompleter::CaseSensitivelySortedModel);
