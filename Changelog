@@ -21,6 +21,8 @@ TBC - 0.51.0
 - Fixed ADIF Export of Gridsqaure too long (issue #1028)
 - Fixed Shutdown: synchronize station-device teardown (PR #1035 @VA3THP @foldynl)
 - Fixed QRZ callbook lookups stall for certain calls (issue #1040)
+- Fixed ADIF multiline fields are incorrectly parsed (issue #1046)
+- Fixed ADX app-fields and grid normalization
 - Github - Source code is signed (#1018)
 
 2026/04/26 - 0.50.0
