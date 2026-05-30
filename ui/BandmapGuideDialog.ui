@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BandmapGuideDialog</class>
+ <widget class="QDialog" name="BandmapGuideDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>760</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Bandmap Guide</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QHBoxLayout" name="mainHLayout">
+   <item>
+    <layout class="QVBoxLayout" name="leftLayout">
+     <item>
+      <layout class="QHBoxLayout" name="fileButtonLayout">
+       <item>
+        <widget class="QPushButton" name="importGuideButton">
+         <property name="toolTip">
+          <string>Import guide</string>
+         </property>
+         <property name="text">
+          <string>Import</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-open">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportGuideButton">
+         <property name="toolTip">
+          <string>Export guide</string>
+         </property>
+         <property name="text">
+          <string>Export</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-save-as">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QListWidget" name="guideList">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="listButtonLayout">
+       <item>
+        <widget class="QPushButton" name="newButton">
+         <property name="toolTip">
+          <string>New guide</string>
+         </property>
+         <property name="text">
+          <string>New</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-new">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copyButton">
+         <property name="toolTip">
+          <string>Copy guide</string>
+         </property>
+         <property name="text">
+          <string>Copy</string>
+         </property>
+         <property name="icon">
+          <iconset theme="edit-copy">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteButton">
+         <property name="toolTip">
+          <string>Delete guide</string>
+         </property>
+         <property name="text">
+          <string>Delete</string>
+         </property>
+         <property name="icon">
+          <iconset theme="edit-delete">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="rightLayout">
+     <item>
+      <layout class="QFormLayout" name="editorFormLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="nameEditorLabel">
+         <property name="text">
+          <string>Guide Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="nameEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="rangesLabel">
+       <property name="text">
+        <string>Ranges:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="rangeTableLayout">
+       <item>
+        <widget class="QTableWidget" name="rangesTable">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="columnCount">
+          <number>4</number>
+         </property>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderMinimumSectionSize">
+          <number>25</number>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>25</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>From</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>To</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Color</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Label</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="rangeButtonLayout">
+       <item>
+        <spacer name="rangeButtonSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addRangeButton">
+         <property name="toolTip">
+          <string>Add range</string>
+         </property>
+         <property name="text">
+          <string>Add</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="removeRangeButton">
+         <property name="toolTip">
+          <string>Remove selected range</string>
+         </property>
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>nameEdit</tabstop>
+  <tabstop>rangesTable</tabstop>
+  <tabstop>addRangeButton</tabstop>
+  <tabstop>removeRangeButton</tabstop>
+  <tabstop>guideList</tabstop>
+  <tabstop>newButton</tabstop>
+  <tabstop>copyButton</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>importGuideButton</tabstop>
+  <tabstop>exportGuideButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>380</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>380</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nameEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>guideNameChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>480</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>guideList</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>guideSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>newGuide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>460</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>copyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>copyGuide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>120</x>
+     <y>460</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>deleteButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>deleteGuide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>180</x>
+     <y>460</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>importGuideButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>importGuide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportGuideButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>exportGuide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addRangeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>addRange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>580</x>
+     <y>440</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>removeRangeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>BandmapGuideDialog</receiver>
+   <slot>removeRange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>660</x>
+     <y>440</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>guideSelectionChanged()</slot>
+  <slot>guideNameChanged(QString)</slot>
+  <slot>newGuide()</slot>
+  <slot>copyGuide()</slot>
+  <slot>deleteGuide()</slot>
+  <slot>importGuide()</slot>
+  <slot>exportGuide()</slot>
+  <slot>addRange()</slot>
+  <slot>removeRange()</slot>
+ </slots>
+</ui>

@@ -5,6 +5,11 @@
 #include <QShortcut>
 #include <QDesktopServices>
 #include <QStyleHints>
+#include <QTimer>
+#include <QProgressDialog>
+#include <QInputDialog>
+#include <QSqlQuery>
+#include <QSqlError>
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -32,10 +37,13 @@
 #include "data/Data.h"
 #include "data/ActivityProfile.h"
 #include "data/AntProfile.h"
+#include "data/StationProfile.h"
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
 #include "ui/DownloadQSLDialog.h"
 #include "ui/UploadQSODialog.h"
+#include "ui/QSLImportStatDialog.h"
+#include "service/lotw/Lotw.h"
 #include "core/LogParam.h"
 #include "core/PotaQE.h"
 #include "data/WsjtxEntry.h"
@@ -48,6 +56,7 @@
 #include "ui/PlatformSettingsDialog.h"
 #include "ui/QSLGalleryDialog.h"
 #include "ui/QSLPrintLabelDialog.h"
+#include "ui/AdifRecoveryManager.h"
 #include <QFileDialog>
 #include <QProcess>
 #include <QThread>
@@ -59,7 +68,8 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     stats(new StatisticsWidget),
-    clublogRT(new ClubLogUploader(this))
+    clublogRT(new ClubLogUploader(this)),
+    adifRecoveryManager(new AdifRecoveryManager(this))
 {
     FCT_IDENTIFICATION;
 
@@ -289,6 +299,13 @@ MainWindow::MainWindow(QWidget* parent) :
     FldigiTCPServer* fldigi = new FldigiTCPServer(this);
     connect(fldigi, &FldigiTCPServer::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
 
+    connect(adifRecoveryManager, &AdifRecoveryManager::contactsRecovered, ui->logbookWidget, &LogbookWidget::updateTable);
+    connect(adifRecoveryManager, &AdifRecoveryManager::problem, this, [this](const QString &message)
+    {
+        if ( !message.isEmpty() )
+            QMessageBox::warning(this, tr("Startup ADI"), message);
+    }, Qt::QueuedConnection);
+
     wsjtx = new WsjtxUDPReceiver(this);
     connect(wsjtx, &WsjtxUDPReceiver::statusReceived, ui->wsjtxWidget, &WsjtxWidget::statusReceived);
     connect(wsjtx, &WsjtxUDPReceiver::decodeReceived, ui->wsjtxWidget, &WsjtxWidget::decodeReceived);
@@ -308,6 +325,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->wsjtxWidget, &WsjtxWidget::modeChanged, ui->newContactWidget, &NewContactWidget::changeModefromRig);
 
     connect(this, &MainWindow::settingsChanged, wsjtx, &WsjtxUDPReceiver::reloadSetting);
+    connect(this, &MainWindow::settingsChanged, adifRecoveryManager, &AdifRecoveryManager::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->rotatorWidget, &RotatorWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->rigWidget, &RigWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->cwconsoleWidget, &CWConsoleWidget::reloadSettings);
@@ -315,6 +333,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::settingsChanged, ui->onlineMapWidget, &OnlineMapWidget::flyToMyQTH);
     connect(this, &MainWindow::settingsChanged, ui->logbookWidget, &LogbookWidget::reloadSetting);
     connect(this, &MainWindow::settingsChanged, ui->dxWidget, &DxWidget::reloadSetting);
+    connect(this, &MainWindow::settingsChanged, ui->dxWidget, &DxWidget::refreshStatusColors);
+    connect(this, &MainWindow::settingsChanged, ui->wsjtxWidget, &WsjtxWidget::refreshStatusColors);
     connect(this, &MainWindow::settingsChanged, ui->bandmapWidget, &BandmapWidget::recalculateDxccStatus);
     connect(this, &MainWindow::settingsChanged, ui->alertsWidget, &AlertWidget::recalculateDxccStatus);
     connect(this, &MainWindow::settingsChanged, ui->chatWidget, &ChatWidget::recalculateDxccStatus);
@@ -468,6 +488,8 @@ MainWindow::MainWindow(QWidget* parent) :
     //restoreConnectionStates();
 
     setupActivitiesMenu();
+
+    QTimer::singleShot(10000, adifRecoveryManager, &AdifRecoveryManager::startStartupRecovery);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -1097,6 +1119,126 @@ void MainWindow::showServiceDownloadQSL()
     DownloadQSLDialog dialog(this);
     dialog.exec();
     ui->logbookWidget->updateTable();
+}
+
+void MainWindow::showServiceDownloadLotwDXCCCredits()
+{
+    FCT_IDENTIFICATION;
+
+    if ( LotwBase::getUsername().isEmpty() )
+    {
+        QMessageBox::warning(this,
+                             tr("QLog Warning"),
+                             tr("LoTW is not configured properly.<p>Please, use <b>Settings</b> dialog to configure it.</p>"));
+        return;
+    }
+
+    QSqlQuery entityQuery;
+    if ( !entityQuery.exec("SELECT my_dxcc, "
+                           "       MAX(NULLIF(TRIM(my_country_intl), '')) AS my_country, "
+                           "       CASE WHEN LENGTH(GROUP_CONCAT(station_callsign, ', ')) > 50 "
+                           "            THEN SUBSTR(GROUP_CONCAT(station_callsign, ', '), 1, 50) || '...' "
+                           "            ELSE GROUP_CONCAT(station_callsign, ', ') END AS station_callsigns "
+                           "FROM ("
+                           "    SELECT DISTINCT my_dxcc, "
+                           "           my_country_intl, "
+                           "           UPPER(NULLIF(TRIM(station_callsign), '')) AS station_callsign "
+                           "    FROM contacts "
+                           "    WHERE my_dxcc IS NOT NULL AND my_dxcc > 0"
+                           ") "
+                           "GROUP BY my_dxcc "
+                           "ORDER BY my_dxcc") )
+    {
+        QMessageBox::critical(this,
+                              tr("QLog Error"),
+                              tr("Cannot load local DXCC entities from the logbook: ") + entityQuery.lastError().text());
+        return;
+    }
+
+    QStringList items;
+    QMap<QString, QString> itemToEntity;
+
+    while ( entityQuery.next() )
+    {
+        const QString entity = entityQuery.value(0).toString();
+        const QString country = entityQuery.value(1).toString();
+        const QString callsigns = entityQuery.value(2).toString();
+
+        QString item = QString("%1 - %2").arg(entity,
+                                              country.isEmpty() ? tr("Unknown DXCC Entity") : country);
+        if ( !callsigns.isEmpty() )
+            item += QString(" (%1)").arg(callsigns);
+
+        items << item;
+        itemToEntity.insert(item, entity);
+    }
+
+    if ( items.isEmpty() )
+    {
+        QMessageBox::warning(this,
+                             tr("QLog Warning"),
+                             tr("Cannot determine a local DXCC entity from logbook contacts."));
+        return;
+    }
+
+    bool ok = false;
+    const QString selectedItem = QInputDialog::getItem(this,
+                                                       tr("LoTW DXCC Credits"),
+                                                       tr("Select the local DXCC entity for which LoTW DXCC credits will be downloaded:"),
+                                                       items,
+                                                       0,
+                                                       false,
+                                                       &ok);
+    if ( !ok )
+        return;
+
+    const QString selectedEntity = itemToEntity.value(selectedItem);
+
+    LotwDXCCCreditDownloader *downloader = new LotwDXCCCreditDownloader(this);
+    QProgressDialog *progressDialog = new QProgressDialog("", tr("Cancel"), 0, 0, this);
+    progressDialog->setWindowModality(Qt::WindowModal);
+    progressDialog->setRange(0, 0);
+    progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    progressDialog->setLabelText(tr("Downloading LoTW DXCC credits"));
+    progressDialog->show();
+
+    connect(downloader, &LotwDXCCCreditDownloader::downloadProgress,
+            progressDialog, &QProgressDialog::setValue);
+
+    connect(downloader, &LotwDXCCCreditDownloader::downloadStarted, this, [progressDialog]
+    {
+        progressDialog->setLabelText(tr("Processing LoTW DXCC credits"));
+        progressDialog->setRange(0, 100);
+    });
+
+    connect(downloader, &LotwDXCCCreditDownloader::downloadComplete, this,
+            [this, downloader, progressDialog](const QSLMergeStat &stats)
+    {
+        progressDialog->done(QDialog::Accepted);
+        downloader->deleteLater();
+        ui->logbookWidget->updateTable();
+
+        QSLImportStatDialog statDialog(stats, this);
+        statDialog.setWindowTitle(tr("LoTW DXCC Credit Import Summary"));
+        statDialog.exec();
+    });
+
+    connect(downloader, &LotwDXCCCreditDownloader::downloadFailed, this,
+            [this, downloader, progressDialog](const QString &error)
+    {
+        progressDialog->done(QDialog::Accepted);
+        QMessageBox::critical(this, tr("QLog Error"), tr("LoTW DXCC credit import failed: ") + error);
+        downloader->deleteLater();
+    });
+
+    connect(progressDialog, &QProgressDialog::canceled, this, [downloader]()
+    {
+        qCDebug(runtime) << "Operation canceled";
+        downloader->abortDownload();
+        downloader->deleteLater();
+    });
+
+    downloader->downloadCredits(selectedEntity);
 }
 
 void MainWindow::showQSLGallery()
@@ -2090,14 +2232,15 @@ MainWindow::~MainWindow()
 
     //saveEquipmentConnOptions();
 
-    Rig::instance()->close();
-    Rotator::instance()->close();
-    CWKeyer::instance()->close();
-    QThread::msleep(500);
+    // These singletons live on worker threads. Disconnect them before shutdown
+    // so queued signals cannot land on widgets that are about to be deleted.
+    QObject::disconnect(CWKeyer::instance(), nullptr, nullptr, nullptr);
+    QObject::disconnect(Rotator::instance(), nullptr, nullptr, nullptr);
+    QObject::disconnect(Rig::instance(), nullptr, nullptr, nullptr);
 
-    Rig::instance()->stopTimer();
-    Rotator::instance()->stopTimer();
-    CWKeyer::instance()->stopTimer();
+    CWKeyer::instance()->shutdown();
+    Rotator::instance()->shutdown();
+    Rig::instance()->shutdown();
 
     conditions->deleteLater();
     conditionsLabel->deleteLater();

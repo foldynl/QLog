@@ -34,9 +34,7 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     mapper(new QDataWidgetMapper(this)),
     model(new LogbookModelPrivate(this)),
     editedRecord(new QSqlRecord(qso)),
-    isMainPageLoaded(false),
-    main_page(new WebEnginePage(this)),
-    layerControlHandler("qsodetail", parent)
+    mapController(new MapPageController(QStringLiteral("qsodetail"), this))
 {
     FCT_IDENTIFICATION;
 
@@ -48,12 +46,12 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     connect(model, &QSqlTableModel::beforeUpdate, this, &QSODetailDialog::handleBeforeUpdate);
 
     /* mapView setting */
-    main_page->setWebChannel(&channel);
-    ui->mapView->setPage(main_page);
-    main_page->load(QUrl(QStringLiteral("qrc:/res/map/onlinemap.html")));
-    ui->mapView->setFocusPolicy(Qt::ClickFocus);
-    connect(ui->mapView, &QWebEngineView::loadFinished, this, &QSODetailDialog::mapLoaded);
-    channel.registerObject("layerControlHandler", &layerControlHandler);
+    mapController->attach(ui->mapView,
+                          MapLayer::Grid
+                          | MapLayer::Grayline
+                          | MapLayer::Path);
+    connect(mapController.data(), &MapPageController::loaded,
+            this, &QSODetailDialog::mapLoaded);
 
     /* Edit Button */
     editButton = new QPushButton(getButtonText(EDIT_BUTTON_TEXT));
@@ -410,8 +408,8 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
 
     setReadOnlyMode(true);
 
-    drawDXOnMap(ui->callsignEdit->text(), Gridsquare(ui->gridEdit->text()));
-    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare(ui->myGridEdit->text()));
+    drawDXOnMap(ui->callsignEdit->text(), Gridsquare::mapDisplayGrid(ui->gridEdit->text()));
+    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare::mapDisplayGrid(ui->myGridEdit->text()));
     setStaticMapTime(ui->dateTimeOnEdit->dateTime());
     refreshDXStatTabs();
 
@@ -1090,44 +1088,23 @@ void QSODetailDialog::doValidationDouble(double)
     doValidation();
 }
 
-void QSODetailDialog::mapLoaded(bool)
+void QSODetailDialog::mapLoaded()
 {
     FCT_IDENTIFICATION;
-
-    isMainPageLoaded = true;
-
-    /* which layers will be active */
-    postponedScripts += layerControlHandler.generateMapMenuJS(true,
-                                                              true,
-                                                              false,
-                                                              false,
-                                                              false,
-                                                              false,
-                                                              false,
-                                                              false,
-                                                              true);
-
-    main_page->runJavaScript(postponedScripts);
 
     const QPalette &defaultPalette = this->palette();
     const QColor &text = defaultPalette.color(QPalette::WindowText);
     const QColor &window = defaultPalette.color(QPalette::Window);
     bool isDark = text.lightness() > window.lightness();
 
-    if ( isDark )
-    {
-        QString themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
-        main_page->runJavaScript(themeJavaScript);
-    }
-
-    layerControlHandler.restoreLayerControlStates(main_page);
+    mapController->setDarkTheme(isDark);
 }
 
 void QSODetailDialog::myGridChanged(const QString &newGrid)
 {
     FCT_IDENTIFICATION;
 
-    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare(newGrid));
+    drawMyQTHOnMap(ui->myCallsignEdit->text(), Gridsquare::mapDisplayGrid(newGrid));
 
     return;
 }
@@ -1136,7 +1113,7 @@ void QSODetailDialog::DXGridChanged(const QString &newGrid)
 {
     FCT_IDENTIFICATION;
 
-    drawDXOnMap(ui->callsignEdit->text(), Gridsquare(newGrid));
+    drawDXOnMap(ui->callsignEdit->text(), Gridsquare::mapDisplayGrid(newGrid));
 
     return;
 }
@@ -1312,14 +1289,16 @@ void QSODetailDialog::clubQueryResult(const QString &in_callsign,
 
     QMapIterator<QString, ClubStatusQuery::ClubInfo> clubs(data);
 
-    QPalette palette;
-
-    //"<font color='red'>Hello</font> <font color='green'>World</font>"
     while ( clubs.hasNext() )
     {
         clubs.next();
-        QColor color = Data::statusToColor(static_cast<DxccStatus>(clubs.value().status), false, palette.color(QPalette::Text));
-        memberText.append(QString("<font color='%1'>%2</font>&nbsp;&nbsp;&nbsp;").arg(Data::colorToHTMLColor(color), clubs.key()));
+        const QColor color = Data::statusToColor(static_cast<DxccStatus>(clubs.value().status), false, QColor());
+        const QString clubName = clubs.key().toHtmlEscaped();
+
+        if ( color.isValid() && color.alpha() > 0 )
+            memberText.append(QString("<font color='%1'>%2</font>&nbsp;&nbsp;&nbsp;").arg(Data::colorToHTMLColor(color), clubName));
+        else
+            memberText.append(QString("%1&nbsp;&nbsp;&nbsp;").arg(clubName));
     }
     ui->memberListLabel->setText(memberText);
 }
@@ -1392,7 +1371,7 @@ void QSODetailDialog::drawDXOnMap(const QString &label, const Gridsquare &dxGrid
     QString stationString;
     QString popupString = label;
 
-    Gridsquare myGrid = Gridsquare(ui->myGridEdit->text());
+    Gridsquare myGrid = Gridsquare::mapDisplayGrid(ui->myGridEdit->text());
     double distance = 0;
 
     if (dxGrid.distanceTo(myGrid, distance))
@@ -1404,39 +1383,28 @@ void QSODetailDialog::drawDXOnMap(const QString &label, const Gridsquare &dxGrid
 
     double lat = dxGrid.getLatitude();
     double lon = dxGrid.getLongitude();
-    // do not wrap the points
-    double delta = lon - myGrid.getLongitude();
-    if ( delta > 180 )
-        lon -= 360;
-    if ( delta < -180 )
-        lon += 360;
 
-    stationString.append(QString("[[\"%1\", %2, %3, yellowIcon]]").arg(popupString).arg(lat).arg(lon));
+    QList<MapPath> shortPaths;
 
-    QString shortPath = QString("[%1, %2, %3, %4]")
-                            .arg(myGrid.getLatitude())
-                            .arg(myGrid.getLongitude())
-                            .arg(lat)
-                            .arg(lon);
-
-    QString javaScript = QString("grids_confirmed = [];"
-                                 "grids_worked = [];"
-                                 "drawPoints(%1);"
-                                 "drawShortPaths([%2]);"
-                                 "maidenheadConfWorked.redraw();"
-                                 "flyToPoint(%3[0], 6);")
-                             .arg(stationString, shortPath, stationString);
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
+    if ( myGrid.isValid() )
     {
-        postponedScripts.append(javaScript);
+        // do not wrap the points
+        double delta = lon - myGrid.getLongitude();
+        if ( delta > 180 )
+            lon -= 360;
+        if ( delta < -180 )
+            lon += 360;
+
+        shortPaths << MapPath(MapCoordinate(myGrid.getLatitude(), myGrid.getLongitude()),
+                              MapCoordinate(lat, lon));
     }
-    else
-    {
-        main_page->runJavaScript(javaScript);
-    }
+
+    const MapPoint dxPoint(popupString, lat, lon, QStringLiteral("yellowIcon"));
+    mapController->clearGridLayers();
+    mapController->drawPoints(QList<MapPoint>() << dxPoint);
+    mapController->drawShortPaths(shortPaths);
+    mapController->redrawGridLayer();
+    mapController->flyToPoint(dxPoint, 6);
 }
 
 void QSODetailDialog::drawMyQTHOnMap(const QString &label, const Gridsquare &myGrid)
@@ -1450,26 +1418,12 @@ void QSODetailDialog::drawMyQTHOnMap(const QString &label, const Gridsquare &myG
         return;
     }
 
-    QString stationString;
     double lat = myGrid.getLatitude();
     double lon = myGrid.getLongitude();
-    stationString.append(QString("[[\"%1\", %2, %3, homeIcon]]").arg(label).arg(lat).arg(lon));
-
-    QString javaScript = QString("grids_confirmed = [];"
-                                 "grids_worked = [];"
-                                 "drawPointsGroup2(%1);"
-                                 "maidenheadConfWorked.redraw();").arg(stationString);
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
-    {
-        postponedScripts.append(javaScript);
-    }
-    else
-    {
-        main_page->runJavaScript(javaScript);
-    }
+    const MapPoint myPoint(label, lat, lon, QStringLiteral("homeIcon"));
+    mapController->clearGridLayers();
+    mapController->drawHomePoints(QList<MapPoint>() << myPoint);
+    mapController->redrawGridLayer();
 }
 
 void QSODetailDialog::setStaticMapTime(const QDateTime &dateTime)
@@ -1478,15 +1432,7 @@ void QSODetailDialog::setStaticMapTime(const QDateTime &dateTime)
 
     qCDebug(function_parameters) << dateTime;
 
-    QString javaScript = QString("setStaticMapTime(new Date(%1));").arg(dateTime.toMSecsSinceEpoch());
-
-    qCDebug(runtime) << javaScript;
-
-    if (!isMainPageLoaded) {
-        postponedScripts.append(javaScript);
-    } else {
-        main_page->runJavaScript(javaScript);
-    }
+    mapController->setStaticMapTime(dateTime);
 }
 
 void QSODetailDialog::enableWidgetChangeHandlers()

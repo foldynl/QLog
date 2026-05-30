@@ -6,6 +6,11 @@ QString AwardPOTAActivator::displayName() const
     return QCoreApplication::translate("AwardsDialog", "POTA Activator");
 }
 
+QString AwardPOTAActivator::rulesUrl() const
+{
+    return QStringLiteral("https://docs.pota.app/docs/awards.html");
+}
+
 QString AwardPOTAActivator::headersColumns(const QString &) const
 {
     return QStringLiteral("p.reference col1, p.name col2 ");

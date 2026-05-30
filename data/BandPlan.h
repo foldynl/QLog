@@ -26,7 +26,15 @@ public:
         BAND_MODE_PHONE
     };
 
+    struct BandModeRange
+    {
+        double start;
+        double end;
+        BandPlanMode mode;
+    };
+
     static BandPlanMode freq2BandMode(const double freq);
+    static const QList<BandModeRange> r1BandModeRanges();
     static const QString bandMode2BandModeGroupString(const BandPlan::BandPlanMode &bandPlanMode);
     static const QString freq2BandModeGroupString(const double freq);
     static const QString bandPlanMode2ExpectedMode(const BandPlan::BandPlanMode &bandPlanMode,

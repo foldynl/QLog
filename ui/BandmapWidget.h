@@ -28,9 +28,16 @@ class GraphicsScene : public QGraphicsScene
 
 public:
     explicit GraphicsScene(QObject *parent = nullptr) : QGraphicsScene(parent){};
+    enum
+    {
+        MarkerFrequencyRole = Qt::UserRole + 1,
+        MarkerModeRole,
+        MarkerSubmodeRole
+    };
 
 signals:
     void spotClicked(QString, double, BandPlan::BandPlanMode mode);
+    void markerClicked(double frequency, const QString &mode, const QString &submode);
 
 protected:
     void mousePressEvent (QGraphicsSceneMouseEvent *evt) override;
@@ -48,6 +55,7 @@ public:
     ~BandmapWidget();
     const Band& getBand() const {return currentBand;};
     const QList<BandmapWidget *> getNonVfoWidgetList() {return nonVfoWidgets;};
+    static void refreshAllBandmaps();
     enum BandmapZoom {
         ZOOM_100HZ = 6,
         ZOOM_250HZ = 5,
@@ -89,12 +97,33 @@ private:
     void removeDuplicates(DxSpot &spot);
     void spotAging();
 
+    struct FrequencyMarkerStyle
+    {
+        QString label;
+        QColor lineColor;
+        QColor pillColor;
+        QColor glowColor;
+        double glowWidthMHz;
+    };
+
     void determineStepDigits(double &step, int &digits) const;
     void clearAllCallsignFromScene();
     void clearFreqMark(QGraphicsPolygonItem **);
     void drawFreqMark(const double, const double, const QColor&, QGraphicsPolygonItem **);
     void drawTXRXMarks(double);
+    void drawLabeledFrequencyMarker(double frequency,
+                                    double step,
+                                    const FrequencyMarkerStyle &style,
+                                    const QString &mode,
+                                    const QString &submode = QString());
+    void setMarkerTuneData(QGraphicsItem *item,
+                           double frequency,
+                           const QString &mode,
+                           const QString &submode) const;
+    QColor readableMarkerTextColor(const QColor &background) const;
+    void drawGuideOverlay(double step, const QString &widestFreqText);
     void drawEmergencyMarkers(double step);
+    void drawIBPMarkers(double step);
     void drawMarkers(double frequency);
     void resizeEvent(QResizeEvent * event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -116,7 +145,10 @@ private:
 private slots:
     void centerRXActionChecked(bool);
     void emergencyMarkersActionChecked(bool);
+    void ibpMarkersActionChecked(bool);
+    void editGuide();
     void spotClicked(const QString&, double, BandPlan::BandPlanMode);
+    void markerClicked(double frequency, const QString &mode, const QString &submode);
     void showContextMenu(const QPoint&);
     void updateStationTimer();
     void focusZoomFreq(int, int);
@@ -141,6 +173,7 @@ private:
     QGraphicsPolygonItem* txMark;
     bool keepRXCenter;
     bool showEmergencyMarkers;
+    bool showIBPMarkers;
     LogLocale locale;
     quint32 pendingSpots;
     qint64 lastStationUpdate;

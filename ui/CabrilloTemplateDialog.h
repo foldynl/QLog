@@ -74,7 +74,6 @@ private:
     Ui::CabrilloTemplateDialog *ui;
     QList<TemplateData> templates;
     int currentTemplateIndex;
-    QList<CabrilloFormat::CategoryItem> dbFieldItems;
     QList<CabrilloFormat::CategoryItem> formatterItems;
 };
 

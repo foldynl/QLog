@@ -348,6 +348,18 @@ void WsjtxWidget::clearTable()
     emit spotsCleared();
 }
 
+void WsjtxWidget::refreshStatusColors()
+{
+    FCT_IDENTIFICATION;
+
+    wsjtxTableModel->refreshStatusColors();
+
+    emit spotsCleared();
+    const QList<WsjtxEntry> entries = wsjtxTableModel->entries();
+    for ( const WsjtxEntry &entry : entries )
+        emit filteredCQSpot(entry);
+}
+
 void WsjtxWidget::saveTableHeaderState()
 {
     FCT_IDENTIFICATION;

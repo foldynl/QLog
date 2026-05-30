@@ -2,6 +2,7 @@
 #define QLOG_CORE_GRIDSQUARE_H
 
 #include <QObject>
+#include <QRegularExpression>
 #include <QString>
 #include <QDebug>
 
@@ -11,18 +12,19 @@ class Gridsquare
 {
 public:
     explicit Gridsquare(const QString &in_grid = QString());
-    explicit Gridsquare(const double inlat,const  double inlon);
-    ~Gridsquare() {};
-    static const QRegularExpression gridRegEx();
-    static const QRegularExpression gridVUCCRegEx();
-    static const QRegularExpression gridExtRegEx();
+    explicit Gridsquare(double inlat, double inlon);
+    ~Gridsquare() = default;
+    static Gridsquare mapDisplayGrid(const QString &grid);
+    static const QRegularExpression &gridRegEx();
+    static const QRegularExpression &gridVUCCRegEx();
+    static const QRegularExpression &gridExtRegEx();
     static double distance2localeUnitDistance(double km, QString &unit, const LogLocale &locale);
     static double localeDistanceCoef(const LogLocale &locale);
 
     bool isValid() const;
     double getLongitude() const {return lon;};
     double getLatitude() const {return lat;};
-    const QString getGrid() const { return grid;};
+    const QString &getGrid() const { return grid;};
     bool distanceTo(const Gridsquare &in_grid, double &distance) const;
     bool distanceTo(double lat, double lon, double &distance) const;
     bool bearingTo(const Gridsquare &in_grid, double &bearing) const;
@@ -32,8 +34,9 @@ public:
 
 private:
     QString grid;
-    bool validGrid;
-    double lat, lon;
+    bool validGrid = false;
+    double lat = qQNaN();
+    double lon = qQNaN();
 };
 
 #endif // QLOG_CORE_GRIDSQUARE_H

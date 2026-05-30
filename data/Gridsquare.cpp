@@ -7,8 +7,54 @@
 
 MODULE_IDENTIFICATION("qlog.core.gridsquare");
 
-Gridsquare::Gridsquare(const QString &in_grid) :
-    validGrid(false), lat(qQNaN()), lon(qQNaN())
+static const double DEG_TO_RAD = M_PI / 180.0;
+static const double RAD_TO_DEG = 180.0 / M_PI;
+static const double IARU_EARTH_RADIUS_KM = 40032.0 / (2.0 * M_PI);
+
+static bool gridCharInRange(const QString &grid, int index, char min, char max)
+{
+    const char ch = grid.at(index).toLatin1();
+    return ch >= min && ch <= max;
+}
+
+static bool gridCharIsDigit(const QString &grid, int index)
+{
+    return gridCharInRange(grid, index, '0', '9');
+}
+
+static bool isValidGrid(const QString &grid)
+{
+    const int size = grid.size();
+
+    if ( size != 2 && size != 4 && size != 6 && size != 8 )
+        return false;
+
+    if ( !gridCharInRange(grid, 0, 'A', 'R')
+         || !gridCharInRange(grid, 1, 'A', 'R') )
+        return false;
+
+    if ( size == 2 )
+        return true;
+
+    if ( !gridCharIsDigit(grid, 2)
+         || !gridCharIsDigit(grid, 3) )
+        return false;
+
+    if ( size == 4 )
+        return true;
+
+    if ( !gridCharInRange(grid, 4, 'A', 'X')
+         || !gridCharInRange(grid, 5, 'A', 'X') )
+        return false;
+
+    if ( size == 6 )
+        return true;
+
+    return gridCharIsDigit(grid, 6)
+           && gridCharIsDigit(grid, 7);
+}
+
+Gridsquare::Gridsquare(const QString &in_grid)
 {
     FCT_IDENTIFICATION;
 
@@ -16,7 +62,7 @@ Gridsquare::Gridsquare(const QString &in_grid) :
     {
         grid = in_grid.toUpper();
 
-        if ( gridRegEx().match(grid).hasMatch() )
+        if ( isValidGrid(grid) )
         {
             lon = (grid.at(0).toLatin1() - 'A') * 20 - 180;
             lat = (grid.at(1).toLatin1() - 'A') * 10 - 90;
@@ -71,8 +117,9 @@ Gridsquare::Gridsquare(const QString &in_grid) :
     }
 }
 
-Gridsquare::Gridsquare(const double inlat, const double inlon) :
-    validGrid(false), lat(inlat), lon(inlon)
+Gridsquare::Gridsquare(double inlat, double inlon) :
+    lat(inlat),
+    lon(inlon)
 {
     FCT_IDENTIFICATION;
 
@@ -105,27 +152,52 @@ Gridsquare::Gridsquare(const double inlat, const double inlon) :
     }
 }
 
-const QRegularExpression Gridsquare::gridRegEx()
+Gridsquare Gridsquare::mapDisplayGrid(const QString &grid)
 {
     FCT_IDENTIFICATION;
 
-    return QRegularExpression("^[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}|[0-9]{2}[A-Xa-x]{2}[0-9]{2})?$");
+    const Gridsquare strictGrid(grid);
+
+    return (strictGrid.isValid() || grid.size() <= 8) ? strictGrid
+                                                      : Gridsquare(grid.left(8));
+}
+
+const QRegularExpression &Gridsquare::gridRegEx()
+{
+    FCT_IDENTIFICATION;
+
+    static const QRegularExpression regex(QStringLiteral("^[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}[0-9]{2})?$"));
+    return regex;
     //return QRegularExpression("^[A-Ra-r]{2}[0-9]{2}([A-Xa-x]{2})?([0-9]{2})?$");
 }
 
-const QRegularExpression Gridsquare::gridVUCCRegEx()
+const QRegularExpression &Gridsquare::gridVUCCRegEx()
 {
     FCT_IDENTIFICATION;
 
-    return QRegularExpression("^[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2})$|"
-                              "^[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2}),[ ]*[A-Ra-r]{2}(?:[0-9]{2}|[0-9]{2}[A-Xa-x]{2})$");
+    static const QRegularExpression regex(QStringLiteral("^[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2})$|"
+                                                         "^[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2}),[ ]*"
+                                                         "[A-Ra-r]{2}(?:[0-9]{2}|"
+                                                         "[0-9]{2}[A-Xa-x]{2})$"));
+    return regex;
 }
 
-const QRegularExpression Gridsquare::gridExtRegEx()
+const QRegularExpression &Gridsquare::gridExtRegEx()
 {
     FCT_IDENTIFICATION;
 
-    return QRegularExpression("^[A-Xa-x]{2}?([0-9]{2})?$");
+    static const QRegularExpression regex(QStringLiteral("^[A-Xa-x]{2}?([0-9]{2})?$"));
+    return regex;
 }
 
 double Gridsquare::distance2localeUnitDistance(double km,
@@ -171,16 +243,18 @@ bool Gridsquare::distanceTo(double lat, double lon, double &distance) const
     }
 
     /* https://www.movable-type.co.uk/scripts/latlong.html */
-    double dLat = (lat - this->getLatitude()) * M_PI / 180;
-    double dLon = (lon - this->getLongitude()) * M_PI / 180;
+    const double dLat = (lat - this->lat) * DEG_TO_RAD;
+    const double dLon = (lon - this->lon) * DEG_TO_RAD;
 
-    double lat1 = this->getLatitude() * M_PI / 180;
-    double lat2 = lat * M_PI / 180;
+    const double lat1 = this->lat * DEG_TO_RAD;
+    const double lat2 = lat * DEG_TO_RAD;
 
-    double a = sin(dLat / 2) * sin(dLat / 2) +
-               sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2);
+    const double sinDLat = sin(dLat / 2.0);
+    const double sinDLon = sin(dLon / 2.0);
+    const double a = sinDLat * sinDLat +
+                     sinDLon * sinDLon * cos(lat1) * cos(lat2);
 
-    double c = 2 * atan2(sqrt(a), sqrt(1-a));
+    const double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
 
     // Based on IARU Rules
     // The centre of the Large Locator Square (e.g. IO84MM to IO91MM) is used for distance calculations.
@@ -190,7 +264,7 @@ bool Gridsquare::distanceTo(double lat, double lon, double &distance) const
     // It means that 111.2km/° * 360 =40032km
     // It means that R = 40032 / (2*PI)
 
-    distance = (40032.0 / (2 * M_PI)) * c;
+    distance = IARU_EARTH_RADIUS_KM * c;
 
     return true;
 }
@@ -217,14 +291,14 @@ bool Gridsquare::bearingTo(double lat, double lon, double &bearing) const
         return false;
     }
 
-    double dLon = (lon - this->getLongitude()) * M_PI / 180;
-    double lat1 = this->getLatitude() * M_PI / 180;
-    double lat2 = lat * M_PI / 180;
+    const double dLon = (lon - this->lon) * DEG_TO_RAD;
+    const double lat1 = this->lat * DEG_TO_RAD;
+    const double lat2 = lat * DEG_TO_RAD;
 
-    double y = sin(dLon) * cos(lat2);
-    double x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
+    const double y = sin(dLon) * cos(lat2);
+    const double x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
 
-    bearing = fmod((180.0 * atan2(y, x) / M_PI + 360.0), 360.0);
+    bearing = fmod((atan2(y, x) * RAD_TO_DEG + 360.0), 360.0);
 
     return true;
 }

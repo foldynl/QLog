@@ -10,6 +10,7 @@ public:
 
     QString key() const override;
     QString displayName() const override;
+    QString rulesUrl() const override;
     bool notWorkedEnabled() const override { return false; }
 
 protected:

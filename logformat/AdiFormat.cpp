@@ -36,9 +36,28 @@ void AdiFormat::exportContact(const QSqlRecord& record,
 
     qCDebug(function_parameters)<<record;
 
-    writeSQLRecord(record, applTags);
+    QSqlRecord exportRecord(record);
+    normalizeGridFields(exportRecord);
+
+    writeSQLRecord(exportRecord, applTags);
 
     stream << "<eor>\n\n";
+}
+
+void AdiFormat::normalizeGridFields(QSqlRecord &record)
+{
+    FCT_IDENTIFICATION;
+
+    QString gridsquare = record.value("gridsquare").toString().trimmed().toUpper();
+    if ( gridsquare.isEmpty() )
+        return;
+
+    if ( gridsquare.length() > GRID_BASE_LENGTH )
+    {
+        record.setValue("gridsquare_ext", gridsquare.mid(GRID_BASE_LENGTH));
+        gridsquare = gridsquare.left(GRID_BASE_LENGTH);
+    }
+    record.setValue("gridsquare", gridsquare);
 }
 
 void AdiFormat::writeField(const QString &name, bool presenceCondition,
@@ -54,7 +73,9 @@ void AdiFormat::writeField(const QString &name, bool presenceCondition,
     if (!presenceCondition) return;
 
     /* ADIF does not support UTF-8 characterset therefore the Accents are remove */
-    QString accentless(Data::removeAccents(value));
+    const QString accentless(normalizeLineBreaks(Data::removeAccents(value),
+                                                 preserveFieldLineBreaks(name, type),
+                                                 QStringLiteral("\r\n")));
 
     qCDebug(runtime) << "Accentless: " << accentless;
 
@@ -111,7 +132,25 @@ void AdiFormat::writeSQLRecord(const QSqlRecord &record,
     const QStringList &keys = fields.keys();
     for (const QString &key : keys)
     {
-        writeField(key, ALWAYS_PRESENT, fields.value(key).toString());
+        if ( !isExportableFieldName(key) )
+        {
+            qCDebug(runtime) << "Skipping invalid ADIF field from fields JSON:" << key;
+            continue;
+        }
+
+        const QJsonValue fieldValue = fields.value(key);
+        if ( fieldValue.isObject() )
+        {
+            const QJsonObject fieldObject = fieldValue.toObject();
+            writeField(key,
+                       ALWAYS_PRESENT,
+                       fieldObject.value(QStringLiteral("value")).toString(),
+                       fieldObject.value(QStringLiteral("type")).toString());
+        }
+        else
+        {
+            writeField(key, ALWAYS_PRESENT, fieldValue.toString());
+        }
     }
 
     /* Add application-specific tags */
@@ -123,6 +162,37 @@ void AdiFormat::writeSQLRecord(const QSqlRecord &record,
            writeField(appkey, ALWAYS_PRESENT, applTags->value(appkey));
        }
     }
+}
+
+bool AdiFormat::isExportableFieldName(const QString &name)
+{
+    const int length = name.length();
+    if ( length == 0 )
+        return false;
+
+    const QChar * const data = name.constData();
+    const ushort first = data[0].unicode();
+    if ( !((first >= 'A' && first <= 'Z') || (first >= 'a' && first <= 'z')) )
+        return false;
+
+    if ( name.startsWith(QStringLiteral("xml"), Qt::CaseInsensitive) )
+        return false;
+
+    for ( int i = 0; i < length; ++i )
+    {
+        const ushort c = data[i].unicode();
+        const bool isLetter = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+        const bool isDigit = c >= '0' && c <= '9';
+
+        if ( !isLetter && !isDigit && c != '_' )
+            return false;
+    }
+
+    if ( !name.startsWith(QStringLiteral("APP_"), Qt::CaseInsensitive) )
+        return true;
+
+    const int fieldStart = name.indexOf(QLatin1Char('_'), 4);
+    return fieldStart > 4 && fieldStart < length - 1;
 }
 
 void AdiFormat::readField(QString& field, QString& value)
@@ -239,6 +309,7 @@ void AdiFormat::readField(QString& field, QString& value)
             if (!inHeader) {
                 return;
             }
+            headerFields.insert(field.toLower(), value);
             break;
         }
     }
@@ -502,6 +573,8 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
 
     record.setValue("start_time", start_time);
     record.setValue("end_time", end_time);
+
+    normalizeGridFields(record);
 }
 
 const QString AdiFormat::formatOuput(OutputFieldFormatter formatter, const QVariant &in)
@@ -645,6 +718,48 @@ void AdiFormat::preprocessINTLField(const QString &fieldName,
     }
 }
 
+bool AdiFormat::isMultilineField(const QString &name)
+{
+    static const QSet<QString> multilineFields({
+        QStringLiteral("address"),
+        QStringLiteral("address_intl"),
+        QStringLiteral("notes"),
+        QStringLiteral("notes_intl"),
+        QStringLiteral("qslmsg"),
+        QStringLiteral("qslmsg_intl"),
+        QStringLiteral("qslmsg_rcvd"),
+        QStringLiteral("rig"),
+        QStringLiteral("rig_intl")
+    });
+
+    const QString lowerName = name.toLower();
+
+    return multilineFields.contains(lowerName)
+           || lowerName.startsWith(QStringLiteral("app_"));
+}
+
+bool AdiFormat::preserveFieldLineBreaks(const QString &name, const QString &type)
+{
+    return type.compare(QStringLiteral("M"), Qt::CaseInsensitive) == 0
+           || (type.isEmpty() && isMultilineField(name));
+}
+
+QString AdiFormat::normalizeLineBreaks(const QString &value,
+                                       bool preserveLineBreaks,
+                                       const QString &lineBreak)
+{
+    QString normalized(value);
+    normalized.replace(QStringLiteral("\r\n"), QStringLiteral("\n"));
+    normalized.replace(QLatin1Char('\r'), QLatin1Char('\n'));
+
+    if ( preserveLineBreaks )
+        normalized.replace(QLatin1Char('\n'), lineBreak);
+    else
+        normalized.remove(QLatin1Char('\n'));
+
+    return normalized;
+}
+
 bool AdiFormat::readContact(QMap<QString, QVariant>& contact)
 {
     FCT_IDENTIFICATION;
@@ -662,7 +777,7 @@ bool AdiFormat::readContact(QMap<QString, QVariant>& contact)
             return true;
         }
 
-        if (!value.isEmpty())
+        if (!field.isEmpty())
         {
             contact[field] = QVariant(value);
         }
@@ -671,10 +786,13 @@ bool AdiFormat::readContact(QMap<QString, QVariant>& contact)
     return false;
 }
 
-AdiFormat::AdiFormat(QTextStream &stream) :
+AdiFormat::AdiFormat(QTextStream &stream, bool preserveFieldLengths) :
     LogFormat(stream)
 {
     FCT_IDENTIFICATION;
+
+    if ( preserveFieldLengths && stream.device() )
+        stream.device()->setTextModeEnabled(false);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
     stream.setEncoding(QStringConverter::Latin1);
@@ -697,6 +815,41 @@ bool AdiFormat::importNext(QSqlRecord& record)
     }
 
     mapContact2SQLRecord(contact, record);
+
+    return true;
+}
+
+void AdiFormat::importStart()
+{
+    FCT_IDENTIFICATION;
+
+    headerFields.clear();
+    state = START;
+    inHeader = false;
+}
+
+bool AdiFormat::importNextDXCCCredit(DXCCCreditRecord &credit)
+{
+    FCT_IDENTIFICATION;
+
+    QVariantMap adifRecord;
+
+    if ( !readContact(adifRecord) )
+        return false;
+
+    credit.call = adifRecord.value("call").toString().trimmed().toUpper();
+    credit.band = adifRecord.value("band").toString().trimmed().toLower();
+    credit.dxcc = adifRecord.value("dxcc").toString().trimmed();
+    credit.mode = adifRecord.value("mode").toString().trimmed().toUpper();
+    credit.propMode = adifRecord.value("prop_mode").toString().trimmed().toUpper();
+    credit.dxccModeGroup = adifRecord.value("app_lotw_modegroup").toString().trimmed().toUpper();
+
+    if ( credit.dxccModeGroup.isEmpty() )
+        credit.dxccModeGroup = adifRecord.value("app_lotw_mode").toString().trimmed().toUpper();
+
+    credit.creditGranted = adifRecord.value("credit_granted").toString().trimmed().toUpper();
+    credit.awardEntity = headerFields.value("app_lotw_dxccrecord_entity").toString().trimmed();
+    credit.qsoDate = parseDate(adifRecord.value("qso_date").toString());
 
     return true;
 }

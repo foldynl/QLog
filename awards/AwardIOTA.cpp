@@ -6,6 +6,11 @@ QString AwardIOTA::displayName() const
     return QCoreApplication::translate("AwardsDialog", "IOTA");
 }
 
+QString AwardIOTA::rulesUrl() const
+{
+    return QStringLiteral("https://www.iota-world.org/info/directory/rules-en.pdf");
+}
+
 QString AwardIOTA::headersColumns(const QString &) const
 {
     return QStringLiteral("c.iota col1, NULL col2 ");

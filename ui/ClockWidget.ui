@@ -69,40 +69,22 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QGraphicsView" name="sunGraphicsView">
+   <item alignment="Qt::AlignHCenter">
+    <widget class="SunTimelineWidget" name="sunTimelineWidget">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>18</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
+       <width>200</width>
        <height>20</height>
       </size>
      </property>
      <property name="focusPolicy">
       <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: transparent;</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="lineWidth">
-      <number>0</number>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="interactive">
-      <bool>false</bool>
-     </property>
-     <property name="renderHints">
-      <set>QPainter::TextAntialiasing</set>
      </property>
     </widget>
    </item>
@@ -324,6 +306,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SunTimelineWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/ClockWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

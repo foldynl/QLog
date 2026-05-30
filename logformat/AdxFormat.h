@@ -1,6 +1,7 @@
 #ifndef QLOG_LOGFORMAT_ADXFORMAT_H
 #define QLOG_LOGFORMAT_ADXFORMAT_H
 
+#include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
 #include "AdiFormat.h"
@@ -28,6 +29,18 @@ protected:
     virtual bool readContact(QVariantMap& ) override;
 
 private:
+    static QString applicationFieldKey(const QString &programId,
+                                       const QString &fieldName);
+    static QString attributeValue(const QXmlStreamAttributes &attributes,
+                                  const QString &name);
+    static bool splitApplicationFieldName(const QString &name,
+                                          QString &programId,
+                                          QString &fieldName);
+    bool writeApplicationField(const QString &name,
+                               bool presenceCondition,
+                               const QString &value,
+                               const QString &type);
+
     QXmlStreamWriter *writer;
     QXmlStreamReader *reader;
 };

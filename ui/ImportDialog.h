@@ -7,6 +7,8 @@
 #include "data/StationProfile.h"
 #include "core/LogLocale.h"
 
+class QComboBox;
+
 namespace Ui {
 class ImportDialog;
 }
@@ -30,6 +32,7 @@ private slots:
     void toggleMyProfile();
     void toggleMyRig();
     void commentChanged(const QString&);
+    void qslSentStatusDefaultChanged(int);
 
 private:
     Ui::ImportDialog *ui;
@@ -38,6 +41,14 @@ private:
     LogLocale locale;
 
     static LogFormat::duplicateQSOBehaviour showDuplicateDialog(QSqlRecord *, QSqlRecord *);
+
+    static void setQslSentStatusValue(QComboBox *, const QString &);
+
+    void setupQslSentStatusComboData();
+    void updateQslSentStatusDefaultWidgets();
+    void loadQslSentStatusCustomDefaults();
+    void saveQslSentStatusCustomDefaults() const;
+    void updateWidgetSize();
     void saveImportDetails(const QString &importDetail,
                            const QString &filename,
                            const int count,

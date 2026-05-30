@@ -3,10 +3,9 @@
 
 #include <QWidget>
 #include <QWebEngineView>
-#include <QWebChannel>
-#include "ui/MapWebChannelHandler.h"
+#include <QScopedPointer>
+#include "ui/MapPageController.h"
 #include "core/PropConditions.h"
-#include "ui/WebEnginePage.h"
 #include "rig/Rig.h"
 #include "ui/NewContactWidget.h"
 #include "service/kstchat/KSTChat.h"
@@ -46,24 +45,18 @@ public slots:
     void clearWSJTXSpots();
 
 protected slots:
-    void finishLoading(bool);
+    void finishLoading();
     void chatCallsignTrigger(const QString&);
     void wsjtxCallsignTrigger(const QString&);
     void IBPCallsignTrigger(const QString&, double);
 
 private:
 
-    WebEnginePage *main_page;
-    bool isMainPageLoaded;
-    QString postponedScripts;
-    QWebChannel channel;
-    MapWebChannelHandler webChannelHandler;
+    QScopedPointer<MapPageController> mapController;
     PropConditions *prop_cond;
     const NewContactWidget *contact;
     double lastSeenAzimuth, lastSeenElevation;
     bool isRotConnected;
-
-    void runJavaScript(const QString &);
 };
 
 #endif // QLOG_UI_ONLINEMAPWIDGET_H

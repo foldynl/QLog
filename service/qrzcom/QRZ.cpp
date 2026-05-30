@@ -268,6 +268,7 @@ void QRZCallbook::processReply(QNetworkReply* reply)
         qCDebug(runtime) << response;
         QXmlStreamReader xml(response);
         CallbookResponseData resposeData;
+        QString xrefCallsign;
 
         /* Reset Session Key */
         /* Every response contains a valid key. If the key is not present */
@@ -315,6 +316,7 @@ void QRZCallbook::processReply(QNetworkReply* reply)
 
             if      (elementName == "Key")       sessionId = xml.readElementText();
             else if (elementName == "call")      resposeData.call = decodeHtmlEntities(xml.readElementText().toUpper());
+            else if (elementName == "xref")      xrefCallsign = decodeHtmlEntities(xml.readElementText().toUpper());
             else if (elementName == "dxcc")      resposeData.dxcc = decodeHtmlEntities(xml.readElementText());
             else if (elementName == "fname")     resposeData.fname = decodeHtmlEntities(xml.readElementText());
             else if (elementName == "name")      resposeData.lname = decodeHtmlEntities(xml.readElementText());
@@ -342,6 +344,35 @@ void QRZCallbook::processReply(QNetworkReply* reply)
             else if (elementName == "url")       resposeData.url = decodeHtmlEntities(xml.readElementText());
             else if (elementName == "name_fmt")  resposeData.name_fmt = decodeHtmlEntities(xml.readElementText());
             else if (elementName == "image")     resposeData.image_url = decodeHtmlEntities(xml.readElementText());
+        }
+
+        const QString requestedCallsign = reply->property("queryCallsign").toString();
+        const QString requestedCallsignUpper = requestedCallsign.toUpper();
+        const Callsign queryCall(requestedCallsignUpper);
+        const QString baseCallsign = (queryCall.isValid()) ? queryCall.getBase()
+                                                           : requestedCallsignUpper;
+
+        if ( !resposeData.call.isEmpty()
+             && !xrefCallsign.isEmpty()
+             && ( xrefCallsign == requestedCallsignUpper
+                  || xrefCallsign == baseCallsign ) )
+        {
+            // xref points to another callsign's record; keep only partial-match fields.
+            CallbookResponseData xrefData;
+
+            xrefData.call = requestedCallsign;
+            xrefData.fname = resposeData.fname;
+            xrefData.lname = resposeData.lname;
+            xrefData.lic_year = resposeData.lic_year;
+            xrefData.qsl_via = resposeData.qsl_via;
+            xrefData.email = resposeData.email;
+            xrefData.born = resposeData.born;
+            xrefData.url = resposeData.url;
+            xrefData.name_fmt = resposeData.name_fmt;
+            xrefData.nick = resposeData.nick;
+            xrefData.image_url = resposeData.image_url;
+
+            resposeData = xrefData;
         }
 
         if (!resposeData.call.isEmpty())

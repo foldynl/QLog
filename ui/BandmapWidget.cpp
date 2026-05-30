@@ -9,15 +9,19 @@
 #include <QPainterPath>
 #include <algorithm>
 #include <QWheelEvent>
+#include <QFontMetrics>
 
 #include "BandmapWidget.h"
 #include "ui_BandmapWidget.h"
 #include "data/Data.h"
 #include "data/BandPlan.h"
+#include "data/BandmapGuide.h"
 #include "core/debug.h"
 #include "rig/macros.h"
 #include "core/LogParam.h"
 #include "core/EmergencyFrequency.h"
+#include "core/IBPBeacon.h"
+#include "ui/BandmapGuideDialog.h"
 
 MODULE_IDENTIFICATION("qlog.ui.bandmapwidget");
 
@@ -41,6 +45,7 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
     txMark(nullptr),
     keepRXCenter(true),
     showEmergencyMarkers(true),
+    showIBPMarkers(true),
     pendingSpots(0),
     lastStationUpdate(0),
     bandmapAnimation(true),
@@ -61,6 +66,7 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
 
     keepRXCenter = LogParam::getBandmapCenterRX(objectName());
     showEmergencyMarkers = LogParam::getBandmapShowEmergency(objectName());
+    showIBPMarkers = LogParam::getBandmapShowIBP(objectName());
 
     if ( isNonVfo )
     {
@@ -82,8 +88,12 @@ BandmapWidget::BandmapWidget(const QString &widgetID,
 
     connect(bandmapScene, &GraphicsScene::spotClicked,
             this, &BandmapWidget::spotClicked);
+    connect(bandmapScene, &GraphicsScene::markerClicked,
+            this, &BandmapWidget::markerClicked);
     connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged,
             this, &BandmapWidget::focusZoomFreq);
+    connect(BandmapGuide::instance(), &BandmapGuide::changed,
+            this, [this]() { update(); });
 
     ui->graphicsView->setScene(bandmapScene);
     ui->graphicsView->installEventFilter(this);
@@ -129,6 +139,7 @@ void BandmapWidget::update()
     determineStepDigits(step, digits);
 
     const int steps = static_cast<int>(round((currentBand.end - currentBand.start) / step));
+    const QString endFreqDigits = QString::number(currentBand.end + step * steps, 'f', digits);
 
     minHeight = steps * PIXELSPERSTEP + 30;
     ui->graphicsView->setFixedSize(270, minHeight);
@@ -138,6 +149,8 @@ void BandmapWidget::update()
     /****************/
     const QPen gridPen(QColor(192, 192, 192));
     const QBrush highlightBrush(QColor(102, 153, 255, 100));
+
+    drawGuideOverlay(step, endFreqDigits);
 
     for ( int i = 0; i <= steps; i++ )
     {
@@ -162,7 +175,6 @@ void BandmapWidget::update()
         }
     }
 
-    const QString &endFreqDigits= QString::number(currentBand.end + step*steps, 'f', digits);
     bandmapScene->setSceneRect(135 - (endFreqDigits.size() * PIXELSPERSTEP),
                                0,
                                0,
@@ -173,10 +185,11 @@ void BandmapWidget::update()
     /************************/
     drawTXRXMarks(step);
 
-    /*****************************/
-    /* Draw Emergency Freq Marks */
-    /*****************************/
+    /********************************/
+    /* Draw Special Frequency Marks */
+    /********************************/
     drawEmergencyMarkers(step);
+    drawIBPMarkers(step);
 
     /*****************
      * Draw Stations *
@@ -259,6 +272,7 @@ void BandmapWidget::updateStations()
 
         QGraphicsTextItem* text = bandmapScene->addText(callsignTmp + " @ " + timeTmp);
         text->document()->setDocumentMargin(0);
+        text->setCursor(Qt::PointingHandCursor);
 
         qreal halfHeight = text->boundingRect().height() / 2;
         text->setPos(40, text_y - halfHeight);
@@ -457,6 +471,140 @@ void BandmapWidget::drawTXRXMarks(double step)
     else
     {
         clearFreqMark(&txMark);
+    }
+}
+
+void BandmapWidget::drawLabeledFrequencyMarker(double frequency,
+                                               double step,
+                                               const FrequencyMarkerStyle &style,
+                                               const QString &mode,
+                                               const QString &submode)
+{
+    FCT_IDENTIFICATION;
+
+    if ( frequency < currentBand.start || frequency > currentBand.end )
+        return;
+
+    QFont markerFont;
+    markerFont.setPointSize(7);
+    markerFont.setBold(true);
+
+    const qreal pillX = 157.0;
+    const qreal pillH = 14.0;
+    const qreal glowH = qMin((style.glowWidthMHz / step) * PIXELSPERSTEP, 15.0);
+    const qreal y = ((frequency - currentBand.start) / step) * PIXELSPERSTEP;
+
+    QColor glowTransparent(style.glowColor);
+    glowTransparent.setAlpha(0);
+    QColor glowLow(style.glowColor);
+    glowLow.setAlpha(70);
+    QColor glowMid(style.glowColor);
+    glowMid.setAlpha(115);
+
+    QLinearGradient glow(0.0, y - glowH, 0.0, y + glowH);
+    glow.setColorAt(0.0,  glowTransparent);
+    glow.setColorAt(0.35, glowLow);
+    glow.setColorAt(0.5,  glowMid);
+    glow.setColorAt(0.65, glowLow);
+    glow.setColorAt(1.0,  glowTransparent);
+    bandmapScene->addRect(0, y - glowH, pillX, 2.0 * glowH,
+                          QPen(Qt::NoPen), QBrush(glow));
+
+    bandmapScene->addLine(0, y, pillX, y, QPen(style.lineColor, 2));
+
+    QGraphicsSimpleTextItem *textItem = bandmapScene->addSimpleText(style.label, markerFont);
+    textItem->setBrush(QBrush(readableMarkerTextColor(style.pillColor)));
+    const QRectF textRect = textItem->boundingRect();
+    const qreal pillW = textRect.width() + 10.0;
+    const qreal pillY = y - pillH / 2.0;
+
+    QPainterPath pillPath;
+    pillPath.addRoundedRect(QRectF(pillX, pillY, pillW, pillH), 4, 4);
+    QGraphicsPathItem *pillItem = bandmapScene->addPath(pillPath,
+                                                        QPen(Qt::NoPen),
+                                                        QBrush(style.pillColor));
+
+    textItem->setPos(pillX + (pillW - textRect.width()) / 2.0,
+                     pillY + (pillH - textRect.height()) / 2.0);
+
+    pillItem->setZValue(1);
+    textItem->setZValue(2);
+
+    setMarkerTuneData(pillItem, frequency, mode, submode);
+    setMarkerTuneData(textItem, frequency, mode, submode);
+}
+
+void BandmapWidget::setMarkerTuneData(QGraphicsItem *item,
+                                      double frequency,
+                                      const QString &mode,
+                                      const QString &submode) const
+{
+    FCT_IDENTIFICATION;
+
+    if ( !item )
+        return;
+
+    item->setCursor(Qt::PointingHandCursor);
+    item->setData(GraphicsScene::MarkerFrequencyRole, frequency);
+    item->setData(GraphicsScene::MarkerModeRole, mode);
+    item->setData(GraphicsScene::MarkerSubmodeRole, submode);
+}
+
+QColor BandmapWidget::readableMarkerTextColor(const QColor &background) const
+{
+    return Data::textColorForBackground(background,
+                                        palette().color(QPalette::Text),
+                                        palette().color(QPalette::Base));
+}
+
+void BandmapWidget::drawGuideOverlay(double step, const QString &widestFreqText)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !BandmapGuide::isEnabled() )
+        return;
+
+    const BandmapGuide::Profile profile = BandmapGuide::currentProfile();
+    if ( profile.ranges.isEmpty() )
+        return;
+
+    QFontMetrics metrics(qApp->font());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+    const qreal labelWidth = metrics.horizontalAdvance(widestFreqText) + 8.0;
+#else
+    const qreal labelWidth = metrics.width(widestFreqText) + 8.0;
+#endif
+    const qreal guideRight = -12.0;
+    const qreal guideX = guideRight - labelWidth;
+
+    for ( const BandmapGuide::Range &range : profile.ranges )
+    {
+        if ( range.to <= currentBand.start || range.from >= currentBand.end )
+            continue;
+
+        const double from = qMax(range.from, currentBand.start);
+        const double to = qMin(range.to, currentBand.end);
+        const qreal y1 = ((from - currentBand.start) / step) * PIXELSPERSTEP;
+        const qreal y2 = ((to - currentBand.start) / step) * PIXELSPERSTEP;
+
+        QColor color(range.color);
+        color.setAlpha(100);
+
+        QGraphicsRectItem *item = bandmapScene->addRect(guideX,
+                                                        y1,
+                                                        labelWidth,
+                                                        qMax(y2 - y1, 1.0),
+                                                        QPen(Qt::NoPen),
+                                                        QBrush(color));
+        item->setZValue(-20);
+
+        if ( !range.label.isEmpty() )
+        {
+            item->setToolTip(QString("%1<br/>%2 - %3 MHz")
+                             .arg(range.label,
+                                  QString::number(range.from, 'f', 6),
+                                  QString::number(range.to, 'f', 6)));
+        }
     }
 }
 
@@ -975,9 +1123,62 @@ void BandmapWidget::showContextMenu(const QPoint &point)
     emergencyAction->setChecked(showEmergencyMarkers);
     connect(emergencyAction, &QAction::triggered, this, &BandmapWidget::emergencyMarkersActionChecked);
 
+    QAction* ibpAction = new QAction(tr("Show IBP Frequencies"), &contextMenu);
+    ibpAction->setCheckable(true);
+    ibpAction->setChecked(showIBPMarkers);
+    connect(ibpAction, &QAction::triggered, this, &BandmapWidget::ibpMarkersActionChecked);
+
+    QMenu guideMenu(tr("Show Guide"), &contextMenu);
+
+    QAction* guideOffAction = new QAction(tr("Off"), &guideMenu);
+    guideOffAction->setCheckable(true);
+    guideOffAction->setChecked(!BandmapGuide::isEnabled());
+    connect(guideOffAction, &QAction::triggered, this, []()
+    {
+        BandmapGuide::setEnabled(false);
+        refreshAllBandmaps();
+    });
+    guideMenu.addAction(guideOffAction);
+
+    const QList<BandmapGuide::Profile> guides = BandmapGuide::profiles();
+    QString currentGuideId = BandmapGuide::currentProfileId();
+    if ( currentGuideId.isEmpty() && !guides.isEmpty() )
+        currentGuideId = guides.first().id;
+
+    if ( guides.isEmpty() )
+    {
+        QAction* noGuideAction = new QAction(tr("No Guide"), &guideMenu);
+        noGuideAction->setEnabled(false);
+        guideMenu.addAction(noGuideAction);
+    }
+    else
+    {
+        guideMenu.addSeparator();
+        for ( const BandmapGuide::Profile &guide : guides )
+        {
+            QAction* action = new QAction(guide.name, &guideMenu);
+            action->setCheckable(true);
+            action->setChecked(BandmapGuide::isEnabled() && guide.id == currentGuideId);
+            connect(action, &QAction::triggered, this, [guide]()
+            {
+                BandmapGuide::setCurrentProfileId(guide.id);
+                BandmapGuide::setEnabled(true);
+                refreshAllBandmaps();
+            });
+            guideMenu.addAction(action);
+        }
+    }
+
+    QAction* editGuideAction = new QAction(tr("Edit Guide..."), &contextMenu);
+    connect(editGuideAction, &QAction::triggered, this, &BandmapWidget::editGuide);
+
     contextMenu.addMenu(&bandsMenu);
     contextMenu.addAction(centerRXAction);
     contextMenu.addAction(emergencyAction);
+    contextMenu.addAction(ibpAction);
+    contextMenu.addSeparator();
+    contextMenu.addMenu(&guideMenu);
+    contextMenu.addAction(editGuideAction);
 
     contextMenu.exec(ui->graphicsView->mapToGlobal(point));
 }
@@ -1057,55 +1258,62 @@ void BandmapWidget::drawEmergencyMarkers(double step)
     if ( !showEmergencyMarkers )
         return;
 
-    QFont emergencyFont;
-    emergencyFont.setPointSize(7);
-    emergencyFont.setBold(true);
-
-    const QColor lineColor(220, 40, 40);
-    const QColor pillColor(185, 28, 28);
-    const qreal pillX = 157.0;
-    const qreal pillH = 14.0;
-    const qreal tolerancePx = (EmergencyFrequency::TOLERANCE_MHZ / step) * PIXELSPERSTEP;
-    const qreal glowH = qMin(tolerancePx, 15.0);
-
     const EmergencyFreqEntry *entry = EmergencyFrequency::inBand(currentBand.start,
                                                                  currentBand.end);
 
     if ( !entry ) return;
 
-    const qreal y = ((entry->frequency - currentBand.start) / step) * PIXELSPERSTEP;
+    const FrequencyMarkerStyle style =
+    {
+        tr("SOS"),
+        QColor(220, 40, 40),
+        QColor(185, 28, 28),
+        QColor(220, 30, 30),
+        EmergencyFrequency::TOLERANCE_MHZ
+    };
 
-    // Gradient glow — height proportional to zoom, fades to transparent at edges
-    QLinearGradient glow(0.0, y - glowH, 0.0, y + glowH);
-    glow.setColorAt(0.0,  QColor(220, 30, 30,   0));
-    glow.setColorAt(0.35, QColor(220, 30, 30,  70));
-    glow.setColorAt(0.5,  QColor(220, 30, 30, 115));
-    glow.setColorAt(0.65, QColor(220, 30, 30,  70));
-    glow.setColorAt(1.0,  QColor(220, 30, 30,   0));
-    bandmapScene->addRect(0, y - glowH, pillX, 2.0 * glowH,
-                          QPen(Qt::NoPen), QBrush(glow));
+    const QString mode = (entry->mode == QLatin1String("LSB")
+                          || entry->mode == QLatin1String("USB"))
+                         ? QStringLiteral("SSB")
+                         : entry->mode;
+    const QString submode = (mode == QLatin1String("SSB")) ? entry->mode : QString();
+    drawLabeledFrequencyMarker(entry->frequency, step, style, mode, submode);
+}
 
-    // Sharp centre line — runs from the scale up to the SOS pill
-    bandmapScene->addLine(0, y, pillX, y, QPen(lineColor, 2));
+void BandmapWidget::drawIBPMarkers(double step)
+{
+    FCT_IDENTIFICATION;
 
-    // Pill label — sized dynamically around the text
-    QGraphicsSimpleTextItem *textItem = bandmapScene->addSimpleText(tr("SOS"), emergencyFont);
-    textItem->setBrush(QBrush(Qt::white));
-    const QRectF textRect = textItem->boundingRect();
-    const qreal pillW = textRect.width() + 10.0;
-    const qreal pillY = y - pillH / 2.0;
+    if ( !showIBPMarkers )
+        return;
 
-    QPainterPath pillPath;
-    pillPath.addRoundedRect(QRectF(pillX, pillY, pillW, pillH), 4, 4);
-    QGraphicsPathItem *pillItem = bandmapScene->addPath(pillPath,
-                                                        QPen(Qt::NoPen),
-                                                        QBrush(pillColor));
+    const FrequencyMarkerStyle style =
+    {
+        tr("IBP"),
+        QColor(80, 170, 255),
+        QColor(30, 136, 229),
+        QColor(80, 170, 255),
+        0.001
+    };
 
-    textItem->setPos(pillX + (pillW - textRect.width()) / 2.0,
-                     pillY + (pillH - textRect.height()) / 2.0);
+    for ( const IBPBeacon::Band &band : IBPBeacon::bands() )
+    {
+        if ( band.frequency >= currentBand.start && band.frequency <= currentBand.end )
+            drawLabeledFrequencyMarker(band.frequency,
+                                       step,
+                                       style,
+                                       QStringLiteral("CW"));
+    }
+}
 
-    pillItem->setZValue(1);
-    textItem->setZValue(2);
+void BandmapWidget::markerClicked(double frequency, const QString &mode, const QString &submode)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << frequency << mode << submode;
+
+    Rig::instance()->setFrequency(MHz(frequency));
+    Rig::instance()->setMode(mode, submode);
 }
 
 void BandmapWidget::drawMarkers(double frequency)
@@ -1314,6 +1522,36 @@ void BandmapWidget::emergencyMarkersActionChecked(bool state)
     update();
 }
 
+void BandmapWidget::ibpMarkersActionChecked(bool state)
+{
+    FCT_IDENTIFICATION;
+
+    showIBPMarkers = state;
+    LogParam::setBandmapShowIBP(objectName(), showIBPMarkers);
+    update();
+}
+
+void BandmapWidget::editGuide()
+{
+    FCT_IDENTIFICATION;
+
+    BandmapGuideDialog dialog(this);
+    if ( dialog.exec() == QDialog::Accepted )
+        refreshAllBandmaps();
+}
+
+void BandmapWidget::refreshAllBandmaps()
+{
+    FCT_IDENTIFICATION;
+
+    if ( vfoWidget )
+        vfoWidget->update();
+
+    for ( BandmapWidget *widget : static_cast<const QList<BandmapWidget *>>(nonVfoWidgets) )
+        if ( widget )
+            widget->update();
+}
+
 
 void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *evt)
 {
@@ -1322,12 +1560,22 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *evt)
     if ( evt->button() & Qt::LeftButton )
     {
         QGraphicsItem *item = itemAt(evt->scenePos(), QTransform());
-        QGraphicsTextItem *focusedSpot = dynamic_cast<QGraphicsTextItem*>(item);
 
-        if ( focusedSpot && focusedSpot->property("freq").isValid() )
-            emit spotClicked(focusedSpot->toPlainText().split(" ").first(),
-                             focusedSpot->property("freq").toDouble(),
-                             static_cast<BandPlan::BandPlanMode>(focusedSpot->property("bandmode").toInt()));
+        if ( item && item->data(MarkerFrequencyRole).isValid() )
+        {
+            emit markerClicked(item->data(MarkerFrequencyRole).toDouble(),
+                               item->data(MarkerModeRole).toString(),
+                               item->data(MarkerSubmodeRole).toString());
+        }
+        else
+        {
+            QGraphicsTextItem *focusedSpot = dynamic_cast<QGraphicsTextItem*>(item);
+
+            if ( focusedSpot && focusedSpot->property("freq").isValid() )
+                emit spotClicked(focusedSpot->toPlainText().split(" ").first(),
+                                 focusedSpot->property("freq").toDouble(),
+                                 static_cast<BandPlan::BandPlanMode>(focusedSpot->property("bandmode").toInt()));
+        }
     }
     evt->accept();
 }

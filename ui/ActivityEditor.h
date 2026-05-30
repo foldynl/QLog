@@ -112,6 +112,7 @@ private:
 
     QList<int> getFieldIndexes(StringListModel *model);
     void setupValuesTab(const QString &activityName);
+    void populateBandmapGuideCombo(bool guideStored, const QString &selectedProfileId);
 
     const QString statusUnSavedText = tr("Unsaved");
 };

@@ -649,8 +649,18 @@ void WsjtxUDPReceiver::sendHighlightCallsign(const WsjtxEntry &entry)
 {
     FCT_IDENTIFICATION;
 
+    const QColor background = Data::statusToColor(entry.status, false, QColor());
+
     // QColor() means that WSJTX clears the color
-    sendHighlightCallsignColor(entry, Qt::black, Data::statusToColor(entry.status, false, QColor()));
+    if ( !background.isValid() || background.alpha() == 0 )
+    {
+        sendHighlightCallsignColor(entry, QColor(), QColor());
+        return;
+    }
+
+    sendHighlightCallsignColor(entry,
+                               Data::textColorForBackground(background),
+                               background);
 }
 
 void WsjtxUDPReceiver::sendClearHighlightCallsign(const WsjtxEntry &entry)

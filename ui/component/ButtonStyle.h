@@ -25,28 +25,27 @@
 #include <QPainter>
 
 
-
 Q_DECL_IMPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0); // src/widgets/effects/qpixmapfilter.cpp
 
-namespace Style {
-
-#define cyan500 QColor("#00bcd4")
-#define gray50 QColor("#fafafa")
-#define gray400 QColor("#bdbdbd")
+namespace Style
+{
 
     using Type = QEasingCurve::Type;
 
-    struct Animation {
-        Animation() = default;
-        Animation(Type _easing, int _duration) :easing{ _easing }, duration{ _duration } {
-
-        }
+    struct Animation
+    {
+        Animation(Type _easing, int _duration) :easing{ _easing }, duration{ _duration } {}
 
         Type easing;
         int duration;
     };
 
-    struct Switch {
+    struct Switch
+    {
+        const QColor cyan500 = QColor(0x00bcd4);
+        const QColor gray50 = QColor(0xfafafa);
+        const QColor gray400 = QColor(0xbdbdbd);
+
         Switch() :
             height{ 24 },
             //font{ QFont("Roboto medium", 13) },

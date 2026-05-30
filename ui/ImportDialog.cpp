@@ -1,13 +1,55 @@
+#include <QComboBox>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTimer>
 #include "ImportDialog.h"
 #include "ui_ImportDialog.h"
 #include "logformat/LogFormat.h"
 #include "core/debug.h"
+#include "core/LogParam.h"
 #include "data/StationProfile.h"
 #include "data/RigProfile.h"
 
 MODULE_IDENTIFICATION("qlog.ui.importdialog");
+
+void ImportDialog::setQslSentStatusValue(QComboBox *combo, const QString &value)
+{
+    if ( !combo ) return;
+
+    int index = combo->findData(value);
+
+    if ( index < 0 )
+        index = combo->findData(QStringLiteral("Q"));
+
+    if ( index >= 0 )
+        combo->setCurrentIndex(index);
+}
+
+void ImportDialog::setupQslSentStatusComboData()
+{
+    FCT_IDENTIFICATION;
+
+    /* do not use Data::qslSentBox — different ordering */
+    ui->qslSentStatusCombo->clear();
+    ui->qslSentStatusCombo->addItem(tr("Queued (ready to send)"),    "Q");
+    ui->qslSentStatusCombo->addItem(tr("Ignored (do not track)"),   "I");
+    ui->qslSentStatusCombo->addItem(tr("Requested (requested again)"), "R");
+    ui->qslSentStatusCombo->addItem(tr("Yes (already sent)"),       "Y");
+    ui->qslSentStatusCombo->addItem(tr("Custom..."), "custom");
+
+    for ( QComboBox* combo : { ui->qslSentStatusPaperCombo,
+                               ui->qslSentStatusLotwCombo,
+                               ui->qslSentStatusEqslCombo,
+                               ui->qslSentStatusDclCombo })
+    {
+        combo->clear();
+        combo->addItem(tr("Queued"),    "Q");
+        combo->addItem(tr("Requested"), "R");
+        combo->addItem(tr("Ignored"),   "I");
+        combo->addItem(tr("No"),        "N");
+        combo->addItem(tr("Yes"),       "Y");
+    }
+}
 
 ImportDialog::ImportDialog(QWidget *parent) :
     QDialog(parent),
@@ -16,6 +58,7 @@ ImportDialog::ImportDialog(QWidget *parent) :
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+    setupQslSentStatusComboData();
 
     ui->allCheckBox->setChecked(true);
     ui->startDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
@@ -47,8 +90,13 @@ ImportDialog::ImportDialog(QWidget *parent) :
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Import"));
 
+    loadQslSentStatusCustomDefaults();
+    updateQslSentStatusDefaultWidgets();
+
     // TODO: disabled #983 - If everything is OK, then delete it over time.
     ui->optionBox->setVisible(false);
+
+    updateWidgetSize();
 }
 
 void ImportDialog::browse()
@@ -70,7 +118,7 @@ void ImportDialog::browse()
                                                     // More information:
                                                     // https://stackoverflow.com/questions/34858220/qt-how-to-set-a-case-insensitive-filter-on-qfiledialog
                                                     // https://bugreports.qt.io/browse/QTBUG-51712
-						    // But Raspberry pi crashes when DontUseNativeDialog is used therefore use the native for it.
+                                                    // But Raspberry pi crashes when DontUseNativeDialog is used therefore use the native for it.
                                                     QFileDialog::DontUseNativeDialog
 #else
                                                     QFileDialog::Options()
@@ -119,6 +167,58 @@ void ImportDialog::toggleComment()
 
     ui->commentEdit->setEnabled(ui->commentCheckBox->isChecked());
     commentChanged(ui->commentEdit->text());
+}
+
+void ImportDialog::qslSentStatusDefaultChanged(int)
+{
+    FCT_IDENTIFICATION;
+
+    updateQslSentStatusDefaultWidgets();
+}
+
+void ImportDialog::updateQslSentStatusDefaultWidgets()
+{
+    const bool enabled = ui->qslSentStatusCheckBox->isChecked();
+    const bool custom = ui->qslSentStatusCombo->currentData().toString() == QLatin1String("custom");
+
+    ui->qslSentStatusCombo->setEnabled(enabled);
+    ui->qslSentStatusCustomWidget->setVisible(enabled && custom);
+
+    updateWidgetSize();
+}
+
+void ImportDialog::loadQslSentStatusCustomDefaults()
+{
+    FCT_IDENTIFICATION;
+
+    setQslSentStatusValue(ui->qslSentStatusPaperCombo, LogParam::getImportQslSentStatusPaper());
+    setQslSentStatusValue(ui->qslSentStatusLotwCombo, LogParam::getImportQslSentStatusLoTW());
+    setQslSentStatusValue(ui->qslSentStatusEqslCombo, LogParam::getImportQslSentStatusEQSL());
+    setQslSentStatusValue(ui->qslSentStatusDclCombo, LogParam::getImportQslSentStatusDCL());
+}
+
+void ImportDialog::saveQslSentStatusCustomDefaults() const
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setImportQslSentStatusPaper(ui->qslSentStatusPaperCombo->currentData().toString());
+    LogParam::setImportQslSentStatusLoTW(ui->qslSentStatusLotwCombo->currentData().toString());
+    LogParam::setImportQslSentStatusEQSL(ui->qslSentStatusEqslCombo->currentData().toString());
+    LogParam::setImportQslSentStatusDCL(ui->qslSentStatusDclCombo->currentData().toString());
+}
+
+void ImportDialog::updateWidgetSize()
+{
+    FCT_IDENTIFICATION;
+
+    QTimer::singleShot(0, this, [this]()
+    {
+        if ( layout() )
+            layout()->activate();
+
+        const QSize targetSize = sizeHint();
+        resize(qMax(width(), targetSize.width()), targetSize.height());
+    });
 }
 
 void ImportDialog::computeProgress(qint64 position)
@@ -263,6 +363,25 @@ void ImportDialog::runImport()
         defaults["comment_intl"] = ui->commentEdit->text();
     }
 
+    if (ui->qslSentStatusCheckBox->isChecked())
+    {
+        if ( ui->qslSentStatusCombo->currentData().toString() == "custom" )
+        {
+            defaults["qsl_sent"] = ui->qslSentStatusPaperCombo->currentData().toString();
+            defaults["lotw_qsl_sent"] = ui->qslSentStatusLotwCombo->currentData().toString();
+            defaults["eqsl_qsl_sent"] = ui->qslSentStatusEqslCombo->currentData().toString();
+            defaults["dcl_qsl_sent"] = ui->qslSentStatusDclCombo->currentData().toString();
+        }
+        else
+        {
+            const QString qslSentStatusDefault = ui->qslSentStatusCombo->currentData().toString();
+            defaults["qsl_sent"] = qslSentStatusDefault;
+            defaults["lotw_qsl_sent"] = qslSentStatusDefault;
+            defaults["eqsl_qsl_sent"] = qslSentStatusDefault;
+            defaults["dcl_qsl_sent"] = qslSentStatusDefault;
+        }
+    }
+
     LogFormat* format = LogFormat::open(ui->typeSelect->currentText(), in);
 
     if (!format) {
@@ -294,6 +413,9 @@ void ImportDialog::runImport()
     ui->rigSelect->setEnabled(false);
     ui->commentCheckBox->setEnabled(false);
     ui->commentEdit->setEnabled(false);
+    ui->qslSentStatusCheckBox->setEnabled(false);
+    ui->qslSentStatusCombo->setEnabled(false);
+    ui->qslSentStatusCustomWidget->setEnabled(false);
     ui->fillMissingDxccCheckBox->setEnabled(false);
 
     QString s;
@@ -351,6 +473,8 @@ void ImportDialog::runImport()
 ImportDialog::~ImportDialog()
 {
     FCT_IDENTIFICATION;
+
+    saveQslSentStatusCustomDefaults();
 
     delete ui;
 }

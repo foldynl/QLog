@@ -32,6 +32,7 @@ public slots:
     void callsignClicked(QString);
     void tableViewClicked(QModelIndex);
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
+    void refreshStatusColors();
 
 private slots:
     void displayedColumns();

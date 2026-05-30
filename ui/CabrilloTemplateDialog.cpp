@@ -3,7 +3,6 @@
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
-#include <QSqlRecord>
 #include <QSqlError>
 #include <QMessageBox>
 #include <QComboBox>
@@ -20,7 +19,7 @@
 
 #include "core/debug.h"
 #include "data/Data.h"
-#include "models/LogbookModel.h"
+#include "ui/component/LogbookFieldComboBox.h"
 
 MODULE_IDENTIFICATION("qlog.ui.cabrillotemplatedialog");
 
@@ -40,30 +39,6 @@ CabrilloTemplateDialog::CabrilloTemplateDialog(QWidget *parent) :
     // Columns table: auto-size columns to content
     QHeaderView *hdr = ui->columnsTable->horizontalHeader();
     hdr->setSectionResizeMode(QHeaderView::ResizeToContents);
-
-    // Populate available DB fields with translated names
-    QSqlRecord contactsRecord = QSqlDatabase::database().record("contacts");
-
-    for ( int i = LogbookModel::ColumnID::COLUMN_ID; i < LogbookModel::ColumnID::COLUMN_LAST_ELEMENT; ++i )
-    {
-        LogbookModel::ColumnID columnID = static_cast<LogbookModel::ColumnID>(i);
-        const QString translation = LogbookModel::getFieldNameTranslation(columnID);
-        if ( translation.isEmpty() )
-            continue;
-
-        const QString dbField = contactsRecord.fieldName(i);
-        if ( dbField.isEmpty() )
-            continue;
-
-        dbFieldItems.append({dbField, translation});
-    }
-
-    std::sort(dbFieldItems.begin(), dbFieldItems.end(),
-              [](const CabrilloFormat::CategoryItem &a,
-                 const CabrilloFormat::CategoryItem &b)
-    {
-        return a.label.localeAwareCompare(b.label) < 0;
-    });
 
     formatterItems = CabrilloFormat::formatterTypes();
 
@@ -262,16 +237,11 @@ void CabrilloTemplateDialog::setupColumnRow(int row, const CabrilloFormat::Colum
     ui->columnsTable->setItem(row, 0, posItem);
 
     // DB Field (ComboBox with translated names)
-    QComboBox *fieldCombo = new QComboBox(this);
+    LogbookFieldComboBox *fieldCombo = new LogbookFieldComboBox(this);
     installWheelGuard(fieldCombo);
-    fieldCombo->addItem(QString(), QLatin1String("")); // empty entry for non-DB fields
-    for ( const CabrilloFormat::CategoryItem &item : static_cast<const QList<CabrilloFormat::CategoryItem>&>(dbFieldItems) )
-        fieldCombo->addItem(item.label, item.value);
-
-    int fieldIdx = fieldCombo->findData(col.dbField);
-
-    if ( fieldIdx >= 0 )
-        fieldCombo->setCurrentIndex(fieldIdx);
+    fieldCombo->populate(LogbookFieldComboBox::ValueMode::DbFieldName,
+                         LogbookFieldComboBox::EmptyMode::Blank);
+    fieldCombo->setCurrentDbFieldName(col.dbField);
 
     ui->columnsTable->setCellWidget(row, 1, fieldCombo);
 

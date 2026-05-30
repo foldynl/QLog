@@ -7,6 +7,7 @@
 #include "ui/MainWindow.h"
 #include "data/StationProfile.h"
 #include "data/AntProfile.h"
+#include "data/BandmapGuide.h"
 #include "data/RigProfile.h"
 #include "data/RotProfile.h"
 #include "models/LogbookModel.h"
@@ -154,6 +155,9 @@ void ActivityEditor::save()
     insertProfile(ActivityProfile::ProfileType::STATION_PROFILE, ui->stationProfileCheckbox->isChecked(), ui->stationProfileCombo->currentText());
     insertProfile(ActivityProfile::ProfileType::RIG_PROFILE, ui->rigProfileCheckbox->isChecked(), ui->rigProfileCombo->currentText(), ui->rigAutoconnectCheckbox);
     insertProfile(ActivityProfile::ProfileType::ROT_PROFILE, ui->rotatorProfileCheckbox->isChecked(), ui->rotatorProfileCombo->currentText(), ui->rotatorAutoconnectCheckbox);
+    insertProfile(ActivityProfile::ProfileType::BANDMAP_GUIDE_PROFILE,
+                  ui->bandmapGuideCombo->currentIndex() > 0,
+                  ui->bandmapGuideCombo->currentData().toString());
 
     insertParam(LogbookModel::COLUMN_CONTEST_ID, ui->contestIDCheckbox, ui->contestIDEdit->text());
     insertParam(LogbookModel::COLUMN_PROP_MODE, ui->propagationModeCheckbox, ui->propagationModeCombo->currentText());
@@ -446,6 +450,9 @@ void ActivityEditor::setupValuesTab(const QString &activityName)
     assignModel(ui->propagationModeCombo, Data::instance()->propagationModesList());
     assignModel(ui->satModeCombo, Data::instance()->satModeList());
 
+    bool bandmapGuideStored = false;
+    QString selectedBandmapGuideId;
+
     if ( !activityName.isEmpty() )
     {
         const ActivityProfile &activity = ActivityProfilesManager::instance()->getProfile(activityName);
@@ -453,6 +460,12 @@ void ActivityEditor::setupValuesTab(const QString &activityName)
         loadProfileValue(activity, ActivityProfile::ProfileType::STATION_PROFILE, ui->stationProfileCheckbox, ui->stationProfileCombo);
         loadProfileValue(activity, ActivityProfile::ProfileType::RIG_PROFILE, ui->rigProfileCheckbox, ui->rigProfileCombo, ui->rigAutoconnectCheckbox);
         loadProfileValue(activity, ActivityProfile::ProfileType::ROT_PROFILE, ui->rotatorProfileCheckbox, ui->rotatorProfileCombo, ui->rotatorAutoconnectCheckbox);
+        const auto bandmapGuide = activity.profiles.constFind(ActivityProfile::ProfileType::BANDMAP_GUIDE_PROFILE);
+        if ( bandmapGuide != activity.profiles.constEnd() )
+        {
+            bandmapGuideStored = true;
+            selectedBandmapGuideId = bandmapGuide.value().name;
+        }
 
         for ( auto i = activity.fieldValues.begin(); i != activity.fieldValues.end(); i++ )
         {
@@ -489,7 +502,36 @@ void ActivityEditor::setupValuesTab(const QString &activityName)
         }
     }
 
+    populateBandmapGuideCombo(bandmapGuideStored, selectedBandmapGuideId);
     setValueState();
+}
+
+void ActivityEditor::populateBandmapGuideCombo(bool guideStored, const QString &selectedProfileId)
+{
+    FCT_IDENTIFICATION;
+
+    ui->bandmapGuideCombo->clear();
+    ui->bandmapGuideCombo->addItem(tr("Leave unchanged"));
+    ui->bandmapGuideCombo->addItem(tr("Off"), QString());
+
+    const QList<BandmapGuide::Profile> profiles = BandmapGuide::profiles();
+    for ( const BandmapGuide::Profile &profile : profiles )
+        ui->bandmapGuideCombo->addItem(profile.name, profile.id);
+
+    if ( !guideStored )
+    {
+        ui->bandmapGuideCombo->setCurrentIndex(0);
+        return;
+    }
+
+    if ( selectedProfileId.isEmpty() )
+    {
+        ui->bandmapGuideCombo->setCurrentIndex(1);
+        return;
+    }
+
+    const int index = ui->bandmapGuideCombo->findData(selectedProfileId);
+    ui->bandmapGuideCombo->setCurrentIndex(index >= 0 ? index : 0);
 }
 
 void ActivityEditor::fillWidgets(const MainLayoutProfile &profile)

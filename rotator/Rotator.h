@@ -42,6 +42,7 @@ public slots:
     void start();
     void open();
     void close();
+    void shutdown();
     void stopTimer();
 
     void sendState();
@@ -52,9 +53,12 @@ private slots:
     void stopTimerImplt();
     void openImpl();
     void closeImpl();
+    void shutdownImpl();
     void sendStateImpl();
 
 private:
+    static const int SHUTDOWN_TIMEOUT_MS = 5000;
+
     Rotator(QObject *parent = nullptr);
     ~Rotator();
 

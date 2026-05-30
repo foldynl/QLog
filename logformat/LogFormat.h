@@ -57,6 +57,7 @@ public:
                             unsigned long *warnings,
                             unsigned long *errors);
     void runQSLImport(QSLFrom fromService);
+    void runDXCCCreditImport();
     long runExport();
     long runExport(const QList<QSqlRecord>&);
     void setDefaults(QMap<QString, QString>& defaults);
@@ -89,10 +90,35 @@ signals:
     void QSLMergeFinished(QSLMergeStat stats);
 
 protected:
+    struct DXCCCreditRecord
+    {
+        QString call;
+        QString band;
+        QString dxcc;
+        QString mode;
+        QString propMode;
+        QString dxccModeGroup;
+        QString creditGranted;
+        QString awardEntity;
+        QDate qsoDate;
+    };
+
     QTextStream& stream;
     QMap<QString, QString>* defaults;
+    virtual bool importNextDXCCCredit(DXCCCreditRecord&) { return false; }
 
 private:
+    struct DXCCCreditMatch
+    {
+        qulonglong id = 0;
+        QString callsign;
+        QString band;
+        QString mode;
+        QDateTime startTime;
+        QString propMode;
+        QString creditGranted;
+    };
+
     enum ImportLogSeverity
     {
         INFO_SEVERITY,
@@ -100,10 +126,31 @@ private:
         ERROR_SEVERITY
     };
 
+    enum DXCCCreditCallMatch
+    {
+        NO_CALL_MATCH,
+        EXACT_CALL_MATCH,
+        PREFIX_CALL_MATCH
+    };
+
     bool isDateRange();
     bool inDateRange(QDate date);
 
     QString importLogSeverityToString(ImportLogSeverity);
+
+    static QStringList splitCreditValues(const QString &value);
+    static QString mergeCreditValues(const QString &currentValue,
+                                     const QString &newValue);
+    static bool isSatelliteDXCCCredit(const DXCCCreditRecord &credit);
+    static bool isDXCCEntityCode(const QString &call);
+    static QString escapeSqlLikePattern(const QString &value);
+    static QString formatDXCCCreditReport(const DXCCCreditRecord &credit,
+                                          const QStringList &addInfo = QStringList());
+    static bool selectDXCCCreditMatches(const DXCCCreditRecord &credit,
+                                        const DXCCCreditCallMatch callMatch,
+                                        const bool matchMode,
+                                        QList<DXCCCreditMatch> &matches,
+                                        QString &error);
 
     void writeImportLog(QTextStream& errorLogStream,
                         ImportLogSeverity severity,

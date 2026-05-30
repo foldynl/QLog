@@ -277,6 +277,23 @@ bool HamlibRigDrv::open()
         qCDebug(runtime) << "Rig Open Error" << lastErrorText;
         // return false; ignore the error - no critical
     }
+
+#ifdef RIG_MODEL_FT950
+    // Tentative workaround for #1017: FT-950 was reported to jump to VFO-B and
+    // back on band changes. This is untested on a real FT-950, but Hamlib
+    // sources suggest that disabling Yaesu band-select restore should avoid
+    // extra VFO queries after set_freq().
+    if ( rigProfile.model == RIG_MODEL_FT950 )
+    {
+        const auto token = rig_token_lookup(rig, "disable_yaesu_bandselect");
+
+        if ( token != RIG_CONF_END && rig_set_conf(rig, token, "1") != RIG_OK )
+        {
+            qCDebug(runtime) << "Cannot set disable_yaesu_bandselect to 1";
+        }
+    }
+#endif
+
 #if 0
     if ( rig_set_conf(rig, rig_token_lookup(rig, "no_xchg"), "1") != RIG_OK )
     {

@@ -6,6 +6,11 @@ QString AwardWAZ::displayName() const
     return QCoreApplication::translate("AwardsDialog", "WAZ");
 }
 
+QString AwardWAZ::rulesUrl() const
+{
+    return QStringLiteral("https://www.k0nr.com/wordpress/wp-content/uploads/2024/02/cq_waz_rules_english.pdf");
+}
+
 QString AwardWAZ::headersColumns(const QString &) const
 {
     return QStringLiteral("d.n col1, null col2 ");

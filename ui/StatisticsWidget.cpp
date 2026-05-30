@@ -34,10 +34,14 @@ void StatisticsWidget::refreshWidget()
 {
     FCT_IDENTIFICATION;
 
-    if ( !isVisible() )
+    pendingRefresh = true;
+    mapRenderDirty = true;
+
+    if ( !isVisible() || !initialized )
         return;
 
     refreshCombos();
+    pendingRefresh = false;
     refreshGraph();
 }
 
@@ -308,6 +312,8 @@ void StatisticsWidget::refreshGraph()
      /***************/
      else if ( ui->statTypeMainCombo->currentIndex() == 4 )
      {
+         ui->stackedWidget->setCurrentIndex(1);
+
          QStringList confirmed("1=2 ");
 
          if ( ui->eqslCheckBox->isChecked() )
@@ -318,6 +324,15 @@ void StatisticsWidget::refreshGraph()
 
          if ( ui->paperCheckBox->isChecked() )
              confirmed << " qsl_rcvd = 'Y' ";
+
+         const QString currentRenderKey = currentMapRenderKey(genericFilter);
+         if ( !mapRenderKey.isEmpty()
+              && !mapRenderDirty
+              && currentRenderKey == mapRenderKey )
+         {
+             mapController->invalidateSize();
+             return;
+         }
 
          QString innerCase = " CASE WHEN (" + confirmed.join("or") + ") THEN 1 ELSE 0 END ";
          QString stmtMyLocations = "SELECT DISTINCT my_gridsquare FROM contacts WHERE " + genericFilter.join(" AND ");
@@ -364,7 +379,9 @@ void StatisticsWidget::refreshGraph()
              break;
          }
 
-         ui->stackedWidget->setCurrentIndex(1);
+         mapRenderKey = currentRenderKey;
+         mapRenderDirty = false;
+         mapController->invalidateSize();
      }
 }
 
@@ -386,44 +403,19 @@ void StatisticsWidget::dateRangeCheckBoxChanged(int)
     refreshGraph();
 }
 
-void StatisticsWidget::mapLoaded(bool)
-{
-    FCT_IDENTIFICATION;
-
-    isMainPageLoaded = true;
-
-    /* which layers will be active */
-    postponedScripts += layerControlHandler.generateMapMenuJS(true, false, false, false, false, false, false, false, true);
-    main_page->runJavaScript(postponedScripts);
-
-    layerControlHandler.restoreLayerControlStates(main_page);
-}
-
 void StatisticsWidget::changeTheme(int theme, bool isDark)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << theme << isDark;
 
-    QString themeJavaScript;
-
-    if (isDark) /* dark mode */
-        themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.9)\";";
-    else
-        themeJavaScript = "map.getPanes().tilePane.style.webkitFilter=\"\";";
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(themeJavaScript);
-    else
-        main_page->runJavaScript(themeJavaScript);
+    mapController->setDarkTheme(isDark);
 }
 
 StatisticsWidget::StatisticsWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::StatisticsWidget),
-    main_page(new WebEnginePage(this)),
-    isMainPageLoaded(false),
-    layerControlHandler("statistics", parent)
+    mapController(new MapPageController(QStringLiteral("statistics"), this))
 {
     FCT_IDENTIFICATION;
 
@@ -447,18 +439,14 @@ StatisticsWidget::StatisticsWidget(QWidget *parent) :
     ui->graphView->setRenderHint(QPainter::Antialiasing);
     ui->graphView->setChart(new QChart());
 
-    main_page->setWebChannel(&channel);
-    ui->mapView->setPage(main_page);
-    connect(ui->mapView, &QWebEngineView::loadFinished, this, &StatisticsWidget::mapLoaded);
-    main_page->load(QUrl(QStringLiteral("qrc:/res/map/onlinemap.html")));
-    ui->mapView->setFocusPolicy(Qt::ClickFocus);
-    channel.registerObject("layerControlHandler", &layerControlHandler);
+    mapController->attach(ui->mapView,
+                          MapLayer::Grid
+                          | MapLayer::Path);
 }
 
 StatisticsWidget::~StatisticsWidget()
 {
     FCT_IDENTIFICATION;
-    main_page->deleteLater();
     delete ui;
 }
 
@@ -466,25 +454,12 @@ bool StatisticsWidget::event(QEvent *event)
 {
     if (event->type() == QEvent::Show)
     {
-        // We will not use refreshWidget here, even though at first glance it appears
-        // to do the same thing. The difference is that we want class constructor to be as fast as possible.
-        // Therefore, in the constructor, we do not populate the combo boxes. As a result, they are empty
-        // when first displayed and need to be loaded and then combos for Rig, Ant, etc., can be set.
-        refreshCombos();
-        ui->statTypeMainCombo->blockSignals(true);
-        ui->statTypeMainCombo->setCurrentIndex(0);
-        ui->statTypeMainCombo->blockSignals(false);
-        setSubTypesCombo(ui->statTypeMainCombo->currentIndex());
-        ui->myRigCombo->blockSignals(true);
-        ui->myRigCombo->setCurrentIndex(0);
-        ui->myRigCombo->blockSignals(false);
-        ui->myAntennaCombo->blockSignals(true);
-        ui->myAntennaCombo->setCurrentIndex(0);
-        ui->myAntennaCombo->blockSignals(false);
-        ui->userFilterCombo->blockSignals(true);
-        ui->userFilterCombo->setCurrentIndex(0);
-        ui->userFilterCombo->blockSignals(false);
-        refreshGraph();
+        if ( !initialized )
+            initializeWidget();
+        else if ( pendingRefresh )
+            refreshWidget();
+        else if ( ui->stackedWidget->currentWidget() == ui->mapPage )
+            mapController->invalidateSize();
     }
     return QWidget::event(event);  // Propagate the event further
 }
@@ -563,35 +538,27 @@ void StatisticsWidget::drawMyLocationsOnMap(QSqlQuery &query)
     if ( query.lastQuery().isEmpty() )
         return;
 
-    QStringList locationIcons;
-    QStringList rawLocationsPoint;
+    QList<MapPoint> locationIcons;
+    QList<MapCoordinate> rawLocationsPoint;
 
     while ( query.next() )
     {
         const QString &loc = query.value(0).toString();
-        const Gridsquare stationGrid(loc);
+        const Gridsquare stationGrid = Gridsquare::mapDisplayGrid(loc);
 
         if ( stationGrid.isValid() )
         {
             double lat = stationGrid.getLatitude();
             double lon = stationGrid.getLongitude();
-            locationIcons.append(QString("[\"%1\", %2, %3, homeIcon]").arg(loc).arg(lat).arg(lon));
-            rawLocationsPoint.append(QString("[%1, %2]").arg(lat).arg(lon));
+            locationIcons << MapPoint(stationGrid.getGrid(), lat, lon, QStringLiteral("homeIcon"));
+            rawLocationsPoint << MapCoordinate(lat, lon);
         }
     }
 
-    QString javaScript = QString("grids_confirmed = [];"
-                                 "grids_worked = [];"
-                                 "drawPointsGroup2([%1]);"
-                                 "maidenheadConfWorked.redraw();"
-                                 "map.panTo([0, L.latLngBounds([%2]).getCenter().lng]);").arg(locationIcons.join(","), rawLocationsPoint.join(","));
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(javaScript);
-    else
-        main_page->runJavaScript(javaScript);
+    mapController->clearGridLayers();
+    mapController->drawHomePoints(locationIcons);
+    mapController->redrawGridLayer();
+    mapController->panToBoundsLongitudeCenter(rawLocationsPoint);
 }
 
 void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
@@ -601,36 +568,40 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
     if ( query.lastQuery().isEmpty() )
         return;
 
-    QList<QString> stations;
-    QList<QString> shortPaths;
+    QList<MapPoint> stations;
+    QList<MapPath> shortPaths;
 
     qulonglong count = 0;
 
     while ( query.next() )
     {
-        const Gridsquare stationGrid(query.value(1).toString());
-        const Gridsquare myStationGrid(query.value(2).toString());
+        const Gridsquare stationGrid = Gridsquare::mapDisplayGrid(query.value(1).toString());
+        const Gridsquare myStationGrid = Gridsquare::mapDisplayGrid(query.value(2).toString());
         if ( stationGrid.isValid() )
         {
             count++;
             double lat = stationGrid.getLatitude();
             double lon = stationGrid.getLongitude();
 
-            // do not wrap the points
-            double delta = lon - myStationGrid.getLongitude();
-            if ( delta > 180 )
-                lon -= 360;
-            if ( delta < -180 )
-                lon += 360;
-            stations.append(QString("[\"%1\", %2, %3, %4]").arg(query.value(0).toString())
-                                                           .arg(lat)
-                                                           .arg(lon)
-                                                           .arg((query.value(3).toInt()) > 0 ? "greenIconSmall" : "yellowIconSmall"));
-            shortPaths.append(QString("[%1, %2, %3, %4]")
-                                  .arg(myStationGrid.getLatitude())
-                                  .arg(myStationGrid.getLongitude())
-                                  .arg(lat)
-                                  .arg(lon));
+            if ( myStationGrid.isValid() )
+            {
+                // do not wrap the points
+                double delta = lon - myStationGrid.getLongitude();
+                if ( delta > 180 )
+                    lon -= 360;
+                if ( delta < -180 )
+                    lon += 360;
+
+                shortPaths << MapPath(MapCoordinate(myStationGrid.getLatitude(),
+                                                    myStationGrid.getLongitude()),
+                                      MapCoordinate(lat, lon));
+            }
+
+            stations << MapPoint(query.value(0).toString(),
+                                 lat,
+                                 lon,
+                                 (query.value(3).toInt()) > 0 ? QStringLiteral("greenIconSmall")
+                                                               : QStringLiteral("yellowIconSmall"));
         }
     }
 
@@ -641,24 +612,15 @@ void StatisticsWidget::drawPointsOnMap(QSqlQuery &query)
                                       QMessageBox::Yes|QMessageBox::No);
 
         if ( reply != QMessageBox::Yes )
+        {
             stations.clear();
+            shortPaths.clear();
+        }
     }
 
-    QString javaScript = QString("grids_confirmed = [];"
-                                 "grids_worked = [];"
-                                 "drawPointsBusy([%1], '%2');"
-                                 "drawShortPathsBusy([%3], '%4');"
-                                 "maidenheadConfWorked.redraw();").arg(stations.join(","),
-                                                                       tr("Rendering QSOs..."),
-                                                                       shortPaths.join(","),
-                                                                       tr("Rendering QSOs..."));
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(javaScript);
-    else
-        main_page->runJavaScript(javaScript);
+    mapController->clearGridLayers();
+    mapController->drawPointsAndShortPathsBusy(stations, shortPaths, tr("Rendering QSOs..."));
+    mapController->redrawGridLayer();
 }
 
 void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
@@ -668,30 +630,35 @@ void StatisticsWidget::drawFilledGridsOnMap(QSqlQuery &query)
 
     if ( query.lastQuery().isEmpty() ) return;
 
-    QList<QString> confirmedGrids;
-    QList<QString> workedGrids;
+    QStringList confirmedGrids;
+    QStringList workedGrids;
 
     while ( query.next() )
     {
-        if ( query.value(3).toInt() > 0 && ! confirmedGrids.contains(query.value(1).toString()) )
-            confirmedGrids << QString("\"" + query.value(1).toString() + "\"");
-        else
-            workedGrids << QString("\"" + query.value(1).toString() + "\"");
+        const Gridsquare grid = Gridsquare::mapDisplayGrid(query.value(1).toString());
+
+        if ( !grid.isValid() )
+            continue;
+
+        const QString gridString = grid.getGrid();
+
+        if ( query.value(3).toInt() > 0 )
+        {
+            if ( !confirmedGrids.contains(gridString) )
+                confirmedGrids << gridString;
+            workedGrids.removeAll(gridString);
+        }
+        else if ( !confirmedGrids.contains(gridString)
+                  && !workedGrids.contains(gridString) )
+        {
+            workedGrids << gridString;
+        }
     }
 
-    QString javaScript = QString("grids_confirmed = [ %1 ]; "
-                                 "grids_worked = [ %2 ];"
-                                 "mylocations = [];"
-                                 "drawPointsBusy([], '');"
-                                 "drawShortPathsBusy([], '');"
-                                 "maidenheadConfWorked.redraw();").arg(confirmedGrids.join(","), workedGrids.join(","));
-
-    qCDebug(runtime) << javaScript;
-
-    if ( !isMainPageLoaded )
-        postponedScripts.append(javaScript);
-    else
-        main_page->runJavaScript(javaScript);
+    mapController->setGridLayers(confirmedGrids, workedGrids);
+    mapController->drawPointsBusy(QList<MapPoint>(), QString());
+    mapController->drawShortPathsBusy(QList<MapPath>(), QString());
+    mapController->redrawGridLayer();
 }
 
 void StatisticsWidget::refreshCombos()
@@ -786,4 +753,44 @@ void StatisticsWidget::refreshCombo(QComboBox * combo,
     combo->setModel(new SqlListModel(sqlQeury,tr("All"), this));
     combo->setCurrentText(currSelection);
     combo->blockSignals(false);
+}
+
+void StatisticsWidget::initializeWidget()
+{
+    FCT_IDENTIFICATION;
+
+    // We will not initialize the combos in the constructor. The constructor should
+    // stay fast, so the first real show populates them and sets default selections.
+    refreshCombos();
+    ui->statTypeMainCombo->blockSignals(true);
+    ui->statTypeMainCombo->setCurrentIndex(0);
+    ui->statTypeMainCombo->blockSignals(false);
+    setSubTypesCombo(ui->statTypeMainCombo->currentIndex());
+    ui->myRigCombo->blockSignals(true);
+    ui->myRigCombo->setCurrentIndex(0);
+    ui->myRigCombo->blockSignals(false);
+    ui->myAntennaCombo->blockSignals(true);
+    ui->myAntennaCombo->setCurrentIndex(0);
+    ui->myAntennaCombo->blockSignals(false);
+    ui->userFilterCombo->blockSignals(true);
+    ui->userFilterCombo->setCurrentIndex(0);
+    ui->userFilterCombo->blockSignals(false);
+
+    initialized = true;
+    pendingRefresh = false;
+    refreshGraph();
+}
+
+QString StatisticsWidget::currentMapRenderKey(const QStringList &genericFilter) const
+{
+    QStringList key;
+
+    key << QString::number(ui->statTypeMainCombo->currentIndex())
+        << QString::number(ui->statTypeSecCombo->currentIndex())
+        << genericFilter.join(QLatin1String(" AND "))
+        << QString::number(ui->eqslCheckBox->isChecked())
+        << QString::number(ui->lotwCheckBox->isChecked())
+        << QString::number(ui->paperCheckBox->isChecked());
+
+    return key.join(QLatin1Char('\n'));
 }

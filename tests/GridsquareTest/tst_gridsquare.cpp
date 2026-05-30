@@ -13,6 +13,8 @@ private slots:
     void invalidGridStrings();
     void validGridStrings_data();
     void validGridStrings();
+    void mapDisplayGrid_data();
+    void mapDisplayGrid();
     void invalidCoordinateCtor_data();
     void invalidCoordinateCtor();
     void validCoordinateCtor_data();
@@ -114,6 +116,47 @@ void GridsquareTest::validGridStrings()
 
     const Gridsquare gs(input);
     QVERIFY(gs.isValid());
+    QCOMPARE(gs.getGrid(), expectedGrid);
+}
+
+void GridsquareTest::mapDisplayGrid_data()
+{
+    QTest::addColumn<QString>("input");
+    QTest::addColumn<bool>("expectedValid");
+    QTest::addColumn<QString>("expectedGrid");
+
+    const struct Case
+    {
+        const char *name;
+        const char *input;
+        bool expectedValid;
+        const char *expectedGrid;
+    } cases[] = {
+        {"valid_six", "AA11AA", true, "AA11AA"},
+        {"valid_eight", "AA11AA00", true, "AA11AA00"},
+        {"long_valid_prefix", "AA11AA00AA", true, "AA11AA00"},
+        {"long_valid_prefix_lowercase", "aa11aa00aa", true, "AA11AA00"},
+        {"long_invalid_prefix", "AA11A000AA", false, ""},
+        {"short_invalid", "INVALID", false, ""}
+    };
+
+    for ( const Case &c : cases )
+    {
+        QTest::newRow(c.name)
+            << QString::fromLatin1(c.input)
+            << c.expectedValid
+            << QString::fromLatin1(c.expectedGrid);
+    }
+}
+
+void GridsquareTest::mapDisplayGrid()
+{
+    QFETCH(QString, input);
+    QFETCH(bool, expectedValid);
+    QFETCH(QString, expectedGrid);
+
+    const Gridsquare gs = Gridsquare::mapDisplayGrid(input);
+    QCOMPARE(gs.isValid(), expectedValid);
     QCOMPARE(gs.getGrid(), expectedGrid);
 }
 
