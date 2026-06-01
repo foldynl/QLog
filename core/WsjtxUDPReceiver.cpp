@@ -287,7 +287,7 @@ void WsjtxUDPReceiver::readPendingDatagrams()
 
             status.id = QString(id);
             status.mode = QString(mode);
-            status.tx_mode = QString(mode);
+            status.tx_mode = QString(tx_mode);
             status.sub_mode = QString(sub_mode);
             status.report = QString(report);
             status.dx_call = QString(dx_call);
