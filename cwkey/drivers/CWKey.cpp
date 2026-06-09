@@ -19,6 +19,14 @@ CWKey::CWKey(CWKeyModeID mode, qint32 defaultWPM, QObject *parent) :
     qCDebug(function_parameters) << mode << defaultWPM;
 }
 
+bool CWKey::setOutput(CWKeyOutputID output)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << output;
+    qCDebug(runtime) << "CW key driver ignores output selection" << outputName(output);
+    return true;
+}
+
 void CWKey::printKeyCaps()
 {
     FCT_IDENTIFICATION;
@@ -53,6 +61,34 @@ CWKey::CWKeyModeID CWKey::intToModeID(int i)
     return static_cast<CWKey::CWKeyModeID>(i);
 }
 
+CWKey::CWKeyOutputID CWKey::intToOutputID(int i)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << i;
+
+    if ( i < CWKEY_OUTPUT_DEFAULT || i > LAST_OUTPUT )
+    {
+        qCWarning(runtime) << "Unknown CW key output" << i << "using default output";
+        return CWKEY_OUTPUT_DEFAULT;
+    }
+    return static_cast<CWKey::CWKeyOutputID>(i);
+}
+
+QString CWKey::outputName(CWKeyOutputID output)
+{
+    switch ( output )
+    {
+    case CWKEY_OUTPUT_DEFAULT:
+        return QStringLiteral("Unchanged");
+    case CWKEY_OUTPUT_A:
+        return QStringLiteral("A");
+    case CWKEY_OUTPUT_B:
+        return QStringLiteral("B");
+    default:
+        return QStringLiteral("Unknown");
+    }
+}
+
 bool CWKey::isNetworkKey(const CWKeyTypeID &type)
 {
     FCT_IDENTIFICATION;
@@ -62,6 +98,13 @@ bool CWKey::isNetworkKey(const CWKeyTypeID &type)
 
     qCDebug(runtime) << ret;
     return ret;
+}
+
+bool CWKey::supportsOutputSelection(const CWKeyTypeID &type)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << type;
+    return type == DUMMY_KEYER || type == WINKEY_KEYER;
 }
 
 const QRegularExpression &CWKey::speedMarkerRE()

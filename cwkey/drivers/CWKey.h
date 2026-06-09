@@ -78,6 +78,14 @@ public:
         LAST_MODE = 4
     };
 
+    enum CWKeyOutputID
+    {
+        CWKEY_OUTPUT_DEFAULT = 0,
+        CWKEY_OUTPUT_A = 1,
+        CWKEY_OUTPUT_B = 2,
+        LAST_OUTPUT = 2
+    };
+
 signals:
     void keyError(QString, QString);
     void keyChangedWPMSpeed(qint32);
@@ -95,6 +103,7 @@ public:
     virtual bool close() = 0;
     virtual bool sendText(const QString &text) = 0;
     virtual bool setWPM(const qint16 wpm) = 0;
+    virtual bool setOutput(CWKeyOutputID output);
     virtual QString lastError() = 0;
     virtual bool immediatelyStop() = 0;
     virtual bool canStopSending() { return stopSendingCap;}
@@ -106,7 +115,10 @@ public:
 
     static CWKeyTypeID intToTypeID(int);
     static CWKeyModeID intToModeID(int);
+    static CWKeyOutputID intToOutputID(int);
+    static QString outputName(CWKeyOutputID output);
     static bool isNetworkKey(const CWKeyTypeID &type);
+    static bool supportsOutputSelection(const CWKeyTypeID &type);
     static QString stripSpeedMarkers(const QString &text);
 
     virtual qint16 minWPM() const { return 5; }

@@ -5,7 +5,8 @@ MODULE_IDENTIFICATION("qlog.cwkey.driver.cwdummykey");
 
 CWDummyKey::CWDummyKey(QObject *parent)
     : CWKey(CWKey::IAMBIC_B, 25, parent),
-      isUsed(false)
+      isUsed(false),
+      output(CWKEY_OUTPUT_DEFAULT)
 {
     FCT_IDENTIFICATION;
     canSetKeySpeed = true;
@@ -15,8 +16,7 @@ bool CWDummyKey::open()
 {
     FCT_IDENTIFICATION;
 
-    qInfo() << "Key is Connected";
-
+    qCDebug(runtime) << "Opening Dummy keyer with output" << outputName(output);
     isUsed = true;
 
     setWPM(defaultWPMSpeed);
@@ -27,20 +27,20 @@ bool CWDummyKey::close()
 {
     FCT_IDENTIFICATION;
 
-    qInfo() << "Key is Disconnected";
-
+    qCDebug(runtime) << "Disconnecting Dummy keyer";
     isUsed = false;
-
     return true;
 }
 
 bool CWDummyKey::sendText(const QString &text)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << text;
 
     if ( isUsed )
     {
-        qInfo() << "Sending " << stripSpeedMarkers(text);
+        qCDebug(runtime) << "Dummy keyer sending on output" << outputName(output)
+                         << stripSpeedMarkers(text);
     }
 
     return true;
@@ -49,15 +49,26 @@ bool CWDummyKey::sendText(const QString &text)
 bool CWDummyKey::setWPM(const qint16 wpm)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << wpm;
 
     if ( !isUsed )
         return true;
 
-    qInfo() << "Setting Speed " << wpm;
+    qCDebug(runtime) << "Setting Dummy keyer speed" << wpm;
 
     emit keyChangedWPMSpeed(wpm); // dummy does not echo a new Speed
             //therefore keyChangedWPMSpeed informs the rest for QLog that
             //Key speed has been changed
+    return true;
+}
+
+bool CWDummyKey::setOutput(CWKeyOutputID newOutput)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << newOutput;
+
+    qCDebug(runtime) << "Setting Dummy keyer output to" << outputName(newOutput);
+    output = newOutput;
     return true;
 }
 
@@ -73,10 +84,7 @@ bool CWDummyKey::immediatelyStop()
     FCT_IDENTIFICATION;
 
     if ( isUsed )
-    {
-        qInfo() << "immediately Stop";
-    }
+        qCDebug(runtime) << "Immediately stopping Dummy keyer";
 
     return true;
 }
-

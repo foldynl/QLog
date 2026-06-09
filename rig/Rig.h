@@ -117,7 +117,7 @@ signals:
     void ritChanged(VFOID, double);
     void xitChanged(VFOID, double);
     void pttChanged(VFOID, bool);
-    void rigCWKeyOpenRequest(QString);
+    void rigCWKeyOpenRequest(QString, qint32);
     void rigCWKeyCloseRequest(QString);
     void rigDisconnected();
     void rigConnected();
@@ -176,7 +176,7 @@ private:
 
     QMap<int, DrvParams> drvMapping;
 
-    void __closeRig();
+    void __closeRig(const QString &preservedCWKeyProfile = QString());
     void __openRig();
     GenericRigDrv *getDriver(const RigProfile &profile, qint32 controlledRigModel);
     void emitRigStatusChanged();

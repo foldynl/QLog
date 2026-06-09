@@ -1845,7 +1845,46 @@
                   </widget>
                  </item>
                  <item row="5" column="1">
-                  <widget class="QComboBox" name="rigAssignedCWKeyCombo"/>
+                  <layout class="QHBoxLayout" name="rigAssignedCWKeyLayout">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QComboBox" name="rigAssignedCWKeyCombo"/>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="rigCWKeyOutputLabel">
+                     <property name="text">
+                      <string>Output</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                     <property name="buddy">
+                      <cstring>rigCWKeyOutputCombo</cstring>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="rigCWKeyOutputCombo">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="6" column="0">
                   <widget class="QLabel" name="rigFeaturesLabel">
@@ -5456,6 +5495,7 @@
   <tabstop>rigTXOffsetSpinBox</tabstop>
   <tabstop>rigPWRDefaultSpinBox</tabstop>
   <tabstop>rigAssignedCWKeyCombo</tabstop>
+  <tabstop>rigCWKeyOutputCombo</tabstop>
   <tabstop>rigGetModeCheckBox</tabstop>
   <tabstop>rigGetVFOCheckBox</tabstop>
   <tabstop>rigGetFreqCheckBox</tabstop>
@@ -6961,5 +7001,6 @@
   <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

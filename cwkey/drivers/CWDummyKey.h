@@ -14,11 +14,13 @@ public:
     virtual bool close() override;
     virtual bool sendText(const QString &text) override;
     virtual bool setWPM(const qint16 wpm) override;
+    virtual bool setOutput(CWKeyOutputID output) override;
     virtual QString lastError() override;
     virtual bool immediatelyStop() override;
 
 private:
     bool isUsed;
+    CWKeyOutputID output;
 };
 
 #endif // QLOG_CWKEY_DRIVER_CWDUMMYKEY_H

@@ -31,6 +31,7 @@ public slots:
     void start();
     void update();
     void open();
+    void open(qint32 cwKeyOutput);
     void close();
     void shutdown();
     bool canStopSending();
@@ -43,7 +44,7 @@ public slots:
     void immediatelyStop();
 
 private slots:
-    void openImpl();
+    void openImpl(qint32 cwKeyOutput);
     void closeImpl();
     void shutdownImpl();
     void setSpeedImpl(const qint16 wpm);
@@ -65,10 +66,12 @@ private:
     ~CWKeyer();
 
     void __closeCWKey();
-    void __openCWKey();
+    void __openCWKey(CWKey::CWKeyOutputID cwKeyOutput);
+    bool setCWKeyOutput(CWKey::CWKeyOutputID cwKeyOutput);
 
     CWKey *cwKey;
     CWKeyProfile connectedCWKeyProfile;
+    CWKey::CWKeyOutputID connectedCWKeyOutput;
     QMutex cwKeyLock;
     QTimer* timer;
 };

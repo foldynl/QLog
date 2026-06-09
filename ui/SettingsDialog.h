@@ -171,6 +171,7 @@ private:
     void refreshRigAssignedCWKeyCombo();
     void refreshBandmapGuideCombo();
     void updateRigShareEnabled();
+    void updateRigCWKeyOutputEnabled();
     QList<QsoStatusColorRow> qsoStatusColorRows() const;
     void setupQsoStatusColorsTable();
     void loadQsoStatusColors();

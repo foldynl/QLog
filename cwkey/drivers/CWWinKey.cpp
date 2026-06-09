@@ -24,9 +24,13 @@ CWWinKey::CWWinKey(const QString &portName,
       paddleSwap(paddleSwap),
       paddleOnlySidetone(paddleOnlySidetone),
       sidetoneFrequency(sidetoneFrequency),
+      output(CWKEY_OUTPUT_DEFAULT),
       version(0)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << portName << baudrate << mode << defaultSpeed
+                                 << paddleSwap << paddleOnlySidetone
+                                 << sidetoneFrequency;
 
     minWPMRange = defaultSpeed - 15; // Winkey has 31 steps for POT, it means that 15 steps to left
                                      // and 15 steps to right
@@ -46,6 +50,8 @@ bool CWWinKey::open()
 {
     FCT_IDENTIFICATION;
 
+    qCDebug(runtime) << "Opening WinKey on serial port" << serial.portName()
+                     << "with output" << outputName(output);
     qCDebug(runtime) << "Waiting for Command Mutex";
     QMutexLocker locker(&commandMutex);
 
@@ -54,7 +60,7 @@ bool CWWinKey::open()
     /***************/
     /* Open Port   */
     /***************/
-    qCDebug(runtime) << "Opening Serial" << serial.portName();
+    qCDebug(runtime) << "Opening WinKey serial port" << serial.portName();
 
     if ( !serial.open(QIODevice::ReadWrite) )
     {
@@ -85,7 +91,7 @@ bool CWWinKey::open()
     serial.setDataTerminalReady(true);
     serial.setRequestToSend(false);
 
-    qCDebug(runtime) << "Serial port has been opened";
+    qCDebug(runtime) << "WinKey serial port opened" << serial.portName();
 
     QThread::msleep(200);
 
@@ -189,7 +195,7 @@ bool CWWinKey::open()
     /******************/
     /* WK2 Mode Status*/
     /******************/
-    if ( version >= 20 )
+    if ( version >= MIN_SIDETONE_VERSION )
     {
         qCDebug(runtime) << "WK2 PB Mode Setting";
 
@@ -225,12 +231,23 @@ bool CWWinKey::open()
     /* Set POT Range */
     __setPOTRange();
 
+    if ( output != CWKEY_OUTPUT_DEFAULT
+         && !__setOutput(output) )
+    {
+        const QString outputError = lastLogicalError;
+        __close();
+        lastLogicalError = outputError;
+        return false;
+    }
+
     /* Sidetone Setting */
     __setSidetone(!paddleOnlySidetone);
 
     /* Set Default value */
     __setWPM(defaultWPMSpeed);
 
+    qCDebug(runtime) << "WinKey ready on serial port" << serial.portName()
+                     << "with output" << outputName(output);
     return true;
 }
 
@@ -238,6 +255,8 @@ bool CWWinKey::close()
 {
     FCT_IDENTIFICATION;
 
+    qCDebug(runtime) << "Closing WinKey on serial port" << serial.portName()
+                     << "with output" << outputName(output);
     qCDebug(runtime) << "Waiting for Command Mutex";
     QMutexLocker locker(&commandMutex);
     __close();
@@ -502,6 +521,13 @@ bool CWWinKey::immediatelyStop()
         return false;
     }
 
+    return __immediatelyStop();
+}
+
+bool CWWinKey::__immediatelyStop()
+{
+    FCT_IDENTIFICATION;
+
     qCDebug(runtime) << "Waiting for WriteBuffer Mutex";
     writeBufferMutex.lock();
     qCDebug(runtime) << "Clearing Buffer";
@@ -517,10 +543,13 @@ bool CWWinKey::immediatelyStop()
     qint64 size = writeAsyncData(cmd);
     if ( size != 3 )
     {
+        lastLogicalError = tr("Cannot stop pending CW text");
         qWarning() << "Unexpected size of write response or communication error";
         qCDebug(runtime) << lastError();
+        return false;
     }
 
+    lastLogicalError = QString();
     return true;
 }
 
@@ -742,7 +771,7 @@ bool CWWinKey::__setSidetone(bool enabled)
      *                  host CW is muted, paddle sidetone at configured frequency.
      * enabled=true  -> normal sidetone at configured frequency (freqCode).
      */
-    if ( version < 20 )
+    if ( version < MIN_SIDETONE_VERSION )
     {
         qCDebug(runtime) << "Sidetone control not supported on WK1";
         return false;
@@ -787,3 +816,98 @@ bool CWWinKey::__setSidetone(bool enabled)
     return true;
 }
 
+bool CWWinKey::setOutput(CWKeyOutputID newOutput)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << newOutput;
+
+    qCDebug(runtime) << "Waiting for Command Mutex";
+    QMutexLocker locker(&commandMutex);
+
+    if ( newOutput == CWKEY_OUTPUT_DEFAULT )
+    {
+        qCDebug(runtime) << "Leaving WinKey hardware output unchanged on serial port"
+                         << serial.portName();
+        if ( !isInHostMode )
+            output = newOutput;
+        lastLogicalError = QString();
+        return true;
+    }
+
+    if ( !isInHostMode )
+    {
+        qCDebug(runtime) << "Configuring WinKey output" << outputName(newOutput)
+                         << "before opening serial port" << serial.portName();
+        output = newOutput;
+        lastLogicalError = QString();
+        return true;
+    }
+
+    if ( newOutput != output )
+    {
+        qCDebug(runtime) << "Stopping pending CW text before changing WinKey output from"
+                         << outputName(output) << "to" << outputName(newOutput);
+        if ( !__immediatelyStop() )
+            return false;
+    }
+
+    return __setOutput(newOutput);
+}
+
+bool CWWinKey::__setOutput(CWKeyOutputID newOutput)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << newOutput;
+
+    if ( newOutput != CWKEY_OUTPUT_A
+         && newOutput != CWKEY_OUTPUT_B )
+    {
+        lastLogicalError = tr("Unsupported WinKeyer output selection");
+        qCWarning(runtime) << lastLogicalError << newOutput;
+        return false;
+    }
+
+    /*
+     * Port Select command: 0x1D <0/1>
+     * Available from WinKeyer 2 version 21.
+     */
+    if ( version < MIN_OUTPUT_PORT_SELECT_VERSION )
+    {
+        lastLogicalError = tr("WinKeyer output selection requires WinKeyer 2 version 21 or later");
+        qCWarning(runtime) << lastLogicalError << "current version" << version;
+        return false;
+    }
+
+    if ( !isInHostMode )
+    {
+        lastLogicalError = tr("Keyer is not connected");
+        qCWarning(runtime) << "Key is not in Host Mode";
+        return false;
+    }
+
+    QByteArray cmd;
+    cmd.resize(2);
+    cmd[0] = 0x1D;
+    cmd[1] = static_cast<char>(newOutput == CWKEY_OUTPUT_A ? 0 : 1);
+
+    qCDebug(runtime) << "Selecting WinKey output" << outputName(newOutput)
+                     << "protocol port" << static_cast<int>(static_cast<unsigned char>(cmd[1]))
+                     << "on serial port" << serial.portName();
+
+    qint64 size = writeAsyncData(cmd);
+    if ( size != 2 )
+    {
+        qWarning() << "Unexpected size of write response or communication error";
+        qCDebug(runtime) << lastError();
+        return false;
+    }
+
+    output = newOutput;
+    lastLogicalError = QString();
+
+    qCDebug(runtime) << "WinKey output selected" << outputName(output)
+                     << "on serial port" << serial.portName();
+
+    return true;
+}

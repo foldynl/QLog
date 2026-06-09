@@ -227,10 +227,19 @@ void Rig::__openRig()
 {
     FCT_IDENTIFICATION;
 
-    // if rig is active then close it
-    __closeRig();
-
     RigProfile newRigProfile = RigProfilesManager::instance()->getCurProfile1();
+
+    bool cwKeyPreserved = false;
+    if ( rigDriver )
+    {
+        const QString connectedCWKey = rigDriver->getCurrRigProfile().assignedCWKey;
+        cwKeyPreserved = !connectedCWKey.isEmpty()
+                         && connectedCWKey != " "
+                         && connectedCWKey == newRigProfile.assignedCWKey;
+    }
+
+    // if rig is active then close it
+    __closeRig(newRigProfile.assignedCWKey);
 
     if ( newRigProfile == RigProfile() )
     {
@@ -261,7 +270,11 @@ void Rig::__openRig()
         }
 
         if ( !rigctldManager->start(newRigProfile) )
+        {
+            if ( cwKeyPreserved )
+                emit rigCWKeyCloseRequest(newRigProfile.assignedCWKey);
             return;
+        }
 
         // Modify profile to connect via network to rigctld
         newRigProfile.hostname = rigctldManager->getConnectHost();
@@ -279,6 +292,8 @@ void Rig::__openRig()
         // initialization failed
         emit rigErrorPresent(tr("Initialization Error"),
                              tr("Internal Error"));
+        if ( cwKeyPreserved )
+            emit rigCWKeyCloseRequest(newRigProfile.assignedCWKey);
         return;
     }
 
@@ -371,9 +386,14 @@ void Rig::__openRig()
 
         // Change Assigned CW Key
         if ( !newRigProfile.assignedCWKey.isEmpty()
-             || newRigProfile.assignedCWKey != " ")
+             && newRigProfile.assignedCWKey != " ")
         {
-            emit rigCWKeyOpenRequest(newRigProfile.assignedCWKey);
+            qCDebug(runtime) << "Rig profile" << newRigProfile.profileName
+                             << "requests CW keyer profile" << newRigProfile.assignedCWKey
+                             << "output"
+                             << CWKey::outputName(CWKey::intToOutputID(newRigProfile.cwKeyOutput));
+            emit rigCWKeyOpenRequest(newRigProfile.assignedCWKey,
+                                     newRigProfile.cwKeyOutput);
         }
 
         rigStatus.profile = newRigProfile.profileName;
@@ -417,9 +437,10 @@ void Rig::shutdownImpl()
     stopTimerImplt();
 }
 
-void Rig::__closeRig()
+void Rig::__closeRig(const QString &preservedCWKeyProfile)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << preservedCWKeyProfile;
 
     if ( !rigDriver )
     {
@@ -431,9 +452,23 @@ void Rig::__closeRig()
 
     // Change Assigned CW Key
     if ( !connectedRigProfile.assignedCWKey.isEmpty()
-         || connectedRigProfile.assignedCWKey != " ")
+         && connectedRigProfile.assignedCWKey != " ")
     {
-        emit rigCWKeyCloseRequest(connectedRigProfile.assignedCWKey);
+        if ( connectedRigProfile.assignedCWKey == preservedCWKeyProfile )
+        {
+            qCDebug(runtime) << "Keeping CW keyer profile"
+                             << connectedRigProfile.assignedCWKey
+                             << "connected while switching rig profile from"
+                             << connectedRigProfile.profileName << "to"
+                             << RigProfilesManager::instance()->getCurProfile1().profileName;
+        }
+        else
+        {
+            qCDebug(runtime) << "Rig profile" << connectedRigProfile.profileName
+                             << "requests closing CW keyer profile"
+                             << connectedRigProfile.assignedCWKey;
+            emit rigCWKeyCloseRequest(connectedRigProfile.assignedCWKey);
+        }
     }
 
     rigStatus.isConnected = false;

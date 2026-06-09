@@ -10,6 +10,7 @@
 #include <QInputDialog>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QSignalBlocker>
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -233,6 +234,8 @@ MainWindow::MainWindow(QWidget* parent) :
             ui->newContactWidget, &NewContactWidget::refreshRigProfileCombo);
     connect(RigProfilesManager::instance(), &RigProfilesManager::profileChanged,
             ui->rigWidget, &RigWidget::refreshRigProfileCombo);
+    connect(RigProfilesManager::instance(), &RigProfilesManager::profileChanged,
+            this, &MainWindow::updateCWKeyOutputForRigProfile);
 
     ui->newContactWidget->reportTXBand();
     ui->newContactWidget->reportRXBand();
@@ -736,6 +739,25 @@ void MainWindow::rigConnect()
             ui->newContactWidget->reportTXBand();
         Rig::instance()->close();
     }
+}
+
+void MainWindow::updateCWKeyOutputForRigProfile()
+{
+    FCT_IDENTIFICATION;
+
+    if ( ui->actionConnectRig->isChecked()
+         || !ui->actionConnectCWKeyer->isChecked() )
+    {
+        qCDebug(runtime) << "Skipping CW key output update; rig connected"
+                         << ui->actionConnectRig->isChecked()
+                         << "keyer connected" << ui->actionConnectCWKeyer->isChecked();
+        return;
+    }
+
+    const qint32 output = currentRigCWKeyOutput();
+    qCDebug(runtime) << "Updating connected CW keyer output after rig profile change to"
+                     << CWKey::outputName(CWKey::intToOutputID(output));
+    CWKeyer::instance()->open(output);
 }
 
 void MainWindow::rigErrorHandler(const QString &error, const QString &errorDetail)
@@ -2205,17 +2227,25 @@ void MainWindow::cwKeyerConnect()
 
     if ( ui->actionConnectCWKeyer->isChecked() )
     {
-        CWKeyer::instance()->open();
+        const qint32 output = currentRigCWKeyOutput();
+        qCDebug(runtime) << "Manually opening CW keyer profile"
+                         << CWKeyProfilesManager::instance()->getCurProfile1().profileName
+                         << "with output" << CWKey::outputName(CWKey::intToOutputID(output));
+        CWKeyer::instance()->open(output);
     }
     else
     {
+        qCDebug(runtime) << "Manually closing CW keyer profile"
+                         << CWKeyProfilesManager::instance()->getCurProfile1().profileName;
         CWKeyer::instance()->close();
     }
 }
 
-void MainWindow::cwKeyerConnectProfile(QString requestedProfile)
+void MainWindow::cwKeyerConnectProfile(QString requestedProfile,
+                                       qint32 cwKeyOutput)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << requestedProfile << cwKeyOutput;
 
     // it is a hack, maybe it will be improved in the future
     if ( requestedProfile == EMPTY_PROFILE_NAME || requestedProfile.isEmpty() )
@@ -2230,15 +2260,21 @@ void MainWindow::cwKeyerConnectProfile(QString requestedProfile)
         qWarning() << "Rig request unknown CW Key Profile";
         return;
     }
-    ui->actionConnectCWKeyer->setChecked(true);
     CWKeyProfilesManager::instance()->setCurProfile1(requestedProfile);
 
-    cwKeyerConnect();
+    const QSignalBlocker blocker(ui->actionConnectCWKeyer);
+    ui->actionConnectCWKeyer->setChecked(true);
+
+    qCDebug(runtime) << "Rig requests opening CW keyer profile" << requestedProfile
+                     << "with output"
+                     << CWKey::outputName(CWKey::intToOutputID(cwKeyOutput));
+    CWKeyer::instance()->open(cwKeyOutput);
 }
 
 void MainWindow::cwKeyerDisconnectProfile(QString requestedProfile)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << requestedProfile;
 
     // it is a hack, maybe it will be improved in the future
     if ( requestedProfile == EMPTY_PROFILE_NAME || requestedProfile.isEmpty() )
@@ -2259,9 +2295,29 @@ void MainWindow::cwKeyerDisconnectProfile(QString requestedProfile)
     {
         return;
     }
+    const QSignalBlocker blocker(ui->actionConnectCWKeyer);
     ui->actionConnectCWKeyer->setChecked(false);
 
-    cwKeyerConnect();
+    qCDebug(runtime) << "Rig requests closing CW keyer profile" << requestedProfile;
+    CWKeyer::instance()->close();
+}
+
+qint32 MainWindow::currentRigCWKeyOutput() const
+{
+    FCT_IDENTIFICATION;
+
+    const RigProfile &rigProfile = RigProfilesManager::instance()->getCurProfile1();
+
+    if ( !rigProfile.profileName.isEmpty() )
+    {
+        qCDebug(runtime) << "Resolved CW key output from selected rig profile"
+                         << rigProfile.profileName << "as"
+                         << CWKey::outputName(CWKey::intToOutputID(rigProfile.cwKeyOutput));
+        return rigProfile.cwKeyOutput;
+    }
+
+    qCDebug(runtime) << "Using default CW key output because no rig profile is selected";
+    return CWKey::CWKEY_OUTPUT_DEFAULT;
 }
 
 void MainWindow::showSettings()

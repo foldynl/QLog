@@ -95,8 +95,25 @@ void CWKeyer::update()
         /* CW Key Profile Changed
          * Need to reconnect CW Key
          */
-        qCDebug(runtime) << "Reconnecting to a new CW Key - " << currCWProfile.profileName << "; Old - " << connectedCWKeyProfile.profileName;
-        __openCWKey();
+        const bool sameProfileName = currCWProfile.profileName == connectedCWKeyProfile.profileName;
+        const CWKey::CWKeyOutputID reconnectCWKeyOutput = sameProfileName ? connectedCWKeyOutput
+                                                                          : CWKey::CWKEY_OUTPUT_DEFAULT;
+        if ( sameProfileName )
+        {
+            qCDebug(runtime) << "CW keyer profile settings changed; reconnecting instance"
+                             << cwKey << "of profile" << currCWProfile.profileName
+                             << "while preserving output"
+                             << CWKey::outputName(reconnectCWKeyOutput);
+        }
+        else
+        {
+            qCDebug(runtime) << "CW keyer profile changed; reconnecting instance"
+                             << cwKey << "from profile"
+                             << connectedCWKeyProfile.profileName << "to"
+                             << currCWProfile.profileName << "with output"
+                             << CWKey::outputName(reconnectCWKeyOutput);
+        }
+        __openCWKey(reconnectCWKeyOutput);
     }
     timer->start(TIME_PERIOD);
     cwKeyLock.unlock();
@@ -106,26 +123,91 @@ void CWKeyer::open()
 {
     FCT_IDENTIFICATION;
 
-    QMetaObject::invokeMethod(this, &CWKeyer::openImpl, Qt::QueuedConnection);
+    open(CWKey::CWKEY_OUTPUT_DEFAULT);
 }
 
-void CWKeyer::openImpl()
+void CWKeyer::open(qint32 cwKeyOutput)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << cwKeyOutput;
+
+    qCDebug(runtime) << "Queueing CW keyer open with output"
+                     << CWKey::outputName(CWKey::intToOutputID(cwKeyOutput));
+    QMetaObject::invokeMethod(this,
+                              [this, cwKeyOutput]() { openImpl(cwKeyOutput); },
+                              Qt::QueuedConnection);
+}
+
+void CWKeyer::openImpl(qint32 cwKeyOutput)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << cwKeyOutput;
 
     QMutexLocker locker(&cwKeyLock);
-    __openCWKey();
+
+    CWKeyProfile newProfile = CWKeyProfilesManager::instance()->getCurProfile1();
+    const CWKey::CWKeyOutputID output = CWKey::intToOutputID(cwKeyOutput);
+    qCDebug(runtime) << "Processing CW keyer open for profile"
+                     << newProfile.profileName << "model" << newProfile.model
+                     << "output" << CWKey::outputName(output)
+                     << "connected instance" << cwKey;
+
+    if ( cwKey && newProfile == connectedCWKeyProfile )
+    {
+        qCDebug(runtime) << "Reusing CW keyer instance" << cwKey
+                         << "because profile" << newProfile.profileName
+                         << "is already open; applying output without disconnect";
+        if ( !setCWKeyOutput(output) )
+            __closeCWKey();
+        return;
+    }
+
+    __openCWKey(output);
 }
 
-void CWKeyer::__openCWKey()
+bool CWKeyer::setCWKeyOutput(CWKey::CWKeyOutputID cwKeyOutput)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << cwKeyOutput;
+
+    if ( cwKeyOutput == connectedCWKeyOutput )
+    {
+        qCDebug(runtime) << "CW keyer output already set to"
+                         << CWKey::outputName(connectedCWKeyOutput)
+                         << "on instance" << cwKey << "; no driver command needed";
+        return true;
+    }
+
+    qCDebug(runtime) << "Switching CW keyer output from"
+                     << CWKey::outputName(connectedCWKeyOutput) << "to"
+                     << CWKey::outputName(cwKeyOutput)
+                     << "on instance" << cwKey;
+    if ( !cwKey->setOutput(cwKeyOutput) )
+    {
+        const QString keyError = cwKey->lastError();
+        emit cwKeyerError(tr("CW Keyer Output Error"),
+                          keyError.isEmpty() ? tr("Cannot switch CW keyer output")
+                                             : keyError);
+        qWarning() << keyError;
+        return false;
+    }
+
+    connectedCWKeyOutput = cwKeyOutput;
+    qCDebug(runtime) << "CW keyer output switched to"
+                     << CWKey::outputName(connectedCWKeyOutput)
+                     << "on instance" << cwKey;
+    return true;
+}
+
+void CWKeyer::__openCWKey(CWKey::CWKeyOutputID cwKeyOutput)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << cwKeyOutput;
 
     // if cw keys is active then close it
     __closeCWKey();
 
     CWKeyProfile newProfile = CWKeyProfilesManager::instance()->getCurProfile1();
-
     if ( newProfile == CWKeyProfile() )
     {
         emit cwKeyerError(tr("No CW Keyer Profile selected"),
@@ -134,7 +216,12 @@ void CWKeyer::__openCWKey()
         return;
     }
 
-    qCDebug(runtime) << "Opening profile name: " << newProfile.profileName;
+    qCDebug(runtime) << "Opening CW keyer profile" << newProfile.profileName
+                     << "model" << newProfile.model
+                     << "serial port" << newProfile.portPath
+                     << "host" << newProfile.hostname
+                     << "network port" << newProfile.netport
+                     << "output" << CWKey::outputName(cwKeyOutput);
 
     switch ( newProfile.model )
     {
@@ -184,11 +271,27 @@ void CWKeyer::__openCWKey()
         return;
     }
 
+    qCDebug(runtime) << "Created CW keyer instance" << cwKey
+                     << "for profile" << newProfile.profileName;
+
+    if ( !cwKey->setOutput(cwKeyOutput) )
+    {
+        const QString keyError = cwKey->lastError();
+        emit cwKeyerError(tr("CW Keyer Output Error"),
+                          keyError.isEmpty() ? tr("Cannot set CW keyer output")
+                                             : keyError);
+        qWarning() << keyError;
+        __closeCWKey();
+        return;
+    }
+
     if ( !cwKey->open() )
     {
+        const QString keyError = cwKey->lastError();
         emit cwKeyerError(tr("Connection Error"),
-                          tr("Cannot open the Keyer connection"));
-        qWarning() << cwKey->lastError();
+                          keyError.isEmpty() ? tr("Cannot open the Keyer connection")
+                                             : keyError);
+        qWarning() << keyError;
         __closeCWKey();
         return;
     }
@@ -202,6 +305,15 @@ void CWKeyer::__openCWKey()
     connect(cwKey, &CWKey::keyHWButton4Pressed, this, &CWKeyer::cwKeyHWButton4PressedHandler);
 
     connectedCWKeyProfile = newProfile;
+    connectedCWKeyOutput = cwKeyOutput;
+
+    qCDebug(runtime) << "CW keyer profile opened" << connectedCWKeyProfile.profileName
+                     << "instance" << cwKey
+                     << "model" << connectedCWKeyProfile.model
+                     << "serial port" << connectedCWKeyProfile.portPath
+                     << "host" << connectedCWKeyProfile.hostname
+                     << "network port" << connectedCWKeyProfile.netport
+                     << "output" << CWKey::outputName(connectedCWKeyOutput);
 
     emit cwKeyConnected(connectedCWKeyProfile.profileName);
 }
@@ -319,7 +431,19 @@ void CWKeyer::__closeCWKey()
 {
     FCT_IDENTIFICATION;
 
+    if ( cwKey )
+    {
+        qCDebug(runtime) << "Closing CW keyer profile" << connectedCWKeyProfile.profileName
+                         << "instance" << cwKey
+                         << "model" << connectedCWKeyProfile.model
+                         << "serial port" << connectedCWKeyProfile.portPath
+                         << "host" << connectedCWKeyProfile.hostname
+                         << "network port" << connectedCWKeyProfile.netport
+                         << "output" << CWKey::outputName(connectedCWKeyOutput);
+    }
+
     connectedCWKeyProfile = CWKeyProfile();
+    connectedCWKeyOutput = CWKey::CWKEY_OUTPUT_DEFAULT;
 
     if ( cwKey )
     {
@@ -418,7 +542,7 @@ void CWKeyer::keyErrorHandler(const QString &main, const QString &detail)
 {
     FCT_IDENTIFICATION;
     emit cwKeyerError(main, detail);
-    closeImpl();
+    close();
 }
 
 void CWKeyer::cwKeyWPMChangedHandler(qint32 wpm)
@@ -458,6 +582,7 @@ void CWKeyer::cwKeyHWButton4PressedHandler()
 CWKeyer::CWKeyer(QObject *parent ) :
     QObject(parent),
     cwKey(nullptr),
+    connectedCWKeyOutput(CWKey::CWKEY_OUTPUT_DEFAULT),
     timer(nullptr)
 {
     FCT_IDENTIFICATION;

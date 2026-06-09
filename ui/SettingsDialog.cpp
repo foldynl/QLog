@@ -137,6 +137,26 @@ void SettingsDialog::setComboByData(QComboBox *combo, const QVariant &data, int 
     combo->setCurrentIndex((idx < 0) ? fallback : idx);
 }
 
+void SettingsDialog::updateRigCWKeyOutputEnabled()
+{
+    bool supportsOutput = false;
+    const QString cwKeyName = ui->rigAssignedCWKeyCombo->currentText();
+
+    if ( cwKeyName != EMPTY_CWKEY_PROFILE && !cwKeyName.isEmpty() )
+    {
+        const CWKeyProfile selectedKeyProfile = cwKeyProfManager->getProfile(cwKeyName);
+        supportsOutput = !selectedKeyProfile.profileName.isEmpty() && CWKey::supportsOutputSelection(selectedKeyProfile.model);
+        qCDebug(runtime) << "CW key output selection for profile" << cwKeyName
+                         << "model" << selectedKeyProfile.model
+                         << "enabled" << supportsOutput;
+    }
+
+    ui->rigCWKeyOutputCombo->setEnabled(supportsOutput);
+    ui->rigCWKeyOutputLabel->setEnabled(supportsOutput);
+    if ( !supportsOutput )
+        setComboByData(ui->rigCWKeyOutputCombo, CWKey::CWKEY_OUTPUT_DEFAULT);
+}
+
 void SettingsDialog::updateOffsetSpinBox(QCheckBox *checkbox, QDoubleSpinBox *spinBox)
 {
     if ( checkbox->isChecked() )
@@ -463,6 +483,15 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     populateParityCombo(ui->rigParitySelect);
     populateSignalCombo(ui->rigDTRCombo);
     populateSignalCombo(ui->rigRTSCombo);
+
+    ui->rigCWKeyOutputCombo->addItem(tr("Unchanged"), CWKey::CWKEY_OUTPUT_DEFAULT);
+    ui->rigCWKeyOutputCombo->addItem(tr("A"), CWKey::CWKEY_OUTPUT_A);
+    ui->rigCWKeyOutputCombo->addItem(tr("B"), CWKey::CWKEY_OUTPUT_B);
+    ui->rigCWKeyOutputCombo->setToolTip( tr("Unchanged does not send an output-selection command. "
+                                            "Select A or B in every rig profile that shares the WinKeyer."));
+    setComboByData(ui->rigCWKeyOutputCombo, CWKey::CWKEY_OUTPUT_DEFAULT);
+    ui->rigCWKeyOutputCombo->setEnabled(false);
+    ui->rigCWKeyOutputLabel->setEnabled(false);
 
     /* Rig Models must be initialized after rigAssignedCWKeyCombo model !!!! */
     /* becase rigChanged is called and it constain uninitialized
@@ -986,6 +1015,8 @@ void SettingsDialog::addRigProfile()
     profile.xitOffset = ui->rigTXOffsetSpinBox->value();
     profile.defaultPWR = ui->rigPWRDefaultSpinBox->value();
     profile.assignedCWKey = ui->rigAssignedCWKeyCombo->currentText();
+    profile.cwKeyOutput = ui->rigCWKeyOutputCombo->isEnabled() ? ui->rigCWKeyOutputCombo->currentData().toInt()
+                                                               : CWKey::CWKEY_OUTPUT_DEFAULT;
 
     profile.getFreqInfo = ui->rigGetFreqCheckBox->isChecked();
     profile.getModeInfo = ui->rigGetModeCheckBox->isChecked();
@@ -1063,6 +1094,7 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     ui->rigTXFreqMaxSpinBox->setValue(profile.txFreqEnd);
     ui->rigPWRDefaultSpinBox->setValue(profile.defaultPWR);
     ui->rigAssignedCWKeyCombo->setCurrentText(profile.assignedCWKey);
+    setComboByData(ui->rigCWKeyOutputCombo, profile.cwKeyOutput, CWKey::CWKEY_OUTPUT_DEFAULT);
     ui->rigGetFreqCheckBox->setChecked(profile.getFreqInfo);
     ui->rigGetModeCheckBox->setChecked(profile.getModeInfo);
     ui->rigGetVFOCheckBox->setChecked(profile.getVFOInfo);
@@ -1098,6 +1130,7 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     rigctldArgs = profile.rigctldArgs;
 
     setUIBasedOnRigCaps(caps);
+    updateRigCWKeyOutputEnabled();
     updateRigShareEnabled();
 
     ui->rigAddProfileButton->setText(tr("Modify"));
@@ -1117,6 +1150,7 @@ void SettingsDialog::clearRigProfileForm()
     ui->rigTXFreqMaxSpinBox->setValue(0.0);
     ui->rigPWRDefaultSpinBox->setValue(100.0);
     ui->rigAssignedCWKeyCombo->setCurrentIndex(0);
+    setComboByData(ui->rigCWKeyOutputCombo, CWKey::CWKEY_OUTPUT_DEFAULT);
     ui->rigPollIntervalSpinBox->setValue(500.0);
     ui->rigPortEdit->clear();
     ui->rigHostNameEdit->clear();
@@ -2188,6 +2222,7 @@ void SettingsDialog::rigChanged(int index)
     ui->rigGetSplitCheckBox->setChecked(true);
 
     setUIBasedOnRigCaps(caps);
+    updateRigCWKeyOutputEnabled();
 }
 
 void SettingsDialog::rotChanged(int index)
@@ -2637,6 +2672,7 @@ void SettingsDialog::assignedKeyChanged(int index)
                                                       ui->rigModelSelect->currentData().toInt());
 
     setUIBasedOnRigCaps(caps);
+    updateRigCWKeyOutputEnabled();
 }
 
 void SettingsDialog::testWebLookupURL()
@@ -3655,6 +3691,7 @@ void SettingsDialog::refreshRigAssignedCWKeyCombo()
     if ( model ) model->setStringList(approvedCWProfiles);
 
     ui->rigAssignedCWKeyCombo->setCurrentText(cwKeyName);
+    updateRigCWKeyOutputEnabled();
 }
 
 void SettingsDialog::setValidationResultColor(QLineEdit *editBox)

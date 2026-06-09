@@ -7,6 +7,7 @@
 #include <QDataStream>
 #include <QVariant>
 
+#include "cwkey/drivers/CWKey.h"
 #include "data/ProfileManager.h"
 
 class RigProfile
@@ -29,6 +30,7 @@ public:
                    QSYWiping = false, getKeySpeed = false, keySpeedSync = false;
                    driver = 0, dxSpot2Rig = false, civAddr = -1;
                    shareRigctld = false; rigctldPort = 4532; getSplitInfo = false;
+                   cwKeyOutput = CWKey::CWKEY_OUTPUT_DEFAULT;
                  };
 
     RigProfile(qint32 model,
@@ -77,6 +79,7 @@ public:
     QString rigctldArgs;  // additional arguments
 
     qint32 model;
+    qint32 cwKeyOutput;
     quint32 baudrate;
     float stopbits;
     quint32 pollInterval;
