@@ -1290,7 +1290,7 @@
               <enum>Qt::ClickFocus</enum>
              </property>
              <property name="maxLength">
-              <number>25</number>
+              <number>50</number>
              </property>
             </widget>
            </item>
