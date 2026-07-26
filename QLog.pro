@@ -163,6 +163,7 @@ SOURCES += \
         service/GenericCallbook.cpp \
         service/GenericQSLDownloader.cpp \
         service/GenericQSOUploader.cpp \
+        service/emailqsl/EmailQSLService.cpp \
         service/cloudlog/Cloudlog.cpp \
         service/clublog/ClubLog.cpp \
         service/eqsl/Eqsl.cpp \
@@ -212,6 +213,8 @@ SOURCES += \
         ui/ModeSelectionController.cpp \
         ui/NewContactWidget.cpp \
         ui/OnlineMapWidget.cpp \
+        ui/EmailQSLDialog.cpp \
+        ui/EmailQSLSettingsWidget.cpp \
         ui/PaperQSLDialog.cpp \
         ui/ProfileImageWidget.cpp \
         ui/QSLImportStatDialog.cpp \
@@ -229,6 +232,7 @@ SOURCES += \
         ui/WsjtxFilterDialog.cpp \
         ui/WsjtxWidget.cpp \
         ui/component/BaseDoubleSpinBox.cpp \
+        ui/component/CardEditorWidget.cpp \
         ui/component/EditLine.cpp \
         ui/component/FreqQSpinBox.cpp \
         ui/component/ModeSubmodeDelegate.cpp \
@@ -366,6 +370,7 @@ HEADERS += \
         service/GenericCallbook.h \
         service/GenericQSLDownloader.h \
         service/GenericQSOUploader.h \
+        service/emailqsl/EmailQSLService.h \
         service/cloudlog/Cloudlog.h \
         service/clublog/ClubLog.h \
         service/eqsl/Eqsl.h \
@@ -391,6 +396,8 @@ HEADERS += \
         ui/DevToolsDialog.h \
         ui/DownloadQSLDialog.h \
         ui/DxFilterDialog.h \
+        ui/EmailQSLDialog.h \
+        ui/EmailQSLSettingsWidget.h \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
         ui/EditActivitiesDialog.h \
@@ -437,6 +444,7 @@ HEADERS += \
         i18n/datastrings.tri \
         ui/component/BaseDoubleSpinBox.h \
         ui/component/ButtonStyle.h \
+        ui/component/CardEditorWidget.h \
         ui/component/EditLine.h \
         ui/component/FreqQSpinBox.h \
         ui/component/ModeSubmodeDelegate.h \
@@ -466,6 +474,8 @@ FORMS += \
         ui/DevToolsDialog.ui \
         ui/DownloadQSLDialog.ui \
         ui/DxFilterDialog.ui \
+        ui/EmailQSLDialog.ui \
+        ui/EmailQSLSettingsWidget.ui \
         ui/DxWidget.ui \
         ui/EditActivitiesDialog.ui \
         ui/CabrilloExportDialog.ui \
@@ -640,7 +650,17 @@ macx: {
    LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
-   DISTFILES +=
+
+   # Custom Info.plist — sets a real bundle identifier
+   # (io.github.foldynl.qlog) and declares NSLocalNetworkUsageDescription
+   # so macOS 14+ will actually prompt for / grant LAN access (needed
+   # for WSJT-X UDP, network rigs, rotators, etc.). Without this, qmake
+   # generates a default Info.plist with CFBundleIdentifier =
+   # com.yourcompany.qlog and no local-network key.
+   QMAKE_INFO_PLIST = $$PWD/res/macos/Info.plist
+   QMAKE_TARGET_BUNDLE_PREFIX = io.github.foldynl
+
+   DISTFILES += res/macos/Info.plist
 }
 
 win32: {

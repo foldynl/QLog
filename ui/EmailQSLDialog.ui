@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EmailQSLDialog</class>
+ <widget class="QDialog" name="EmailQSLDialog">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>520</width><height>500</height></rect>
+  </property>
+  <property name="windowTitle">
+   <string>Send Email QSL Card</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+
+   <!-- Card preview thumbnail -->
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="cardPreviewLabel">
+       <property name="minimumSize"><size><width>200</width><height>130</height></size></property>
+       <property name="maximumSize"><size><width>260</width><height>170</height></size></property>
+       <property name="frameShape"><enum>QFrame::Box</enum></property>
+       <property name="alignment"><set>Qt::AlignCenter</set></property>
+       <property name="text"><string>No card image</string></property>
+       <property name="scaledContents"><bool>true</bool></property>
+      </widget>
+     </item>
+     <item>
+      <!-- Contact details -->
+      <widget class="QGroupBox" name="detailsGroup">
+       <property name="title"><string>QSO Details</string></property>
+       <layout class="QFormLayout" name="detailsForm">
+        <item row="0" column="0">
+         <widget class="QLabel" name="callLabel"><property name="text"><string>Callsign:</string></property></widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="callValueLabel"><property name="text"><string/></property></widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="emailAddrLabel"><property name="text"><string>To address:</string></property></widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="emailValueLabel">
+          <property name="text"><string/></property>
+          <property name="wordWrap"><bool>true</bool></property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="dateLabel"><property name="text"><string>Date / Time:</string></property></widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="dateValueLabel"><property name="text"><string/></property></widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="bandModeLabel"><property name="text"><string>Band / Mode:</string></property></widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="bandModeValueLabel"><property name="text"><string/></property></widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+   <!-- Warnings -->
+   <item>
+    <widget class="QLabel" name="warningLabel">
+     <property name="text"><string/></property>
+     <property name="wordWrap"><bool>true</bool></property>
+     <property name="styleSheet">
+      <string>QLabel { color: #cc6600; font-weight: bold; }</string>
+     </property>
+    </widget>
+   </item>
+
+   <!-- Subject preview -->
+   <item>
+    <widget class="QGroupBox" name="subjectGroup">
+     <property name="title"><string>Subject</string></property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QLabel" name="subjectPreviewLabel">
+        <property name="text"><string/></property>
+        <property name="wordWrap"><bool>true</bool></property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
+   <!-- Body preview (scrollable) -->
+   <item>
+    <widget class="QGroupBox" name="bodyGroup">
+     <property name="title"><string>Email Body (preview)</string></property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QPlainTextEdit" name="bodyPreviewEdit">
+        <property name="readOnly"><bool>true</bool></property>
+        <property name="minimumSize"><size><width>0</width><height>100</height></size></property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
+   <!-- Status label shown while sending -->
+   <item>
+    <widget class="QLabel" name="statusLabel">
+     <property name="text"><string/></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+    </widget>
+   </item>
+
+   <!-- Buttons -->
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel</set>
+     </property>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender><signal>rejected()</signal>
+   <receiver>EmailQSLDialog</receiver><slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel"><x>260</x><y>480</y></hint>
+    <hint type="destinationlabel"><x>260</x><y>240</y></hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleAllowMixedLocalizations</key>
+    <true/>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleExecutable</key>
+    <string>@EXECUTABLE@</string>
+    <key>CFBundleIconFile</key>
+    <string>@ICON@</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.github.foldynl.qlog</string>
+    <key>CFBundleName</key>
+    <string>QLog</string>
+    <key>CFBundleDisplayName</key>
+    <string>QLog</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@SHORT_VERSION@</string>
+    <key>CFBundleVersion</key>
+    <string>@FULL_VERSION@</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © OK1MLG. Licensed under the GNU GPL v3.</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+
+    <!--
+        Required on macOS 14+ for QLog to talk to local-network devices
+        (WSJT-X UDP, network rigs, FlexRadio, hamlib rigctld over the LAN,
+        notification listeners, etc.). Without this key, sockets bound to
+        LAN addresses fail silently and the user never sees a permission
+        prompt.
+    -->
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>QLog needs local network access to communicate with WSJT-X, network-attached rigs, rotators, and other amateur-radio software running on devices on your network.</string>
+</dict>
+</plist>

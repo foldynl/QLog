@@ -333,6 +333,14 @@
     <string>Logbook - Send DX Spot</string>
    </property>
   </action>
+  <action name="actionSendEmailQSL">
+   <property name="text">
+    <string>Send Email QSL Card</string>
+   </property>
+   <property name="toolTip">
+    <string>Send an Email QSL card to this contact</string>
+   </property>
+  </action>
   <action name="actionSearchCallsign">
    <property name="checkable">
     <bool>true</bool>
@@ -568,6 +576,16 @@
    </hints>
   </connection>
   <connection>
+   <sender>actionSendEmailQSL</sender>
+   <signal>triggered()</signal>
+   <receiver>LogbookWidget</receiver>
+   <slot>sendEmailQSL()</slot>
+   <hints>
+    <hint type="sourcelabel"><x>-1</x><y>-1</y></hint>
+    <hint type="destinationlabel"><x>404</x><y>168</y></hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>actionSendDXCSpot</sender>
    <signal>triggered()</signal>
    <receiver>LogbookWidget</receiver>
@@ -715,6 +733,7 @@
   <slot>exportContact()</slot>
   <slot>clubFilterChanged()</slot>
   <slot>sendDXCSpot()</slot>
+  <slot>sendEmailQSL()</slot>
   <slot>setCallsignSearch()</slot>
   <slot>setGridsquareSearch()</slot>
   <slot>setPotaSearch()</slot>

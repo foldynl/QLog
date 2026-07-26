@@ -54,6 +54,7 @@
 #include "ui/BandmapWidget.h"
 #include "ui/RigctldAdvancedDialog.h"
 #include "cwkey/drivers/CWWinKey.h"
+#include "ui/EmailQSLSettingsWidget.h"
 
 MODULE_IDENTIFICATION("qlog.ui.settingsdialog");
 
@@ -2779,6 +2780,11 @@ void SettingsDialog::readSettings()
     ui->unitFormatImperialRadioButton->setChecked(!unitFormatMetric);
     loadQsoStatusColors();
 
+    /***************/
+    /* Email QSL   */
+    /***************/
+    ui->emailQSLSettingsWidget->readSettings();
+
     /******************/
     /* END OF Reading */
     /******************/
@@ -2912,6 +2918,11 @@ void SettingsDialog::writeSettings()
     locale.setSettingUseMetric(ui->unitFormatMetricRadioButton->isChecked());
     saveQsoStatusColors();
     Data::reloadQsoStatusColors();
+
+    /***************/
+    /* Email QSL   */
+    /***************/
+    ui->emailQSLSettingsWidget->writeSettings();
 }
 
 void SettingsDialog::setupAdifRecoveryTab()
