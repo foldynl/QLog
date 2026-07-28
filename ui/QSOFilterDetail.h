@@ -48,8 +48,9 @@ private:
     bool isEqslAgTypeField(int index);
     QComboBox* createComboBox(const QMap<QString, QString>&, const QString&,
                               const int identifier, const QSizePolicy&);
-    QDateEdit* createDateEdit(const QString&, const int, const QSizePolicy&);
-    QDateTimeEdit* createDateTimeEdit(const QString&, const int, const QSizePolicy&);
+    QWidget* createDateEdit(const QString&, const int, const QSizePolicy&);
+    QWidget* createDateTimeEdit(const QString&, const int, const QSizePolicy&);
+    QComboBox* createDatePresetCombo(const QString&, const int);
     QLineEdit* createLineEdit(const QString&, const int, const QSizePolicy&);
 
     LogLocale locale;

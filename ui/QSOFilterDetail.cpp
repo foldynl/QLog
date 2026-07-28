@@ -114,7 +114,7 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
 
     // connect field combo and stacked widged to switch correct Edit Widget
     connect(fieldNameCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, [this, stacked, value, fieldNameCombo](int)
+            this, [this, stacked, fieldNameCombo](int)
     {
         /* Index is mapped the same way as LogbookModel columns
            Therefore, we can use Column aliases here
@@ -382,13 +382,42 @@ QComboBox* QSOFilterDetail::createComboBox(const QMap<QString, QString> &mapping
     return combo;
 }
 
-QDateEdit *QSOFilterDetail::createDateEdit(const QString &value, const int identified,
-                                           const QSizePolicy &sizepolicy)
+QComboBox *QSOFilterDetail::createDatePresetCombo(const QString &value, const int identifier)
+{
+    QComboBox *presetCombo = new QComboBox();
+    presetCombo->setObjectName(QString::fromUtf8("valueDatePresetCombo%1").arg(identifier));
+    presetCombo->setProperty("datePresetCombo", true);
+    presetCombo->setToolTip(tr("Relative date ranges are evaluated in UTC when the filter is used"));
+    presetCombo->addItem(tr("Custom date/time"), QString());
+    presetCombo->addItem(tr("Today"), QStringLiteral("@date-range:today"));
+    presetCombo->addItem(tr("Yesterday"), QStringLiteral("@date-range:yesterday"));
+    presetCombo->addItem(tr("Week to date"), QStringLiteral("@date-range:week-to-date"));
+    presetCombo->addItem(tr("Month to date"), QStringLiteral("@date-range:month-to-date"));
+    presetCombo->addItem(tr("Last 7 days"), QStringLiteral("@date-range:last-7-days"));
+    presetCombo->addItem(tr("Last 30 days"), QStringLiteral("@date-range:last-30-days"));
+    presetCombo->addItem(tr("This year"), QStringLiteral("@date-range:this-year"));
+
+    const int presetIndex = presetCombo->findData(value);
+    if ( presetIndex >= 0 )
+        presetCombo->setCurrentIndex(presetIndex);
+
+    return presetCombo;
+}
+
+QWidget *QSOFilterDetail::createDateEdit(const QString &value, const int identified,
+                                         const QSizePolicy &sizepolicy)
 {
     FCT_IDENTIFICATION;
 
+    QWidget *container = new QWidget();
+    container->setObjectName(QString::fromUtf8("dateValueContainer%1").arg(identified));
+    container->setSizePolicy(sizepolicy);
+    QHBoxLayout *layout = new QHBoxLayout(container);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(4);
 
-    QDateEdit* valueDate = new QDateEdit();
+    QComboBox *presetCombo = createDatePresetCombo(value, identified);
+    QDateEdit* valueDate = new QDateEdit(container);
     valueDate->setObjectName(QString::fromUtf8("valueDateEdit%1").arg(identified));
     valueDate->setFocusPolicy(Qt::ClickFocus);
     valueDate->setCalendarPopup(true);
@@ -399,17 +428,37 @@ QDateEdit *QSOFilterDetail::createDateEdit(const QString &value, const int ident
 #endif
     valueDate->setDisplayFormat(locale.formatDateShortWithYYYY());
     valueDate->setSizePolicy(sizepolicy);
-    if ( !value.isEmpty() )
+    if ( !value.isEmpty() && !value.startsWith(QLatin1String("@date-range:")) )
         valueDate->setDate(QDate::fromString(value, "yyyy-MM-dd"));
-    return valueDate;
+    else
+        valueDate->setDate(QDateTime::currentDateTimeUtc().date());
+
+    valueDate->setVisible(presetCombo->currentData().toString().isEmpty());
+    connect(presetCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            valueDate, [presetCombo, valueDate](int)
+    {
+        valueDate->setVisible(presetCombo->currentData().toString().isEmpty());
+    });
+
+    layout->addWidget(presetCombo);
+    layout->addWidget(valueDate);
+    return container;
 }
 
-QDateTimeEdit *QSOFilterDetail::createDateTimeEdit(const QString &value, const int identified,
-                                                   const QSizePolicy &sizepolicy)
+QWidget *QSOFilterDetail::createDateTimeEdit(const QString &value, const int identified,
+                                             const QSizePolicy &sizepolicy)
 {
     FCT_IDENTIFICATION;
 
-    QDateTimeEdit* valueDateTime = new QDateTimeEdit();
+    QWidget *container = new QWidget();
+    container->setObjectName(QString::fromUtf8("dateTimeValueContainer%1").arg(identified));
+    container->setSizePolicy(sizepolicy);
+    QHBoxLayout *layout = new QHBoxLayout(container);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(4);
+
+    QComboBox *presetCombo = createDatePresetCombo(value, identified);
+    QDateTimeEdit* valueDateTime = new QDateTimeEdit(container);
     valueDateTime->setObjectName(QString::fromUtf8("valueDateTimeEdit%1").arg(identified));
     valueDateTime->setFocusPolicy(Qt::ClickFocus);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
@@ -420,7 +469,7 @@ QDateTimeEdit *QSOFilterDetail::createDateTimeEdit(const QString &value, const i
     valueDateTime->setDisplayFormat(locale.formatDateShortWithYYYY()
                                     + " " + locale.formatTimeLongWithoutTZ());
     valueDateTime->setSizePolicy(sizepolicy);
-    if ( !value.isEmpty() )
+    if ( !value.isEmpty() && !value.startsWith(QLatin1String("@date-range:")) )
     {
         QDateTime dtValue = QDateTime::fromString(value, "yyyy-MM-ddTHH:mm:ss");
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
@@ -430,7 +479,19 @@ QDateTimeEdit *QSOFilterDetail::createDateTimeEdit(const QString &value, const i
 #endif
         valueDateTime->setDateTime(dtValue);
     }
-    return valueDateTime;
+    else
+        valueDateTime->setDateTime(QDateTime::currentDateTimeUtc());
+
+    valueDateTime->setVisible(presetCombo->currentData().toString().isEmpty());
+    connect(presetCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            valueDateTime, [presetCombo, valueDateTime](int)
+    {
+        valueDateTime->setVisible(presetCombo->currentData().toString().isEmpty());
+    });
+
+    layout->addWidget(presetCombo);
+    layout->addWidget(valueDateTime);
+    return container;
 
 }
 
@@ -493,7 +554,26 @@ void QSOFilterDetail::save()
                 {
                     QString stacketEditObjName = stackedEdit->objectName();
 
-                    if ( stacketEditObjName.contains("valueLineEdit") )
+                    if ( stacketEditObjName.contains("dateValueContainer") )
+                    {
+                        QComboBox *presetCombo = stackedEdit->findChild<QComboBox *>();
+                        const QString preset = presetCombo->currentData().toString();
+                        if ( !preset.isEmpty() )
+                            rule.value = preset;
+                        else
+                            rule.value = stackedEdit->findChild<QDateEdit *>()->date().toString(Qt::ISODate);
+                    }
+                    else if ( stacketEditObjName.contains("dateTimeValueContainer") )
+                    {
+                        QComboBox *presetCombo = stackedEdit->findChild<QComboBox *>();
+                        const QString preset = presetCombo->currentData().toString();
+                        if ( !preset.isEmpty() )
+                            rule.value = preset;
+                        else
+                            rule.value = stackedEdit->findChild<QDateTimeEdit *>()->dateTime()
+                                    .toString("yyyy-MM-ddTHH:mm:ss");
+                    }
+                    else if ( stacketEditObjName.contains("valueLineEdit") )
                     {
                         QLineEdit* editLine = dynamic_cast<QLineEdit*>(stackedEdit);
                         rule.value = editLine->text();

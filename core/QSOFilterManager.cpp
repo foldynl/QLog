@@ -221,16 +221,47 @@ QString QSOFilterManager::getWhereClause(const QString &filterName, const QStrin
     QString finalColumnPfx = columnPrefix;
     finalColumnPfx += finalColumnPfx.isEmpty() ? "" : ".";
 
+    const QDate today = QDateTime::currentDateTimeUtc().date();
+    const QDate tomorrow = today.addDays(1);
+    const QDate weekStart = today.addDays(1 - today.dayOfWeek());
+    const QDate monthStart(today.year(), today.month(), 1);
+    const QDate yearStart(today.year(), 1, 1);
+
+    // Date preset tokens are stored with the rule so saved filters remain relative. Resolve them
+    // into half-open UTC date ranges here each time a filter is used.
+    const QString fieldExpression = "'" + finalColumnPfx + "' || c.name";
+    const QString dateRangeStartExpression =
+            "CASE r.value "
+            "WHEN '@date-range:today' THEN quote(:today) "
+            "WHEN '@date-range:yesterday' THEN quote(:yesterday) "
+            "WHEN '@date-range:week-to-date' THEN quote(:weekStart) "
+            "WHEN '@date-range:month-to-date' THEN quote(:monthStart) "
+            "WHEN '@date-range:last-7-days' THEN quote(:last7Days) "
+            "WHEN '@date-range:last-30-days' THEN quote(:last30Days) "
+            "WHEN '@date-range:this-year' THEN quote(:yearStart) "
+            "END";
+    const QString dateRangeEndExpression =
+            "CASE r.value "
+            "WHEN '@date-range:yesterday' THEN quote(:today) "
+            "WHEN '@date-range:this-year' THEN quote(:nextYear) "
+            "ELSE quote(:tomorrow) "
+            "END";
+
     if ( ! userFilterQuery.prepare(
                   QString(       "SELECT "
-                                 "'(' || GROUP_CONCAT( ' ' || '" + finalColumnPfx + "' || c.name || ' ' || CASE WHEN r.value IS NULL AND o.sql_operator IN ('=', 'like') THEN 'IS' "
+                                 "'(' || GROUP_CONCAT(CASE WHEN r.value LIKE '@date-range:%' THEN CASE "
+                                 "WHEN r.operator_id IN (1, 3) THEN ' (' || " + fieldExpression + " || ' < ' || " + dateRangeStartExpression + " || ' OR ' || " + fieldExpression + " || ' >= ' || " + dateRangeEndExpression + " || ') ' "
+                                 "WHEN r.operator_id = 4 THEN ' ' || " + fieldExpression + " || ' >= (' || " + dateRangeEndExpression + " || ') ' "
+                                 "WHEN r.operator_id = 5 THEN ' ' || " + fieldExpression + " || ' < (' || " + dateRangeStartExpression + " || ') ' "
+                                 "ELSE ' (' || " + fieldExpression + " || ' >= ' || " + dateRangeStartExpression + " || ' AND ' || " + fieldExpression + " || ' < ' || " + dateRangeEndExpression + " || ') ' END "
+                                 "ELSE ' ' || " + fieldExpression + " || ' ' || CASE WHEN r.value IS NULL AND o.sql_operator IN ('=', 'like') THEN 'IS' "
                                  "                                                  WHEN r.value IS NULL and r.operator_id NOT IN ('=', 'like') THEN 'IS NOT' "
                                  "                                                  WHEN o.sql_operator = ('starts with') THEN 'like' "
                                  "                                                  ELSE o.sql_operator END || "
                                  "' (' || quote(CASE o.sql_operator WHEN 'like' THEN '%' || r.value || '%' "
                                  "                                  WHEN 'not like' THEN '%' || r.value || '%' "
                                  "                                  WHEN 'starts with' THEN r.value || '%' "
-                                 "                                  ELSE r.value END)  || ') ', m.sql_operator) || ')' "
+                                 "                                  ELSE r.value END)  || ') ' END, m.sql_operator) || ')' "
                                  "FROM qso_filters f, qso_filter_rules r, "
                                  "qso_filter_operators o, qso_filter_matching_types m, "
                                  "PRAGMA_TABLE_INFO('contacts') c "
@@ -245,6 +276,15 @@ QString QSOFilterManager::getWhereClause(const QString &filterName, const QStrin
     }
 
     userFilterQuery.bindValue(":filterName", filterName);
+    userFilterQuery.bindValue(":today", today.toString(Qt::ISODate));
+    userFilterQuery.bindValue(":tomorrow", tomorrow.toString(Qt::ISODate));
+    userFilterQuery.bindValue(":yesterday", today.addDays(-1).toString(Qt::ISODate));
+    userFilterQuery.bindValue(":weekStart", weekStart.toString(Qt::ISODate));
+    userFilterQuery.bindValue(":monthStart", monthStart.toString(Qt::ISODate));
+    userFilterQuery.bindValue(":last7Days", today.addDays(-6).toString(Qt::ISODate));
+    userFilterQuery.bindValue(":last30Days", today.addDays(-29).toString(Qt::ISODate));
+    userFilterQuery.bindValue(":yearStart", yearStart.toString(Qt::ISODate));
+    userFilterQuery.bindValue(":nextYear", yearStart.addYears(1).toString(Qt::ISODate));
 
     qCDebug(runtime) << "User filter SQL: " << userFilterQuery.lastQuery();
 
@@ -256,7 +296,7 @@ QString QSOFilterManager::getWhereClause(const QString &filterName, const QStrin
     else
         qCDebug(runtime) << "User filter error - " << userFilterQuery.lastError().text();
 
-    // This filter, when used with fields that contain time, only works by luck.
+    // Manual conditions, when used with fields that contain time, only work by luck.
     // These fields are Timeon/Timeoff. They are stored by QSO Filter Dialog as values in the format
     // YYYY-MM-DDThh:mm:ss without a timezone. This is fine, since all times in QLog
     // are internally in UTC. The problem arises because this WHERE clause is later
@@ -264,6 +304,8 @@ QString QSOFilterManager::getWhereClause(const QString &filterName, const QStrin
     // but as strings — otherwise both sides would need to be proper datetime types.
     // Fortunately, both sides are strings in the same format, except that Timeon/Timeoff
     // includes a timezone at the end. Therefore, string comparison of the dates still works.
+    // Preset ranges intentionally use ISO dates without a time component; their half-open
+    // comparisons work for both date-only fields and ISO date-time fields.
     return ret;
 }
 
@@ -277,4 +319,3 @@ SqlListModel *QSOFilterManager::QSOFilterModel(const QString &firstValue, QObjec
                             firstValue,
                             parent);
 }
-
