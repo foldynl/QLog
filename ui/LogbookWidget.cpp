@@ -145,11 +145,13 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
     ui->contactTable->addAction(ui->actionDisplayedColumns);
     ui->contactTable->addAction(separator2);
     ui->contactTable->addAction(ui->actionQSLRcvd);
+    ui->contactTable->addAction(ui->actionQSLSent);
     ui->contactTable->addAction(ui->actionQSLRequested);
     ui->contactTable->addAction(separator3);
     ui->contactTable->addAction(ui->actionDeleteContact);
 
     connect(ui->actionQSLRcvd, &QAction::triggered, this, &LogbookWidget::markQslReceived);
+    connect(ui->actionQSLSent, &QAction::triggered, this, &LogbookWidget::markQslSent);
     connect(ui->actionQSLRequested, &QAction::triggered, this, &LogbookWidget::markQslRequested);
 
     ui->contactTable->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -1242,6 +1244,17 @@ void LogbookWidget::markQslReceived()
     {
         model->setData(model->index(row, LogbookModel::COLUMN_QSL_RCVD), "Y", Qt::EditRole);
         model->setData(model->index(row, LogbookModel::COLUMN_QSL_RCVD_DATE), QDate::currentDate(), Qt::EditRole);
+    });
+}
+
+void LogbookWidget::markQslSent()
+{
+    FCT_IDENTIFICATION;
+
+    updateSelectedRows([this](int row)
+    {
+        model->setData(model->index(row, LogbookModel::COLUMN_QSL_SENT), "Y", Qt::EditRole);
+        model->setData(model->index(row, LogbookModel::COLUMN_QSL_SENT_DATE), QDate::currentDate(), Qt::EditRole);
     });
 }
 

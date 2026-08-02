@@ -283,6 +283,11 @@
     <string>Mark QSL RCVD</string>
    </property>
   </action>
+  <action name="actionQSLSent">
+   <property name="text">
+    <string>Mark QSL Sent</string>
+   </property>
+  </action>
   <action name="actionQSLRequested">
    <property name="text">
     <string>Mark QSL Requested</string>

@@ -81,6 +81,7 @@ public slots:
     void saveTableHeaderState();
     void showTableHeaderContextMenu(const QPoint& point);
     void markQslReceived();
+    void markQslSent();
     void markQslRequested();
     void doubleClickColumn(QModelIndex);
     void handleBeforeUpdate(int, QSqlRecord&);
