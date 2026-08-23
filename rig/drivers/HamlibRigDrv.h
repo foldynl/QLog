@@ -7,6 +7,7 @@
 
 #include "GenericRigDrv.h"
 #include "rig/RigCaps.h"
+#include "rig/drivers/HamlibCompat.h"
 
 class HamlibRigDrv : public GenericRigDrv
 {
@@ -49,7 +50,7 @@ private:
 
 // https://github.com/Hamlib/Hamlib/issues/1647
 // use a newer HAMLIB API rig_list_foreach_model from 4.2
-#if ( HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 2  )
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,2,0)
     static int addRig (const rig_model_t rigModel, void *data);
 #else
     static int addRig(const rig_caps *caps, void* data);

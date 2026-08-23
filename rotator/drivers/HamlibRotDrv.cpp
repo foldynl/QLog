@@ -4,6 +4,7 @@
 #include "HamlibRotDrv.h"
 #include "core/debug.h"
 #include "data/SerialPort.h"
+#include "rig/drivers/HamlibCompat.h"
 
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Rot Drv mutex"; \
                         QMutexLocker locker(&drvLock); \
@@ -443,7 +444,7 @@ QString HamlibRotDrv::hamlibErrorString(int errorCode)
     QString ret;
     QString detail(rigerror(errorCode));
 
-#if ( HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,5,0)
     // The rigerror has different behavior since 4.5. It contains the stack trace in the first part
     // Need to use rigerror2
     ret = QString(rigerror2(errorCode));

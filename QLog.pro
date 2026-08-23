@@ -366,6 +366,7 @@ HEADERS += \
         rig/RigctldManager.h \
         rig/drivers/FlrigRigDrv.h \
         rig/drivers/GenericRigDrv.h \
+        rig/drivers/HamlibCompat.h \
         rig/drivers/HamlibRigDrv.h \
         rig/drivers/TCIRigDrv.h \
         rig/macros.h \

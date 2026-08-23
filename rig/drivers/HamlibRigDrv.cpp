@@ -6,6 +6,7 @@
 #include "rig/macros.h"
 #include "data/SerialPort.h"
 #include "data/Data.h"
+#include "rig/drivers/HamlibCompat.h"
 
 #ifndef HAMLIB_FILPATHLEN
 #define HAMLIB_FILPATHLEN FILPATHLEN
@@ -39,7 +40,7 @@ QList<QPair<int, QString>> HamlibRigDrv::getModelList()
 
     rig_load_all_backends();
 
-#if ( HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 2  )
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,2,0)
     rig_list_foreach_model(addRig, &ret);
 #else
     rig_list_foreach(addRig, &ret);
@@ -62,7 +63,7 @@ QList<QPair<QString, QString> > HamlibRigDrv::getPTTTypeList()
     return ret;
 }
 
-#if ( HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 2  )
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,2,0)
 int HamlibRigDrv::addRig (const rig_model_t rigModel, void *data)
 {
     QList<QPair<int, QString>> *list = static_cast<QList<QPair<int, QString>>*>(data);
@@ -116,10 +117,10 @@ RigCaps HamlibRigDrv::getCaps(int model)
 
         if ( ret.isNetworkOnly )
         {
-#if ( HAMLIBVERSION_MAJOR == 4 && ( HAMLIBVERSION_MINOR == 2 || HAMLIBVERSION_MINOR == 3 ) )
-         /* due to a hamlib issue #855 (https://github.com/Hamlib/Hamlib/issues/855)
-         * the PWR will be disabled for 4.2.x and 4.3.x for NETRIG
-         */
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,2,0) \
+    && HAMLIB_VERSION < HAMLIB_VERSION_CHECK(4,4,0)
+            // Hamlib issue #855 can overflow NETRIGCTL's power2mW command
+            // buffer in 4.2.x and 4.3.x; the fix was first released in 4.4.
             ret.canGetPWR = false;
 #else
             // this feature is known after connection to RIG what is too late for QLog, Let's try to enable it.
@@ -617,7 +618,7 @@ void HamlibRigDrv::stopMorse()
         return;
     }
 
-#if (HAMLIBVERSION_MAJOR >= 4)
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,0,0)
     int status = rig_stop_morse(rig, RIG_VFO_CURR);
     isRigRespOK(status, tr("Cannot stop Morse"), false);
 #endif
@@ -655,7 +656,7 @@ void HamlibRigDrv::sendDXSpot(const DxSpot &spot)
 
     if ( isSmartSDRSlice(rig->caps) )
     {
-#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,5,0)
         const QString freqStr = QString::number(spot.freq, 'f', 3);
         const QString call = spot.callsign.trimmed().toUpper();
         const QColor spotColor = Data::statusToColor(spot.status, spot.dupeCount, QColor(187,194,195));
@@ -1282,7 +1283,7 @@ bool HamlibRigDrv::isRigRespOK(int errorStatus,
 
 bool HamlibRigDrv::isSmartSDRSlice(const rig_caps *caps)
 {
-#if (HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 6 ) // Hamlib 4.6 implements SmartSDR Slices.
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,6,0) // Hamlib 4.6 implements SmartSDR Slices.
     return QString::fromLatin1(caps->model_name).contains("SmartSDR Slice", Qt::CaseInsensitive);
 #else
     Q_UNUSED(caps)
@@ -1407,7 +1408,7 @@ QString HamlibRigDrv::hamlibErrorString(int errorCode)
     QString ret;
     QString detail(rigerror(errorCode));
 
-#if ( HAMLIBVERSION_MAJOR >= 4 && HAMLIBVERSION_MINOR >= 5 )
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,5,0)
     // The rigerror has different behavior since 4.5. It contains the stack trace in the first part
     // Need to use rigerror2
     ret = QString(rigerror2(errorCode));
