@@ -581,21 +581,221 @@
     }
 
 
-    var language = navigator.language || navigator.userLanguage;
-    var mapUrl;
+    var baseMapLayer = null;
+    const mapLanguage = new URLSearchParams(window.location.search).get('language') || 'en';
 
-    // based on the language setting, qlog uses the map tile server
-    if (language === 'de') {
-      mapUrl = 'https://tile.openstreetmap.de/{z}/{x}/{y}.png';
-    } else if (language === 'fr') {
-      mapUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
-    } else {
-      mapUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+    function rasterMapUrl(language) {
+      if (language === 'de')
+        return 'https://tile.openstreetmap.de/{z}/{x}/{y}.png';
+      if (language === 'fr')
+        return 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
+
+      return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     }
 
-    L.tileLayer(mapUrl, {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    function useRasterBaseMap() {
+      if (baseMapLayer && typeof baseMapLayer.getMaplibreMap !== 'function')
+        return;
+
+      const failedBaseMapLayer = baseMapLayer;
+      baseMapLayer = null;
+      if (failedBaseMapLayer && map.hasLayer(failedBaseMapLayer))
+        map.removeLayer(failedBaseMapLayer);
+
+      baseMapLayer = L.tileLayer(rasterMapUrl(mapLanguage), {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+    }
+
+    function expressionUsesMapName(expression) {
+      if (!Array.isArray(expression))
+        return false;
+
+      if (expression[0] === 'get' && typeof expression[1] === 'string')
+        return expression[1] === 'name'
+            || expression[1] === 'name_en'
+            || expression[1].indexOf('name:') === 0;
+
+      return expression.some(expressionUsesMapName);
+    }
+
+    function applyMapLanguage(maplibreMap) {
+      if (mapLanguage === 'en')
+        return;
+
+      const style = maplibreMap.getStyle();
+      if (!style || !style.layers)
+        return;
+
+      style.layers.forEach(function(layer) {
+        const textField = layer.layout && layer.layout['text-field'];
+        if (layer.type === 'symbol' && expressionUsesMapName(textField))
+          maplibreMap.setLayoutProperty(layer.id, 'text-field', [
+            'coalesce',
+            ['get', 'name:' + mapLanguage],
+            textField
+          ]);
+      });
+    }
+
+    function loadExternalStyle(url, integrity) {
+      return new Promise(function(resolve, reject) {
+        const resource = document.createElement('link');
+        resource.rel = 'stylesheet';
+        resource.href = url;
+        resource.integrity = integrity;
+        resource.crossOrigin = 'anonymous';
+        resource.onload = resolve;
+        resource.onerror = reject;
+        document.head.appendChild(resource);
+      });
+    }
+
+    function loadExternalScript(url, integrity) {
+      return new Promise(function(resolve, reject) {
+        const resource = document.createElement('script');
+        resource.src = url;
+        resource.integrity = integrity;
+        resource.crossOrigin = 'anonymous';
+        resource.async = true;
+        resource.onload = resolve;
+        resource.onerror = reject;
+        document.head.appendChild(resource);
+      });
+    }
+
+    function loadMapLibre() {
+      const resources = Promise.all([
+        loadExternalStyle(
+          'https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css',
+          'sha256-XSFr7LOcuEhLTCjxEDKGYWrybnxvmEbq1vVebzaOdGQ='
+        ),
+        loadExternalScript(
+          'https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js',
+          'sha256-+w4eOjx0PG0PkY759djLZBB4sF2VoKuyJfsQ67pUGYk='
+        ).then(function() {
+          return loadExternalScript(
+            'https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.20/leaflet-maplibre-gl.js',
+            'sha256-/LD//86ABfi3cF7izoYCBVoAzxJXxqlUHKk57MVWjsY='
+          );
+        })
+      ]);
+
+      return new Promise(function(resolve, reject) {
+        const timer = setTimeout(function() {
+          reject(new Error('MapLibre resources timed out'));
+        }, 10000);
+
+        resources.then(function() {
+          clearTimeout(timer);
+          resolve();
+        }, function(error) {
+          clearTimeout(timer);
+          reject(error);
+        });
+      });
+    }
+
+    function useVectorBaseMap() {
+      let vectorBaseMapLayer = null;
+
+      try {
+        if (!window.maplibregl
+            || typeof maplibregl.supported !== 'function'
+            || !maplibregl.supported()
+            || typeof L.maplibreGL !== 'function')
+          return;
+
+        const rasterBaseMapLayer = baseMapLayer;
+        vectorBaseMapLayer = L.maplibreGL({
+          style: 'https://tiles.openfreemap.org/styles/liberty',
+          attribution: '<a href="https://openmaptiles.org/">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        });
+        vectorBaseMapLayer.addTo(map);
+        vectorBaseMapLayer.getContainer().style.opacity = '0';
+
+        const maplibreMap = vectorBaseMapLayer.getMaplibreMap();
+        let vectorMapActive = false;
+        let vectorMapErrorCount = 0;
+        let vectorMapErrorTimer = null;
+        let vectorMapLoadTimer = null;
+
+        function clearVectorMapErrors() {
+          vectorMapErrorCount = 0;
+          clearTimeout(vectorMapErrorTimer);
+          vectorMapErrorTimer = null;
+        }
+
+        function fallbackToRaster() {
+          clearTimeout(vectorMapLoadTimer);
+          clearVectorMapErrors();
+
+          if (map.hasLayer(vectorBaseMapLayer))
+            map.removeLayer(vectorBaseMapLayer);
+          if (baseMapLayer === vectorBaseMapLayer)
+            baseMapLayer = null;
+          useRasterBaseMap();
+        }
+
+        function activateVectorMap() {
+          if (baseMapLayer !== rasterBaseMapLayer || !map.hasLayer(vectorBaseMapLayer)) {
+            fallbackToRaster();
+            return;
+          }
+
+          clearTimeout(vectorMapLoadTimer);
+          vectorMapActive = true;
+          baseMapLayer = vectorBaseMapLayer;
+          vectorBaseMapLayer.getContainer().style.opacity = '';
+          if (rasterBaseMapLayer && map.hasLayer(rasterBaseMapLayer))
+            map.removeLayer(rasterBaseMapLayer);
+        }
+
+        vectorMapLoadTimer = setTimeout(function() {
+          if (!vectorMapActive)
+            fallbackToRaster();
+        }, 15000);
+
+        maplibreMap.once('load', function() {
+          if (!map.hasLayer(vectorBaseMapLayer))
+            return;
+
+          maplibreMap.once('idle', activateVectorMap);
+          applyMapLanguage(maplibreMap);
+        });
+        maplibreMap.on('webglcontextlost', function() {
+          fallbackToRaster();
+        });
+        maplibreMap.on('error', function(event) {
+          const message = event && event.error ? String(event.error.message || event.error) : '';
+          if (/webgl|graphics context/i.test(message))
+            return fallbackToRaster();
+
+          if (!vectorMapActive)
+            return;
+
+          ++vectorMapErrorCount;
+          if (vectorMapErrorTimer)
+            return;
+
+          vectorMapErrorTimer = setTimeout(function() {
+            const hasRepeatedErrors = vectorMapErrorCount >= 3;
+            clearVectorMapErrors();
+            if (hasRepeatedErrors && baseMapLayer === vectorBaseMapLayer)
+              fallbackToRaster();
+          }, 5000);
+        });
+      } catch (error) {
+        if (vectorBaseMapLayer && map.hasLayer(vectorBaseMapLayer))
+          map.removeLayer(vectorBaseMapLayer);
+        useRasterBaseMap();
+      }
+    }
+
+    useRasterBaseMap();
+    window.addEventListener('load', function() {
+      loadMapLibre().then(useVectorBaseMap, function() {});
+    });
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
     var grayline = L.terminator()
