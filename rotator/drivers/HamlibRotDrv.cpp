@@ -6,6 +6,11 @@
 #include "data/SerialPort.h"
 #include "rig/drivers/HamlibCompat.h"
 
+// Hamlib 4.7 moved the public port accessors out of rotator.h.
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4, 7, 0)
+#include <hamlib/port.h>
+#endif
+
 #define MUTEXLOCKER     qCDebug(runtime) << "Waiting for Rot Drv mutex"; \
                         QMutexLocker locker(&drvLock); \
                         qCDebug(runtime) << "Using Rot Drv"
@@ -134,17 +139,17 @@ bool HamlibRotDrv::open()
     {
         //handling Network Radio
         const QString portString = rotProfile.hostname + ":" + QString::number(rotProfile.netport);
-        strncpy(rot->state.rotport.pathname, portString.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
+        strncpy(QLOG_HAMLIB_ROTPORT(rot)->pathname, portString.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
     }
     else if ( portType == RotProfile::SERIAL_ATTACHED )
     {
         //handling Serial Port Radio
-        strncpy(rot->state.rotport.pathname, rotProfile.portPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
-        rot->state.rotport.parm.serial.rate = rotProfile.baudrate;
-        rot->state.rotport.parm.serial.data_bits = rotProfile.databits;
-        rot->state.rotport.parm.serial.stop_bits = rotProfile.stopbits;
-        rot->state.rotport.parm.serial.handshake = stringToHamlibFlowControl(rotProfile.flowcontrol);
-        rot->state.rotport.parm.serial.parity = stringToHamlibParity(rotProfile.parity);
+        strncpy(QLOG_HAMLIB_ROTPORT(rot)->pathname, rotProfile.portPath.toLocal8Bit().constData(), HAMLIB_FILPATHLEN - 1);
+        QLOG_HAMLIB_ROTPORT(rot)->parm.serial.rate = rotProfile.baudrate;
+        QLOG_HAMLIB_ROTPORT(rot)->parm.serial.data_bits = rotProfile.databits;
+        QLOG_HAMLIB_ROTPORT(rot)->parm.serial.stop_bits = rotProfile.stopbits;
+        QLOG_HAMLIB_ROTPORT(rot)->parm.serial.handshake = stringToHamlibFlowControl(rotProfile.flowcontrol);
+        QLOG_HAMLIB_ROTPORT(rot)->parm.serial.parity = stringToHamlibParity(rotProfile.parity);
     }
     else
     {
