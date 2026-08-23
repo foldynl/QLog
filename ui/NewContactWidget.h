@@ -324,6 +324,8 @@ private:
     void setDxccInfo(const DxccEntity &curr);
     void setDxccInfo(const QString &callsign);
     void refreshDxccFlag();
+    QList<QLineEdit *> callbookQueryFields() const;
+    void setCallbookQueryField(QLineEdit *field, const QString &value);
     void clearCallbookQueryFields();
     void clearMemberQueryFields();
     void readWidgetSettings();
@@ -382,6 +384,7 @@ private:
     double realRigFreq;
     double realFreqForManualExit;
     QString callsign;
+    QSet<QLineEdit *> operatorEditedCallbookFields;
     double dxDistance; // QSO distance in km - used for ADIF and internal usage
     DxccEntity dxccEntity;
     QString defaultReport;

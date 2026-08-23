@@ -472,6 +472,9 @@ void NewContactWidget::handleCallsignFromUser()
     callsign = newCallsign;
 
     qslManager.abortQuery();
+    if ( callsign.isEmpty() )
+        operatorEditedCallbookFields.clear();
+
     clearCallbookQueryFields();
     clearMemberQueryFields();
 
@@ -620,14 +623,20 @@ void NewContactWidget::useFieldsFromPrevQSO(const QString &callsign, const QStri
         {
             // entered callsign is base callsign - no portable QTH. Get all fields from
             // previous QSO
-            uiDynamic->qthEdit->setText(prevQSOExactMatchQuery.value("qth_intl").toString());
-            uiDynamic->gridEdit->setText(prevQSOExactMatchQuery.value("gridsquare").toString());
-            uiDynamic->dokEdit->setText(prevQSOExactMatchQuery.value("darc_dok").toString());
+            setCallbookQueryField(uiDynamic->qthEdit,
+                                  prevQSOExactMatchQuery.value("qth_intl").toString());
+            setCallbookQueryField(uiDynamic->gridEdit,
+                                  prevQSOExactMatchQuery.value("gridsquare").toString());
+            setCallbookQueryField(uiDynamic->dokEdit,
+                                  prevQSOExactMatchQuery.value("darc_dok").toString());
         }
-        uiDynamic->nameEdit->setText(prevQSOExactMatchQuery.value("name_intl").toString());
+        setCallbookQueryField(uiDynamic->nameEdit,
+                              prevQSOExactMatchQuery.value("name_intl").toString());
         ui->noteEdit->insertPlainText(prevQSOExactMatchQuery.value("notes_intl").toString());
-        uiDynamic->emailEdit->setText(prevQSOExactMatchQuery.value("email").toString());
-        uiDynamic->urlEdit->setText(prevQSOExactMatchQuery.value("web").toString());
+        setCallbookQueryField(uiDynamic->emailEdit,
+                              prevQSOExactMatchQuery.value("email").toString());
+        setCallbookQueryField(uiDynamic->urlEdit,
+                              prevQSOExactMatchQuery.value("web").toString());
 
         emit filterCallsign(baseCallsign);
     }
@@ -646,10 +655,13 @@ void NewContactWidget::useFieldsFromPrevQSO(const QString &callsign, const QStri
         if ( prevQSOBaseCallMatchQuery.next() )
         {
             // partial informaion available
-            uiDynamic->nameEdit->setText(prevQSOBaseCallMatchQuery.value("name_intl").toString());
+            setCallbookQueryField(uiDynamic->nameEdit,
+                                  prevQSOBaseCallMatchQuery.value("name_intl").toString());
             ui->noteEdit->insertPlainText(prevQSOBaseCallMatchQuery.value("notes_intl").toString());
-            uiDynamic->emailEdit->setText(prevQSOBaseCallMatchQuery.value("email").toString());
-            uiDynamic->urlEdit->setText(prevQSOBaseCallMatchQuery.value("web").toString());
+            setCallbookQueryField(uiDynamic->emailEdit,
+                                  prevQSOBaseCallMatchQuery.value("email").toString());
+            setCallbookQueryField(uiDynamic->urlEdit,
+                                  prevQSOBaseCallMatchQuery.value("web").toString());
 
             emit filterCallsign(baseCallsign);
         }
@@ -683,23 +695,23 @@ void NewContactWidget::setCallbookFields(const CallbookResponseData& data)
         if ( name.isEmpty() )
             name = ( data.fname.isEmpty() && data.lname.isEmpty() ) ? data.nick
                                                                     : fnamelname;
-        uiDynamic->nameEdit->setText(name);
+        setCallbookQueryField(uiDynamic->nameEdit, name);
     }
 
     if ( uiDynamic->gridEdit->text().isEmpty()
          || data.gridsquare.contains(uiDynamic->gridEdit->text()) )
-        uiDynamic->gridEdit->setText(data.gridsquare);
+        setCallbookQueryField(uiDynamic->gridEdit, data.gridsquare);
 
     if ( uiDynamic->qthEdit->text().isEmpty()
          || data.qth.contains(uiDynamic->qthEdit->text()))
-        uiDynamic->qthEdit->setText(data.qth);
+        setCallbookQueryField(uiDynamic->qthEdit, data.qth);
 
-    if ( uiDynamic->dokEdit->text().isEmpty() )    uiDynamic->dokEdit->setText(data.dok);
-    if ( uiDynamic->iotaEdit->text().isEmpty() )   uiDynamic->iotaEdit->setText(data.iota);
-    if ( uiDynamic->emailEdit->text().isEmpty() )  uiDynamic->emailEdit->setText(data.email);
-    if ( uiDynamic->countyEdit->text().isEmpty() ) uiDynamic->countyEdit->setText(data.county);
-    if ( uiDynamic->urlEdit->text().isEmpty() )    uiDynamic->urlEdit->setText(data.url);
-    if ( uiDynamic->stateEdit->text().isEmpty() )  uiDynamic->stateEdit->setText(data.us_state);
+    if ( uiDynamic->dokEdit->text().isEmpty() )    setCallbookQueryField(uiDynamic->dokEdit, data.dok);
+    if ( uiDynamic->iotaEdit->text().isEmpty() )   setCallbookQueryField(uiDynamic->iotaEdit, data.iota);
+    if ( uiDynamic->emailEdit->text().isEmpty() )  setCallbookQueryField(uiDynamic->emailEdit, data.email);
+    if ( uiDynamic->countyEdit->text().isEmpty() ) setCallbookQueryField(uiDynamic->countyEdit, data.county);
+    if ( uiDynamic->urlEdit->text().isEmpty() )    setCallbookQueryField(uiDynamic->urlEdit, data.url);
+    if ( uiDynamic->stateEdit->text().isEmpty() )  setCallbookQueryField(uiDynamic->stateEdit, data.us_state);
     if ( data.eqsl == "Y" )                        ui->eqslLabel->setText("eQSL");
     if ( data.lotw == "Y" )                        ui->lotwLabel->setText("LoTW");
     if ( !data.dxcc.isEmpty() )
@@ -1168,21 +1180,36 @@ void NewContactWidget::gridChanged()
     updateCoordinates(newGrid.getLatitude(), newGrid.getLongitude(), COORD_GRID);
 }
 
+QList<QLineEdit *> NewContactWidget::callbookQueryFields() const
+{
+    return {
+        uiDynamic->nameEdit,
+        uiDynamic->gridEdit,
+        uiDynamic->qthEdit,
+        uiDynamic->dokEdit,
+        uiDynamic->iotaEdit,
+        uiDynamic->emailEdit,
+        uiDynamic->countyEdit,
+        uiDynamic->urlEdit,
+        uiDynamic->stateEdit,
+        ui->qslViaEdit
+    };
+}
+
+void NewContactWidget::setCallbookQueryField(QLineEdit *field,
+                                             const QString &value)
+{
+    if ( !operatorEditedCallbookFields.contains(field) )
+        field->setText(value);
+}
+
 void NewContactWidget::clearCallbookQueryFields()
 {
     FCT_IDENTIFICATION;
 
-    uiDynamic->nameEdit->clear();
-    uiDynamic->gridEdit->clear();
-    uiDynamic->qthEdit->clear();
-    uiDynamic->dokEdit->clear();
-    uiDynamic->iotaEdit->clear();
-    uiDynamic->emailEdit->clear();
-    uiDynamic->countyEdit->clear();
-    uiDynamic->urlEdit->clear();
-    uiDynamic->stateEdit->clear();
+    for ( QLineEdit *field : callbookQueryFields() )
+        setCallbookQueryField(field, QString());
 
-    ui->qslViaEdit->clear();
     ui->eqslLabel->setText(QString());
     ui->lotwLabel->setText(QString());
     emit callboolImageUrl("");
@@ -1199,6 +1226,8 @@ void NewContactWidget::clearMemberQueryFields()
 void NewContactWidget::resetContact()
 {
     FCT_IDENTIFICATION;
+
+    operatorEditedCallbookFields.clear();
 
     srxStringEditedByUser = false;
     ui->callsignEdit->clear();
@@ -1798,6 +1827,19 @@ void NewContactWidget::connectFieldChanged()
 
     connect(uiDynamic->gridEdit, &QLineEdit::textChanged,
             this, &NewContactWidget::formFieldChangedString);
+
+    // textEdited is emitted only for operator input, not by setText().
+    for ( QLineEdit *field : callbookQueryFields() )
+    {
+        connect(field, &QLineEdit::textEdited, this,
+                [this, field](const QString &text)
+                {
+                    if ( text.isEmpty() )
+                        operatorEditedCallbookFields.remove(field);
+                    else
+                        operatorEditedCallbookFields.insert(field);
+                });
+    }
 
     connect(uiDynamic->contestIDEdit, &QLineEdit::textChanged,
             this, &NewContactWidget::formFieldChangedString);
@@ -3819,11 +3861,11 @@ void NewContactWidget::sotaChanged(const QString &newSOTA)
                                                                 : nullptr);
 
     if ( uiDynamic->qthEdit->text() == lastSOTA.summitName )
-        uiDynamic->qthEdit->clear();
+        setCallbookQueryField(uiDynamic->qthEdit, QString());
 
     const Gridsquare SOTAGrid(lastSOTA.latitude, lastSOTA.longitude);
     if ( uiDynamic->gridEdit->text() == SOTAGrid.getGrid() )
-        uiDynamic->gridEdit->clear();
+        setCallbookQueryField(uiDynamic->gridEdit, QString());
 
     ui->AMLSInfo->clear();
 }
@@ -3849,10 +3891,10 @@ void NewContactWidget::sotaEditFinished()
 
     if ( isSOTAValid(&sotaInfo) )
     {
-        uiDynamic->qthEdit->setText(sotaInfo.summitName);
+        setCallbookQueryField(uiDynamic->qthEdit, sotaInfo.summitName);
         const Gridsquare SOTAGrid(sotaInfo.latitude, sotaInfo.longitude);
         if ( SOTAGrid.isValid() )
-            uiDynamic->gridEdit->setText(SOTAGrid.getGrid());
+            setCallbookQueryField(uiDynamic->gridEdit, SOTAGrid.getGrid());
         ui->AMLSInfo->setText(QString::number(sotaInfo.altm) + tr(" m"));
         lastSOTA = sotaInfo;
     }
@@ -3870,12 +3912,12 @@ void NewContactWidget::potaChanged(const QString &newPOTA)
                                                                  : nullptr);
 
     if ( uiDynamic->qthEdit->text() == lastPOTA.name )
-        uiDynamic->qthEdit->clear();
+        setCallbookQueryField(uiDynamic->qthEdit, QString());
 
     const Gridsquare POTAGrid(lastPOTA.grid);
 
     if ( uiDynamic->gridEdit->text() == POTAGrid.getGrid() )
-        uiDynamic->gridEdit->clear();
+        setCallbookQueryField(uiDynamic->gridEdit, QString());
 }
 
 bool NewContactWidget::isPOTAValid(POTAEntity *entity)
@@ -3907,10 +3949,10 @@ void NewContactWidget::potaEditFinished()
 
     if ( isPOTAValid(&potaInfo) )
     {
-        uiDynamic->qthEdit->setText(potaInfo.name);
+        setCallbookQueryField(uiDynamic->qthEdit, potaInfo.name);
         Gridsquare POTAGrid(potaInfo.grid);
         if ( POTAGrid.isValid() )
-            uiDynamic->gridEdit->setText(POTAGrid.getGrid());
+            setCallbookQueryField(uiDynamic->gridEdit, POTAGrid.getGrid());
         lastPOTA = potaInfo;
     }
     else if ( isSOTAValid(nullptr) )
@@ -3957,7 +3999,7 @@ void NewContactWidget::useNearestSpotInfo(const QString &in_callsign)
 
     if ( nearestSpot.containsIOTA )
     {
-        uiDynamic->iotaEdit->setText(nearestSpot.iotaRef);
+        setCallbookQueryField(uiDynamic->iotaEdit, nearestSpot.iotaRef);
     }
 
     if ( nearestSpot.containsWWFF )
@@ -4219,13 +4261,15 @@ void NewContactWidget::wwffEditFinished()
 
     if ( isWWFFValid(&wwffInfo) )
     {
-        uiDynamic->qthEdit->setText(wwffInfo.name);
+        setCallbookQueryField(uiDynamic->qthEdit, wwffInfo.name);
         if ( ! wwffInfo.iota.isEmpty()
              && wwffInfo.iota != "-" )
         {
-            uiDynamic->iotaEdit->setText(wwffInfo.iota.toUpper());
+            setCallbookQueryField(uiDynamic->iotaEdit,
+                                  wwffInfo.iota.toUpper());
         }
-        uiDynamic->gridEdit->setText(QString()); // WWFF's Grid is unrealiable information
+        // WWFF's Grid is unreliable information.
+        setCallbookQueryField(uiDynamic->gridEdit, QString());
         lastWWFF = wwffInfo;
     }
     else if ( isSOTAValid(nullptr) )
@@ -4243,8 +4287,8 @@ void NewContactWidget::wwffChanged(const QString &newWWFF)
 
     if ( uiDynamic->qthEdit->text() == lastWWFF.name )
     {
-        uiDynamic->qthEdit->clear();
-        uiDynamic->gridEdit->clear();
+        setCallbookQueryField(uiDynamic->qthEdit, QString());
+        setCallbookQueryField(uiDynamic->gridEdit, QString());
     }
 }
 
