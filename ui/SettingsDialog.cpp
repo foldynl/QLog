@@ -458,6 +458,11 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     QStringListModel* cwKeysModel = new QStringListModel(ui->rigAssignedCWKeyCombo);
     ui->rigAssignedCWKeyCombo->setModel(cwKeysModel);
 
+    populateFlowControlCombo(ui->rigFlowControlSelect);
+    populateParityCombo(ui->rigParitySelect);
+    populateSignalCombo(ui->rigDTRCombo);
+    populateSignalCombo(ui->rigRTSCombo);
+
     /* Rig Models must be initialized after rigAssignedCWKeyCombo model !!!! */
     /* becase rigChanged is called and it constain uninitialized
      * CW Model */
@@ -615,8 +620,6 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     ui->qslManagerSourceCombo->addItem(tr("From Callbook"), QVariant(QSLManager::NO_SOURCE));
     ui->qslManagerSourceCombo->addItem(tr("QSLInfo.de"),    QVariant(QSLInfo::SOURCE_ID));
 
-    populateFlowControlCombo(ui->rigFlowControlSelect);
-    populateParityCombo(ui->rigParitySelect);
     populateFlowControlCombo(ui->rotFlowControlSelect);
     populateParityCombo(ui->rotParitySelect);
 
@@ -637,9 +640,6 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     for ( const QPair<QString, int> &f : sideToneFreqsList )
         ui->cwSidetoneFreqCombo->addItem(f.first, f.second);
     ui->cwSidetoneFreqCombo->setCurrentIndex(ui->cwSidetoneFreqCombo->findData(CWWinKey::defaultSidetoneFrequency()));
-
-    populateSignalCombo(ui->rigDTRCombo);
-    populateSignalCombo(ui->rigRTSCombo);
 
     /* disable WSJTX Multicast by default */
     joinMulticastChanged(false);
@@ -1086,6 +1086,7 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     ui->rigPTTPortEdit->setText(profile.pttPortPath);
     setComboByData(ui->rigRTSCombo, profile.rts, PTT_TYPE_CAT_INDEX);
     setComboByData(ui->rigDTRCombo, profile.dtr, PTT_TYPE_CAT_INDEX);
+    rigFlowControlChanged(ui->rigFlowControlSelect->currentIndex());
 
     ui->rigCIVAddrSpinBox->setValue(( profile.civAddr >= 0 ) ? profile.civAddr : CIVADDR_DISABLED_VALUE);
 
@@ -1188,8 +1189,7 @@ void SettingsDialog::rigPortTypeChanged(int index)
         const RigCaps &caps = Rig::instance()->getRigCaps(static_cast<Rig::DriverID>(ui->rigInterfaceCombo->currentData().toInt()),
                                                           ui->rigModelSelect->currentData().toInt());
         ui->rigStackedWidget->setCurrentIndex(STACKED_WIDGET_SERIAL_SETTING);
-        ui->rigDataBitsSelect->setCurrentText(QString::number(caps.serialDataBits));
-        ui->rigStopBitsSelect->setCurrentText(QString::number(caps.serialStopBits));
+        setRigDefaultsFromCaps(caps);
         ui->rigHostNameEdit->clear();
     }
         break;
@@ -1231,9 +1231,6 @@ void SettingsDialog::rigInterfaceChanged(int)
         ui->rigPortTypeCombo->insertItem(STACKED_WIDGET_SPECIAL_OMNIRIG_SETTING, tr("Special - Omnirig"));
     }
 
-    rigTypeModel->select(driverID);
-    ui->rigModelSelect->setCurrentIndex(( driverID == Rig::HAMLIB_DRIVER ) ? ui->rigModelSelect->findData(Rig::DEFAULT_MODEL)
-                                                                           : 0 );
     ui->rigPTTTypeCombo->clear();
     setComboByData(ui->rigRTSCombo, SerialPort::SERIAL_SIGNAL_NONE);
     setComboByData(ui->rigDTRCombo, SerialPort::SERIAL_SIGNAL_NONE);
@@ -1250,6 +1247,10 @@ void SettingsDialog::rigInterfaceChanged(int)
     ui->rigPTTPortEdit->setVisible(( driverID == Rig::HAMLIB_DRIVER ));
     ui->rigPTTPortLabel->setVisible(( driverID == Rig::HAMLIB_DRIVER ));
     ui->rigPTTTypeCombo->setCurrentIndex(( driverID == Rig::HAMLIB_DRIVER ) ? PTT_TYPE_CAT_INDEX : 0);
+
+    rigTypeModel->select(driverID);
+    ui->rigModelSelect->setCurrentIndex(( driverID == Rig::HAMLIB_DRIVER ) ? ui->rigModelSelect->findData(Rig::DEFAULT_MODEL)
+                                                                           : 0 );
 }
 
 void SettingsDialog::rigPTTTypeChanged(int index)
@@ -2139,10 +2140,7 @@ void SettingsDialog::rigChanged(int index)
         ui->rigPortTypeCombo->setEnabled(!caps.isNetworkOnly);
 
         if ( !caps.isNetworkOnly )
-        {
-            ui->rigDataBitsSelect->setCurrentText(QString::number(caps.serialDataBits));
-            ui->rigStopBitsSelect->setCurrentText(QString::number(caps.serialStopBits));
-        }
+            setRigDefaultsFromCaps(caps);
     }
 
     ui->rigPollIntervalSpinBox->setEnabled(caps.needPolling);
@@ -2697,11 +2695,16 @@ void SettingsDialog::rigFlowControlChanged(int)
     FCT_IDENTIFICATION;
 
     // if HW handshake is enabled then RTS must be None
-    bool isHWControlEnabled = (ui->rigFlowControlSelect->currentData().toString() == SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
+    const bool isHWControlEnabled = (ui->rigFlowControlSelect->currentData().toString() == SerialPort::SERIAL_FLOWCONTROL_HARDWARE);
 
     if ( isHWControlEnabled )
         setComboByData(ui->rigRTSCombo, SerialPort::SERIAL_SIGNAL_NONE);
+
+    const QString tooltip = isHWControlEnabled ? tr("RTS is controlled by hardware flow control") : QString();
     ui->rigRTSCombo->setEnabled(!isHWControlEnabled);
+    ui->rigRTSCombo->setToolTip(tooltip);
+    ui->rigRTSLabel->setEnabled(!isHWControlEnabled);
+    ui->rigRTSLabel->setToolTip(tooltip);
 }
 
 void SettingsDialog::showRigctldAdvanced()
@@ -3529,6 +3532,29 @@ QString SettingsDialog::adifRecoveryQslSentStatusToText(const QString &status) c
     if ( status == QLatin1String("custom") )
         return tr("Custom");
     return tr("Queued");
+}
+
+void SettingsDialog::setRigDefaultsFromCaps(const RigCaps &caps)
+{
+    FCT_IDENTIFICATION;
+
+    if ( caps.serialBaudRate > 0 )
+    {
+        const QString baudRate = QString::number(caps.serialBaudRate);
+        if ( ui->rigBaudSelect->findText(baudRate) < 0 )
+            ui->rigBaudSelect->addItem(baudRate);
+        ui->rigBaudSelect->setCurrentText(baudRate);
+    }
+    if ( caps.serialDataBits > 0 )
+        ui->rigDataBitsSelect->setCurrentText(QString::number(caps.serialDataBits));
+    if ( caps.serialStopBits > 0 )
+        ui->rigStopBitsSelect->setCurrentText(QString::number(caps.serialStopBits));
+    if ( !caps.serialFlowControl.isEmpty() )
+        setComboByData(ui->rigFlowControlSelect, caps.serialFlowControl);
+    if ( !caps.serialParity.isEmpty() )
+        setComboByData(ui->rigParitySelect, caps.serialParity);
+    if ( !caps.defaultPTTType.isEmpty() )
+        setComboByData(ui->rigPTTTypeCombo, caps.defaultPTTType, PTT_TYPE_CAT_INDEX);
 }
 
 /* this function is called when user modify rig progile

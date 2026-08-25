@@ -1,6 +1,8 @@
 #ifndef RIG_RIGCAPS_H
 #define RIG_RIGCAPS_H
 
+#include <QString>
+
 
 class RigCaps
 {
@@ -32,8 +34,12 @@ public:
     bool canGetPTT;
     bool canGetKeySpeed;
     bool canSendMorse;
+    int serialBaudRate;
     int serialDataBits;
     int serialStopBits;
+    QString serialFlowControl;
+    QString serialParity;
+    QString defaultPTTType;
     bool isNetworkOnly;
     bool needPolling;
     bool canProcessDXSpot;
