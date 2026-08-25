@@ -107,7 +107,7 @@ void LOVDownloader::loadData(const LOVDownloader::SourceDefinition &sourceDef)
     QByteArray data = file.readAll();
     file.close();
 
-    if (sourceDef.fileName.endsWith(".gz", Qt::CaseInsensitive))
+    if ( sourceDef.fileName.endsWith(".gz", Qt::CaseInsensitive) )
         data = FileCompressor::gunzip(data);
 
     emit processingSize(data.size());
