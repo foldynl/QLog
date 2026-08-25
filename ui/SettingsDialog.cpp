@@ -40,6 +40,7 @@
 #include "core/NetworkNotification.h"
 #include "rig/Rig.h"
 #include "rig/RigCaps.h"
+#include "rig/RigctldManager.h"
 #include "rig/macros.h"
 #include "rotator/Rotator.h"
 #include "rotator/RotCaps.h"
@@ -125,7 +126,7 @@ void SettingsDialog::populateParityCombo(QComboBox *combo)
 
 void SettingsDialog::populateSignalCombo(QComboBox *combo)
 {
-    combo->addItem(tr("None"), SerialPort::SERIAL_SIGNAL_NONE);
+    combo->addItem(tr("Unset"), SerialPort::SERIAL_SIGNAL_NONE);
     combo->addItem(tr("High"), SerialPort::SERIAL_SIGNAL_HIGH);
     combo->addItem(tr("Low"), SerialPort::SERIAL_SIGNAL_LOW);
 }
@@ -2711,9 +2712,24 @@ void SettingsDialog::showRigctldAdvanced()
 {
     FCT_IDENTIFICATION;
 
+    const RigProfile profile(ui->rigModelSelect->currentData().toInt(),
+                             ui->rigPortEdit->text(),
+                             ui->rigBaudSelect->currentText().toInt(),
+                             ui->rigDataBitsSelect->currentText().toInt(),
+                             ui->rigStopBitsSelect->currentText().toFloat(),
+                             ui->rigFlowControlSelect->currentData().toString(),
+                             ui->rigParitySelect->currentData().toString(),
+                             ui->rigPTTTypeCombo->currentData().toString(),
+                             ui->rigPTTPortEdit->text(),
+                             ui->rigRTSCombo->currentData().toString(),
+                             ui->rigDTRCombo->currentData().toString(),
+                             ui->rigCIVAddrSpinBox->value(),
+                             ui->rigSharePortSpinBox->value());
+
     RigctldAdvancedDialog dialog(this);
     dialog.setPath(rigctldPath);
     dialog.setArgs(rigctldArgs);
+    dialog.setQLogArgs(RigctldManager::buildArguments(profile));
 
     if (dialog.exec() == QDialog::Accepted)
     {

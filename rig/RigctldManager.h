@@ -30,6 +30,7 @@ public:
 
     static QString findRigctldPath();
     static RigctldVersion getVersion(const QString &rigctldPath = QString());
+    static QStringList buildArguments(const RigProfile &profile);
 
 signals:
     void started();
@@ -47,7 +48,6 @@ private:
     friend class RigctldManagerTest;
 
     bool waitForRigctldReady(int timeoutMs = 5000);
-    QStringList buildArguments(const RigProfile &profile) const;
 
     QProcess *rigctldProcess = nullptr;
     quint16 currentPort = 4532;

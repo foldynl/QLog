@@ -21,6 +21,7 @@ public:
 
     void setArgs(const QString &args);
     QString getArgs() const;
+    void setQLogArgs(const QStringList &args);
 
 private slots:
     void autoDetectPath();

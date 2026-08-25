@@ -63,6 +63,14 @@ QString RigctldAdvancedDialog::getArgs() const
     return ui->argsEdit->text().trimmed();
 }
 
+void RigctldAdvancedDialog::setQLogArgs(const QStringList &args)
+{
+    ui->qlogArgsValueLabel->setText(args.join(QLatin1Char(' ')));
+    ui->qlogArgsValueLabel->updateGeometry();
+    layout()->activate();
+    adjustSize();
+}
+
 void RigctldAdvancedDialog::autoDetectPath()
 {
     FCT_IDENTIFICATION;
