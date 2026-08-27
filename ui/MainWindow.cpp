@@ -1263,6 +1263,7 @@ void MainWindow::showServiceDownloadLotwDXCCCredits()
 
     LotwDXCCCreditDownloader *downloader = new LotwDXCCCreditDownloader(this);
     QProgressDialog *progressDialog = new QProgressDialog("", tr("Cancel"), 0, 0, this);
+    progressDialog->setWindowTitle(tr("LoTW DXCC Credit Download"));
     progressDialog->setWindowModality(Qt::WindowModal);
     progressDialog->setRange(0, 0);
     progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);

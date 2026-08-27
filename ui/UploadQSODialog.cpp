@@ -265,6 +265,7 @@ void UploadQSODialog::processNextUploader()
 
     QProgressDialog* dialog = new QProgressDialog(tr("Uploading to %1").arg(currentTask.getServiceName()),
                                                   tr("Cancel"), 0, 0, this);
+    dialog->setWindowTitle(tr("QSO Upload Progress"));
     dialog->setWindowModality(Qt::WindowModal);
     dialog->setValue(0);
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
