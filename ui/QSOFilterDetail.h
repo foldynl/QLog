@@ -17,7 +17,8 @@ class QSOFilterDetail : public QDialog
     Q_OBJECT
 
 public:
-    explicit QSOFilterDetail(const QString &filterName = QString(), QWidget *parent = nullptr);
+    explicit QSOFilterDetail(const QString &filterName = QString(), QWidget *parent = nullptr,
+                             bool clone = false);
     ~QSOFilterDetail();
 
 public slots:
@@ -32,7 +33,7 @@ private:
     QStringList filterNamesList;
 
 private:
-    void loadFilter(const QString &filterName);
+    void loadFilter(const QString &filterName, bool lockName = true);
     bool filterExists(const QString &filterName);
     bool isDateField(int index);
     bool isDateTimeField(int index);

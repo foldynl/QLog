@@ -22,6 +22,13 @@ QSOFilterDialog::QSOFilterDialog(QWidget *parent) :
     ui->filtersListView->setModelColumn(filterModel->fieldIndex("filter_name"));
     ui->filtersListView->setSelectionMode(QAbstractItemView::SingleSelection);
     filterModel->select();
+
+    ui->cloneFilterButton->setEnabled(false);
+    connect(ui->filtersListView->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, [this]()
+    {
+        ui->cloneFilterButton->setEnabled(ui->filtersListView->selectionModel()->hasSelection());
+    });
 }
 
 QSOFilterDialog::~QSOFilterDialog()
@@ -64,4 +71,18 @@ void QSOFilterDialog::editFilterButton()
     const QModelIndexList &list = ui->filtersListView->selectionModel()->selectedIndexes();
     if ( !list.empty() )
         editFilter(list.first());
+}
+
+void QSOFilterDialog::cloneFilter()
+{
+    FCT_IDENTIFICATION;
+
+    const QModelIndexList &list = ui->filtersListView->selectionModel()->selectedIndexes();
+    if ( list.empty() )
+        return;
+
+    const QString filterName = ui->filtersListView->model()->data(list.first()).toString();
+    QSOFilterDetail dialog(filterName, this, true);
+    dialog.exec();
+    filterModel->select();
 }
