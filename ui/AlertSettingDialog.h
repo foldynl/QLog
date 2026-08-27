@@ -25,6 +25,7 @@ public slots:
     void removeRule();
     void editRule(QModelIndex);
     void editRuleButton();
+    void cloneRule();
 
 };
 

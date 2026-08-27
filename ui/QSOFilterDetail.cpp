@@ -11,7 +11,7 @@
 
 MODULE_IDENTIFICATION("qlog.ui.qsofilterdetail");
 
-QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent) :
+QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent, bool clone) :
     QDialog(parent),
     ui(new Ui::QSOFilterDetail),
     filterName(filterName),
@@ -22,7 +22,19 @@ QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent) :
     ui->setupUi(this);
 
     if ( ! filterName.isEmpty() )
-        loadFilter(filterName);
+    {
+        if ( clone )
+            filterNamesList = QSOFilterManager::instance()->getFilterList();
+
+        loadFilter(filterName, !clone);
+
+        if ( clone )
+        {
+            ui->filterLineEdit->clear();
+            ui->filterLineEdit->setPlaceholderText(tr("Enter a new name"));
+            ui->filterLineEdit->setFocus();
+        }
+    }
     else
     {
         /* get Filters name from DB to checking whether a new filter name
@@ -184,12 +196,12 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     condCount++;
 }
 
-void QSOFilterDetail::loadFilter(const QString &filterName)
+void QSOFilterDetail::loadFilter(const QString &filterName, bool lockName)
 {
     FCT_IDENTIFICATION;
 
     ui->filterLineEdit->setText(filterName);
-    ui->filterLineEdit->setEnabled(false);
+    ui->filterLineEdit->setEnabled(!lockName);
 
     const QSOFilter &filter = QSOFilterManager::instance()->getFilter(filterName);
 

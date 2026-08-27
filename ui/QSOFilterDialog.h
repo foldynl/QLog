@@ -26,6 +26,7 @@ public slots:
     void removeFilter();
     void editFilter(QModelIndex);
     void editFilterButton();
+    void cloneFilter();
 };
 
 #endif // QLOG_UI_QSOFILTERDIALOG_H

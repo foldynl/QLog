@@ -55,13 +55,23 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="editFilterButton">
-         <property name="text">
-          <string>Edit</string>
-         </property>
-        </widget>
-       </item>
-       <item>
+       <widget class="QPushButton" name="editFilterButton">
+        <property name="text">
+         <string>Edit</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cloneFilterButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Clone</string>
+        </property>
+       </widget>
+      </item>
+      <item>
         <widget class="QPushButton" name="removeFilterButton">
          <property name="text">
           <string>Remove</string>
@@ -180,6 +190,12 @@
    </hints>
   </connection>
   <connection>
+   <sender>cloneFilterButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QSOFilterDialog</receiver>
+   <slot>cloneFilter()</slot>
+  </connection>
+  <connection>
    <sender>editFilterButton</sender>
    <signal>clicked()</signal>
    <receiver>QSOFilterDialog</receiver>
@@ -201,5 +217,6 @@
   <slot>removeFilter()</slot>
   <slot>editFilter(QModelIndex)</slot>
   <slot>editFilterButton()</slot>
+  <slot>cloneFilter()</slot>
  </slots>
 </ui>

@@ -35,6 +35,13 @@ AlertSettingDialog::AlertSettingDialog(QWidget *parent) :
     ui->rulesTableView->setItemDelegateForColumn(1,new CheckBoxDelegate(ui->rulesTableView));
 
     rulesModel->select();
+
+    ui->cloneRuleButton->setEnabled(false);
+    connect(ui->rulesTableView->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, [this]()
+    {
+        ui->cloneRuleButton->setEnabled(ui->rulesTableView->selectionModel()->hasSelection());
+    });
 }
 
 AlertSettingDialog::~AlertSettingDialog()
@@ -83,4 +90,19 @@ void AlertSettingDialog::editRuleButton()
     {
        editRule(index);
     }
+}
+
+void AlertSettingDialog::cloneRule()
+{
+    FCT_IDENTIFICATION;
+
+    const QModelIndexList selectedRows = ui->rulesTableView->selectionModel()->selectedRows();
+    if ( selectedRows.empty() )
+        return;
+
+    const QModelIndex nameIndex = ui->rulesTableView->model()->index(selectedRows.first().row(), 0);
+    const QString ruleName = ui->rulesTableView->model()->data(nameIndex).toString();
+    AlertRuleDetail dialog(ruleName, this, true);
+    dialog.exec();
+    rulesModel->select();
 }

@@ -14,7 +14,7 @@
 
 MODULE_IDENTIFICATION("qlog.ui.alerruledetail");
 
-AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent) :
+AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent, bool clone) :
     QDialog(parent),
     ui(new Ui::AlertRuleDetail),
     ruleName(ruleName)
@@ -71,25 +71,23 @@ AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent) :
     /**************************************/
     if ( ! ruleName.isEmpty() )
     {
-        loadRule(ruleName);
+        if ( clone )
+            loadRuleNames();
+
+        loadRule(ruleName, !clone);
+
+        if ( clone )
+        {
+            ui->ruleNameEdit->clear();
+            ui->ruleNameEdit->setPlaceholderText(tr("Enter a new name"));
+            ui->ruleNameEdit->setFocus();
+        }
     }
     else
     {
         /* get Rule name from DB to checking whether a new filter name
          * will be unique */
-        QSqlQuery ruleStmt;
-        if ( ! ruleStmt.prepare("SELECT rule_name FROM alert_rules ORDER BY rule_name") )
-        {
-            qWarning() << "Cannot prepare select statement";
-        }
-        else
-        {
-            if ( ruleStmt.exec() )
-                while (ruleStmt.next())
-                    ruleNamesList << ruleStmt.value(0).toString();
-            else
-                qWarning()<< "Cannot get filters names from DB" << ruleStmt.lastError();
-        }
+        loadRuleNames();
         setDefaultValues();
         generateMembershipCheckboxes();
     }
@@ -408,13 +406,33 @@ bool AlertRuleDetail::ruleExists(const QString &ruleName)
     return ruleNamesList.contains(ruleName);
 }
 
-void AlertRuleDetail::loadRule(const QString &ruleName)
+void AlertRuleDetail::loadRuleNames()
+{
+    FCT_IDENTIFICATION;
+
+    QSqlQuery ruleStmt;
+    if ( !ruleStmt.prepare("SELECT rule_name FROM alert_rules ORDER BY rule_name") )
+    {
+        qWarning() << "Cannot prepare select statement";
+    }
+    else if ( ruleStmt.exec() )
+    {
+        while ( ruleStmt.next() )
+            ruleNamesList << ruleStmt.value(0).toString();
+    }
+    else
+    {
+        qWarning() << "Cannot get alert rule names from DB" << ruleStmt.lastError();
+    }
+}
+
+void AlertRuleDetail::loadRule(const QString &ruleName, bool lockName)
 {
 
     FCT_IDENTIFICATION;
 
     ui->ruleNameEdit->setText(ruleName);
-    ui->ruleNameEdit->setEnabled(false);
+    ui->ruleNameEdit->setEnabled(!lockName);
 
     AlertRule rule;
 
