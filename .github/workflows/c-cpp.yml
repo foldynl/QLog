@@ -196,7 +196,7 @@ jobs:
         echo "REPO_VERSION=${VERSION}" >> $GITHUB_ENV
 
     - name: Install build dependencies from spec
-      run: dnf builddep -y rpm_spec/qlog.spec
+      run: dnf builddep -y packaging/rpm/qlog.spec
 
     - name: Prepare RPM build tree
       run: |
@@ -207,7 +207,7 @@ jobs:
         tar czf ~/rpmbuild/SOURCES/qlog-${REPO_VERSION}.tar.gz --exclude='.git' -C /tmp "${TAR_DIR}"
 
     - name: Build RPM package
-      run: rpmbuild -bb rpm_spec/qlog.spec
+      run: rpmbuild -bb packaging/rpm/qlog.spec
 
     - name: Verify RPM was created
       run: ls -la ~/rpmbuild/RPMS/*/QLog-*.rpm

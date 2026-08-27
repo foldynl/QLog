@@ -22,7 +22,7 @@ fi
 # --- Checks ---
 
 DEB_CHANGELOG="${ROOTDIR}/debian/changelog"
-RPM_SPEC="${ROOTDIR}/rpm_spec/qlog.spec"
+RPM_SPEC="${ROOTDIR}/packaging/rpm/qlog.spec"
 METAINFO="${ROOTDIR}/res/io.github.foldynl.QLog.metainfo.xml"
 INSTALLER_PKG="${ROOTDIR}/installer/packages/de.dl2ic.qlog/meta/package.xml"
 INSTALLER_CFG="${ROOTDIR}/installer/config/config.xml"
@@ -80,7 +80,7 @@ cp "${TMPFILE}" "${DEB_CHANGELOG}"
 
 # --- RPM Changelog ---
 
-echo "  rpm_spec/qlog.spec"
+echo "  packaging/rpm/qlog.spec"
 {
     echo "* ${RELEASE_DATE_RPM} Ladislav Foldyna - ${QLOG_VERSION}-1"
     echo "${ENTRIES}"

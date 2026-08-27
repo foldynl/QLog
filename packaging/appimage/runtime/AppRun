@@ -1,0 +1,32 @@
+#!/bin/sh
+
+set -eu
+
+APPDIR="${APPDIR:-$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)}"
+
+# Do not mix Qt or GLib plugins from the host with the Debian runtime bundled
+# in the AppImage. Secret Service itself remains a host D-Bus service.
+export LD_LIBRARY_PATH="$APPDIR/usr/lib"
+export PATH="$APPDIR/usr/bin:$PATH"
+export QT_PLUGIN_PATH="$APPDIR/usr/plugins"
+export QT_QPA_PLATFORM_PLUGIN_PATH="$APPDIR/usr/plugins/platforms"
+export QTWEBENGINEPROCESS_PATH="$APPDIR/usr/libexec/QtWebEngineProcess"
+export GIO_MODULE_DIR="$APPDIR/usr/lib/gio/modules"
+export OPENSSL_MODULES="$APPDIR/usr/lib/ossl-modules"
+unset GIO_EXTRA_MODULES
+
+# OpenSSL's compiled-in certificate path comes from the build distribution.
+# Prefer the current host trust store, whose location differs across distros.
+if [ -z "${SSL_CERT_FILE:-}" ]; then
+    for cert_file in \
+        /etc/ssl/certs/ca-certificates.crt \
+        /etc/pki/tls/certs/ca-bundle.crt \
+        /etc/ssl/ca-bundle.pem; do
+        if [ -r "$cert_file" ]; then
+            export SSL_CERT_FILE="$cert_file"
+            break
+        fi
+    done
+fi
+
+exec "$APPDIR/usr/bin/qlog" "$@"
