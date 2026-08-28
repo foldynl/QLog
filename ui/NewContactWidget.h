@@ -283,6 +283,8 @@ private slots:
     void handleCallsignFromUser();
     void frequencyTXChanged();
     void frequencyRXChanged();
+    void bandTXChanged(int index);
+    void bandRXChanged(int index);
     void changeMode();
     void subModeChanged();
     void gridChanged();
@@ -360,7 +362,10 @@ private:
     QList<QWidget*> setupCustomDetailColumn(QFormLayout *column, const QList<int>& widgetsList);
 
     void setupCustomUiRowsTabOrder(const QList<QWidget *> &customWidgets);
-    void setBandLabel(const QString &);
+    void reloadBandCombos();
+    QString selectedBand(const QComboBox *combo) const;
+    void setBandComboFromBand(QComboBox *combo, const Band &band);
+    void setBandComboEditingEnabled();
     void updateSatMode();
 
     bool isPOTAValid(POTAEntity *entity);
