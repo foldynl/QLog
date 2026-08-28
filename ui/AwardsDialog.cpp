@@ -29,6 +29,9 @@
 #include "awards/AwardUKD.h"
 #include "awards/AwardWAIP.h"
 #include "awards/AwardWAAC.h"
+#include "awards/AwardCanadaAward.h"
+#include "awards/AwardWANA.h"
+#include "awards/AwardWorkedAllRAC.h"
 
 MODULE_IDENTIFICATION("qlog.ui.awardsdialog");
 
@@ -236,5 +239,8 @@ QList<AwardDefinition*> AwardsDialog::createAwards()
         new AwardUKD(),
         new AwardWAIP(),
         new AwardWAAC(),
+        new AwardCanadaAward(),
+        new AwardWANA(),
+        new AwardWorkedAllRAC(),
     };
 }
