@@ -12,6 +12,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
+#include <QScopeGuard>
 #include <QXmlStreamReader>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -452,7 +453,7 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
                                     const QString &insertSQL,
                                     const QStringList &csvColumns,
                                     csv::CSVFormat format,
-                                    const QString &preValidateContains)
+                                    const QString &preValidateContains) try
 {
     FCT_IDENTIFICATION;
 
@@ -468,12 +469,13 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
         return false;
     }
 
-    QSqlDatabase::database().transaction();
+    QSqlDatabase database = QSqlDatabase::database();
+    database.transaction();
+    auto rollbackGuard = qScopeGuard([&database]() { database.rollback(); });
 
     if ( !deleteTable(sourceDef.tableName) )
     {
         qCWarning(runtime) << "Delete failed - rollback:" << sourceDef.tableName;
-        QSqlDatabase::database().rollback();
         return false;
     }
 
@@ -481,11 +483,10 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
     if ( !insertQuery.prepare(insertSQL) )
     {
         qWarning() << "Cannot prepare insert statement for" << sourceDef.tableName;
-        QSqlDatabase::database().rollback();
         return false;
     }
 
-    csv::CSVReader reader = csv::parse(csvData, format);
+    csv::CSVReader reader = csv::parse_unsafe(csvData, format);
 
     const std::vector<std::string> colNames = reader.get_col_names();
     for ( const QString &col : csvColumns )
@@ -493,7 +494,6 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
         if ( std::find(colNames.begin(), colNames.end(), col.toStdString()) == colNames.end() )
         {
             qWarning() << "Missing column:" << col << "in" << sourceDef.tableName;
-            QSqlDatabase::database().rollback();
             return false;
         }
     }
@@ -507,12 +507,8 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
         stdCols.push_back(col.toStdString());
 
     QVector<QVariantList> columns(colCount);
-
-    auto reserveAll = [&]()
-    {
-        for ( auto &col : columns )
-            col.reserve(CHUNK);
-    };
+    for ( QVariantList &column : columns )
+        column.reserve(CHUNK);
 
     auto flushChunk = [&]() -> bool
     {
@@ -529,11 +525,9 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
         for ( QVariantList &col : columns )
             col.clear();
 
-        reserveAll();
         return true;
     };
 
-    reserveAll();
     int count = 0;
 
     for ( csv::CSVRow &row : reader )
@@ -558,7 +552,13 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
         }
     }
 
-    if ( !abortRequested && !columns[0].isEmpty() )
+    if ( !abortRequested && count == 0 )
+    {
+        qWarning() << "No records found in" << sourceDef.tableName;
+        return false;
+    }
+
+    if ( !abortRequested && count % CHUNK != 0 )
     {
         if ( !flushChunk() )
             abortRequested = true;
@@ -566,13 +566,23 @@ bool LOVDownloader::parseCSVGeneric(const SourceDefinition &sourceDef,
 
     if ( !abortRequested )
     {
-        QSqlDatabase::database().commit();
+        database.commit();
+        rollbackGuard.dismiss();
         qCDebug(runtime) << sourceDef.tableName << "update finished:" << count << "entities loaded.";
         return true;
     }
 
     qCWarning(runtime) << sourceDef.tableName << "update failed - rollback";
-    QSqlDatabase::database().rollback();
+    return false;
+}
+catch ( const std::exception &exception )
+{
+    qWarning() << "CSV parsing failed for" << sourceDef.tableName << ":" << exception.what();
+    return false;
+}
+catch ( ... )
+{
+    qWarning() << "CSV parsing failed for" << sourceDef.tableName << ": unknown exception";
     return false;
 }
 
