@@ -136,8 +136,11 @@ void OnlineMapWidget::auroraDataUpdate()
         {
             if ( point.value > 10 )
             {
+                const double wrappedLongitude = point.longitude < 0.0
+                                                ? point.longitude + 360.0
+                                                : point.longitude - 360.0;
                 mapPoints << MapHeatPoint(point.latitude, point.longitude, point.value)
-                          << MapHeatPoint(point.latitude, point.longitude - 360, point.value);
+                          << MapHeatPoint(point.latitude, wrappedLongitude, point.value);
             }
         }
     }

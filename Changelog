@@ -8,8 +8,9 @@ TBC- 0.53.0
 - [CHANGED] - NewQSO - Reworked field-clearing algorithm (issue #411)
 - [CHANGED] - Settings - Hamlib Interface now prefills default capabilities for newly defined rigs
 - [CHANGED] - Settings - Rig Sharing shows the rigctld parameters set by QLog
-- Fixed - Hamlib Driver - preparation for Hamlib 5.0
-- Fixed - DX Spot frequency rounding - Added one decimal place for kHz (issue #1149)
+- Fixed Hamlib Driver - preparation for Hamlib 5.0
+- Fixed DX Spot frequency rounding - Added one decimal place for kHz (issue #1149)
+- Fixed Online Map - Aurora forecast was not displayed west of the prime meridian
 
 2026/08/21 - 0.52.0
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)
