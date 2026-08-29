@@ -1,0 +1,17 @@
+ARG DEBIAN_VERSION=12
+FROM docker.io/library/debian:${DEBIAN_VERSION}
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV APPIMAGE_EXTRACT_AND_RUN=1
+
+COPY packages.txt /tmp/packages.txt
+COPY runtime/bundle-packages.txt /tmp/bundle-packages.txt
+
+RUN apt-get update \
+    && sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' \
+        /tmp/packages.txt /tmp/bundle-packages.txt \
+        | sort -u \
+        | xargs -r apt-get install -y \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src

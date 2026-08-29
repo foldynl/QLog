@@ -1,0 +1,4 @@
+# Complete runtime families whose modules are loaded through dlopen().
+# Every shared object and checksum file from these Debian packages is bundled.
+libnss3
+libssl3

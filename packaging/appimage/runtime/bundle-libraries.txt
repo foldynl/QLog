@@ -1,0 +1,3 @@
+# Libraries loaded dynamically or by a Qt plugin and therefore not guaranteed
+# to be visible in QLog's ELF dependency graph.
+libsecret-1.so.0

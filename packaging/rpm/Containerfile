@@ -1,0 +1,16 @@
+ARG FEDORA_VERSION=43
+FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION}
+
+COPY qlog.spec /tmp/qlog.spec
+
+RUN dnf -y install \
+        rpm-build \
+        rpmdevtools \
+        dnf-plugins-core \
+        git \
+        tar \
+        gzip \
+    && REPO_VERSION=0 dnf builddep -y /tmp/qlog.spec \
+    && dnf clean all
+
+WORKDIR /src

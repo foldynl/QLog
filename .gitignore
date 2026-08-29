@@ -56,3 +56,5 @@ compile_commands.json
 *creator.user*
 .DS_Store
 /build
+/build-appimage/
+/dist/

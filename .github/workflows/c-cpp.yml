@@ -176,50 +176,21 @@ jobs:
   rpm-package:
     name: RPM Package Build
     if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    container:
-      image: fedora:43
+    runs-on: ubuntu-24.04
 
     steps:
-    - name: Install base tools
-      run: dnf install -y git rpm-build rpmdevtools rpmlint dnf-plugins-core
-
     - name: Checkout code
       uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
-
-    - name: Get version from tag
-      run: |
-        git config --global --add safe.directory "$GITHUB_WORKSPACE"
-        VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
-        echo "REPO_VERSION=${VERSION}" >> $GITHUB_ENV
-
-    - name: Install build dependencies from spec
-      run: dnf builddep -y rpm_spec/qlog.spec
-
-    - name: Prepare RPM build tree
-      run: |
-        rpmdev-setuptree
-        TAR_DIR="QLog-${REPO_VERSION}"
-        mkdir -p "/tmp/${TAR_DIR}"
-        cp -a . "/tmp/${TAR_DIR}/"
-        tar czf ~/rpmbuild/SOURCES/qlog-${REPO_VERSION}.tar.gz --exclude='.git' -C /tmp "${TAR_DIR}"
 
     - name: Build RPM package
-      run: rpmbuild -bb rpm_spec/qlog.spec
-
-    - name: Verify RPM was created
-      run: ls -la ~/rpmbuild/RPMS/*/QLog-*.rpm
-
-    - name: Run rpmlint
-      run: rpmlint ~/rpmbuild/RPMS/*/*.rpm || true
+      run: CONTAINER_ENGINE=docker ./packaging/rpm/build-container.sh 43
 
     - name: Upload RPM artifact
       uses: actions/upload-artifact@v5
       with:
         name: rpm-package
-        path: ~/rpmbuild/RPMS/*/QLog-*.rpm
+        path: dist/rpm/fedora-43/x86_64/QLog-*.x86_64.rpm
+        if-no-files-found: error
         retention-days: 1
 
   rpm-smoke-test:
@@ -234,8 +205,9 @@ jobs:
       uses: actions/download-artifact@v5
       with:
         name: rpm-package
+        path: dist/rpm/fedora-43/x86_64
 
     - name: Install and smoke test
       run: |
-        dnf install -y $(find . -name 'QLog-*.rpm')
+        dnf install -y dist/rpm/fedora-43/x86_64/QLog-*.x86_64.rpm
         QT_QPA_PLATFORM=offscreen qlog --help 2>&1 | grep -q "QLog Help"
