@@ -56,10 +56,10 @@ QList<QPair<QString, QString> > HamlibRigDrv::getPTTTypeList()
 
     QList<QPair<QString, QString>> ret;
 
-    ret << QPair<QString, QString>("None", tr("None"))
-        << QPair<QString, QString>("RIG", tr("CAT"))
-        << QPair<QString, QString>("DTR", tr("DTR"))
-        << QPair<QString, QString>("RTS", tr("RTS"));
+    ret << QPair<QString, QString>(hamlibPTTType2String(RIG_PTT_NONE), tr("None"))
+        << QPair<QString, QString>(hamlibPTTType2String(RIG_PTT_RIG), tr("CAT"))
+        << QPair<QString, QString>(hamlibPTTType2String(RIG_PTT_SERIAL_DTR), tr("DTR"))
+        << QPair<QString, QString>(hamlibPTTType2String(RIG_PTT_SERIAL_RTS), tr("RTS"));
 
     return ret;
 }
@@ -102,6 +102,8 @@ RigCaps HamlibRigDrv::getCaps(int model)
 
     if ( caps )
     {
+        ret.isNetworkOnly = ( caps->port_type == RIG_PORT_NETWORK
+                              || caps->port_type == RIG_PORT_UDP_NETWORK );
         ret.canGetFreq = ( caps->get_freq );
         ret.canGetMode = ( caps->get_mode );
         ret.canGetVFO =  ( caps->get_vfo );
@@ -116,7 +118,7 @@ RigCaps HamlibRigDrv::getCaps(int model)
         ret.isCIVAddrSupported = isCIVAddrRig(caps);
         ret.canGetSplit = ( caps->get_split_vfo && caps->get_split_freq );
 
-        if ( ret.isNetworkOnly )
+        if ( model == RIG_MODEL_NETRIGCTL )
         {
 #if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,2,0) \
     && HAMLIB_VERSION < HAMLIB_VERSION_CHECK(4,4,0)
@@ -132,8 +134,15 @@ RigCaps HamlibRigDrv::getCaps(int model)
 #endif
         }
 
+        // Hamlib uses the backend's maximum supported rate as its default.
+        ret.serialBaudRate = caps->serial_rate_max;
         ret.serialDataBits = caps->serial_data_bits;
         ret.serialStopBits = caps->serial_stop_bits;
+
+        ret.serialFlowControl = hamlibFlowControl2String(caps->serial_handshake);
+        ret.serialParity = hamlibParity2String(caps->serial_parity);
+
+        ret.defaultPTTType = hamlibPTTType2String(caps->ptt_type);
     }
     return ret;
 }
@@ -1347,6 +1356,56 @@ const QString HamlibRigDrv::hamlibVFO2String(const vfo_t vfo) const
 {
     const char *rawVFO = rig_strvfo(vfo);
     return QString(rawVFO);
+}
+
+QString HamlibRigDrv::hamlibFlowControl2String(serial_handshake_e flowControl)
+{
+    switch ( flowControl )
+    {
+    case RIG_HANDSHAKE_XONXOFF:
+        return SerialPort::SERIAL_FLOWCONTROL_SOFTWARE;
+    case RIG_HANDSHAKE_HARDWARE:
+        return SerialPort::SERIAL_FLOWCONTROL_HARDWARE;
+    case RIG_HANDSHAKE_NONE:
+    default:
+        return SerialPort::SERIAL_FLOWCONTROL_NONE;
+    }
+}
+
+QString HamlibRigDrv::hamlibParity2String(serial_parity_e parity)
+{
+    switch ( parity )
+    {
+    case RIG_PARITY_ODD:
+        return SerialPort::SERIAL_PARITY_ODD;
+    case RIG_PARITY_EVEN:
+        return SerialPort::SERIAL_PARITY_EVEN;
+    case RIG_PARITY_MARK:
+        return SerialPort::SERIAL_PARITY_MARK;
+    case RIG_PARITY_SPACE:
+        return SerialPort::SERIAL_PARITY_SPACE;
+    case RIG_PARITY_NONE:
+    default:
+        return SerialPort::SERIAL_PARITY_NO;
+    }
+}
+
+QString HamlibRigDrv::hamlibPTTType2String(ptt_type_t pttType)
+{
+    switch ( pttType )
+    {
+    case RIG_PTT_NONE:
+        return "None";
+    case RIG_PTT_RIG:
+    case RIG_PTT_RIG_MICDATA:
+        return "RIG";
+    case RIG_PTT_SERIAL_DTR:
+        return "DTR";
+    case RIG_PTT_SERIAL_RTS:
+        return "RTS";
+    default:
+        return QString();
+    }
 }
 
 serial_handshake_e HamlibRigDrv::stringToHamlibFlowControl(const QString &in_flowcontrol)

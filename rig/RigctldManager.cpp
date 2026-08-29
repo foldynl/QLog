@@ -319,7 +319,7 @@ bool RigctldManager::waitForRigctldReady(int timeoutMs)
     return false;
 }
 
-QStringList RigctldManager::buildArguments(const RigProfile &profile) const
+QStringList RigctldManager::buildArguments(const RigProfile &profile)
 {
     FCT_IDENTIFICATION;
 

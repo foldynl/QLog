@@ -31,6 +31,35 @@ public:
                    shareRigctld = false; rigctldPort = 4532; getSplitInfo = false;
                  };
 
+    RigProfile(qint32 model,
+               const QString &portPath,
+               quint32 baudrate,
+               quint8 databits,
+               float stopbits,
+               const QString &flowcontrol,
+               const QString &parity,
+               const QString &pttType,
+               const QString &pttPortPath,
+               const QString &rts,
+               const QString &dtr,
+               qint16 civAddr,
+               quint16 rigctldPort) : RigProfile()
+    {
+        this->model = model;
+        this->portPath = portPath;
+        this->baudrate = baudrate;
+        this->databits = databits;
+        this->stopbits = stopbits;
+        this->flowcontrol = flowcontrol;
+        this->parity = parity;
+        this->pttType = pttType;
+        this->pttPortPath = pttPortPath;
+        this->rts = rts;
+        this->dtr = dtr;
+        this->civAddr = civAddr;
+        this->rigctldPort = rigctldPort;
+    }
+
     QString profileName;
     QString portPath;
     QString hostname;

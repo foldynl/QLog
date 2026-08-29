@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>631</width>
-    <height>149</height>
+    <height>180</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,13 +85,39 @@
       </widget>
      </item>
      <item row="2" column="0">
+      <widget class="QLabel" name="qlogArgsLabel">
+       <property name="text">
+        <string>QLog Arguments:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="qlogArgsValueLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByMouse</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
       <widget class="QLabel" name="argsLabel">
        <property name="text">
         <string>Additional Arguments:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QLineEdit" name="argsEdit">
        <property name="placeholderText">
         <string>e.g. -v -v for verbose logging</string>
