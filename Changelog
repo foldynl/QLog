@@ -4,6 +4,7 @@ TBC- 0.53.0
 - [CHANGED] - List of Values – use uncompressed files
 - [CHANGED] - NewQSO - Reworked field-clearing algorithm (issue #411)
 - Fixed - Hamlib Driver - preparation for Hamlib 5.0
+- Fixed - DX Spot frequency rounding - Added one decimal place for kHz (issue #1149)
 
 2026/08/21 - 0.52.0
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)
