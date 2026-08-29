@@ -57,6 +57,13 @@ static void setupTranslator(QApplication* app,
     QString localeLang = ( lang.isEmpty() ) ? QLocale::system().name()
                                             : lang;
 
+    QString mapLanguage = localeLang;
+    mapLanguage.replace('_', '-');
+    mapLanguage = mapLanguage.section('-', 0, 0).toLower();
+    if ( mapLanguage == QLatin1String("c") )
+        mapLanguage = QStringLiteral("en");
+    app->setProperty("qlogLanguage", mapLanguage);
+
     QTranslator* qtTranslator = new QTranslator(app);
     if ( qtTranslator->load("qt_" + localeLang,
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
