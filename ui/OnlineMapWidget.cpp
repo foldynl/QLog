@@ -163,8 +163,11 @@ void OnlineMapWidget::mufDataUpdate()
         for ( const GenericValueMap<double>::MapPoint &point : points )
         {
             const QString label = QString::number(point.value, 'f', 0);
+            const double wrappedLongitude = point.longitude < 0.0
+                                            ? point.longitude + 360.0
+                                            : point.longitude - 360.0;
             mapPoints << MapPoint(label, point.latitude, point.longitude)
-                      << MapPoint(label, point.latitude, point.longitude - 360);
+                      << MapPoint(label, point.latitude, wrappedLongitude);
         }
     }
 

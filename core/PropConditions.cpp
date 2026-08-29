@@ -240,6 +240,9 @@ void PropConditions::processReply(QNetworkReply* reply)
                          || !jsonToFiniteDouble(obj["mufd"], muf) )
                         continue;
 
+                    if ( longitude > 180.0 )
+                        longitude -= 360.0;
+
                     mufMap.addPoint(longitude, latitude, muf, &skipElement);
                 }
                 mufMap_last_update = QDateTime::currentDateTime();
