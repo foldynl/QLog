@@ -2,6 +2,7 @@ TBC- 0.53.0
 - [NEW] - Online Map - Added Maps localization
 - [CHANGED] - Online Map - Using vector maps
 - [CHANGED] - List of Values – use uncompressed files
+- [CHANGED] - NewQSO - Reworked field-clearing algorithm (issue #411)
 - Fixed - Hamlib Driver - preparation for Hamlib 5.0
 
 2026/08/21 - 0.52.0
