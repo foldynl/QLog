@@ -94,23 +94,23 @@
         </widget>
        </item>
        <item>
-       <widget class="QPushButton" name="editRuleButton">
-        <property name="text">
-         <string>Edit</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="cloneRuleButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Clone</string>
-        </property>
-       </widget>
-      </item>
-      <item>
+        <widget class="QPushButton" name="editRuleButton">
+         <property name="text">
+          <string>Edit</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cloneRuleButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Clone</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="removeRuleButton">
          <property name="text">
           <string>Remove</string>

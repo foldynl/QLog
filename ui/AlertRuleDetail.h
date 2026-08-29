@@ -38,7 +38,7 @@ private:
     void setDefaultValues();
     bool ruleExists(const QString &ruleName);
     void loadRuleNames();
-    void loadRule(const QString &ruleName, bool lockName = true);
+    void loadRule(const QString &ruleName);
     void generateMembershipCheckboxes(const AlertRule * rule = nullptr);
 
     const quint8 MAXCOLUMNS = 8;

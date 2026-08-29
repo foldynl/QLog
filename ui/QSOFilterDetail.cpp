@@ -21,25 +21,20 @@ QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent, boo
 
     ui->setupUi(this);
 
+    if ( clone || filterName.isEmpty() )
+        filterNamesList = QSOFilterManager::instance()->getFilterList();
+
     if ( ! filterName.isEmpty() )
     {
-        if ( clone )
-            filterNamesList = QSOFilterManager::instance()->getFilterList();
-
-        loadFilter(filterName, !clone);
+        loadFilter(filterName);
 
         if ( clone )
         {
+            ui->filterLineEdit->setEnabled(true);
             ui->filterLineEdit->clear();
             ui->filterLineEdit->setPlaceholderText(tr("Enter a new name"));
             ui->filterLineEdit->setFocus();
         }
-    }
-    else
-    {
-        /* get Filters name from DB to checking whether a new filter name
-         * will be unique */
-        filterNamesList = QSOFilterManager::instance()->getFilterList();
     }
 }
 
@@ -196,12 +191,12 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     condCount++;
 }
 
-void QSOFilterDetail::loadFilter(const QString &filterName, bool lockName)
+void QSOFilterDetail::loadFilter(const QString &filterName)
 {
     FCT_IDENTIFICATION;
 
     ui->filterLineEdit->setText(filterName);
-    ui->filterLineEdit->setEnabled(!lockName);
+    ui->filterLineEdit->setEnabled(false);
 
     const QSOFilter &filter = QSOFilterManager::instance()->getFilter(filterName);
 

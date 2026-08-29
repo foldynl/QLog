@@ -69,15 +69,16 @@ AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent, bool 
     /**************************************/
     /* Load or Prepare Rule Dialog Values */
     /**************************************/
+    if ( clone || ruleName.isEmpty() )
+        loadRuleNames();
+
     if ( ! ruleName.isEmpty() )
     {
-        if ( clone )
-            loadRuleNames();
-
-        loadRule(ruleName, !clone);
+        loadRule(ruleName);
 
         if ( clone )
         {
+            ui->ruleNameEdit->setEnabled(true);
             ui->ruleNameEdit->clear();
             ui->ruleNameEdit->setPlaceholderText(tr("Enter a new name"));
             ui->ruleNameEdit->setFocus();
@@ -87,7 +88,6 @@ AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent, bool 
     {
         /* get Rule name from DB to checking whether a new filter name
          * will be unique */
-        loadRuleNames();
         setDefaultValues();
         generateMembershipCheckboxes();
     }
@@ -426,13 +426,13 @@ void AlertRuleDetail::loadRuleNames()
     }
 }
 
-void AlertRuleDetail::loadRule(const QString &ruleName, bool lockName)
+void AlertRuleDetail::loadRule(const QString &ruleName)
 {
 
     FCT_IDENTIFICATION;
 
     ui->ruleNameEdit->setText(ruleName);
-    ui->ruleNameEdit->setEnabled(!lockName);
+    ui->ruleNameEdit->setEnabled(false);
 
     AlertRule rule;
 

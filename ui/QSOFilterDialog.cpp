@@ -23,7 +23,6 @@ QSOFilterDialog::QSOFilterDialog(QWidget *parent) :
     ui->filtersListView->setSelectionMode(QAbstractItemView::SingleSelection);
     filterModel->select();
 
-    ui->cloneFilterButton->setEnabled(false);
     connect(ui->filtersListView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, [this]()
     {
@@ -77,12 +76,11 @@ void QSOFilterDialog::cloneFilter()
 {
     FCT_IDENTIFICATION;
 
-    const QModelIndexList &list = ui->filtersListView->selectionModel()->selectedIndexes();
-    if ( list.empty() )
+    const QModelIndexList selectedIndexes = ui->filtersListView->selectionModel()->selectedIndexes();
+    if ( selectedIndexes.empty() )
         return;
 
-    const QString filterName = ui->filtersListView->model()->data(list.first()).toString();
-    QSOFilterDetail dialog(filterName, this, true);
+    QSOFilterDetail dialog(selectedIndexes.first().data().toString(), this, true);
     dialog.exec();
     filterModel->select();
 }

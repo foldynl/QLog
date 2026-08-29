@@ -33,7 +33,7 @@ private:
     QStringList filterNamesList;
 
 private:
-    void loadFilter(const QString &filterName, bool lockName = true);
+    void loadFilter(const QString &filterName);
     bool filterExists(const QString &filterName);
     bool isDateField(int index);
     bool isDateTimeField(int index);

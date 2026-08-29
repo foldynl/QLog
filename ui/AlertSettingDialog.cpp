@@ -36,7 +36,6 @@ AlertSettingDialog::AlertSettingDialog(QWidget *parent) :
 
     rulesModel->select();
 
-    ui->cloneRuleButton->setEnabled(false);
     connect(ui->rulesTableView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, [this]()
     {
@@ -100,8 +99,7 @@ void AlertSettingDialog::cloneRule()
     if ( selectedRows.empty() )
         return;
 
-    const QModelIndex nameIndex = ui->rulesTableView->model()->index(selectedRows.first().row(), 0);
-    const QString ruleName = ui->rulesTableView->model()->data(nameIndex).toString();
+    const QString ruleName = selectedRows.first().data().toString();
     AlertRuleDetail dialog(ruleName, this, true);
     dialog.exec();
     rulesModel->select();
