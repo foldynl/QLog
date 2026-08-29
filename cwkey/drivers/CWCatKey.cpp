@@ -1,6 +1,7 @@
 #include "CWCatKey.h"
 #include "core/debug.h"
 #include "rig/Rig.h"
+#include "rig/drivers/HamlibCompat.h"
 
 MODULE_IDENTIFICATION("qlog.cwkey.driver.cwcatkey");
 
@@ -67,7 +68,7 @@ bool CWCatKey::open()
     /* Test if hamlib > 4.0 */
     /* Stop sending feature */
     /************************/
-#if (HAMLIBVERSION_MAJOR >= 4)
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,0,0)
     stopSendingCap = 1;
 #endif
     rigMustConnectedCap = true;
