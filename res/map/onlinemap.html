@@ -361,6 +361,10 @@
       return point;
     }
 
+    function wrappedLongitude(longitude) {
+      return longitude < 0 ? longitude + 360 : longitude - 360;
+    }
+
     function markerOptions(point) {
       const icon = resolveIcon(point.icon);
       return icon ? {icon: icon} : {};
@@ -1492,12 +1496,14 @@
        chatStationsLayer.clearLayers();
        points.forEach(function(point) {
           const mapPoint = normalizePoint(point);
-          let marker = new L.marker([mapPoint.lat, mapPoint.lng], {opacity: 0.001 });
-          marker.bindTooltip(mapPoint.label, {pane: 'lowestPane', permanent: true, direction : 'bottom', offset: [-16, 8], className: 'chat-tooltip' });
-          marker.on('dblclick', chatCallsignPressed);
-          marker.callsign = mapPoint.label;
-          marker.getTooltip().setContent(`<div style="background-color: aqua;border-radius: 20px;padding: 5px;font-weight: bold;">${marker.getTooltip().getContent()}</div>`);
-          chatStationsLayer.addLayer(marker);
+          [mapPoint.lng, wrappedLongitude(mapPoint.lng)].forEach(function(longitude) {
+             let marker = new L.marker([mapPoint.lat, longitude], {opacity: 0.001 });
+             marker.bindTooltip(mapPoint.label, {pane: 'lowestPane', permanent: true, direction : 'bottom', offset: [-16, 8], className: 'chat-tooltip' });
+             marker.on('dblclick', chatCallsignPressed);
+             marker.callsign = mapPoint.label;
+             marker.getTooltip().setContent(`<div style="background-color: aqua;border-radius: 20px;padding: 5px;font-weight: bold;">${marker.getTooltip().getContent()}</div>`);
+             chatStationsLayer.addLayer(marker);
+          });
        });
     }
 
@@ -1535,6 +1541,50 @@
         return label;
     }
 
+    function addHeardMeSpotMarkers(spot, longitude, ageOpacity) {
+        if (spot.halo) {
+            const haloOutline = L.circleMarker([spot.lat, longitude], {
+                radius: 9,
+                color: '#000000',
+                weight: 6,
+                opacity: 0.65 * ageOpacity,
+                fill: false,
+                interactive: false
+            });
+            const halo = L.circleMarker([spot.lat, longitude], {
+                radius: 9,
+                color: spot.color,
+                weight: 4,
+                opacity: spot.opacity * ageOpacity,
+                fill: false,
+                interactive: false
+            });
+            heardMeLayer.addLayer(haloOutline);
+            heardMeLayer.addLayer(halo);
+        }
+
+        const marker = L.circleMarker([spot.lat, longitude], {
+            radius: 6,
+            color: '#000000',
+            weight: 1,
+            stroke: !spot.halo,
+            fillColor: spot.color,
+            opacity: ageOpacity,
+            fillOpacity: spot.opacity * ageOpacity
+        });
+        marker.bindPopup(heardMeLabel(spot));
+        heardMeLayer.addLayer(marker);
+
+        const center = L.circleMarker([spot.lat, longitude], {
+            radius: 2,
+            stroke: false,
+            fillColor: '#000000',
+            fillOpacity: ageOpacity,
+            interactive: false
+        });
+        heardMeLayer.addLayer(center);
+    }
+
     function refreshHeardMeLayer() {
         heardMeLayer.clearLayers();
 
@@ -1543,48 +1593,8 @@
                 return;
 
             const ageOpacity = spot.faded ? heardMeFadedOpacity : 1.0;
-
-            if (spot.halo) {
-                const haloOutline = L.circleMarker([spot.lat, spot.lng], {
-                    radius: 9,
-                    color: '#000000',
-                    weight: 6,
-                    opacity: 0.65 * ageOpacity,
-                    fill: false,
-                    interactive: false
-                });
-                const halo = L.circleMarker([spot.lat, spot.lng], {
-                    radius: 9,
-                    color: spot.color,
-                    weight: 4,
-                    opacity: spot.opacity * ageOpacity,
-                    fill: false,
-                    interactive: false
-                });
-                heardMeLayer.addLayer(haloOutline);
-                heardMeLayer.addLayer(halo);
-            }
-
-            const marker = L.circleMarker([spot.lat, spot.lng], {
-                radius: 6,
-                color: '#000000',
-                weight: 1,
-                stroke: !spot.halo,
-                fillColor: spot.color,
-                opacity: ageOpacity,
-                fillOpacity: spot.opacity * ageOpacity
-            });
-            marker.bindPopup(heardMeLabel(spot));
-            heardMeLayer.addLayer(marker);
-
-            const center = L.circleMarker([spot.lat, spot.lng], {
-                radius: 2,
-                stroke: false,
-                fillColor: '#000000',
-                fillOpacity: ageOpacity,
-                interactive: false
-            });
-            heardMeLayer.addLayer(center);
+            addHeardMeSpotMarkers(spot, spot.lng, ageOpacity);
+            addHeardMeSpotMarkers(spot, wrappedLongitude(spot.lng), ageOpacity);
         });
     }
 

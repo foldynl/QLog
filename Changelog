@@ -11,6 +11,7 @@ TBC- 0.53.0
 - Fixed Hamlib Driver - preparation for Hamlib 5.0
 - Fixed DX Spot frequency rounding - Added one decimal place for kHz (issue #1149)
 - Fixed Online Map - Aurora forecast and MUF wer not displayed west of the prime meridian
+- Fixed Online Map - Chat and Heard Me markers were not displayed across map boundaries
 
 2026/08/21 - 0.52.0
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)
