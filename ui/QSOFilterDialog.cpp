@@ -26,14 +26,28 @@ QSOFilterDialog::QSOFilterDialog(QWidget *parent) :
     connect(ui->filtersListView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, [this]()
     {
-        ui->cloneFilterButton->setEnabled(ui->filtersListView->selectionModel()->hasSelection());
+        setSelectionActionsEnabled(ui->filtersListView->selectionModel()->hasSelection());
     });
+    connect(filterModel, &QAbstractItemModel::modelAboutToBeReset,
+            this, [this]()
+    {
+        setSelectionActionsEnabled(false);
+    });
+
+    setSelectionActionsEnabled(false);
 }
 
 QSOFilterDialog::~QSOFilterDialog()
 {
     FCT_IDENTIFICATION;
     delete ui;
+}
+
+void QSOFilterDialog::setSelectionActionsEnabled(bool enabled)
+{
+    ui->editFilterButton->setEnabled(enabled);
+    ui->cloneFilterButton->setEnabled(enabled);
+    ui->removeFilterButton->setEnabled(enabled);
 }
 
 void QSOFilterDialog::addFilter()

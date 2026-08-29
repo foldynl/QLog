@@ -63,9 +63,6 @@
        </item>
        <item>
         <widget class="QPushButton" name="cloneFilterButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="text">
           <string>Clone</string>
          </property>

@@ -102,9 +102,6 @@
        </item>
        <item>
         <widget class="QPushButton" name="cloneRuleButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="text">
           <string>Clone</string>
          </property>

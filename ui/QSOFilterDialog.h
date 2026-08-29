@@ -20,6 +20,7 @@ public:
 private:
     Ui::QSOFilterDialog *ui;
     QSqlTableModel* filterModel;
+    void setSelectionActionsEnabled(bool enabled);
 
 public slots:
     void addFilter();

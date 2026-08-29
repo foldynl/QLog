@@ -19,6 +19,7 @@ public:
 private:
     Ui::AlertSettingDialog *ui;
     QSqlTableModel* rulesModel;
+    void setSelectionActionsEnabled(bool enabled);
 
 public slots:
     void addRule();

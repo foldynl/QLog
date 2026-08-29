@@ -39,13 +39,27 @@ AlertSettingDialog::AlertSettingDialog(QWidget *parent) :
     connect(ui->rulesTableView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, [this]()
     {
-        ui->cloneRuleButton->setEnabled(ui->rulesTableView->selectionModel()->hasSelection());
+        setSelectionActionsEnabled(ui->rulesTableView->selectionModel()->hasSelection());
     });
+    connect(rulesModel, &QAbstractItemModel::modelAboutToBeReset,
+            this, [this]()
+    {
+        setSelectionActionsEnabled(false);
+    });
+
+    setSelectionActionsEnabled(false);
 }
 
 AlertSettingDialog::~AlertSettingDialog()
 {
     delete ui;
+}
+
+void AlertSettingDialog::setSelectionActionsEnabled(bool enabled)
+{
+    ui->editRuleButton->setEnabled(enabled);
+    ui->cloneRuleButton->setEnabled(enabled);
+    ui->removeRuleButton->setEnabled(enabled);
 }
 
 void AlertSettingDialog::addRule()
