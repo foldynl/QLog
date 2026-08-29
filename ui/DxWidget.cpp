@@ -1418,7 +1418,7 @@ void DxWidget::prepareQSOSpot(QSqlRecord qso)
 
             // DX Spider allow to enter QSO freq in MHz but it is not reliable for SHF bands.
             // a more reliable way is to send a spot with kHz value
-            ui->commandEdit->setText(QString("dx %1 %2 ").arg(QString::number(Hz2kHz(MHz2Hz(spotFreq)), 'f', 0),
+            ui->commandEdit->setText(QString("dx %1 %2 ").arg(QString::number(Hz2kHz(MHz2Hz(spotFreq)), 'f', 1),
                                                               qso.value("callsign").toString()));
             ui->commandEdit->setFocus();
         }
