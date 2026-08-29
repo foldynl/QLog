@@ -17,7 +17,8 @@
 MODULE_IDENTIFICATION("qlog.ui.mainlayouteditor");
 
 ActivityEditor::ActivityEditor(const QString &activityName,
-                                   QWidget *parent) :
+                               QWidget *parent,
+                               bool clone) :
     QDialog(parent),
     ui(new Ui::ActivityEditor),
     availableFieldsModel(new StringListModel(this)),
@@ -68,6 +69,14 @@ ActivityEditor::ActivityEditor(const QString &activityName,
         ui->activityNameEdit->setText(profile.profileName);
 
         fillWidgets(profile);
+
+        if ( clone )
+        {
+            ui->activityNameEdit->setEnabled(true);
+            ui->activityNameEdit->clear();
+            ui->activityNameEdit->setPlaceholderText(tr("Enter a new name"));
+            ui->activityNameEdit->setFocus();
+        }
     }
     else
         fillWidgets(MainLayoutProfile::getClassicLayout());
