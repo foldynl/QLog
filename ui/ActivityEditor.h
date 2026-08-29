@@ -73,7 +73,8 @@ class ActivityEditor : public QDialog
 
 public:
     explicit ActivityEditor(const QString &activityName = QString(),
-                            QWidget *parent = nullptr);
+                            QWidget *parent = nullptr,
+                            bool clone = false);
     ~ActivityEditor();
 
 private:

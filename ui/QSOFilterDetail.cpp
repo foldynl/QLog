@@ -11,7 +11,7 @@
 
 MODULE_IDENTIFICATION("qlog.ui.qsofilterdetail");
 
-QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent) :
+QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent, bool clone) :
     QDialog(parent),
     ui(new Ui::QSOFilterDetail),
     filterName(filterName),
@@ -21,13 +21,20 @@ QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent) :
 
     ui->setupUi(this);
 
-    if ( ! filterName.isEmpty() )
-        loadFilter(filterName);
-    else
-    {
-        /* get Filters name from DB to checking whether a new filter name
-         * will be unique */
+    if ( clone || filterName.isEmpty() )
         filterNamesList = QSOFilterManager::instance()->getFilterList();
+
+    if ( ! filterName.isEmpty() )
+    {
+        loadFilter(filterName);
+
+        if ( clone )
+        {
+            ui->filterLineEdit->setEnabled(true);
+            ui->filterLineEdit->clear();
+            ui->filterLineEdit->setPlaceholderText(tr("Enter a new name"));
+            ui->filterLineEdit->setFocus();
+        }
     }
 }
 

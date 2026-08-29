@@ -20,12 +20,14 @@ public:
 private:
     Ui::QSOFilterDialog *ui;
     QSqlTableModel* filterModel;
+    void setSelectionActionsEnabled(bool enabled);
 
 public slots:
     void addFilter();
     void removeFilter();
     void editFilter(QModelIndex);
     void editFilterButton();
+    void cloneFilter();
 };
 
 #endif // QLOG_UI_QSOFILTERDIALOG_H

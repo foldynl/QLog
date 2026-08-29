@@ -15,7 +15,7 @@ class AlertRuleDetail : public QDialog
     Q_OBJECT
 
 public:
-    explicit AlertRuleDetail(const QString &ruleName, QWidget *parent);
+    explicit AlertRuleDetail(const QString &ruleName, QWidget *parent, bool clone = false);
     ~AlertRuleDetail();
 
 public slots:
@@ -37,6 +37,7 @@ private slots:
 private:
     void setDefaultValues();
     bool ruleExists(const QString &ruleName);
+    void loadRuleNames();
     void loadRule(const QString &ruleName);
     void generateMembershipCheckboxes(const AlertRule * rule = nullptr);
 

@@ -19,12 +19,14 @@ public:
 private:
     Ui::AlertSettingDialog *ui;
     QSqlTableModel* rulesModel;
+    void setSelectionActionsEnabled(bool enabled);
 
 public slots:
     void addRule();
     void removeRule();
     void editRule(QModelIndex);
     void editRuleButton();
+    void cloneRule();
 
 };
 

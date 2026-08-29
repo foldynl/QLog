@@ -35,11 +35,31 @@ AlertSettingDialog::AlertSettingDialog(QWidget *parent) :
     ui->rulesTableView->setItemDelegateForColumn(1,new CheckBoxDelegate(ui->rulesTableView));
 
     rulesModel->select();
+
+    connect(ui->rulesTableView->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, [this]()
+    {
+        setSelectionActionsEnabled(ui->rulesTableView->selectionModel()->hasSelection());
+    });
+    connect(rulesModel, &QAbstractItemModel::modelAboutToBeReset,
+            this, [this]()
+    {
+        setSelectionActionsEnabled(false);
+    });
+
+    setSelectionActionsEnabled(false);
 }
 
 AlertSettingDialog::~AlertSettingDialog()
 {
     delete ui;
+}
+
+void AlertSettingDialog::setSelectionActionsEnabled(bool enabled)
+{
+    ui->editRuleButton->setEnabled(enabled);
+    ui->cloneRuleButton->setEnabled(enabled);
+    ui->removeRuleButton->setEnabled(enabled);
 }
 
 void AlertSettingDialog::addRule()
@@ -83,4 +103,18 @@ void AlertSettingDialog::editRuleButton()
     {
        editRule(index);
     }
+}
+
+void AlertSettingDialog::cloneRule()
+{
+    FCT_IDENTIFICATION;
+
+    const QModelIndexList selectedRows = ui->rulesTableView->selectionModel()->selectedRows();
+    if ( selectedRows.empty() )
+        return;
+
+    const QString ruleName = selectedRows.first().data().toString();
+    AlertRuleDetail dialog(ruleName, this, true);
+    dialog.exec();
+    rulesModel->select();
 }

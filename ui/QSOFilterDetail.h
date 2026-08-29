@@ -17,7 +17,8 @@ class QSOFilterDetail : public QDialog
     Q_OBJECT
 
 public:
-    explicit QSOFilterDetail(const QString &filterName = QString(), QWidget *parent = nullptr);
+    explicit QSOFilterDetail(const QString &filterName = QString(), QWidget *parent = nullptr,
+                             bool clone = false);
     ~QSOFilterDetail();
 
 public slots:

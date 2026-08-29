@@ -101,6 +101,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="cloneRuleButton">
+         <property name="text">
+          <string>Clone</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="removeRuleButton">
          <property name="text">
           <string>Remove</string>
@@ -169,6 +176,12 @@
      <y>274</y>
     </hint>
    </hints>
+  </connection>
+  <connection>
+   <sender>cloneRuleButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AlertSettingDialog</receiver>
+   <slot>cloneRule()</slot>
   </connection>
   <connection>
    <sender>removeRuleButton</sender>
@@ -240,5 +253,6 @@
   <slot>editRule(QModelIndex)</slot>
   <slot>editRuleButton()</slot>
   <slot>addRule()</slot>
+  <slot>cloneRule()</slot>
  </slots>
 </ui>
