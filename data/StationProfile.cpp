@@ -1,4 +1,5 @@
 #include "data/StationProfile.h"
+#include "data/Gridsquare.h"
 #include "core/debug.h"
 
 #include <QVariant>
@@ -164,6 +165,35 @@ StationProfile StationProfilesManager::findByCallsign(const QString &callsign)
     }
 
     return StationProfile();
+}
+
+QList<StationProfile> StationProfilesManager::findMatchingProfiles(const QString &callsign,
+                                                                   const QString &locator)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << callsign << locator;
+
+    const QString stationCallsign = callsign.trimmed();
+    const Gridsquare stationLocation(locator.trimmed());
+    QList<StationProfile> matches;
+
+    if ( stationCallsign.isEmpty() || !stationLocation.isValid() )
+        return matches;
+
+    const QStringList names = profileNameList();
+
+    for ( const QString &name : names )
+    {
+        const StationProfile profile = getProfile(name);
+
+        if ( profile.callsign.trimmed().compare(stationCallsign, Qt::CaseInsensitive) != 0 )
+            continue;
+
+        if ( profile.locator == stationLocation.getGrid() )
+            matches.append(profile);
+    }
+
+    return matches;
 }
 
 bool StationProfile::operator==(const StationProfile &profile)

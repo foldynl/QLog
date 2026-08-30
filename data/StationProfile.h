@@ -7,6 +7,7 @@
 #include <QDataStream>
 #include <QVariant>
 #include <QMap>
+#include <QList>
 
 #include "data/ProfileManager.h"
 
@@ -65,6 +66,8 @@ public:
     };
     void save();
     StationProfile findByCallsign(const QString &callsign);
+    QList<StationProfile> findMatchingProfiles(const QString &callsign,
+                                               const QString &locator);
 };
 
 

@@ -339,9 +339,15 @@ private:
     void updatePartnerLocTime();
     void setDefaultReport();
     void showExternalQSOWarningOnce(const QString &message,
-                                    const StationProfile &profile,
+                                    const StationProfile &activeProfile,
                                     const QSqlRecord &record);
-    void addAddlFields(QSqlRecord &record, const StationProfile &profile);
+    void showMatchingStationProfileInfoOnce(const StationProfile &matchedProfile,
+                                            const StationProfile &activeProfile);
+    QString externalQSOStationWarningText(const QSqlRecord &record,
+                                          const StationProfile &activeProfile,
+                                          const QList<StationProfile> &matchingProfiles) const;
+    void addAdditionalFields(QSqlRecord &record,
+                             const StationProfile &profile);
     bool externalQSOConflictsWithProfile(const QSqlRecord &record,
                                          const StationProfile &profile) const;
     bool eventFilter(QObject *object, QEvent *event) override;
@@ -429,6 +435,7 @@ private:
     ModeSelectionController *modeController;
     QStringList memberListHtmlItems;
     QSet<QString> warnedExternalStationContexts;
+    QSet<QString> notifiedMatchingStationProfiles;
     NewContactEditLine *srxStringLinkSourceWidget = nullptr;
     bool srxStringLinkFlexible = false;
     bool srxStringEditedByUser = false;

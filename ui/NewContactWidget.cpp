@@ -887,37 +887,98 @@ void NewContactWidget::setMembershipList(const QString &in_callsign,
     updateMemberListLabel();
 }
 
-
 void NewContactWidget::showExternalQSOWarningOnce(const QString &message,
-                                                  const StationProfile &profile,
+                                                  const StationProfile &activeProfile,
                                                   const QSqlRecord &record)
 {
     FCT_IDENTIFICATION;
 
-    // Treat a changed profile callsign or grid as a new station context.
-    const QStringList warningContext = {
-        profile.profileName,
-        profile.callsign.trimmed().toUpper(),
-        profile.locator.trimmed().toUpper(),
+    const QStringList contextFields = {
+        activeProfile.profileName,
+        activeProfile.callsign.trimmed().toUpper(),
+        activeProfile.locator.trimmed().toUpper(),
         record.value("station_callsign").toString().trimmed().toUpper(),
         record.value("my_gridsquare").toString().trimmed().toUpper()
     };
-    const QString warningKey = warningContext.join(QChar(0x1f));
+    const QString stationContext = contextFields.join(QChar(0x1f));
 
-    if ( warnedExternalStationContexts.contains(warningKey) )
+    if ( warnedExternalStationContexts.contains(stationContext) )
         return;
 
-    warnedExternalStationContexts.insert(warningKey);
+    warnedExternalStationContexts.insert(stationContext);
 
-    QMessageBox* messageBox =
-            new QMessageBox(QMessageBox::Information,
-                            tr("QLog Information"),
-                            message,
-                            QMessageBox::Ok,
-                            this);
-    messageBox->setAttribute(Qt::WA_DeleteOnClose);
-    messageBox->setTextFormat(Qt::PlainText);
-    messageBox->open();
+    qWarning() << message;
+
+    QMessageBox::information(nullptr,
+                             tr("QLog Information"),
+                             message);
+}
+
+void NewContactWidget::showMatchingStationProfileInfoOnce(const StationProfile &matchedProfile,
+                                                          const StationProfile &activeProfile)
+{
+    FCT_IDENTIFICATION;
+
+    if ( notifiedMatchingStationProfiles.contains(matchedProfile.profileName) )
+        return;
+
+    notifiedMatchingStationProfiles.insert(matchedProfile.profileName);
+
+    QString message;
+    if ( activeProfile.profileName.isEmpty() )
+    {
+        message = tr("QSO was saved using matching Station Profile \"%1\". "
+                     "No Station Profile is active.").arg(matchedProfile.profileName);
+    }
+    else
+    {
+        message = tr("QSO was saved using matching Station Profile \"%1\". "
+                     "Active profile is \"%2\".").arg(matchedProfile.profileName, activeProfile.profileName);
+    }
+
+    qInfo() << message;
+    QMessageBox::information(nullptr,
+                             tr("QLog Information"),
+                             message);
+}
+
+QString NewContactWidget::externalQSOStationWarningText(const QSqlRecord &record,
+                                                        const StationProfile &activeProfile,
+                                                        const QList<StationProfile> &matchingProfiles) const
+{
+    FCT_IDENTIFICATION;
+
+    if ( matchingProfiles.size() > 1 )
+    {
+        QStringList profileNames;
+        for ( const StationProfile &profile : matchingProfiles )
+            profileNames.append(profile.profileName);
+
+        return tr("The external QSO was saved without Station Profile data: "
+                  "received station %1 / %2 matches multiple Station "
+                  "Profiles (%3).").arg(record.value("station_callsign").toString(),
+                                        record.value("my_gridsquare").toString(),
+                                        profileNames.join(QStringLiteral(", ")));
+    }
+
+    if ( activeProfile.profileName.isEmpty() )
+    {
+        return tr("The external QSO was saved without Station Profile data "
+                  "because no matching Station Profile was found.");
+    }
+
+    const auto displayedValue = [](const QString &value)
+    {
+        return value.isEmpty() ? tr("not provided") : value;
+    };
+
+    return tr("The external QSO was saved without Station Profile data: "
+              "received station %1 / %2 does not match active Station "
+              "Profile \"%3\" (%4 / %5).") .arg(displayedValue(record.value("station_callsign").toString()),
+                                                displayedValue(record.value("my_gridsquare").toString()),
+                                                activeProfile.profileName,
+                                                displayedValue(activeProfile.callsign.trimmed()),
+                                                displayedValue(activeProfile.locator.trimmed()));
 }
 
 /* function just refresh Station Profile Combo */
@@ -1287,7 +1348,8 @@ void NewContactWidget::resetContact()
     emit contactReset();
 }
 
-void NewContactWidget::addAddlFields(QSqlRecord &record, const StationProfile &profile)
+void NewContactWidget::addAdditionalFields(QSqlRecord &record,
+                                           const StationProfile &profile)
 {
     FCT_IDENTIFICATION;
 
@@ -1449,7 +1511,9 @@ void NewContactWidget::addAddlFields(QSqlRecord &record, const StationProfile &p
          && profile.dxcc != 0 )
     {
         record.setValue("my_dxcc", profile.dxcc);
-        record.setValue("my_country_intl", profile.country);
+
+        if ( record.value("my_country_intl").toString().isEmpty() )
+            record.setValue("my_country_intl", profile.country);
     }
 
     if ( record.value("my_cnty").toString().isEmpty()
@@ -1509,7 +1573,8 @@ void NewContactWidget::addAddlFields(QSqlRecord &record, const StationProfile &p
     {
         SOTAEntity sotaInfo = Data::instance()->lookupSOTA(record.value("my_sota_ref").toString());
         if ( sotaInfo.summitCode.toUpper() == record.value("my_sota_ref").toString().toUpper()
-             && !sotaInfo.summitName.isEmpty() )
+             && !sotaInfo.summitName.isEmpty()
+             && record.value("my_altitude").toString().isEmpty() )
         {
             record.setValue("my_altitude", sotaInfo.altm);
         }
@@ -2108,7 +2173,7 @@ void NewContactWidget::saveContact()
 
     AdiFormat::preprocessINTLFields<QSqlRecord>(record);
 
-    addAddlFields(record, profile);
+    addAdditionalFields(record, profile);
 
     AdiFormat::preprocessINTLFields<QSqlRecord>(record);
 
@@ -2284,32 +2349,22 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
     record.setValue("my_gridsquare",
                     record.value("my_gridsquare").toString().trimmed());
 
-    if ( !record.value("gridsquare").toString().isEmpty()
-         && !record.value("my_gridsquare").toString().isEmpty() )
-    {
-        const Gridsquare stationGrid(record.value("my_gridsquare").toString());
-        double distance;
-        if ( stationGrid.distanceTo(
-                 Gridsquare(record.value("gridsquare").toString()), distance) )
-        {
-            record.setValue("distance", distance);
-        }
-    }
+    const StationProfile activeProfile = StationProfilesManager::instance()->getCurProfile1();
+    StationProfile qsoProfile = activeProfile;
+    QList<StationProfile> matchingProfiles;
 
-    const StationProfile profile =
-            StationProfilesManager::instance()->getCurProfile1();
-    const bool activeProfileAvailable = !profile.profileName.isEmpty();
-    const bool stationProfileConflict =
-            activeProfileAvailable
-            && externalQSOConflictsWithProfile(record, profile);
-    const bool useCurrentStationContext =
-            activeProfileAvailable
-            && !isManualEnterMode
-            && !stationProfileConflict;
+    if ( qsoProfile.profileName.isEmpty()
+         || externalQSOConflictsWithProfile(record, qsoProfile) )
+    {
+        matchingProfiles = StationProfilesManager::instance()->findMatchingProfiles(record.value("station_callsign").toString(),
+                                                                                    record.value("my_gridsquare").toString());
+
+        qsoProfile = matchingProfiles.size() == 1 ? matchingProfiles.constFirst() : StationProfile();
+    }
 
     // add information from callbook if it is a known callsign
     // based on the poll #420, QLog adds more information from callbook
-    if ( useCurrentStationContext
+    if ( !isManualEnterMode
          && savedCallsign == ui->callsignEdit->text() )
     {
         stopContactTimer();
@@ -2391,42 +2446,9 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
         }
     }
 
-    QString externalQSOWarning;
-
-    if ( isManualEnterMode )
-    {
-        externalQSOWarning =
-                tr("The external QSO was saved without current station data "
-                   "because Manual QSO Entry is active.");
-    }
-    else if ( !activeProfileAvailable )
-    {
-        externalQSOWarning =
-                tr("The external QSO was saved without current station data "
-                   "because no active Station Profile is available.");
-    }
-    else if ( stationProfileConflict )
-    {
-        const auto displayedValue = [](const QString &value)
-        {
-            return value.isEmpty() ? tr("not provided") : value;
-        };
-
-        externalQSOWarning =
-                tr("The external QSO was saved without current station data: "
-                   "received station %1 / %2 does not match active Station "
-                   "Profile \"%3\" (%4 / %5).")
-                        .arg(displayedValue(record.value("station_callsign").toString()),
-                             displayedValue(record.value("my_gridsquare").toString()),
-                             profile.profileName,
-                             displayedValue(profile.callsign.trimmed()),
-                             displayedValue(profile.locator.trimmed()));
-    }
-
     AdiFormat::preprocessINTLFields<QSqlRecord>(record);
 
-    if ( useCurrentStationContext )
-        addAddlFields(record, profile);
+    addAdditionalFields(record, qsoProfile);
 
     AdiFormat::preprocessINTLFields<QSqlRecord>(record);
 
@@ -2460,10 +2482,16 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
     updateNearestSpotDupe();
     setNearestSpotColor();
 
-    if ( !externalQSOWarning.isEmpty() )
+    if ( matchingProfiles.size() == 1 )
     {
-        qWarning() << externalQSOWarning;
-        showExternalQSOWarningOnce(externalQSOWarning, profile, record);
+        showMatchingStationProfileInfoOnce(qsoProfile, activeProfile);
+    }
+    else if ( qsoProfile.profileName.isEmpty() )
+    {
+        const QString warning = externalQSOStationWarningText(record,
+                                                              activeProfile,
+                                                              matchingProfiles);
+        showExternalQSOWarningOnce(warning, activeProfile, record);
     }
 
     emit contactAdded(record);
