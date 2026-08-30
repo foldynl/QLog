@@ -196,6 +196,7 @@ void DownloadQSLDialog::prepareDownload(GenericQSLDownloader *service,
     FCT_IDENTIFICATION;
 
     QProgressDialog* progressDialog = new QProgressDialog("", tr("Cancel"), 0, 0, this);
+    progressDialog->setWindowTitle(tr("QSL Download Progress"));
     progressDialog->setWindowModality(Qt::WindowModal);
     progressDialog->setRange(0, 0);
     progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);

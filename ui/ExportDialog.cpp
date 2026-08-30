@@ -245,6 +245,7 @@ void ExportDialog::runExport()
 
     // Modal progress dialog
     QProgressDialog progressDialog(tr("Exporting..."), tr("Cancel"), 0, 100, this);
+    progressDialog.setWindowTitle(tr("Export Progress"));
     progressDialog.setWindowModality(Qt::WindowModal);
     progressDialog.setMinimumDuration(0);
 

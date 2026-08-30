@@ -292,6 +292,7 @@ bool FileCompressor::gzipFileWithProgress(const QString &sourceFile, const QStri
     FCT_IDENTIFICATION;
 
     QProgressDialog progressDialog(title, QString(), 0, 100, parent);
+    progressDialog.setWindowTitle(title);
     progressDialog.setWindowModality(Qt::WindowModal);
     progressDialog.setMinimumDuration(500);  // Show after 500ms
     progressDialog.setValue(0);
@@ -317,6 +318,7 @@ bool FileCompressor::gunzipFileWithProgress(const QString &sourceFile, const QSt
     FCT_IDENTIFICATION;
 
     QProgressDialog progressDialog(title, QString(), 0, 100, parent);
+    progressDialog.setWindowTitle(title);
     progressDialog.setWindowModality(Qt::WindowModal);
     progressDialog.setMinimumDuration(500);  // Show after 500ms
     progressDialog.setValue(0);

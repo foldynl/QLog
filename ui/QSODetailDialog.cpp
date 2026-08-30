@@ -656,6 +656,7 @@ void QSODetailDialog::showEQSLButton()
     FCT_IDENTIFICATION;
 
     QProgressDialog* dialog = new QProgressDialog(tr("Downloading eQSL Image"), tr("Cancel"), 0, 0, this);
+    dialog->setWindowTitle(tr("eQSL Image Download"));
     dialog->setWindowModality(Qt::WindowModal);
     dialog->setRange(0, 0);
     dialog->setAutoClose(true);
