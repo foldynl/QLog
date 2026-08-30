@@ -818,7 +818,8 @@ void QSODetailDialog::queryMemberList()
     if ( ui->callsignEdit->text().size() >= 3 )
     {
         MembershipQE::instance()->asyncQueryDetails(ui->callsignEdit->text(),
-                                                    BandPlan::freq2Band(ui->freqTXEdit->value()).name,
+                                                    BandPlan::resolveBand(ui->freqTXEdit->value(),
+                                                                          ui->bandTXCombo->currentText()).name,
                                                     ui->modeEdit->currentText());
     }
 }
@@ -1618,7 +1619,8 @@ void QSODetailDialog::refreshDXStatTabs()
     FCT_IDENTIFICATION;
 
     const DxccEntity &dxccEntity = Data::instance()->lookupDxccIDClublog(editedRecord->field("dxcc").value().toInt());
-    const Band &currBand = BandPlan::freq2Band(ui->freqTXEdit->value());
+    const Band &currBand = BandPlan::resolveBand(ui->freqTXEdit->value(),
+                                                 ui->bandTXCombo->currentText());
 
     ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, currBand);
     ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), currBand);

@@ -104,7 +104,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Frequency</string>
+            <string>Band/Freq</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -297,32 +297,26 @@
             <number>1</number>
            </property>
            <item>
-            <widget class="QComboBox" name="bandRXCombo">
+            <widget class="QLabel" name="bandRXLabel">
              <property name="font">
               <font>
                <bold>true</bold>
               </font>
              </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="text">
+              <string notr="true">80m</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="bandTXCombo">
+            <widget class="QLabel" name="bandTXLabel">
              <property name="font">
               <font>
                <bold>true</bold>
               </font>
              </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="text">
+              <string notr="true">80m</string>
              </property>
             </widget>
            </item>

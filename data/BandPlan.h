@@ -43,6 +43,7 @@ public:
                                      QString &submode);
     static const Band freq2Band(double freq);
     static const Band bandName2Band(const QString& name);
+    static const Band resolveBand(double frequency, const QString &fallbackBandName);
     static const QList<Band> bandsList(const bool onlyDXCCBands = false,
                                        const bool onlyEnabled = false);
     static const QString modeToDXCCModeGroup(const QString &mode);

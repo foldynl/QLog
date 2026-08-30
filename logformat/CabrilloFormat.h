@@ -71,6 +71,10 @@ public:
     static QString formatField(const QString &value,
                                const QString &formatter,
                                int width);
+    static QString bandToFrequencyField(const QString &band);
+    static QString formatFrequencyOrBand(const QString &frequency,
+                                         const QString &band,
+                                         int width);
 
     static QList<CategoryItem> bandCategories();
     static QList<CategoryItem> modeCategories();

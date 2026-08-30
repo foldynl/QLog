@@ -39,6 +39,7 @@ private:
 
     Ui::CabrilloExportDialog *ui;
     QTimer *countDebounceTimer;
+    QString bandFilterName;
     double bandStartFreq;
     double bandEndFreq;
     bool bandFilterActive;

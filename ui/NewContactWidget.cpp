@@ -274,9 +274,11 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     /* Set Visiable for widgets */
     /****************************/
     ui->freqTXEdit->setVisible(false);
-    ui->bandTXCombo->setVisible(false);
+    ui->bandTXLabel->setVisible(false);
     ui->freqRXLabel->setVisible(false);
     ui->freqTXLabel->setVisible(false);
+    ui->freqRXEdit->enableBandSelection();
+    ui->freqTXEdit->enableBandSelection();
 
     /***********************/
     /* Read Widget Setting */
@@ -287,15 +289,17 @@ NewContactWidget::NewContactWidget(QWidget *parent) :
     /* Reload Global Setting */
     /*************************/
     readGlobalSettings();
+    restoreBandSetting();
 
     /**********************/
     /* Clear Contact Form */
     /**********************/
     resetContact();
+    updateBandLabels();
 
-    connect(ui->bandTXCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+    connect(ui->freqTXEdit, &FreqQSpinBox::bandSelected,
             this, &NewContactWidget::bandTXChanged);
-    connect(ui->bandRXCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+    connect(ui->freqRXEdit, &FreqQSpinBox::bandSelected,
             this, &NewContactWidget::bandRXChanged);
 
     /************************/
@@ -363,7 +367,7 @@ void NewContactWidget::queryMemberList()
 
     if ( callsign.size() >= 3 )
     {
-        MembershipQE::instance()->asyncQueryDetails(callsign, selectedBand(ui->bandRXCombo), ui->modeEdit->currentText());
+        MembershipQE::instance()->asyncQueryDetails(callsign, bandTX.name, ui->modeEdit->currentText());
     }
 }
 
@@ -390,6 +394,9 @@ void NewContactWidget::writeWidgetSetting()
     FCT_IDENTIFICATION;
 
     LogParam::setNewContactFreq(realRigFreq);
+    LogParam::setNewContactBand(ui->freqRXEdit->hasBand()
+                                ? bandRX.name
+                                : QString());
     LogParam::setNewContactMode(ui->modeEdit->currentText());
     LogParam::setNewContactSubMode(ui->submodeEdit->currentText());
     LogParam::setNewContactPower(uiDynamic->powerEdit->value());
@@ -400,6 +407,22 @@ void NewContactWidget::writeWidgetSetting()
     LogParam::setNewContactQSLVia(ui->qslSentViaBox->itemData(ui->qslSentViaBox->currentIndex()).toString());
     LogParam::setNewContactPropMode(Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText()));
     LogParam::setNewContactTabsExpanded(tabCollapseBtn->isChecked());
+}
+
+void NewContactWidget::restoreBandSetting()
+{
+    const QString savedBandName = LogParam::getNewContactBand();
+    if ( savedBandName.isEmpty() )
+        return;
+
+    const QSignalBlocker rxBlocker(ui->freqRXEdit);
+    const QSignalBlocker txBlocker(ui->freqTXEdit);
+    if ( ui->freqRXEdit->setBand(savedBandName) )
+    {
+        ui->freqTXEdit->setBand(savedBandName);
+        bandRX = BandPlan::bandName2Band(savedBandName);
+        bandTX = bandRX;
+    }
 }
 
 /* function read global setting, called when starting or when Setting is reloaded */
@@ -433,8 +456,7 @@ void NewContactWidget::readGlobalSettings()
 
     ui->freqRXEdit->loadBands();
     ui->freqTXEdit->loadBands();
-    reloadBandCombos();
-    setBandComboEditingEnabled();
+    setBandSelectionEnabled();
 
     updatePartnerLocTime();
     ui->dateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
@@ -529,8 +551,8 @@ void NewContactWidget::setDxccInfo(const DxccEntity &curr)
         uiDynamic->cqzEdit->setText(QString::number(dxccEntity.cqz));
         uiDynamic->ituEdit->setText(QString::number(dxccEntity.ituz));
         updateCoordinates(dxccEntity.latlon[0], dxccEntity.latlon[1], COORD_DXCC);
-        ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, BandPlan::freq2Band(ui->freqTXEdit->value()));
-        ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), BandPlan::freq2Band(ui->freqTXEdit->value()));
+        ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, bandTX);
+        ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), bandTX);
         uiDynamic->contEdit->setCurrentText(dxccEntity.cont);
         updateDxccStatus();
         updateCountyCompleter(dxccEntity.dxcc);
@@ -980,9 +1002,12 @@ void NewContactWidget::refreshRigProfileCombo()
     if ( isManualEnterMode )
         return;
 
-    __changeFrequency(VFO1, realRigFreq,
-                      realRigFreq + RigProfilesManager::instance()->getProfile(currentText).ritOffset,
-                      realRigFreq + RigProfilesManager::instance()->getProfile(currentText).xitOffset);
+    if ( !ui->freqRXEdit->hasBand() && !ui->freqTXEdit->hasBand() )
+    {
+        __changeFrequency(VFO1, realRigFreq,
+                          realRigFreq + RigProfilesManager::instance()->getProfile(currentText).ritOffset,
+                          realRigFreq + RigProfilesManager::instance()->getProfile(currentText).xitOffset);
+    }
 
     uiDynamic->powerEdit->setValue(RigProfilesManager::instance()->getProfile(currentText).defaultPWR);
 }
@@ -1092,10 +1117,14 @@ void NewContactWidget::updateTXBand(double freq, bool reportChange)
 
     qCDebug(function_parameters)<<freq;
 
-    const QString previousBandName = bandTX.name;
-    bandTX = BandPlan::freq2Band(freq);
+    updateTXBand(BandPlan::freq2Band(freq), reportChange);
+}
 
-    setBandComboFromBand(ui->bandTXCombo, bandTX);
+void NewContactWidget::updateTXBand(const Band &band, bool reportChange)
+{
+    const QString previousBandName = bandTX.name;
+    bandTX = band;
+    updateBandLabels();
 
     if ( reportChange
          && !isManualEnterMode
@@ -1106,9 +1135,8 @@ void NewContactWidget::updateTXBand(double freq, bool reportChange)
     }
 
     updateSatMode();
-    updateDxccStatus();
-    queryPota(); // It is not possible to call the potaquert everywhere when the freq changes,
-                 // call it when band is changed
+    setSTXSeq();
+    refreshCallsignsColors();
     ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, bandTX);
     ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), bandTX);
 }
@@ -1124,6 +1152,13 @@ void NewContactWidget::reportTXBand()
     emit txBandChanged(bandTX.name);
 }
 
+void NewContactWidget::reportRXBand()
+{
+    FCT_IDENTIFICATION;
+
+    emit rxBandChanged(bandRX.name);
+}
+
 void NewContactWidget::requestTXBandReport()
 {
     FCT_IDENTIFICATION;
@@ -1137,55 +1172,39 @@ void NewContactWidget::updateRXBand(double freq)
 
     qCDebug(function_parameters)<<freq;
 
-    bandRX = BandPlan::freq2Band(freq);
-
-    setBandComboFromBand(ui->bandRXCombo, bandRX);
-    updateSatMode();
-    setSTXSeq();
-    refreshCallsignsColors();
+    updateRXBand(BandPlan::freq2Band(freq));
 }
 
-void NewContactWidget::bandTXChanged(int)
+void NewContactWidget::updateRXBand(const Band &band)
+{
+    const QString previousBandName = bandRX.name;
+    bandRX = band;
+    updateBandLabels();
+    updateSatMode();
+
+    if ( bandRX.name != previousBandName )
+    {
+        queryPota();
+        emit rxBandChanged(bandRX.name);
+    }
+}
+
+void NewContactWidget::bandTXChanged(const QString &bandName)
 {
     FCT_IDENTIFICATION;
 
-    if (!isManualEnterMode && rigOnline)
-    {
-        setBandComboFromBand(ui->bandTXCombo, BandPlan::freq2Band(ui->freqTXEdit->value()));
-        return;
-    }
-
-    bandTX = BandPlan::bandName2Band(selectedBand(ui->bandTXCombo));
-    {
-        const QSignalBlocker blocker(ui->freqTXEdit);
-        ui->freqTXEdit->setValue(0.0);
-    }
-    updateSatMode();
-    updateDxccStatus();
-    queryPota();
-    ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, bandTX);
-    ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), bandTX);
+    updateTXBand(BandPlan::bandName2Band(bandName));
     formFieldChanged();
 }
 
-void NewContactWidget::bandRXChanged(int)
+void NewContactWidget::bandRXChanged(const QString &bandName)
 {
     FCT_IDENTIFICATION;
 
-    if (!isManualEnterMode && rigOnline)
-    {
-        setBandComboFromBand(ui->bandRXCombo, BandPlan::freq2Band(ui->freqRXEdit->value()));
-        return;
-    }
+    updateRXBand(BandPlan::bandName2Band(bandName));
 
-    bandRX = BandPlan::bandName2Band(selectedBand(ui->bandRXCombo));
-    {
-        const QSignalBlocker blocker(ui->freqRXEdit);
-        ui->freqRXEdit->setValue(0.0);
-    }
-    updateSatMode();
-    setSTXSeq();
-    refreshCallsignsColors();
+    if ( !bandName.isEmpty() )
+        ui->freqTXEdit->setBand(bandName);
     formFieldChanged();
 }
 
@@ -1417,7 +1436,7 @@ void NewContactWidget::addAddlFields(QSqlRecord &record, const StationProfile &p
         // because it might be missing from the log record.
         if ( record.value("sat_mode").toString().isEmpty()
              && !uiDynamic->satModeEdit->currentText().isEmpty()
-             && record.value("band").toString() == selectedBand(ui->bandTXCombo))
+             && record.value("band").toString() == bandTX.name)
         {
             record.setValue("sat_mode", Data::instance()->satModeTextToID(uiDynamic->satModeEdit->currentText()));
         }
@@ -1889,18 +1908,26 @@ void NewContactWidget::saveContact()
     if ( callsign.isEmpty() )
         return;
 
-    const QString txBandName = selectedBand(ui->bandTXCombo);
-    const QString rxBandName = selectedBand(ui->bandRXCombo);
-    if ( ui->freqTXEdit->value() == 0.0 && txBandName.isEmpty() )
+    const QString txBandName = bandTX.name;
+    const QString rxBandName = bandRX.name;
+    const bool txHasFrequency = ui->freqTXEdit->hasFrequency();
+    const bool rxHasFrequency = ui->freqRXEdit->hasFrequency();
+    if ( txBandName.isEmpty() )
     {
-        QMessageBox::critical(this, tr("QLog Error"), tr("TX Frequency or Band must be filled"));
-        ui->bandTXCombo->setFocus();
+        const QString message = txHasFrequency
+                                ? tr("TX Frequency is outside a known band")
+                                : tr("TX Frequency or Band must be filled");
+        QMessageBox::critical(this, tr("QLog Error"), message);
+        ui->freqTXEdit->setFocus();
         return;
     }
-    if ( ui->freqRXEdit->value() == 0.0 && rxBandName.isEmpty() )
+    if ( rxBandName.isEmpty() )
     {
-        QMessageBox::critical(this, tr("QLog Error"), tr("RX Frequency or Band must be filled"));
-        ui->bandRXCombo->setFocus();
+        const QString message = rxHasFrequency
+                                ? tr("RX Frequency is outside a known band")
+                                : tr("RX Frequency or Band must be filled");
+        QMessageBox::critical(this, tr("QLog Error"), message);
+        ui->freqRXEdit->setFocus();
         return;
     }
 
@@ -1955,16 +1982,26 @@ void NewContactWidget::saveContact()
         record.setValue("gridsquare", uiDynamic->gridEdit->text().toUpper());
     }
 
-    record.setValue("freq", ui->freqTXEdit->value());
+    record.setValue("freq", txHasFrequency
+                            ? QVariant(ui->freqTXEdit->value())
+                            : QVariant());
     record.setValue("band", txBandName);
 
     // Based on ADIF 3.1.x FREQ_RX is defined as "in a split frequency QSO"
     // Also here https://groups.io/g/adifdev/message/228 is mentioned:
     //    "BAND_RX & FREQ_RX (Same than BAND and FREQ but for split/crossband/satellite QSOs)"
-    if ( MHz2Hz(ui->freqRXEdit->value()) != MHz2Hz(ui->freqTXEdit->value())
+    const bool frequencyTypeDiffers = rxHasFrequency != txHasFrequency;
+    const bool exactFrequenciesDiffer = rxHasFrequency
+                                        && txHasFrequency
+                                        && MHz2Hz(ui->freqRXEdit->value())
+                                           != MHz2Hz(ui->freqTXEdit->value());
+    if ( frequencyTypeDiffers
+         || exactFrequenciesDiffer
          || rxBandName != txBandName )
     {
-        record.setValue("freq_rx", ui->freqRXEdit->value());
+        record.setValue("freq_rx", rxHasFrequency
+                                   ? QVariant(ui->freqRXEdit->value())
+                                   : QVariant());
         record.setValue("band_rx", rxBandName);
     }
 
@@ -2516,16 +2553,22 @@ void NewContactWidget::markContact()
 {
     FCT_IDENTIFICATION;
 
-    if ( !ui->callsignEdit->text().isEmpty() )
-    {
-        DxSpot spot;
+    if ( ui->callsignEdit->text().isEmpty() )
+        return;
 
-        spot.dateTime = QDateTime::currentDateTime().toTimeZone(QTimeZone::utc());
-        spot.freq = ui->freqRXEdit->value();
-        spot.band = BandPlan::freq2Band(spot.freq).name;
-        spot.callsign = ui->callsignEdit->text().toUpper();
-        emit markQSO(spot);
+    if ( !ui->freqRXEdit->hasFrequency() )
+    {
+        QMessageBox::warning(this, tr("QLog Warning"),
+                             tr("An exact RX frequency is required to add a Bandmap mark"));
+        return;
     }
+
+    DxSpot spot;
+    spot.dateTime = QDateTime::currentDateTime().toTimeZone(QTimeZone::utc());
+    spot.freq = ui->freqRXEdit->value();
+    spot.band = bandRX.name;
+    spot.callsign = ui->callsignEdit->text().toUpper();
+    emit markQSO(spot);
 }
 
 void NewContactWidget::updateTime()
@@ -2641,7 +2684,7 @@ void NewContactWidget::updateDxccStatus()
         return;
     }
 
-    DxccStatus status = Data::instance()->dxccStatus(dxccEntity.dxcc, selectedBand(ui->bandRXCombo), ui->modeEdit->currentText());
+    DxccStatus status = Data::instance()->dxccStatus(dxccEntity.dxcc, bandTX.name, ui->modeEdit->currentText());
 
     switch (status)
     {
@@ -2874,9 +2917,9 @@ void NewContactWidget::showRXTXFreqs(bool enable)
     FCT_IDENTIFICATION;
 
     ui->freqTXEdit->setVisible(enable);
-    ui->bandTXCombo->setVisible(enable);
     ui->freqRXLabel->setVisible(enable);
     ui->freqTXLabel->setVisible(enable);
+    updateBandLabels();
 }
 
 /* Generic function to change freq */
@@ -2958,7 +3001,7 @@ void NewContactWidget::rigConnected()
     }
 
     rigOnline = true;
-    setBandComboEditingEnabled();
+    setBandSelectionEnabled();
 }
 
 /* disconnection slot */
@@ -2978,7 +3021,7 @@ void NewContactWidget::rigDisconnected()
     uiDynamic->powerEdit->setValue(RigProfilesManager::instance()->getCurProfile1().defaultPWR);
 
     rigOnline = false;
-    setBandComboEditingEnabled();
+    setBandSelectionEnabled();
 }
 
 void NewContactWidget::setNearestSpot(const DxSpot &spot)
@@ -3002,7 +3045,7 @@ void NewContactWidget::setNearestSpotColor()
 
     const DxccEntity &spotEntity = Data::instance()->lookupDxcc(nearestSpot.callsign);
     const DxccStatus &status = Data::instance()->dxccStatus(spotEntity.dxcc,
-                                                selectedBand(ui->bandRXCombo),
+                                                bandTX.name,
                                                 ui->modeEdit->currentText());
     const QColor statusColor = Data::statusToColor(status,
                                                    nearestSpot.dupeCount,
@@ -3030,7 +3073,7 @@ void NewContactWidget::setManualMode(bool isEnabled)
         rigDisconnected();
 
     isManualEnterMode = isEnabled;
-    setBandComboEditingEnabled();
+    setBandSelectionEnabled();
 
     if ( isExitManualMode )
     {
@@ -3276,58 +3319,30 @@ void NewContactWidget::setupCustomUiRowsTabOrder(const QList<QWidget *> &customW
     setTabOrder(prevCustomWidget, ui->callsignEdit);
 }
 
-void NewContactWidget::reloadBandCombos()
-{
-    FCT_IDENTIFICATION;
-
-    const QString txBandName = selectedBand(ui->bandTXCombo);
-    const QString rxBandName = selectedBand(ui->bandRXCombo);
-    const QList<Band> bands = BandPlan::bandsList();
-    const QSignalBlocker txBlocker(ui->bandTXCombo);
-    const QSignalBlocker rxBlocker(ui->bandRXCombo);
-
-    ui->bandTXCombo->clear();
-    ui->bandRXCombo->clear();
-    ui->bandTXCombo->addItem(tr("Blank"), QString());
-    ui->bandRXCombo->addItem(tr("Blank"), QString());
-    for (const Band &band : bands)
-    {
-        ui->bandTXCombo->addItem(band.name, band.name);
-        ui->bandRXCombo->addItem(band.name, band.name);
-    }
-
-    setBandComboFromBand(ui->bandTXCombo, BandPlan::bandName2Band(txBandName));
-    setBandComboFromBand(ui->bandRXCombo, BandPlan::bandName2Band(rxBandName));
-
-    if (txBandName.isEmpty())
-        setBandComboFromBand(ui->bandTXCombo, BandPlan::freq2Band(ui->freqTXEdit->value()));
-    if (rxBandName.isEmpty())
-        setBandComboFromBand(ui->bandRXCombo, BandPlan::freq2Band(ui->freqRXEdit->value()));
-}
-
-QString NewContactWidget::selectedBand(const QComboBox *combo) const
-{
-    FCT_IDENTIFICATION;
-
-    return combo->currentData().toString();
-}
-
-void NewContactWidget::setBandComboFromBand(QComboBox *combo, const Band &band)
-{
-    FCT_IDENTIFICATION;
-
-    const QSignalBlocker blocker(combo);
-    const int index = combo->findData(band.name);
-    combo->setCurrentIndex(index >= 0 ? index : 0);
-}
-
-void NewContactWidget::setBandComboEditingEnabled()
+void NewContactWidget::setBandSelectionEnabled()
 {
     FCT_IDENTIFICATION;
 
     const bool editable = isManualEnterMode || !rigOnline;
-    ui->bandRXCombo->setEnabled(editable);
-    ui->bandTXCombo->setEnabled(editable);
+    ui->freqRXEdit->setBandSelectionEnabled(editable);
+    ui->freqTXEdit->setBandSelectionEnabled(editable);
+}
+
+void NewContactWidget::updateBandLabels()
+{
+    auto updateLabel = [](QLabel *label, const Band &band,
+                          bool rowVisible, bool bandMode)
+    {
+        QSizePolicy policy = label->sizePolicy();
+        policy.setRetainSizeWhenHidden(rowVisible);
+        label->setSizePolicy(policy);
+        label->setText(band.name.isEmpty() ? QStringLiteral("OOB!") : band.name);
+        label->setVisible(rowVisible && !bandMode);
+    };
+
+    updateLabel(ui->bandRXLabel, bandRX, true, ui->freqRXEdit->hasBand());
+    updateLabel(ui->bandTXLabel, bandTX, !ui->freqTXEdit->isHidden(),
+                ui->freqTXEdit->hasBand());
 }
 
 void NewContactWidget::updateSatMode()
@@ -3744,7 +3759,7 @@ QString NewContactWidget::getBand() const
 {
     FCT_IDENTIFICATION;
 
-    return selectedBand(ui->bandRXCombo);
+    return bandTX.name;
 }
 
 QString NewContactWidget::getMode() const
@@ -3893,8 +3908,11 @@ void NewContactWidget::rigProfileComboChanged(const QString &profileName)
 
     RigProfilesManager::instance()->setCurProfile1(profileName);
 
-    ui->freqRXEdit->setValue(realRigFreq + RigProfilesManager::instance()->getCurProfile1().ritOffset);
-    ui->freqTXEdit->setValue(realRigFreq + RigProfilesManager::instance()->getCurProfile1().xitOffset);
+    if ( !ui->freqRXEdit->hasBand() && !ui->freqTXEdit->hasBand() )
+    {
+        ui->freqRXEdit->setValue(realRigFreq + RigProfilesManager::instance()->getCurProfile1().ritOffset);
+        ui->freqTXEdit->setValue(realRigFreq + RigProfilesManager::instance()->getCurProfile1().xitOffset);
+    }
 
     emit rigProfileChanged();
 
@@ -4097,7 +4115,7 @@ void NewContactWidget::setSTXSeq()
 
     int seqnoType = LogParam::getContestSeqnoType();
     int seq = LogParam::getContestSeqno(( seqnoType == Data::SeqType::SINGLE ) ? QString()
-                                                                               : selectedBand(ui->bandTXCombo));
+                                                                               : bandTX.name);
     uiDynamic->stxEdit->setText(QString::number(seq).rightJustified(3, '0'));
 }
 
@@ -4110,7 +4128,7 @@ void NewContactWidget::setSTXSeq(int newValue)
     int seqnoType = LogParam::getContestSeqnoType();
 
     LogParam::setContestSeqno(newValue, (seqnoType == Data::SeqType::SINGLE) ? QString()
-                                                                             : selectedBand(ui->bandTXCombo));
+                                                                             : bandTX.name);
     uiDynamic->stxEdit->setText(QString::number(newValue).rightJustified(3, '0'));
 }
 
@@ -4119,7 +4137,7 @@ void NewContactWidget::updateNearestSpotDupe()
     FCT_IDENTIFICATION;
 
     nearestSpot.dupeCount = Data::countDupe(nearestSpot.callsign,
-                                            bandRX.name,
+                                            bandTX.name,
                                             ui->modeEdit->currentText());
 }
 
@@ -4310,7 +4328,7 @@ void NewContactWidget::checkDupe()
         return;
 
     ui->dupeLabel->setVisible(Data::countDupe(callsign,
-                                           bandRX.name,
+                                           bandTX.name,
                                            ui->modeEdit->currentText()));
 }
 
@@ -4504,7 +4522,9 @@ void NewContactWidget::queryPota()
     if ( callsign.size() >= 3 )
     {
         // use copy constructor - POTA is updated from another thread and reference can be problem
-        const QString ref = PotaQE::instance()->findReferenceId(Callsign(callsign), ui->freqRXEdit->value()).reference;
+        const QString ref = PotaQE::instance()->findReferenceId(Callsign(callsign),
+                                                                ui->freqRXEdit->value(),
+                                                                bandRX.name).reference;
         uiDynamic->potaEdit->setText(ref);
         potaEditFinished();
     }
