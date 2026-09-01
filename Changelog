@@ -19,6 +19,7 @@ TBC- 0.53.0
 - Fixed Awards DXCC EME tracking
 - Fixed Awards WAZ can include eQSL
 - Fixed Band-Only QSO processing - DXCC Status, Cabrillo Export, Awards
+- Fixed All dialogs have a title (PR #1150 @Fale)
 
 2026/08/21 - 0.52.0
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)
