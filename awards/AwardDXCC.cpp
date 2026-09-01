@@ -41,3 +41,8 @@ bool AwardDXCC::clickUsesCountryName() const
 {
     return true;
 }
+
+bool AwardDXCC::hasIndependentSatelliteCategory() const
+{
+    return true;
+}

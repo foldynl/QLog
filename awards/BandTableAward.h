@@ -197,6 +197,9 @@ protected:
      * Only DXCC uses this. Default: false. */
     virtual bool clickUsesCountryName() const;
 
+    /* Satellite normally follows the generic award's band/mode rules. */
+    virtual bool hasIndependentSatelliteCategory() const;
+
     // ===================================================================
     //  STATIC HELPERS — use these in additionalCTEs() / sourceContactsOverride()
     // ===================================================================

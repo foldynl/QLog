@@ -425,7 +425,8 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
     QString sqlStatement = QString("WITH all_dxcc_qsos AS (SELECT DISTINCT contacts.mode, contacts.band, "
                                          "                                       contacts.qsl_rcvd, contacts.lotw_qsl_rcvd, contacts.eqsl_qsl_rcvd "
                                          "                       FROM contacts "
-                                         "                       WHERE dxcc = :dxcc %1) "
+                                         "                       WHERE dxcc = :dxcc "
+                                         "                         AND UPPER(COALESCE(prop_mode, '')) <> 'SAT' %1) "
                                          "  SELECT (SELECT 1 FROM all_dxcc_qsos LIMIT 1) as entity,"
                                          "         (SELECT 1 FROM all_dxcc_qsos WHERE band = :band LIMIT 1) as band, "
                                          "         (SELECT 1 FROM all_dxcc_qsos INNER JOIN modes ON (modes.name = all_dxcc_qsos.mode) "
@@ -501,6 +502,68 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 }
 #undef RETCODE
 
+DxccStatus Data::satelliteDxccStatus(int dxcc)
+{
+    FCT_IDENTIFICATION;
+
+    if ( dxcc <= 0 )
+        return DxccStatus::UnknownStatus;
+
+    const int myDXCC = StationProfilesManager::instance()->getCurProfile1().dxcc;
+    const QPair<int, int> cacheKey(dxcc, myDXCC);
+
+    if ( DxccStatus *statusFromCache = satelliteDxccStatusCache.object(cacheKey) )
+        return *statusFromCache;
+
+    QStringList confirmedByCond(QLatin1String("0=1"));
+
+    if ( LogParam::getDxccConfirmedByLotwState() )
+        confirmedByCond << QLatin1String("lotw_qsl_rcvd = 'Y'");
+
+    if ( LogParam::getDxccConfirmedByPaperState() )
+        confirmedByCond << QLatin1String("qsl_rcvd = 'Y'");
+
+    if ( LogParam::getDxccConfirmedByEqslState() )
+        confirmedByCond << QLatin1String("eqsl_qsl_rcvd = 'Y'");
+
+    QSqlQuery query;
+    const QString sqlStatement = QString(
+        "SELECT MAX(CASE WHEN (%1) THEN 1 ELSE 0 END) "
+        "FROM contacts "
+        "WHERE dxcc = :dxcc "
+        "  AND UPPER(prop_mode) = 'SAT' %2")
+        .arg(confirmedByCond.join(" OR "),
+             ( myDXCC != 0 ) ? QString(" AND my_dxcc = %1").arg(myDXCC) : QString());
+
+    DxccStatus status = DxccStatus::UnknownStatus;
+
+    if ( !query.prepare(sqlStatement) )
+    {
+        qWarning() << "Cannot prepare Satellite DXCC status statement" << query.lastError();
+    }
+    else
+    {
+        query.bindValue(":dxcc", dxcc);
+
+        if ( !query.exec() )
+        {
+            qWarning() << "Cannot execute Satellite DXCC status statement" << query.lastError();
+        }
+        else if ( query.next() )
+        {
+            status = query.value(0).isNull()
+                     ? DxccStatus::NewEntity
+                     : query.value(0).toBool() ? DxccStatus::Confirmed
+                                               : DxccStatus::Worked;
+        }
+    }
+
+    if ( status != DxccStatus::UnknownStatus )
+        satelliteDxccStatusCache.insert(cacheKey, new DxccStatus(status));
+
+    return status;
+}
+
 QStringList Data::contestList()
 {
     FCT_IDENTIFICATION;
@@ -525,7 +588,8 @@ DxccStatus Data::dxccNewStatusWhenQSOAdded(const DxccStatus &oldStatus,
                                   const QString &oldMode,
                                   const qint32 newDxcc,
                                   const QString &newBand,
-                                  const QString &newMode)
+                                  const QString &newMode,
+                                  const QString &newPropMode)
 {
     FCT_IDENTIFICATION;
 
@@ -535,7 +599,11 @@ DxccStatus Data::dxccNewStatusWhenQSOAdded(const DxccStatus &oldStatus,
                                << oldMode
                                << newDxcc
                                << newBand
-                               << newMode;
+                               << newMode
+                               << newPropMode;
+
+    if ( newPropMode.compare(QLatin1String("SAT"), Qt::CaseInsensitive) == 0 )
+        RETURNCODE(oldStatus);
 
     if ( oldDxcc != newDxcc )
     {
@@ -790,6 +858,21 @@ QString Data::statusToText(const DxccStatus &status) {
     }
 }
 
+QString Data::satelliteDxccStatusToText(const DxccStatus &status)
+{
+    switch (status)
+    {
+    case DxccStatus::NewEntity:
+        return tr("New for Satellite DXCC");
+    case DxccStatus::Worked:
+        return tr("Satellite DXCC: Worked");
+    case DxccStatus::Confirmed:
+        return tr("Satellite DXCC: Confirmed");
+    default:
+        return QString();
+    }
+}
+
 int Data::getITUZMin()
 {
     FCT_IDENTIFICATION;
@@ -948,7 +1031,10 @@ void Data::invalidateDXCCStatusCache(const QSqlRecord &record)
 {
     FCT_IDENTIFICATION;
 
-    dxccStatusCache.invalidate(record.value("dxcc").toInt(), StationProfilesManager::instance()->getCurProfile1().dxcc);
+    const int dxcc = record.value("dxcc").toInt();
+    const int myDXCC = StationProfilesManager::instance()->getCurProfile1().dxcc;
+    dxccStatusCache.invalidate(dxcc, myDXCC);
+    satelliteDxccStatusCache.remove(QPair<int, int>(dxcc, myDXCC));
 }
 
 void Data::invalidateSetOfDXCCStatusCache(const QSet<uint> &entities)
@@ -958,7 +1044,10 @@ void Data::invalidateSetOfDXCCStatusCache(const QSet<uint> &entities)
     int myDXCC = StationProfilesManager::instance()->getCurProfile1().dxcc;
 
     for ( uint entity : entities )
-       dxccStatusCache.invalidate(entity, myDXCC);
+    {
+        dxccStatusCache.invalidate(entity, myDXCC);
+        satelliteDxccStatusCache.remove(QPair<int, int>(entity, myDXCC));
+    }
 }
 
 void Data::clearDXCCStatusCache()
@@ -966,6 +1055,7 @@ void Data::clearDXCCStatusCache()
     FCT_IDENTIFICATION;
 
     dxccStatusCache.clear();
+    satelliteDxccStatusCache.clear();
 }
 
 qulonglong Data::countDupe(const QString &callsign,

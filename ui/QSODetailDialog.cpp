@@ -842,6 +842,8 @@ void QSODetailDialog::propagationModeChanged(const QString &propModeText)
         ui->satModeEdit->setEnabled(false);
         ui->satNameEdit->setEnabled(false);
     }
+
+    refreshDXStatTabs();
 }
 
 bool QSODetailDialog::doValidation()
@@ -1621,9 +1623,24 @@ void QSODetailDialog::refreshDXStatTabs()
     const DxccEntity &dxccEntity = Data::instance()->lookupDxccIDClublog(editedRecord->field("dxcc").value().toInt());
     const Band &currBand = BandPlan::resolveBand(ui->freqTXEdit->value(),
                                                  ui->bandTXCombo->currentText());
+    const bool satellite = Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText())
+                           == QLatin1String("SAT");
+    const Band highlightedBand = satellite ? Band() : currBand;
 
-    ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, currBand);
-    ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), currBand);
+    QString dxccTitle = QString("<b>%1</b>").arg(tr("DXCC Statistics"));
+    if ( satellite && dxccEntity.dxcc )
+    {
+        const QString statusText = Data::satelliteDxccStatusToText(
+            Data::instance()->satelliteDxccStatus(dxccEntity.dxcc));
+        if ( !statusText.isEmpty() )
+            dxccTitle.append(QString(" &mdash; %1").arg(statusText.toHtmlEscaped()));
+    }
+    ui->dxccTableLabel->setText(dxccTitle);
+
+    ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, highlightedBand, satellite);
+    ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(),
+                                          highlightedBand,
+                                          satellite);
 }
 
 const QString QSODetailDialog::getButtonText(int index) const

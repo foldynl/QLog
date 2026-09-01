@@ -165,7 +165,7 @@ QValidator::State FreqQSpinBox::validate(QString &input, int &pos) const
     if ( bandIndex >= 0 && input == selectedBand() )
         return QValidator::Acceptable;
 
-    if ( containsLettersOutsideSuffix(input) )
+    if ( bandMenuButton && containsLettersOutsideSuffix(input) )
         return QValidator::Intermediate;
 
     return BaseDoubleSpinBox::validate(input, pos);
@@ -173,8 +173,9 @@ QValidator::State FreqQSpinBox::validate(QString &input, int &pos) const
 
 double FreqQSpinBox::valueFromText(const QString &text) const
 {
-    return containsLettersOutsideSuffix(text) ? value()
-                                               : BaseDoubleSpinBox::valueFromText(text);
+    return bandMenuButton && containsLettersOutsideSuffix(text)
+            ? value()
+            : BaseDoubleSpinBox::valueFromText(text);
 }
 
 QAbstractSpinBox::StepEnabled FreqQSpinBox::stepEnabled() const

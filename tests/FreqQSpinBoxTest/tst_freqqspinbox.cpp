@@ -23,6 +23,7 @@ private slots:
     void mhzActionUsesSelectedBandFrequency();
     void exactFrequencyReplacesSelectedBand();
     void bandTextMustBeSelectedFromMenu();
+    void legacyFrequencyEditorRejectsBandText();
     void selectedBandStepsThroughActiveBands();
     void frequencyBandShortcutsStayInMhzMode();
     void bandMenuContainsOnlyActiveBands();
@@ -176,6 +177,23 @@ void FreqQSpinBoxTest::bandTextMustBeSelectedFromMenu()
         QVERIFY(edit.hasFrequency());
         QCOMPARE(edit.value(), 14.074);
     }
+}
+
+void FreqQSpinBoxTest::legacyFrequencyEditorRejectsBandText()
+{
+    FreqQSpinBox edit;
+    edit.setDecimals(5);
+    edit.setMaximum(7500000.0);
+    edit.setKeyboardTracking(false);
+    edit.setValue(14.074);
+    edit.show();
+
+    QLineEdit *lineEdit = edit.findChild<QLineEdit *>();
+    QVERIFY(lineEdit);
+    lineEdit->selectAll();
+    QTest::keyClicks(lineEdit, QStringLiteral("20m"));
+
+    QVERIFY(!lineEdit->text().contains(QLatin1Char('m'), Qt::CaseInsensitive));
 }
 
 void FreqQSpinBoxTest::selectedBandStepsThroughActiveBands()

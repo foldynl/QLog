@@ -551,8 +551,7 @@ void NewContactWidget::setDxccInfo(const DxccEntity &curr)
         uiDynamic->cqzEdit->setText(QString::number(dxccEntity.cqz));
         uiDynamic->ituEdit->setText(QString::number(dxccEntity.ituz));
         updateCoordinates(dxccEntity.latlon[0], dxccEntity.latlon[1], COORD_DXCC);
-        ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, bandTX);
-        ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), bandTX);
+        refreshDXStatTables();
         uiDynamic->contEdit->setCurrentText(dxccEntity.cont);
         updateDxccStatus();
         updateCountyCompleter(dxccEntity.dxcc);
@@ -563,8 +562,7 @@ void NewContactWidget::setDxccInfo(const DxccEntity &curr)
         uiDynamic->cqzEdit->clear();
         uiDynamic->ituEdit->clear();
         clearCoordinates();
-        ui->dxccTableWidget->clear();
-        ui->stationTableWidget->clear();
+        refreshDXStatTables();
         uiDynamic->contEdit->setCurrentText("");
         ui->dxccStatus->clear();
 
@@ -582,6 +580,23 @@ void NewContactWidget::refreshDxccFlag()
     ui->flagView->setPixmap((!flag.isEmpty())
                             ? QPixmap(QString(":/flags/64/%1.png").arg(flag))
                             : QPixmap());
+}
+
+bool NewContactWidget::isSatelliteQSO() const
+{
+    return Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText())
+           == QLatin1String("SAT");
+}
+
+void NewContactWidget::refreshDXStatTables()
+{
+    const bool satellite = isSatelliteQSO();
+    const Band highlightedBand = satellite ? Band() : bandTX;
+
+    ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, highlightedBand, satellite);
+    ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(),
+                                          highlightedBand,
+                                          satellite);
 }
 
 void NewContactWidget::setDxccInfo(const QString &callsign)
@@ -1137,8 +1152,7 @@ void NewContactWidget::updateTXBand(const Band &band, bool reportChange)
     updateSatMode();
     setSTXSeq();
     refreshCallsignsColors();
-    ui->dxccTableWidget->setDxcc(dxccEntity.dxcc, bandTX);
-    ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(), bandTX);
+    refreshDXStatTables();
 }
 
 void NewContactWidget::reportTXBand()
@@ -1173,6 +1187,7 @@ void NewContactWidget::updateRXBand(double freq)
     qCDebug(function_parameters)<<freq;
 
     updateRXBand(BandPlan::freq2Band(freq));
+    queryPota();
 }
 
 void NewContactWidget::updateRXBand(const Band &band)
@@ -1183,10 +1198,7 @@ void NewContactWidget::updateRXBand(const Band &band)
     updateSatMode();
 
     if ( bandRX.name != previousBandName )
-    {
-        queryPota();
         emit rxBandChanged(bandRX.name);
-    }
 }
 
 void NewContactWidget::bandTXChanged(const QString &bandName)
@@ -1205,6 +1217,7 @@ void NewContactWidget::bandRXChanged(const QString &bandName)
 
     if ( !bandName.isEmpty() )
         ui->freqTXEdit->setBand(bandName);
+    queryPota();
     formFieldChanged();
 }
 
@@ -1912,21 +1925,17 @@ void NewContactWidget::saveContact()
     const QString rxBandName = bandRX.name;
     const bool txHasFrequency = ui->freqTXEdit->hasFrequency();
     const bool rxHasFrequency = ui->freqRXEdit->hasFrequency();
-    if ( txBandName.isEmpty() )
+    if ( !txHasFrequency && txBandName.isEmpty() )
     {
-        const QString message = txHasFrequency
-                                ? tr("TX Frequency is outside a known band")
-                                : tr("TX Frequency or Band must be filled");
-        QMessageBox::critical(this, tr("QLog Error"), message);
+        QMessageBox::critical(this, tr("QLog Error"),
+                              tr("TX Frequency or Band must be filled"));
         ui->freqTXEdit->setFocus();
         return;
     }
-    if ( rxBandName.isEmpty() )
+    if ( !rxHasFrequency && rxBandName.isEmpty() )
     {
-        const QString message = rxHasFrequency
-                                ? tr("RX Frequency is outside a known band")
-                                : tr("RX Frequency or Band must be filled");
-        QMessageBox::critical(this, tr("QLog Error"), message);
+        QMessageBox::critical(this, tr("QLog Error"),
+                              tr("RX Frequency or Band must be filled"));
         ui->freqRXEdit->setFocus();
         return;
     }
@@ -2684,33 +2693,45 @@ void NewContactWidget::updateDxccStatus()
         return;
     }
 
-    DxccStatus status = Data::instance()->dxccStatus(dxccEntity.dxcc, bandTX.name, ui->modeEdit->currentText());
+    const bool satellite = isSatelliteQSO();
+    const DxccStatus status = satellite
+                              ? Data::instance()->satelliteDxccStatus(dxccEntity.dxcc)
+                              : Data::instance()->dxccStatus(dxccEntity.dxcc,
+                                                             bandTX.name,
+                                                             ui->modeEdit->currentText());
 
-    switch (status)
+    if ( satellite )
     {
-    case DxccStatus::NewEntity:
-        ui->dxccStatus->setText(tr("New Entity!"));
-        break;
-    case DxccStatus::NewBand:
-        ui->dxccStatus->setText(tr("New Band!"));
-        break;
-    case DxccStatus::NewMode:
-        ui->dxccStatus->setText(tr("New Mode!"));
-        break;
-    case DxccStatus::NewBandMode:
-        ui->dxccStatus->setText(tr("New Band & Mode!"));
-        break;
-    case DxccStatus::NewSlot:
-        ui->dxccStatus->setText(tr("New Slot!"));
-        break;
-    case DxccStatus::Worked:
-        ui->dxccStatus->setText(tr("Worked"));
-        break;
-    case DxccStatus::Confirmed:
-        ui->dxccStatus->setText(tr("Confirmed"));
-        break;
-    default:
-        ui->dxccStatus->clear();
+        ui->dxccStatus->setText(Data::satelliteDxccStatusToText(status));
+    }
+    else
+    {
+        switch (status)
+        {
+        case DxccStatus::NewEntity:
+            ui->dxccStatus->setText(tr("New Entity!"));
+            break;
+        case DxccStatus::NewBand:
+            ui->dxccStatus->setText(tr("New Band!"));
+            break;
+        case DxccStatus::NewMode:
+            ui->dxccStatus->setText(tr("New Mode!"));
+            break;
+        case DxccStatus::NewBandMode:
+            ui->dxccStatus->setText(tr("New Band & Mode!"));
+            break;
+        case DxccStatus::NewSlot:
+            ui->dxccStatus->setText(tr("New Slot!"));
+            break;
+        case DxccStatus::Worked:
+            ui->dxccStatus->setText(tr("Worked"));
+            break;
+        case DxccStatus::Confirmed:
+            ui->dxccStatus->setText(tr("Confirmed"));
+            break;
+        default:
+            ui->dxccStatus->clear();
+        }
     }
 
     const QColor statusColor = Data::statusToColor(status,
@@ -3044,9 +3065,11 @@ void NewContactWidget::setNearestSpotColor()
     }
 
     const DxccEntity &spotEntity = Data::instance()->lookupDxcc(nearestSpot.callsign);
-    const DxccStatus &status = Data::instance()->dxccStatus(spotEntity.dxcc,
-                                                bandTX.name,
-                                                ui->modeEdit->currentText());
+    const DxccStatus status = isSatelliteQSO()
+                              ? Data::instance()->satelliteDxccStatus(spotEntity.dxcc)
+                              : Data::instance()->dxccStatus(spotEntity.dxcc,
+                                                             bandTX.name,
+                                                             ui->modeEdit->currentText());
     const QColor statusColor = Data::statusToColor(status,
                                                    nearestSpot.dupeCount,
                                                    QColor());
@@ -3835,6 +3858,9 @@ void NewContactWidget::propModeChanged(const QString &propModeText)
         uiDynamic->satModeEdit->setEnabled(false);
         uiDynamic->satNameEdit->setEnabled(false);
     }
+
+    refreshDXStatTables();
+    updateDxccStatus();
 }
 
 void NewContactWidget::stationProfileComboChanged(const QString &profileName)

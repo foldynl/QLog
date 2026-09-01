@@ -327,6 +327,8 @@ private:
                               const QString &grid = QString());
     void setDxccInfo(const DxccEntity &curr);
     void setDxccInfo(const QString &callsign);
+    bool isSatelliteQSO() const;
+    void refreshDXStatTables();
     void refreshDxccFlag();
     void clearCallbookQueryFields();
     void clearMemberQueryFields();

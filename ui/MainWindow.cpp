@@ -387,6 +387,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, Data::instance(), &Data::invalidateSetOfDXCCStatusCache); // must be the first delete signal
     connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshWidget);
+    connect(ui->logbookWidget, &LogbookWidget::contactUpdated, Data::instance(), &Data::clearDXCCStatusCache);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);

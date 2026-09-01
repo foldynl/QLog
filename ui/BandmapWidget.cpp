@@ -891,7 +891,8 @@ void BandmapWidget::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
                                                            : dxccModeGroup ),
                                                       dxcc,
                                                       band,
-                                                      dxccModeGroup);
+                                                      dxccModeGroup,
+                                                      record.value("prop_mode").toString());
         if ( spot.callsign == callsign )
             spot.dupeCount = Data::dupeNewCountWhenQSOAdded(spot.dupeCount,
                                                             spot.band,

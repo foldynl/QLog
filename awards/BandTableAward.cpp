@@ -57,11 +57,15 @@ void BandTableAward::updateData(const AwardFilterParams &params)
     QStringList stmt_total_band_condition_confirmed;
     QStringList stmt_not_confirmed;
     QStringList stmt_any_worked;
+    const bool independentSatellite = hasIndependentSatelliteCategory();
+    const QString regularPropagationCondition = independentSatellite
+                                                ? QStringLiteral(" AND UPPER(COALESCE(prop_mode, '')) <> 'SAT'")
+                                                : QString();
 
     for ( const Band& band : dxccBands )
     {
-        stmt_max_part << QString(" MAX(CASE WHEN band = '%1' AND m.dxcc IN (%2) THEN %3 ELSE 0 END) as '%4'")
-                             .arg(band.name, params.modes.join(","), innerConfirmedCase, band.name);
+        stmt_max_part << QString(" MAX(CASE WHEN band = '%1'%2 AND m.dxcc IN (%3) THEN %4 ELSE 0 END) as '%5'")
+                             .arg(band.name, regularPropagationCondition, params.modes.join(","), innerConfirmedCase, band.name);
         stmt_total_padding << QString(" NULL '%1'").arg(band.name);
         stmt_sum_confirmed << QString("SUM(CASE WHEN a.'%1' > 1 THEN 1 ELSE 0 END) '%2'").arg(band.name, band.name);
         stmt_sum_worked << QString("SUM(CASE WHEN a.'%1' > 0 THEN 1 ELSE 0 END) '%2'").arg(band.name, band.name);
@@ -73,8 +77,11 @@ void BandTableAward::updateData(const AwardFilterParams &params)
         stmt_any_worked << QString("MAX(d.'%1') > 0").arg(band.name);
     }
 
-    stmt_max_part << QString(" MAX(CASE WHEN prop_mode = 'SAT' AND m.dxcc IN (%1) THEN %2 ELSE 0 END) as 'SAT' ").arg(params.modes.join(","), innerConfirmedCase)
-                  << QString(" MAX(CASE WHEN prop_mode = 'EME' AND m.dxcc IN (%1) THEN %2 ELSE 0 END) as 'EME' ").arg(params.modes.join(","), innerConfirmedCase);
+    const QString satelliteModeCondition = independentSatellite
+                                           ? QString()
+                                           : QString(" AND m.dxcc IN (%1)").arg(params.modes.join(","));
+    stmt_max_part << QString(" MAX(CASE WHEN UPPER(prop_mode) = 'SAT'%1 THEN %2 ELSE 0 END) as 'SAT' ").arg(satelliteModeCondition, innerConfirmedCase)
+                  << QString(" MAX(CASE WHEN UPPER(prop_mode) = 'EME' AND m.dxcc IN (%1) THEN %2 ELSE 0 END) as 'EME' ").arg(params.modes.join(","), innerConfirmedCase);
     stmt_total_padding << " NULL 'SAT' "
                        << " NULL 'EME' ";
     stmt_sum_confirmed << " SUM(CASE WHEN a.'SAT' > 1 THEN 1 ELSE 0 END) 'SAT' "
@@ -83,16 +90,19 @@ void BandTableAward::updateData(const AwardFilterParams &params)
                     << " SUM(CASE WHEN a.'EME' > 0 THEN 1 ELSE 0 END) 'EME' ";
     stmt_sum_total << " SUM(d.'SAT') 'SAT' "
                    << " SUM(d.'EME') 'EME' ";
-    stmt_having << " SUM(d.'SAT') = 0"
-                << " SUM(d.'EME') = 0";
-    stmt_total_band_condition_work << "e.'SAT' > 0"
-                                   << "e.'EME' > 0";
-    stmt_total_band_condition_confirmed << "e.'SAT' > 1"
-                                        << "e.'EME' > 1";
-    stmt_not_confirmed << " MAX(d.'SAT') < 2"
-                       << " MAX(d.'EME') < 2";
-    stmt_any_worked << " MAX(d.'SAT') > 0"
-                    << " MAX(d.'EME') > 0";
+    if ( !independentSatellite )
+    {
+        stmt_having << " SUM(d.'SAT') = 0";
+        stmt_total_band_condition_work << "e.'SAT' > 0";
+        stmt_total_band_condition_confirmed << "e.'SAT' > 1";
+        stmt_not_confirmed << " MAX(d.'SAT') < 2";
+        stmt_any_worked << " MAX(d.'SAT') > 0";
+    }
+    stmt_having << " SUM(d.'EME') = 0";
+    stmt_total_band_condition_work << "e.'EME' > 0";
+    stmt_total_band_condition_confirmed << "e.'EME' > 1";
+    stmt_not_confirmed << " MAX(d.'EME') < 2";
+    stmt_any_worked << " MAX(d.'EME') > 0";
 
     const QString &entity = params.entitySelected;
 
@@ -188,6 +198,20 @@ void BandTableAward::updateData(const AwardFilterParams &params)
     m_model->setQuery(finalSQL);
     m_model->setHeaderData(1, Qt::Horizontal, "");
     m_model->setHeaderData(2, Qt::Horizontal, "");
+    if ( independentSatellite )
+    {
+        for ( int column = 0; column < m_model->columnCount(); ++column )
+        {
+            if ( m_model->headerData(column, Qt::Horizontal).toString() == QLatin1String("SAT") )
+            {
+                m_model->setHeaderData(column,
+                                       Qt::Horizontal,
+                                       QObject::tr("Satellite DXCC, all modes"),
+                                       Qt::ToolTipRole);
+                break;
+            }
+        }
+    }
     m_tableView->setModel(m_model);
     m_tableView->setColumnHidden(0, true);
 }
@@ -222,7 +246,13 @@ BandTableAward::ConditionResult BandTableAward::getConditionSelected(const QMode
     }
 
     if ( clickedIndex.column() > 2 )
-        result.band = m_model->headerData(clickedIndex.column(), Qt::Horizontal).toString();
+    {
+        const QString column = m_model->headerData(clickedIndex.column(), Qt::Horizontal).toString();
+        if ( column == QLatin1String("SAT") || column == QLatin1String("EME") )
+            addlFilters << QString("UPPER(prop_mode)='%1'").arg(column);
+        else
+            result.band = column;
+    }
 
     result.filter = QString("(") + addlFilters.join(" and ") + QString(")");
     result.valid = true;
@@ -246,6 +276,11 @@ QString BandTableAward::clickFilter(const QString &, const QString &) const
 }
 
 bool BandTableAward::clickUsesCountryName() const
+{
+    return false;
+}
+
+bool BandTableAward::hasIndependentSatelliteCategory() const
 {
     return false;
 }
