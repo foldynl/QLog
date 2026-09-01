@@ -1417,11 +1417,8 @@ void DxWidget::prepareQSOSpot(QSqlRecord qso)
                                                                             : qso.value("freq").toDouble();
 
             if ( spotFreq <= 0.0 )
-            {
                 QMessageBox::warning(this, tr("QLog Warning"),
                                      tr("An exact frequency is required to spot a QSO"));
-                return;
-            }
 
             // DX Spider allow to enter QSO freq in MHz but it is not reliable for SHF bands.
             // a more reliable way is to send a spot with kHz value
