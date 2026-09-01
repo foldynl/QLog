@@ -107,6 +107,7 @@ void WsjtxTableModel::addOrReplaceEntry(const WsjtxEntry &entry)
         }
 
         wsjtxData[idx].status = entry.status;
+        wsjtxData[idx].dxccStatusSatellite = entry.dxccStatusSatellite;
         wsjtxData[idx].decode = entry.decode;
         wsjtxData[idx].receivedTime = entry.receivedTime;
         wsjtxData[idx].dupeCount = entry.dupeCount;
@@ -194,6 +195,26 @@ void WsjtxTableModel::refreshStatusColors()
     emit dataChanged(createIndex(0, COLUMN_CALLSIGN),
                      createIndex(wsjtxData.size() - 1, COLUMN_CALLSIGN),
                      {Qt::BackgroundRole, Qt::ForegroundRole});
+}
+
+void WsjtxTableModel::recalculateDxccStatus()
+{
+    if ( wsjtxData.isEmpty() )
+        return;
+
+    const bool satellite = Data::instance()->isSatelliteDxccContext();
+
+    for ( WsjtxEntry &entry : wsjtxData )
+    {
+        entry.status = Data::instance()->currentDxccStatus(entry.dxcc.dxcc,
+                                                           entry.band,
+                                                           entry.modeGroupString);
+        entry.dxccStatusSatellite = satellite;
+    }
+
+    emit dataChanged(createIndex(0, COLUMN_CALLSIGN),
+                     createIndex(wsjtxData.size() - 1, COLUMN_CALLSIGN),
+                     {Qt::BackgroundRole, Qt::ForegroundRole, Qt::ToolTipRole});
 }
 
 QList<WsjtxEntry> WsjtxTableModel::entries() const

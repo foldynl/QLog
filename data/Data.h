@@ -216,6 +216,7 @@ public:
     static QCompleter* createCountyCompleter(int dxcc, QObject *parent = nullptr);
 
 signals:
+    void satelliteDxccContextChanged();
 
 public slots:
     void invalidateDXCCStatusCache(const QSqlRecord &record);

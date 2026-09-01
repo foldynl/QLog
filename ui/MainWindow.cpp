@@ -371,6 +371,12 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::settingsChanged, ui->alertsWidget, &AlertWidget::recalculateDxccStatus);
     connect(this, &MainWindow::settingsChanged, ui->chatWidget, &ChatWidget::recalculateDxccStatus);
     connect(this, &MainWindow::settingsChanged, ui->newContactWidget, &NewContactWidget::readGlobalSettings);
+    connect(Data::instance(), &Data::satelliteDxccContextChanged, ui->dxWidget, &DxWidget::recalculateDxccStatus);
+    connect(Data::instance(), &Data::satelliteDxccContextChanged, ui->wsjtxWidget, &WsjtxWidget::recalculateDxccStatus);
+    connect(Data::instance(), &Data::satelliteDxccContextChanged, ui->bandmapWidget, &BandmapWidget::recalculateDxccStatus);
+    connect(Data::instance(), &Data::satelliteDxccContextChanged, ui->alertsWidget, &AlertWidget::recalculateDxccStatus);
+    connect(Data::instance(), &Data::satelliteDxccContextChanged, ui->chatWidget, &ChatWidget::recalculateDxccStatus);
+    connect(Data::instance(), &Data::satelliteDxccContextChanged, ui->onlineMapWidget, &OnlineMapWidget::clearHeardMeSpots);
     connect(this, &MainWindow::altBackslash, Rig::instance(), &Rig::setPTT);
     connect(this, &MainWindow::manualMode, ui->newContactWidget, &NewContactWidget::setManualMode);
     connect(this, &MainWindow::contestStopped, ui->newContactWidget, &NewContactWidget::stopContest);

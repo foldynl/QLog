@@ -262,6 +262,26 @@ void DxTableModel::refreshStatusColors()
                      {Qt::BackgroundRole, Qt::ForegroundRole});
 }
 
+void DxTableModel::recalculateDxccStatus()
+{
+    if ( dxData.isEmpty() )
+        return;
+
+    const bool satellite = Data::instance()->isSatelliteDxccContext();
+
+    for ( DxSpot &spot : dxData )
+    {
+        spot.status = Data::instance()->currentDxccStatus(spot.dxcc.dxcc,
+                                                          spot.band,
+                                                          spot.modeGroupString);
+        spot.dxccStatusSatellite = satellite;
+    }
+
+    emit dataChanged(createIndex(0, 1),
+                     createIndex(dxData.size() - 1, 1),
+                     {Qt::BackgroundRole, Qt::ForegroundRole, Qt::ToolTipRole});
+}
+
 void DxTableModel::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
 {
     const qint32 dxcc = record.value("dxcc").toInt();
@@ -1469,6 +1489,13 @@ void DxWidget::refreshStatusColors()
     FCT_IDENTIFICATION;
 
     dxTableModel->refreshStatusColors();
+}
+
+void DxWidget::recalculateDxccStatus()
+{
+    FCT_IDENTIFICATION;
+
+    dxTableModel->recalculateDxccStatus();
 }
 
 void DxWidget::prepareQSOSpot(QSqlRecord qso)

@@ -1087,7 +1087,11 @@ void Data::invalidateDXCCStatusCache(const QSqlRecord &record)
 
 void Data::setSatelliteDxccContext(bool satellite)
 {
+    if ( satelliteDxccContext == satellite )
+        return;
+
     satelliteDxccContext = satellite;
+    emit satelliteDxccContextChanged();
 }
 
 void Data::invalidateSetOfDXCCStatusCache(const QSet<uint> &entities)

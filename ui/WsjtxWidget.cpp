@@ -360,7 +360,19 @@ void WsjtxWidget::refreshStatusColors()
     FCT_IDENTIFICATION;
 
     wsjtxTableModel->refreshStatusColors();
+    redrawMapSpots();
+}
 
+void WsjtxWidget::recalculateDxccStatus()
+{
+    FCT_IDENTIFICATION;
+
+    wsjtxTableModel->recalculateDxccStatus();
+    redrawMapSpots();
+}
+
+void WsjtxWidget::redrawMapSpots()
+{
     emit spotsCleared();
     const QList<WsjtxEntry> entries = wsjtxTableModel->entries();
     for ( const WsjtxEntry &entry : entries )

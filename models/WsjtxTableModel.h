@@ -33,6 +33,7 @@ public:
     void clear();
     void removeSpot(const QString &callsign);
     void refreshStatusColors();
+    void recalculateDxccStatus();
     QList<WsjtxEntry> entries() const;
 
 private:

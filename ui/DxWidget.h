@@ -45,6 +45,7 @@ public:
     const DxSpot getSpot(const QModelIndex& index) const {return dxData.at(index.row());};
     void clear();
     void refreshStatusColors();
+    void recalculateDxccStatus();
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
 
 private:
@@ -145,6 +146,7 @@ public slots:
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
     void reloadSetting();
     void refreshStatusColors();
+    void recalculateDxccStatus();
     void prepareQSOSpot(QSqlRecord);
     void setSearch(const QString &);
     void setSearchStatus(bool);
