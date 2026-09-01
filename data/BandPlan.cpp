@@ -339,6 +339,12 @@ const Band BandPlan::bandName2Band(const QString &name)
     return Band();
 }
 
+const Band BandPlan::resolveBand(double frequency, const QString &fallbackBandName)
+{
+    return frequency > 0.0 ? freq2Band(frequency)
+                           : bandName2Band(fallbackBandName);
+}
+
 const QList<Band> BandPlan::bandsList(const bool onlyDXCCBands,
                                       const bool onlyEnabled)
 {

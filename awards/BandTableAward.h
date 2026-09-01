@@ -197,6 +197,12 @@ protected:
      * Only DXCC uses this. Default: false. */
     virtual bool clickUsesCountryName() const;
 
+    /* Satellite normally follows the generic award's band/mode rules. */
+    virtual bool hasIndependentSatelliteCategory() const;
+
+    /* EME normally follows the generic award's mode rules. */
+    virtual bool hasIndependentEMECategory() const;
+
     // ===================================================================
     //  STATIC HELPERS — use these in additionalCTEs() / sourceContactsOverride()
     // ===================================================================
@@ -235,6 +241,9 @@ private:
     QTableView *m_tableView = nullptr;
     AwardsTableModel *m_model = nullptr;
     QString m_currentEntity;
+    QString m_currentModeFilter;
+    QString m_currentUserFilter;
+    bool m_currentIndependentEME = false;
 };
 
 #endif // QLOG_AWARDS_BANDTABLEAWARD_H

@@ -243,7 +243,8 @@ void KSTChat::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
                                                       modeGroupString,
                                                       dxcc,
                                                       currBand,
-                                                      dxccModeGroup);
+                                                      dxccModeGroup,
+                                                      record.value("prop_mode").toString());
         if ( user.callsign == callsign )
             user.dupeCount = Data::dupeNewCountWhenQSOAdded(user.dupeCount,
                                                             currBand,

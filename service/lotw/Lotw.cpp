@@ -45,26 +45,6 @@ static QString lotwPlainResponseSummary(const QByteArray &data)
     return text.left(500);
 }
 
-QStringList LotwUploader::uploadedFields =
-{
-    "callsign",
-    "freq",
-    "band",
-    "freq_rx",
-    "mode",
-    "submode",
-    "start_time",
-    "prop_mode",
-    "sat_name",
-    "station_callsign",
-    "operator",
-    "rst_sent",
-    "rst_rcvd",
-    "my_state",
-    "my_cnty",
-    "my_vucc_grids"
-};
-
 const QString LotwBase::SECURE_STORAGE_KEY = "LoTW";
 REGISTRATION_SECURE_SERVICE(LotwBase);
 
@@ -314,7 +294,7 @@ QList<TQSLStationLocation> LotwBase::getTQSLStationLocations()
 }
 
 LotwUploader::LotwUploader(QObject *parent) :
-    GenericQSOUploader(uploadedFields, parent),
+    GenericQSOUploader(uploadedFields(), parent),
     LotwBase()
 {
     FCT_IDENTIFICATION;

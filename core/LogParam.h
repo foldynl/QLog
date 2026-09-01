@@ -292,6 +292,8 @@ public:
      *************/
     static double getNewContactFreq();
     static void setNewContactFreq(double freq);
+    static QString getNewContactBand();
+    static void setNewContactBand(const QString &band);
     static QString getNewContactMode();
     static void setNewContactMode(const QString &mode);
     static QString getNewContactSubMode();

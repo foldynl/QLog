@@ -30,6 +30,7 @@ private slots:
     void freq2ExpectedMode();
     void freq2Band_data();
     void freq2Band();
+    void resolveBand();
     void bandUsesWholeHzBoundaries();
     void bandsList_onlyDXCC();
     void modeToDXCCModeGroup_data();
@@ -267,6 +268,15 @@ void BandPlanTest::freq2Band()
 
     const Band band = BandPlan::freq2Band(frequency);
     QCOMPARE(band.name, expectedBand);
+}
+
+void BandPlanTest::resolveBand()
+{
+    QCOMPARE(BandPlan::resolveBand(14.074, QStringLiteral("40m")).name,
+             QStringLiteral("20m"));
+    QCOMPARE(BandPlan::resolveBand(0.0, QStringLiteral("40m")).name,
+             QStringLiteral("40m"));
+    QVERIFY(BandPlan::resolveBand(0.0, QStringLiteral("invalid")).name.isEmpty());
 }
 
 void BandPlanTest::bandUsesWholeHzBoundaries()

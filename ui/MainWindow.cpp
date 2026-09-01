@@ -214,6 +214,8 @@ MainWindow::MainWindow(QWidget* parent) :
             ui->newContactWidget, &NewContactWidget::setValuesFromActivity);
     connect(ui->newContactWidget, &NewContactWidget::txBandChanged,
             this, &MainWindow::selectEquipmentProfilesForBand);
+    connect(ui->newContactWidget, &NewContactWidget::rxBandChanged,
+            ui->onlineMapWidget, &OnlineMapWidget::setCurrentBand);
 
     connect(AntProfilesManager::instance(), &AntProfilesManager::profileChanged,
             ui->newContactWidget, &NewContactWidget::refreshAntProfileCombo);
@@ -231,6 +233,7 @@ MainWindow::MainWindow(QWidget* parent) :
             ui->rigWidget, &RigWidget::refreshRigProfileCombo);
 
     ui->newContactWidget->reportTXBand();
+    ui->newContactWidget->reportRXBand();
 
     connect(MainLayoutProfilesManager::instance(), &MainLayoutProfilesManager::profileChanged,
             ui->newContactWidget, &NewContactWidget::setupCustomUi);
@@ -384,6 +387,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, Data::instance(), &Data::invalidateSetOfDXCCStatusCache); // must be the first delete signal
     connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshWidget);
+    connect(ui->logbookWidget, &LogbookWidget::contactUpdated, Data::instance(), &Data::clearDXCCStatusCache);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
@@ -413,7 +417,6 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->rotatorWidget, &RotatorWidget::setQSOBearing);
     connect(ui->newContactWidget, &NewContactWidget::filterCallsign, ui->logbookWidget, &LogbookWidget::filterCallsign);
     connect(ui->newContactWidget, &NewContactWidget::userFrequencyChanged, ui->bandmapWidget, &BandmapWidget::updateTunedFrequency);
-    connect(ui->newContactWidget, &NewContactWidget::userFrequencyChanged, ui->onlineMapWidget, &OnlineMapWidget::setIBPBand);
     connect(ui->newContactWidget, &NewContactWidget::userFrequencyChanged, ui->dxWidget , &DxWidget::setTunedFrequency);
     connect(ui->newContactWidget, &NewContactWidget::userModeChanged, ui->bandmapWidget, &BandmapWidget::updateMode);
     connect(ui->newContactWidget, &NewContactWidget::markQSO, ui->bandmapWidget, &BandmapWidget::addSpot);

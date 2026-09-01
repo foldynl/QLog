@@ -34,7 +34,8 @@ void DxccTableWidget::clear()
 
 void DxccTableWidget::updateDxTable(const QString &condition,
                                     const QVariant &conditionValue,
-                                    const Band &highlightedBand)
+                                    const Band &highlightedBand,
+                                    bool highlightSatellite)
 {
     FCT_IDENTIFICATION;
 
@@ -45,22 +46,28 @@ void DxccTableWidget::updateDxTable(const QString &condition,
     if ( dxccBands.isEmpty() )
         return;
 
-    QString filter(QLatin1String("1 = 1"));
+    QString commonFilter(QLatin1String("1 = 1"));
     StationProfile profile = StationProfilesManager::instance()->getCurProfile1();
     QStringList stmt_band_part1;
     QStringList stmt_band_part2;
 
     if ( profile != StationProfile() )
-        filter.append(QString(" AND c.my_dxcc = %1").arg(profile.dxcc));
+        commonFilter.append(QString(" AND c.my_dxcc = %1").arg(profile.dxcc));
 
     for ( const Band &band : dxccBands )
     {
-        stmt_band_part1 << QString(" MAX(CASE WHEN band = '%0' THEN  CASE WHEN (eqsl_qsl_rcvd = 'Y') THEN 2 ELSE 1 END  ELSE 0 END) as '%0_eqsl',"
-                                   " MAX(CASE WHEN band = '%0' THEN  CASE WHEN (lotw_qsl_rcvd = 'Y') THEN 2 ELSE 1 END  ELSE 0 END) as '%0_lotw',"
-                                   " MAX(CASE WHEN band = '%0' THEN  CASE WHEN (qsl_rcvd = 'Y')      THEN 2 ELSE 1 END  ELSE 0 END) as '%0_paper' ")
+        stmt_band_part1 << QString(" MAX(CASE WHEN band = '%0' AND UPPER(COALESCE(prop_mode, '')) <> 'SAT' THEN CASE WHEN (eqsl_qsl_rcvd = 'Y') THEN 2 ELSE 1 END ELSE 0 END) as '%0_eqsl',"
+                                   " MAX(CASE WHEN band = '%0' AND UPPER(COALESCE(prop_mode, '')) <> 'SAT' THEN CASE WHEN (lotw_qsl_rcvd = 'Y') THEN 2 ELSE 1 END ELSE 0 END) as '%0_lotw',"
+                                   " MAX(CASE WHEN band = '%0' AND UPPER(COALESCE(prop_mode, '')) <> 'SAT' THEN CASE WHEN (qsl_rcvd = 'Y')      THEN 2 ELSE 1 END ELSE 0 END) as '%0_paper' ")
                                   .arg(band.name);
         stmt_band_part2 << QString(" c.'%0_eqsl' || c.'%0_lotw'|| c.'%0_paper' as '%0'").arg(band.name);
     }
+
+    stmt_band_part1 << QStringLiteral(
+        " MAX(CASE WHEN UPPER(prop_mode) = 'SAT' THEN CASE WHEN (eqsl_qsl_rcvd = 'Y') THEN 2 ELSE 1 END ELSE 0 END) as 'SAT_eqsl',"
+        " MAX(CASE WHEN UPPER(prop_mode) = 'SAT' THEN CASE WHEN (lotw_qsl_rcvd = 'Y') THEN 2 ELSE 1 END ELSE 0 END) as 'SAT_lotw',"
+        " MAX(CASE WHEN UPPER(prop_mode) = 'SAT' THEN CASE WHEN (qsl_rcvd = 'Y')      THEN 2 ELSE 1 END ELSE 0 END) as 'SAT_paper' ");
+    stmt_band_part2 << QStringLiteral(" c.'SAT_eqsl' || c.'SAT_lotw' || c.'SAT_paper' as 'SAT'");
 
     QString stmt = QString("WITH dxcc_summary AS "
                            "             ("
@@ -76,7 +83,7 @@ void DxccTableWidget::updateDxTable(const QString &condition,
                            "	   FROM modes) m"
                            "        LEFT OUTER JOIN dxcc_summary c ON c.dxcc = m.dxcc "
                            " ORDER BY m.dxcc").arg(stmt_band_part1.join(","),
-                                                   filter,
+                                                   commonFilter,
                                                    condition.arg(conditionValue.toString()),
                                                    stmt_band_part2.join(","));
 
@@ -96,31 +103,49 @@ void DxccTableWidget::updateDxTable(const QString &condition,
         dxccTableModel->setHeaderData(i+1, Qt::Horizontal, dxccBands.at(i).name);
     }
 
+    const int satelliteColumn = dxccBands.size() + 1;
+    dxccTableModel->setHeaderData(satelliteColumn,
+                                  Qt::Horizontal,
+                                  highlightSatellite ? QBrush(Qt::darkGray) : defaultBrush,
+                                  Qt::BackgroundRole);
+    dxccTableModel->setHeaderData(satelliteColumn, Qt::Horizontal, tr("SAT"));
+    dxccTableModel->setHeaderData(satelliteColumn,
+                                  Qt::Horizontal,
+                                  tr("Satellite QSOs for this mode"),
+                                  Qt::ToolTipRole);
+
     horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     show();
 }
 
-void DxccTableWidget::setDxCallsign(const QString &dxCallsign, const Band &band)
+void DxccTableWidget::setDxCallsign(const QString &dxCallsign,
+                                    const Band &highlightedBand,
+                                    bool highlightSatellite)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << dxCallsign;
 
     if (!dxCallsign.isEmpty())
-        updateDxTable("c.callsign = '%1'", dxCallsign.toUpper(), band);
+        updateDxTable("c.callsign = '%1'",
+                      dxCallsign.toUpper(),
+                      highlightedBand,
+                      highlightSatellite);
     else
         clear();
 
 }
 
-void DxccTableWidget::setDxcc(int dxcc, const Band &highlightedBand)
+void DxccTableWidget::setDxcc(int dxcc,
+                              const Band &highlightedBand,
+                              bool highlightSatellite)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << dxcc;
 
     if ( dxcc )
-        updateDxTable("c.dxcc = %1", dxcc, highlightedBand);
+        updateDxTable("c.dxcc = %1", dxcc, highlightedBand, highlightSatellite);
     else
         clear();
 }

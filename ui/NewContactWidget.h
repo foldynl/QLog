@@ -237,6 +237,7 @@ signals:
     void stationCallsignChanged(const QString &callsign);
     void contactReset();
     void txBandChanged(const QString &bandName);
+    void rxBandChanged(const QString &bandName);
 
 public slots:
     void refreshRigProfileCombo();
@@ -258,6 +259,7 @@ public slots:
     void rigConnected();
     void rigDisconnected();
     void reportTXBand();
+    void reportRXBand();
     void requestTXBandReport();
     void setNearestSpot(const DxSpot &);
     void setNearestSpotColor();
@@ -283,6 +285,8 @@ private slots:
     void handleCallsignFromUser();
     void frequencyTXChanged();
     void frequencyRXChanged();
+    void bandTXChanged(const QString &bandName);
+    void bandRXChanged(const QString &bandName);
     void changeMode();
     void subModeChanged();
     void gridChanged();
@@ -323,6 +327,8 @@ private:
                               const QString &grid = QString());
     void setDxccInfo(const DxccEntity &curr);
     void setDxccInfo(const QString &callsign);
+    bool isSatelliteQSO() const;
+    void refreshDXStatTables();
     void refreshDxccFlag();
     QList<QLineEdit *> callbookQueryFields() const;
     void setCallbookQueryField(QLineEdit *field, const QString &value);
@@ -330,9 +336,12 @@ private:
     void clearMemberQueryFields();
     void readWidgetSettings();
     void writeWidgetSetting();
+    void restoreBandSetting();
     void __modeChanged();
     void updateTXBand(double freq, bool reportChange = true);
+    void updateTXBand(const Band &band, bool reportChange = true);
     void updateRXBand(double freq);
+    void updateRXBand(const Band &band);
     void updateCoordinates(double lat, double lon, CoordPrecision prec);
     void clearCoordinates();
     void updateDxccStatus();
@@ -368,7 +377,8 @@ private:
     QList<QWidget*> setupCustomDetailColumn(QFormLayout *column, const QList<int>& widgetsList);
 
     void setupCustomUiRowsTabOrder(const QList<QWidget *> &customWidgets);
-    void setBandLabel(const QString &);
+    void setBandSelectionEnabled();
+    void updateBandLabels();
     void updateSatMode();
 
     bool isPOTAValid(POTAEntity *entity);

@@ -223,7 +223,8 @@ void AlertTableModel::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
                                                                                                                                 : dxccModeGroup ),
                                                             dxcc,
                                                             band,
-                                                            dxccModeGroup);
+                                                            dxccModeGroup,
+                                                            record.value("prop_mode").toString());
         if ( alert.spot.callsign == callsign )
             alert.spot.dupeCount = Data::dupeNewCountWhenQSOAdded(alert.spot.dupeCount,
                                                                   alert.spot.band,

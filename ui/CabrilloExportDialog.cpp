@@ -293,6 +293,7 @@ void CabrilloExportDialog::resolveBandFilter()
     FCT_IDENTIFICATION;
 
     bandFilterActive = false;
+    bandFilterName.clear();
     const QString selectedBand = ui->catBandCombo->currentData().toString();
 
     if ( selectedBand == CabrilloFormat::BAND_ALL
@@ -312,8 +313,8 @@ void CabrilloExportDialog::resolveBandFilter()
         {CabrilloFormat::BAND_1_2G, "23cm"}
     };
 
-    const QString bandName = cabrilloToBandName.value(selectedBand, selectedBand);
-    const Band band = BandPlan::bandName2Band(bandName);
+    bandFilterName = cabrilloToBandName.value(selectedBand, selectedBand);
+    const Band band = BandPlan::bandName2Band(bandFilterName);
 
     if ( !band.name.isEmpty() )
     {
@@ -392,8 +393,9 @@ QString CabrilloExportDialog::buildWhereClause() const
     }
 
     if ( bandFilterActive )
-        conditions << "CAST(ROUND(freq * 1000000.0) AS INTEGER) "
-                      "BETWEEN :band_start_freq_hz AND :band_end_freq_hz";
+        conditions << "((freq > 0 AND CAST(ROUND(freq * 1000000.0) AS INTEGER) "
+                      "BETWEEN :band_start_freq_hz AND :band_end_freq_hz) "
+                      "OR ((freq IS NULL OR freq <= 0) AND band = :band_name COLLATE NOCASE))";
 
     const QString selectedMode = ui->catModeCombo->currentData().toString();
     if ( selectedMode != CabrilloFormat::MODE_MIXED )
@@ -423,6 +425,7 @@ void CabrilloExportDialog::bindWhereClause(QSqlQuery &query) const
     {
         query.bindValue(":band_start_freq_hz", MHz2Hz(bandStartFreq));
         query.bindValue(":band_end_freq_hz", MHz2Hz(bandEndFreq));
+        query.bindValue(":band_name", bandFilterName);
     }
 
     const QString selectedMode = ui->catModeCombo->currentData().toString();
@@ -482,6 +485,42 @@ void CabrilloExportDialog::accept()
     QList<QSqlRecord> records;
     while ( query.next() )
         records.append(query.record());
+
+    bool hasFrequencyColumn = false;
+    const QList<CabrilloFormat::ColumnDef> columns =
+            CabrilloFormat::loadTemplateColumns(ui->templateCombo->currentData().toInt());
+    for ( const CabrilloFormat::ColumnDef &column : columns )
+    {
+        if ( column.formatter == CabrilloFormat::FMT_FREQ_KHZ )
+        {
+            hasFrequencyColumn = true;
+            break;
+        }
+    }
+
+    QStringList unsupportedBandOnlyBands;
+    if ( hasFrequencyColumn )
+    {
+        for ( const QSqlRecord &record : static_cast<const QList<QSqlRecord>&>(records) )
+        {
+            if ( record.value("freq").toDouble() <= 0.0 )
+            {
+                const QString band = record.value("band").toString();
+                if ( CabrilloFormat::bandToFrequencyField(band).isEmpty() )
+                    unsupportedBandOnlyBands << band;
+            }
+        }
+    }
+
+    unsupportedBandOnlyBands.removeDuplicates();
+    if ( !unsupportedBandOnlyBands.isEmpty() )
+    {
+        QMessageBox::warning(this, tr("QLog Warning"),
+                             tr("Cabrillo does not define a frequency designator for band-only QSO(s) on: %1. "
+                                "Enter an exact frequency or exclude these QSOs from the export.")
+                             .arg(unsupportedBandOnlyBands.join(", ")));
+        return;
+    }
 
     QFile file(ui->fileEdit->text());
     if ( !file.open(QIODevice::WriteOnly | QIODevice::Text) )

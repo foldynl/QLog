@@ -448,6 +448,49 @@ QString CabrilloFormat::formatField(const QString &value,
     return result;
 }
 
+QString CabrilloFormat::bandToFrequencyField(const QString &band)
+{
+    static const QHash<QString, QString> bandDesignators =
+    {
+        { "160m", "1800" },
+        { "80m", "3500" },
+        { "40m", "7000" },
+        { "20m", "14000" },
+        { "15m", "21000" },
+        { "10m", "28000" },
+        { "6m", "50" },
+        { "4m", "70" },
+        { "2m", "144" },
+        { "1.25m", "222" },
+        { "70cm", "432" },
+        { "33cm", "902" },
+        { "23cm", "1.2G" },
+        { "13cm", "2.3G" },
+        { "9cm", "3.4G" },
+        { "6cm", "5.7G" },
+        { "3cm", "10G" },
+        { "1.25cm", "24G" },
+        { "6mm", "47G" },
+        { "4mm", "75G" },
+        { "2.5mm", "122G" },
+        { "2mm", "134G" },
+        { "1mm", "241G" },
+        { "submm", "LIGHT" }
+    };
+
+    return bandDesignators.value(band.trimmed().toLower());
+}
+
+QString CabrilloFormat::formatFrequencyOrBand(const QString &frequency,
+                                              const QString &band,
+                                              int width)
+{
+    if ( !frequency.trimmed().isEmpty() )
+        return formatField(frequency, FMT_FREQ_KHZ, width);
+
+    return formatField(bandToFrequencyField(band), FMT_NONE, width);
+}
+
 void CabrilloFormat::writeMultiLineField(const QString &key, const QString &value,
                                          int maxLines)
 {
@@ -567,7 +610,10 @@ void CabrilloFormat::exportContact(const QSqlRecord &record,
         if ( fieldIndex >= 0 )
             value = record.value(fieldIndex).toString();
 
-        line += " " + formatField(value, col.formatter, col.width);
+        if ( col.formatter == FMT_FREQ_KHZ )
+            line += " " + formatFrequencyOrBand(value, record.value("band").toString(), col.width);
+        else
+            line += " " + formatField(value, col.formatter, col.width);
     }
 
     qCDebug(runtime) << line;

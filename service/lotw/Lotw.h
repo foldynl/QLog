@@ -67,7 +67,28 @@ class LotwUploader : public GenericQSOUploader, private LotwBase
     Q_OBJECT
 
 public:
-    static QStringList uploadedFields;
+    static QStringList uploadedFields()
+    {
+        return {
+            "callsign",
+            "freq",
+            "band",
+            "freq_rx",
+            "band_rx",
+            "mode",
+            "submode",
+            "start_time",
+            "prop_mode",
+            "sat_name",
+            "station_callsign",
+            "operator",
+            "rst_sent",
+            "rst_rcvd",
+            "my_state",
+            "my_cnty",
+            "my_vucc_grids"
+        };
+    }
 
     static QVariantMap generateUploadConfigMap(const QString &location)
     {

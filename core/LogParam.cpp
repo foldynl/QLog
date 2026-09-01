@@ -979,6 +979,16 @@ void LogParam::setNewContactFreq(double freq)
     setParam("newcontact/freq", freq);
 }
 
+QString LogParam::getNewContactBand()
+{
+    return getParam("newcontact/band").toString();
+}
+
+void LogParam::setNewContactBand(const QString &band)
+{
+    setParam("newcontact/band", band);
+}
+
 QString LogParam::getNewContactMode()
 {
     return getParam("newcontact/mode", "CW").toString();

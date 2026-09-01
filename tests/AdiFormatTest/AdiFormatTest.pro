@@ -1,4 +1,4 @@
-QT += testlib core sql
+QT += testlib core sql network
 CONFIG += console testcase c++11
 TEMPLATE = app
 TARGET = tst_adiformat
@@ -12,10 +12,12 @@ SOURCES += \
     test_stubs.cpp \
     ../../core/LogLocale.cpp \
     ../../data/Accents.cpp \
+    ../../service/GenericQSOUploader.cpp \
     ../../logformat/AdiFormat.cpp
 
 HEADERS += \
     ../../core/LogLocale.h \
     ../../data/Data.h \
     ../../logformat/AdiFormat.h \
-    ../../logformat/LogFormat.h
+    ../../logformat/LogFormat.h \
+    ../../service/GenericQSOUploader.h

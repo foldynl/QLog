@@ -1,4 +1,5 @@
 #include <QPushButton>
+#include <QSignalBlocker>
 #include <QStackedWidget>
 #include <QTableView>
 #include <QDesktopServices>
@@ -88,6 +89,18 @@ void AwardsDialog::refreshTable(int)
     setEntityInputEnabled(award->entityInputEnabled());
     setNotWorkedEnabled(award->notWorkedEnabled());
     updateRulesButton(award);
+
+    if ( ui->eqslCheckBox->isEnabled() )
+        m_eqslConfirmationChecked = ui->eqslCheckBox->isChecked();
+
+    const bool acceptsEqsl = award->acceptsEqslConfirmation();
+    const QSignalBlocker eqslBlocker(ui->eqslCheckBox);
+    ui->eqslCheckBox->setChecked(acceptsEqsl && m_eqslConfirmationChecked);
+    ui->eqslCheckBox->setEnabled(acceptsEqsl);
+    ui->eqslCheckBox->setToolTip(acceptsEqsl
+                                 ? QString()
+                                 : tr("eQSL confirmations are not accepted for %1.")
+                                       .arg(award->displayName()));
 
     if ( !award->widget() )
     {

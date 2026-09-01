@@ -15,13 +15,16 @@ public:
 
 public slots:
     void clear();
-    void setDxcc(int dxcc, const Band &highlightedBand);
-    void setDxCallsign(const QString &dxCallsign, const Band &band);
+    void setDxcc(int dxcc, const Band &highlightedBand, bool highlightSatellite = false);
+    void setDxCallsign(const QString &dxCallsign,
+                       const Band &highlightedBand,
+                       bool highlightSatellite = false);
 
 private:
     void updateDxTable(const QString &condition,
                        const QVariant &conditionValue,
-                       const Band &highlightedBand);
+                       const Band &highlightedBand,
+                       bool highlightSatellite);
 
     DxccTableModel* dxccTableModel;
 };

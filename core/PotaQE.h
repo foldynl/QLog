@@ -19,7 +19,9 @@ public:
         return &instance;
     };
 
-    const POTASpot findReferenceId(const Callsign &callsign, double freq);
+    const POTASpot findReferenceId(const Callsign &callsign,
+                                   double freq,
+                                   const QString &fallbackBand = QString());
 
 private slots:
     void updateSpot();

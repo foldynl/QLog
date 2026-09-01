@@ -114,7 +114,8 @@ public:
                                        const QString &oldMode,
                                        const qint32 newDxcc,
                                        const QString &newBand,
-                                       const QString &newMode);
+                                       const QString &newMode,
+                                       const QString &newPropMode);
     static qulonglong dupeNewCountWhenQSOAdded(qulonglong oldCounter,
                                                const QString &oldBand,
                                                const QString &oldMode,
@@ -140,6 +141,7 @@ public:
     static void reloadQsoStatusColors();
     static QString colorToHTMLColor(const QColor&);
     static QString statusToText(const DxccStatus &status);
+    static QString satelliteDxccStatusToText(const DxccStatus &status);
     static QString removeAccents(const QString &input);
     static int getITUZMin();
     static int getITUZMax();
@@ -157,6 +159,7 @@ public:
 
     static QString safeQueryString(const QUrlQuery &query);
     DxccStatus dxccStatus(int dxcc, const QString &band, const QString &mode);
+    DxccStatus satelliteDxccStatus(int dxcc);
     QStringList contestList();
     QStringList propagationModesList() const { return QStringList{""} + propagationModes.values(); }
     QStringList propagationModesIDList() const { return QStringList{""} + propagationModes.keys(); }
@@ -239,6 +242,7 @@ private:
     bool isDXCCIDAD1CQueryValid;
     bool isDXCCIDClublogQueryValid;
     QuadKeyCache<DxccStatus> dxccStatusCache;
+    QCache<QPair<int, int>, DxccStatus> satelliteDxccStatusCache;
 
     static const char translitTab[];
     static const int tranlitIndexMap[];

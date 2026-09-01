@@ -26,6 +26,7 @@ public:
     enum class DXCCBandScope
     {
         EntityLevel,   // Any band — one entry per entity (basic DXCC)
+        Satellite,     // Satellite DXCC — one entry per entity, independent of band/mode
         FiveBand,      // 80/40/20/15/10m preset
         AllDXCCBands,  // All enabled DXCC bands, per band
         Custom         // User-selected bands
@@ -57,6 +58,7 @@ private:
                                     const QStringList &selectedBands,
                                     DXCCBandScope scope);
     void          setBandControlsVisible(bool visible);
+    void          setModeControlsEnabled(bool enabled);
     DXCCBandScope currentScope() const;
     void          clearTable();
     const QStringList FIVE_BAND_DXCC = { "80m", "40m", "20m", "15m", "10m" };

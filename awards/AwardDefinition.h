@@ -46,6 +46,9 @@ public:
     /*Whether the Not-Worked / Not-Confirmed checkboxes are shown. Default: true. */
     virtual bool notWorkedEnabled() const;
 
+    /*Whether eQSL confirmations are valid for this award. Default: true. */
+    virtual bool acceptsEqslConfirmation() const;
+
     /*Create the display widget. Called once on first selection. Store in m_widget. */
     virtual QWidget* createWidget(QWidget *parent) = 0;
 

@@ -182,7 +182,14 @@ void OnlineMapWidget::setIBPBand(VFOID vfoid, double, double ritFreq, double)
     if ( vfoid == VFO2 )
         return;
 
-    mapController->setCurrentBand(BandPlan::freq2Band(ritFreq).name);
+    setCurrentBand(BandPlan::freq2Band(ritFreq).name);
+}
+
+void OnlineMapWidget::setCurrentBand(const QString &band)
+{
+    FCT_IDENTIFICATION;
+
+    mapController->setCurrentBand(band);
 }
 
 void OnlineMapWidget::antPositionChanged(double in_azimuth, double in_elevation)

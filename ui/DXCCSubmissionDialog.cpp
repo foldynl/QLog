@@ -16,21 +16,23 @@
 MODULE_IDENTIFICATION("qlog.ui.dxccsubmissiondialog");
 
 //
-// ADIF credit_submitted / credit_granted are comma-delimited lists, e.g.:
-//   "DXCC,DXCC_MODE,DXCC_BAND"
+// ADIF credit_submitted / credit_granted are comma-delimited lists. A credit
+// may optionally include its QSL medium, e.g. "DXCC:lotw,DXCC_BAND:card".
 //
 // Standard DXCC credit tokens:
 //   DXCC      — basic DXCC award (any mode, any band)
 //   DXCC_MODE — DXCC mode endorsement (CW / Phone / Digital)
 //   DXCC_BAND — DXCC band endorsement (per-band, incl. 5-Band DXCC)
+//   DXCC_SATELLITE — Satellite DXCC (entity-level, independent of band/mode)
 //
-// We use comma-padding so "DXCC" never accidentally matches "DXCC_MODE" or
-// "DXCC_BAND":  INSTR(',' || field || ',', ',TOKEN,') > 0
+// Match both TOKEN and TOKEN:medium while keeping exact token boundaries.
 //
 static QString creditHas(const QString &field, const QString &token)
 {
-    return QString("INSTR(',' || COALESCE(%1,'') || ',', ',%2,') > 0")
-               .arg(field, token);
+    const QString paddedList = QString("',' || UPPER(REPLACE(COALESCE(%1,''), ' ', '')) || ','")
+                                   .arg(field);
+    return QString("(INSTR(%1, ',%2,') > 0 OR INSTR(%1, ',%2:') > 0)")
+               .arg(paddedList, token);
 }
 
 DXCCSubmissionDialog::DXCCSubmissionDialog(QWidget *parent)
@@ -76,6 +78,8 @@ DXCCSubmissionDialog::DXCCSubmissionDialog(QWidget *parent)
     ui->bandScopeComboBox->blockSignals(true);
     ui->bandScopeComboBox->addItem(tr("Any Band (Entity Level)"),
                                    QVariant(static_cast<int>(DXCCBandScope::EntityLevel)));
+    ui->bandScopeComboBox->addItem(tr("Satellite DXCC"),
+                                   QVariant(static_cast<int>(DXCCBandScope::Satellite)));
     ui->bandScopeComboBox->addItem(tr("5-Band DXCC (80/40/20/15/10m)"),
                                    QVariant(static_cast<int>(DXCCBandScope::FiveBand)));
     ui->bandScopeComboBox->addItem(tr("All DXCC Bands"),
@@ -131,6 +135,7 @@ void DXCCSubmissionDialog::onBandScopeChanged(int)
 
     const DXCCBandScope scope = currentScope();
     setBandControlsVisible(scope == DXCCBandScope::Custom);
+    setModeControlsEnabled(scope != DXCCBandScope::Satellite);
     refreshTable();
 }
 
@@ -169,11 +174,18 @@ void DXCCSubmissionDialog::refreshTable()
         return;
 
     const DXCCBandScope scope   = currentScope();
-    const bool perBand = (scope != DXCCBandScope::EntityLevel);
+    const bool satellite = (scope == DXCCBandScope::Satellite);
+    const bool perBand = (scope != DXCCBandScope::EntityLevel && !satellite);
     const bool isMixed = ui->mixedRadioButton->isChecked();
 
     const QStringList selectedBands    = getSelectedBands(scope);
-    const QString     modeGroupFilter  = buildModeGroupFilter();
+    const QString     modeGroupFilter  = satellite ? QString() : buildModeGroupFilter();
+    const QString     propagationFilter = satellite
+                                          ? QStringLiteral("AND UPPER(c.prop_mode) = 'SAT' ")
+                                          : QStringLiteral("AND UPPER(COALESCE(c.prop_mode, '')) <> 'SAT' ");
+    const QString     modeJoin = satellite
+                                 ? QString()
+                                 : QStringLiteral("INNER JOIN modes m ON c.mode = m.name ");
 
     /**********************/
     /* Confirmation Level */
@@ -219,6 +231,7 @@ void DXCCSubmissionDialog::refreshTable()
     //   DXCC      — basic DXCC (any mode, any band)
     //   DXCC_MODE — mode endorsement (CW / Phone / Digital, entity-level)
     //   DXCC_BAND — band endorsement (any mode per band, incl. 5-Band DXCC)
+    //   DXCC_SATELLITE — Satellite DXCC (entity-level, any band/mode)
     //
     // For per-band scope, only DXCC_BAND matters — 5-Band DXCC (and all band
     // endorsements) require one contact per entity per band, ANY mode.  There
@@ -229,7 +242,8 @@ void DXCCSubmissionDialog::refreshTable()
     //   Mixed          → DXCC
     //   CW/Phone/Digi  → DXCC_MODE  (filter ensures only that mode is shown)
 
-    const QString creditToken = perBand ? "DXCC_BAND"
+    const QString creditToken = satellite ? "DXCC_SATELLITE"
+                              : perBand ? "DXCC_BAND"
                               : (isMixed ? "DXCC" : "DXCC_MODE");
 
     // ── slot_credits CTE ───────────────────────────────────────────────────
@@ -250,9 +264,12 @@ void DXCCSubmissionDialog::refreshTable()
     // For per-band it does NOT apply modeGroupFilter (any mode earns DXCC_BAND).
 
     const QString slotGroupBy    = perBand ? "c.dxcc, c.band" : "c.dxcc";
-    const QString slotModeFilter = (perBand || isMixed)
+    const QString slotModeFilter = (satellite || perBand || isMixed)
                                    ? ""
                                    : "AND (" + modeGroupFilter + ") ";
+    const QString rankedModeFilter = satellite
+                                     ? QString()
+                                     : "AND (" + modeGroupFilter + ") ";
 
     const QString slotCreditsCTE =
         "slot_credits AS ( "
@@ -260,9 +277,10 @@ void DXCCSubmissionDialog::refreshTable()
         "    MAX(CASE WHEN " + creditHas("c.credit_submitted", creditToken) + " THEN 1 ELSE 0 END) AS slot_submitted, "
         "    MAX(CASE WHEN " + creditHas("c.credit_granted",   creditToken) + " THEN 1 ELSE 0 END) AS slot_granted "
         "  FROM contacts c "
-        "  INNER JOIN modes m ON c.mode = m.name "
+        "  " + modeJoin +
         "  WHERE c.my_dxcc = '" + myEntity + "' "
         "    AND c.dxcc IS NOT NULL "
+        "    " + propagationFilter +
         "    " + slotModeFilter +
         "    " + bandWhereClause + " "
         "    " + userFilter + " "
@@ -292,11 +310,12 @@ void DXCCSubmissionDialog::refreshTable()
         "        c.start_time DESC "
         "    ) AS rn "
         "  FROM contacts c "
-        "  INNER JOIN modes m ON c.mode = m.name "
+        "  " + modeJoin +
         "  WHERE c.my_dxcc = '" + myEntity + "' "
         "    AND c.dxcc IS NOT NULL "
         "    AND (" + confFilter + ") "
-        "    AND (" + modeGroupFilter + ") "
+        "    " + propagationFilter +
+        "    " + rankedModeFilter +
         "    " + bandWhereClause + " "
         "    " + userFilter + " "
         ") ";
@@ -476,7 +495,8 @@ void DXCCSubmissionDialog::updateStatusLabel(int count, const QStringList &selec
 {
     FCT_IDENTIFICATION;
 
-    const bool perBand = ( scope != DXCCBandScope::EntityLevel) ;
+    const bool perBand = ( scope != DXCCBandScope::EntityLevel
+                           && scope != DXCCBandScope::Satellite );
     QString modeStr;
 
     if      ( ui->cwRadioButton->isChecked() )      modeStr = tr("CW");
@@ -489,6 +509,7 @@ void DXCCSubmissionDialog::updateStatusLabel(int count, const QStringList &selec
     switch ( scope )
     {
     case DXCCBandScope::EntityLevel:  scopeStr = tr("any band");  break;
+    case DXCCBandScope::Satellite:    scopeStr = tr("satellite"); break;
     case DXCCBandScope::FiveBand:     scopeStr = tr("5-band");    break;
     case DXCCBandScope::AllDXCCBands: scopeStr = tr("all bands"); break;
     case DXCCBandScope::Custom:
@@ -498,6 +519,11 @@ void DXCCSubmissionDialog::updateStatusLabel(int count, const QStringList &selec
 
     if ( count == 0 )
         ui->statusLabel->setText(tr("No contacts match the selected criteria."));
+    else if ( scope == DXCCBandScope::Satellite )
+        ui->statusLabel->setText(
+                    tr("%1 satellite %2 — Satellite DXCC")
+                    .arg(count)
+                    .arg(count == 1 ? tr("entity") : tr("entities")));
     else
         ui->statusLabel->setText(
                     tr("%1 %2 %3 — DXCC %4 / %5")
@@ -521,6 +547,26 @@ void DXCCSubmissionDialog::setBandControlsVisible(bool visible)
     ui->bandsLabel->setVisible(visible);
     ui->fiveBandButton->setVisible(visible);
     ui->allBandsButton->setVisible(visible);
+}
+
+void DXCCSubmissionDialog::setModeControlsEnabled(bool enabled)
+{
+    const QString toolTip = enabled
+                            ? QString()
+                            : tr("Satellite DXCC includes all bands and modes.");
+
+    ui->bandScopeLabel->setToolTip(toolTip);
+    ui->bandScopeComboBox->setToolTip(toolTip);
+    ui->awardCategoryLabel->setEnabled(enabled);
+    ui->awardCategoryLabel->setToolTip(toolTip);
+    ui->mixedRadioButton->setEnabled(enabled);
+    ui->mixedRadioButton->setToolTip(toolTip);
+    ui->cwRadioButton->setEnabled(enabled);
+    ui->cwRadioButton->setToolTip(toolTip);
+    ui->phoneRadioButton->setEnabled(enabled);
+    ui->phoneRadioButton->setToolTip(toolTip);
+    ui->digitalRadioButton->setEnabled(enabled);
+    ui->digitalRadioButton->setToolTip(toolTip);
 }
 
 DXCCSubmissionDialog::DXCCBandScope DXCCSubmissionDialog::currentScope() const

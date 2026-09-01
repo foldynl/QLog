@@ -4,6 +4,7 @@
 
 #include "core/debug.h"
 #include "PotaQE.h"
+#include "data/BandPlan.h"
 #include "rig/macros.h"
 
 MODULE_IDENTIFICATION("qlog.core.potaqe");
@@ -42,8 +43,10 @@ PotaQE::~PotaQE()
 // find park reference by callsign + freq +-5 kHz + mode.
 // Matching:
 //    callsign ignores prefixes and suffixes (/P,/M,/QRP,...) (Based Callsign is used)
-//    freq +- 5KHz
-const POTASpot PotaQE::findReferenceId(const Callsign &callsign, double freq)
+//    exact freq +- 5KHz, or the selected band when the QSO has no frequency
+const POTASpot PotaQE::findReferenceId(const Callsign &callsign,
+                                       double freq,
+                                       const QString &fallbackBand)
 {
     FCT_IDENTIFICATION;
 
@@ -58,7 +61,11 @@ const POTASpot PotaQE::findReferenceId(const Callsign &callsign, double freq)
     while ( i != activatorSpots.cend() && i.key() == baseCallsign )
     {
         const POTASpot &spot = i.value();
-        if ( qAbs(MHz2Hz(spot.frequency) - MHz2Hz(freq)) <= MHz2Hz(FREQTOL) ) return spot;
+        const bool matches = freq > 0.0
+                ? qAbs(MHz2Hz(spot.frequency) - MHz2Hz(freq)) <= MHz2Hz(FREQTOL)
+                : !fallbackBand.isEmpty()
+                  && BandPlan::freq2Band(spot.frequency).name == fallbackBand;
+        if ( matches ) return spot;
         i++;
     }
 

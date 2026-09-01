@@ -6,6 +6,8 @@
 #include <QSqlRecord>
 
 #include "logformat/AdiFormat.h"
+#include "service/GenericQSOUploader.h"
+#include "service/lotw/Lotw.h"
 
 class TestAdiFormat : public AdiFormat
 {
@@ -35,6 +37,33 @@ public:
     }
 };
 
+class TestLotwUploader : public GenericQSOUploader
+{
+public:
+    TestLotwUploader() :
+        GenericQSOUploader(LotwUploader::uploadedFields())
+    {
+    }
+
+    QByteArray payload(const QSqlRecord &record)
+    {
+        return generateADIF({record});
+    }
+
+    void uploadQSOList(const QList<QSqlRecord> &, const QVariantMap &) override
+    {
+    }
+
+    void abortRequest() override
+    {
+    }
+
+private:
+    void processReply(QNetworkReply *) override
+    {
+    }
+};
+
 class AdiFormatTest : public QObject
 {
     Q_OBJECT
@@ -50,6 +79,7 @@ private slots:
     void writeFieldNormalizesLineBreaksByFieldType();
     void exportStartWritesAdifHeader();
     void writeSqlRecordMapsKnownFields();
+    void lotwPayloadKeepsBandOnlyRxBand();
     void writeSqlRecordExportsApplicationTags();
     void writeSqlRecordExportsRawFieldsFiltersInvalidNames();
     void exportContactNormalizesGridAndTerminatesRecord();
@@ -274,6 +304,7 @@ void AdiFormatTest::writeSqlRecordMapsKnownFields()
     QSqlRecord record;
     appendField(record, QStringLiteral("callsign"), QStringLiteral("OK1AA"));
     appendField(record, QStringLiteral("band"), QStringLiteral("20M"));
+    appendField(record, QStringLiteral("freq"), QVariant());
     appendField(record, QStringLiteral("iota"), QStringLiteral("eu-001"));
     appendField(record, QStringLiteral("qsl_sent"), QStringLiteral("N"));
     appendField(record, QStringLiteral("qsl_rcvd"), QStringLiteral("Y"));
@@ -294,6 +325,7 @@ void AdiFormatTest::writeSqlRecordMapsKnownFields()
 
     QVERIFY(output.contains("<call:5>OK1AA\n"));
     QVERIFY(output.contains("<band:3>20m\n"));
+    QVERIFY(!output.contains("<freq:"));
     QVERIFY(output.contains("<iota:6>EU-001\n"));
     QVERIFY(output.contains("<qsl_rcvd:1>Y\n"));
     QVERIFY(!output.contains("qsl_sent"));
@@ -301,6 +333,27 @@ void AdiFormatTest::writeSqlRecordMapsKnownFields()
     QVERIFY(output.contains("<comment:10>Line1Line2\n"));
     QVERIFY(output.contains("<qso_date:8>20260528\n"));
     QVERIFY(output.contains("<time_on:6>123456\n"));
+}
+
+void AdiFormatTest::lotwPayloadKeepsBandOnlyRxBand()
+{
+    QSqlRecord record;
+    appendField(record, QStringLiteral("callsign"), QStringLiteral("OK1AA"));
+    appendField(record, QStringLiteral("band"), QStringLiteral("20m"));
+    appendField(record, QStringLiteral("freq"), QVariant());
+    appendField(record, QStringLiteral("band_rx"), QStringLiteral("40m"));
+    appendField(record, QStringLiteral("freq_rx"), QVariant());
+    appendField(record, QStringLiteral("comment"), QStringLiteral("not uploaded"));
+
+    TestLotwUploader uploader;
+    const QByteArray output = uploader.payload(record);
+
+    QVERIFY(output.contains("<call:5>OK1AA\n"));
+    QVERIFY(output.contains("<band:3>20m\n"));
+    QVERIFY(output.contains("<band_rx:3>40m\n"));
+    QVERIFY(!output.contains("<freq:"));
+    QVERIFY(!output.contains("<freq_rx:"));
+    QVERIFY(!output.contains("<comment:"));
 }
 
 void AdiFormatTest::writeSqlRecordExportsApplicationTags()
