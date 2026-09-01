@@ -537,6 +537,7 @@ void CabrilloExportDialog::accept()
     format.setTransmitterId(ui->transmitterIdSpin->value());
 
     QProgressDialog progress(tr("Exporting Cabrillo..."), QString(), 0, 100, this);
+    progress.setWindowTitle(tr("Cabrillo Export Progress"));
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
 

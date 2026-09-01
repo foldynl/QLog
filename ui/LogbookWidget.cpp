@@ -397,6 +397,7 @@ void LogbookWidget::actionCallbookLookup()
                                        tr("Cancel"),
                                        0, callbookLookupBatch.count(),
                                        this);
+    lookupDialog->setWindowTitle(tr("QSOs Update Progress"));
 
     connect(lookupDialog, &QProgressDialog::canceled, this, [this]()
     {
@@ -1037,6 +1038,7 @@ void LogbookWidget::deleteContact()
                                                     0,
                                                     deletedRowIndexes.size(),
                                                     this);
+    progress->setWindowTitle(tr("Delete QSOs Progress"));
     progress->setWindowModality(Qt::WindowModal);
     progress->setValue(0);
     progress->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -1280,6 +1282,7 @@ void LogbookWidget::doubleClickColumn(QModelIndex modelIndex)
          && modelIndex.data().toString() == 'Y')
     {
         QProgressDialog* dialog = new QProgressDialog(tr("Downloading eQSL Image"), tr("Cancel"), 0, 0, this);
+        dialog->setWindowTitle(tr("eQSL Image Download"));
         dialog->setWindowModality(Qt::WindowModal);
         dialog->setRange(0, 0);
         dialog->setAutoClose(true);

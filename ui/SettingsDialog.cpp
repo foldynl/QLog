@@ -2884,6 +2884,7 @@ void SettingsDialog::onDeleteAllQSOs()
     FCT_IDENTIFICATION;
 
     QProgressDialog *progress = new QProgressDialog(tr("Deleting all QSOs..."), QString(), 0, 0, this);
+    progress->setWindowTitle(tr("Delete QSOs Progress"));
     progress->setWindowModality(Qt::ApplicationModal);
     progress->setMinimumDuration(0);
     progress->setAttribute(Qt::WA_DeleteOnClose, true);
