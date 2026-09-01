@@ -45,7 +45,7 @@ bool DBSchemaMigration::run(bool force)
     qCDebug(runtime) << "Starting database migration";
 
     QProgressDialog progress("Migrating the database...", nullptr, currentVersion, latestVersion);
-    progress.setWindowTitle(QObject::tr("Database Migration"));
+    progress.setWindowTitle(tr("Database Migration"));
     progress.show();
 
     while ((currentVersion = getVersion()) < latestVersion)
@@ -355,7 +355,7 @@ bool DBSchemaMigration::updateExternalResource(bool force)
     LOVDownloader downloader;
 
     QProgressDialog progress;
-    progress.setWindowTitle(QObject::tr("Updating External Resources"));
+    progress.setWindowTitle(tr("Updating External Resources"));
 
     connect(&downloader, &LOVDownloader::processingSize,
             &progress, &QProgressDialog::setMaximum);

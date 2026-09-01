@@ -427,7 +427,6 @@ StatisticsWidget::StatisticsWidget(QWidget *parent) :
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
-    setWindowTitle(tr("Statistics"));
 
     ui->myCallCombo->setModel(new QStringListModel(this));
     ui->myGridCombo->setModel(new QStringListModel(this));
