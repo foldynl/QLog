@@ -411,6 +411,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->alertsWidget, &AlertWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->chatWidget, &ChatWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->wsjtxWidget, &WsjtxWidget::updateSpotsStatusWhenQSOAdded);
+    connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->dxWidget, &DxWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->dxWidget, &DxWidget::setLastQSO);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, clublogRT, &ClubLogUploader::insertQSOImmediately);
     connect(ui->newContactWidget, &NewContactWidget::contestStarted, this, &MainWindow::startContest);

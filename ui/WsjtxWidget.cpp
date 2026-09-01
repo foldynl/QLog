@@ -70,7 +70,10 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
             entry.callsign = match.captured(3);
             entry.grid = match.captured(4);
             entry.dxcc = Data::instance()->lookupDxcc(entry.callsign);
-            entry.status = Data::instance()->dxccStatus(entry.dxcc.dxcc, currBand, BandPlan::MODE_GROUP_STRING_DIGITAL);
+            entry.status = Data::instance()->currentDxccStatus(entry.dxcc.dxcc,
+                                                               currBand,
+                                                               BandPlan::MODE_GROUP_STRING_DIGITAL);
+            entry.dxccStatusSatellite = Data::instance()->isSatelliteDxccContext();
             entry.receivedTime = QDateTime::currentDateTimeUtc();
             entry.freq = currFreq;
             entry.band = currBand;
@@ -150,7 +153,10 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
             {
                 entry.dateTime = QDateTime::currentDateTime().toTimeZone(QTimeZone::utc());
                 entry.dxcc = Data::instance()->lookupDxcc(entry.callsign);
-                entry.status = Data::instance()->dxccStatus(entry.dxcc.dxcc, currBand, BandPlan::MODE_GROUP_STRING_DIGITAL);
+                entry.status = Data::instance()->currentDxccStatus(entry.dxcc.dxcc,
+                                                                   currBand,
+                                                                   BandPlan::MODE_GROUP_STRING_DIGITAL);
+                entry.dxccStatusSatellite = Data::instance()->isSatelliteDxccContext();
                 entry.decode = decode;
                 entry.receivedTime = QDateTime::currentDateTimeUtc();
                 entry.freq = currFreq;

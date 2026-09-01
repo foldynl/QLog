@@ -151,9 +151,9 @@ void PSKReporter::processMessage(PSKReporter::Direction direction,
     decode.dupeCount = Data::countDupe(remoteCallsign,
                                        bandDecoded.name,
                                        BandPlan::MODE_GROUP_STRING_DIGITAL);
-    decode.status = Data::instance()->dxccStatus(remoteDxcc,
-                                                 bandDecoded.name,
-                                                 BandPlan::MODE_GROUP_STRING_DIGITAL);
+    decode.status = Data::instance()->currentDxccStatus(remoteDxcc,
+                                                        bandDecoded.name,
+                                                        BandPlan::MODE_GROUP_STRING_DIGITAL);
 
     qCDebug(runtime) << decode;
     emit heardMePointRequested(decode, direction);

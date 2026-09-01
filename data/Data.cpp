@@ -502,6 +502,52 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 }
 #undef RETCODE
 
+DxccStatus Data::currentDxccStatus(int dxcc, const QString &band, const QString &mode)
+{
+    return satelliteDxccContext ? satelliteDxccStatus(dxcc)
+                                : dxccStatus(dxcc, band, mode);
+}
+
+DxccStatus Data::currentDxccNewStatusWhenQSOAdded(const DxccStatus &oldStatus,
+                                                   bool oldStatusSatellite,
+                                                   qint32 oldDxcc,
+                                                   const QString &oldBand,
+                                                   const QString &oldMode,
+                                                   qint32 newDxcc,
+                                                   const QString &newBand,
+                                                   const QString &newMode,
+                                                   const QString &newPropMode)
+{
+    if ( oldDxcc != newDxcc )
+        return oldStatus;
+
+    if ( oldStatusSatellite != satelliteDxccContext )
+        return currentDxccStatus(oldDxcc, oldBand, oldMode);
+
+    return satelliteDxccContext
+           ? satelliteDxccNewStatusWhenQSOAdded(oldStatus, oldDxcc, newDxcc, newPropMode)
+           : dxccNewStatusWhenQSOAdded(oldStatus,
+                                       oldDxcc,
+                                       oldBand,
+                                       oldMode,
+                                       newDxcc,
+                                       newBand,
+                                       newMode,
+                                       newPropMode);
+}
+
+DxccStatus Data::satelliteDxccNewStatusWhenQSOAdded(const DxccStatus &oldStatus,
+                                                     qint32 oldDxcc,
+                                                     qint32 newDxcc,
+                                                     const QString &newPropMode)
+{
+    if ( oldDxcc != newDxcc
+         || newPropMode.compare(QLatin1String("SAT"), Qt::CaseInsensitive) != 0 )
+        return oldStatus;
+
+    return oldStatus == DxccStatus::Confirmed ? oldStatus : DxccStatus::Worked;
+}
+
 DxccStatus Data::satelliteDxccStatus(int dxcc)
 {
     FCT_IDENTIFICATION;
@@ -603,7 +649,9 @@ DxccStatus Data::dxccNewStatusWhenQSOAdded(const DxccStatus &oldStatus,
                                << newPropMode;
 
     if ( newPropMode.compare(QLatin1String("SAT"), Qt::CaseInsensitive) == 0 )
+    {
         RETURNCODE(oldStatus);
+    }
 
     if ( oldDxcc != newDxcc )
     {
@@ -1035,6 +1083,11 @@ void Data::invalidateDXCCStatusCache(const QSqlRecord &record)
     const int myDXCC = StationProfilesManager::instance()->getCurProfile1().dxcc;
     dxccStatusCache.invalidate(dxcc, myDXCC);
     satelliteDxccStatusCache.remove(QPair<int, int>(dxcc, myDXCC));
+}
+
+void Data::setSatelliteDxccContext(bool satellite)
+{
+    satelliteDxccContext = satellite;
 }
 
 void Data::invalidateSetOfDXCCStatusCache(const QSet<uint> &entities)

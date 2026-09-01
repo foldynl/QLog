@@ -3914,7 +3914,10 @@ void NewContactWidget::propModeChanged(const QString &propModeText)
     FCT_IDENTIFICATION;
 
     qCDebug(runtime) << "propModeText: " << propModeText << " mode: "<< Data::instance()->propagationModeIDToText("SAT");
-    if ( propModeText == Data::instance()->propagationModeIDToText("SAT") )
+    const bool satellite = propModeText == Data::instance()->propagationModeIDToText("SAT");
+    Data::instance()->setSatelliteDxccContext(satellite);
+
+    if ( satellite )
     {
         uiDynamic->satNameEdit->setText(LogParam::getNewContactSatName());
         updateSatMode();

@@ -208,6 +208,7 @@ void AlertTableModel::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
     const QString &band = record.value("band").toString();
     const QString &dxccModeGroup = BandPlan::modeToDXCCModeGroup(record.value("mode").toString());
     const QString &callsign = record.value("callsign").toString();
+    const bool satellite = Data::instance()->isSatelliteDxccContext();
 
     QMutexLocker locker(&alertListMutex);
 
@@ -216,15 +217,25 @@ void AlertTableModel::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
     {
         SpotAlert &alert = alertRecord.alert;
 
-        alert.spot.status = Data::dxccNewStatusWhenQSOAdded(alert.spot.status,
-                                                            alert.spot.dxcc.dxcc,
-                                                            alert.spot.band,
-                                                            ( ( alert.spot.modeGroupString == BandPlan::MODE_GROUP_STRING_FTx ) ? BandPlan::MODE_GROUP_STRING_DIGITAL
-                                                                                                                                : dxccModeGroup ),
-                                                            dxcc,
-                                                            band,
-                                                            dxccModeGroup,
-                                                            record.value("prop_mode").toString());
+        if ( alert.spot.dxcc.dxcc == dxcc )
+        {
+            const QString &spotDxccModeGroup =
+                alert.spot.modeGroupString == BandPlan::MODE_GROUP_STRING_FTx
+                ? BandPlan::MODE_GROUP_STRING_DIGITAL
+                : alert.spot.modeGroupString;
+
+            alert.spot.status = Data::instance()->currentDxccNewStatusWhenQSOAdded(
+                                    alert.spot.status,
+                                    alert.spot.dxccStatusSatellite,
+                                    alert.spot.dxcc.dxcc,
+                                    alert.spot.band,
+                                    spotDxccModeGroup,
+                                    dxcc,
+                                    band,
+                                    dxccModeGroup,
+                                    record.value("prop_mode").toString());
+            alert.spot.dxccStatusSatellite = satellite;
+        }
         if ( alert.spot.callsign == callsign )
             alert.spot.dupeCount = Data::dupeNewCountWhenQSOAdded(alert.spot.dupeCount,
                                                                   alert.spot.band,
@@ -289,7 +300,10 @@ void AlertTableModel::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &enti
         if ( !entities.contains(alert.spot.dxcc.dxcc) )
             continue;
 
-        alert.spot.status = Data::instance()->dxccStatus(alert.spot.dxcc.dxcc, alert.spot.band, alert.spot.modeGroupString);
+        alert.spot.status = Data::instance()->currentDxccStatus(alert.spot.dxcc.dxcc,
+                                                                alert.spot.band,
+                                                                alert.spot.modeGroupString);
+        alert.spot.dxccStatusSatellite = Data::instance()->isSatelliteDxccContext();
     }
     endResetModel();
 }
@@ -303,7 +317,10 @@ void AlertTableModel::recalculateDxccStatus()
     {
         SpotAlert &alert = alertRecord.alert;
 
-        alert.spot.status = Data::instance()->dxccStatus(alert.spot.dxcc.dxcc, alert.spot.band, alert.spot.modeGroupString);
+        alert.spot.status = Data::instance()->currentDxccStatus(alert.spot.dxcc.dxcc,
+                                                                alert.spot.band,
+                                                                alert.spot.modeGroupString);
+        alert.spot.dxccStatusSatellite = Data::instance()->isSatelliteDxccContext();
     }
     endResetModel();
 }

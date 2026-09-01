@@ -27,6 +27,7 @@ struct KSTUsersInfo
     QString stationComment;
     DxccEntity dxcc;
     DxccStatus status;
+    bool dxccStatusSatellite = false;
     qulonglong dupeCount = 0;
 };
 

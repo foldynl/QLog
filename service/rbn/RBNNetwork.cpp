@@ -404,7 +404,7 @@ void RBNNetwork::processMatchingSpot(const char *line, int length)
     spot.frequency = frequency;
     spot.report = reportMatch.captured(1).toInt();
     spot.status = dxcc.dxcc
-                  ? Data::instance()->dxccStatus(dxcc.dxcc, band.name, modeGroup)
+                  ? Data::instance()->currentDxccStatus(dxcc.dxcc, band.name, modeGroup)
                   : DxccStatus::UnknownStatus;
     spot.dupeCount = Data::countDupe(lookupCallsign, band.name, modeGroup);
     spot.displayGroup = (mode == BandPlan::MODE_GROUP_STRING_CW)

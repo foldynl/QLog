@@ -29,6 +29,7 @@ public:
     DxccEntity dxcc;
     DxccEntity dxcc_spotter;
     DxccStatus status;
+    bool dxccStatusSatellite;
     bool containsWWFF;
     bool containsPOTA;
     bool containsSOTA;
@@ -38,6 +39,7 @@ public:
         freqTX(0.0),
         bandPlanMode(BandPlan::BAND_MODE_UNKNOWN),
         status(DxccStatus::UnknownStatus),
+        dxccStatusSatellite(false),
         containsWWFF(false), containsPOTA(false),
         containsSOTA(false), containsIOTA(false)
         {};
