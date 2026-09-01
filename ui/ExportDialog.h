@@ -83,6 +83,8 @@ private:
     void fillQSLSendViaCombo();
     void fillExportTypeCombo();
     void fillExportedColumnsCombo();
+    QString exportFileSuffix(const QString &format) const;
+    QString exportFileFilter(const QString &format) const;
     bool markQSOAsSent(LogFormat *format);
 };
 

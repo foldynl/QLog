@@ -75,15 +75,24 @@ void ExportDialog::browse()
     FCT_IDENTIFICATION;
 
     QSettings settings; //platform-dependent, must be present
-    const QString &lastPath = ( ui->fileEdit->text().isEmpty() ) ? settings.value("export/last_path", QDir::homePath()).toString()
-                                                                 : ui->fileEdit->text();
+    const QString lastPath = ( ui->fileEdit->text().isEmpty() ) ? settings.value("export/last_path", QDir::homePath()).toString()
+                                                                : ui->fileEdit->text();
+    const QString format = ui->typeSelect->currentText();
 
-    QString filename = QFileDialog::getSaveFileName(this, nullptr, lastPath);
-    if ( !filename.isEmpty() )
-    {
-        settings.setValue("export/last_path", QFileInfo(filename).path());
-        ui->fileEdit->setText(filename);
-    }
+    QFileDialog dialog(this, windowTitle(), lastPath, exportFileFilter(format));
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix(exportFileSuffix(format));
+    // The final target can also change when the export format is changed.
+    // Confirm overwrites centrally in runExport() for the actual target path.
+    dialog.setOption(QFileDialog::DontConfirmOverwrite);
+
+    if ( dialog.exec() != QDialog::Accepted || dialog.selectedFiles().isEmpty() )
+        return;
+
+    const QString filename = dialog.selectedFiles().constFirst();
+    settings.setValue("export/last_path", QFileInfo(filename).path());
+    ui->fileEdit->setText(filename);
 }
 
 void ExportDialog::toggleDateRange()
@@ -166,14 +175,29 @@ void ExportDialog::runExport()
 {
     FCT_IDENTIFICATION;
 
-    if ( ui->fileEdit->text().isEmpty() )
+    const QString filename = ui->fileEdit->text();
+
+    if ( filename.isEmpty() )
     {
         QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Filename is empty"));
         return;
     }
 
-    QFile file(ui->fileEdit->text());
+    if ( QFileInfo::exists(filename) )
+    {
+        const QMessageBox::StandardButton answer = QMessageBox::question(
+            this,
+            windowTitle(),
+            tr("The selected file already exists. Overwrite it?"),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::No);
+
+        if ( answer != QMessageBox::Yes )
+            return;
+    }
+
+    QFile file(filename);
 
     if ( ! file.open(QFile::WriteOnly | QFile::Text) )
     {
@@ -479,6 +503,30 @@ void ExportDialog::exportFormatChanged(const QString &format)
         ui->exportedColumnsCombo->setCurrentIndex(ui->exportedColumnsCombo->findData("all"));
         ui->exportTypeCombo->setEnabled(true);
     }
+
+    if ( ui->fileEdit->text().isEmpty() )
+        return;
+
+    const QFileInfo fileInfo(ui->fileEdit->text());
+    ui->fileEdit->setText(fileInfo.dir().filePath(fileInfo.completeBaseName()
+                                                  + "." + exportFileSuffix(format)));
+}
+
+QString ExportDialog::exportFileSuffix(const QString &format) const
+{
+    return ( format.compare(QLatin1String("POTA"), Qt::CaseInsensitive) == 0 )
+               ? QStringLiteral("adi")
+               : format.toLower();
+}
+
+QString ExportDialog::exportFileFilter(const QString &format) const
+{
+    const QString suffix = exportFileSuffix(format);
+    const QString patterns = ( suffix == QLatin1String("adi") )
+                                 ? QStringLiteral("*.adi *.adif")
+                                 : QString("*.%1").arg(suffix);
+
+    return tr("%1 Files (%2);;All Files (*)").arg(format, patterns);
 }
 
 ExportDialog::~ExportDialog()
