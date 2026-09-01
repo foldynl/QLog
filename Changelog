@@ -3,7 +3,7 @@ TBC- 0.53.0
 - [NEW] - QSO Filter - Added Clone Profile button (PR #1151 issue #1144 @aa5sh)
 - [NEW] - Alert Rules - Added Clone Rule button (PR #1151 issue #1144 @aa5sh)
 - [NEW] - Activity Manager - Added Clone Activity button
-- [CHANGED] - Online Map - Using vector maps
+- [CHANGED] - Online Map - Using vector maps with a fallback to raster maps
 - [CHANGED] - List of Values – use uncompressed files
 - [CHANGED] - NewQSO - Reworked field-clearing algorithm (issue #411)
 - [CHANGED] - NewQSO - Freq field can be switched to Band field (issue #905 @aa5sh @foldynl)
