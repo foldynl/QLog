@@ -9,6 +9,7 @@ public:
     QString key() const override { return QStringLiteral("waz"); }
     QString displayName() const override;
     QString rulesUrl() const override;
+    bool acceptsEqslConfirmation() const override;
 
 protected:
     QString headersColumns(const QString &entity) const override;
@@ -16,6 +17,7 @@ protected:
     QString additionalWhere(const QString &entity) const override;
     QStringList additionalCTEs(const QString &entity, const QString &contactFilter) const override;
     QString clickFilter(const QString &col1Value, const QString &col2Value) const override;
+    bool hasIndependentEMECategory() const override;
 };
 
 #endif // QLOG_AWARDS_AWARDWAZ_H

@@ -25,9 +25,14 @@ QVariant AwardsTableModel::data(const QModelIndex &index, int role) const
          && index.column() == 2 )
     {
         unsigned int count = 0;
-        for ( int i = 3; i <= columnCount(); i++ )
+        for ( int i = 3; i < columnCount(); i++ )
+        {
+            // EME is a propagation view of a QSO already counted in its band.
+            if ( headerData(i, Qt::Horizontal).toString() == QLatin1String("EME") )
+                continue;
             count += QSqlQueryModel::data(this->index(index.row(), i),
                                           Qt::DisplayRole).toInt();
+        }
         return tr("Slots: ") + QString::number(count) + "  ";
     }
 

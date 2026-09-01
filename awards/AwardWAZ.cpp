@@ -11,6 +11,11 @@ QString AwardWAZ::rulesUrl() const
     return QStringLiteral("https://www.k0nr.com/wordpress/wp-content/uploads/2024/02/cq_waz_rules_english.pdf");
 }
 
+bool AwardWAZ::acceptsEqslConfirmation() const
+{
+    return false;
+}
+
 QString AwardWAZ::headersColumns(const QString &) const
 {
     return QStringLiteral("d.n col1, null col2 ");
@@ -36,4 +41,9 @@ QStringList AwardWAZ::additionalCTEs(const QString &, const QString &) const
 QString AwardWAZ::clickFilter(const QString &col1Value, const QString &) const
 {
     return QString("cqz = '%1'").arg(col1Value);
+}
+
+bool AwardWAZ::hasIndependentEMECategory() const
+{
+    return true;
 }

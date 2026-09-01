@@ -28,6 +28,7 @@ private:
     Ui::AwardsDialog *ui;
     QList<AwardDefinition*> m_awards;
     SqlListModel* entityCallsignModel;
+    bool m_eqslConfirmationChecked = true;
 
     AwardDefinition* currentAward() const;
     AwardFilterParams buildFilterParams() const;

@@ -42,10 +42,21 @@ void BandTableAward::updateData(const AwardFilterParams &params)
 
     m_currentEntity = params.entitySelected;
 
+    QStringList confirmedConditions = params.confirmedConditions;
+    if ( !acceptsEqslConfirmation() )
+    {
+        for ( int i = confirmedConditions.size() - 1; i >= 0; --i )
+        {
+            if ( confirmedConditions.at(i).contains(QLatin1String("eqsl_qsl_rcvd"),
+                                                     Qt::CaseInsensitive) )
+                confirmedConditions.removeAt(i);
+        }
+    }
+
     const QString innerConfirmedCase(QString(" CASE WHEN (%1) THEN 2 ELSE 1 END ")
-                                         .arg(params.confirmedConditions.isEmpty()
+                                         .arg(confirmedConditions.isEmpty()
                                                   ? QStringLiteral("1=2")
-                                                  : params.confirmedConditions.join(" or ")));
+                                                  : confirmedConditions.join(" or ")));
 
     QStringList stmt_max_part;
     QStringList stmt_total_padding;
@@ -58,6 +69,13 @@ void BandTableAward::updateData(const AwardFilterParams &params)
     QStringList stmt_not_confirmed;
     QStringList stmt_any_worked;
     const bool independentSatellite = hasIndependentSatelliteCategory();
+    const bool independentEME = hasIndependentEMECategory();
+    m_currentIndependentEME = independentEME;
+    m_currentModeFilter = QString("mode IN (SELECT name FROM modes WHERE dxcc IN (%1))")
+                              .arg(params.modes.join(","));
+    m_currentUserFilter = params.userFilterWhereClause.trimmed();
+    if ( m_currentUserFilter.startsWith(QLatin1String("AND "), Qt::CaseInsensitive) )
+        m_currentUserFilter.remove(0, 4);
     const QString regularPropagationCondition = independentSatellite
                                                 ? QStringLiteral(" AND UPPER(COALESCE(prop_mode, '')) <> 'SAT'")
                                                 : QString();
@@ -80,8 +98,11 @@ void BandTableAward::updateData(const AwardFilterParams &params)
     const QString satelliteModeCondition = independentSatellite
                                            ? QString()
                                            : QString(" AND m.dxcc IN (%1)").arg(params.modes.join(","));
+    const QString emeModeCondition = independentEME
+                                     ? QString()
+                                     : QString(" AND m.dxcc IN (%1)").arg(params.modes.join(","));
     stmt_max_part << QString(" MAX(CASE WHEN UPPER(prop_mode) = 'SAT'%1 THEN %2 ELSE 0 END) as 'SAT' ").arg(satelliteModeCondition, innerConfirmedCase)
-                  << QString(" MAX(CASE WHEN UPPER(prop_mode) = 'EME' AND m.dxcc IN (%1) THEN %2 ELSE 0 END) as 'EME' ").arg(params.modes.join(","), innerConfirmedCase);
+                  << QString(" MAX(CASE WHEN UPPER(prop_mode) = 'EME'%1 THEN %2 ELSE 0 END) as 'EME' ").arg(emeModeCondition, innerConfirmedCase);
     stmt_total_padding << " NULL 'SAT' "
                        << " NULL 'EME' ";
     stmt_sum_confirmed << " SUM(CASE WHEN a.'SAT' > 1 THEN 1 ELSE 0 END) 'SAT' "
@@ -212,6 +233,20 @@ void BandTableAward::updateData(const AwardFilterParams &params)
             }
         }
     }
+    if ( independentEME )
+    {
+        for ( int column = 0; column < m_model->columnCount(); ++column )
+        {
+            if ( m_model->headerData(column, Qt::Horizontal).toString() == QLatin1String("EME") )
+            {
+                m_model->setHeaderData(column,
+                                       Qt::Horizontal,
+                                       QObject::tr("EME WAZ, all bands and modes"),
+                                       Qt::ToolTipRole);
+                break;
+            }
+        }
+    }
     m_tableView->setModel(m_model);
     m_tableView->setColumnHidden(0, true);
 }
@@ -249,7 +284,16 @@ BandTableAward::ConditionResult BandTableAward::getConditionSelected(const QMode
     {
         const QString column = m_model->headerData(clickedIndex.column(), Qt::Horizontal).toString();
         if ( column == QLatin1String("SAT") || column == QLatin1String("EME") )
+        {
             addlFilters << QString("UPPER(prop_mode)='%1'").arg(column);
+            if ( column == QLatin1String("EME") )
+            {
+                if ( !m_currentIndependentEME )
+                    addlFilters << m_currentModeFilter;
+                if ( !m_currentUserFilter.isEmpty() )
+                    addlFilters << m_currentUserFilter;
+            }
+        }
         else
             result.band = column;
     }
@@ -281,6 +325,11 @@ bool BandTableAward::clickUsesCountryName() const
 }
 
 bool BandTableAward::hasIndependentSatelliteCategory() const
+{
+    return false;
+}
+
+bool BandTableAward::hasIndependentEMECategory() const
 {
     return false;
 }

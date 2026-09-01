@@ -10,6 +10,11 @@ bool AwardDefinition::notWorkedEnabled() const
     return true;
 }
 
+bool AwardDefinition::acceptsEqslConfirmation() const
+{
+    return true;
+}
+
 QString AwardDefinition::rulesUrl() const
 {
     return QString();
