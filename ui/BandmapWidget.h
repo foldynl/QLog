@@ -68,6 +68,7 @@ public:
 
 public slots:
     void update();
+    void setCurrentBand(const QString &bandName);
     void updateTunedFrequency(VFOID, double, double, double);
     void updateMode(VFOID, const QString &, const QString &mode,
                     const QString &subMode, qint32 width);

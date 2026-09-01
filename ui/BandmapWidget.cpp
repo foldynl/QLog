@@ -753,6 +753,20 @@ void BandmapWidget::setBandmapAnimation(bool isEnable)
     bandmapAnimation = isEnable;
 }
 
+void BandmapWidget::setCurrentBand(const QString &bandName)
+{
+    FCT_IDENTIFICATION;
+
+    const Band &newBand = BandPlan::bandName2Band(bandName);
+    if ( newBand.name.isEmpty()
+         || newBand == currentBand
+         || isAlreadyOpened(newBand) )
+        return;
+
+    setBand(newBand);
+    update();
+}
+
 void BandmapWidget::setBand(const Band &newBand, bool savePrevBandZoom)
 {
     FCT_IDENTIFICATION;

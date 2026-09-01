@@ -216,6 +216,8 @@ MainWindow::MainWindow(QWidget* parent) :
             this, &MainWindow::selectEquipmentProfilesForBand);
     connect(ui->newContactWidget, &NewContactWidget::rxBandChanged,
             ui->onlineMapWidget, &OnlineMapWidget::setCurrentBand);
+    connect(ui->newContactWidget, &NewContactWidget::rxBandChanged,
+            ui->bandmapWidget, &BandmapWidget::setCurrentBand);
 
     connect(AntProfilesManager::instance(), &AntProfilesManager::profileChanged,
             ui->newContactWidget, &NewContactWidget::refreshAntProfileCombo);
