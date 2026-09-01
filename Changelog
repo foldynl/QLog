@@ -6,6 +6,8 @@ TBC- 0.53.0
 - [CHANGED] - Online Map - Using vector maps
 - [CHANGED] - List of Values – use uncompressed files
 - [CHANGED] - NewQSO - Reworked field-clearing algorithm (issue #411)
+- [CHANGED] - NewQSO - Freq field can be switched to Band field (issue #905 @aa5sh @foldynl)
+- [CHANGED] - NewQSO - Separate DXCC satellite statistic tracking
 - [CHANGED] - Settings - Hamlib Interface now prefills default capabilities for newly defined rigs
 - [CHANGED] - Settings - Rig Sharing shows the rigctld parameters set by QLog
 - Fixed Hamlib Driver - preparation for Hamlib 5.0
@@ -13,6 +15,9 @@ TBC- 0.53.0
 - Fixed DX Spot frequency rounding - Added one decimal place for kHz (issue #1149)
 - Fixed Online Map - Aurora forecast and MUF wer not displayed west of the prime meridian
 - Fixed Online Map - Chat and Heard Me markers were not displayed across map boundaries
+- Fixed Awards DXCC EME tracking
+- Fixed Awards WAZ can include eQSL
+- Fixed Band-Only QSO processing - DXCC Status, Cabrillo Export, Awards
 
 2026/08/21 - 0.52.0
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)
