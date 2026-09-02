@@ -399,6 +399,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
+    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->dxWidget, &DxWidget::updateSpotsDxccStatusWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->bandmapWidget, &BandmapWidget::updateSpotsDupeWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->bandmapWidget, &BandmapWidget::updateSpotsDxccStatusWhenQSODeleted);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->alertsWidget, &AlertWidget::updateSpotsDupeWhenQSODeleted);

@@ -349,6 +349,40 @@ void DxTableModel::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
     }
 }
 
+void DxTableModel::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+{
+    if ( entities.isEmpty() )
+        return;
+
+    const bool satellite = Data::instance()->isSatelliteDxccContext();
+    int firstChangedRow = -1;
+    int lastChangedRow = -1;
+
+    for ( int row = 0; row < dxData.size(); ++row )
+    {
+        DxSpot &spot = dxData[row];
+
+        if ( !entities.contains(spot.dxcc.dxcc) )
+            continue;
+
+        spot.status = Data::instance()->currentDxccStatus(spot.dxcc.dxcc,
+                                                          spot.band,
+                                                          spot.modeGroupString);
+        spot.dxccStatusSatellite = satellite;
+
+        if ( firstChangedRow < 0 )
+            firstChangedRow = row;
+        lastChangedRow = row;
+    }
+
+    if ( firstChangedRow >= 0 )
+    {
+        emit dataChanged(createIndex(firstChangedRow, 1),
+                         createIndex(lastChangedRow, 1),
+                         {Qt::BackgroundRole, Qt::ForegroundRole, Qt::ToolTipRole});
+    }
+}
+
 int WCYTableModel::rowCount(const QModelIndex&) const
 {
     return wcyData.count();
@@ -1496,6 +1530,13 @@ void DxWidget::recalculateDxccStatus()
     FCT_IDENTIFICATION;
 
     dxTableModel->recalculateDxccStatus();
+}
+
+void DxWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+{
+    FCT_IDENTIFICATION;
+
+    dxTableModel->updateSpotsDxccStatusWhenQSODeleted(entities);
 }
 
 void DxWidget::prepareQSOSpot(QSqlRecord qso)

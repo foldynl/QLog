@@ -47,6 +47,7 @@ public:
     void refreshStatusColors();
     void recalculateDxccStatus();
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
+    void updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities);
 
 private:
     QList<DxSpot> dxData;
@@ -147,6 +148,7 @@ public slots:
     void reloadSetting();
     void refreshStatusColors();
     void recalculateDxccStatus();
+    void updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities);
     void prepareQSOSpot(QSqlRecord);
     void setSearch(const QString &);
     void setSearchStatus(bool);
