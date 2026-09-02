@@ -115,13 +115,20 @@ void CabrilloExportDialog::browseFile()
 {
     FCT_IDENTIFICATION;
 
-    QSettings settings;
-    const QString &lastPath = ( ui->fileEdit->text().isEmpty() )
-        ? settings.value("export/last_path", QDir::homePath()).toString()
-        : ui->fileEdit->text();
+    QSettings settings; //platform-dependent, must be present
 
-    const QString filename = QFileDialog::getSaveFileName(this, nullptr, lastPath,
-                                                          tr("Cabrillo Files (*.log);;CBR Files (*.cbr);;All Files (*)"));
+    const QString &lastPath = ( ui->fileEdit->text().isEmpty() ) ? settings.value("export/last_path", QDir::homePath()).toString()
+                                                                 : ui->fileEdit->text();
+
+    QFileDialog dialog(this, windowTitle(), lastPath, tr("Cabrillo Files (*.log);;CBR Files (*.cbr);;All Files (*)"));
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setDefaultSuffix("cbr");
+
+    if ( dialog.exec() != QDialog::Accepted || dialog.selectedFiles().isEmpty() )
+        return;
+
+    const QString filename = dialog.selectedFiles().constFirst();
+
     if ( !filename.isEmpty() )
     {
         settings.setValue("export/last_path", QFileInfo(filename).path());
