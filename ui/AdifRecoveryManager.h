@@ -20,6 +20,7 @@ public:
 
 signals:
     void contactsRecovered(int count);
+    void importedEntities(const QSet<uint> &entities);
     void problem(const QString &text);
 
 public slots:
@@ -52,6 +53,7 @@ private:
     QList<AdifRecoveryConfig> configs;
     QMap<QString, AdifRecoveryConfig> configByKey;
     QQueue<QString> pendingKeys;
+    QSet<uint> pendingImportedEntities;
     QThread *workerThread = nullptr;
     AdifRecoveryReaderWorker *worker = nullptr;
     bool reloadAfterScan = false;

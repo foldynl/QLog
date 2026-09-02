@@ -106,6 +106,13 @@ void AdifRecoveryManager::startNextScan()
         workerThread->start();
         return;
     }
+
+    if ( !pendingImportedEntities.isEmpty() )
+    {
+        const QSet<uint> entities = pendingImportedEntities;
+        pendingImportedEntities.clear();
+        emit importedEntities(entities);
+    }
 }
 
 void AdifRecoveryManager::scanFinished(const AdifRecoveryScanResult &result)
@@ -195,9 +202,12 @@ void AdifRecoveryManager::importRecoveredContacts(const AdifRecoveryScanResult &
     QTextStream importLogStream(&importLog);
     unsigned long warnings = 0;
     unsigned long errors = 0;
+    QSet<uint> importedEntities;
     const int importedCount = format->runImport(importLogStream, &stationProfile,
-                                                &warnings, &errors);
+                                                &warnings, &errors, &importedEntities);
     format->deleteLater();
+
+    pendingImportedEntities.unite(importedEntities);
 
     if ( errors == 0 )
     {

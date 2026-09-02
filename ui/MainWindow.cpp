@@ -331,6 +331,7 @@ MainWindow::MainWindow(QWidget* parent) :
     });
 
     connect(adifRecoveryManager, &AdifRecoveryManager::contactsRecovered, ui->logbookWidget, &LogbookWidget::updateTable);
+    connect(adifRecoveryManager, &AdifRecoveryManager::importedEntities, this, &MainWindow::importedEntities);
     connect(adifRecoveryManager, &AdifRecoveryManager::problem, this, [this](const QString &message)
     {
         if ( !message.isEmpty() )
