@@ -297,11 +297,11 @@ void KSTChatWidget::updateSpotsStatusWhenQSODeleted(const QSqlRecord &record)
 
 }
 
-void KSTChatWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void KSTChatWidget::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
     FCT_IDENTIFICATION;
 
-    chat->updateSpotsDxccStatusWhenQSODeleted(entities);
+    chat->updateSpotsDxccStatus(entities);
 }
 
 void KSTChatWidget::showChatError(const QString &error)

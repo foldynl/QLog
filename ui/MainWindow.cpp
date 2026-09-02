@@ -389,6 +389,14 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::dupeTypeChanged, ui->chatWidget, &ChatWidget::recalculateDupe);
     connect(this, &MainWindow::dupeTypeChanged, ui->newContactWidget, &NewContactWidget::refreshCallsignsColors);
 
+    connect(this, &MainWindow::importedEntities, Data::instance(), &Data::invalidateSetOfDXCCStatusCache); // must be the first import signal
+    connect(this, &MainWindow::importedEntities, ui->dxWidget, &DxWidget::updateSpotsDxccStatus);
+    connect(this, &MainWindow::importedEntities, ui->wsjtxWidget, &WsjtxWidget::updateSpotsDxccStatus);
+    connect(this, &MainWindow::importedEntities, ui->bandmapWidget, &BandmapWidget::updateSpotsDxccStatus);
+    connect(this, &MainWindow::importedEntities, ui->alertsWidget, &AlertWidget::updateSpotsDxccStatus);
+    connect(this, &MainWindow::importedEntities, ui->chatWidget, &ChatWidget::updateSpotsDxccStatus);
+    connect(this, &MainWindow::importedEntities, ui->newContactWidget, &NewContactWidget::refreshCallsignsColors);
+
     connect(ui->rigWidget, &RigWidget::rigProfileChanged, this, &MainWindow::rigConnect);
 
     connect(ui->rotatorWidget, &RotatorWidget::rotProfileChanged, this, &MainWindow::rotConnect);
@@ -399,13 +407,13 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, &networknotification, &NetworkNotification::QSODeleted);
-    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->dxWidget, &DxWidget::updateSpotsDxccStatusWhenQSODeleted);
+    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->dxWidget, &DxWidget::updateSpotsDxccStatus);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->bandmapWidget, &BandmapWidget::updateSpotsDupeWhenQSODeleted);
-    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->bandmapWidget, &BandmapWidget::updateSpotsDxccStatusWhenQSODeleted);
+    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->bandmapWidget, &BandmapWidget::updateSpotsDxccStatus);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->alertsWidget, &AlertWidget::updateSpotsDupeWhenQSODeleted);
-    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->alertsWidget, &AlertWidget::updateSpotsDxccStatusWhenQSODeleted);
+    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->alertsWidget, &AlertWidget::updateSpotsDxccStatus);
     connect(ui->logbookWidget, &LogbookWidget::contactDeleted, ui->chatWidget, &ChatWidget::updateSpotsDupeWhenQSODeleted);
-    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->chatWidget, &ChatWidget::updateSpotsDxccStatusWhenQSODeleted);
+    connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->chatWidget, &ChatWidget::updateSpotsDxccStatus);
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, ui->newContactWidget, &NewContactWidget::refreshCallsignsColors);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactDeleted, clublogRT, &ClubLogUploader::deleteQSOImmediately);
     connect(ui->logbookWidget, &LogbookWidget::sendDXSpotContactReq, ui->dxWidget, &DxWidget::prepareQSOSpot);
@@ -2327,6 +2335,9 @@ void MainWindow::importLog() {
     ImportDialog dialog(this);
     dialog.exec();
     ui->logbookWidget->updateTable();
+
+    if ( !dialog.getImportedEntities().isEmpty() )
+        emit importedEntities(dialog.getImportedEntities());
 }
 
 void MainWindow::exportLog() {

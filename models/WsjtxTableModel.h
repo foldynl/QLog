@@ -2,6 +2,7 @@
 #define QLOG_MODELS_WSJTXTABLEMODEL_H
 
 #include <QAbstractTableModel>
+#include <QSet>
 #include "data/WsjtxEntry.h"
 
 class WsjtxTableModel : public QAbstractTableModel {
@@ -34,6 +35,7 @@ public:
     void removeSpot(const QString &callsign);
     void refreshStatusColors();
     void recalculateDxccStatus();
+    bool updateSpotsDxccStatus(const QSet<uint> &entities);
     QList<WsjtxEntry> entries() const;
 
 private:

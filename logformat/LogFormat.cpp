@@ -282,11 +282,15 @@ void LogFormat::setDuplicateQSOCallback(duplicateQSOBehaviour (*func)(QSqlRecord
 unsigned long LogFormat::runImport(QTextStream& importLogStream,
                                    const StationProfile *defaultStationProfile,
                                    unsigned long *warnings,
-                                   unsigned long *errors)
+                                   unsigned long *errors,
+                                   QSet<uint> *importedEntities)
 {
     FCT_IDENTIFICATION;
 
     this->importStart();
+
+    if ( importedEntities )
+        importedEntities->clear();
 
     unsigned long count = 0L;
     *errors = 0L;
@@ -773,6 +777,9 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
                            record,
                            tr("Imported"));
             count++;
+
+            if ( importedEntities )
+                importedEntities->insert(record.value(RECORDIDX(LogbookModel::COLUMN_DXCC)).toUInt());
         }
     }
 

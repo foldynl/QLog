@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QActionGroup>
+#include <QSet>
 #include "ui/StatisticsWidget.h"
 #include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
@@ -39,6 +40,7 @@ signals:
     void manualMode(bool);
     void contestStopped();
     void dupeTypeChanged();
+    void importedEntities(const QSet<uint> &entities);
 
 public slots:
     void rigErrorHandler(const QString &error, const QString &errorDetail);

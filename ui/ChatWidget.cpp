@@ -138,7 +138,7 @@ void ChatWidget::updateSpotsDupeWhenQSODeleted(const QSqlRecord &record)
     }
 }
 
-void ChatWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void ChatWidget::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
     FCT_IDENTIFICATION;
 
@@ -147,7 +147,7 @@ void ChatWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
         KSTChatWidget *kstWidget = qobject_cast<KSTChatWidget*>(ui->chatTabWidget->widget(i));
 
         if ( kstWidget )
-            kstWidget->updateSpotsDxccStatusWhenQSODeleted(entities);
+            kstWidget->updateSpotsDxccStatus(entities);
     }
 }
 

@@ -155,7 +155,7 @@ public slots:
     void recalculateDxccStatus();
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
     void updateSpotsStatusWhenQSODeleted(const QSqlRecord &record);
-    void updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities);
+    void updateSpotsDxccStatus(const QSet<uint> &entities);
 
 private slots:
     void showChatError(const QString &);

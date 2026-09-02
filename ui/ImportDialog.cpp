@@ -426,7 +426,8 @@ void ImportDialog::runImport()
     int count = format->runImport(out,
                                   ( ui->profileCheckBox->isChecked() && selectedStationProfile != StationProfile() ) ?&selectedStationProfile: nullptr,
                                   &warnings,
-                                  &errors);
+                                  &errors,
+                                  &importedEntities);
 
     QString report = QObject::tr("<b>Imported</b>: %n contact(s)", "", count) + "<br/>" +
                      QObject::tr("<b>Warning(s)</b>: %n", "", warnings) + "<br/>" +

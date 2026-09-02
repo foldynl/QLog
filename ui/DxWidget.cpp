@@ -349,7 +349,7 @@ void DxTableModel::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
     }
 }
 
-void DxTableModel::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void DxTableModel::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
     if ( entities.isEmpty() )
         return;
@@ -1532,11 +1532,11 @@ void DxWidget::recalculateDxccStatus()
     dxTableModel->recalculateDxccStatus();
 }
 
-void DxWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void DxWidget::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
     FCT_IDENTIFICATION;
 
-    dxTableModel->updateSpotsDxccStatusWhenQSODeleted(entities);
+    dxTableModel->updateSpotsDxccStatus(entities);
 }
 
 void DxWidget::prepareQSOSpot(QSqlRecord qso)

@@ -293,11 +293,9 @@ void KSTChat::updateSpotsStatusWhenQSODeleted(const QSqlRecord &record)
 
 }
 
-void KSTChat::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void KSTChat::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
     FCT_IDENTIFICATION;
-
-    // this method is called at the end of QSO Delete (after commit).
 
     if ( entities.isEmpty() || !contact)
         return;

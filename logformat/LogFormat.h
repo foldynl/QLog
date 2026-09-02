@@ -55,7 +55,8 @@ public:
     unsigned long runImport(QTextStream& importLogStream,
                             const StationProfile *defaultStationProfile,
                             unsigned long *warnings,
-                            unsigned long *errors);
+                            unsigned long *errors,
+                            QSet<uint> *importedEntities = nullptr);
     void runQSLImport(QSLFrom fromService);
     void runDXCCCreditImport();
     long runExport();

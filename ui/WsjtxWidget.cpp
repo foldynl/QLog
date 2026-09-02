@@ -371,6 +371,14 @@ void WsjtxWidget::recalculateDxccStatus()
     redrawMapSpots();
 }
 
+void WsjtxWidget::updateSpotsDxccStatus(const QSet<uint> &entities)
+{
+    FCT_IDENTIFICATION;
+
+    if ( wsjtxTableModel->updateSpotsDxccStatus(entities) )
+        redrawMapSpots();
+}
+
 void WsjtxWidget::redrawMapSpots()
 {
     emit spotsCleared();

@@ -20,6 +20,7 @@ class ImportDialog : public QDialog
 public:
     explicit ImportDialog(QWidget *parent = 0);
     ~ImportDialog();
+    const QSet<uint>& getImportedEntities() const { return importedEntities; }
 
 private slots:
     void browse();
@@ -37,6 +38,7 @@ private slots:
 private:
     Ui::ImportDialog *ui;
     qint64 size;
+    QSet<uint> importedEntities;
     StationProfile selectedStationProfile;
     LogLocale locale;
 

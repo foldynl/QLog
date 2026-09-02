@@ -972,10 +972,10 @@ void BandmapWidget::updateSpotsDupeWhenQSODeleted(const QSqlRecord &record)
                                                                dxccModeGroup);
     }
     // do not call updateStation. it will be updated at the end of delete procedure
-    // by updateSpotsDxccStatusWhenQSODeleted;
+    // by updateSpotsDxccStatus;
 }
 
-void BandmapWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void BandmapWidget::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
     FCT_IDENTIFICATION;
 
@@ -985,8 +985,6 @@ void BandmapWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entiti
         qCDebug(runtime) << "NonVFO widget - skipping";
         return;
     }
-
-    // this method is called at the end of QSO Delete (after commit).
 
     if ( entities.isEmpty() )
         return;

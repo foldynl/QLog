@@ -32,6 +32,7 @@ public slots:
     void callsignClicked(QString);
     void tableViewClicked(QModelIndex);
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
+    void updateSpotsDxccStatus(const QSet<uint> &entities);
     void refreshStatusColors();
     void recalculateDxccStatus();
 

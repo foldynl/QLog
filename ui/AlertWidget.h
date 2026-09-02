@@ -34,7 +34,7 @@ public slots:
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
     void updateSpotsStatusWhenQSOUpdated(const QSqlRecord &record);
     void updateSpotsDupeWhenQSODeleted(const QSqlRecord &record);
-    void updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities);
+    void updateSpotsDxccStatus(const QSet<uint> &entities);
     void recalculateDupe();
     void recalculateDxccStatus();
     void saveTableHeaderState();

@@ -285,7 +285,7 @@ void AlertTableModel::updateSpotsStatusWhenQSODeleted(const QSqlRecord &record)
     }
 }
 
-void AlertTableModel::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void AlertTableModel::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
     if ( entities.isEmpty() )
         return;

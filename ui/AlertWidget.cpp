@@ -153,9 +153,9 @@ void AlertWidget::updateSpotsDupeWhenQSODeleted(const QSqlRecord &record)
     alertTableModel->updateSpotsStatusWhenQSODeleted(record);
 }
 
-void AlertWidget::updateSpotsDxccStatusWhenQSODeleted(const QSet<uint> &entities)
+void AlertWidget::updateSpotsDxccStatus(const QSet<uint> &entities)
 {
-    alertTableModel->updateSpotsDxccStatusWhenQSODeleted(entities);
+    alertTableModel->updateSpotsDxccStatus(entities);
 }
 
 void AlertWidget::recalculateDupe()

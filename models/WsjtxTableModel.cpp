@@ -217,6 +217,41 @@ void WsjtxTableModel::recalculateDxccStatus()
                      {Qt::BackgroundRole, Qt::ForegroundRole, Qt::ToolTipRole});
 }
 
+bool WsjtxTableModel::updateSpotsDxccStatus(const QSet<uint> &entities)
+{
+    if ( entities.isEmpty() )
+        return false;
+
+    const bool satellite = Data::instance()->isSatelliteDxccContext();
+    int firstChangedRow = -1;
+    int lastChangedRow = -1;
+
+    for ( int row = 0; row < wsjtxData.size(); ++row )
+    {
+        WsjtxEntry &entry = wsjtxData[row];
+
+        if ( !entities.contains(entry.dxcc.dxcc) )
+            continue;
+
+        entry.status = Data::instance()->currentDxccStatus(entry.dxcc.dxcc,
+                                                           entry.band,
+                                                           entry.modeGroupString);
+        entry.dxccStatusSatellite = satellite;
+
+        if ( firstChangedRow < 0 )
+            firstChangedRow = row;
+        lastChangedRow = row;
+    }
+
+    if ( firstChangedRow < 0 )
+        return false;
+
+    emit dataChanged(createIndex(firstChangedRow, COLUMN_CALLSIGN),
+                     createIndex(lastChangedRow, COLUMN_CALLSIGN),
+                     {Qt::BackgroundRole, Qt::ForegroundRole, Qt::ToolTipRole});
+    return true;
+}
+
 QList<WsjtxEntry> WsjtxTableModel::entries() const
 {
     return wsjtxData;
