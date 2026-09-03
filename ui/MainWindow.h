@@ -68,7 +68,7 @@ private slots:
     void showAbout();
     void showWhatsNew();
     void showWikiHelp();
-    void showMailingList();
+    void showDiscussion();
     void showReportBug();
     void showAlerts();
     void clearAlerts();

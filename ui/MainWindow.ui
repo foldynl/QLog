@@ -89,7 +89,7 @@
     </property>
     <addaction name="actionWikiHelp"/>
     <addaction name="actionReportBug"/>
-    <addaction name="actionMailingList"/>
+    <addaction name="actionDiscussionList"/>
     <addaction name="separator"/>
     <addaction name="actionWhatsNew"/>
     <addaction name="separator"/>
@@ -510,7 +510,8 @@
   </action>
   <action name="actionPrintQslLabels">
    <property name="icon">
-    <iconset theme="document-print"/>
+    <iconset theme="document-print">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Print QS&amp;L</string>
@@ -691,9 +692,12 @@
     <enum>QAction::NoRole</enum>
    </property>
   </action>
-  <action name="actionMailingList">
+  <action name="actionDiscussionList">
    <property name="text">
-    <string>Mailing List...</string>
+    <string>Discussion...</string>
+   </property>
+   <property name="toolTip">
+    <string>Discussion</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -1727,10 +1731,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionMailingList</sender>
+   <sender>actionDiscussionList</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>showMailingList()</slot>
+   <slot>showDiscussion()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -2037,7 +2041,7 @@
   <slot>showWikiHelp()</slot>
   <slot>showReportBug()</slot>
   <slot>setManualContact(bool)</slot>
-  <slot>showMailingList()</slot>
+  <slot>showDiscussion()</slot>
   <slot>showEditLayout()</slot>
   <slot>saveProfileLayoutGeometry()</slot>
   <slot>setEquipmentKeepOptions(bool)</slot>

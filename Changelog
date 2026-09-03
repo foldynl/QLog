@@ -11,6 +11,7 @@ TBC- 0.53.0
 - [CHANGED] - Settings - Hamlib Interface now prefills default capabilities for newly defined rigs
 - [CHANGED] - Settings - Rig Sharing shows the rigctld parameters set by QLog
 - [CHANGED] - Export - The filename suffix is added when missing (issue #1158)
+- [CHANGED] - Help Discussion instead of Help Mailing List
 - Fixed Hamlib Driver - preparation for Hamlib 5.0
 - Fixed External QSO - Use properly data from a matching Station Profile (issue #1148)
 - Fixed DX Spot frequency rounding - Added one decimal place for kHz (issue #1149)
