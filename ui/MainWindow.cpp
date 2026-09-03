@@ -505,7 +505,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->alertsWidget, &AlertWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
     connect(ui->alertsWidget, &AlertWidget::tuneWsjtx, wsjtx, &WsjtxUDPReceiver::sendReply);
 
-    conditions = new PropConditions();
+    conditions = new PropConditions(this);
 
     connect(conditions, &PropConditions::conditionsUpdated, this, &MainWindow::conditionsUpdated);
     connect(conditions, &PropConditions::auroraMapUpdated, ui->onlineMapWidget, &OnlineMapWidget::auroraDataUpdate);
@@ -2558,17 +2558,7 @@ MainWindow::~MainWindow()
     Rotator::instance()->shutdown();
     Rig::instance()->shutdown();
 
-    conditions->deleteLater();
-    conditionsLabel->deleteLater();
-    profileLabel->deleteLater();
-    callsignLabel->deleteLater();
-    locatorLabel->deleteLater();
     QSqlDatabase::database().close();
-    clublogRT->deleteLater();
-    if ( wsjtx )
-        wsjtx->deleteLater();
 
-    seqGroup->deleteLater();
-    dupeGroup->deleteLater();
     delete ui;
 }
