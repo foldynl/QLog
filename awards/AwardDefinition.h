@@ -49,6 +49,10 @@ public:
     /*Whether eQSL confirmations are valid for this award. Default: true. */
     virtual bool acceptsEqslConfirmation() const;
 
+    /*Whether an eQSL confirmation must have Authenticity Guaranteed status.
+     * Default: false. */
+    virtual bool requiresEqslAuthenticityGuaranteed() const;
+
     /*Create the display widget. Called once on first selection. Store in m_widget. */
     virtual QWidget* createWidget(QWidget *parent) = 0;
 

@@ -15,6 +15,11 @@ bool AwardDefinition::acceptsEqslConfirmation() const
     return true;
 }
 
+bool AwardDefinition::requiresEqslAuthenticityGuaranteed() const
+{
+    return false;
+}
+
 QString AwardDefinition::rulesUrl() const
 {
     return QString();

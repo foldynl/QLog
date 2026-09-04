@@ -280,6 +280,10 @@ BandTableAward::ConditionResult BandTableAward::getConditionSelected(const QMode
         addlFilters << filter;
     }
 
+    const QString eligibilityFilter = additionalClickFilter();
+    if ( !eligibilityFilter.isEmpty() )
+        addlFilters << eligibilityFilter;
+
     if ( clickedIndex.column() > 2 )
     {
         const QString column = m_model->headerData(clickedIndex.column(), Qt::Horizontal).toString();
@@ -315,6 +319,11 @@ QString BandTableAward::sourceContactsOverride(const QString &) const
 }
 
 QString BandTableAward::clickFilter(const QString &, const QString &) const
+{
+    return QString();
+}
+
+QString BandTableAward::additionalClickFilter() const
 {
     return QString();
 }

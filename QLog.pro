@@ -55,6 +55,7 @@ CONFIG += c++11 force_debug_info
 CONFIG *= link_pkgconfig
 
 SOURCES += \
+        awards/AwardCanadaAward.cpp \
         awards/AwardDefinition.cpp \
         awards/AwardDXCC.cpp \
         awards/AwardGridsquare.cpp \
@@ -71,6 +72,8 @@ SOURCES += \
         awards/AwardSOTA.cpp \
         awards/AwardWAAC.cpp \
         awards/AwardWAIP.cpp \
+        awards/AwardWANA.cpp \
+        awards/AwardWorkedAllRAC.cpp \
         awards/SecondarySubdivisionAward.cpp \
         awards/AwardWAC.cpp \
         awards/AwardWAS.cpp \
@@ -247,6 +250,7 @@ SOURCES += \
         ui/component/SwitchButton.cpp
 
 HEADERS += \
+        awards/AwardCanadaAward.h \
         awards/AwardDefinition.h \
         awards/AwardDXCC.h \
         awards/AwardGridsquare.h \
@@ -263,6 +267,8 @@ HEADERS += \
         awards/AwardSOTA.h \
         awards/AwardWAAC.h \
         awards/AwardWAIP.h \
+        awards/AwardWANA.h \
+        awards/AwardWorkedAllRAC.h \
         awards/SecondarySubdivisionAward.h \
         awards/AwardWAC.h \
         awards/AwardWAS.h \
