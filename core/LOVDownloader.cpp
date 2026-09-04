@@ -131,6 +131,28 @@ bool LOVDownloader::isTableFilled(const QString &tableName)
     return i==1;
 }
 
+bool LOVDownloader::loadBundledCTY(const LOVDownloader::SourceDefinition &sourceDef)
+{
+    FCT_IDENTIFICATION;
+
+    QFile file(":/res/data/cty.csv");
+    if ( ! file.open(QIODevice::ReadOnly) )
+    {
+        qWarning() << "Cannot open bundled CTY data";
+        return false;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    emit processingSize(data.size());
+
+    QTextStream stream(data);
+    parseData(sourceDef, stream);
+
+    return isTableFilled(sourceDef.tableName);
+}
+
 bool LOVDownloader::deleteTable(const QString &tableName)
 {
     FCT_IDENTIFICATION;
@@ -1098,6 +1120,18 @@ void LOVDownloader::processReply(QNetworkReply *reply)
         qCDebug(runtime) << "Failed to download " << sourceDef.fileName;
 
         reply->deleteLater();
-        emit finished(false);
+
+        bool fallbackLoaded = false;
+        if ( sourceType == CTY
+             && !isTableFilled(sourceDef.tableName) )
+        {
+            // Cancel stops only the network request. An empty database still
+            // needs the bundled DXCC data.
+            abortRequested = false;
+            qCWarning(runtime) << "Using bundled CTY data";
+            fallbackLoaded = loadBundledCTY(sourceDef);
+        }
+
+        emit finished(fallbackLoaded);
     }
 }

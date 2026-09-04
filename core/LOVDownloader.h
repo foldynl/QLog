@@ -128,6 +128,7 @@ private:
 
 private:
     bool isTableFilled(const QString &);
+    bool loadBundledCTY(const SourceDefinition &);
     bool deleteTable(const QString &);
     void download(const SourceDefinition &);
     void parseData(const LOVDownloader::SourceDefinition &,

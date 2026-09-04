@@ -12,6 +12,7 @@ Release: 1%{?dist}
 # core/zonedetect.h (BSD 3 clause)
 # devtools/timezones/builder/builder.cpp (BSD 3 clause)
 # devtools/timezones/timezone_DATA_LICENSE (ODbL)
+# res/data/cty.csv (MIT)
 License: GPL-3.0-or-later AND BSD-3-Clause AND MIT AND ODbL-1.0
 Group: Productivity/Hamradio/Logging
 Source: https://github.com/foldynl/QLog/archive/refs/tags/v%{version}.tar.gz#/qlog-%{version}.tar.gz
@@ -55,6 +56,7 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %license LICENSE
 %license LICENSE.BSD-3-Clause
 %license LICENSE.MIT
+%license LICENSE.CTY
 %license devtools/timezones/timezone_DATA_LICENSE
 %doc README.md Changelog
 %{_datadir}/applications/qlog.desktop

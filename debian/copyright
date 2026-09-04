@@ -45,6 +45,10 @@ Copyright: 2017-2024 Vincent Lau
            2017-2019 Martin Moene (string-view lite, embedded)
 License: Expat
 
+Files: res/data/cty.csv
+Copyright: 1994-, Jim Reisert AD1C
+License: Expat
+
 Files: devtools/timezones/builder/builder.cpp
 Copyright: 
 	   2018, Bertold Van den Bergh <vandenbergh@bertold.org>
@@ -651,5 +655,4 @@ License: Expat
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-
 

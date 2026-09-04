@@ -22,6 +22,7 @@ TBC- 0.53.0
 - Fixed Band-Only QSO processing - DXCC Status, Cabrillo Export, Awards
 - Fixed All dialogs have a title (PR #1150 @Fale)
 - Fixed DXCC Status recalculation after Import QSOs, Delete QSO
+- Fixed empty country selection box when DXCC list download fails (issue #1159)
 
 2026/08/21 - 0.52.0
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)

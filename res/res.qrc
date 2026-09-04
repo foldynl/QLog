@@ -4,6 +4,8 @@
         <file>map/nasaearthlights.jpg</file>
         <file>stylesheet.css</file>
         <file>qlog.png</file>
+        <file>data/cty.csv</file>
+        <file alias="data/cty-copyright.txt">../LICENSE.CTY</file>
         <file>data/dxcc.json</file>
         <file>data/legacy_modes.json</file>
         <file>data/contests.json</file>
