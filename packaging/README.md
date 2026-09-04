@@ -82,6 +82,24 @@ Build-container images are temporary and are removed on success, failure, or
 interruption. The small Fedora/Debian base images remain in the selected
 engine's cache because subsequent builds reuse them.
 
+## Windows
+
+The native MSVC and Qt build scripts are in `windows/`. Adjust their tool and
+dependency paths to match the local Windows development environment, then run:
+
+```bat
+packaging\windows\make.bat all
+packaging\windows\tests.bat
+```
+
+The installer is written as:
+
+```text
+dist/windows/QLog-VERSION-x86_64.exe
+```
+
+The Windows build is intentionally not part of `build-all.sh`.
+
 ## GitHub Actions
 
 Use native runners for both architectures. The same build command can be used

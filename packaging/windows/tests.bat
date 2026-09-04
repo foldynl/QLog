@@ -17,9 +17,10 @@ rem  - It expects MSVC environment init batch (VS_VCVARS) and Qt qmake.
 rem  - QTKEYCHAIN/HAMLIB/ZLIB paths are passed through like in make.bat.
 rem ============================================================
 
-set "ROOT=%~dp0"
-if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
-for %%I in ("%ROOT%\..\..\..") do set "DEVROOT=%%~fI"
+set "SCRIPT_DIR=%~dp0"
+if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+for %%I in ("%SCRIPT_DIR%\..\..") do set "PROJECT_BASE=%%~fI"
+for %%I in ("%PROJECT_BASE%\..") do set "DEVROOT=%%~fI"
 
 rem === CONFIGURATION (keep in sync with make.bat) ===
 
@@ -32,7 +33,6 @@ set "QT_BASE=C:\Qt\6.11.1\msvc2022_64"
 set "JOM=C:\Qt\Tools\QtCreator\bin\jom\jom.exe"
 
 rem -- Project Settings
-set "PROJECT_BASE=%DEVROOT%\QLog"
 set "PRO=%PROJECT_BASE%\tests\tests.pro"
 set "BUILDROOT=%PROJECT_BASE%\build\tests"
 

@@ -35,10 +35,10 @@ rem   - %VCPKG_PACKAGES%\%ZLIB_PKG%\include        and  ...\lib
 rem
 rem ============================================================
 
-set "ROOT=%~dp0"
-
-if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
-for %%I in ("%ROOT%\..\..\..") do set "DEVROOT=%%~fI"
+set "SCRIPT_DIR=%~dp0"
+if "%SCRIPT_DIR:~-1%"=="\" set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+for %%I in ("%SCRIPT_DIR%\..\..") do set "PROJECT_BASE=%%~fI"
+for %%I in ("%PROJECT_BASE%\..") do set "DEVROOT=%%~fI"
 
 rem === CONFIGURATION ===
 
@@ -51,20 +51,9 @@ set "QTIFW_BIN=C:\Qt\Tools\QtInstallerFramework\4.6\bin"
 set "JOM=C:\Qt\Tools\QtCreator\bin\jom\jom.exe"
 
 rem -- Project Settings
-set "PROJECT_BASE=%DEVROOT%\QLog"
 for /f "tokens=3" %%V in ('findstr /R /C:"^VERSION *= *" "%PROJECT_BASE%\QLog.pro"') do set "QLOG_VERSION=%%V"
-set "INSTALLER_BASE=%DEVROOT%\qlog_build\qlog-installer-%QLOG_VERSION%"
-set "INSTALLER_SEQ=0"
-if exist "%INSTALLER_BASE%.exe" (
-  :seq_loop
-  set /a INSTALLER_SEQ+=1
-  if exist "%INSTALLER_BASE%-!INSTALLER_SEQ!.exe" goto :seq_loop
-)
-if %INSTALLER_SEQ%==0 (
-  set "INSTALLER_OUT=%INSTALLER_BASE%.exe"
-) else (
-  set "INSTALLER_OUT=%INSTALLER_BASE%-!INSTALLER_SEQ!.exe"
-)
+set "DIST=%PROJECT_BASE%\dist\windows"
+set "INSTALLER_OUT=%DIST%\QLog-%QLOG_VERSION%-x86_64.exe"
 
 rem -- Libs Settings
 set "VCPKG_PACKAGES=%DEVROOT%\vcpkg\packages"
@@ -298,9 +287,27 @@ if not exist "%BINARYCREATOR%" (
   goto :fail
 )
 
+if not exist "%DIST%" (
+  mkdir "%DIST%"
+  if errorlevel 1 (
+    echo ERROR: Cannot create DIST directory: "%DIST%"
+    goto :fail
+  )
+)
+
+if exist "%INSTALLER_OUT%" (
+  del /F /Q "%INSTALLER_OUT%"
+  if errorlevel 1 (
+    echo ERROR: Cannot replace existing installer: "%INSTALLER_OUT%"
+    goto :fail
+  )
+)
+
 echo --- binarycreator ---
 "%BINARYCREATOR%" -f -c "%INSTALLER_CONFIG%" -p "%INSTALLER_PACKAGES%" "%INSTALLER_OUT%"
 if errorlevel 1 goto :fail
+
+echo Windows installer: "%INSTALLER_OUT%"
 
 goto :ok
 
