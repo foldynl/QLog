@@ -378,8 +378,9 @@ void UploadQSODialog::processNextUploader()
     connect(dialog, &QProgressDialog::canceled, this, [this, uploader]()
     {
         qCDebug(runtime)<< "Operation canceled";
+        disconnect(uploader, nullptr, this, nullptr);
         uploader->abortRequest();
-        uploadFinished();
+        reject();
     });
 
     QVariantMap uploadConfig;

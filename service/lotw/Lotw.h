@@ -101,7 +101,7 @@ public:
     virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
 
 public slots:
-    virtual void abortRequest() override {};
+    virtual void abortRequest() override;
 
 private:
     QTemporaryFile file;

@@ -320,7 +320,7 @@ void LotwUploader::uploadAdif(const QByteArray &data, const QString &location)
     if ( !location.trimmed().isEmpty() )
         args << "-l" << location.trimmed();
 
-    QProcess *tqslProcess = new QProcess();
+    QProcess *tqslProcess = new QProcess(this);
 
     connect(tqslProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, [this, tqslProcess](int exitCode, QProcess::ExitStatus exitStatus)
@@ -423,6 +423,19 @@ void LotwUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMa
     QByteArray data = generateADIF(qsos);
     const QString location = addlParams["tqsl_location"].toString();
     uploadAdif(data, location);
+}
+
+void LotwUploader::abortRequest()
+{
+    FCT_IDENTIFICATION;
+
+    QProcess *process = findChild<QProcess *>();
+    if ( !process )
+        return;
+
+    disconnect(process, nullptr, this, nullptr);
+    process->kill();
+    process->deleteLater();
 }
 
 LotwQSLDownloader::LotwQSLDownloader(QObject *parent) :

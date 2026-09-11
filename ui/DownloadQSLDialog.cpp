@@ -239,6 +239,7 @@ void DownloadQSLDialog::prepareDownload(GenericQSLDownloader *service,
     {
         qCDebug(runtime)<< "Operation canceled";
 
+        disconnect(service, nullptr, this, nullptr);
         service->abortDownload();
         service->deleteLater();
         downloadQueue.clear();
