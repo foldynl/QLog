@@ -32,11 +32,12 @@ QSOFilterDateRangeEdit::QSOFilterDateRangeEdit(const QString &value, QWidget *pa
     for ( auto id : {Preset::Today, Preset::Yesterday, Preset::LastDays, Preset::Week,
                      Preset::Month, Preset::Year, Preset::Custom} )
         preset->setItemData(index++, static_cast<int>(id));
+
     Q_ASSERT(index == preset->count());
 
     updateControls();
-    connect(preset, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &QSOFilterDateRangeEdit::presetChanged);
+
+    connect(preset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &QSOFilterDateRangeEdit::presetChanged);
     connect(days, QOverload<int>::of(&QSpinBox::valueChanged), this, &QSOFilterDateRangeEdit::presetChanged);
     connect(customButton, &QPushButton::clicked, this, &QSOFilterDateRangeEdit::editCustomRange);
 }
@@ -49,6 +50,7 @@ void QSOFilterDateRangeEdit::updateControls()
     const Boundary from = Boundary::fromString(range.from);
     const Boundary to = Boundary::fromString(range.to);
     Preset selected = Preset::Custom;
+
     if ( from.isRelativeTo(Anchor::Today) && to.isRelativeTo(Anchor::Today) )
         selected = Preset::Today;
     else if ( from.isRelativeTo(Anchor::Today, -1) && to.isRelativeTo(Anchor::Today, -1) )
@@ -63,9 +65,10 @@ void QSOFilterDateRangeEdit::updateControls()
         selected = Preset::Year;
 
     preset->setCurrentIndex(preset->findData(static_cast<int>(selected)));
+
     if ( selected == Preset::LastDays )
-        days->setValue(static_cast<int>(qBound<qint64>(days->minimum(), 1LL - from.offsetDays,
-                                                      days->maximum())));
+        days->setValue(static_cast<int>(qBound(days->minimum(), 1 - from.offsetDays, days->maximum())));
+
     days->setVisible(selected == Preset::LastDays);
     customButton->setVisible(selected == Preset::Custom);
 
@@ -83,8 +86,9 @@ void QSOFilterDateRangeEdit::presetChanged()
 {
     FCT_IDENTIFICATION;
 
-    const auto selected = static_cast<Preset>(preset->currentData().toInt());
+    const Preset selected = static_cast<Preset>(preset->currentData().toInt());
     Boundary from, to;
+
     switch ( selected )
     {
     case Preset::Today:
@@ -128,6 +132,7 @@ void QSOFilterDateRangeEdit::setupBoundaryEditor(const Boundary &boundary,
     for ( auto id : {Anchor::Date, Anchor::DateTime, Anchor::Today, Anchor::WeekStart,
                      Anchor::MonthStart, Anchor::YearStart, Anchor::YearEnd} )
         ui.anchor->setItemData(index++, static_cast<int>(id));
+
     Q_ASSERT(index == ui.anchor->count());
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
@@ -136,22 +141,22 @@ void QSOFilterDateRangeEdit::setupBoundaryEditor(const Boundary &boundary,
     ui.fixed->setTimeSpec(Qt::UTC);
 #endif
     ui.fixed->setDateTime(boundary.fixedDateTime.isValid() ? boundary.fixedDateTime
-                                                         : QDateTime::currentDateTimeUtc());
-    ui.anchor->setCurrentIndex(ui.anchor->findData(static_cast<int>(
-                                  boundary.anchor == Anchor::Invalid ? Anchor::DateTime : boundary.anchor)));
+                                                           : QDateTime::currentDateTimeUtc());
+    ui.anchor->setCurrentIndex(ui.anchor->findData(static_cast<int>(boundary.anchor == Anchor::Invalid ? Anchor::DateTime
+                                                                                                       : boundary.anchor)));
     ui.offset->setValue(boundary.offsetDays);
 
-    const auto update = [ui]()
+    connect(ui.anchor, QOverload<int>::of(&QComboBox::currentIndexChanged), editor, [ui]()
     {
         const Boundary selected(static_cast<Anchor>(ui.anchor->currentData().toInt()));
         const LogLocale locale;
         ui.fixed->setDisplayFormat(locale.formatDateShortWithYYYY()
-                                   + (selected.anchor == Anchor::DateTime
-                                      ? " " + locale.formatTimeLongWithoutTZ() : QString()));
+                                   + (selected.anchor == Anchor::DateTime ? " " + locale.formatTimeLongWithoutTZ()
+                                                                          : QString()));
         ui.fixed->setVisible(!selected.isRelative());
         ui.offset->setVisible(selected.isRelative());
-    };
-    connect(ui.anchor, QOverload<int>::of(&QComboBox::currentIndexChanged), editor, update);
+    });
+
     update();
 }
 
@@ -171,9 +176,12 @@ void QSOFilterDateRangeEdit::editCustomRange()
     ui.setupUi(&dialog);
     ui.errorLabel->hide();
     Ui::QSOFilterDateBoundary fromEditor, toEditor;
+
     setupBoundaryEditor(Boundary::fromString(range.from), fromEditor, ui.fromBoundary);
     setupBoundaryEditor(Boundary::fromString(range.to), toEditor, ui.toBoundary);
+
     if ( dialog.windowType() == Qt::Popup ) dialog.move(mapToGlobal(QPoint(0, height())));
+
     connect(ui.buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, &dialog, [this, &dialog, &ui, &fromEditor, &toEditor]()
     {
