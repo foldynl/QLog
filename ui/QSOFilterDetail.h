@@ -7,6 +7,9 @@
 #include <QDateEdit>
 #include <QDateTimeEdit>
 #include "core/LogLocale.h"
+#include "core/QSOFilterManager.h"
+
+class QStackedWidget;
 
 namespace Ui {
 class QSOFilterDetail;
@@ -19,39 +22,36 @@ class QSOFilterDetail : public QDialog
 public:
     explicit QSOFilterDetail(const QString &filterName = QString(), QWidget *parent = nullptr,
                              bool clone = false);
+    explicit QSOFilterDetail(const QSOFilter &filter, QWidget *parent = nullptr);
     ~QSOFilterDetail();
+    const QSOFilter &filter() const { return editedFilter; }
 
 public slots:
     void addCondition(int fieldIdx = -1, int operatorId = -1, QString value = QString());
     void save();
     void filterNameChanged(const QString&);
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
+    class Condition;
+    QList<Condition *> conditions;
     Ui::QSOFilterDetail *ui;
     QString filterName;
     int condCount;
     QStringList filterNamesList;
+    bool parametersOnly = false;
+    QSOFilter editedFilter;
 
 private:
     void loadFilter(const QString &filterName);
+    void loadFilter(const QSOFilter &filter);
+    QSOFilter readFilter() const;
+    static QString editorValue(QStackedWidget *stack);
     bool filterExists(const QString &filterName);
-    bool isDateField(int index);
-    bool isDateTimeField(int index);
-    bool isQSLSentField(int index);
-    bool isQSLSentViaField(int index);
-    bool isQSLRcvdField(int index);
-    bool isUploadStatusField(int index);
-    bool isAntPathField(int index);
-    bool isBoolField(int index);
-    bool isQSOCompleteField(int index);
-    bool isDownloadStatusField(int index);
-    bool isMorseKeyTypeField(int index);
-    bool isEqslAgTypeField(int index);
-    QComboBox* createComboBox(const QMap<QString, QString>&, const QString&,
-                              const int identifier, const QSizePolicy&);
-    QDateEdit* createDateEdit(const QString&, const int, const QSizePolicy&);
-    QDateTimeEdit* createDateTimeEdit(const QString&, const int, const QSizePolicy&);
-    QLineEdit* createLineEdit(const QString&, const int, const QSizePolicy&);
+    static QWidget *fieldEditor(const Condition *row);
+    void populateComboBox(QComboBox *, const QMap<QString, QString> &, const QString &);
 
     LogLocale locale;
 };

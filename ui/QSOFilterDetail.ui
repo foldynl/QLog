@@ -7,13 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>648</width>
-    <height>173</height>
+    <height>260</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>QSO Filter Detail</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin"><number>5</number></property>
+   <property name="topMargin"><number>5</number></property>
+   <property name="rightMargin"><number>5</number></property>
+   <property name="bottomMargin"><number>5</number></property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -80,23 +84,26 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Preferred</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>10</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="conditionsLayout"/>
+    <widget class="QScrollArea" name="conditionsScrollArea">
+     <property name="horizontalScrollBarPolicy"><enum>Qt::ScrollBarAlwaysOff</enum></property>
+     <property name="sizeAdjustPolicy"><enum>QAbstractScrollArea::AdjustToContents</enum></property>
+     <property name="widgetResizable"><bool>true</bool></property>
+     <property name="frameShape"><enum>QFrame::NoFrame</enum></property>
+     <widget class="QWidget" name="conditionsWidget">
+      <layout class="QVBoxLayout" name="conditionsLayout">
+       <property name="leftMargin"><number>0</number></property>
+       <property name="topMargin"><number>0</number></property>
+       <property name="rightMargin"><number>0</number></property>
+       <property name="bottomMargin"><number>0</number></property>
+       <item>
+        <spacer name="conditionsSpacer">
+         <property name="orientation"><enum>Qt::Vertical</enum></property>
+         <property name="sizeHint" stdset="0"><size><width>0</width><height>0</height></size></property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -129,17 +136,11 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
+    <widget class="QLabel" name="periodErrorLabel">
+     <property name="text"><string>The end of the period must not be before its start.</string></property>
+     <property name="wordWrap"><bool>true</bool></property>
+     <property name="styleSheet"><string notr="true">color: red;</string></property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -151,10 +152,22 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QDialogButtonBox" name="parameterButtonBox">
+     <property name="standardButtons"><set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::RestoreDefaults</set></property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
  <connections>
+  <connection>
+   <sender>parameterButtonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>QSOFilterDetail</receiver>
+   <slot>reject()</slot>
+   <hints/>
+  </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>

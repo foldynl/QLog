@@ -150,17 +150,58 @@
         </widget>
        </item>
        <item>
-        <widget class="SmartSearchBox" name="userSelectFilter" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
          </property>
-         <property name="focusPolicy">
-          <enum>Qt::ClickFocus</enum>
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <item>
+          <widget class="SmartSearchBox" name="userSelectFilter" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="userFilterParametersButton">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>18</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Filter parameters</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton[modified=&quot;true&quot;] { border: 2px solid red; border-radius: 4px; padding: 2px; }</string>
+           </property>
+           <property name="text">
+            <string notr="true">…</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="horizontalSpacer">

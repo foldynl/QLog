@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>QSOFilterDateBoundary</class>
+  <widget class="QWidget" name="QSOFilterDateBoundary">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+        <number>0</number>
+      </property>
+      <property name="topMargin">
+        <number>0</number>
+      </property>
+      <property name="rightMargin">
+        <number>0</number>
+      </property>
+      <property name="bottomMargin">
+        <number>0</number>
+      </property>
+      <item>
+        <widget class="QComboBox" name="anchor">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+          </property>
+          <item>
+            <property name="text">
+              <string>Date</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Date and time</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Today</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Start of this week</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Start of this month</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Start of this year</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>End of this year</string>
+            </property>
+          </item>
+        </widget>
+      </item>
+      <item>
+        <widget class="QDateTimeEdit" name="fixed">
+          <property name="calendarPopup">
+            <bool>true</bool>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QSpinBox" name="offset">
+          <property name="minimum">
+            <number>-365000</number>
+          </property>
+          <property name="maximum">
+            <number>365000</number>
+          </property>
+          <property name="suffix">
+            <string> days</string>
+          </property>
+          <property name="toolTip">
+            <string>Offset from the selected day; use a negative number for earlier days.</string>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <resources/>
+  <connections/>
+</ui>

@@ -1,6 +1,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include "QSOFilterManager.h"
+#include "QSOFilterDateRange.h"
 #include "core/debug.h"
 
 MODULE_IDENTIFICATION("qlog.core.qsofiltermanager");
@@ -75,7 +76,7 @@ bool QSOFilterManager::insertFilterRule(const QString & filterName,
     insertRuleStmt.bindValue(":filterName", filterName);
     insertRuleStmt.bindValue(":tableFieldIndex", rule.tableFieldIndex);
     insertRuleStmt.bindValue(":operatorID", rule.operatorID);
-    insertRuleStmt.bindValue(":valueString", (rule.value.isEmpty()) ? QVariant()
+    insertRuleStmt.bindValue(":valueString", (rule.value.isNull()) ? QVariant()
                                                                     : rule.value);
     bool ret = insertRuleStmt.exec();
     if ( !ret )
@@ -181,9 +182,9 @@ QSOFilter QSOFilterManager::getFilter(const QString &filterName) const
     QSOFilter ret;
     QSqlQuery query;
     if ( ! query.prepare(QLatin1String("SELECT matching_type, table_field_index, operator_id, value "
-                                       "FROM qso_filter_rules r, qso_filters f "
+                                       "FROM qso_filters f LEFT JOIN qso_filter_rules r ON f.filter_name = r.filter_name "
                                        "WHERE f.filter_name = :filter "
-                                       "      AND f.filter_name = r.filter_name")) )
+                                       "ORDER BY r.rowid")) )
     {
         qWarning() << "Cannot prepare select statement";
         return ret;
@@ -200,6 +201,7 @@ QSOFilter QSOFilterManager::getFilter(const QString &filterName) const
             const QSqlRecord &record = query.record();
 
             ret.machingType = record.value("matching_type").toInt();
+            if ( record.value("table_field_index").isNull() ) continue;
             rule.tableFieldIndex = record.value("table_field_index").toInt();
             rule.operatorID = record.value("operator_id").toInt();
             rule.value = record.value("value").toString();
@@ -214,57 +216,117 @@ QSOFilter QSOFilterManager::getFilter(const QString &filterName) const
 
 QString QSOFilterManager::getWhereClause(const QString &filterName, const QString &columnPrefix)
 {
-    FCT_IDENTIFICATION;
+    return getWhereClause(instance()->getFilter(filterName), columnPrefix);
+}
 
-    QSqlQuery userFilterQuery;
-    QString ret;
-    QString finalColumnPfx = columnPrefix;
-    finalColumnPfx += finalColumnPfx.isEmpty() ? "" : ".";
-
-    if ( ! userFilterQuery.prepare(
-                  QString(       "SELECT "
-                                 "'(' || GROUP_CONCAT( ' ' || '" + finalColumnPfx + "' || c.name || ' ' || CASE WHEN r.value IS NULL AND o.sql_operator IN ('=', 'like') THEN 'IS' "
-                                 "                                                  WHEN r.value IS NULL and r.operator_id NOT IN ('=', 'like') THEN 'IS NOT' "
-                                 "                                                  WHEN o.sql_operator = ('starts with') THEN 'like' "
-                                 "                                                  ELSE o.sql_operator END || "
-                                 "' (' || quote(CASE o.sql_operator WHEN 'like' THEN '%' || r.value || '%' "
-                                 "                                  WHEN 'not like' THEN '%' || r.value || '%' "
-                                 "                                  WHEN 'starts with' THEN r.value || '%' "
-                                 "                                  ELSE r.value END)  || ') ', m.sql_operator) || ')' "
-                                 "FROM qso_filters f, qso_filter_rules r, "
-                                 "qso_filter_operators o, qso_filter_matching_types m, "
-                                 "PRAGMA_TABLE_INFO('contacts') c "
-                                 "WHERE f.filter_name = :filterName "
-                                 "      AND f.filter_name = r.filter_name "
-                                 "      AND o.operator_id = r.operator_id "
-                                 "      AND m.matching_id = f.matching_type "
-                                 "      AND c.cid = r.table_field_index")) )
+namespace
+{
+QString valueCondition(const QSOFilterRule &rule, const QString &field, QSqlQuery &quoteQuery)
+{
+    QString value = rule.value;
+    QString sqlOperator;
+    switch ( rule.operatorID )
     {
-        qWarning() << "Cannot prepare select statement";
-        return ret;
+    case QSOFilterRule::Equal:       sqlOperator = "="; break;
+    case QSOFilterRule::NotEqual:    sqlOperator = "<>"; break;
+    case QSOFilterRule::GreaterThan: sqlOperator = ">"; break;
+    case QSOFilterRule::LessThan:    sqlOperator = "<"; break;
+    case QSOFilterRule::Contains:
+    case QSOFilterRule::NotContains:
+        sqlOperator = rule.operatorID == QSOFilterRule::Contains ? "like" : "not like";
+        if ( !value.isNull() ) value = '%' + value + '%';
+        break;
+    case QSOFilterRule::StartsWith:
+        sqlOperator = "like";
+        if ( !value.isNull() ) value += '%';
+        break;
+    case QSOFilterRule::RegExp:
+        sqlOperator = "regexp";
+        if ( !value.isNull() ) value.prepend("(?i)");
+        break;
+    default:
+        return {};
     }
 
-    userFilterQuery.bindValue(":filterName", filterName);
+    // Keep the legacy NULL behavior, including Contains vs. StartsWith.
+    if ( value.isNull() )
+        sqlOperator = (rule.operatorID == QSOFilterRule::Equal || rule.operatorID == QSOFilterRule::Contains)
+                       ? "IS" : "IS NOT";
 
-    qCDebug(runtime) << "User filter SQL: " << userFilterQuery.lastQuery();
+    // Let SQLite quote the literal; do not duplicate escaping or NULL handling.
+    quoteQuery.bindValue(0, value.isNull() ? QVariant() : QVariant(value));
+    if ( !quoteQuery.exec() || !quoteQuery.next() ) return {};
+    return QString(" %1 COLLATE NOCASE %2 (%3) ").arg(field, sqlOperator, quoteQuery.value(0).toString());
+}
 
-    if ( userFilterQuery.exec() )
+QString dateRangeCondition(const QSOFilterRule &rule, QString field, const QDate &today)
+{
+    QSOFilterDateRange range;
+    QDateTime start, end;
+
+    if ( !QSOFilterDateRange::fromString(rule.value, range) || !range.resolve(today, start, end) )
+        return {};
+
+    QString lower, upper;
+    if ( start.time() == QTime(0, 0) && end.time() == QTime(0, 0) )
     {
-        userFilterQuery.next();
-        ret = QString("( %1 )").arg(userFilterQuery.value(0).toString());
+        // Whole days work for ISO dates and UTC timestamps and retain index use.
+        lower = "'" + start.date().toString(Qt::ISODate) + "'";
+        upper = "'" + end.date().toString(Qt::ISODate) + "'";
     }
     else
-        qCDebug(runtime) << "User filter error - " << userFilterQuery.lastError().text();
+    {
+        // Custom times compare equally with and without an ISO zone.
+        field = "julianday(" + field + ")";
+        lower = "julianday('" + start.toString(Qt::ISODate) + "')";
+        upper = "julianday('" + end.toString(Qt::ISODate) + "')";
+    }
 
-    // This filter, when used with fields that contain time, only works by luck.
-    // These fields are Timeon/Timeoff. They are stored by QSO Filter Dialog as values in the format
-    // YYYY-MM-DDThh:mm:ss without a timezone. This is fine, since all times in QLog
-    // are internally in UTC. The problem arises because this WHERE clause is later
-    // used in a SELECT in the logbook. SQL does not compare the values as datetime,
-    // but as strings — otherwise both sides would need to be proper datetime types.
-    // Fortunately, both sides are strings in the same format, except that Timeon/Timeoff
-    // includes a timezone at the end. Therefore, string comparison of the dates still works.
-    return ret;
+    switch ( rule.operatorID )
+    {
+    case QSOFilterRule::InDateRange:
+        return QString(" (%1 >= %2 AND %1 < %3) ").arg(field, lower, upper);
+    case QSOFilterRule::OutsideDateRange:
+        return QString(" (%1 < %2 OR %1 >= %3) ").arg(field, lower, upper);
+    case QSOFilterRule::BeforeDateRange:
+        return QString(" %1 < %2 ").arg(field, lower);
+    case QSOFilterRule::AfterDateRange:
+        return QString(" %1 >= %2 ").arg(field, upper);
+    default:
+        return {};
+    }
+}
+}
+
+QString QSOFilterManager::getWhereClause(const QSOFilter &filter, const QString &columnPrefix,
+                                       const QDate &today)
+{
+    FCT_IDENTIFICATION;
+
+    const QSqlRecord columns = QSqlDatabase::database().record("contacts");
+    const QString prefix = columnPrefix.isEmpty() ? QString() : columnPrefix + '.';
+    QSqlQuery quoteQuery;
+
+    if ( !quoteQuery.prepare("SELECT quote(?)") ) return QStringLiteral("(0)");
+
+    QStringList conditions;
+
+    for ( const QSOFilterRule &rule : filter.rules )
+    {
+        if ( rule.tableFieldIndex < 0 || rule.tableFieldIndex >= columns.count() )
+            return QStringLiteral("(0)");
+        const QString field = prefix + columns.fieldName(rule.tableFieldIndex);
+        const QString condition = rule.isDateRange() ? dateRangeCondition(rule, field, today)
+                                                    : valueCondition(rule, field, quoteQuery);
+        // A malformed rule must not broaden an OR filter.
+        if ( condition.isEmpty() ) return QStringLiteral("(0)");
+        conditions.append(condition);
+    }
+
+    if ( conditions.isEmpty() ) return QStringLiteral("(  )"); // Existing empty-filter behavior.
+    if ( filter.machingType != QSOFilter::All && filter.machingType != QSOFilter::Any )
+        return QStringLiteral("(0)");
+    return QString("( (%1) )").arg(conditions.join(filter.machingType == QSOFilter::All ? "AND" : "OR"));
 }
 
 SqlListModel *QSOFilterManager::QSOFilterModel(const QString &firstValue, QObject *parent)
@@ -277,4 +339,3 @@ SqlListModel *QSOFilterManager::QSOFilterModel(const QString &firstValue, QObjec
                             firstValue,
                             parent);
 }
-

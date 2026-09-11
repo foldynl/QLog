@@ -1,15 +1,30 @@
-#include <QStringListModel>
 #include <QMessageBox>
 #include <QDateTimeEdit>
+#include <QEvent>
+#include <QScreen>
+#include <QScrollBar>
 #include <QStackedWidget>
+#include <QStandardItemModel>
 #include "QSOFilterDetail.h"
 #include "ui_QSOFilterDetail.h"
+#include "ui_QSOFilterRule.h"
 #include "core/debug.h"
 #include "data/Data.h"
 #include "core/QSOFilterManager.h"
 #include "ui/component/LogbookFieldComboBox.h"
+#include "ui/component/QSOFilterDateRangeEdit.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qsofilterdetail");
+
+class QSOFilterDetail::Condition : public QWidget
+{
+public:
+    explicit Condition(QWidget *parent) : QWidget(parent) { ui.setupUi(this); }
+
+    Ui::QSOFilterRule ui;
+    QSOFilterRule originalRule;
+    QString initialValue;
+};
 
 QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent, bool clone) :
     QDialog(parent),
@@ -20,6 +35,9 @@ QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent, boo
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+    ui->conditionsWidget->installEventFilter(this);
+    ui->parameterButtonBox->hide();
+    ui->periodErrorLabel->hide();
 
     if ( clone || filterName.isEmpty() )
         filterNamesList = QSOFilterManager::instance()->getFilterList();
@@ -38,10 +56,53 @@ QSOFilterDetail::QSOFilterDetail(const QString &filterName, QWidget *parent, boo
     }
 }
 
+QSOFilterDetail::QSOFilterDetail(const QSOFilter &filter, QWidget *parent)
+    : QSOFilterDetail(QString(), parent)
+{
+    parametersOnly = true;
+    filterName = filter.filterName;
+    setWindowTitle(tr("Filter Parameters: %1").arg(filterName));
+    ui->filterNameLabel->hide();
+    ui->filterLineEdit->hide();
+    ui->matchingCombo->hide();
+    ui->addConditionButton->hide();
+    ui->buttonBox->hide();
+    ui->parameterButtonBox->show();
+    connect(ui->parameterButtonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked,
+            this, &QSOFilterDetail::save);
+    auto *reset = ui->parameterButtonBox->button(QDialogButtonBox::RestoreDefaults);
+    connect(reset, &QPushButton::clicked, this, [this]()
+    {
+        loadFilter(QSOFilterManager::instance()->getFilter(filterName));
+    });
+    loadFilter(filter);
+    setWindowFlags(Qt::Popup);
+    adjustSize();
+}
+
 QSOFilterDetail::~QSOFilterDetail()
 {
     FCT_IDENTIFICATION;
     delete ui;
+}
+
+bool QSOFilterDetail::eventFilter(QObject *watched, QEvent *event)
+{
+    if ( watched == ui->conditionsWidget && event->type() == QEvent::LayoutRequest )
+    {
+        const QSize contentSize = ui->conditionsLayout->minimumSize();
+        // Keep complete rows visible, including when the vertical scrollbar appears.
+        ui->conditionsScrollArea->setMinimumWidth(contentSize.width()
+            + ui->conditionsScrollArea->verticalScrollBar()->sizeHint().width());
+        if ( parametersOnly )
+        {
+            // Let the popup follow its contents, but keep long filters scrollable.
+            ui->conditionsScrollArea->setMinimumHeight(qMin(contentSize.height(),
+                screen()->availableGeometry().height() / 2));
+            adjustSize();
+        }
+    }
+    return QDialog::eventFilter(watched, event);
 }
 
 void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
@@ -50,111 +111,105 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
 
     qCDebug(function_parameters) << "FieldIDX: " << fieldIdx << " Operator: " << operatorId << " Value: " << value;
 
-    QHBoxLayout* conditionLayout = new QHBoxLayout();
-    conditionLayout->setObjectName(QString::fromUtf8("conditionLayout%1").arg(condCount));
-
-    /***************/
-    /* Field Combo */
-    /***************/
-    LogbookFieldComboBox* fieldNameCombo = new LogbookFieldComboBox(this);
-    fieldNameCombo->setObjectName(QString::fromUtf8("fieldNameCombo%1").arg(condCount));
-    QSizePolicy sizePolicy1(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    sizePolicy1.setHorizontalStretch(0);
-    sizePolicy1.setVerticalStretch(0);
-    sizePolicy1.setHeightForWidth(fieldNameCombo->sizePolicy().hasHeightForWidth());
-    fieldNameCombo->setSizePolicy(sizePolicy1);
-
+    auto *row = new Condition(ui->conditionsWidget);
+    auto &ruleUi = row->ui;
+    auto *conditionLayout = ruleUi.conditionLayout;
+    auto *fieldNameCombo = ruleUi.fieldNameCombo;
+    auto *conditionCombo = ruleUi.conditionCombo;
+    auto *stacked = ruleUi.stackedValueEdit;
+    auto *removeButton = ruleUi.removeButton;
+    // Keep per-row object names without duplicating their .ui definitions.
+    const QObjectList controls = {conditionLayout, fieldNameCombo, conditionCombo, stacked, removeButton,
+                                  ruleUi.valueLineEdit, ruleUi.valueDateEdit, ruleUi.valueDateTimeEdit};
+    for ( auto *control : controls ) control->setObjectName(control->objectName() + QString::number(condCount));
     fieldNameCombo->populate(LogbookFieldComboBox::ValueMode::ColumnId);
 
-    /* Do not set combo value here because we will connect signal Change later */
-    conditionLayout->addWidget(fieldNameCombo);
-
-    /*******************/
-    /* Condition Combo */
-    /*******************/
-    QComboBox* conditionCombo = new QComboBox(this);
-    conditionCombo->addItem(QString(tr("Equal")));
-    conditionCombo->addItem(QString(tr("Not Equal")));
-    conditionCombo->addItem(QString(tr("Contains")));
-    conditionCombo->addItem(QString(tr("Not Contains")));
-    conditionCombo->addItem(QString(tr("Greater Than")));
-    conditionCombo->addItem(QString(tr("Less Than")));
-    conditionCombo->addItem(QString(tr("Starts with")));
-    conditionCombo->addItem(QString(tr("RegExp")));
-    conditionCombo->setObjectName(QString::fromUtf8("conditionCombo%1").arg(condCount));
-
+    // Match the display order in QSOFilterRule.ui; never use translated captions as IDs.
+    int index = 0;
+    for ( auto op : {QSOFilterRule::Equal, QSOFilterRule::NotEqual, QSOFilterRule::Contains,
+                     QSOFilterRule::NotContains, QSOFilterRule::GreaterThan, QSOFilterRule::LessThan,
+                     QSOFilterRule::StartsWith, QSOFilterRule::RegExp, QSOFilterRule::InDateRange,
+                     QSOFilterRule::OutsideDateRange, QSOFilterRule::BeforeDateRange, QSOFilterRule::AfterDateRange} )
+        conditionCombo->setItemData(index++, op);
+    Q_ASSERT(index == conditionCombo->count());
     if ( operatorId >= 0 )
-        conditionCombo->setCurrentIndex(operatorId);
+        conditionCombo->setCurrentIndex(conditionCombo->findData(operatorId));
 
-    conditionLayout->addWidget(conditionCombo);
-
-    /**************/
-    /* Value Edit */
-    /**************/
-
-    QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-
-    // use stack to change Line and Date Edit - it will depend on column from combo selection
-    QStackedWidget* stacked = new QStackedWidget(this);
-    stacked->setObjectName(QString::fromUtf8("stackedValueEdit%1").arg(condCount));
-    stacked->setMaximumSize(QSize(16777215, 30));
-    stacked->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-    stacked->setSizePolicy(sizePolicy);
-
-    stacked->addWidget(createLineEdit(value, condCount, sizePolicy));
-    stacked->addWidget(createDateEdit(value, condCount, sizePolicy));
-    stacked->addWidget(createDateTimeEdit(value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->qslSentEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->qslSentViaEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->qslRcvdEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->uploadStatusEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->antPathEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->boolEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->qsoCompleteEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->downloadStatusEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->morseKeyTypeEnum, value, condCount, sizePolicy));
-    stacked->addWidget(createComboBox(Data::instance()->eqslAgEnum, value, condCount, sizePolicy));
-
-    conditionLayout->addWidget(stacked);
-
-    // connect field combo and stacked widged to switch correct Edit Widget
-    connect(fieldNameCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, [this, stacked, value, fieldNameCombo](int)
+    ruleUi.valueLineEdit->setText(value);
+    for ( auto *date : {static_cast<QDateTimeEdit *>(ruleUi.valueDateEdit), ruleUi.valueDateTimeEdit} )
     {
-        /* Index is mapped the same way as LogbookModel columns
-           Therefore, we can use Column aliases here
-         */
-        int fieldIndex = fieldNameCombo->currentData().toInt();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+        date->setTimeZone(QTimeZone::UTC);
+#else
+        date->setTimeSpec(Qt::UTC);
+#endif
+    }
+    ruleUi.valueDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
+    ruleUi.valueDateTimeEdit->setDisplayFormat(locale.formatDateShortWithYYYY()
+                                              + " " + locale.formatTimeLongWithoutTZ());
+    if ( !value.isEmpty() )
+    {
+        ruleUi.valueDateEdit->setDate(QDate::fromString(value, Qt::ISODate));
+        QDateTime dateTime = QDateTime::fromString(value, Qt::ISODate);
+        if ( dateTime.timeSpec() == Qt::LocalTime )
+        {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+            dateTime.setTimeZone(QTimeZone::UTC);
+#else
+            dateTime.setTimeSpec(Qt::UTC);
+#endif
+        }
+        ruleUi.valueDateTimeEdit->setDateTime(dateTime.toUTC());
+    }
+    const auto *data = Data::instance();
+    populateComboBox(ruleUi.qslSentCombo, data->qslSentEnum, value);
+    populateComboBox(ruleUi.qslSentViaCombo, data->qslSentViaEnum, value);
+    populateComboBox(ruleUi.qslRcvdCombo, data->qslRcvdEnum, value);
+    populateComboBox(ruleUi.uploadStatusCombo, data->uploadStatusEnum, value);
+    populateComboBox(ruleUi.antPathCombo, data->antPathEnum, value);
+    populateComboBox(ruleUi.boolCombo, data->boolEnum, value);
+    populateComboBox(ruleUi.qsoCompleteCombo, data->qsoCompleteEnum, value);
+    populateComboBox(ruleUi.downloadStatusCombo, data->downloadStatusEnum, value);
+    populateComboBox(ruleUi.morseKeyTypeCombo, data->morseKeyTypeEnum, value);
+    populateComboBox(ruleUi.eqslAgCombo, data->eqslAgEnum, value);
+    auto *rangeEditor = new QSOFilterDateRangeEdit(value, stacked);
+    stacked->addWidget(rangeEditor);
 
-        if ( this->isDateField(fieldIndex) )
-            stacked->setCurrentIndex(1); //Date Edit
-        else if ( this->isDateTimeField(fieldIndex) )
-            stacked->setCurrentIndex(2); //DateTime edit
-        else if ( this->isQSLSentField(fieldIndex) )
-            stacked->setCurrentIndex(3);
-        else if ( this->isQSLSentViaField(fieldIndex) )
-            stacked->setCurrentIndex(4);
-        else if ( this->isQSLRcvdField(fieldIndex) )
-            stacked->setCurrentIndex(5);
-        else if ( this->isUploadStatusField(fieldIndex) )
-            stacked->setCurrentIndex(6);
-        else if ( this->isAntPathField(fieldIndex) )
-            stacked->setCurrentIndex(7);
-        else if ( this->isBoolField(fieldIndex) )
-            stacked->setCurrentIndex(8);
-        else if ( this->isQSOCompleteField(fieldIndex) )
-            stacked->setCurrentIndex(9);
-        else if ( this->isDownloadStatusField(fieldIndex))
-            stacked->setCurrentIndex(10);
-        else if ( this->isMorseKeyTypeField(fieldIndex))
-            stacked->setCurrentIndex(11);
-        else if ( this->isEqslAgTypeField(fieldIndex))
-            stacked->setCurrentIndex(12);
-        else
-            stacked->setCurrentIndex(0);
-    });
+    const auto updateEditor = [row, rangeEditor]()
+    {
+        auto &ui = row->ui;
+        auto *stacked = ui.stackedValueEdit;
+        QWidget *editor = fieldEditor(row);
+        const bool dateField = qobject_cast<QDateTimeEdit *>(editor) != nullptr;
+        const int op = ui.conditionCombo->currentData().toInt();
+        const bool dateOperator = op >= QSOFilterRule::InDateRange && op <= QSOFilterRule::AfterDateRange;
+        auto *operators = qobject_cast<QStandardItemModel *>(ui.conditionCombo->model());
+        for ( auto id : {QSOFilterRule::InDateRange, QSOFilterRule::OutsideDateRange,
+                        QSOFilterRule::BeforeDateRange, QSOFilterRule::AfterDateRange} )
+            operators->item(ui.conditionCombo->findData(id))->setEnabled(dateField);
+        if ( !dateField && dateOperator )
+            ui.conditionCombo->setCurrentIndex(ui.conditionCombo->findData(QSOFilterRule::Equal));
+
+        if ( dateField && dateOperator ) editor = rangeEditor;
+        stacked->setCurrentWidget(editor);
+
+        // Hidden pages must not determine the width of every condition.
+        for ( int i = 0; i < stacked->count(); ++i )
+            stacked->widget(i)->setSizePolicy(i == stacked->currentIndex() ? QSizePolicy::Preferred
+                                                                         : QSizePolicy::Ignored,
+                                             QSizePolicy::Fixed);
+    };
+    if ( !parametersOnly )
+    {
+        connect(fieldNameCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), row,
+                [row, fieldIdx, conditionCombo, updateEditor]()
+        {
+            if ( fieldIdx < 0 && qobject_cast<QDateTimeEdit *>(fieldEditor(row)) )
+                conditionCombo->setCurrentIndex(conditionCombo->findData(QSOFilterRule::InDateRange));
+            updateEditor();
+        });
+        connect(conditionCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), row, updateEditor);
+    }
 
     /* Set FieldNameCombo here to update Stacked Widget */
     if ( fieldIdx >= 0 )
@@ -163,50 +218,64 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
         if (index != -1)
             fieldNameCombo->setCurrentIndex(index);
     }
+    updateEditor();
 
-    /*****************/
-    /* Remove Button */
-    /*****************/
-    QPushButton* removeButton = new QPushButton(tr("Remove"), this);
-    removeButton->setObjectName(QString::fromUtf8("removeButton%1").arg(condCount));
-
-    conditionLayout->addWidget(removeButton);
-
-    connect(removeButton, &QPushButton::clicked, this, [conditionLayout]()
+    // Keep the exact stored representation unless the user changes the value.
+    // Date editors and enum combos can otherwise normalize old values on save.
+    if ( fieldIdx >= 0 )
     {
-        QLayoutItem *item = NULL;
-        while ((item = conditionLayout->takeAt(0)) != 0)
-        {
-            delete item->widget();
-            delete item;
-        }
-        conditionLayout->deleteLater();
+        row->originalRule = QSOFilterRule(fieldIdx, operatorId, value);
+        row->initialValue = editorValue(stacked);
+    }
+
+    if ( parametersOnly )
+    {
+        auto *fieldLabel = new QLabel(fieldNameCombo->currentText(), row);
+        auto *operatorLabel = new QLabel(conditionCombo->currentText(), row);
+        delete conditionLayout->replaceWidget(fieldNameCombo, fieldLabel);
+        delete conditionLayout->replaceWidget(conditionCombo, operatorLabel);
+        delete fieldNameCombo;
+        delete conditionCombo;
+        ruleUi.fieldNameCombo = nullptr;
+        ruleUi.conditionCombo = nullptr;
+        removeButton->hide();
+    }
+
+    connect(removeButton, &QPushButton::clicked, this, [this, row]()
+    {
+        ui->conditionsLayout->removeWidget(row);
+        conditions.removeOne(row);
+        row->hide();
+        row->deleteLater();
     });
 
     /**************************/
     /* Add to the main layout */
     /**************************/
-    ui->conditionsLayout->addLayout(conditionLayout);
+    ui->conditionsLayout->insertWidget(ui->conditionsLayout->count() - 1, row);
+    conditions.append(row);
 
     condCount++;
 }
 
 void QSOFilterDetail::loadFilter(const QString &filterName)
 {
-    FCT_IDENTIFICATION;
+    loadFilter(QSOFilterManager::instance()->getFilter(filterName));
+}
 
-    ui->filterLineEdit->setText(filterName);
+void QSOFilterDetail::loadFilter(const QSOFilter &filter)
+{
+    editedFilter = filter;
+    qDeleteAll(conditions);
+    conditions.clear();
+    ui->filterLineEdit->setText(filter.filterName);
     ui->filterLineEdit->setEnabled(false);
-
-    const QSOFilter &filter = QSOFilterManager::instance()->getFilter(filterName);
-
-    if ( filter.filterName == filterName )
-    {
-        ui->matchingCombo->setCurrentIndex(filter.machingType);
-
-        for ( const QSOFilterRule &rule : filter.rules )
-            addCondition(rule.tableFieldIndex, rule.operatorID, rule.value);
-    }
+    ui->matchingCombo->setCurrentIndex(filter.machingType);
+    if ( parametersOnly )
+        ui->matchingLabel->setText(filter.machingType == QSOFilter::All ? tr("All conditions must match")
+                                                                     : tr("Any condition must match"));
+    for ( const QSOFilterRule &rule : filter.rules )
+        addCondition(rule.tableFieldIndex, rule.operatorID, rule.value);
 }
 
 bool QSOFilterDetail::filterExists(const QString &filterName)
@@ -218,244 +287,102 @@ bool QSOFilterDetail::filterExists(const QString &filterName)
     return filterNamesList.contains(filterName);
 }
 
-bool QSOFilterDetail::isDateField(int index)
+QWidget *QSOFilterDetail::fieldEditor(const Condition *row)
 {
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_QSL_RCVD_DATE
-                 || index == LogbookModel::COLUMN_QSL_SENT_DATE
-                 || index == LogbookModel::COLUMN_LOTW_RCVD_DATE
-                 || index == LogbookModel::COLUMN_LOTW_SENT_DATE
-                 || index == LogbookModel::COLUMN_CLUBLOG_QSO_UPLOAD_DATE
-                 || index == LogbookModel::COLUMN_EQSL_QSLRDATE
-                 || index == LogbookModel::COLUMN_EQSL_QSLSDATE
-                 || index == LogbookModel::COLUMN_HRDLOG_QSO_UPLOAD_DATE
-                 || index == LogbookModel::COLUMN_HAMLOGEU_QSO_UPLOAD_DATE
-                 || index == LogbookModel::COLUMN_HAMQTH_QSO_UPLOAD_DATE
-                 || index == LogbookModel::COLUMN_DCL_QSLRDATE
-                 || index == LogbookModel::COLUMN_DCL_QSLSDATE
-                 || index == LogbookModel::COLUMN_QRZCOM_QSO_DOWNLOAD_DATE);
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isDateTimeField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_TIME_ON
-                 || index == LogbookModel::COLUMN_TIME_OFF );
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isQSLSentField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_QSL_SENT
-                 || index == LogbookModel::COLUMN_LOTW_SENT
-                 || index == LogbookModel::COLUMN_EQSL_QSL_SENT
-                 || index == LogbookModel::COLUMN_DCL_QSL_SENT);
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isQSLSentViaField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_QSL_SENT_VIA
-                 || index == LogbookModel::COLUMN_QSL_RCVD_VIA );
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isQSLRcvdField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_QSL_RCVD
-                 || index == LogbookModel::COLUMN_LOTW_RCVD
-                 || index == LogbookModel::COLUMN_EQSL_QSL_RCVD
-                 || index == LogbookModel::COLUMN_DCL_QSL_RCVD);
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isUploadStatusField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_CLUBLOG_QSO_UPLOAD_STATUS
-                 || index == LogbookModel::COLUMN_HRDLOG_QSO_UPLOAD_STATUS
-                 || index == LogbookModel::COLUMN_QRZCOM_QSO_UPLOAD_STATUS
-                 || index == LogbookModel::COLUMN_HAMLOGEU_QSO_UPLOAD_STATUS
-                 || index == LogbookModel::COLUMN_HAMQTH_QSO_UPLOAD_STATUS);
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isAntPathField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_ANT_PATH );
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isBoolField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = (    index == LogbookModel::COLUMN_FORCE_INIT
-                 || index == LogbookModel::COLUMN_QSO_RANDOM
-                 || index == LogbookModel::COLUMN_SILENT_KEY
-                 || index == LogbookModel::COLUMN_SWL);
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isQSOCompleteField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = ( index == LogbookModel::COLUMN_QSO_COMPLETE );
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isDownloadStatusField(int index)
-{
-    FCT_IDENTIFICATION;
-
-    bool ret = ( index == LogbookModel::COLUMN_QRZCOM_QSO_DOWNLOAD_STATUS );
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isMorseKeyTypeField(int index)
-{
-    bool ret = ( index == LogbookModel::COLUMN_MORSE_KEY_TYPE
-                 || index == LogbookModel::COLUMN_MY_MORSE_KEY_TYPE );
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-bool QSOFilterDetail::isEqslAgTypeField(int index)
-{
-    bool ret = ( index == LogbookModel::COLUMN_EQSL_AG );
-
-    qCDebug(function_parameters) << index << " return " << ret;
-    return ret;
-}
-
-QComboBox* QSOFilterDetail::createComboBox(const QMap<QString, QString> &mapping,
-                                           const QString &value, const int identifier,
-                                           const QSizePolicy &sizepolicy)
-{
-    FCT_IDENTIFICATION;
-
-    QComboBox* combo = new QComboBox();
-    combo->setObjectName(QString::fromUtf8("valueCombo%1").arg(identifier));
-    combo->setFocusPolicy(Qt::ClickFocus);
-
-    QMapIterator<QString, QString> iter(mapping);
-    int iter_index = 0;
-    int value_index = 0;
-    while ( iter.hasNext() )
+    const auto &ui = row->ui;
+    switch ( ui.fieldNameCombo->currentData().toInt() )
     {
-        iter.next();
-        combo->addItem(iter.value(), iter.key());
-        if ( ! value.isEmpty() && iter.key() == value )
-            value_index = iter_index;
-        iter_index++;
+    case LogbookModel::COLUMN_QSL_RCVD_DATE:
+    case LogbookModel::COLUMN_QSL_SENT_DATE:
+    case LogbookModel::COLUMN_LOTW_RCVD_DATE:
+    case LogbookModel::COLUMN_LOTW_SENT_DATE:
+    case LogbookModel::COLUMN_CLUBLOG_QSO_UPLOAD_DATE:
+    case LogbookModel::COLUMN_EQSL_QSLRDATE:
+    case LogbookModel::COLUMN_EQSL_QSLSDATE:
+    case LogbookModel::COLUMN_HRDLOG_QSO_UPLOAD_DATE:
+    case LogbookModel::COLUMN_HAMLOGEU_QSO_UPLOAD_DATE:
+    case LogbookModel::COLUMN_HAMQTH_QSO_UPLOAD_DATE:
+    case LogbookModel::COLUMN_DCL_QSLRDATE:
+    case LogbookModel::COLUMN_DCL_QSLSDATE:
+    case LogbookModel::COLUMN_QRZCOM_QSO_DOWNLOAD_DATE:
+        return ui.valueDateEdit;
+    case LogbookModel::COLUMN_TIME_ON:
+    case LogbookModel::COLUMN_TIME_OFF:
+        return ui.valueDateTimeEdit;
+    case LogbookModel::COLUMN_QSL_SENT:
+    case LogbookModel::COLUMN_LOTW_SENT:
+    case LogbookModel::COLUMN_EQSL_QSL_SENT:
+    case LogbookModel::COLUMN_DCL_QSL_SENT:
+        return ui.qslSentCombo;
+    case LogbookModel::COLUMN_QSL_SENT_VIA:
+    case LogbookModel::COLUMN_QSL_RCVD_VIA:
+        return ui.qslSentViaCombo;
+    case LogbookModel::COLUMN_QSL_RCVD:
+    case LogbookModel::COLUMN_LOTW_RCVD:
+    case LogbookModel::COLUMN_EQSL_QSL_RCVD:
+    case LogbookModel::COLUMN_DCL_QSL_RCVD:
+        return ui.qslRcvdCombo;
+    case LogbookModel::COLUMN_CLUBLOG_QSO_UPLOAD_STATUS:
+    case LogbookModel::COLUMN_HRDLOG_QSO_UPLOAD_STATUS:
+    case LogbookModel::COLUMN_QRZCOM_QSO_UPLOAD_STATUS:
+    case LogbookModel::COLUMN_HAMLOGEU_QSO_UPLOAD_STATUS:
+    case LogbookModel::COLUMN_HAMQTH_QSO_UPLOAD_STATUS:
+        return ui.uploadStatusCombo;
+    case LogbookModel::COLUMN_ANT_PATH:
+        return ui.antPathCombo;
+    case LogbookModel::COLUMN_FORCE_INIT:
+    case LogbookModel::COLUMN_QSO_RANDOM:
+    case LogbookModel::COLUMN_SILENT_KEY:
+    case LogbookModel::COLUMN_SWL:
+        return ui.boolCombo;
+    case LogbookModel::COLUMN_QSO_COMPLETE:
+        return ui.qsoCompleteCombo;
+    case LogbookModel::COLUMN_QRZCOM_QSO_DOWNLOAD_STATUS:
+        return ui.downloadStatusCombo;
+    case LogbookModel::COLUMN_MORSE_KEY_TYPE:
+    case LogbookModel::COLUMN_MY_MORSE_KEY_TYPE:
+        return ui.morseKeyTypeCombo;
+    case LogbookModel::COLUMN_EQSL_AG:
+        return ui.eqslAgCombo;
+    default:
+        return ui.valueLineEdit;
     }
-    combo->setCurrentIndex(value_index);
-    combo->setSizePolicy(sizepolicy);
-
-    return combo;
 }
 
-QDateEdit *QSOFilterDetail::createDateEdit(const QString &value, const int identified,
-                                           const QSizePolicy &sizepolicy)
+void QSOFilterDetail::populateComboBox(QComboBox *combo, const QMap<QString, QString> &mapping,
+                                      const QString &value)
 {
-    FCT_IDENTIFICATION;
-
-
-    QDateEdit* valueDate = new QDateEdit();
-    valueDate->setObjectName(QString::fromUtf8("valueDateEdit%1").arg(identified));
-    valueDate->setFocusPolicy(Qt::ClickFocus);
-    valueDate->setCalendarPopup(true);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
-    valueDate->setTimeZone(QTimeZone::UTC);
-#else
-    valueDate->setTimeSpec(Qt::UTC);
-#endif
-    valueDate->setDisplayFormat(locale.formatDateShortWithYYYY());
-    valueDate->setSizePolicy(sizepolicy);
-    if ( !value.isEmpty() )
-        valueDate->setDate(QDate::fromString(value, "yyyy-MM-dd"));
-    return valueDate;
-}
-
-QDateTimeEdit *QSOFilterDetail::createDateTimeEdit(const QString &value, const int identified,
-                                                   const QSizePolicy &sizepolicy)
-{
-    FCT_IDENTIFICATION;
-
-    QDateTimeEdit* valueDateTime = new QDateTimeEdit();
-    valueDateTime->setObjectName(QString::fromUtf8("valueDateTimeEdit%1").arg(identified));
-    valueDateTime->setFocusPolicy(Qt::ClickFocus);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
-    valueDateTime->setTimeZone(QTimeZone::UTC);
-#else
-    valueDateTime->setTimeSpec(Qt::UTC);
-#endif
-    valueDateTime->setDisplayFormat(locale.formatDateShortWithYYYY()
-                                    + " " + locale.formatTimeLongWithoutTZ());
-    valueDateTime->setSizePolicy(sizepolicy);
-    if ( !value.isEmpty() )
-    {
-        QDateTime dtValue = QDateTime::fromString(value, "yyyy-MM-ddTHH:mm:ss");
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
-        dtValue.setTimeZone(QTimeZone::UTC);
-#else
-        dtValue.setTimeSpec(Qt::UTC);
-#endif
-        valueDateTime->setDateTime(dtValue);
-    }
-    return valueDateTime;
-
-}
-
-QLineEdit *QSOFilterDetail::createLineEdit(const QString &value, const int identified,
-                                           const QSizePolicy &sizepolicy)
-{
-    FCT_IDENTIFICATION;
-
-    QLineEdit* valueEdit = new QLineEdit();
-    valueEdit->setObjectName(QString::fromUtf8("valueLineEdit%1").arg(identified));
-    valueEdit->setSizePolicy(sizepolicy);
-    valueEdit->setText(value);
-    return valueEdit;
+    for ( auto it = mapping.cbegin(); it != mapping.cend(); ++it )
+        combo->addItem(it.value(), it.key());
+    if ( combo->findData(" ") < 0 ) combo->insertItem(0, tr("Blank"), " ");
+    const QString selected = value.isEmpty() ? QStringLiteral(" ") : value;
+    if ( combo->findData(selected) < 0 ) combo->addItem(value, value);
+    combo->setCurrentIndex(combo->findData(selected));
 }
 
 void QSOFilterDetail::save()
 {
     FCT_IDENTIFICATION;
+
+    editedFilter = readFilter();
+    ui->periodErrorLabel->hide();
+    for ( const auto &rule : editedFilter.rules )
+    {
+        if ( !rule.isDateRange() ) continue;
+        QSOFilterDateRange range;
+        QDateTime start, end;
+        if ( !QSOFilterDateRange::fromString(rule.value, range)
+             || !range.resolve(QDateTime::currentDateTimeUtc().date(), start, end) )
+        {
+            ui->periodErrorLabel->show();
+            return;
+        }
+    }
+    if ( parametersOnly )
+    {
+        accept();
+        return;
+    }
 
     if ( ui->filterLineEdit->text().isEmpty() )
     {
@@ -470,70 +397,7 @@ void QSOFilterDetail::save()
         return;
     }
 
-    const QList<QHBoxLayout *> &conditionLayouts = ui->conditionsLayout->findChildren<QHBoxLayout *>();
-
-    QSOFilter filter;
-
-    filter.filterName = ui->filterLineEdit->text();
-    filter.machingType = ui->matchingCombo->currentIndex();
-
-    for ( auto &condition: conditionLayouts )
-    {
-        QSOFilterRule rule;
-
-        for ( int i = 0; i < 3; i++ )
-        {
-
-            QString objectName = condition->itemAt(i)->widget()->objectName();
-
-            if ( objectName.contains("fieldNameCombo") )
-                rule.tableFieldIndex = dynamic_cast<QComboBox*>(condition->itemAt(i)->widget())->currentData().toInt();
-            else if ( objectName.contains("conditionCombo") )
-                rule.operatorID = dynamic_cast<QComboBox*>(condition->itemAt(i)->widget())->currentIndex();
-            else if ( objectName.contains("stackedValueEdit") )
-            {
-                QStackedWidget* editStack = dynamic_cast<QStackedWidget*>(condition->itemAt(i)->widget());
-
-                QWidget* stackedEdit = editStack->currentWidget();
-
-                if ( stackedEdit )
-                {
-                    QString stacketEditObjName = stackedEdit->objectName();
-
-                    if ( stacketEditObjName.contains("valueLineEdit") )
-                    {
-                        QLineEdit* editLine = dynamic_cast<QLineEdit*>(stackedEdit);
-                        rule.value = editLine->text();
-                    }
-                    else if ( stacketEditObjName.contains("valueDateEdit") )
-                    {
-                        QDateEdit* dateTimeEdit = dynamic_cast<QDateEdit*>(stackedEdit);
-                        rule.value = dateTimeEdit->date().toString(Qt::ISODate);
-                    }
-                    else if ( stacketEditObjName.contains("valueDateTimeEdit") )
-                    {
-                        QDateTimeEdit* dateEdit = dynamic_cast<QDateTimeEdit*>(stackedEdit);
-                        rule.value = dateEdit->dateTime().toString("yyyy-MM-ddTHH:mm:ss");
-                    }
-                    else if ( stacketEditObjName.contains("valueCombo") )
-                    {
-                        QComboBox* combo = dynamic_cast<QComboBox*>(stackedEdit);
-                        rule.value = combo->currentData().toString();
-                        if ( rule.value == " ") // empty value
-                            rule.value = QString();
-                    }
-                }
-                else
-                    qCritical(runtime) << "Unexpected empty Stack - null pointer";
-            }
-            else
-                qWarning() << "Unknown object name"  << objectName;
-        }
-
-        filter.addRule(rule);
-    }
-
-    if ( !QSOFilterManager::instance()->save(filter) )
+    if ( !QSOFilterManager::instance()->save(editedFilter) )
     {
         QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
                               QMessageBox::tr("Cannot update QSO Filter Conditions"));
@@ -541,6 +405,46 @@ void QSOFilterDetail::save()
     }
 
     accept();
+}
+
+QString QSOFilterDetail::editorValue(QStackedWidget *stack)
+{
+    QWidget *editor = stack->currentWidget();
+    if ( auto *range = qobject_cast<QSOFilterDateRangeEdit *>(editor) ) return range->value();
+    if ( auto *date = qobject_cast<QDateEdit *>(editor) ) return date->date().toString(Qt::ISODate);
+    if ( auto *dateTime = qobject_cast<QDateTimeEdit *>(editor) )
+        return dateTime->dateTime().toString("yyyy-MM-ddTHH:mm:ss");
+    QString value;
+    if ( auto *line = qobject_cast<QLineEdit *>(editor) ) value = line->text();
+    else if ( auto *combo = qobject_cast<QComboBox *>(editor) )
+    {
+        value = combo->currentData().toString();
+        if ( value == " " ) value = QString();
+    }
+    return value.isEmpty() ? QString() : value;
+}
+
+QSOFilter QSOFilterDetail::readFilter() const
+{
+    QSOFilter filter;
+    filter.filterName = ui->filterLineEdit->text();
+    filter.machingType = ui->matchingCombo->currentIndex();
+    for ( const auto *row : conditions )
+    {
+        QSOFilterRule rule = row->originalRule;
+        if ( !parametersOnly )
+        {
+            rule.tableFieldIndex = row->ui.fieldNameCombo->currentData().toInt();
+            rule.operatorID = row->ui.conditionCombo->currentData().toInt();
+        }
+        rule.value = editorValue(row->ui.stackedValueEdit);
+        if ( row->originalRule.tableFieldIndex >= 0
+             && rule.tableFieldIndex == row->originalRule.tableFieldIndex
+             && rule.value == row->initialValue )
+            rule.value = row->originalRule.value;
+        filter.addRule(rule);
+    }
+    return filter;
 }
 
 void QSOFilterDetail::filterNameChanged(const QString &newFilterName)

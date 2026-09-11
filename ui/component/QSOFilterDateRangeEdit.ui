@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>QSOFilterDateRangeEdit</class>
+  <widget class="QWidget" name="QSOFilterDateRangeEdit">
+    <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+      </sizepolicy>
+    </property>
+    <property name="toolTip">
+      <string>Calendar days in UTC. The first and last day are included.
+This week and This month run through today.</string>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+        <number>0</number>
+      </property>
+      <property name="topMargin">
+        <number>0</number>
+      </property>
+      <property name="rightMargin">
+        <number>0</number>
+      </property>
+      <property name="bottomMargin">
+        <number>0</number>
+      </property>
+      <item>
+        <widget class="QComboBox" name="periodPreset">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+          </property>
+          <item>
+            <property name="text">
+              <string>Today</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Yesterday</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Last N days</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>This week</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>This month</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>This year</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Custom period</string>
+            </property>
+          </item>
+        </widget>
+      </item>
+      <item>
+        <widget class="QSpinBox" name="periodDays">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="minimum">
+            <number>1</number>
+          </property>
+          <property name="maximum">
+            <number>365000</number>
+          </property>
+          <property name="value">
+            <number>30</number>
+          </property>
+          <property name="suffix">
+            <string> days</string>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QPushButton" name="customPeriodButton">
+          <property name="text">
+            <string>Edit…</string>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <resources/>
+  <connections/>
+</ui>

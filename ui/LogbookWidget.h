@@ -10,6 +10,7 @@
 #include "core/CallbookManager.h"
 #include "service/QSLManager.h"
 #include "component/ShutdownAwareWidget.h"
+#include "core/QSOFilterManager.h"
 
 namespace Ui {
 class LogbookWidget;
@@ -18,6 +19,7 @@ class LogbookWidget;
 class ClubLogUploader;
 class LogbookModel;
 class QProgressDialog;
+class QTimer;
 
 class LogbookWidget : public QWidget, public ShutdownAwareWidget
 {
@@ -109,11 +111,12 @@ private:
     LogbookModel* model;
     Ui::LogbookWidget *ui;
     QString externalFilter;
+    QSOFilter activeUserFilter;
+    QTimer *userFilterDayTimer;
     bool blockClublogSignals;
     bool eventFilter(QObject *obj, QEvent *event);
-
-    void colorsFilterWidget(QComboBox *widget);
     void filterTable();
+    void editUserFilterParameters();
     void saveBandFilter();
     void restoreBandFilter();
     void saveModeFilter();

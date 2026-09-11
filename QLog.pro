@@ -104,6 +104,7 @@ SOURCES += \
         core/QSLPrintLabelRenderer.cpp \
         core/QSLStorage.cpp \
         core/QSOFilterManager.cpp \
+        core/QSOFilterDateRange.cpp \
         core/WsjtxUDPReceiver.cpp \
         core/debug.cpp \
         core/EmergencyFrequency.cpp \
@@ -226,6 +227,7 @@ SOURCES += \
         ui/QSLImportStatDialog.cpp \
         ui/QSODetailDialog.cpp \
         ui/QSOFilterDetail.cpp \
+        ui/component/QSOFilterDateRangeEdit.cpp \
         ui/QSOFilterDialog.cpp \
         ui/QTableQSOView.cpp \
         ui/RigWidget.cpp \
@@ -299,6 +301,7 @@ HEADERS += \
         core/QSLPrintLabelRenderer.h \
         core/QSLStorage.h \
         core/QSOFilterManager.h \
+        core/QSOFilterDateRange.h \
         core/QuadKeyCache.h \
         core/WsjtxUDPReceiver.h \
         core/csv.hpp \
@@ -444,6 +447,7 @@ HEADERS += \
         ui/QSLImportStatDialog.h \
         ui/QSODetailDialog.h \
         ui/QSOFilterDetail.h \
+        ui/component/QSOFilterDateRangeEdit.h \
         ui/QSOFilterDialog.h \
         ui/QTableQSOView.h \
         ui/ShowUploadDialog.h \
@@ -474,6 +478,10 @@ HEADERS += \
         ui/component/SwitchButton.h
 
 FORMS += \
+        ui/QSOFilterRule.ui \
+        ui/component/QSOFilterDateRangeEdit.ui \
+        ui/component/QSOFilterDateBoundary.ui \
+        ui/component/QSOFilterDateRangeDialog.ui \
         ui/ActivityEditor.ui \
         ui/AlertRuleDetail.ui \
         ui/AlertSettingDialog.ui \

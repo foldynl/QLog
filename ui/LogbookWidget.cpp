@@ -12,6 +12,8 @@
 #include <QProgressDialog>
 #include <QActionGroup>
 #include <QHeaderView>
+#include <QTimer>
+#include <QStyle>
 
 #include "logformat/AdiFormat.h"
 #include "models/LogbookModel.h"
@@ -34,12 +36,15 @@
 #include "service/GenericCallbook.h"
 #include "core/QSOFilterManager.h"
 #include "core/LogParam.h"
+#include "core/QSOFilterDateRange.h"
+#include "ui/QSOFilterDetail.h"
 
 MODULE_IDENTIFICATION("qlog.ui.logbookwidget");
 
 LogbookWidget::LogbookWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::LogbookWidget),
+    userFilterDayTimer(new QTimer(this)),
     blockClublogSignals(false),
     qslLookupEnabledForBatch(false),
     lookupDialog(nullptr)
@@ -95,6 +100,16 @@ LogbookWidget::LogbookWidget(QWidget *parent) :
 
     connect(ui->userSelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::userFilterChanged);
+    connect(ui->userFilterParametersButton, &QToolButton::clicked,
+            this, &LogbookWidget::editUserFilterParameters);
+    userFilterDayTimer->setSingleShot(true);
+    userFilterDayTimer->setTimerType(Qt::PreciseTimer);
+    connect(userFilterDayTimer, &QTimer::timeout, this, &LogbookWidget::filterTable);
+    connect(qApp, &QGuiApplication::applicationStateChanged, this, [this](Qt::ApplicationState state)
+    {
+        // Refresh filter view when QLog resumes from sleep mode (PC wakeup)
+        if ( state == Qt::ApplicationActive && userFilterDayTimer->isActive() ) filterTable();
+    });
 
     connect(ui->clubSelectFilter, &SmartSearchBox::currentTextChanged,
             this, &LogbookWidget::clubFilterChanged);
@@ -910,6 +925,7 @@ void LogbookWidget::refreshUserFilter()
 {
     FCT_IDENTIFICATION;
 
+    activeUserFilter = QSOFilter();
     ui->userSelectFilter->refreshModel();
 
     filterTable();  // TODO ??? is it needed
@@ -959,6 +975,7 @@ void LogbookWidget::restoreFilters()
 {
     FCT_IDENTIFICATION;
 
+    activeUserFilter = QSOFilter();
     restoreSearchTextFilter();
     restoreModeFilter();
     restoreBandFilter();
@@ -1173,7 +1190,7 @@ void LogbookWidget::updateTable()
 {
     FCT_IDENTIFICATION;
 
-    reselectModel();
+    filterTable();
 
     // it is called when QSO is inserted/updated/deleted
     // therefore it is needed to refresh country select box
@@ -1441,14 +1458,6 @@ bool LogbookWidget::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
-void LogbookWidget::colorsFilterWidget(QComboBox *widget)
-{
-    FCT_IDENTIFICATION;
-
-    widget->setStyleSheet( (widget->currentIndex() > 0) ? "QComboBox {border: 2px solid red; border-radius: 4px; padding: 2px;}"
-                                                        : "");
-}
-
 void LogbookWidget::filterTable()
 {
     FCT_IDENTIFICATION;
@@ -1487,8 +1496,37 @@ void LogbookWidget::filterTable()
     if ( ui->clubSelectFilter->currentIndex() != 0 )
         filterString.append(QString("id in (SELECT contactid FROM contact_clubs_view WHERE clubid = '%1')").arg(ui->clubSelectFilter->currentText()));
 
-    if ( ui->userSelectFilter->currentIndex() != 0 )
-        filterString.append(QSOFilterManager::instance()->getWhereClause(ui->userSelectFilter->currentText()));
+    const QString selectedFilter = ui->userSelectFilter->currentIndex() != 0
+                                   ? ui->userSelectFilter->currentText() : QString();
+    if ( activeUserFilter.filterName != selectedFilter || selectedFilter.isEmpty() )
+    {
+        activeUserFilter = selectedFilter.isEmpty() ? QSOFilter()
+                             : QSOFilterManager::instance()->getFilter(selectedFilter);
+        ui->userFilterParametersButton->setProperty("modified", false);
+        ui->userFilterParametersButton->style()->unpolish(ui->userFilterParametersButton);
+        ui->userFilterParametersButton->style()->polish(ui->userFilterParametersButton);
+        ui->userFilterParametersButton->setToolTip(tr("Filter parameters"));
+    }
+    ui->userFilterParametersButton->setHidden(selectedFilter.isEmpty() || activeUserFilter.rules.isEmpty());
+    userFilterDayTimer->stop();
+    if ( !selectedFilter.isEmpty() )
+    {
+        const QDateTime filterTime = QDateTime::currentDateTimeUtc();
+        filterString.append(QSOFilterManager::getWhereClause(activeUserFilter, {}, filterTime.date()));
+        for ( const auto &rule : activeUserFilter.rules )
+        {
+            if ( !rule.isDateRange() ) continue;
+            QSOFilterDateRange range;
+            if ( QSOFilterDateRange::fromString(rule.value, range) && range.isRelative() )
+            {
+                QDateTime tomorrow = filterTime.addDays(1);
+                tomorrow.setTime(QTime(0, 0));
+                userFilterDayTimer->start(static_cast<int>(qMax<qint64>(1,
+                                          QDateTime::currentDateTimeUtc().msecsTo(tomorrow) + 1)));
+                break;
+            }
+        }
+    }
 
     if ( !externalFilter.isEmpty() )
         filterString.append(QString("( ") + externalFilter + ")");
@@ -1497,6 +1535,27 @@ void LogbookWidget::filterTable()
     qCDebug(runtime) << model->query().lastQuery();
 
     reselectModel();
+}
+
+void LogbookWidget::editUserFilterParameters()
+{
+    auto *popup = new QSOFilterDetail(activeUserFilter, this);
+    popup->setAttribute(Qt::WA_DeleteOnClose);
+    connect(popup, &QDialog::accepted, this, [this, popup]()
+    {
+        if ( popup->filter().filterName != activeUserFilter.filterName ) return;
+        activeUserFilter = popup->filter();
+        const QSOFilter defaults = QSOFilterManager::instance()->getFilter(activeUserFilter.filterName);
+        const bool modified = activeUserFilter.rules != defaults.rules;
+        auto *button = ui->userFilterParametersButton;
+        button->setProperty("modified", modified);
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+        button->setToolTip(modified ? tr("Filter parameters (temporary values)") : tr("Filter parameters"));
+        filterTable();
+    });
+    popup->move(ui->userFilterParametersButton->mapToGlobal(QPoint(0, ui->userFilterParametersButton->height())));
+    popup->show();
 }
 
 LogbookWidget::~LogbookWidget()

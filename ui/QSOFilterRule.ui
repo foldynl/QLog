@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>QSOFilterRule</class>
+  <widget class="QWidget" name="QSOFilterRule">
+    <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+      </sizepolicy>
+    </property>
+    <layout class="QHBoxLayout" name="conditionLayout" stretch="2,1,2,0">
+      <property name="leftMargin">
+        <number>0</number>
+      </property>
+      <property name="topMargin">
+        <number>0</number>
+      </property>
+      <property name="rightMargin">
+        <number>0</number>
+      </property>
+      <property name="bottomMargin">
+        <number>0</number>
+      </property>
+      <item>
+        <widget class="LogbookFieldComboBox" name="fieldNameCombo">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+          </property>
+          <property name="minimumContentsLength">
+            <number>7</number>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QComboBox" name="conditionCombo">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+          </property>
+          <item>
+            <property name="text">
+              <string>Equal</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Not Equal</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Contains</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Not Contains</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Greater Than</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Less Than</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Starts with</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>RegExp</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>In period</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Outside period</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Before period</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>After period</string>
+            </property>
+          </item>
+        </widget>
+      </item>
+      <item>
+        <widget class="QStackedWidget" name="stackedValueEdit">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <widget class="QLineEdit" name="valueLineEdit"/>
+          <widget class="QDateEdit" name="valueDateEdit">
+            <property name="focusPolicy">
+              <enum>Qt::ClickFocus</enum>
+            </property>
+            <property name="calendarPopup">
+              <bool>true</bool>
+            </property>
+          </widget>
+          <widget class="QDateTimeEdit" name="valueDateTimeEdit">
+            <property name="focusPolicy">
+              <enum>Qt::ClickFocus</enum>
+            </property>
+            <property name="calendarPopup">
+              <bool>true</bool>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="qslSentCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="qslSentViaCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="qslRcvdCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="uploadStatusCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="antPathCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="boolCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="qsoCompleteCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="downloadStatusCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="morseKeyTypeCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="eqslAgCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+            <property name="minimumContentsLength">
+              <number>7</number>
+            </property>
+          </widget>
+        </widget>
+      </item>
+      <item>
+        <widget class="QPushButton" name="removeButton">
+          <property name="text">
+            <string>Remove</string>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <customwidgets>
+    <customwidget>
+      <class>LogbookFieldComboBox</class>
+      <extends>QComboBox</extends>
+      <header>ui/component/LogbookFieldComboBox.h</header>
+    </customwidget>
+  </customwidgets>
+  <resources/>
+  <connections/>
+</ui>

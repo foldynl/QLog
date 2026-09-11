@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>QSOFilterDateRangeDialog</class>
+  <widget class="QDialog" name="QSOFilterDateRangeDialog">
+    <property name="windowTitle">
+      <string>Custom Period</string>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+        <widget class="QLabel" name="fromLabel">
+          <property name="text">
+            <string>From (inclusive):</string>
+          </property>
+        </widget>
+      </item>
+      <item row="0" column="1">
+        <widget class="QWidget" name="fromBoundary" native="true"/>
+      </item>
+      <item row="1" column="0">
+        <widget class="QLabel" name="toLabel">
+          <property name="text">
+            <string>To (inclusive):</string>
+          </property>
+        </widget>
+      </item>
+      <item row="1" column="1">
+        <widget class="QWidget" name="toBoundary" native="true"/>
+      </item>
+      <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="utcLabel">
+          <property name="text">
+            <string>Dates and times are in UTC.</string>
+          </property>
+        </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+        <widget class="QLabel" name="errorLabel">
+          <property name="text"><string>The end of the period must not be before its start.</string></property>
+          <property name="wordWrap"><bool>true</bool></property>
+          <property name="styleSheet"><string notr="true">color: red;</string></property>
+        </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+        <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="standardButtons">
+            <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <resources/>
+  <connections/>
+</ui>

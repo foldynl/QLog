@@ -20,4 +20,6 @@ SUBDIRS += CallsignTest \
            PasswordCipherTest \
            QuadKeyCacheTest \
            QTableQSOViewTest \
+           QSOFilterManagerTest \
+           QSOFilterDetailTest \
            RigctldManagerTest
