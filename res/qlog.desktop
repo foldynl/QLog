@@ -3,6 +3,7 @@ Version=1.0
 Type=Application
 Name=QLog
 Comment=Amateur Radio Logbook
+Comment[fr]=Carnet de trafic Radio Amateur
 Exec=qlog
 Icon=qlog
 Categories=Utility;HamRadio;
