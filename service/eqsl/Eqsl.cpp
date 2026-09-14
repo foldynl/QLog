@@ -527,7 +527,7 @@ void EQSLQSLDownloader::processReply(QNetworkReply *reply)
         if ( ! tempFile.open() )
         {
             qCDebug(runtime) << "Cannot open temp file";
-            emit receiveQSLFailed(tr("Cannot opet temporary file"));
+            emit receiveQSLFailed(tr("Cannot open temporary file"));
             reply->deleteLater();
             return;
         }
