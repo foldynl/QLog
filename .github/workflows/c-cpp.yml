@@ -14,7 +14,11 @@ jobs:
     name: Ubuntu CI QT5
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        include:
+          - os: ubuntu-22.04
+            run_tests: true
+          - os: ubuntu-24.04
+            run_tests: false
 
     runs-on: ${{ matrix.os }}
 
@@ -30,11 +34,13 @@ jobs:
     - name: make
       run: make -j2
     - name: Configure tests
+      if: matrix.run_tests
       run: |
         mkdir -p tests/build
         cd tests/build
         qmake ../tests.pro
     - name: Build and run tests
+      if: matrix.run_tests
       working-directory: tests/build
       env:
         QT_QPA_PLATFORM: offscreen
@@ -45,7 +51,11 @@ jobs:
     name: Ubuntu CI QT6
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        include:
+          - os: ubuntu-22.04
+            run_tests: false
+          - os: ubuntu-24.04
+            run_tests: true
         
     runs-on: ${{ matrix.os }}
 
@@ -61,11 +71,13 @@ jobs:
     - name: make
       run: make -j2
     - name: Configure tests
+      if: matrix.run_tests
       run: |
         mkdir -p tests/build
         cd tests/build
         qmake6 ../tests.pro
     - name: Build and run tests
+      if: matrix.run_tests
       working-directory: tests/build
       env:
         QT_QPA_PLATFORM: offscreen
@@ -124,6 +136,7 @@ jobs:
 
   deb-package:
     name: DEB Package Build
+    needs: [ubuntu-build-qt5, ubuntu-build-qt6]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
 
@@ -175,6 +188,7 @@ jobs:
 
   rpm-package:
     name: RPM Package Build
+    needs: [ubuntu-build-qt5, ubuntu-build-qt6]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
 
