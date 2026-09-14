@@ -217,7 +217,7 @@
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1412"/>
         <source>Guide</source>
-        <translation type="unfinished"></translation>
+        <translation>Guide</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.ui" line="1425"/>
@@ -931,12 +931,12 @@
     <message>
         <location filename="../awards/AwardWAAC.cpp" line="9"/>
         <source>WAAC</source>
-        <translation type="unfinished"></translation>
+        <translation>WAAC</translation>
     </message>
     <message>
         <location filename="../awards/AwardWAIP.cpp" line="6"/>
         <source>WAIP</source>
-        <translation type="unfinished"></translation>
+        <translation>WAIP</translation>
     </message>
 </context>
 <context>
@@ -967,7 +967,7 @@
     <message>
         <location filename="../ui/BandmapGuideDialog.ui" line="14"/>
         <source>Bandmap Guide</source>
-        <translation type="unfinished">Aide Bandmap</translation>
+        <translation>Guide Bandmap</translation>
     </message>
     <message>
         <location filename="../ui/BandmapGuideDialog.ui" line="27"/>
@@ -1067,7 +1067,7 @@
     <message>
         <location filename="../ui/BandmapGuideDialog.ui" line="221"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../ui/BandmapGuideDialog.cpp" line="181"/>
@@ -1678,7 +1678,7 @@
         <location filename="../ui/CabrilloExportDialog.ui" line="131"/>
         <location filename="../ui/CabrilloExportDialog.ui" line="154"/>
         <source>yyyy-MM-dd HH:mm</source>
-        <translation type="unfinished"></translation>
+        <translation>yyyy-MM-dd HH:mm</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloExportDialog.ui" line="144"/>
@@ -1688,7 +1688,7 @@
     <message>
         <location filename="../ui/CabrilloExportDialog.ui" line="167"/>
         <source>UTC</source>
-        <translation type="unfinished"></translation>
+        <translation>UTC</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloExportDialog.ui" line="194"/>
@@ -1809,7 +1809,7 @@
         <location filename="../ui/CabrilloExportDialog.ui" line="449"/>
         <location filename="../ui/CabrilloExportDialog.ui" line="452"/>
         <source>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</source>
-        <translation type="unfinished"></translation>
+        <translation>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloExportDialog.cpp" line="43"/>
@@ -1901,7 +1901,7 @@
     <message>
         <location filename="../logformat/CabrilloFormat.cpp" line="212"/>
         <source>All Bands</source>
-        <translation type="unfinished"></translation>
+        <translation>Toutes les bandes</translation>
     </message>
     <message>
         <location filename="../logformat/CabrilloFormat.cpp" line="221"/>
@@ -1966,7 +1966,7 @@
     <message>
         <location filename="../logformat/CabrilloFormat.cpp" line="249"/>
         <source>QRP</source>
-        <translation type="unfinished"></translation>
+        <translation>QRP</translation>
     </message>
     <message>
         <location filename="../logformat/CabrilloFormat.cpp" line="256"/>
@@ -2006,7 +2006,7 @@
     <message>
         <location filename="../logformat/CabrilloFormat.cpp" line="275"/>
         <source>Portable</source>
-        <translation type="unfinished"></translation>
+        <translation>Portable</translation>
     </message>
     <message>
         <location filename="../logformat/CabrilloFormat.cpp" line="276"/>
@@ -2209,7 +2209,7 @@
     <message>
         <location filename="../ui/CabrilloTemplateDialog.ui" line="100"/>
         <source>Delete</source>
-        <translation type="unfinished">Supprimer</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloTemplateDialog.ui" line="119"/>
@@ -2279,7 +2279,7 @@
     <message>
         <location filename="../ui/CabrilloTemplateDialog.ui" line="327"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloTemplateDialog.cpp" line="346"/>
@@ -4724,12 +4724,12 @@
     <message>
         <location filename="../data/Data.h" line="63"/>
         <source>Short Path</source>
-        <translation>Petit chemin</translation>
+        <translation>Trajet court (SP)</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="64"/>
         <source>Long Path</source>
-        <translation>Grand chemin</translation>
+        <translation>Trajet long (LP)</translation>
     </message>
     <message>
         <location filename="../data/Data.h" line="75"/>
@@ -4971,7 +4971,7 @@
         <location filename="../ui/DevToolsDialog.cpp" line="82"/>
         <location filename="../ui/DevToolsDialog.cpp" line="382"/>
         <source>TXT</source>
-        <translation type="unfinished"></translation>
+        <translation>TXT</translation>
     </message>
     <message>
         <location filename="../ui/DevToolsDialog.cpp" line="84"/>
@@ -4982,7 +4982,7 @@
     <message>
         <location filename="../ui/DevToolsDialog.cpp" line="86"/>
         <source>ADI</source>
-        <translation type="unfinished"></translation>
+        <translation>ADI</translation>
     </message>
     <message>
         <location filename="../ui/DevToolsDialog.cpp" line="192"/>
@@ -5786,7 +5786,7 @@ Example:
     </message>
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="530"/>
-        <source>Cannot opet temporary file</source>
+        <source>Cannot open temporary file</source>
         <translation>Impossible d&apos;ouvrir le fichier temporaire</translation>
     </message>
     <message>
@@ -6480,7 +6480,7 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
     <message>
         <location filename="../ui/ImportDialog.ui" line="387"/>
         <source>DCL</source>
-        <translation type="unfinished">DCL</translation>
+        <translation>DCL</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.ui" line="394"/>
@@ -6535,17 +6535,17 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
     <message>
         <location filename="../ui/ImportDialog.cpp" line="46"/>
         <source>Queued</source>
-        <translation type="unfinished"></translation>
+        <translation>En file</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="47"/>
         <source>Requested</source>
-        <translation type="unfinished"></translation>
+        <translation>Demandé</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="48"/>
         <source>Ignored</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignoré</translation>
     </message>
     <message>
         <location filename="../ui/ImportDialog.cpp" line="49"/>
@@ -7164,13 +7164,14 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
     <message>
         <location filename="../models/LogbookModel.cpp" line="41"/>
         <source>Mode/Submode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode/Sous-mode</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="84"/>
         <source>Mode: %1
 Submode: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode: %1
+Sous-mode: %2</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="195"/>
@@ -7391,7 +7392,7 @@ Submode: %2</source>
     <message>
         <location filename="../models/LogbookModel.cpp" line="782"/>
         <source>TX PWR</source>
-        <translation>TX PWR</translation>
+        <translation>Puissance émise</translation>
     </message>
     <message>
         <location filename="../models/LogbookModel.cpp" line="783"/>
@@ -9001,7 +9002,7 @@ Submode: %2</source>
     <message>
         <location filename="../ui/MainWindow.cpp" line="332"/>
         <source>Startup ADI</source>
-        <translation type="unfinished"></translation>
+        <translation>ADI au démarrage</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.cpp" line="499"/>
@@ -9255,12 +9256,12 @@ Submode: %2</source>
     <message>
         <location filename="../ui/MapPageController.cpp" line="640"/>
         <source>QSO Short Path</source>
-        <translation>QSO Petit Chemin (SP)</translation>
+        <translation>QSO Trajet Court (SP)</translation>
     </message>
     <message>
         <location filename="../ui/MapPageController.cpp" line="641"/>
         <source>QSO Long Path</source>
-        <translation>QSO Grand Chemin (LP)</translation>
+        <translation>QSO Trajet Long (LP)</translation>
     </message>
     <message>
         <location filename="../ui/MapPageController.cpp" line="642"/>
@@ -9539,7 +9540,7 @@ Submode: %2</source>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="829"/>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation>Membre</translation>
     </message>
     <message>
         <location filename="../ui/NewContactWidget.cpp" line="902"/>
@@ -10522,12 +10523,12 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
     <message>
         <location filename="../awards/BandTableAward.cpp" line="181"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>Contacté</translation>
     </message>
     <message>
         <location filename="../data/BandmapGuide.cpp" line="180"/>
         <source>IARU Region 1</source>
-        <translation type="unfinished"></translation>
+        <translation>IARU Région 1</translation>
     </message>
     <message>
         <location filename="../data/BandmapGuide.cpp" line="243"/>
@@ -11966,7 +11967,7 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="1321"/>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation>Membre</translation>
     </message>
     <message>
         <location filename="../ui/QSODetailDialog.cpp" line="1362"/>
@@ -12760,7 +12761,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4099"/>
         <source>Startup ADI</source>
-        <translation type="unfinished"></translation>
+        <translation>ADI au démarrage</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4105"/>
@@ -12775,7 +12776,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4165"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4187"/>
@@ -13200,7 +13201,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1954"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Split</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="1968"/>
@@ -13952,7 +13953,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
         <location filename="../ui/SettingsDialog.cpp" line="510"/>
         <location filename="../ui/SettingsDialog.cpp" line="528"/>
         <source>State</source>
-        <translation>État / Province</translation>
+        <translation>État</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="526"/>
@@ -14091,7 +14092,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="167"/>
         <source>New Entity</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle Entité</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="167"/>
@@ -14111,7 +14112,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="169"/>
         <source>New Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau Slot (bande/mode)</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="169"/>
@@ -14121,7 +14122,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="170"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation>Contacté</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="170"/>
@@ -14338,7 +14339,7 @@ Veuillez installer TQSL ou spécifier le chemin manuellement.</translation>
         <location filename="../ui/SettingsDialog.cpp" line="3463"/>
         <location filename="../ui/SettingsDialog.cpp" line="3531"/>
         <source>Queued</source>
-        <translation type="unfinished"></translation>
+        <translation>En attente</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="3207"/>
@@ -14346,7 +14347,7 @@ Veuillez installer TQSL ou spécifier le chemin manuellement.</translation>
         <location filename="../ui/SettingsDialog.cpp" line="3506"/>
         <location filename="../ui/SettingsDialog.cpp" line="3522"/>
         <source>Ignored</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignoré</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="3208"/>
@@ -14354,7 +14355,7 @@ Veuillez installer TQSL ou spécifier le chemin manuellement.</translation>
         <location filename="../ui/SettingsDialog.cpp" line="3508"/>
         <location filename="../ui/SettingsDialog.cpp" line="3524"/>
         <source>Requested</source>
-        <translation type="unfinished"></translation>
+        <translation>Demandé</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="3210"/>
