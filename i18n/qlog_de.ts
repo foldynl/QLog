@@ -5786,7 +5786,7 @@ Example:
     </message>
     <message>
         <location filename="../service/eqsl/Eqsl.cpp" line="530"/>
-        <source>Cannot opet temporary file</source>
+        <source>Cannot open temporary file</source>
         <translation>Kann temporäre Datei nicht öffnen</translation>
     </message>
     <message>
