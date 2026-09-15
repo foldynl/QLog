@@ -157,8 +157,6 @@ void QSOFilterDateRangeEdit::setupBoundaryEditor(const Boundary &boundary,
         ui.fixed->setVisible(!selected.isRelative());
         ui.offset->setVisible(selected.isRelative());
     });
-
-    update();
 }
 
 QString QSOFilterDateRangeEdit::boundaryValue(const Ui::QSOFilterDateBoundary &ui) const
@@ -185,7 +183,7 @@ void QSOFilterDateRangeEdit::editCustomRange()
     {
         dialog.move(mapToGlobal(QPoint(0, height())));
         // Cocoa may stack a nested popup behind its parent until its native window exists.
-        QTimer::singleShot(0, &dialog, [&dialog]() { dialog.raise(); });
+        QTimer::singleShot(0, &dialog, &QWidget::raise);
     }
 
     connect(ui.buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
