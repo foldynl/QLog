@@ -5,6 +5,7 @@
 
 #include <QSignalBlocker>
 #include <QTimeZone>
+#include <QTimer>
 #include "core/LogLocale.h"
 #include "core/debug.h"
 
@@ -180,7 +181,12 @@ void QSOFilterDateRangeEdit::editCustomRange()
     setupBoundaryEditor(Boundary::fromString(range.from), fromEditor, ui.fromBoundary);
     setupBoundaryEditor(Boundary::fromString(range.to), toEditor, ui.toBoundary);
 
-    if ( dialog.windowType() == Qt::Popup ) dialog.move(mapToGlobal(QPoint(0, height())));
+    if ( dialog.windowType() == Qt::Popup )
+    {
+        dialog.move(mapToGlobal(QPoint(0, height())));
+        // Cocoa may stack a nested popup behind its parent until its native window exists.
+        QTimer::singleShot(0, &dialog, [&dialog]() { dialog.raise(); });
+    }
 
     connect(ui.buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, &dialog, [this, &dialog, &ui, &fromEditor, &toEditor]()
