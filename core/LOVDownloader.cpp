@@ -26,6 +26,14 @@
 
 MODULE_IDENTIFICATION("qlog.core.lovdownloader");
 
+namespace
+{
+bool isCTYCSV(const QByteArray &data)
+{
+    return data.left(data.indexOf('\n')).split(',').size() == 10;
+}
+}
+
 LOVDownloader::LOVDownloader(QObject *parent) :
     QObject(parent),
     currentReply(nullptr),
@@ -111,6 +119,15 @@ void LOVDownloader::loadData(const LOVDownloader::SourceDefinition &sourceDef)
     if ( sourceDef.fileName.endsWith(".gz", Qt::CaseInsensitive) )
         data = FileCompressor::gunzip(data);
 
+    if (sourceDef.type == CTY && !isCTYCSV(data))
+    {
+        qCWarning(runtime) << "Invalid cached CTY data; removing cache";
+        file.remove();
+
+        emit finished(loadBundledCTY(sourceDef));
+        return;
+    }
+
     emit processingSize(data.size());
 
     QTextStream stream(data);
@@ -134,6 +151,9 @@ bool LOVDownloader::isTableFilled(const QString &tableName)
 bool LOVDownloader::loadBundledCTY(const LOVDownloader::SourceDefinition &sourceDef)
 {
     FCT_IDENTIFICATION;
+
+    abortRequested = false;
+    qCWarning(runtime) << "Using bundled CTY data";
 
     QFile file(":/res/data/cty.csv");
     if ( ! file.open(QIODevice::ReadOnly) )
@@ -1088,10 +1108,14 @@ void LOVDownloader::processReply(QNetworkReply *reply)
     Q_ASSERT(sourceDef.type == sourceType);
 
     int replyStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    const bool successfulResponse = reply->error() == QNetworkReply::NoError
+                                    && replyStatusCode >= 200 && replyStatusCode < 300;
+    const QString contentType = reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    const bool invalidCTYResponse = sourceType == CTY
+                                    && (contentType.startsWith("text/html", Qt::CaseInsensitive)
+                                        || !isCTYCSV(data));
 
-    if ( reply->isFinished()
-         && reply->error() == QNetworkReply::NoError
-         && replyStatusCode >= 200 && replyStatusCode < 300)
+    if (successfulResponse && !invalidCTYResponse)
     {
         qCDebug(runtime) << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
         qCDebug(runtime) << reply->header(QNetworkRequest::KnownHeaders::LocationHeader);
@@ -1116,21 +1140,16 @@ void LOVDownloader::processReply(QNetworkReply *reply)
     }
     else
     {
+        if (invalidCTYResponse)
+            qCWarning(runtime) << "Received invalid CTY data; ignoring response";
         qCDebug(runtime) << "HTTP Status Code" << replyStatusCode;
         qCDebug(runtime) << "Failed to download " << sourceDef.fileName;
 
         reply->deleteLater();
 
         bool fallbackLoaded = false;
-        if ( sourceType == CTY
-             && !isTableFilled(sourceDef.tableName) )
-        {
-            // Cancel stops only the network request. An empty database still
-            // needs the bundled DXCC data.
-            abortRequested = false;
-            qCWarning(runtime) << "Using bundled CTY data";
+        if (sourceType == CTY)
             fallbackLoaded = loadBundledCTY(sourceDef);
-        }
 
         emit finished(fallbackLoaded);
     }

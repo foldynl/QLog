@@ -356,6 +356,8 @@ bool DBSchemaMigration::updateExternalResource(bool force)
 
     QProgressDialog progress;
     progress.setWindowTitle(tr("Updating External Resources"));
+    progress.setAutoClose(false);
+    progress.setAutoReset(false);
 
     connect(&downloader, &LOVDownloader::processingSize,
             &progress, &QProgressDialog::setMaximum);
