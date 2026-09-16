@@ -33,12 +33,12 @@ QSODetailDialog::QSODetailDialog(const QSqlRecord &qso,
     ui(new Ui::QSODetailDialog),
     mapper(new QDataWidgetMapper(this)),
     model(new LogbookModelPrivate(this)),
-    editedRecord(new QSqlRecord(qso)),
-    mapController(new MapPageController(QStringLiteral("qsodetail"), this))
+    editedRecord(new QSqlRecord(qso))
 {
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+    mapController = new MapPageController(QStringLiteral("qsodetail"), ui->mapView);
 
     /* model setting */
     model->setFilter(QString("id = '%1'").arg(qso.value("id").toString()));

@@ -171,9 +171,6 @@ MapPageController::MapPageController(const QString &configID,
 
 MapPageController::~MapPageController()
 {
-    if ( attachedView && attachedView->page() == mainPage )
-        attachedView->setPage(nullptr);
-
     if ( mainPage )
         mainPage->setWebChannel(nullptr);
 

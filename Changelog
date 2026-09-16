@@ -26,6 +26,7 @@ TBC- 0.53.0
 - Fixed empty country selection box when DXCC list download fails (issue #1159)
 - Workaround - Added a bundled DXCC fallback for blocked CTY.CSV downloads
 - Fixed Upload and Download problems make QLog unusable (issue #1163)
+- Fixed QLog crash on exit (issue #1169)
 
 2026/08/21 - 0.52.0
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)

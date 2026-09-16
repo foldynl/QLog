@@ -5,7 +5,7 @@
 #include <QSqlQuery>
 #include <QPieSeries>
 #include <QComboBox>
-#include <QScopedPointer>
+#include <QPointer>
 
 #include "ui/MapPageController.h"
 #include "core/LogLocale.h"
@@ -53,7 +53,7 @@ private:
 
 private:
     Ui::StatisticsWidget *ui;
-    QScopedPointer<MapPageController> mapController;
+    QPointer<MapPageController> mapController;
     LogLocale locale;
     bool initialized = false;
     bool pendingRefresh = true;

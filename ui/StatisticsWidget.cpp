@@ -421,12 +421,12 @@ void StatisticsWidget::changeTheme(int theme, bool isDark)
 
 StatisticsWidget::StatisticsWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::StatisticsWidget),
-    mapController(new MapPageController(QStringLiteral("statistics"), this))
+    ui(new Ui::StatisticsWidget)
 {
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+    mapController = new MapPageController(QStringLiteral("statistics"), ui->mapView);
 
     ui->myCallCombo->setModel(new QStringListModel(this));
     ui->myGridCombo->setModel(new QStringListModel(this));

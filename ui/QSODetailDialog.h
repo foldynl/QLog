@@ -142,7 +142,7 @@ private:
     QPointer<QMovie> lookupButtonMovie;
     qint64 timeLockDiff;
     double freqLockDiff;
-    QScopedPointer<MapPageController> mapController;
+    QPointer<MapPageController> mapController;
     CallbookManager callbookManager;
     QSLManager qslManager;
     QScopedPointer<QCompleter> iotaCompleter;
