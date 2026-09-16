@@ -321,6 +321,10 @@ void StatisticsWidget::refreshGraph()
      {
          ui->stackedWidget->setCurrentIndex(1);
 
+         mapController->attach(ui->mapView,
+                               MapLayer::Grid
+                               | MapLayer::Path);
+
          QStringList confirmed("1=2 ");
 
          if ( ui->eqslCheckBox->isChecked() )
@@ -445,10 +449,6 @@ StatisticsWidget::StatisticsWidget(QWidget *parent) :
 
     ui->graphView->setRenderHint(QPainter::Antialiasing);
     ui->graphView->setChart(new QChart());
-
-    mapController->attach(ui->mapView,
-                          MapLayer::Grid
-                          | MapLayer::Path);
 }
 
 StatisticsWidget::~StatisticsWidget()

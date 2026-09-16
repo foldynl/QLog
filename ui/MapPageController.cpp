@@ -182,7 +182,7 @@ void MapPageController::attach(QWebEngineView *view,
 {
     FCT_IDENTIFICATION;
 
-    if ( !view )
+    if ( !view || (attachedView == view && mapLayers == layers) )
         return;
 
     if ( attachedView )
