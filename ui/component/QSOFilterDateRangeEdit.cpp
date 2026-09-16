@@ -181,7 +181,7 @@ void QSOFilterDateRangeEdit::editCustomRange()
 
     if ( dialog.windowType() == Qt::Popup )
     {
-        dialog.move(mapToGlobal(QPoint(0, height())));
+        dialog.move(mapToGlobal(QPoint(-2*dialog.width(), height())));
         // Cocoa may stack a nested popup behind its parent until its native window exists.
         QTimer::singleShot(0, &dialog, &QWidget::raise);
     }
