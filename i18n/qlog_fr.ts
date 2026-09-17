@@ -2601,57 +2601,57 @@
         <translation>Mise à jour des ressources externes</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="397"/>
+        <location filename="../core/Migration.cpp" line="399"/>
         <source>DXCC Entities</source>
         <translation>Entités DXCC</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="400"/>
+        <location filename="../core/Migration.cpp" line="402"/>
         <source>Sats Info</source>
         <translation>Infos Satellites</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="403"/>
+        <location filename="../core/Migration.cpp" line="405"/>
         <source>SOTA Summits</source>
         <translation>Sommets SOTA</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="406"/>
+        <location filename="../core/Migration.cpp" line="408"/>
         <source>WWFF Records</source>
         <translation>Références WWFF</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="409"/>
+        <location filename="../core/Migration.cpp" line="411"/>
         <source>IOTA Records</source>
         <translation>Références IOTA</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="412"/>
+        <location filename="../core/Migration.cpp" line="414"/>
         <source>POTA Records</source>
         <translation>Références POTA</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="415"/>
+        <location filename="../core/Migration.cpp" line="417"/>
         <source>Membership Directory Records</source>
         <translation>Registres des listes de membres</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="418"/>
+        <location filename="../core/Migration.cpp" line="420"/>
         <source>Clublog CTY.XML</source>
         <translation>Fichier Clublog CTY.XML</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="421"/>
+        <location filename="../core/Migration.cpp" line="423"/>
         <source>List of Values</source>
         <translation>Liste de valeurs</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="425"/>
+        <location filename="../core/Migration.cpp" line="427"/>
         <source>Updating </source>
         <translation>Mise à jour de </translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="438"/>
+        <location filename="../core/Migration.cpp" line="440"/>
         <source> Update Failed</source>
         <translation> Échec de la mise à jour</translation>
     </message>
@@ -9392,72 +9392,72 @@ Sous-mode: %2</translation>
 <context>
     <name>MapPageController</name>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="514"/>
+        <location filename="../ui/MapPageController.cpp" line="511"/>
         <source>Aurora</source>
         <translation>Aurore</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="516"/>
+        <location filename="../ui/MapPageController.cpp" line="513"/>
         <source>Beam</source>
         <translation type="unfinished">Azimut (Beam)</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="518"/>
+        <location filename="../ui/MapPageController.cpp" line="515"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="520"/>
+        <location filename="../ui/MapPageController.cpp" line="517"/>
         <source>Grid</source>
         <translation>Grille/Locator</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="522"/>
+        <location filename="../ui/MapPageController.cpp" line="519"/>
         <source>Gray-Line</source>
         <translation>Ligne de gris (Gray-Line)</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="524"/>
+        <location filename="../ui/MapPageController.cpp" line="521"/>
         <source>Heard Me</source>
         <translation>M’ont entendu</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="526"/>
+        <location filename="../ui/MapPageController.cpp" line="523"/>
         <source>IBP</source>
         <translation>IBP</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="528"/>
+        <location filename="../ui/MapPageController.cpp" line="525"/>
         <source>MUF</source>
         <translation>MUF</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="530"/>
+        <location filename="../ui/MapPageController.cpp" line="527"/>
         <source>WSJTX - CQ</source>
         <translation>WSJTX - Appels CQ</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="532"/>
+        <location filename="../ui/MapPageController.cpp" line="529"/>
         <source>Path</source>
         <translation>Chemin/Trajet</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="646"/>
+        <location filename="../ui/MapPageController.cpp" line="643"/>
         <source>Target Antenna Here</source>
         <translation>Orienter ici</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="647"/>
+        <location filename="../ui/MapPageController.cpp" line="644"/>
         <source>QSO Short Path</source>
         <translation>QSO Trajet Court (SP)</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="648"/>
+        <location filename="../ui/MapPageController.cpp" line="645"/>
         <source>QSO Long Path</source>
         <translation>QSO Trajet Long (LP)</translation>
     </message>
     <message>
-        <location filename="../ui/MapPageController.cpp" line="649"/>
+        <location filename="../ui/MapPageController.cpp" line="646"/>
         <source>Stop Antenna</source>
         <translation>Arrêter l’antenne</translation>
     </message>
@@ -10149,7 +10149,7 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
         <location filename="../core/MembershipQE.cpp" line="211"/>
         <location filename="../core/MembershipQE.cpp" line="338"/>
         <location filename="../core/MembershipQE.cpp" line="345"/>
-        <location filename="../core/Migration.cpp" line="437"/>
+        <location filename="../core/Migration.cpp" line="439"/>
         <location filename="../core/main.cpp" line="462"/>
         <location filename="../ui/ExportDialog.cpp" line="182"/>
         <location filename="../ui/ImportDialog.cpp" line="343"/>
@@ -12369,7 +12369,7 @@ Cette semaine et Ce mois couvrent la période jusqu’à aujourd’hui inclus.</
         <translation>Modifier</translation>
     </message>
     <message>
-        <location filename="../ui/component/QSOFilterDateRangeEdit.cpp" line="79"/>
+        <location filename="../ui/component/QSOFilterDateRangeEdit.cpp" line="80"/>
         <source>%1 – %2 UTC</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15064,7 +15064,7 @@ Veuillez installer TQSL ou spécifier le chemin manuellement.</translation>
         <translation>Non confirmé </translation>
     </message>
     <message>
-        <location filename="../ui/StatisticsWidget.cpp" line="436"/>
+        <location filename="../ui/StatisticsWidget.cpp" line="440"/>
         <source>No User Filter</source>
         <translation>Aucun filtre utilisateur</translation>
     </message>
