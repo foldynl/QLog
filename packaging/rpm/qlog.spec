@@ -65,6 +65,38 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_mandir}/man1/*
 
 %changelog
+* Fri Sep 18 2026 Ladislav Foldyna - 0.53.0-1
+- [NEW] - Online Map - Added Maps localization (issue #873)
+- [NEW] - QSO Filter - Added Clone Profile button (PR #1151 issue #1144 @aa5sh)
+- [NEW] - Alert Rules - Added Clone Rule button (PR #1151 issue #1144 @aa5sh)
+- [NEW] - Activity Manager - Added Clone Activity button
+- [NEW] - Awards - Adding Canada Award, WANA, RAC (PR #1152 issue #1075 @aa5sh @foldynl)
+- [NEW] - Logbook - QSO Filter - Added Change Filter Parameters Widget
+- [NEW] - Logbook - QSO Filter - Added date-time periods today, last week and more
+- [CHANGED] - Online Map - Using vector maps with a fallback to raster maps
+- [CHANGED] - List of Values – use uncompressed files
+- [CHANGED] - NewQSO - Reworked field-clearing algorithm (issue #411)
+- [CHANGED] - NewQSO - Freq field can be switched to Band field (issue #905 @aa5sh @foldynl)
+- [CHANGED] - NewQSO - Separate DXCC satellite statistic tracking
+- [CHANGED] - Settings - Hamlib Interface now prefills default capabilities for newly defined rigs
+- [CHANGED] - Settings - Rig Sharing shows the rigctld parameters set by QLog
+- [CHANGED] - Export - The filename suffix is added when missing (issue #1158)
+- [CHANGED] - Help Discussion instead of Help Mailing List
+- Fixed Hamlib Driver - preparation for Hamlib 5.0
+- Fixed External QSO - Use properly data from a matching Station Profile (issue #1148)
+- Fixed DX Spot frequency rounding - Added one decimal place for kHz (issue #1149)
+- Fixed Online Map - Aurora forecast and MUF wer not displayed west of the prime meridian
+- Fixed Online Map - Chat and Heard Me markers were not displayed across map boundaries
+- Fixed Awards DXCC EME tracking
+- Fixed Awards WAZ can include eQSL
+- Fixed Band-Only QSO processing - DXCC Status, Cabrillo Export, Awards
+- Fixed All dialogs have a title (PR #1150 @Fale)
+- Fixed DXCC Status recalculation after Import QSOs, Delete QSO
+- Fixed empty country selection box when DXCC list download fails (issue #1159)
+- Workaround - Added a bundled DXCC fallback for blocked CTY.CSV downloads
+- Fixed Upload and Download problems make QLog unusable (issue #1163)
+- Fixed QLog crash on exit (issue #1169)
+
 * Fri Aug 21 2026 Ladislav Foldyna - 0.52.0-1
 - [NEW] - QSL Printing - Added Custom Paper Size (issue #1089)
 - [NEW] - FLDigi Logging - Added ADIF UDP logging method (issue #1113)
