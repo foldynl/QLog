@@ -1,8 +1,8 @@
 # QLog packaging builds
 
-The packaging builds run in containers and write their results below `dist/`.
-Podman is used by default, but Docker is also supported. All distro-specific
-dependencies are installed inside the build images.
+The packaging builds run in temporary containers and write their results below
+`dist/`. Podman is used by default, but Docker is also supported. All
+distro-specific dependencies are installed inside the build containers.
 
 The AppImage build uses Qt 6. The RPM build deliberately follows the existing
 Qt 5 `BuildRequires` in `rpm/qlog.spec`.
@@ -78,9 +78,9 @@ architecture arguments and build only for the architecture reported by the
 host. To produce both architectures, run the same scripts once on an x86_64
 system and once on an ARM64 system.
 
-Build-container images are temporary and are removed on success, failure, or
-interruption. The small Fedora/Debian base images remain in the selected
-engine's cache because subsequent builds reuse them.
+Build containers are removed on success, failure, or interruption. The small
+Fedora/Debian base images remain in the selected engine's cache because
+subsequent builds reuse them.
 
 ## Windows
 
@@ -128,7 +128,9 @@ selected runner, not from an emulated container or a build-script argument.
 The aggregate build creates native RPMs for Fedora 43 and 44, then creates a
 native AppImage for the current host. An optional GPG secret key ID or
 fingerprint creates an ASCII-armored detached `.asc` signature for every
-generated RPM, source RPM, and AppImage:
+generated RPM, source RPM, and AppImage. Without a key, matching signatures
+left by an earlier build are removed only for artifacts rebuilt in the current
+run:
 
 ```bash
 ./packaging/build-all.sh

@@ -20,10 +20,10 @@ if [[ -n "$GPG_KEY_ID" ]]; then
         echo "Error: GPG secret key was not found: $GPG_KEY_ID" >&2
         exit 1
     fi
-
-    BUILD_STARTED="$(mktemp)"
-    trap 'rm -f "$BUILD_STARTED"' EXIT
 fi
+
+BUILD_STARTED="$(mktemp)"
+trap 'rm -f "$BUILD_STARTED"' EXIT
 
 for fedora in 43 44; do
     "$ROOT/packaging/rpm/build-container.sh" "$fedora"
@@ -31,23 +31,25 @@ done
 
 "$ROOT/packaging/appimage/build-container.sh"
 
-if [[ -z "$GPG_KEY_ID" ]]; then
-    exit 0
+if [[ -n "$GPG_KEY_ID" ]]; then
+    echo
+    echo "Signing artifacts with GPG key $GPG_KEY_ID:"
 fi
 
-echo
-echo "Signing artifacts with GPG key $GPG_KEY_ID:"
-
-signed=0
+processed=0
 while IFS= read -r -d '' artifact; do
-    gpg --batch --yes --local-user "$GPG_KEY_ID" --armor --detach-sign \
-        --output "$artifact.asc" "$artifact"
-    echo "$artifact.asc"
-    signed=1
+    if [[ -n "$GPG_KEY_ID" ]]; then
+        gpg --batch --yes --local-user "$GPG_KEY_ID" --armor --detach-sign \
+            --output "$artifact.asc" "$artifact"
+        echo "$artifact.asc"
+    else
+        rm -f -- "$artifact.asc"
+    fi
+    processed=1
 done < <(find "$ROOT/dist/rpm" "$ROOT/dist/appimage" -type f \
     \( -name '*.rpm' -o -name '*.AppImage' \) -newer "$BUILD_STARTED" -print0)
 
-if [[ $signed -eq 0 ]]; then
-    echo "Error: no artifacts were found to sign." >&2
+if [[ $processed -eq 0 ]]; then
+    echo "Error: no artifacts were created." >&2
     exit 1
 fi

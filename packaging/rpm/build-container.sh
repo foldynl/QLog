@@ -30,16 +30,13 @@ if ! command -v "$CONTAINER_ENGINE" >/dev/null 2>&1; then
     exit 1
 fi
 
-BUILD_OPTIONS=(--rm --force-rm)
 RUN_OPTIONS=(--rm --security-opt label=disable)
 
 case "${CONTAINER_ENGINE##*/}" in
     podman)
-        BUILD_OPTIONS+=(--layers=false)
         RUN_OPTIONS+=(--userns=keep-id)
         ;;
     docker)
-        RUN_OPTIONS+=(--user "$(id -u):$(id -g)")
         ;;
     *)
         echo "Error: supported container engines are podman and docker." >&2
@@ -47,42 +44,17 @@ case "${CONTAINER_ENGINE##*/}" in
         ;;
 esac
 
-IMAGE="localhost/qlog-rpm-build:f${FEDORA}-${ARCH}-$$"
+BASE_IMAGE="registry.fedoraproject.org/fedora:${FEDORA}"
 
 echo "Building QLog RPM for Fedora $FEDORA natively on $ARCH with ${CONTAINER_ENGINE##*/}"
 
-cleanup()
-{
-    local status=$?
-    local cleanup_status=0
-
-    trap - EXIT
-
-    if "$CONTAINER_ENGINE" image inspect "$IMAGE" >/dev/null 2>&1; then
-        echo "Removing temporary build image $IMAGE"
-        "$CONTAINER_ENGINE" image rm --force "$IMAGE" >/dev/null || cleanup_status=$?
-    fi
-
-    if [[ $status -eq 0 && $cleanup_status -ne 0 ]]; then
-        status=$cleanup_status
-    fi
-
-    exit "$status"
-}
-
-trap cleanup EXIT
-
-"$CONTAINER_ENGINE" build \
-    "${BUILD_OPTIONS[@]}" \
-    --build-arg FEDORA_VERSION="$FEDORA" \
-    -f "$ROOT/packaging/rpm/Containerfile" \
-    -t "$IMAGE" \
-    "$ROOT/packaging/rpm"
-
 "$CONTAINER_ENGINE" run \
     "${RUN_OPTIONS[@]}" \
+    --user 0:0 \
     -e HOME=/tmp \
+    -e HOST_UID="$(id -u)" \
+    -e HOST_GID="$(id -g)" \
     -v "$ROOT:/src" \
     -w /src \
-    "$IMAGE" \
-    ./packaging/rpm/build.sh
+    "$BASE_IMAGE" \
+    ./packaging/rpm/build-in-container.sh
