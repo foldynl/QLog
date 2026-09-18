@@ -126,9 +126,11 @@ selected runner, not from an emulated container or a build-script argument.
 ## All default builds
 
 The aggregate build creates native RPMs for Fedora 43 and 44, then creates a
-native AppImage for the current host:
+native AppImage for the current host. An optional GPG secret key ID or
+fingerprint creates an ASCII-armored detached `.asc` signature for every
+generated RPM, source RPM, and AppImage:
 
 ```bash
 ./packaging/build-all.sh
-CONTAINER_ENGINE=docker ./packaging/build-all.sh
+./packaging/build-all.sh 0C671AC7DEBDC8AC0C349269C214374D823D58CE
 ```
