@@ -42,10 +42,16 @@
        <item>
         <widget class="QPushButton" name="menuButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>16777215</height>
+          </size>
          </property>
          <property name="focusPolicy">
           <enum>Qt::ClickFocus</enum>
