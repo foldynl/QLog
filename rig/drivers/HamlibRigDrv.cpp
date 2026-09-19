@@ -715,6 +715,8 @@ void HamlibRigDrv::checkChanges()
 {
     FCT_IDENTIFICATION;
 
+    checkVFOChange();
+
     if ( !checkFreqChange() )
         return;
 
@@ -723,7 +725,6 @@ void HamlibRigDrv::checkChanges()
     if ( !checkModeChange() )
         return;
 
-    checkVFOChange();
     checkSplitChange();
     checkPWRChange();
     checkRITChange();
