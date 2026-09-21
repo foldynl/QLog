@@ -477,8 +477,6 @@ public:
     static void setQslLabelCustomPageHeight(double height);
     static QString getQslLabelImageExportPath(const QString &defaultPath);
     static void setQslLabelImageExportPath(const QString &path);
-    static int getQslLabelCustomPageSize();
-    static void setQslLabelCustomPageSize(int pageSizeIndex);
     static int getQslLabelCustomCols();
     static void setQslLabelCustomCols(int cols);
     static int getQslLabelCustomRows();
@@ -517,6 +515,12 @@ public:
     static void setQslLabelCardBackgroundImage(const QImage &image);
     static bool getQslLabelPrintBorders();
     static void setQslLabelPrintBorders(bool enabled);
+    static int getQslLabelOrder();
+    static void setQslLabelOrder(int order);
+    static bool getQslLabelPrintQslManager();
+    static void setQslLabelPrintQslManager(bool enabled);
+    static bool getQslLabelPrintRoutePrefix();
+    static void setQslLabelPrintRoutePrefix(bool enabled);
     static QString getQslLabelDateFormat();
     static void setQslLabelDateFormat(const QString &format);
     static QString getQslLabelSansFont();

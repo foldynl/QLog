@@ -245,9 +245,6 @@ Data::Data(QObject *parent) :
     loadPOTA();
     loadTZ();
 
-
-    // dxcc_prefixes_ad1c.exact DESC, dxcc_prefixes_ad1c.prefix DESC
-    // is used because it prefers an exact-match record over a partial-match records
     isDXCCQueryValid = queryDXCC.prepare(
                 "SELECT "
                 "    dxcc_entities_ad1c.id, "
@@ -270,9 +267,8 @@ Data::Data(QObject *parent) :
                 "    dxcc_prefixes_ad1c.exact "
                 "FROM dxcc_prefixes_ad1c "
                 "INNER JOIN dxcc_entities_ad1c ON (dxcc_prefixes_ad1c.dxcc = dxcc_entities_ad1c.id) "
-                "WHERE (dxcc_prefixes_ad1c.prefix = :callsign and dxcc_prefixes_ad1c.exact = true) "
-                "    OR (dxcc_prefixes_ad1c.exact = false and :callsign LIKE dxcc_prefixes_ad1c.prefix || '%') "
-                "ORDER BY dxcc_prefixes_ad1c.exact DESC, dxcc_prefixes_ad1c.prefix DESC "
+                "WHERE dxcc_prefixes_ad1c.prefix = :prefix "
+                "  AND dxcc_prefixes_ad1c.exact = :exact "
                 "LIMIT 1 "
                 );
 
@@ -1497,15 +1493,34 @@ DxccEntity Data::lookupDxccAD1C(const QString &callsign)
             }
         }
 
-        queryDXCC.bindValue(":callsign", lookupPrefix);
-
-        if ( ! queryDXCC.exec() )
+        bool queryFailed = false;
+        const auto findPrefix = [this, &queryFailed](const QString &prefix, bool exact)
         {
-            qWarning() << "Cannot execute Select statement" << queryDXCC.lastError() << queryDXCC.lastQuery();
-            return DxccEntity();
-        }
+            queryDXCC.bindValue(":prefix", prefix);
+            queryDXCC.bindValue(":exact", exact);
 
-        if ( queryDXCC.next() )
+            if ( !queryDXCC.exec() )
+            {
+                qWarning() << "Cannot execute Select statement" << queryDXCC.lastError() << queryDXCC.lastQuery();
+                queryFailed = true;
+                return false;
+            }
+
+            return queryDXCC.next();
+        };
+
+        bool found = findPrefix(lookupPrefix, true);
+
+        // Probe longest to shortest so the (prefix, exact) index can be used.
+        // Uppercase preserves the case-insensitive behavior of the previous LIKE expression.
+        const QString partialLookupPrefix = lookupPrefix.toUpper();
+        for ( int length = partialLookupPrefix.size(); !found && !queryFailed && length > 0; --length )
+            found = findPrefix(partialLookupPrefix.left(length), false);
+
+        if ( queryFailed )
+            return DxccEntity();
+
+        if ( found )
         {
             dxccRet.dxcc = queryDXCC.value(0).toInt();
             dxccRet.country = queryDXCC.value(1).toString();

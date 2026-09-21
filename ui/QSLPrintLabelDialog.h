@@ -4,11 +4,17 @@
 #include <QColor>
 #include <QDialog>
 #include <QImage>
+#include <QPixmap>
+#include <QScopedPointer>
+#include <QTimer>
+#include <QVariantMap>
 
 #include "core/LogLocale.h"
+#include "core/QSLLabelBuilder.h"
 #include "core/QSLPrintLabelRenderer.h"
 
 class QSqlQuery;
+class QToolButton;
 
 namespace Ui {
 class QSLPrintLabelDialog;
@@ -23,13 +29,10 @@ public:
     ~QSLPrintLabelDialog();
 
 private slots:
-    void toggleDateRange();
-    void toggleMyCallsign();
-    void toggleStationProfile();
-    void toggleQslSent();
-    void toggleUserFilter();
+    void filterChanged();
     void refreshData();
-    void updatePreview();
+    void refreshLabels();
+    void refreshPreview();
     void prevPage();
     void nextPage();
     void print();
@@ -52,19 +55,45 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
+    enum class UpdateLevel
+    {
+        None = 0,
+        Preview,
+        Labels,
+        Data
+    };
+
+    struct ContactFilter
+    {
+        QString whereClause;
+        QVariantMap bindings;
+
+        void bind(QSqlQuery &query) const;
+    };
+
     Ui::QSLPrintLabelDialog *ui;
+    QScopedPointer<QSLLabelBuilder> labelBuilder;
     LogLocale locale;
     QSLPrintLabelRenderer renderer;
     QList<QSLLabelData> labelsData;
     QImage cardBackgroundImageData;
+    QPixmap previewPagePixmap;
     QColor labelTextColor;
     QColor cardLabelBackgroundColor;
     int currentPage = 0;
     int zoomPercent = 100;
+    QTimer refreshTimer;
+    UpdateLevel pendingUpdate = UpdateLevel::None;
 
-    void buildLabels();
-    QString buildWhereClause() const;
-    void bindWhereClause(QSqlQuery &query) const;
+    void loadData();
+    void rebuildLabels();
+    void scheduleUpdate(UpdateLevel level);
+    void applyPendingUpdate();
+    void showRefreshState(const QString &message);
+    void renderCurrentPage();
+    void scalePreview();
+    void refreshPreviewFromFirstPage();
+    ContactFilter currentFilter() const;
     void askAndMarkQslSent();
     void updatePageNavigation();
     void saveSettings();
@@ -74,6 +103,7 @@ private:
     LabelTemplate buildCustomTemplate() const;
     LabelTemplate currentLabelTemplate() const;
     QSLPrintMode currentPrintMode() const;
+    QSLLabelOrder currentLabelOrder() const;
     QPageSize::PageSizeId currentOutputPageSizeId() const;
     QPageSize currentOutputPageSize() const;
     QSLCardLayout buildCardLayout() const;
@@ -86,6 +116,8 @@ private:
     void updateLabelTextColorUi();
     void updateCardLabelBackgroundColorUi();
     void updateCardBackgroundUi();
+    void updateFilterUi();
+    void setupCollapsibleSection(QToolButton *button, QWidget *content);
     void populateExtraColumnCombo();
     void populateQSLSentCombo();
 };

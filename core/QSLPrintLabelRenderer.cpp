@@ -233,6 +233,13 @@ void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
     const QString toRadioText = styleOptions.toRadioText.isEmpty() ? "To Radio" : styleOptions.toRadioText;
     painter->drawText(toRadioRect, Qt::AlignLeft | Qt::AlignVCenter, toRadioText);
 
+    if ( styleOptions.showQslManager && !label.qslManager.isEmpty() )
+    {
+        painter->drawText(toRadioRect,
+                          Qt::AlignRight | Qt::AlignVCenter,
+                          QStringLiteral("via %1").arg(label.qslManager));
+    }
+
     painter->setFont(fontCallsign);
     painter->drawText(toRadioRect, Qt::AlignHCenter | Qt::AlignVCenter, label.callsign);
 
@@ -366,11 +373,60 @@ void QSLPrintLabelRenderer::drawLabel(QPainter *painter,
 
     painter->setFont(fontFooter);
 
-    if ( !footerLeft.isEmpty() )
-        painter->drawText(footerRect, Qt::AlignLeft | Qt::AlignVCenter, footerLeft);
+    const qreal footerGap = mmToUnits(1.0, device);
+    qreal footerLeftEdge = footerRect.left();
 
-    if ( !footerRight.isEmpty() )
-        painter->drawText(footerRect, Qt::AlignRight | Qt::AlignVCenter, footerRight);
+    if ( styleOptions.showRoutePrefix && !label.routePrefix.isEmpty() )
+    {
+        const QString prefix = fmFooter.elidedText(label.routePrefix,
+                                                   Qt::ElideRight,
+                                                   footerRect.width());
+        const qreal prefixWidth = fmFooter.horizontalAdvance(prefix);
+        const QRectF prefixRect(footerLeftEdge, footerRect.top(), prefixWidth, footerRect.height());
+        painter->drawText(prefixRect, Qt::AlignLeft | Qt::AlignVCenter, prefix);
+        footerLeftEdge += prefixWidth + footerGap;
+    }
+
+    const qreal availableWidth = qMax(0.0, footerRect.right() - footerLeftEdge);
+    qreal leftWidth = footerLeft.isEmpty() ? 0.0 : availableWidth;
+    qreal rightWidth = footerRight.isEmpty() ? 0.0 : availableWidth;
+
+    if ( !footerLeft.isEmpty() && !footerRight.isEmpty() )
+    {
+        const qreal textWidth = qMax(0.0, availableWidth - footerGap);
+        const qreal requestedLeft = fmFooter.horizontalAdvance(footerLeft);
+        const qreal requestedRight = fmFooter.horizontalAdvance(footerRight);
+
+        if ( requestedLeft + requestedRight <= textWidth )
+        {
+            rightWidth = requestedRight;
+            leftWidth = textWidth - rightWidth;
+        }
+        else
+        {
+            leftWidth = textWidth / 2.0;
+            rightWidth = textWidth - leftWidth;
+        }
+    }
+
+    if ( !footerLeft.isEmpty() && leftWidth > 0.0 )
+    {
+        const QString text = fmFooter.elidedText(footerLeft, Qt::ElideRight, leftWidth);
+        painter->drawText(QRectF(footerLeftEdge, footerRect.top(), leftWidth, footerRect.height()),
+                          Qt::AlignLeft | Qt::AlignVCenter,
+                          text);
+    }
+
+    if ( !footerRight.isEmpty() && rightWidth > 0.0 )
+    {
+        const QString text = fmFooter.elidedText(footerRight, Qt::ElideLeft, rightWidth);
+        painter->drawText(QRectF(footerRect.right() - rightWidth,
+                                 footerRect.top(),
+                                 rightWidth,
+                                 footerRect.height()),
+                          Qt::AlignRight | Qt::AlignVCenter,
+                          text);
+    }
 }
 
 void QSLPrintLabelRenderer::drawPage(QPainter *painter, int pageIndex)

@@ -1,6 +1,8 @@
 #include "ui/QSLPrintLabelDialog.h"
 #include "ui_QSLPrintLabelDialog.h"
 
+#include <utility>
+
 #include <QDir>
 #include <QColorDialog>
 #include <QFile>
@@ -22,18 +24,22 @@
 #include "core/debug.h"
 #include "core/LogParam.h"
 #include "core/QSOFilterManager.h"
+#include "data/Data.h"
 #include "data/StationProfile.h"
 #include "models/SqlListModel.h"
-#include "data/Data.h"
 #include "ui/component/LogbookFieldComboBox.h"
 
 MODULE_IDENTIFICATION("qlog.ui.qslprintlabeldialog");
 
 QSLPrintLabelDialog::QSLPrintLabelDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::QSLPrintLabelDialog)
+    ui(new Ui::QSLPrintLabelDialog),
+    labelBuilder(new QSLLabelBuilder)
 {
     FCT_IDENTIFICATION;
+
+    refreshTimer.setSingleShot(true);
+    connect(&refreshTimer, &QTimer::timeout, this, &QSLPrintLabelDialog::applyPendingUpdate);
 
     ui->setupUi(this);
 
@@ -50,6 +56,10 @@ QSLPrintLabelDialog::QSLPrintLabelDialog(QWidget *parent) :
 
     ui->printModeComboBox->addItem(tr("Label Sheet"), static_cast<int>(QSLPrintMode::LabelSheet));
     ui->printModeComboBox->addItem(tr("QSL Card"), static_cast<int>(QSLPrintMode::DirectCard));
+
+    ui->orderComboBox->addItem(tr("Callsign"), static_cast<int>(QSLLabelOrder::Callsign));
+    ui->orderComboBox->addItem(tr("QSL Route"), static_cast<int>(QSLLabelOrder::QslRoute));
+
     ui->printPageSizeComboBox->addItem("A4", static_cast<int>(QPageSize::A4));
     ui->printPageSizeComboBox->addItem("Letter", static_cast<int>(QPageSize::Letter));
     ui->printPageSizeComboBox->addItem(tr("Custom"), static_cast<int>(QPageSize::Custom));
@@ -59,12 +69,6 @@ QSLPrintLabelDialog::QSLPrintLabelDialog(QWidget *parent) :
     for ( const LabelTemplate &tmpl : templates )
         ui->templateComboBox->addItem(tmpl.name);
     ui->templateComboBox->addItem(tr("Custom"));
-
-    /* Populate page size combo */
-    ui->pageSizeComboBox->addItem("A4", static_cast<int>(QPageSize::A4));
-    ui->pageSizeComboBox->addItem("Letter", static_cast<int>(QPageSize::Letter));
-    ui->pageSizeLabel->setVisible(false);
-    ui->pageSizeComboBox->setVisible(false);
 
     /* Populate callsign combo */
     ui->myCallsignComboBox->setModel(new SqlListModel("SELECT DISTINCT UPPER(station_callsign) FROM contacts ORDER BY station_callsign",
@@ -97,38 +101,19 @@ QSLPrintLabelDialog::QSLPrintLabelDialog(QWidget *parent) :
     ui->endDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->endDateEdit->setDate(QDate::currentDate());
 
-    /* Section collapse/expand -- toggle maxHeight and arrow direction.
-     * Using maxHeight instead of setVisible keeps the widget in layout
-     * calculations so the scroll area's width is always correct. */
-    connect(ui->filterSectionButton, &QToolButton::toggled, this, [this](bool checked)
-    {
-        ui->filterSectionButton->setArrowType(checked ? Qt::DownArrow : Qt::RightArrow);
-        ui->filterSectionContent->setMaximumHeight(checked ? QWIDGETSIZE_MAX : 0);
-    });
-    connect(ui->templateSectionButton, &QToolButton::toggled, this, [this](bool checked)
-    {
-        ui->templateSectionButton->setArrowType(checked ? Qt::DownArrow : Qt::RightArrow);
-        ui->templateSectionContent->setMaximumHeight(checked ? QWIDGETSIZE_MAX : 0);
-    });
-    connect(ui->cardSectionButton, &QToolButton::toggled, this, [this](bool checked)
-    {
-        ui->cardSectionButton->setArrowType(checked ? Qt::DownArrow : Qt::RightArrow);
-        ui->cardSectionContent->setMaximumHeight(checked ? QWIDGETSIZE_MAX : 0);
-    });
-    connect(ui->printOptionsSectionButton, &QToolButton::toggled, this, [this](bool checked)
-    {
-        ui->printOptionsSectionButton->setArrowType(checked ? Qt::DownArrow : Qt::RightArrow);
-        ui->printOptionsSectionContent->setMaximumHeight(checked ? QWIDGETSIZE_MAX : 0);
-    });
+    setupCollapsibleSection(ui->filterSectionButton, ui->filterSectionContent);
+    setupCollapsibleSection(ui->templateSectionButton, ui->templateSectionContent);
+    setupCollapsibleSection(ui->cardSectionButton, ui->cardSectionContent);
+    setupCollapsibleSection(ui->printOptionsSectionButton, ui->printOptionsSectionContent);
 
-    /* Load persisted settings and refresh data BEFORE connecting signals
-     * to avoid triggering a refresh storm during initialization */
+    /* Child signals stay blocked while persisted settings are restored. */
     loadSettings();
+    updateFilterUi();
 
     for ( QWidget *w : widgets )
         w->blockSignals(false);
 
-    QTimer::singleShot(0, this, &QSLPrintLabelDialog::refreshData);
+    refreshData();
 
     QScroller::grabGesture(ui->previewScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     ui->previewScrollArea->viewport()->installEventFilter(this);
@@ -142,6 +127,17 @@ QSLPrintLabelDialog::~QSLPrintLabelDialog()
 
     saveSettings();
     delete ui;
+}
+
+void QSLPrintLabelDialog::setupCollapsibleSection(QToolButton *button, QWidget *content)
+{
+    FCT_IDENTIFICATION;
+
+    connect(button, &QToolButton::toggled, this, [button, content](bool checked)
+    {
+        button->setArrowType(checked ? Qt::DownArrow : Qt::RightArrow);
+        content->setMaximumHeight(checked ? QWIDGETSIZE_MAX : 0);
+    });
 }
 
 void QSLPrintLabelDialog::loadSettings()
@@ -163,6 +159,10 @@ void QSLPrintLabelDialog::loadSettings()
 
     int printModeIdx = ui->printModeComboBox->findData(LogParam::getQslLabelPrintMode());
     ui->printModeComboBox->setCurrentIndex(printModeIdx >= 0 ? printModeIdx : 0);
+    int orderIdx = ui->orderComboBox->findData(LogParam::getQslLabelOrder());
+    ui->orderComboBox->setCurrentIndex(orderIdx >= 0 ? orderIdx : 0);
+    ui->qslManagerCheckBox->setChecked(LogParam::getQslLabelPrintQslManager());
+    ui->routePrefixCheckBox->setChecked(LogParam::getQslLabelPrintRoutePrefix());
     int outputPageSizeIdx = ui->printPageSizeComboBox->findData(LogParam::getQslLabelPageSize());
     ui->printPageSizeComboBox->setCurrentIndex(outputPageSizeIdx >= 0 ? outputPageSizeIdx : 0);
     ui->customPageWidthSpinBox->setValue(LogParam::getQslLabelCustomPageWidth());
@@ -202,9 +202,6 @@ void QSLPrintLabelDialog::loadSettings()
     ui->dataSizeSpinBox->setValue(LogParam::getQslLabelFontSizeData());
 
     /* Load custom template fields from LogParam */
-    int pageSizeIdx = LogParam::getQslLabelCustomPageSize();
-    if ( pageSizeIdx >= 0 && pageSizeIdx < ui->pageSizeComboBox->count() )
-        ui->pageSizeComboBox->setCurrentIndex(pageSizeIdx);
     ui->colsSpinBox->setValue(LogParam::getQslLabelCustomCols());
     ui->rowsSpinBox->setValue(LogParam::getQslLabelCustomRows());
     ui->labelWidthSpinBox->setValue(LogParam::getQslLabelCustomLabelWidth());
@@ -256,6 +253,9 @@ void QSLPrintLabelDialog::saveSettings()
     LogParam::setQslLabelCustomPageWidth(ui->customPageWidthSpinBox->value());
     LogParam::setQslLabelCustomPageHeight(ui->customPageHeightSpinBox->value());
     LogParam::setQslLabelPrintBorders(ui->printBordersCheckBox->isChecked());
+    LogParam::setQslLabelOrder(ui->orderComboBox->currentData().toInt());
+    LogParam::setQslLabelPrintQslManager(ui->qslManagerCheckBox->isChecked());
+    LogParam::setQslLabelPrintRoutePrefix(ui->routePrefixCheckBox->isChecked());
     LogParam::setQslLabelDateFormat(ui->dateFormatEdit->text());
     LogParam::setQslLabelSansFont(ui->sansFontComboBox->currentFont().family());
     LogParam::setQslLabelMonoFont(ui->monoFontComboBox->currentFont().family());
@@ -275,7 +275,6 @@ void QSLPrintLabelDialog::saveSettings()
     LogParam::setQslLabelFontSizeData(ui->dataSizeSpinBox->value());
 
     /* Save custom template fields */
-    LogParam::setQslLabelCustomPageSize(ui->pageSizeComboBox->currentIndex());
     LogParam::setQslLabelCustomCols(ui->colsSpinBox->value());
     LogParam::setQslLabelCustomRows(ui->rowsSpinBox->value());
     LogParam::setQslLabelCustomLabelWidth(ui->labelWidthSpinBox->value());
@@ -300,7 +299,6 @@ void QSLPrintLabelDialog::populateTemplateFields(const LabelTemplate &tmpl)
 {
     FCT_IDENTIFICATION;
 
-    const QSignalBlocker pageSizeBlocker(ui->pageSizeComboBox);
     const QSignalBlocker colsBlocker(ui->colsSpinBox);
     const QSignalBlocker rowsBlocker(ui->rowsSpinBox);
     const QSignalBlocker labelWidthBlocker(ui->labelWidthSpinBox);
@@ -309,10 +307,6 @@ void QSLPrintLabelDialog::populateTemplateFields(const LabelTemplate &tmpl)
     const QSignalBlocker topMarginBlocker(ui->topMarginSpinBox);
     const QSignalBlocker hSpacingBlocker(ui->hSpacingSpinBox);
     const QSignalBlocker vSpacingBlocker(ui->vSpacingSpinBox);
-
-    int pageSizeIdx = ui->pageSizeComboBox->findData(static_cast<int>(tmpl.pageSize));
-    if ( pageSizeIdx >= 0 )
-        ui->pageSizeComboBox->setCurrentIndex(pageSizeIdx);
 
     ui->colsSpinBox->setValue(tmpl.cols);
     ui->rowsSpinBox->setValue(tmpl.rows);
@@ -328,7 +322,6 @@ void QSLPrintLabelDialog::setTemplateFieldsEnabled(bool enabled)
 {
     FCT_IDENTIFICATION;
 
-    ui->pageSizeComboBox->setEnabled(enabled);
     ui->colsSpinBox->setEnabled(enabled);
     ui->rowsSpinBox->setEnabled(enabled);
     ui->labelWidthSpinBox->setEnabled(enabled);
@@ -376,6 +369,13 @@ QSLPrintMode QSLPrintLabelDialog::currentPrintMode() const
     FCT_IDENTIFICATION;
 
     return static_cast<QSLPrintMode>(ui->printModeComboBox->currentData().toInt());
+}
+
+QSLLabelOrder QSLPrintLabelDialog::currentLabelOrder() const
+{
+    FCT_IDENTIFICATION;
+
+    return static_cast<QSLLabelOrder>(ui->orderComboBox->currentData().toInt());
 }
 
 QPageSize::PageSizeId QSLPrintLabelDialog::currentOutputPageSizeId() const
@@ -438,6 +438,8 @@ LabelStyleOptions QSLPrintLabelDialog::buildStyleOptions() const
     styleOpts.extraColumnHeader = (extraCol.isEmpty() || ui->extraColumnComboBox->currentIndex() == 0) ? QString()
                                   : (customHeader.isEmpty() ? extraCol : customHeader);
     styleOpts.maxQsoRows = ui->maxRowsSpinBox->value();
+    styleOpts.showQslManager = ui->qslManagerCheckBox->isChecked();
+    styleOpts.showRoutePrefix = ui->routePrefixCheckBox->isChecked();
 
     const QString toRadioText = ui->toRadioTextEdit->text().trimmed();
     if ( !toRadioText.isEmpty() )
@@ -495,7 +497,7 @@ QString QSLPrintLabelDialog::imageExportFileName(const QSLLabelData &label, int 
     QString sanitized;
     sanitized.reserve(base.size());
 
-    for ( const QChar &ch : base )
+    for ( const QChar &ch : static_cast<const QString &>(base) )
     {
         if ( ch.isLetterOrNumber() || ch == '_' || ch == '-' )
             sanitized += ch;
@@ -508,12 +510,9 @@ QString QSLPrintLabelDialog::imageExportFileName(const QSLLabelData &label, int 
 
     sanitized = sanitized.trimmed();
 
-    if ( sanitized.startsWith("_") )
-        sanitized.remove(0, 1);
-    if ( sanitized.endsWith("_") )
-        sanitized.chop(1);
-    if ( sanitized.isEmpty() )
-        sanitized = QStringLiteral("qsl_card");
+    if ( sanitized.startsWith("_") ) sanitized.remove(0, 1);
+    if ( sanitized.endsWith("_") ) sanitized.chop(1);
+    if ( sanitized.isEmpty() ) sanitized = QStringLiteral("qsl_card");
 
     return QString("%1_%2.jpg").arg(sanitized, QString::number(index + 1).rightJustified(3, '0'));
 }
@@ -522,6 +521,7 @@ void QSLPrintLabelDialog::updateRendererOptions()
 {
     FCT_IDENTIFICATION;
 
+    renderer.setTemplate(currentLabelTemplate());
     renderer.setPrintMode(currentPrintMode());
     renderer.setPageSize(currentOutputPageSize());
     renderer.setFooterLeft(ui->footerLeftEdit->text());
@@ -592,6 +592,35 @@ void QSLPrintLabelDialog::updateCardBackgroundUi()
     ui->clearCardBackgroundButton->setEnabled(hasImage);
 }
 
+void QSLPrintLabelDialog::updateFilterUi()
+{
+    FCT_IDENTIFICATION;
+
+    const bool dateRangeEnabled = ui->dateRangeCheckBox->isChecked();
+    const bool myCallsignEnabled = ui->myCallsignCheckBox->isChecked();
+    const bool stationProfileEnabled = ui->stationProfileCheckBox->isChecked();
+
+    ui->startDateEdit->setEnabled(dateRangeEnabled);
+    ui->endDateEdit->setEnabled(dateRangeEnabled);
+    ui->myCallsignComboBox->setEnabled(myCallsignEnabled);
+    ui->stationProfileComboBox->setEnabled(stationProfileEnabled);
+    ui->qslSentComboBox->setEnabled(ui->qslSentCheckBox->isChecked());
+    ui->userFilterComboBox->setEnabled(ui->userFilterCheckBox->isChecked());
+
+    if ( stationProfileEnabled )
+    {
+        const StationProfile &profile = StationProfilesManager::instance()->getProfile(
+            ui->stationProfileComboBox->currentText());
+        ui->stationProfileComboBox->setToolTip(tr("QSOs matching this station profile")
+                                               + "<br/>"
+                                               + profile.toHTMLString());
+    }
+    else
+    {
+        ui->stationProfileComboBox->setToolTip({});
+    }
+}
+
 void QSLPrintLabelDialog::populateExtraColumnCombo()
 {
     FCT_IDENTIFICATION;
@@ -605,9 +634,11 @@ void QSLPrintLabelDialog::populateExtraColumnCombo()
 void QSLPrintLabelDialog::populateQSLSentCombo()
 {
     FCT_IDENTIFICATION;
+
     QMapIterator<QString, QString> iter(Data::instance()->qslSentEnum);
     int iter_index = 0;
     int value_index = 0;
+
     while ( iter.hasNext() )
     {
         iter.next();
@@ -619,58 +650,16 @@ void QSLPrintLabelDialog::populateQSLSentCombo()
     ui->qslSentComboBox->setCurrentIndex(value_index);
 }
 
-void QSLPrintLabelDialog::toggleDateRange()
+void QSLPrintLabelDialog::filterChanged()
 {
     FCT_IDENTIFICATION;
 
-    ui->startDateEdit->setEnabled(ui->dateRangeCheckBox->isChecked());
-    ui->endDateEdit->setEnabled(ui->dateRangeCheckBox->isChecked());
-    refreshData();
-}
-
-void QSLPrintLabelDialog::toggleMyCallsign()
-{
-    FCT_IDENTIFICATION;
-
-    ui->myCallsignComboBox->setEnabled(ui->myCallsignCheckBox->isChecked());
-    if ( ui->myCallsignCheckBox->isChecked() )
+    if ( sender() == ui->myCallsignCheckBox && ui->myCallsignCheckBox->isChecked() )
         ui->stationProfileCheckBox->setChecked(false);
-    refreshData();
-}
-
-void QSLPrintLabelDialog::toggleStationProfile()
-{
-    FCT_IDENTIFICATION;
-
-    ui->stationProfileComboBox->setEnabled(ui->stationProfileCheckBox->isChecked());
-    if ( ui->stationProfileCheckBox->isChecked() )
-    {
-        const StationProfile &selectedStationProfile = StationProfilesManager::instance()->getProfile(ui->stationProfileComboBox->currentText());
-        const QString toolTip = tr("QSOs matching this station profile")
-                                + "<br/>"
-                                + selectedStationProfile.toHTMLString();
-        ui->stationProfileComboBox->setToolTip(toolTip);
-
+    else if ( sender() == ui->stationProfileCheckBox && ui->stationProfileCheckBox->isChecked() )
         ui->myCallsignCheckBox->setChecked(false);
-    }
-    else
-        ui->stationProfileComboBox->setToolTip({});
-    refreshData();
-}
 
-void QSLPrintLabelDialog::toggleQslSent()
-{
-    FCT_IDENTIFICATION;
-
-    ui->qslSentComboBox->setEnabled(ui->qslSentCheckBox->isChecked());
-    refreshData();
-}
-
-void QSLPrintLabelDialog::toggleUserFilter()
-{
-    FCT_IDENTIFICATION;
-
-    ui->userFilterComboBox->setEnabled(ui->userFilterCheckBox->isChecked());
+    updateFilterUi();
     refreshData();
 }
 
@@ -700,7 +689,7 @@ void QSLPrintLabelDialog::templateChanged(int index)
         setTemplateFieldsEnabled(true);
     }
 
-    refreshData();
+    refreshPreviewFromFirstPage();
 }
 
 void QSLPrintLabelDialog::skipChanged(int value)
@@ -709,7 +698,7 @@ void QSLPrintLabelDialog::skipChanged(int value)
     qCDebug(function_parameters) << value;
 
     renderer.setSkipLabels(value);
-    updatePreview();
+    refreshPreview();
 }
 
 void QSLPrintLabelDialog::zoomChanged(int value)
@@ -718,7 +707,7 @@ void QSLPrintLabelDialog::zoomChanged(int value)
     qCDebug(function_parameters) << value;
 
     zoomPercent = value;
-    updatePreview();
+    scalePreview();
 }
 
 void QSLPrintLabelDialog::customTemplateFieldChanged()
@@ -732,7 +721,7 @@ void QSLPrintLabelDialog::customTemplateFieldChanged()
     if ( index >= 0 && index < templates.size() )
         return;
 
-    refreshData();
+    refreshPreviewFromFirstPage();
 }
 
 void QSLPrintLabelDialog::outputPageSizeChanged()
@@ -740,7 +729,7 @@ void QSLPrintLabelDialog::outputPageSizeChanged()
     FCT_IDENTIFICATION;
 
     updateOutputPageSizeUi();
-    refreshData();
+    refreshPreviewFromFirstPage();
 }
 
 void QSLPrintLabelDialog::printModeChanged(int index)
@@ -749,7 +738,7 @@ void QSLPrintLabelDialog::printModeChanged(int index)
     qCDebug(function_parameters) << index;
 
     updatePrintModeUi();
-    refreshData();
+    refreshPreviewFromFirstPage();
 }
 
 void QSLPrintLabelDialog::cardLayoutChanged()
@@ -757,7 +746,7 @@ void QSLPrintLabelDialog::cardLayoutChanged()
     FCT_IDENTIFICATION;
 
     updateCardLabelBackgroundColorUi();
-    refreshData();
+    refreshPreviewFromFirstPage();
 }
 
 void QSLPrintLabelDialog::selectLabelTextColor()
@@ -773,7 +762,7 @@ void QSLPrintLabelDialog::selectLabelTextColor()
 
     labelTextColor = color;
     updateLabelTextColorUi();
-    updatePreview();
+    refreshPreview();
 }
 
 void QSLPrintLabelDialog::selectCardLabelBackgroundColor()
@@ -789,7 +778,7 @@ void QSLPrintLabelDialog::selectCardLabelBackgroundColor()
 
     cardLabelBackgroundColor = color;
     updateCardLabelBackgroundColorUi();
-    updatePreview();
+    refreshPreview();
 }
 
 void QSLPrintLabelDialog::selectCardBackgroundImage()
@@ -823,7 +812,7 @@ void QSLPrintLabelDialog::selectCardBackgroundImage()
 
     cardBackgroundImageData = image;
     updateCardBackgroundUi();
-    updatePreview();
+    refreshPreview();
 }
 
 void QSLPrintLabelDialog::clearCardBackgroundImage()
@@ -832,7 +821,7 @@ void QSLPrintLabelDialog::clearCardBackgroundImage()
 
     cardBackgroundImageData = QImage();
     updateCardBackgroundUi();
-    updatePreview();
+    refreshPreview();
 }
 
 void QSLPrintLabelDialog::resizeEvent(QResizeEvent *event)
@@ -840,7 +829,7 @@ void QSLPrintLabelDialog::resizeEvent(QResizeEvent *event)
     FCT_IDENTIFICATION;
 
     QWidget::resizeEvent(event);
-    updatePreview();
+    scalePreview();
 }
 
 bool QSLPrintLabelDialog::eventFilter(QObject *obj, QEvent *event)
@@ -865,18 +854,42 @@ bool QSLPrintLabelDialog::eventFilter(QObject *obj, QEvent *event)
     return QDialog::eventFilter(obj, event);
 }
 
-QString QSLPrintLabelDialog::buildWhereClause() const
+void QSLPrintLabelDialog::ContactFilter::bind(QSqlQuery &query) const
 {
     FCT_IDENTIFICATION;
 
-    QStringList where;
-    where << "1 = 1";
+    for ( auto it = bindings.cbegin(); it != bindings.cend(); ++it )
+        query.bindValue(it.key(), it.value());
+}
+
+QSLPrintLabelDialog::ContactFilter QSLPrintLabelDialog::currentFilter() const
+{
+    FCT_IDENTIFICATION;
+
+    ContactFilter filter;
+    QStringList where ({"1 = 1"});
 
     if ( ui->dateRangeCheckBox->isChecked() )
+    {
         where << "(datetime(start_time) BETWEEN datetime(:start_date) AND datetime(:end_date))";
 
+        const QDate startDate = ui->startDateEdit->date();
+        const QDate endDate = ui->endDateEdit->date();
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        filter.bindings.insert(":start_date", startDate.startOfDay());
+        filter.bindings.insert(":end_date", endDate.endOfDay());
+#else
+        filter.bindings.insert(":start_date", QDateTime(startDate));
+        filter.bindings.insert(":end_date", QDateTime(endDate));
+#endif
+    }
+
     if ( ui->myCallsignCheckBox->isChecked() )
+    {
         where << "upper(station_callsign) = upper(:stationCallsign)";
+        filter.bindings.insert(":stationCallsign", ui->myCallsignComboBox->currentText());
+    }
 
     if ( ui->stationProfileCheckBox->isChecked() )
     {
@@ -888,10 +901,15 @@ QString QSLPrintLabelDialog::buildWhereClause() const
                          " WHERE station_profiles.profile_name = :stationProfileName"
                          " AND %1"
                          ")").arg(stProfile.getContactInnerJoin());
+        filter.bindings.insert(":stationProfileName",
+                               ui->stationProfileComboBox->currentText());
     }
 
     if ( ui->qslSentCheckBox->isChecked() )
+    {
         where << "upper(qsl_sent) = upper(:qslSent)";
+        filter.bindings.insert(":qslSent", ui->qslSentComboBox->currentData().toString());
+    }
 
     if ( ui->userFilterCheckBox->isChecked() )
     {
@@ -900,63 +918,31 @@ QString QSLPrintLabelDialog::buildWhereClause() const
             where << filterClause;
     }
 
-    return where.join(" AND ");
+    filter.whereClause = where.join(" AND ");
+    return filter;
 }
 
-void QSLPrintLabelDialog::bindWhereClause(QSqlQuery &query) const
+void QSLPrintLabelDialog::loadData()
 {
     FCT_IDENTIFICATION;
 
-    if ( ui->dateRangeCheckBox->isChecked() )
-    {
-        QDate startDate = ui->startDateEdit->date();
-        QDate endDate = ui->endDateEdit->date();
+    labelBuilder->clear();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-        query.bindValue(":start_date", startDate.startOfDay());
-        query.bindValue(":end_date", endDate.endOfDay());
-#else
-        query.bindValue(":start_date", QDateTime(startDate));
-        query.bindValue(":end_date", QDateTime(endDate));
-#endif
-    }
-
-    if ( ui->myCallsignCheckBox->isChecked() )
-        query.bindValue(":stationCallsign", ui->myCallsignComboBox->currentText());
-
-    if ( ui->stationProfileCheckBox->isChecked() )
-        query.bindValue(":stationProfileName", ui->stationProfileComboBox->currentText());
-
-    if ( ui->qslSentCheckBox->isChecked() )
-        query.bindValue(":qslSent", ui->qslSentComboBox->currentData().toString());
-}
-
-void QSLPrintLabelDialog::buildLabels()
-{
-    FCT_IDENTIFICATION;
-
-    labelsData.clear();
-
-    const QString whereClause = buildWhereClause();
-
-    const QString dateFormat = ui->dateFormatEdit->text().trimmed();
-    const QString effectiveDateFormat = dateFormat.isEmpty() ? "yyyy-MM-dd" : dateFormat;
-    const int maxRows = ui->maxRowsSpinBox->value();
-
+    const ContactFilter filter = currentFilter();
     const QString extraCol = ui->extraColumnComboBox->currentData().toString();
-    const QString extraColSelect = extraCol.isEmpty()
-                                   ? QString()
-                                   : QString(", \"%1\"").arg(extraCol);
+    const QString extraColSelect = extraCol.isEmpty() ? QString()
+                                                      : QString(", \"%1\"").arg(extraCol);
 
     const QString sql = QString("SELECT start_time, callsign, band, mode, submode, "
-                          "qsl_rcvd, lotw_qsl_rcvd, eqsl_qsl_rcvd, dcl_qsl_rcvd"
-                          "%1 "
+                          "qsl_rcvd, lotw_qsl_rcvd, eqsl_qsl_rcvd, dcl_qsl_rcvd, "
+                          "qsl_via, dxcc, pfx%1 "
                           "FROM contacts "
                           "WHERE %2 "
                           "ORDER BY callsign COLLATE NOCASE ASC, start_time ASC")
-                          .arg(extraColSelect, whereClause);
+                          .arg(extraColSelect, filter.whereClause);
 
     QSqlQuery query;
+    query.setForwardOnly(true);
 
     if ( !query.prepare(sql) )
     {
@@ -964,7 +950,7 @@ void QSLPrintLabelDialog::buildLabels()
         return;
     }
 
-    bindWhereClause(query);
+    filter.bind(query);
 
     if ( !query.exec() )
     {
@@ -972,107 +958,144 @@ void QSLPrintLabelDialog::buildLabels()
         return;
     }
 
-    QString currentCallsign;
-    QList<QSLLabelData::QsoRow> currentRows;
+    QVector<QSLSourceQso> sourceQsos;
 
     while ( query.next() )
     {
-        const QDateTime startTime = query.value("start_time").toDateTime();
-        const QString callsign = query.value("callsign").toString().toUpper();
-        const QString band = query.value("band").toString().toUpper();
-        const QString mode = query.value("mode").toString().toUpper();
-        const QString submode = query.value("submode").toString().toUpper();
+        QSLSourceQso source;
+        source.startTime = query.value(0).toDateTime().toUTC();
+        source.callsign = query.value(1).toString().toUpper();
+        source.row.time = source.startTime.toString("HH:mm");
+        source.row.band = query.value(2).toString().toUpper();
+        source.row.extra = extraCol.isEmpty() ? QString() : query.value(12).toString();
+        source.qslVia = query.value(9).toString().trimmed().toUpper();
+        source.dxcc = query.value(10).toInt();
+        source.prefix = query.value(11).toString().trimmed().toUpper();
 
-        /* Mode normalization:
-         * - If submode is present and non-empty, use submode
-         * - SSB with USB/LSB submode stays SSB
-         * - Otherwise use mode */
-        QString displayMode;
-        if ( mode == "SSB"
-             && ( submode == "USB" || submode == "LSB" ) )
-        {
-            displayMode = "SSB";
-        }
+        const QString mode = query.value(3).toString().toUpper();
+        const QString submode = query.value(4).toString().toUpper();
+
+        if ( mode == "SSB" && ( submode == "USB" || submode == "LSB" ) )
+            source.row.mode = "SSB";
         else if ( !submode.isEmpty() )
-            displayMode = submode.toUpper();
+            source.row.mode = submode;
         else
-            displayMode = mode.toUpper();
+            source.row.mode = mode;
 
-        /* QSL logic: TNX if any *_rcvd == 'Y', else PSE */
-        const QString qslRcvd = query.value("qsl_rcvd").toString().toUpper();
-        const QString lotwRcvd = query.value("lotw_qsl_rcvd").toString().toUpper();
-        const QString eqslRcvd = query.value("eqsl_qsl_rcvd").toString().toUpper();
-        const QString dclRcvd = query.value("dcl_qsl_rcvd").toString().toUpper();
+        const bool qslReceived = query.value(5).toString().compare("Y", Qt::CaseInsensitive) == 0
+                                 || query.value(6).toString().compare("Y", Qt::CaseInsensitive) == 0
+                                 || query.value(7).toString().compare("Y", Qt::CaseInsensitive) == 0
+                                 || query.value(8).toString().compare("Y", Qt::CaseInsensitive) == 0;
 
-        const QString qslText = ( qslRcvd == "Y"
-                                  || lotwRcvd == "Y"
-                                  || eqslRcvd == "Y"
-                                  || dclRcvd == "Y" ) ? "TNX" : "PSE";
+        source.row.qsl = qslReceived ? "TNX" : "PSE";
 
-        QSLLabelData::QsoRow row;
-        row.date = startTime.toUTC().toString(effectiveDateFormat);
-        row.time = startTime.toUTC().toString("HH:mm");
-        row.band = band;
-        row.mode = displayMode;
-        row.qsl = qslText;
-        row.extra = extraCol.isEmpty() ? QString() : query.value(extraCol).toString();
-
-        /* Group by callsign, split into chunks of 4 QSOs per label */
-        if ( callsign != currentCallsign )
-        {
-            /* Flush previous callsign's rows */
-            while ( !currentRows.isEmpty() )
-            {
-                QSLLabelData label;
-                label.callsign = currentCallsign;
-                int count = qMin(maxRows, currentRows.size());
-                for ( int i = 0; i < count; ++i )
-                    label.qsos.append(currentRows.takeFirst());
-                labelsData.append(label);
-            }
-            currentCallsign = callsign;
-        }
-
-        currentRows.append(row);
-
-        /* If we have maxRows rows, emit a label */
-        if ( currentRows.size() == maxRows )
-        {
-            QSLLabelData label;
-            label.callsign = currentCallsign;
-            for ( int i = 0; i < maxRows; ++i )
-                label.qsos.append(currentRows.takeFirst());
-            labelsData.append(label);
-        }
+        sourceQsos.append(source);
     }
 
-    /* Flush remaining rows for the last callsign */
-    while ( !currentRows.isEmpty() )
-    {
-        QSLLabelData label;
-        label.callsign = currentCallsign;
-        int count = qMin(maxRows, currentRows.size());
-        for ( int i = 0; i < count; ++i )
-            label.qsos.append(currentRows.takeFirst());
-        labelsData.append(label);
-    }
+    labelBuilder->setSourceQsos(std::move(sourceQsos));
+}
+
+void QSLPrintLabelDialog::rebuildLabels()
+{
+    FCT_IDENTIFICATION;
+
+    QSLLabelBuildOptions options;
+    options.dateFormat = ui->dateFormatEdit->text();
+    options.maxRows = ui->maxRowsSpinBox->value();
+    options.order = currentLabelOrder();
+    options.showQslManager = ui->qslManagerCheckBox->isChecked();
+    options.showRoutePrefix = ui->routePrefixCheckBox->isChecked();
+
+    labelsData = labelBuilder->build(options);
+    renderer.setLabels(labelsData);
+    renderer.setSkipLabels(ui->skipSpinBox->value());
+    currentPage = 0;
 }
 
 void QSLPrintLabelDialog::refreshData()
 {
     FCT_IDENTIFICATION;
 
-    buildLabels();
-
-    renderer.setTemplate(currentLabelTemplate());
-    renderer.setLabels(labelsData);
-    renderer.setSkipLabels(ui->skipSpinBox->value());
-    currentPage = 0;
-
-    updatePreview();
+    scheduleUpdate(UpdateLevel::Data);
 }
 
-void QSLPrintLabelDialog::updatePreview()
+void QSLPrintLabelDialog::refreshLabels()
+{
+    FCT_IDENTIFICATION;
+
+    scheduleUpdate(UpdateLevel::Labels);
+}
+
+void QSLPrintLabelDialog::refreshPreview()
+{
+    FCT_IDENTIFICATION;
+
+    scheduleUpdate(UpdateLevel::Preview);
+}
+
+void QSLPrintLabelDialog::refreshPreviewFromFirstPage()
+{
+    FCT_IDENTIFICATION;
+
+    currentPage = 0;
+    refreshPreview();
+}
+
+void QSLPrintLabelDialog::scheduleUpdate(UpdateLevel level)
+{
+    FCT_IDENTIFICATION;
+
+    if ( level > pendingUpdate )
+        pendingUpdate = level;
+
+    if ( pendingUpdate == UpdateLevel::Data )
+        showRefreshState(tr("Loading QSOs..."));
+    else if ( pendingUpdate == UpdateLevel::Labels )
+        showRefreshState(tr("Updating labels..."));
+
+    const int interval = pendingUpdate == UpdateLevel::Data ? 50
+                       : pendingUpdate == UpdateLevel::Labels ? 150
+                                                             : 100;
+    refreshTimer.start(interval);
+}
+
+void QSLPrintLabelDialog::applyPendingUpdate()
+{
+    FCT_IDENTIFICATION;
+
+    const UpdateLevel update = pendingUpdate;
+    pendingUpdate = UpdateLevel::None;
+
+    if ( update == UpdateLevel::None )
+        return;
+
+    if ( update >= UpdateLevel::Data )
+        loadData();
+
+    if ( update >= UpdateLevel::Labels )
+        rebuildLabels();
+
+    renderCurrentPage();
+}
+
+void QSLPrintLabelDialog::showRefreshState(const QString &message)
+{
+    FCT_IDENTIFICATION;
+
+    previewPagePixmap = QPixmap();
+    ui->previewLabel->clear();
+    ui->previewLabel->setText(message);
+    ui->previewLabel->setAlignment(Qt::AlignCenter);
+    ui->statusLabel->setText(message);
+
+    ui->printButton->setEnabled(false);
+    ui->exportPdfButton->setEnabled(false);
+    ui->exportImagesButton->setEnabled(false);
+    ui->prevPageButton->setEnabled(false);
+    ui->nextPageButton->setEnabled(false);
+}
+
+void QSLPrintLabelDialog::renderCurrentPage()
 {
     FCT_IDENTIFICATION;
 
@@ -1100,25 +1123,12 @@ void QSLPrintLabelDialog::updatePreview()
 
     if ( totalPages > 0 && currentPage < totalPages )
     {
-        QImage pageImage = renderer.renderPage(currentPage);
-
-        /* Calculate scaled width: fit-to-viewport * zoom% */
-        int fitWidth = ui->previewScrollArea->viewport()->width() - 10;
-
-        if ( fitWidth > 0 )
-        {
-            int scaledWidth = fitWidth * zoomPercent / 100;
-            QPixmap pixmap = QPixmap::fromImage(pageImage);
-            ui->previewLabel->setPixmap(pixmap.scaledToWidth(scaledWidth, Qt::SmoothTransformation));
-        }
-        else
-        {
-            ui->previewLabel->setPixmap(QPixmap::fromImage(pageImage));
-        }
-        ui->previewLabel->setAlignment(Qt::AlignCenter);
+        previewPagePixmap = QPixmap::fromImage(renderer.renderPage(currentPage));
+        scalePreview();
     }
     else
     {
+        previewPagePixmap = QPixmap();
         ui->previewLabel->clear();
 
         if ( hasLabels
@@ -1129,6 +1139,27 @@ void QSLPrintLabelDialog::updatePreview()
 
         ui->previewLabel->setAlignment(Qt::AlignCenter);
     }
+}
+
+void QSLPrintLabelDialog::scalePreview()
+{
+    FCT_IDENTIFICATION;
+
+    if ( previewPagePixmap.isNull() )
+        return;
+
+    const int fitWidth = ui->previewScrollArea->viewport()->width() - 10;
+
+    if ( fitWidth > 0 )
+    {
+        const int scaledWidth = fitWidth * zoomPercent / 100;
+        ui->previewLabel->setPixmap(previewPagePixmap.scaledToWidth(scaledWidth,
+                                                                    Qt::SmoothTransformation));
+    }
+    else
+        ui->previewLabel->setPixmap(previewPagePixmap);
+
+    ui->previewLabel->setAlignment(Qt::AlignCenter);
 }
 
 void QSLPrintLabelDialog::updatePageNavigation()
@@ -1153,7 +1184,7 @@ void QSLPrintLabelDialog::prevPage()
     if ( currentPage > 0 )
     {
         currentPage--;
-        updatePreview();
+        refreshPreview();
     }
 }
 
@@ -1165,7 +1196,7 @@ void QSLPrintLabelDialog::nextPage()
     if ( totalPages > 0 && currentPage < totalPages - 1 )
     {
         currentPage++;
-        updatePreview();
+        refreshPreview();
     }
 }
 
@@ -1318,11 +1349,11 @@ void QSLPrintLabelDialog::askAndMarkQslSent()
     if ( answer != QMessageBox::Yes )
         return;
 
-    const QString whereClause = buildWhereClause();
+    const ContactFilter filter = currentFilter();
     const QString sql = QString("UPDATE contacts "
                                 "SET qsl_sent = 'Y', "
                                 "qsl_sdate = strftime('%Y-%m-%d', DATETIME('now', 'utc')) "
-                                "WHERE %1").arg(whereClause);
+                                "WHERE %1").arg(filter.whereClause);
 
     QSqlQuery query;
 
@@ -1332,7 +1363,7 @@ void QSLPrintLabelDialog::askAndMarkQslSent()
         return;
     }
 
-    bindWhereClause(query);
+    filter.bind(query);
 
     if ( !query.exec() )
         qCWarning(runtime) << "Cannot execute mark-sent query" << query.lastError().text();

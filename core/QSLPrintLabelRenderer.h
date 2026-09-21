@@ -59,6 +59,8 @@ struct LabelStyleOptions
     qreal dataFontSize = 8.0;
     QString extraColumnHeader;       // empty = no extra column
     int maxQsoRows = 4;              // 1-4 QSO data rows per label
+    bool showQslManager = false;
+    bool showRoutePrefix = false;
     QString toRadioText = "To Radio";
     QString hdrDate = "Date";
     QString hdrTime = "Time";
@@ -70,6 +72,8 @@ struct LabelStyleOptions
 struct QSLLabelData
 {
     QString callsign;
+    QString qslManager;
+    QString routePrefix;
 
     struct QsoRow
     {
