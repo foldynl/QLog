@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DuplicateContactsDialog</class>
+ <widget class="QDialog" name="DuplicateContactsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>950</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Find, Merge &amp; Remove Duplicate Contacts</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>6</number>
+   </property>
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>9</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="infoLabel">
+     <property name="text">
+      <string>Duplicate contacts match on: Callsign, Band, Mode Group (CW / PHONE / DIGITAL), Satellite, and start time within 30 minutes.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="statusLabel">
+     <property name="text">
+      <string>Searching...</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>false</bool>
+     </property>
+     <property name="showGrid">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+     <item>
+      <widget class="QPushButton" name="autoSelectButton">
+       <property name="toolTip">
+        <string>Automatically check the second contact in each duplicate pair (the one with the higher ID) for removal.</string>
+       </property>
+       <property name="text">
+        <string>Auto-Select Duplicates</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="unselectAllButton">
+       <property name="toolTip">
+        <string>Uncheck all rows so you can manually select which contacts to merge or remove.</string>
+       </property>
+       <property name="text">
+        <string>Unselect All</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="mergeButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Merge all duplicate groups into a single contact each.
+
+Rules per field:
+• QSL status (qsl_rcvd / lotw / eqsl): best value wins — Y &gt; R &gt; I &gt; Q &gt; N
+• QSL dates: fill blank, keep latest when both present
+• Frequency: most decimal digits (most precise) wins
+• Submode: copied from duplicate only when both share the same exact mode
+• All other fields: fill blank from duplicate if the kept contact has no value
+
+The earliest contact (lowest ID) is always kept.
+Duplicate contacts are removed after the merge.</string>
+       </property>
+       <property name="text">
+        <string>Merge All Groups</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="removeButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Permanently delete all checked contacts. This cannot be undone.</string>
+       </property>
+       <property name="text">
+        <string>Remove Checked (0)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <connections>
+  <connection>
+   <sender>closeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DuplicateContactsDialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>475</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

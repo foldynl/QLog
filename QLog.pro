@@ -197,6 +197,7 @@ SOURCES += \
         ui/ColumnSettingDialog.cpp \
         ui/DevToolsDialog.cpp \
         ui/DownloadQSLDialog.cpp \
+        ui/DuplicateContactsDialog.cpp \
         ui/DxFilterDialog.cpp \
         ui/DxWidget.cpp \
         ui/DxccTableWidget.cpp \
@@ -416,6 +417,7 @@ HEADERS += \
         ui/ColumnSettingDialog.h \
         ui/DevToolsDialog.h \
         ui/DownloadQSLDialog.h \
+        ui/DuplicateContactsDialog.h \
         ui/DxFilterDialog.h \
         ui/DxWidget.h \
         ui/DxccTableWidget.h \
@@ -497,6 +499,7 @@ FORMS += \
         ui/ColumnSettingSimpleDialog.ui \
         ui/DevToolsDialog.ui \
         ui/DownloadQSLDialog.ui \
+        ui/DuplicateContactsDialog.ui \
         ui/DxFilterDialog.ui \
         ui/DxWidget.ui \
         ui/EditActivitiesDialog.ui \
