@@ -4692,7 +4692,7 @@ NewContactDynamicWidgets::NewContactDynamicWidgets(bool allocateWidgets,
         qthEdit->setMaxLength(75);
 
         gridEdit->setMaximumSize(QSize(100, 16777215));
-        gridEdit->setMaxLength(10);
+        gridEdit->setMaxLength(8);
         gridEdit->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Maximum);
         gridEdit->setValidator(new QRegularExpressionValidator(Gridsquare::gridRegEx(), gridEdit));
         gridEdit->spaceForbidden(true);
