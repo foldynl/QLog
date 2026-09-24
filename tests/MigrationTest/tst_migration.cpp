@@ -143,9 +143,42 @@ void MigrationSqlTest::migrateVersion()
     const int expectedCurrent = targetVersion - 1;
     QCOMPARE(currentVersion(), expectedCurrent);
 
+    const QList<int> legacyAlertStatuses = {1, 6, 31, 127};
+    if ( targetVersion == 42 )
+    {
+        QSqlQuery insert;
+        QVERIFY(insert.prepare(QStringLiteral(
+            "INSERT INTO alert_rules(rule_name, dx_logstatus) VALUES (:name, :status)")));
+
+        for ( int status : legacyAlertStatuses )
+        {
+            insert.bindValue(QStringLiteral(":name"), QStringLiteral("legacy_%1").arg(status));
+            insert.bindValue(QStringLiteral(":status"), status);
+            QVERIFY2(insert.exec(), qPrintable(insert.lastError().text()));
+        }
+    }
+
     QVERIFY2(executeSqlFile(targetVersion),
              qPrintable(QStringLiteral("Migration SQL file %1 failed").arg(targetVersion, 3, 10, QChar('0'))));
     QCOMPARE(currentVersion(), targetVersion);
+
+    if ( targetVersion == 42 )
+    {
+        QSqlQuery query(QStringLiteral(
+            "SELECT dx_logstatus, dx_alert_goal, dx_alert_context "
+            "FROM alert_rules ORDER BY dx_logstatus"));
+        QVERIFY2(query.isActive(), qPrintable(query.lastError().text()));
+
+        int row = 0;
+        while ( query.next() )
+        {
+            QCOMPARE(query.value(0).toInt(), legacyAlertStatuses.at(row));
+            QVERIFY(query.value(1).isNull());
+            QVERIFY(query.value(2).isNull());
+            ++row;
+        }
+        QCOMPARE(row, legacyAlertStatuses.size());
+    }
 }
 
 QTEST_MAIN(MigrationSqlTest)

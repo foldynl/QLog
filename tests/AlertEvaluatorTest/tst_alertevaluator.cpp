@@ -1,4 +1,7 @@
 #include <QtTest>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QLoggingCategory>
 #include <memory>
 
@@ -52,6 +55,10 @@ struct RuleSpec {
     int source = SpotAlert::WSJTXCQSPOT;
     bool enabled = true;
     int dxLogStatusMap = DxccStatus::Worked;
+    int dxAlertGoal = static_cast<int>(AlertDxccGoal::Confirmed);
+    int dxAlertContext = static_cast<int>(AlertDxccContext::Anywhere);
+    bool dxAlertGoalSet = false;
+    bool dxAlertContextSet = false;
     QString mode = QStringLiteral("*");
     QString band = QStringLiteral("*");
     int dxCountry = 0;
@@ -73,6 +80,7 @@ struct WsjtxSpec {
     QString callsign = QStringLiteral("OK1TEST");
     QString message = QStringLiteral("CQ TEST");
     QString decodedMode = QStringLiteral("FT8");
+    QString modeGroupString = QStringLiteral("FTx");
     QString band = QStringLiteral("20m");
     int dxcc = 123;
     int ituz = 28;
@@ -121,6 +129,10 @@ std::unique_ptr<AlertRule> makeRule(const RuleSpec &spec, int source)
     rule->sourceMap = source;
     rule->dxCountry = spec.dxCountry;
     rule->dxLogStatusMap = spec.dxLogStatusMap;
+    rule->dxAlertGoal = spec.dxAlertGoal;
+    rule->dxAlertContext = spec.dxAlertContext;
+    rule->dxAlertGoalSet = spec.dxAlertGoalSet;
+    rule->dxAlertContextSet = spec.dxAlertContextSet;
     rule->dxContinent = spec.dxContinent;
     rule->dxComment = spec.commentRe;
     rule->dxMember = spec.dxMember;
@@ -150,6 +162,7 @@ WsjtxEntry makeWsjtxEntry(const WsjtxSpec &spec)
     entry.callsign = spec.callsign;
     entry.decode.message = spec.message;
     entry.decodedMode = spec.decodedMode;
+    entry.modeGroupString = spec.modeGroupString;
     entry.band = spec.band;
     entry.dxcc.dxcc = spec.dxcc;
     entry.dxcc.ituz = spec.ituz;
@@ -209,6 +222,11 @@ private slots:
     void cross_valid();
     void cross_valid2_data();
     void cross_valid2();
+    void newDxccConditions();
+    void newDxccConditionWsjtx();
+    void newDxccConditionFailures();
+    void newDxccConditionSatellite();
+    void confirmationResolverIsSharedAcrossRules();
 };
 
 void AlertEvaluatorTest::initTestCase()
@@ -1307,6 +1325,243 @@ void AlertEvaluatorTest::cross_valid2()
     WsjtxEntry spot = makeWsjtxEntry(input);
 
     QCOMPARE(alertRule->match(spot), expected);
+}
+
+void AlertEvaluatorTest::newDxccConditions()
+{
+    RuleSpec ruleSpec;
+    ruleSpec.dxAlertGoalSet = true;
+    ruleSpec.dxAlertContextSet = true;
+
+    DxSpotSpec spotSpec;
+    int resolverCalls = 0;
+    DxccConfirmationResult resolverResult = DxccConfirmationResult::NotConfirmed;
+    const DxccConfirmationResolver resolver =
+        [&resolverCalls, &resolverResult](int, const QString &, const QString &, AlertDxccContext)
+        {
+            ++resolverCalls;
+            return resolverResult;
+        };
+
+    ruleSpec.dxAlertGoal = static_cast<int>(AlertDxccGoal::Worked);
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Anywhere);
+    spotSpec.status = DxccStatus::NewEntity;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    spotSpec.status = DxccStatus::Worked;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Band);
+    spotSpec.status = DxccStatus::NewBand;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Anywhere);
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Mode);
+    spotSpec.status = DxccStatus::NewMode;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Anywhere);
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+
+    spotSpec.status = DxccStatus::NewSlot;
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Anywhere);
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Band);
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Mode);
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::BandMode);
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    spotSpec.status = DxccStatus::Worked;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    QCOMPARE(resolverCalls, 0);
+
+    ruleSpec.dxAlertGoal = static_cast<int>(AlertDxccGoal::Confirmed);
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Anywhere);
+    spotSpec.status = DxccStatus::NewBand;
+    DxSpot spot = makeDxSpot(spotSpec);
+    resolverResult = DxccConfirmationResult::NotConfirmed;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(spot, resolver));
+    QCOMPARE(spot.status, DxccStatus::NewBand);
+    QCOMPARE(resolverCalls, 1);
+
+    resolverResult = DxccConfirmationResult::Confirmed;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(spot, resolver));
+    QCOMPARE(resolverCalls, 2);
+
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Band);
+    spotSpec.status = DxccStatus::NewBand;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    QCOMPARE(resolverCalls, 2);
+
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Mode);
+    spotSpec.status = DxccStatus::NewMode;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    QCOMPARE(resolverCalls, 2);
+
+    spotSpec.status = DxccStatus::Worked;
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Band);
+    resolverResult = DxccConfirmationResult::NotConfirmed;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    resolverResult = DxccConfirmationResult::Confirmed;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Mode);
+    resolverResult = DxccConfirmationResult::NotConfirmed;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    resolverResult = DxccConfirmationResult::Confirmed;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::BandMode);
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    spotSpec.status = DxccStatus::Confirmed;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), resolver));
+    QCOMPARE(resolverCalls, 6);
+}
+
+void AlertEvaluatorTest::newDxccConditionWsjtx()
+{
+    RuleSpec ruleSpec;
+    ruleSpec.dxAlertGoalSet = true;
+    ruleSpec.dxAlertContextSet = true;
+    ruleSpec.dxAlertGoal = static_cast<int>(AlertDxccGoal::Confirmed);
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Mode);
+
+    WsjtxSpec spotSpec;
+    spotSpec.status = DxccStatus::Worked;
+    spotSpec.modeGroupString = BandPlan::MODE_GROUP_STRING_FTx;
+
+    int resolverCalls = 0;
+    int resolvedDxcc = 0;
+    QString resolvedBand;
+    QString resolvedMode;
+    AlertDxccContext resolvedContext = AlertDxccContext::Anywhere;
+    const DxccConfirmationResolver resolver =
+        [&resolverCalls, &resolvedDxcc, &resolvedBand, &resolvedMode, &resolvedContext]
+        (int dxcc, const QString &band, const QString &mode, AlertDxccContext context)
+        {
+            ++resolverCalls;
+            resolvedDxcc = dxcc;
+            resolvedBand = band;
+            resolvedMode = mode;
+            resolvedContext = context;
+            return DxccConfirmationResult::NotConfirmed;
+        };
+
+    QVERIFY(makeRule(ruleSpec, SpotAlert::WSJTXCQSPOT)->match(makeWsjtxEntry(spotSpec), resolver));
+    QCOMPARE(resolverCalls, 1);
+    QCOMPARE(resolvedDxcc, 123);
+    QCOMPARE(resolvedBand, QStringLiteral("20m"));
+    QCOMPARE(resolvedMode, BandPlan::MODE_GROUP_STRING_FTx);
+    QCOMPARE(resolvedContext, AlertDxccContext::Mode);
+}
+
+void AlertEvaluatorTest::newDxccConditionFailures()
+{
+    RuleSpec ruleSpec;
+    ruleSpec.dxAlertGoalSet = true;
+    ruleSpec.dxAlertContextSet = true;
+    ruleSpec.dxAlertGoal = static_cast<int>(AlertDxccGoal::Confirmed);
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Anywhere);
+
+    DxSpotSpec spotSpec;
+    spotSpec.status = DxccStatus::Worked;
+
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec)));
+
+    const DxccConfirmationResolver errorResolver =
+        [](int, const QString &, const QString &, AlertDxccContext)
+        {
+            return DxccConfirmationResult::Error;
+        };
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), errorResolver));
+
+    int resolverCalls = 0;
+    const DxccConfirmationResolver countingResolver =
+        [&resolverCalls](int, const QString &, const QString &, AlertDxccContext)
+        {
+            ++resolverCalls;
+            return DxccConfirmationResult::Confirmed;
+        };
+    ruleSpec.dxAlertGoalSet = false;
+    ruleSpec.dxAlertContextSet = false;
+    ruleSpec.dxLogStatusMap = DxccStatus::All;
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), countingResolver));
+    QCOMPARE(resolverCalls, 0);
+
+    ruleSpec.dxAlertGoalSet = true;
+    ruleSpec.dxAlertContextSet = false;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(makeDxSpot(spotSpec), countingResolver));
+    QCOMPARE(resolverCalls, 0);
+}
+
+void AlertEvaluatorTest::newDxccConditionSatellite()
+{
+    RuleSpec ruleSpec;
+    ruleSpec.dxAlertGoalSet = true;
+    ruleSpec.dxAlertContextSet = true;
+    ruleSpec.dxAlertGoal = static_cast<int>(AlertDxccGoal::Confirmed);
+    ruleSpec.dxAlertContext = static_cast<int>(AlertDxccContext::Band);
+
+    DxSpotSpec spotSpec;
+    spotSpec.status = DxccStatus::Worked;
+    DxSpot spot = makeDxSpot(spotSpec);
+    spot.dxccStatusSatellite = true;
+
+    int resolverCalls = 0;
+    const DxccConfirmationResolver resolver =
+        [&resolverCalls](int, const QString &, const QString &, AlertDxccContext)
+        {
+            ++resolverCalls;
+            return DxccConfirmationResult::Confirmed;
+        };
+
+    QVERIFY(makeRule(ruleSpec, SpotAlert::DXSPOT)->match(spot, resolver));
+    QCOMPARE(resolverCalls, 0);
+
+    spot.status = DxccStatus::Confirmed;
+    QVERIFY(!makeRule(ruleSpec, SpotAlert::DXSPOT)->match(spot, resolver));
+    QCOMPARE(resolverCalls, 0);
+}
+
+void AlertEvaluatorTest::confirmationResolverIsSharedAcrossRules()
+{
+    QSqlDatabase database = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"));
+    database.setDatabaseName(QStringLiteral(":memory:"));
+    QVERIFY2(database.open(), qPrintable(database.lastError().text()));
+
+    QSqlQuery query;
+    QVERIFY(query.exec(QStringLiteral(
+        "CREATE TABLE alert_rules ("
+        "rule_name TEXT PRIMARY KEY, enabled INTEGER, source INTEGER, dx_callsign TEXT, "
+        "dx_country INTEGER, dx_logstatus INTEGER, dx_alert_goal INTEGER, dx_alert_context INTEGER, "
+        "dx_continent TEXT, spot_comment TEXT, mode TEXT, band TEXT, spotter_country INTEGER, "
+        "spotter_continent TEXT, dx_member TEXT, ituz INTEGER, cqz INTEGER, "
+        "pota INTEGER, sota INTEGER, iota INTEGER, wwff INTEGER)")));
+    QVERIFY(query.exec(QStringLiteral(
+        "INSERT INTO alert_rules VALUES "
+        "('first', 1, 1, '.*', 0, 127, 1, 0, '*', '.*', '*', '*', 0, '*', '*', 0, 0, 0, 0, 0, 0), "
+        "('second', 1, 1, '.*', 0, 127, 1, 0, '*', '.*', '*', '*', 0, '*', '*', 0, 0, 0, 0, 0, 0)")));
+
+    int resolverCalls = 0;
+    {
+        AlertEvaluator evaluator;
+        evaluator.setDxccConfirmationResolver(
+            [&resolverCalls](int, const QString &, const QString &, AlertDxccContext)
+            {
+                ++resolverCalls;
+                return DxccConfirmationResult::NotConfirmed;
+            });
+
+        DxSpotSpec spotSpec;
+        spotSpec.status = DxccStatus::Worked;
+        evaluator.dxSpot(makeDxSpot(spotSpec));
+    }
+
+    QCOMPARE(resolverCalls, 1);
+
+    database.close();
+    database = QSqlDatabase();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
 }
 
 

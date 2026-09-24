@@ -33,12 +33,15 @@ void AlertEvaluator::dxSpot(const DxSpot & spot)
     qCDebug(function_parameters) << "DX Spot";
 
     QStringList matchedRules;
+    QHash<int, DxccConfirmationResult> confirmationResults;
+    const DxccConfirmationResolver spotConfirmationResolver =
+        confirmationResolverForSpot(confirmationResults);
 
     for ( const AlertRule *rule : static_cast<const QList<AlertRule *>&>(ruleList) )
     {
         qCDebug(runtime) << "Processing " << *rule;
 
-        if ( rule->match(spot) )
+        if ( rule->match(spot, spotConfirmationResolver) )
         {
             matchedRules << rule->ruleName;
         }
@@ -58,11 +61,14 @@ void AlertEvaluator::WSJTXCQSpot(const WsjtxEntry &wsjtx)
     qCDebug(function_parameters) << "WSJTX CQ Spot";
 
     QStringList matchedRules;
+    QHash<int, DxccConfirmationResult> confirmationResults;
+    const DxccConfirmationResolver spotConfirmationResolver =
+        confirmationResolverForSpot(confirmationResults);
 
     for ( const AlertRule *rule : static_cast<const QList<AlertRule *>&>(ruleList) )
     {
         qCDebug(runtime) << "Processing " << *rule;
-        if ( rule->match(wsjtx) )
+        if ( rule->match(wsjtx, spotConfirmationResolver) )
         {
             matchedRules << rule->ruleName;
         }
@@ -73,6 +79,35 @@ void AlertEvaluator::WSJTXCQSpot(const WsjtxEntry &wsjtx)
         SpotAlert alert(matchedRules, wsjtx);
         emit spotAlert(alert);
     }
+}
+
+void AlertEvaluator::setDxccConfirmationResolver(const DxccConfirmationResolver &resolver)
+{
+    FCT_IDENTIFICATION;
+
+    confirmationResolver = resolver;
+}
+
+DxccConfirmationResolver AlertEvaluator::confirmationResolverForSpot(
+    QHash<int, DxccConfirmationResult> &results) const
+{
+    FCT_IDENTIFICATION;
+
+    if ( !confirmationResolver ) return DxccConfirmationResolver();
+
+    return [this, &results](int dxcc,
+                            const QString &band,
+                            const QString &mode,
+                            AlertDxccContext context)
+    {
+        const int key = static_cast<int>(context);
+        const auto cachedResult = results.constFind(key);
+        if ( cachedResult != results.constEnd() ) return cachedResult.value();
+
+        const DxccConfirmationResult result = confirmationResolver(dxcc, band, mode, context);
+        results.insert(key, result);
+        return result;
+    };
 }
 
 void AlertEvaluator::loadRules()
@@ -118,6 +153,10 @@ AlertRule::AlertRule(QObject *parent) :
     sourceMap(SpotAlert::UKNOWN),
     dxCountry(-1),
     dxLogStatusMap(0),
+    dxAlertGoal(static_cast<int>(AlertDxccGoal::Confirmed)),
+    dxAlertContext(static_cast<int>(AlertDxccContext::Anywhere)),
+    dxAlertGoalSet(false),
+    dxAlertContextSet(false),
     spotterCountry(-1),
     ituz(0),
     cqz(0),
@@ -143,11 +182,11 @@ bool AlertRule::save()
     QSqlQuery insertUpdateStmt;
 
     if ( ! insertUpdateStmt.prepare("INSERT INTO alert_rules(rule_name, enabled, source, dx_callsign, dx_country, "
-                                    "dx_logstatus, dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff) "
+                                    "dx_logstatus, dx_alert_goal, dx_alert_context, dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff) "
                                     " VALUES (:ruleName, :enabled, :source, :dxCallsign, :dxCountry, "
-                                    ":dxLogstatus, :dxContinent, :spotComment, :mode, :band, :spotterCountry, :spotterContinent, :dxMember, :ituz, :cqz, :pota, :sota, :iota, :wwff) "
+                                    ":dxLogstatus, :dxAlertGoal, :dxAlertContext, :dxContinent, :spotComment, :mode, :band, :spotterCountry, :spotterContinent, :dxMember, :ituz, :cqz, :pota, :sota, :iota, :wwff) "
                                     " ON CONFLICT(rule_name) DO UPDATE SET enabled = :enabled, source = :source, dx_callsign =:dxCallsign, "
-                                    "dx_country = :dxCountry, dx_logstatus = :dxLogstatus, dx_continent = :dxContinent, spot_comment = :spotComment, "
+                                    "dx_country = :dxCountry, dx_logstatus = :dxLogstatus, dx_alert_goal = :dxAlertGoal, dx_alert_context = :dxAlertContext, dx_continent = :dxContinent, spot_comment = :spotComment, "
                                     "mode = :mode, band = :band, spotter_country = :spotterCountry, spotter_continent = :spotterContinent, dx_member = :dxMember, ituz = :ituz, cqz = :cqz, pota = :pota, sota = :sota, iota = :iota, wwff = :wwff "
                                     " WHERE rule_name = :ruleName"))
     {
@@ -161,6 +200,8 @@ bool AlertRule::save()
     insertUpdateStmt.bindValue(":dxCallsign", dxCallsign);
     insertUpdateStmt.bindValue(":dxCountry", dxCountry);
     insertUpdateStmt.bindValue(":dxLogstatus", dxLogStatusMap);
+    insertUpdateStmt.bindValue(":dxAlertGoal", dxAlertGoalSet ? QVariant(dxAlertGoal) : QVariant());
+    insertUpdateStmt.bindValue(":dxAlertContext", dxAlertContextSet ? QVariant(dxAlertContext) : QVariant());
     insertUpdateStmt.bindValue(":dxContinent", dxContinent);
     insertUpdateStmt.bindValue(":dxMember", dxMember.join(","));
     insertUpdateStmt.bindValue(":spotComment", dxComment);
@@ -191,7 +232,7 @@ bool AlertRule::load(const QString &in_ruleName)
 
     QSqlQuery query;
 
-    if ( ! query.prepare("SELECT rule_name, enabled, source, dx_callsign, dx_country, dx_logstatus, "
+    if ( ! query.prepare("SELECT rule_name, enabled, source, dx_callsign, dx_country, dx_logstatus, dx_alert_goal, dx_alert_context, "
                          "dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff "
                          "FROM alert_rules "
                          "WHERE rule_name = :rule") )
@@ -214,6 +255,12 @@ bool AlertRule::load(const QString &in_ruleName)
         dxCallsign       = record.value("dx_callsign").toString();
         dxCountry        = record.value("dx_country").toInt();
         dxLogStatusMap   = record.value("dx_logstatus").toInt();
+        dxAlertGoalSet   = !record.value("dx_alert_goal").isNull();
+        dxAlertContextSet = !record.value("dx_alert_context").isNull();
+        if ( dxAlertGoalSet )
+            dxAlertGoal = record.value("dx_alert_goal").toInt();
+        if ( dxAlertContextSet )
+            dxAlertContext = record.value("dx_alert_context").toInt();
         dxContinent      = record.value("dx_continent").toString();
         dxComment        = record.value("spot_comment").toString();
         dxMember         = record.value("dx_member").toString().split(",");
@@ -251,7 +298,8 @@ bool AlertRule::load(const QString &in_ruleName)
     return true;
 }
 
-bool AlertRule::match(const WsjtxEntry &wsjtx) const
+bool AlertRule::match(const WsjtxEntry &wsjtx,
+                      const DxccConfirmationResolver &confirmationResolver) const
 {
     FCT_IDENTIFICATION;
 
@@ -281,8 +329,6 @@ bool AlertRule::match(const WsjtxEntry &wsjtx) const
         if ( !refMatch ) return fail();
     }
 
-    if ( !(wsjtx.status & dxLogStatusMap) ) return fail();
-
     if ( mode != "*" )
     {
         const QString &group = BandPlan::isFTxMode(wsjtx.decodedMode)
@@ -307,13 +353,15 @@ bool AlertRule::match(const WsjtxEntry &wsjtx) const
     qCDebug(runtime) << "Comment RE" << commentRE.pattern();
 
     const bool ret = callsignRE.match(wsjtx.callsign).hasMatch()
-                     && commentRE.match(wsjtx.decode.message).hasMatch();
+                     && commentRE.match(wsjtx.decode.message).hasMatch()
+                     && matchDxccStatus(wsjtx, confirmationResolver);
 
     qCDebug(runtime) << "Rule name: " << ruleName << " - result " << ret;
     return ret;
 }
 
-bool AlertRule::match(const DxSpot &spot) const
+bool AlertRule::match(const DxSpot &spot,
+                      const DxccConfirmationResolver &confirmationResolver) const
 {
     FCT_IDENTIFICATION;
 
@@ -342,8 +390,6 @@ bool AlertRule::match(const DxSpot &spot) const
 
         if ( !refMatch ) return fail();
     }
-
-    if ( !(spot.status & dxLogStatusMap) ) return fail();
 
     if ( mode != "*" )
     {
@@ -382,10 +428,124 @@ bool AlertRule::match(const DxSpot &spot) const
 
     const bool ret =
         callsignRE.match(spot.callsign).hasMatch() &&
-        commentRE.match(spot.comment).hasMatch();
+        commentRE.match(spot.comment).hasMatch() &&
+        matchDxccStatus(spot, confirmationResolver);
 
     qCDebug(runtime) << "Rule name:" << ruleName << "- result" << ret;
     return ret;
+}
+
+bool AlertRule::matchDxccStatus(const DxSpot &spot,
+                                const DxccConfirmationResolver &confirmationResolver) const
+{
+    FCT_IDENTIFICATION;
+
+    const bool newCondition = hasDxAlertCondition();
+
+    if ( !newCondition && (dxAlertGoalSet || dxAlertContextSet) )
+    {
+        qCWarning(runtime) << "Invalid DXCC alert condition in rule" << ruleName;
+        return false;
+    }
+
+    if ( !newCondition )
+        return spot.status & dxLogStatusMap;
+
+    if ( spot.status == DxccStatus::UnknownStatus )
+        return false;
+
+    const AlertDxccGoal goal = static_cast<AlertDxccGoal>(dxAlertGoal);
+    const AlertDxccContext context = static_cast<AlertDxccContext>(dxAlertContext);
+
+    if ( spot.dxccStatusSatellite )
+    {
+        return goal == AlertDxccGoal::Worked
+                   ? spot.status == DxccStatus::NewEntity
+                   : spot.status != DxccStatus::Confirmed;
+    }
+
+    if ( goal == AlertDxccGoal::Worked )
+    {
+        switch ( context )
+        {
+            case AlertDxccContext::Anywhere:
+                return spot.status == DxccStatus::NewEntity;
+            case AlertDxccContext::Band:
+                return spot.status == DxccStatus::NewEntity
+                    || spot.status == DxccStatus::NewBand
+                    || spot.status == DxccStatus::NewBandMode;
+            case AlertDxccContext::Mode:
+                return spot.status == DxccStatus::NewEntity
+                    || spot.status == DxccStatus::NewMode
+                    || spot.status == DxccStatus::NewBandMode;
+            case AlertDxccContext::BandMode:
+                return spot.status == DxccStatus::NewEntity
+                    || spot.status == DxccStatus::NewBand
+                    || spot.status == DxccStatus::NewMode
+                    || spot.status == DxccStatus::NewBandMode
+                    || spot.status == DxccStatus::NewSlot;
+        }
+    }
+
+    if ( context == AlertDxccContext::BandMode )
+        return spot.status != DxccStatus::Confirmed;
+
+    if ( spot.status == DxccStatus::Confirmed )
+        return false;
+
+    if ( context == AlertDxccContext::Anywhere
+         && spot.status == DxccStatus::NewEntity )
+        return true;
+
+    if ( context == AlertDxccContext::Band
+         && (spot.status == DxccStatus::NewEntity
+             || spot.status == DxccStatus::NewBand
+             || spot.status == DxccStatus::NewBandMode) )
+        return true;
+
+    if ( context == AlertDxccContext::Mode
+         && (spot.status == DxccStatus::NewEntity
+             || spot.status == DxccStatus::NewMode
+             || spot.status == DxccStatus::NewBandMode) )
+        return true;
+
+    if ( !confirmationResolver )
+    {
+        qCWarning(runtime) << "DXCC confirmation resolver is not available for rule" << ruleName;
+        return false;
+    }
+
+    const DxccConfirmationResult result = confirmationResolver(spot.dxcc.dxcc,
+                                                                spot.band,
+                                                                spot.modeGroupString,
+                                                                context);
+
+    if ( result == DxccConfirmationResult::Error )
+    {
+        qCWarning(runtime) << "Cannot resolve DXCC confirmation for rule" << ruleName;
+        return false;
+    }
+
+    return result == DxccConfirmationResult::NotConfirmed;
+}
+
+bool AlertRule::hasDxAlertCondition() const
+{
+    FCT_IDENTIFICATION;
+
+    const bool validGoal = dxAlertGoal == static_cast<int>(AlertDxccGoal::Worked)
+                           || dxAlertGoal == static_cast<int>(AlertDxccGoal::Confirmed);
+    const bool validContext = dxAlertContext >= static_cast<int>(AlertDxccContext::Anywhere)
+                              && dxAlertContext <= static_cast<int>(AlertDxccContext::BandMode);
+
+    return dxAlertGoalSet && dxAlertContextSet && validGoal && validContext;
+}
+
+bool AlertRule::hasInvalidDxAlertCondition() const
+{
+    FCT_IDENTIFICATION;
+
+    return (dxAlertGoalSet || dxAlertContextSet) && !hasDxAlertCondition();
 }
 
 bool AlertRule::isValid() const

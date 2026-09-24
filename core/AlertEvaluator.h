@@ -5,7 +5,15 @@
 #include "data/DxSpot.h"
 #include "data/WsjtxEntry.h"
 #include "data/SpotAlert.h"
+#include <QHash>
 #include <QRegularExpression>
+#include <functional>
+
+using DxccConfirmationResolver = std::function<DxccConfirmationResult(
+    int,
+    const QString &,
+    const QString &,
+    AlertDxccContext)>;
 
 class AlertRule : public QObject
 {
@@ -17,9 +25,13 @@ public:
 
     bool save();
     bool load(const QString &);
-    bool match(const WsjtxEntry &wsjtx) const;
-    bool match(const DxSpot & spot) const;
+    bool match(const WsjtxEntry &wsjtx,
+               const DxccConfirmationResolver &confirmationResolver = DxccConfirmationResolver()) const;
+    bool match(const DxSpot &spot,
+               const DxccConfirmationResolver &confirmationResolver = DxccConfirmationResolver()) const;
     bool isValid() const;
+    bool hasDxAlertCondition() const;
+    bool hasInvalidDxAlertCondition() const;
     operator QString() const;
 public:
     QString ruleName;
@@ -28,6 +40,10 @@ public:
     QString dxCallsign;
     int dxCountry;
     int dxLogStatusMap;
+    int dxAlertGoal;
+    int dxAlertContext;
+    bool dxAlertGoalSet;
+    bool dxAlertContextSet;
     QString dxContinent;
     QString dxComment;
     QStringList dxMember;
@@ -43,6 +59,8 @@ public:
     bool wwff;
 
 private:
+    bool matchDxccStatus(const DxSpot &spot,
+                         const DxccConfirmationResolver &confirmationResolver) const;
     bool ruleValid;
     QRegularExpression callsignRE;
     QRegularExpression commentRE;
@@ -58,6 +76,7 @@ public:
     ~AlertEvaluator() {clearRules();}
 
     void clearRules();
+    void setDxccConfirmationResolver(const DxccConfirmationResolver &resolver);
 
 public slots:
     void dxSpot(const DxSpot&);
@@ -68,7 +87,10 @@ signals:
     void spotAlert(SpotAlert alert);
 
 private:
+    DxccConfirmationResolver confirmationResolverForSpot(
+        QHash<int, DxccConfirmationResult> &results) const;
     QList<AlertRule *>ruleList;
+    DxccConfirmationResolver confirmationResolver;
 };
 
 #endif // QLOG_CORE_ALERTEVALUATOR_H

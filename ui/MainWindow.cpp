@@ -78,6 +78,12 @@ MainWindow::MainWindow(QWidget* parent) :
 {
     FCT_IDENTIFICATION;
 
+    alertEvaluator.setDxccConfirmationResolver(
+        [](int dxcc, const QString &band, const QString &mode, AlertDxccContext context)
+        {
+            return Data::instance()->dxccConfirmationStatus(dxcc, band, mode, context);
+        });
+
     ui->setupUi(this);
     ui->rigWidget->setConnectAction(ui->actionConnectRig);
     ui->rotatorWidget->setConnectAction(ui->actionConnectRotator);

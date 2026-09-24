@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AlertRuleLogStatusDialog</class>
+ <widget class="QDialog" name="AlertRuleLogStatusDialog">
+  <property name="windowTitle">
+   <string>Custom Log Status Condition</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="statusLabel">
+     <property name="text">
+      <string>Alert when any selected DXCC status occurs:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="legacyStatusLayout">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="newEntityCheckbox">
+       <property name="text"><string>New Entity</string></property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="newBandCheckbox">
+       <property name="text"><string>New Band</string></property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QCheckBox" name="newModeCheckbox">
+       <property name="text"><string>New Mode</string></property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="newSlotCheckbox">
+       <property name="text"><string>New Slot</string></property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="workedCheckbox">
+       <property name="text"><string>Worked</string></property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QCheckBox" name="confirmedCheckbox">
+       <property name="text"><string>Confirmed</string></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>AlertRuleLogStatusDialog</receiver>
+   <slot>accept()</slot>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AlertRuleLogStatusDialog</receiver>
+   <slot>reject()</slot>
+  </connection>
+ </connections>
+</ui>

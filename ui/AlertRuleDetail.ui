@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
+    <width>776</width>
     <height>604</height>
    </rect>
   </property>
@@ -163,65 +163,91 @@
           <number>2</number>
          </property>
          <item row="0" column="0">
-          <widget class="QLabel" name="logStatusLabel">
+          <widget class="QCheckBox" name="logStatusCheckBox">
+           <property name="toolTip">
+            <string>Restrict this rule by DXCC progress in the log. When disabled, log status is ignored.</string>
+           </property>
            <property name="text">
             <string>Log Status</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <layout class="QGridLayout" name="gridLayout">
-           <property name="spacing">
-            <number>0</number>
+          <layout class="QGridLayout" name="logStatusLayout">
+           <property name="horizontalSpacing">
+            <number>6</number>
            </property>
-           <item row="1" column="2">
-            <widget class="QCheckBox" name="workedCheckbox">
-             <property name="text">
-              <string>Worked</string>
+           <property name="verticalSpacing">
+            <number>2</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="dxAlertGoalLabel">
+             <property name="enabled">
+              <bool>false</bool>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="newSlotCheckbox">
              <property name="text">
-              <string>New Slot</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QCheckBox" name="confirmedCheckbox">
-             <property name="text">
-              <string>Confirmed</string>
+              <string>Condition:</string>
              </property>
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QCheckBox" name="newEntityCheckbox">
-             <property name="text">
-              <string>New Entity</string>
+            <widget class="QComboBox" name="dxAlertGoalCombo">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToContents</enum>
              </property>
             </widget>
            </item>
-           <item row="0" column="3">
-            <widget class="QCheckBox" name="newModeCheckbox">
+           <item row="1" column="0">
+            <widget class="QLabel" name="dxAlertContextLabel">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Defines the band and mode grouping used to evaluate the DXCC condition.</string>
+             </property>
              <property name="text">
-              <string>New Mode</string>
+              <string>QSO group:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="dxAlertContextCombo">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToContents</enum>
              </property>
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QCheckBox" name="newBandCheckbox">
+            <widget class="QPushButton" name="editLogStatusButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Select individual DXCC statuses</string>
+             </property>
              <property name="text">
-              <string>New Band</string>
+              <string>Edit...</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="allCheckbox">
-             <property name="text">
-              <string>All</string>
+           <item row="0" column="3" rowspan="2">
+            <spacer name="logStatusSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
-            </widget>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
@@ -885,13 +911,10 @@
   <tabstop>dxcCheckBox</tabstop>
   <tabstop>wsjtxCheckBox</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>allCheckbox</tabstop>
-  <tabstop>newEntityCheckbox</tabstop>
-  <tabstop>newBandCheckbox</tabstop>
-  <tabstop>newModeCheckbox</tabstop>
-  <tabstop>newSlotCheckbox</tabstop>
-  <tabstop>workedCheckbox</tabstop>
-  <tabstop>confirmedCheckbox</tabstop>
+  <tabstop>logStatusCheckBox</tabstop>
+  <tabstop>dxAlertGoalCombo</tabstop>
+  <tabstop>editLogStatusButton</tabstop>
+  <tabstop>dxAlertContextCombo</tabstop>
   <tabstop>dxCallsignEdit</tabstop>
   <tabstop>countryCombo</tabstop>
   <tabstop>ituEdit</tabstop>
@@ -1009,20 +1032,52 @@
    </hints>
   </connection>
   <connection>
-   <sender>allCheckbox</sender>
+   <sender>logStatusCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>AlertRuleDetail</receiver>
-   <slot>enabledLogStatusAll(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>203</x>
-     <y>132</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>288</x>
-     <y>301</y>
-    </hint>
-   </hints>
+   <slot>logStatusEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>logStatusCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dxAlertGoalLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>logStatusCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dxAlertGoalCombo</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>logStatusCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dxAlertContextLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>logStatusCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dxAlertContextCombo</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>dxAlertGoalCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>AlertRuleDetail</receiver>
+   <slot>logStatusConditionChanged()</slot>
+  </connection>
+  <connection>
+   <sender>dxAlertContextCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>AlertRuleDetail</receiver>
+   <slot>logStatusConditionChanged()</slot>
+  </connection>
+  <connection>
+   <sender>editLogStatusButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AlertRuleDetail</receiver>
+   <slot>editLogStatuses()</slot>
   </connection>
  </connections>
  <slots>
@@ -1030,6 +1085,8 @@
   <slot>ruleNameChanged(QString)</slot>
   <slot>callsignChanged(QString)</slot>
   <slot>spotCommentChanged(QString)</slot>
-  <slot>enabledLogStatusAll(bool)</slot>
+  <slot>logStatusEnabled(bool)</slot>
+  <slot>logStatusConditionChanged()</slot>
+  <slot>editLogStatuses()</slot>
  </slots>
 </ui>

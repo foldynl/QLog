@@ -373,6 +373,25 @@ Data::~Data()
     }
 }
 
+DxccConfirmationSources Data::dxccConfirmationSources()
+{
+    FCT_IDENTIFICATION;
+
+    if ( dxccConfirmationSourcesValid ) return currentDxccConfirmationSources;
+
+    currentDxccConfirmationSources = DxccConfirmationSource::NoConfirmationSource;
+
+    if ( LogParam::getDxccConfirmedByLotwState() )
+        currentDxccConfirmationSources |= DxccConfirmationSource::LotwConfirmation;
+    if ( LogParam::getDxccConfirmedByPaperState() )
+        currentDxccConfirmationSources |= DxccConfirmationSource::PaperConfirmation;
+    if ( LogParam::getDxccConfirmedByEqslState() )
+        currentDxccConfirmationSources |= DxccConfirmationSource::EqslConfirmation;
+
+    dxccConfirmationSourcesValid = true;
+    return currentDxccConfirmationSources;
+}
+
 #define RETCODE(a)  \
     dxccStatusCache.insert(dxcc, myDXCC, band, mode, new DxccStatus(a)); \
     return ((a));
@@ -390,11 +409,7 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
     if ( statusFromCache )
         return *statusFromCache;
 
-    // FTx modes (FT8, FT4, FT2) are stored in contacts with modes.dxcc = 'DIGITAL',
-    // so we use DIGITAL as the effective mode group when querying for FTx.
-    const QString modeForQuery = ( mode == BandPlan::MODE_GROUP_STRING_FTx )
-                                 ? BandPlan::MODE_GROUP_STRING_DIGITAL
-                                 : mode;
+    const QString modeForQuery = DxccConfirmation::normalizedMode(mode);
 
     QString sql_mode(":mode");
 
@@ -405,17 +420,6 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
         sql_mode = "(SELECT modes.dxcc FROM modes WHERE modes.name = :mode LIMIT 1) ";
     }
 
-
-    QStringList dxccConfirmedByCond(QLatin1String("0=1")); // if no option is selected then always false
-
-    if ( LogParam::getDxccConfirmedByLotwState() )
-        dxccConfirmedByCond << QLatin1String("all_dxcc_qsos.lotw_qsl_rcvd = 'Y'");
-
-    if ( LogParam::getDxccConfirmedByPaperState() )
-        dxccConfirmedByCond << QLatin1String("all_dxcc_qsos.qsl_rcvd = 'Y'");
-
-    if ( LogParam::getDxccConfirmedByEqslState() )
-        dxccConfirmedByCond << QLatin1String("all_dxcc_qsos.eqsl_qsl_rcvd = 'Y'");
 
     QSqlQuery query;
     QString sqlStatement = QString("WITH all_dxcc_qsos AS (SELECT DISTINCT contacts.mode, contacts.band, "
@@ -437,7 +441,8 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
                                               sql_mode,
                                               sql_mode,
                                               sql_mode,
-                                              dxccConfirmedByCond.join(" OR "));
+                                              DxccConfirmation::confirmationCondition(dxccConfirmationSources(),
+                                                                                      QStringLiteral("all_dxcc_qsos")));
 
     if ( ! query.prepare(sqlStatement) )
     {
@@ -495,6 +500,22 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
     }
 
     RETCODE(DxccStatus::UnknownStatus);
+}
+
+DxccConfirmationResult Data::dxccConfirmationStatus(int dxcc,
+                                                    const QString &band,
+                                                    const QString &mode,
+                                                    AlertDxccContext context)
+{
+    FCT_IDENTIFICATION;
+
+    const int myDxcc = StationProfilesManager::instance()->getCurProfile1().dxcc;
+    return dxccConfirmation.status(dxcc,
+                                   myDxcc,
+                                   band,
+                                   mode,
+                                   context,
+                                   dxccConfirmationSources());
 }
 #undef RETCODE
 
@@ -557,24 +578,13 @@ DxccStatus Data::satelliteDxccStatus(int dxcc)
     if ( DxccStatus *statusFromCache = satelliteDxccStatusCache.object(cacheKey) )
         return *statusFromCache;
 
-    QStringList confirmedByCond(QLatin1String("0=1"));
-
-    if ( LogParam::getDxccConfirmedByLotwState() )
-        confirmedByCond << QLatin1String("lotw_qsl_rcvd = 'Y'");
-
-    if ( LogParam::getDxccConfirmedByPaperState() )
-        confirmedByCond << QLatin1String("qsl_rcvd = 'Y'");
-
-    if ( LogParam::getDxccConfirmedByEqslState() )
-        confirmedByCond << QLatin1String("eqsl_qsl_rcvd = 'Y'");
-
     QSqlQuery query;
     const QString sqlStatement = QString(
         "SELECT MAX(CASE WHEN (%1) THEN 1 ELSE 0 END) "
         "FROM contacts "
         "WHERE dxcc = :dxcc "
         "  AND UPPER(prop_mode) = 'SAT' %2")
-        .arg(confirmedByCond.join(" OR "),
+        .arg(DxccConfirmation::confirmationCondition(dxccConfirmationSources()),
              ( myDXCC != 0 ) ? QString(" AND my_dxcc = %1").arg(myDXCC) : QString());
 
     DxccStatus status = DxccStatus::UnknownStatus;
@@ -1078,6 +1088,7 @@ void Data::invalidateDXCCStatusCache(const QSqlRecord &record)
     const int dxcc = record.value("dxcc").toInt();
     const int myDXCC = StationProfilesManager::instance()->getCurProfile1().dxcc;
     dxccStatusCache.invalidate(dxcc, myDXCC);
+    dxccConfirmation.invalidate(dxcc, myDXCC);
     satelliteDxccStatusCache.remove(QPair<int, int>(dxcc, myDXCC));
 }
 
@@ -1099,6 +1110,7 @@ void Data::invalidateSetOfDXCCStatusCache(const QSet<uint> &entities)
     for ( uint entity : entities )
     {
         dxccStatusCache.invalidate(entity, myDXCC);
+        dxccConfirmation.invalidate(entity, myDXCC);
         satelliteDxccStatusCache.remove(QPair<int, int>(entity, myDXCC));
     }
 }
@@ -1108,6 +1120,8 @@ void Data::clearDXCCStatusCache()
     FCT_IDENTIFICATION;
 
     dxccStatusCache.clear();
+    dxccConfirmation.clear();
+    dxccConfirmationSourcesValid = false;
     satelliteDxccStatusCache.clear();
 }
 

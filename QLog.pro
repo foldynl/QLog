@@ -129,6 +129,7 @@ SOURCES += \
         data/CWShortcutProfile.cpp \
         data/Callsign.cpp \
         data/Data.cpp \
+        data/DxccConfirmation.cpp \
         data/DxServerString.cpp \
         data/Gridsquare.cpp \
         data/HostsPortString.cpp \
@@ -187,6 +188,7 @@ SOURCES += \
         ui/ActivityEditor.cpp \
         ui/AdifRecoveryManager.cpp \
         ui/AlertRuleDetail.cpp \
+        ui/AlertRuleLogStatusDialog.cpp \
         ui/AlertSettingDialog.cpp \
         ui/AlertWidget.cpp \
         ui/AwardsDialog.cpp \
@@ -332,6 +334,7 @@ HEADERS += \
         data/DxServerString.h \
         data/DxSpot.h \
         data/Dxcc.h \
+        data/DxccConfirmation.h \
         data/Gridsquare.h \
         data/HeardMeSpot.h \
         data/HostsPortString.h \
@@ -408,6 +411,7 @@ HEADERS += \
         ui/ActivityEditor.h \
         ui/AdifRecoveryManager.h \
         ui/AlertRuleDetail.h \
+        ui/AlertRuleLogStatusDialog.h \
         ui/AlertSettingDialog.h \
         ui/AlertWidget.h \
         ui/AwardsDialog.h \
@@ -482,6 +486,7 @@ HEADERS += \
         ui/component/SwitchButton.h
 
 FORMS += \
+        ui/AlertRuleLogStatusDialog.ui \
         ui/QSOFilterRule.ui \
         ui/component/QSOFilterDateRangeEdit.ui \
         ui/component/QSOFilterDateBoundary.ui \
