@@ -1,4 +1,5 @@
 TBC - 0.54.0
+- [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
 - Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI: DEB artifact path assumes the repository is named QLog (issue #1182)
 
