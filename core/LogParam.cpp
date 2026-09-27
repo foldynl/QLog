@@ -1728,16 +1728,6 @@ void LogParam::setQslLabelImageExportPath(const QString &path)
     setParam("qsllabel/image_export_path", path);
 }
 
-int LogParam::getQslLabelCustomPageSize()
-{
-    return getParam("qsllabel/custom_pagesize", 0).toInt();
-}
-
-void LogParam::setQslLabelCustomPageSize(int pageSizeIndex)
-{
-    setParam("qsllabel/custom_pagesize", pageSizeIndex);
-}
-
 int LogParam::getQslLabelCustomCols()
 {
     return getParam("qsllabel/custom_cols", 3).toInt();
@@ -1947,6 +1937,36 @@ bool LogParam::getQslLabelPrintBorders()
 void LogParam::setQslLabelPrintBorders(bool enabled)
 {
     setParam("qsllabel/print_borders", enabled);
+}
+
+int LogParam::getQslLabelOrder()
+{
+    return getParam("qsllabel/order", 0).toInt();
+}
+
+void LogParam::setQslLabelOrder(int order)
+{
+    setParam("qsllabel/order", order);
+}
+
+bool LogParam::getQslLabelPrintQslManager()
+{
+    return getParam("qsllabel/qsl_manager", false).toBool();
+}
+
+void LogParam::setQslLabelPrintQslManager(bool enabled)
+{
+    setParam("qsllabel/qsl_manager", enabled);
+}
+
+bool LogParam::getQslLabelPrintRoutePrefix()
+{
+    return getParam("qsllabel/route_prefix", false).toBool();
+}
+
+void LogParam::setQslLabelPrintRoutePrefix(bool enabled)
+{
+    setParam("qsllabel/route_prefix", enabled);
 }
 
 QString LogParam::getQslLabelDateFormat()

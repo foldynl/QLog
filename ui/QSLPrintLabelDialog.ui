@@ -46,9 +46,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
-          <width>393</width>
-          <height>1778</height>
+          <y>-719</y>
+          <width>381</width>
+          <height>1946</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="settingsScrollLayout">
@@ -615,7 +615,8 @@
                  <string>Browse</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="folder-open"/>
+                 <iconset theme="folder-open">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -625,7 +626,8 @@
                  <string>Clear</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="edit-delete"/>
+                 <iconset theme="edit-delete">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -686,27 +688,13 @@
             <item>
              <layout class="QFormLayout" name="templateDetailsLayout">
               <item row="0" column="0">
-               <widget class="QLabel" name="pageSizeLabel">
-                <property name="text">
-                 <string>Page Size:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QComboBox" name="pageSizeComboBox">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
                <widget class="QLabel" name="colsLabel">
                 <property name="text">
                  <string>Columns:</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
+              <item row="0" column="1">
                <widget class="QSpinBox" name="colsSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -719,14 +707,14 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="1" column="0">
                <widget class="QLabel" name="rowsLabel">
                 <property name="text">
                  <string>Rows:</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
+              <item row="1" column="1">
                <widget class="QSpinBox" name="rowsSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -739,14 +727,14 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
+              <item row="2" column="0">
                <widget class="QLabel" name="labelWidthLabel">
                 <property name="text">
                  <string>Label Width:</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
+              <item row="2" column="1">
                <widget class="BaseDoubleSpinBox" name="labelWidthSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -768,14 +756,14 @@
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
+              <item row="3" column="0">
                <widget class="QLabel" name="labelHeightLabel">
                 <property name="text">
                  <string>Label Height:</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="1">
+              <item row="3" column="1">
                <widget class="BaseDoubleSpinBox" name="labelHeightSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -797,14 +785,14 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
+              <item row="4" column="0">
                <widget class="QLabel" name="leftMarginLabel">
                 <property name="text">
                  <string>Left Margin:</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="1">
+              <item row="4" column="1">
                <widget class="BaseDoubleSpinBox" name="leftMarginSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -826,14 +814,14 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
+              <item row="5" column="0">
                <widget class="QLabel" name="topMarginLabel">
                 <property name="text">
                  <string>Top Margin:</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="1">
+              <item row="5" column="1">
                <widget class="BaseDoubleSpinBox" name="topMarginSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -855,14 +843,14 @@
                 </property>
                </widget>
               </item>
-              <item row="7" column="0">
+              <item row="6" column="0">
                <widget class="QLabel" name="hSpacingLabel">
                 <property name="text">
                  <string>H Spacing:</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="6" column="1">
                <widget class="BaseDoubleSpinBox" name="hSpacingSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -884,14 +872,14 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="0">
+              <item row="7" column="0">
                <widget class="QLabel" name="vSpacingLabel">
                 <property name="text">
                  <string>V Spacing:</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="1">
+              <item row="7" column="1">
                <widget class="BaseDoubleSpinBox" name="vSpacingSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -967,12 +955,65 @@
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="printBordersCheckBox">
-              <property name="text">
-               <string>Print Label Borders</string>
+            <item row="0" column="0" colspan="2">
+             <layout class="QFormLayout" name="routingOptionsLayout">
+              <property name="horizontalSpacing">
+               <number>6</number>
               </property>
-             </widget>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="orderLabel">
+                <property name="text">
+                 <string>Order:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="orderComboBox">
+                <property name="toolTip">
+                 <string>QSL Route uses the QSL manager's destination when available.</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QCheckBox" name="qslManagerCheckBox">
+                <property name="toolTip">
+                 <string>Print the QSL manager next to the callsign.</string>
+                </property>
+                <property name="text">
+                 <string>QSL Manager</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QCheckBox" name="routePrefixCheckBox">
+                <property name="toolTip">
+                 <string>Print the destination prefix on every label or card.</string>
+                </property>
+                <property name="text">
+                 <string>Route Prefix</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" colspan="2">
+               <widget class="QCheckBox" name="printBordersCheckBox">
+                <property name="text">
+                 <string>Print Label Borders</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="maxRowsLabel">
@@ -1368,7 +1409,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>671</width>
+            <width>683</width>
             <height>568</height>
            </rect>
           </property>
@@ -1711,7 +1752,7 @@
    <sender>dateRangeCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>toggleDateRange()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>71</x>
@@ -1727,7 +1768,7 @@
    <sender>myCallsignCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>toggleMyCallsign()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>69</x>
@@ -1743,7 +1784,7 @@
    <sender>stationProfileCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>toggleStationProfile()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>81</x>
@@ -1759,7 +1800,7 @@
    <sender>qslSentCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>toggleQslSent()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>62</x>
@@ -1775,7 +1816,7 @@
    <sender>userFilterCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>toggleUserFilter()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>66</x>
@@ -1791,7 +1832,7 @@
    <sender>startDateEdit</sender>
    <signal>dateChanged(QDate)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>212</x>
@@ -1807,7 +1848,7 @@
    <sender>endDateEdit</sender>
    <signal>dateChanged(QDate)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>334</x>
@@ -1823,7 +1864,7 @@
    <sender>myCallsignComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>273</x>
@@ -1839,7 +1880,7 @@
    <sender>stationProfileComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>273</x>
@@ -1855,7 +1896,7 @@
    <sender>qslSentComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>273</x>
@@ -1871,7 +1912,7 @@
    <sender>userFilterComboBox</sender>
    <signal>currentTextChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>filterChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>273</x>
@@ -1919,7 +1960,7 @@
    <sender>footerLeftEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -1935,7 +1976,7 @@
    <sender>footerRightEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2028,10 +2069,28 @@
    </hints>
   </connection>
   <connection>
+   <sender>orderComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshLabels()</slot>
+  </connection>
+  <connection>
+   <sender>qslManagerCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshLabels()</slot>
+  </connection>
+  <connection>
+   <sender>routePrefixCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>QSLPrintLabelDialog</receiver>
+   <slot>refreshLabels()</slot>
+  </connection>
+  <connection>
    <sender>printBordersCheckBox</sender>
    <signal>toggled(bool)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>98</x>
@@ -2047,7 +2106,7 @@
    <sender>dateFormatEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>refreshLabels()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2063,7 +2122,7 @@
    <sender>columnHeaderEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2079,7 +2138,7 @@
    <sender>toRadioTextEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2095,7 +2154,7 @@
    <sender>hdrDateEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2111,7 +2170,7 @@
    <sender>hdrTimeEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2127,7 +2186,7 @@
    <sender>hdrBandEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2143,7 +2202,7 @@
    <sender>hdrModeEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2159,7 +2218,7 @@
    <sender>hdrQslEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2175,7 +2234,7 @@
    <sender>maxRowsSpinBox</sender>
    <signal>valueChanged(int)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>refreshData()</slot>
+   <slot>refreshLabels()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2207,7 +2266,7 @@
    <sender>sansFontComboBox</sender>
    <signal>currentFontChanged(QFont)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2223,7 +2282,7 @@
    <sender>monoFontComboBox</sender>
    <signal>currentFontChanged(QFont)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2255,7 +2314,7 @@
    <sender>toRadioSizeSpinBox</sender>
    <signal>valueChanged(double)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2271,7 +2330,7 @@
    <sender>callsignSizeSpinBox</sender>
    <signal>valueChanged(double)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2287,7 +2346,7 @@
    <sender>headerSizeSpinBox</sender>
    <signal>valueChanged(double)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
@@ -2303,27 +2362,11 @@
    <sender>dataSizeSpinBox</sender>
    <signal>valueChanged(double)</signal>
    <receiver>QSLPrintLabelDialog</receiver>
-   <slot>updatePreview()</slot>
+   <slot>refreshPreview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>290</x>
      <y>1068</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>553</x>
-     <y>349</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pageSizeComboBox</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>QSLPrintLabelDialog</receiver>
-   <slot>customTemplateFieldChanged()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>256</x>
-     <y>317</y>
     </hint>
     <hint type="destinationlabel">
      <x>553</x>
@@ -2701,15 +2744,12 @@
   </connection>
  </connections>
  <slots>
-  <slot>toggleDateRange()</slot>
-  <slot>toggleMyCallsign()</slot>
-  <slot>toggleStationProfile()</slot>
-  <slot>toggleQslSent()</slot>
-  <slot>toggleUserFilter()</slot>
+  <slot>filterChanged()</slot>
   <slot>refreshData()</slot>
+  <slot>refreshLabels()</slot>
   <slot>templateChanged(int)</slot>
   <slot>skipChanged(int)</slot>
-  <slot>updatePreview()</slot>
+  <slot>refreshPreview()</slot>
   <slot>prevPage()</slot>
   <slot>nextPage()</slot>
   <slot>print()</slot>

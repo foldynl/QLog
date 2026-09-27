@@ -101,6 +101,7 @@ SOURCES += \
         core/PlatformParameterManager.cpp \
         core/PotaQE.cpp \
         core/PropConditions.cpp \
+        core/QSLLabelBuilder.cpp \
         core/QSLPrintLabelRenderer.cpp \
         core/QSLStorage.cpp \
         core/QSOFilterManager.cpp \
@@ -298,6 +299,7 @@ HEADERS += \
         core/PlatformParameterManager.h \
         core/PotaQE.h \
         core/PropConditions.h \
+        core/QSLLabelBuilder.h \
         core/QSLPrintLabelRenderer.h \
         core/QSLStorage.h \
         core/QSOFilterManager.h \
