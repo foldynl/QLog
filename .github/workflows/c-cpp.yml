@@ -166,7 +166,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: deb-package
-        path: /home/runner/work/QLog/qlog_*.deb
+        path: ../qlog_*.deb
         retention-days: 1
 
   deb-smoke-test:
