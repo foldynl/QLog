@@ -52,6 +52,7 @@ struct RuleSpec {
     int source = SpotAlert::WSJTXCQSPOT;
     bool enabled = true;
     int dxLogStatusMap = DxccStatus::Worked;
+    int dxLogStatusScope = static_cast<int>(DxccStatusScope::BandMode);
     QString mode = QStringLiteral("*");
     QString band = QStringLiteral("*");
     int dxCountry = 0;
@@ -121,6 +122,7 @@ std::unique_ptr<AlertRule> makeRule(const RuleSpec &spec, int source)
     rule->sourceMap = source;
     rule->dxCountry = spec.dxCountry;
     rule->dxLogStatusMap = spec.dxLogStatusMap;
+    rule->dxLogStatusScope = AlertRule::toLogStatusScope(spec.dxLogStatusScope);
     rule->dxContinent = spec.dxContinent;
     rule->dxComment = spec.commentRe;
     rule->dxMember = spec.dxMember;
@@ -209,6 +211,14 @@ private slots:
     void cross_valid();
     void cross_valid2_data();
     void cross_valid2();
+    void scope_dxspot_data();
+    void scope_dxspot();
+    void scope_wsjtx_data();
+    void scope_wsjtx();
+    void scope_resolver_arguments();
+    void scope_conversion();
+    void logstatus_sentence_data();
+    void logstatus_sentence();
 };
 
 void AlertEvaluatorTest::initTestCase()
@@ -1309,6 +1319,346 @@ void AlertEvaluatorTest::cross_valid2()
     QCOMPARE(alertRule->match(spot), expected);
 }
 
+namespace {
+
+/* Stub resolver: the Band scope status and the Entity scope status
+ * are given by the test, everything else is a failure */
+AlertRule::LogStatusResolver makeResolver(int bandStatus, int entityStatus, int modeStatus = DxccStatus::UnknownStatus)
+{
+    return [bandStatus, entityStatus, modeStatus](int, const QString &, const QString &, DxccStatusScope scope) -> DxccStatus
+    {
+        switch ( scope )
+        {
+        case DxccStatusScope::Band:   return static_cast<DxccStatus>(bandStatus);
+        case DxccStatusScope::Entity: return static_cast<DxccStatus>(entityStatus);
+        case DxccStatusScope::Mode:   return static_cast<DxccStatus>(modeStatus);
+        default:                      return DxccStatus::UnknownStatus;
+        }
+    };
+}
+
+}
+
+void AlertEvaluatorTest::scope_dxspot_data()
+{
+    QTest::addColumn<RuleSpec>("rule");
+    QTest::addColumn<DxSpotSpec>("input");
+    QTest::addColumn<int>("bandStatus");
+    QTest::addColumn<int>("entityStatus");
+    QTest::addColumn<bool>("useResolver");
+    QTest::addColumn<bool>("expected");
+
+    const QList<QPair<int, const char*>> scopes =
+    {
+        { static_cast<int>(DxccStatusScope::BandMode), "bandmode" },
+        { static_cast<int>(DxccStatusScope::Band),     "band" },
+        { static_cast<int>(DxccStatusScope::Entity),   "entity" }
+    };
+
+    /* the rule waits for Worked; each scope has a different status
+     * and only the status of the rule's scope must be evaluated */
+    for ( const auto &scope : scopes )
+    {
+        for ( int spotStatus = DxccStatus::NewEntity; spotStatus <= DxccStatus::UnknownStatus; spotStatus <<= 1 )
+        {
+            for ( int bandStatus = DxccStatus::NewEntity; bandStatus <= DxccStatus::UnknownStatus; bandStatus <<= 1 )
+            {
+                for ( int entityStatus = DxccStatus::NewEntity; entityStatus <= DxccStatus::UnknownStatus; entityStatus <<= 1 )
+                {
+                    RuleSpec rule;
+                    rule.dxLogStatusMap = DxccStatus::Worked;
+                    rule.dxLogStatusScope = scope.first;
+
+                    DxSpotSpec in;
+                    in.status = spotStatus;
+
+                    int evaluated = spotStatus;
+                    if ( scope.first == static_cast<int>(DxccStatusScope::Band) )   evaluated = bandStatus;
+                    if ( scope.first == static_cast<int>(DxccStatusScope::Entity) ) evaluated = entityStatus;
+
+                    QTest::addRow("dxspot_scope_%s_%d_%d_%d", scope.second, spotStatus, bandStatus, entityStatus)
+                        << rule << in << bandStatus << entityStatus << true
+                        << (evaluated == DxccStatus::Worked);
+                }
+            }
+        }
+    }
+
+    /* without a resolver the spot status is used for every scope */
+    for ( const auto &scope : scopes )
+    {
+        for ( int spotStatus = DxccStatus::NewEntity; spotStatus <= DxccStatus::UnknownStatus; spotStatus <<= 1 )
+        {
+            RuleSpec rule;
+            rule.dxLogStatusMap = DxccStatus::Worked;
+            rule.dxLogStatusScope = scope.first;
+
+            DxSpotSpec in;
+            in.status = spotStatus;
+
+            QTest::addRow("dxspot_scope_noresolver_%s_%d", scope.second, spotStatus)
+                << rule << in << static_cast<int>(DxccStatus::Confirmed) << static_cast<int>(DxccStatus::Confirmed) << false
+                << (spotStatus == DxccStatus::Worked);
+        }
+    }
+
+    /* the typical use-case from issue #913: an alert for an entity
+     * that has been worked on some band but not confirmed on any band */
+    {
+        RuleSpec rule;
+        rule.dxLogStatusMap = DxccStatus::NewEntity | DxccStatus::Worked;
+        rule.dxLogStatusScope = static_cast<int>(DxccStatusScope::Entity);
+
+        DxSpotSpec in;
+        in.status = DxccStatus::NewBandMode;  // never worked on the spot's band/mode
+
+        QTest::addRow("dxspot_scope_913_unconfirmed_entity")
+            << rule << in << static_cast<int>(DxccStatus::NewBand) << static_cast<int>(DxccStatus::Worked) << true << true;
+        QTest::addRow("dxspot_scope_913_confirmed_entity")
+            << rule << in << static_cast<int>(DxccStatus::NewBand) << static_cast<int>(DxccStatus::Confirmed) << true << false;
+    }
+
+    /* the second scenario from issue #913: not confirmed on the band in any mode */
+    {
+        RuleSpec rule;
+        rule.dxLogStatusMap = DxccStatus::NewEntity | DxccStatus::NewBand | DxccStatus::Worked;
+        rule.dxLogStatusScope = static_cast<int>(DxccStatusScope::Band);
+
+        DxSpotSpec in;
+        in.status = DxccStatus::NewMode;
+
+        QTest::addRow("dxspot_scope_913_unconfirmed_band")
+            << rule << in << static_cast<int>(DxccStatus::Worked) << static_cast<int>(DxccStatus::Confirmed) << true << true;
+        QTest::addRow("dxspot_scope_913_confirmed_band")
+            << rule << in << static_cast<int>(DxccStatus::Confirmed) << static_cast<int>(DxccStatus::Confirmed) << true << false;
+    }
+}
+
+void AlertEvaluatorTest::scope_dxspot()
+{
+    QFETCH(RuleSpec, rule);
+    QFETCH(DxSpotSpec, input);
+    QFETCH(int, bandStatus);
+    QFETCH(int, entityStatus);
+    QFETCH(bool, useResolver);
+    QFETCH(bool, expected);
+
+    auto alertRule = makeRule(rule, SpotAlert::DXSPOT);
+    DxSpot spot = makeDxSpot(input);
+
+    const AlertRule::LogStatusResolver resolver = useResolver ? makeResolver(bandStatus, entityStatus)
+                                                              : AlertRule::LogStatusResolver();
+
+    QCOMPARE(alertRule->match(spot, resolver), expected);
+}
+
+void AlertEvaluatorTest::scope_wsjtx_data()
+{
+    QTest::addColumn<RuleSpec>("rule");
+    QTest::addColumn<WsjtxSpec>("input");
+    QTest::addColumn<int>("bandStatus");
+    QTest::addColumn<int>("entityStatus");
+    QTest::addColumn<bool>("expected");
+
+    for ( int spotStatus = DxccStatus::NewEntity; spotStatus <= DxccStatus::UnknownStatus; spotStatus <<= 1 )
+    {
+        for ( int scopedStatus = DxccStatus::NewEntity; scopedStatus <= DxccStatus::UnknownStatus; scopedStatus <<= 1 )
+        {
+            RuleSpec rule;
+            rule.dxLogStatusMap = DxccStatus::Confirmed;
+
+            WsjtxSpec in;
+            in.status = spotStatus;
+
+            rule.dxLogStatusScope = static_cast<int>(DxccStatusScope::BandMode);
+            QTest::addRow("wsjtx_scope_bandmode_%d_%d", spotStatus, scopedStatus)
+                << rule << in << scopedStatus << scopedStatus << (spotStatus == DxccStatus::Confirmed);
+
+            rule.dxLogStatusScope = static_cast<int>(DxccStatusScope::Band);
+            QTest::addRow("wsjtx_scope_band_%d_%d", spotStatus, scopedStatus)
+                << rule << in << scopedStatus << static_cast<int>(DxccStatus::UnknownStatus) << (scopedStatus == DxccStatus::Confirmed);
+
+            rule.dxLogStatusScope = static_cast<int>(DxccStatusScope::Entity);
+            QTest::addRow("wsjtx_scope_entity_%d_%d", spotStatus, scopedStatus)
+                << rule << in << static_cast<int>(DxccStatus::UnknownStatus) << scopedStatus << (scopedStatus == DxccStatus::Confirmed);
+
+            /* the Mode scope is served by the mode status of the resolver; band and entity statuses are unknown */
+            rule.dxLogStatusScope = static_cast<int>(DxccStatusScope::Mode);
+            QTest::addRow("wsjtx_scope_mode_%d_%d", spotStatus, scopedStatus)
+                << rule << in << static_cast<int>(DxccStatus::UnknownStatus) << static_cast<int>(DxccStatus::UnknownStatus) << (scopedStatus == DxccStatus::Confirmed);
+        }
+    }
+}
+
+void AlertEvaluatorTest::scope_wsjtx()
+{
+    QFETCH(RuleSpec, rule);
+    QFETCH(WsjtxSpec, input);
+    QFETCH(int, bandStatus);
+    QFETCH(int, entityStatus);
+    QFETCH(bool, expected);
+
+    auto alertRule = makeRule(rule, SpotAlert::WSJTXCQSPOT);
+    WsjtxEntry entry = makeWsjtxEntry(input);
+
+    /* the mode status of the resolver mirrors the expectation: Confirmed when the row expects a match */
+    const int modeStatus = expected ? DxccStatus::Confirmed : DxccStatus::Worked;
+    QCOMPARE(alertRule->match(entry, makeResolver(bandStatus, entityStatus, modeStatus)), expected);
+}
+
+void AlertEvaluatorTest::scope_resolver_arguments()
+{
+    int seenDxcc = -1;
+    QString seenBand;
+    QString seenMode;
+    int seenScope = -1;
+    int calls = 0;
+
+    AlertRule::LogStatusResolver resolver = [&](int dxcc, const QString &band, const QString &modeGroup, DxccStatusScope scope) -> DxccStatus
+    {
+        calls++;
+        seenDxcc = dxcc;
+        seenBand = band;
+        seenMode = modeGroup;
+        seenScope = static_cast<int>(scope);
+        return DxccStatus::Worked;
+    };
+
+    /* DX Cluster spot - the mode group of the spot is passed */
+    {
+        RuleSpec ruleSpec;
+        ruleSpec.dxLogStatusScope = static_cast<int>(DxccStatusScope::Band);
+        auto rule = makeRule(ruleSpec, SpotAlert::DXSPOT);
+
+        DxSpotSpec spec;
+        spec.dxcc = 230;
+        spec.band = QStringLiteral("40m");
+        spec.modeGroupString = QStringLiteral("CW");
+        spec.status = DxccStatus::NewEntity;
+        DxSpot spot = makeDxSpot(spec);
+
+        QVERIFY(rule->match(spot, resolver));
+        QCOMPARE(calls, 1);
+        QCOMPARE(seenDxcc, 230);
+        QCOMPARE(seenBand, QStringLiteral("40m"));
+        QCOMPARE(seenMode, QStringLiteral("CW"));
+        QCOMPARE(seenScope, static_cast<int>(DxccStatusScope::Band));
+    }
+
+    /* WSJTX spot - FTx mode group is derived from the decoded mode */
+    {
+        RuleSpec ruleSpec;
+        ruleSpec.dxLogStatusScope = static_cast<int>(DxccStatusScope::Entity);
+        auto rule = makeRule(ruleSpec, SpotAlert::WSJTXCQSPOT);
+
+        WsjtxSpec spec;
+        spec.dxcc = 5;
+        spec.band = QStringLiteral("6m");
+        spec.decodedMode = QStringLiteral("FT4");
+        spec.status = DxccStatus::Confirmed;
+        WsjtxEntry entry = makeWsjtxEntry(spec);
+
+        QVERIFY(rule->match(entry, resolver));
+        QCOMPARE(calls, 2);
+        QCOMPARE(seenDxcc, 5);
+        QCOMPARE(seenBand, QStringLiteral("6m"));
+        QCOMPARE(seenMode, BandPlan::MODE_GROUP_STRING_FTx);
+        QCOMPARE(seenScope, static_cast<int>(DxccStatusScope::Entity));
+    }
+
+    /* Band & Mode scope never calls the resolver */
+    {
+        RuleSpec ruleSpec;
+        ruleSpec.dxLogStatusScope = static_cast<int>(DxccStatusScope::BandMode);
+        auto rule = makeRule(ruleSpec, SpotAlert::DXSPOT);
+
+        DxSpotSpec spec;
+        DxSpot spot = makeDxSpot(spec);
+
+        QVERIFY(rule->match(spot, resolver));
+        QCOMPARE(calls, 2);
+    }
+}
+
+void AlertEvaluatorTest::scope_conversion()
+{
+    QCOMPARE(AlertRule::toLogStatusScope(0), DxccStatusScope::BandMode);
+    QCOMPARE(AlertRule::toLogStatusScope(1), DxccStatusScope::Band);
+    QCOMPARE(AlertRule::toLogStatusScope(2), DxccStatusScope::Entity);
+    QCOMPARE(AlertRule::toLogStatusScope(3), DxccStatusScope::Mode);
+    /* unknown values (e.g. NULL column of an older rule) fall back to the default */
+    QCOMPARE(AlertRule::toLogStatusScope(-1), DxccStatusScope::BandMode);
+    QCOMPARE(AlertRule::toLogStatusScope(99), DxccStatusScope::BandMode);
+}
+
+void AlertEvaluatorTest::logstatus_sentence_data()
+{
+    QTest::addColumn<int>("need");
+    QTest::addColumn<int>("until");
+    QTest::addColumn<int>("expectedMap");
+    QTest::addColumn<int>("expectedScope");
+
+    const int entity = static_cast<int>(AlertRule::LogStatusNeed::NewEntity);
+    const int band = static_cast<int>(AlertRule::LogStatusNeed::NewBand);
+    const int modeNeed = static_cast<int>(AlertRule::LogStatusNeed::NewMode);
+    const int slot = static_cast<int>(AlertRule::LogStatusNeed::NewBandMode);
+    const int any = static_cast<int>(AlertRule::LogStatusNeed::Any);
+    const int worked = static_cast<int>(AlertRule::LogStatusUntil::Worked);
+    const int confirmed = static_cast<int>(AlertRule::LogStatusUntil::Confirmed);
+    const int allNew = DxccStatus::NewEntity | DxccStatus::NewBand | DxccStatus::NewMode | DxccStatus::NewSlot;
+
+    QTest::newRow("entity_worked")    << entity << worked    << int(DxccStatus::NewEntity)                        << int(DxccStatusScope::Entity);
+    QTest::newRow("entity_confirmed") << entity << confirmed << int(DxccStatus::NewEntity | DxccStatus::Worked)   << int(DxccStatusScope::Entity);
+    QTest::newRow("band_worked")      << band   << worked    << int(DxccStatus::NewEntity | DxccStatus::NewBand)  << int(DxccStatusScope::Band);
+    QTest::newRow("band_confirmed")   << band   << confirmed << int(DxccStatus::NewEntity | DxccStatus::NewBand | DxccStatus::Worked) << int(DxccStatusScope::Band);
+    QTest::newRow("mode_worked")      << modeNeed << worked  << int(DxccStatus::NewEntity | DxccStatus::NewMode)  << int(DxccStatusScope::Mode);
+    QTest::newRow("mode_confirmed")   << modeNeed << confirmed << int(DxccStatus::NewEntity | DxccStatus::NewMode | DxccStatus::Worked) << int(DxccStatusScope::Mode);
+    QTest::newRow("slot_worked")      << slot   << worked    << allNew                                            << int(DxccStatusScope::BandMode);
+    QTest::newRow("slot_confirmed")   << slot   << confirmed << (allNew | DxccStatus::Worked)                     << int(DxccStatusScope::BandMode);
+    QTest::newRow("any_worked")       << any    << worked    << int(DxccStatus::All)                              << int(DxccStatusScope::BandMode);
+    QTest::newRow("any_confirmed")    << any    << confirmed << int(DxccStatus::All)                              << int(DxccStatusScope::BandMode);
+}
+
+void AlertEvaluatorTest::logstatus_sentence()
+{
+    QFETCH(int, need);
+    QFETCH(int, until);
+    QFETCH(int, expectedMap);
+    QFETCH(int, expectedScope);
+
+    AlertRule rule;
+    rule.setLogStatus(static_cast<AlertRule::LogStatusNeed>(need),
+                      static_cast<AlertRule::LogStatusUntil>(until));
+
+    QCOMPARE(rule.dxLogStatusMap, expectedMap);
+    QCOMPARE(static_cast<int>(rule.dxLogStatusScope), expectedScope);
+
+    /* the sentence can be read back from the stored values */
+    QCOMPARE(static_cast<int>(rule.logStatusNeed()), need);
+
+    if ( need != static_cast<int>(AlertRule::LogStatusNeed::Any) )
+        QCOMPARE(static_cast<int>(rule.logStatusUntil()), until);
+
+    /* the classic "New One" rule: the entity is worked on 15m but not confirmed anywhere,
+     * a spot on 10m must alert only while the entity is not confirmed */
+    if ( need == static_cast<int>(AlertRule::LogStatusNeed::NewEntity) )
+    {
+        RuleSpec ruleSpec;
+        auto newOneRule = makeRule(ruleSpec, SpotAlert::DXSPOT);
+        newOneRule->setLogStatus(static_cast<AlertRule::LogStatusNeed>(need),
+                                 static_cast<AlertRule::LogStatusUntil>(until));
+
+        DxSpotSpec spec;
+        spec.band = "10m";
+        spec.status = DxccStatus::NewBand;
+        DxSpot spot = makeDxSpot(spec);
+
+        const bool untilConfirmed = ( until == static_cast<int>(AlertRule::LogStatusUntil::Confirmed) );
+        QCOMPARE(newOneRule->match(spot, makeResolver(DxccStatus::NewBand, DxccStatus::Worked)), untilConfirmed);
+        QCOMPARE(newOneRule->match(spot, makeResolver(DxccStatus::NewBand, DxccStatus::Confirmed)), false);
+        QCOMPARE(newOneRule->match(spot, makeResolver(DxccStatus::NewBand, DxccStatus::NewEntity)), true);
+    }
+}
 
 QTEST_APPLESS_MAIN(AlertEvaluatorTest)
 

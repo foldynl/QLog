@@ -163,76 +163,13 @@
           <number>2</number>
          </property>
          <item row="0" column="0">
-          <widget class="QLabel" name="logStatusLabel">
-           <property name="text">
-            <string>Log Status</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QGridLayout" name="gridLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item row="1" column="2">
-            <widget class="QCheckBox" name="workedCheckbox">
-             <property name="text">
-              <string>Worked</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="newSlotCheckbox">
-             <property name="text">
-              <string>New Slot</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QCheckBox" name="confirmedCheckbox">
-             <property name="text">
-              <string>Confirmed</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="newEntityCheckbox">
-             <property name="text">
-              <string>New Entity</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QCheckBox" name="newModeCheckbox">
-             <property name="text">
-              <string>New Mode</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QCheckBox" name="newBandCheckbox">
-             <property name="text">
-              <string>New Band</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="allCheckbox">
-             <property name="text">
-              <string>All</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0">
           <widget class="QLabel" name="dxCallsignLabel">
            <property name="text">
             <string>DX Callsign</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="0" column="1">
           <widget class="QLineEdit" name="dxCallsignEdit">
            <property name="toolTip">
             <string>Use Perl-like regular expression</string>
@@ -245,14 +182,14 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="countryLabel">
            <property name="text">
             <string>Country</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="1" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
             <widget class="SmartSearchBox" name="countryCombo">
@@ -395,14 +332,14 @@
            </item>
           </layout>
          </item>
-         <item row="3" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="spotCommentLabel">
            <property name="text">
             <string>Spot Comment</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="2" column="1">
           <widget class="QLineEdit" name="spotCommentEdit">
            <property name="toolTip">
             <string>Use Perl-like regular expression</string>
@@ -415,14 +352,14 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Special Programs</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="3" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <property name="spacing">
             <number>9</number>
@@ -687,6 +624,110 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="logStatusGroupBox">
+         <property name="toolTip">
+          <string>Checked: the rule alerts as long as the sentence is true. Unchecked: the log is not consulted.</string>
+         </property>
+         <property name="title">
+          <string>Log Status</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_logStatus">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+            <layout class="QHBoxLayout" name="logStatusLayout">
+             <item>
+              <widget class="QLabel" name="logStatusNeedLabel">
+               <property name="text">
+                <string>I need this</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="logStatusSpacer1">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QComboBox" name="logStatusNeedCombo">
+               <property name="sizeAdjustPolicy">
+                <enum>QComboBox::AdjustToContents</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="logStatusSpacer2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="logStatusUntilLabel">
+               <property name="text">
+                <string>until it is</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="logStatusSpacer3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QComboBox" name="logStatusUntilCombo">
+               <property name="sizeAdjustPolicy">
+                <enum>QComboBox::AdjustToContents</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="memberGroupBox">
          <property name="title">
           <string>Member</string>
@@ -885,13 +926,9 @@
   <tabstop>dxcCheckBox</tabstop>
   <tabstop>wsjtxCheckBox</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>allCheckbox</tabstop>
-  <tabstop>newEntityCheckbox</tabstop>
-  <tabstop>newBandCheckbox</tabstop>
-  <tabstop>newModeCheckbox</tabstop>
-  <tabstop>newSlotCheckbox</tabstop>
-  <tabstop>workedCheckbox</tabstop>
-  <tabstop>confirmedCheckbox</tabstop>
+  <tabstop>logStatusGroupBox</tabstop>
+  <tabstop>logStatusNeedCombo</tabstop>
+  <tabstop>logStatusUntilCombo</tabstop>
   <tabstop>dxCallsignEdit</tabstop>
   <tabstop>countryCombo</tabstop>
   <tabstop>ituEdit</tabstop>
@@ -1008,28 +1045,11 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>allCheckbox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>AlertRuleDetail</receiver>
-   <slot>enabledLogStatusAll(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>203</x>
-     <y>132</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>288</x>
-     <y>301</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
   <slot>ruleNameChanged(QString)</slot>
   <slot>callsignChanged(QString)</slot>
   <slot>spotCommentChanged(QString)</slot>
-  <slot>enabledLogStatusAll(bool)</slot>
  </slots>
 </ui>

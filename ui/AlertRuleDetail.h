@@ -32,10 +32,11 @@ private:
 
 
 private slots:
-    void enabledLogStatusAll(bool enabled);
+    void updateLogStatusToolTips();
 
 private:
     void setDefaultValues();
+    void setupLogStatus();
     bool ruleExists(const QString &ruleName);
     void loadRuleNames();
     void loadRule(const QString &ruleName);

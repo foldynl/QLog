@@ -468,6 +468,10 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->dxWidget, &DxWidget::tuneBand, ui->rigWidget, &RigWidget::setBand);
     ui->dxWidget->registerContactWidget(ui->newContactWidget);
 
+    alertEvaluator.setLogStatusResolver([](int dxcc, const QString &band, const QString &modeGroup, DxccStatusScope scope)
+    {
+        return Data::instance()->currentDxccStatusForScope(dxcc, band, modeGroup, scope);
+    });
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, this, &MainWindow::processSpotAlert);
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, &networknotification, &NetworkNotification::spotAlert);
 

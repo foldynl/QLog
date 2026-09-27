@@ -38,7 +38,7 @@ void AlertEvaluator::dxSpot(const DxSpot & spot)
     {
         qCDebug(runtime) << "Processing " << *rule;
 
-        if ( rule->match(spot) )
+        if ( rule->match(spot, logStatusResolver) )
         {
             matchedRules << rule->ruleName;
         }
@@ -62,7 +62,7 @@ void AlertEvaluator::WSJTXCQSpot(const WsjtxEntry &wsjtx)
     for ( const AlertRule *rule : static_cast<const QList<AlertRule *>&>(ruleList) )
     {
         qCDebug(runtime) << "Processing " << *rule;
-        if ( rule->match(wsjtx) )
+        if ( rule->match(wsjtx, logStatusResolver) )
         {
             matchedRules << rule->ruleName;
         }
@@ -73,6 +73,13 @@ void AlertEvaluator::WSJTXCQSpot(const WsjtxEntry &wsjtx)
         SpotAlert alert(matchedRules, wsjtx);
         emit spotAlert(alert);
     }
+}
+
+void AlertEvaluator::setLogStatusResolver(const AlertRule::LogStatusResolver &resolver)
+{
+    FCT_IDENTIFICATION;
+
+    logStatusResolver = resolver;
 }
 
 void AlertEvaluator::loadRules()
@@ -118,6 +125,7 @@ AlertRule::AlertRule(QObject *parent) :
     sourceMap(SpotAlert::UKNOWN),
     dxCountry(-1),
     dxLogStatusMap(0),
+    dxLogStatusScope(DxccStatusScope::BandMode),
     spotterCountry(-1),
     ituz(0),
     cqz(0),
@@ -143,11 +151,11 @@ bool AlertRule::save()
     QSqlQuery insertUpdateStmt;
 
     if ( ! insertUpdateStmt.prepare("INSERT INTO alert_rules(rule_name, enabled, source, dx_callsign, dx_country, "
-                                    "dx_logstatus, dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff) "
+                                    "dx_logstatus, dx_logstatus_scope, dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff) "
                                     " VALUES (:ruleName, :enabled, :source, :dxCallsign, :dxCountry, "
-                                    ":dxLogstatus, :dxContinent, :spotComment, :mode, :band, :spotterCountry, :spotterContinent, :dxMember, :ituz, :cqz, :pota, :sota, :iota, :wwff) "
+                                    ":dxLogstatus, :dxLogstatusScope, :dxContinent, :spotComment, :mode, :band, :spotterCountry, :spotterContinent, :dxMember, :ituz, :cqz, :pota, :sota, :iota, :wwff) "
                                     " ON CONFLICT(rule_name) DO UPDATE SET enabled = :enabled, source = :source, dx_callsign =:dxCallsign, "
-                                    "dx_country = :dxCountry, dx_logstatus = :dxLogstatus, dx_continent = :dxContinent, spot_comment = :spotComment, "
+                                    "dx_country = :dxCountry, dx_logstatus = :dxLogstatus, dx_logstatus_scope = :dxLogstatusScope, dx_continent = :dxContinent, spot_comment = :spotComment, "
                                     "mode = :mode, band = :band, spotter_country = :spotterCountry, spotter_continent = :spotterContinent, dx_member = :dxMember, ituz = :ituz, cqz = :cqz, pota = :pota, sota = :sota, iota = :iota, wwff = :wwff "
                                     " WHERE rule_name = :ruleName"))
     {
@@ -161,6 +169,7 @@ bool AlertRule::save()
     insertUpdateStmt.bindValue(":dxCallsign", dxCallsign);
     insertUpdateStmt.bindValue(":dxCountry", dxCountry);
     insertUpdateStmt.bindValue(":dxLogstatus", dxLogStatusMap);
+    insertUpdateStmt.bindValue(":dxLogstatusScope", static_cast<int>(dxLogStatusScope));
     insertUpdateStmt.bindValue(":dxContinent", dxContinent);
     insertUpdateStmt.bindValue(":dxMember", dxMember.join(","));
     insertUpdateStmt.bindValue(":spotComment", dxComment);
@@ -191,7 +200,7 @@ bool AlertRule::load(const QString &in_ruleName)
 
     QSqlQuery query;
 
-    if ( ! query.prepare("SELECT rule_name, enabled, source, dx_callsign, dx_country, dx_logstatus, "
+    if ( ! query.prepare("SELECT rule_name, enabled, source, dx_callsign, dx_country, dx_logstatus, dx_logstatus_scope, "
                          "dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff "
                          "FROM alert_rules "
                          "WHERE rule_name = :rule") )
@@ -214,6 +223,7 @@ bool AlertRule::load(const QString &in_ruleName)
         dxCallsign       = record.value("dx_callsign").toString();
         dxCountry        = record.value("dx_country").toInt();
         dxLogStatusMap   = record.value("dx_logstatus").toInt();
+        dxLogStatusScope = toLogStatusScope(record.value("dx_logstatus_scope").toInt());
         dxContinent      = record.value("dx_continent").toString();
         dxComment        = record.value("spot_comment").toString();
         dxMember         = record.value("dx_member").toString().split(",");
@@ -251,7 +261,7 @@ bool AlertRule::load(const QString &in_ruleName)
     return true;
 }
 
-bool AlertRule::match(const WsjtxEntry &wsjtx) const
+bool AlertRule::match(const WsjtxEntry &wsjtx, const LogStatusResolver &resolver) const
 {
     FCT_IDENTIFICATION;
 
@@ -281,13 +291,14 @@ bool AlertRule::match(const WsjtxEntry &wsjtx) const
         if ( !refMatch ) return fail();
     }
 
-    if ( !(wsjtx.status & dxLogStatusMap) ) return fail();
+    const QString &group = BandPlan::isFTxMode(wsjtx.decodedMode)
+        ? BandPlan::MODE_GROUP_STRING_FTx
+        : BandPlan::MODE_GROUP_STRING_DIGITAL;
+
+    if ( !(logStatus(wsjtx, group, resolver) & dxLogStatusMap) ) return fail();
 
     if ( mode != "*" )
     {
-        const QString &group = BandPlan::isFTxMode(wsjtx.decodedMode)
-            ? BandPlan::MODE_GROUP_STRING_FTx
-            : BandPlan::MODE_GROUP_STRING_DIGITAL;
         if ( !mode.contains(QLatin1Char('|') + group) ) return fail();
     }
 
@@ -313,7 +324,7 @@ bool AlertRule::match(const WsjtxEntry &wsjtx) const
     return ret;
 }
 
-bool AlertRule::match(const DxSpot &spot) const
+bool AlertRule::match(const DxSpot &spot, const LogStatusResolver &resolver) const
 {
     FCT_IDENTIFICATION;
 
@@ -343,7 +354,7 @@ bool AlertRule::match(const DxSpot &spot) const
         if ( !refMatch ) return fail();
     }
 
-    if ( !(spot.status & dxLogStatusMap) ) return fail();
+    if ( !(logStatus(spot, spot.modeGroupString, resolver) & dxLogStatusMap) ) return fail();
 
     if ( mode != "*" )
     {
@@ -388,6 +399,105 @@ bool AlertRule::match(const DxSpot &spot) const
     return ret;
 }
 
+DxccStatus AlertRule::logStatus(const DxSpot &spot,
+                                const QString &modeGroup,
+                                const LogStatusResolver &resolver) const
+{
+    FCT_IDENTIFICATION;
+
+    // The spot already carries the Band & Mode status computed by its source
+    if ( dxLogStatusScope == DxccStatusScope::BandMode )
+        return spot.status;
+
+    if ( !resolver )
+    {
+        qCDebug(runtime) << "No Log Status resolver - using the spot status";
+        return spot.status;
+    }
+
+    const DxccStatus status = resolver(spot.dxcc.dxcc, spot.band, modeGroup, dxLogStatusScope);
+
+    qCDebug(runtime) << "Scoped Log Status" << static_cast<int>(dxLogStatusScope) << status;
+
+    return status;
+}
+
+DxccStatusScope AlertRule::toLogStatusScope(int value)
+{
+    FCT_IDENTIFICATION;
+
+    switch ( value )
+    {
+    case static_cast<int>(DxccStatusScope::Band):
+        return DxccStatusScope::Band;
+    case static_cast<int>(DxccStatusScope::Entity):
+        return DxccStatusScope::Entity;
+    case static_cast<int>(DxccStatusScope::Mode):
+        return DxccStatusScope::Mode;
+    default:
+        return DxccStatusScope::BandMode;
+    }
+}
+
+void AlertRule::setLogStatus(LogStatusNeed need, LogStatusUntil until)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << static_cast<int>(need) << static_cast<int>(until);
+
+    switch ( need )
+    {
+    case LogStatusNeed::NewEntity:
+        dxLogStatusMap = DxccStatus::NewEntity;
+        dxLogStatusScope = DxccStatusScope::Entity;
+        break;
+    case LogStatusNeed::NewBand:
+        dxLogStatusMap = DxccStatus::NewEntity | DxccStatus::NewBand;
+        dxLogStatusScope = DxccStatusScope::Band;
+        break;
+    case LogStatusNeed::NewMode:
+        dxLogStatusMap = DxccStatus::NewEntity | DxccStatus::NewMode;
+        dxLogStatusScope = DxccStatusScope::Mode;
+        break;
+    case LogStatusNeed::NewBandMode:
+        dxLogStatusMap = DxccStatus::NewEntity | DxccStatus::NewBand
+                         | DxccStatus::NewMode | DxccStatus::NewSlot;
+        dxLogStatusScope = DxccStatusScope::BandMode;
+        break;
+    case LogStatusNeed::Any:
+        dxLogStatusMap = DxccStatus::All;
+        dxLogStatusScope = DxccStatusScope::BandMode;
+        return;
+    }
+
+    if ( until == LogStatusUntil::Confirmed )
+        dxLogStatusMap |= DxccStatus::Worked;
+}
+
+AlertRule::LogStatusNeed AlertRule::logStatusNeed() const
+{
+    FCT_IDENTIFICATION;
+
+    if ( dxLogStatusMap == DxccStatus::All )
+        return LogStatusNeed::Any;
+
+    switch ( dxLogStatusScope )
+    {
+    case DxccStatusScope::Entity: return LogStatusNeed::NewEntity;
+    case DxccStatusScope::Band:   return LogStatusNeed::NewBand;
+    case DxccStatusScope::Mode:   return LogStatusNeed::NewMode;
+    default:                      return LogStatusNeed::NewBandMode;
+    }
+}
+
+AlertRule::LogStatusUntil AlertRule::logStatusUntil() const
+{
+    FCT_IDENTIFICATION;
+
+    return ( dxLogStatusMap & DxccStatus::Worked ) ? LogStatusUntil::Confirmed
+                                                   : LogStatusUntil::Worked;
+}
+
 bool AlertRule::isValid() const
 {
     FCT_IDENTIFICATION;
@@ -413,6 +523,7 @@ AlertRule::operator QString() const
             + "dxMember: "         + dxMember.join(", ") + "; "
             + "dxCountry: "        + QString::number(dxCountry) + "; "
             + "dxLogStatusMap: 0b" + QString::number(dxLogStatusMap,2) + "; "
+            + "dxLogStatusScope: " + QString::number(static_cast<int>(dxLogStatusScope)) + "; "
             + "dxComment: "        + dxComment + "; "
             + "mode: "             + mode + "; "
             + "band: "             + band + "; "

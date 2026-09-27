@@ -159,9 +159,13 @@ public:
 
     static QString safeQueryString(const QUrlQuery &query);
     DxccStatus dxccStatus(int dxcc, const QString &band, const QString &mode);
+    // DXCC status evaluated at a coarser granularity - per band (any mode)
+    // or per entity (any band and mode). Scope BandMode is the same as dxccStatus().
+    DxccStatus dxccStatusForScope(int dxcc, const QString &band, const QString &mode, DxccStatusScope scope);
     // Live views follow the propagation mode selected in New Contact.
     // Record-specific calculations must use dxccStatus() or satelliteDxccStatus().
     DxccStatus currentDxccStatus(int dxcc, const QString &band, const QString &mode);
+    DxccStatus currentDxccStatusForScope(int dxcc, const QString &band, const QString &mode, DxccStatusScope scope);
     DxccStatus currentDxccNewStatusWhenQSOAdded(const DxccStatus &oldStatus,
                                                 bool oldStatusSatellite,
                                                 qint32 oldDxcc,
