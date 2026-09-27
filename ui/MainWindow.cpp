@@ -180,8 +180,19 @@ MainWindow::MainWindow(QWidget* parent) :
     menuAlert->addAction(ui->actionClearAlerts);
     menuAlert->addSeparator();
     menuAlert->addAction(ui->actionEditAlertRules);
-    menuAlert->addAction(ui->actionBeepSettingAlert);
-    ui->actionBeepSettingAlert->setChecked(LogParam::getMainWindowAlertBeep());
+
+    // the alarms of the rules (bell or command) can be silenced without editing the rules
+    QAction *actionMuteAlarms = new QAction(tr("Mute Alarms"), this);
+    actionMuteAlarms->setCheckable(true);
+    actionMuteAlarms->setChecked(LogParam::getMainWindowAlarmsMuted());
+    actionMuteAlarms->setToolTip(tr("Do not ring the bell or run the command of the alert rules"));
+    alertEvaluator.setAlarmsMuted(actionMuteAlarms->isChecked());
+    connect(actionMuteAlarms, &QAction::toggled, this, [this](bool muted)
+    {
+        LogParam::setMainWindowAlarmsMuted(muted);
+        alertEvaluator.setAlarmsMuted(muted);
+    });
+    menuAlert->addAction(actionMuteAlarms);
     alertButton->setMenu(menuAlert);
 
     alertTextButton = new QPushButton(" ", ui->statusBar);
@@ -468,7 +479,12 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->dxWidget, &DxWidget::tuneBand, ui->rigWidget, &RigWidget::setBand);
     ui->dxWidget->registerContactWidget(ui->newContactWidget);
 
+    alertEvaluator.setLogStatusResolver([](int dxcc, const QString &band, const QString &modeGroup, DxccStatusScope scope)
+    {
+        return Data::instance()->currentDxccStatusForScope(dxcc, band, modeGroup, scope);
+    });
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, this, &MainWindow::processSpotAlert);
+    connect(&alertEvaluator, &AlertEvaluator::alarmBell, this, []() { QApplication::beep(); });
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, &networknotification, &NetworkNotification::spotAlert);
 
     connect(ui->bandmapWidget, &BandmapWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
@@ -1139,8 +1155,6 @@ void MainWindow::processSpotAlert(SpotAlert alert)
         else
             ui->newContactWidget->tuneDx(alert.getDxSpot());
     });
-
-    if ( ui->actionBeepSettingAlert->isChecked() ) QApplication::beep();
 }
 
 void MainWindow::clearAlertEvent()
@@ -1158,15 +1172,6 @@ void MainWindow::clearAlertEvent()
         if (alertTextButtonConn) QObject::disconnect(alertTextButtonConn);
         hasDisplayedAlert = false;
     }
-}
-
-void MainWindow::beepSettingAlerts()
-{
-    FCT_IDENTIFICATION;
-
-    LogParam::setMainWindowAlertBeep(ui->actionBeepSettingAlert->isChecked());
-
-    if ( ui->actionBeepSettingAlert->isChecked() ) QApplication::beep();
 }
 
 void MainWindow::shortcutALTBackslash()

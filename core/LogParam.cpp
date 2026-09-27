@@ -1553,6 +1553,16 @@ void LogParam::setMainWindowAlertBeep(bool state)
     setParam("mainwindow/alertbeep", state);
 }
 
+bool LogParam::getMainWindowAlarmsMuted()
+{
+    return getParam("mainwindow/alarmsmuted", false).toBool();
+}
+
+void LogParam::setMainWindowAlarmsMuted(bool state)
+{
+    setParam("mainwindow/alarmsmuted", state);
+}
+
 int LogParam::getMainWindowDarkMode()
 {
     return getParam("mainwindow/darkmode", 0).toInt();

@@ -630,14 +630,6 @@
     <enum>QAction::NoRole</enum>
    </property>
   </action>
-  <action name="actionBeepSettingAlert">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Beep</string>
-   </property>
-  </action>
   <action name="actionConnectCWKeyer">
    <property name="checkable">
     <bool>true</bool>
@@ -1635,22 +1627,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionBeepSettingAlert</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>beepSettingAlerts()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>456</x>
-     <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionConnectCWKeyer</sender>
    <signal>toggled(bool)</signal>
    <receiver>MainWindow</receiver>
@@ -2036,7 +2012,6 @@
   <slot>alertRuleSetting()</slot>
   <slot>showAlerts()</slot>
   <slot>clearAlerts()</slot>
-  <slot>beepSettingAlerts()</slot>
   <slot>cwKeyerConnect()</slot>
   <slot>showWikiHelp()</slot>
   <slot>showReportBug()</slot>

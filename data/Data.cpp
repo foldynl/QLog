@@ -502,10 +502,129 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 }
 #undef RETCODE
 
+DxccStatus Data::dxccStatusForScope(int dxcc, const QString &band, const QString &mode, DxccStatusScope scope)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << dxcc << " " << band << " " << mode << " " << static_cast<int>(scope);
+
+    if ( scope == DxccStatusScope::BandMode )
+        return dxccStatus(dxcc, band, mode);
+
+    const bool bandScope = ( scope == DxccStatusScope::Band );
+    const bool modeScope = ( scope == DxccStatusScope::Mode );
+    const int myDXCC = StationProfilesManager::instance()->getCurProfile1().dxcc;
+
+    // FTx modes are stored with modes.dxcc = 'DIGITAL' - see dxccStatus()
+    const QString modeForQuery = ( mode == BandPlan::MODE_GROUP_STRING_FTx )
+                                 ? BandPlan::MODE_GROUP_STRING_DIGITAL
+                                 : mode;
+
+    // The scoped statuses share the band/mode cache. The dimension that
+    // is not evaluated is stored under a wildcard key, therefore
+    // the cache invalidation per entity covers them as well.
+    static const QString ANY_KEY = QStringLiteral("*");
+    const QString &cacheBand = ( bandScope ) ? band : ANY_KEY;
+    const QString &cacheMode = ( modeScope ) ? modeForQuery : ANY_KEY;
+
+    DxccStatus *statusFromCache = dxccStatusCache.value(dxcc, myDXCC, cacheBand, cacheMode);
+
+    if ( statusFromCache )
+        return *statusFromCache;
+
+    QStringList dxccConfirmedByCond(QLatin1String("0=1")); // if no option is selected then always false
+
+    if ( LogParam::getDxccConfirmedByLotwState() )
+        dxccConfirmedByCond << QLatin1String("all_dxcc_qsos.lotw_qsl_rcvd = 'Y'");
+
+    if ( LogParam::getDxccConfirmedByPaperState() )
+        dxccConfirmedByCond << QLatin1String("all_dxcc_qsos.qsl_rcvd = 'Y'");
+
+    if ( LogParam::getDxccConfirmedByEqslState() )
+        dxccConfirmedByCond << QLatin1String("all_dxcc_qsos.eqsl_qsl_rcvd = 'Y'");
+
+    // the condition of the evaluated dimension: the spot's band, the spot's
+    // mode group (via the modes table, as in dxccStatus()), or nothing
+    QString scopeCond(QLatin1String("1 = 1"));
+
+    if ( bandScope )
+        scopeCond = QLatin1String("all_dxcc_qsos.band = :band");
+    else if ( modeScope )
+        scopeCond = ( modeForQuery == BandPlan::MODE_GROUP_STRING_CW
+                      || modeForQuery == BandPlan::MODE_GROUP_STRING_PHONE
+                      || modeForQuery == BandPlan::MODE_GROUP_STRING_DIGITAL )
+                    ? QLatin1String("all_dxcc_qsos.mode IN (SELECT name FROM modes WHERE modes.dxcc = :mode)")
+                    : QLatin1String("all_dxcc_qsos.mode IN (SELECT m.name FROM modes m WHERE m.dxcc = "
+                                    "(SELECT modes.dxcc FROM modes WHERE modes.name = :mode LIMIT 1))");
+
+    QSqlQuery query;
+    const QString sqlStatement = QString("WITH all_dxcc_qsos AS (SELECT DISTINCT contacts.band, contacts.mode, "
+                                         "                                       contacts.qsl_rcvd, contacts.lotw_qsl_rcvd, contacts.eqsl_qsl_rcvd "
+                                         "                       FROM contacts "
+                                         "                       WHERE dxcc = :dxcc "
+                                         "                         AND UPPER(COALESCE(prop_mode, '')) <> 'SAT' %1) "
+                                         "  SELECT (SELECT 1 FROM all_dxcc_qsos LIMIT 1) as entity,"
+                                         "         (SELECT 1 FROM all_dxcc_qsos WHERE %2 LIMIT 1) as scoped, "
+                                         "         (SELECT 1 FROM all_dxcc_qsos WHERE %2 AND (%3) LIMIT 1) as confirmed")
+                                         .arg(( myDXCC != 0 ) ? QString(" AND my_dxcc = %1").arg(myDXCC)
+                                                              : "",
+                                              scopeCond,
+                                              dxccConfirmedByCond.join(" OR "));
+
+    if ( ! query.prepare(sqlStatement) )
+    {
+        qWarning() << "Cannot prepare Select statement";
+        return DxccStatus::UnknownStatus;
+    }
+
+    query.bindValue(":dxcc", dxcc);
+
+    if ( bandScope )
+        query.bindValue(":band", band);
+    else if ( modeScope )
+        query.bindValue(":mode", modeForQuery);
+
+    if ( ! query.exec() )
+    {
+        qWarning() << "Cannot execute Select statement" << query.lastError();
+        return DxccStatus::UnknownStatus;
+    }
+
+    DxccStatus status = DxccStatus::UnknownStatus;
+
+    if ( query.next() )
+    {
+        if ( query.value(0).isNull() )
+            status = DxccStatus::NewEntity;
+        else if ( bandScope && query.value(1).isNull() )
+            status = DxccStatus::NewBand;
+        else if ( modeScope && query.value(1).isNull() )
+            status = DxccStatus::NewMode;
+        else if ( query.value(2).isNull() )
+            status = DxccStatus::Worked;
+        else
+            status = DxccStatus::Confirmed;
+    }
+
+    if ( status != DxccStatus::UnknownStatus )
+        dxccStatusCache.insert(dxcc, myDXCC, cacheBand, cacheMode, new DxccStatus(status));
+
+    qCDebug(runtime) << "Scoped DXCC Status: " << status;
+
+    return status;
+}
+
 DxccStatus Data::currentDxccStatus(int dxcc, const QString &band, const QString &mode)
 {
     return satelliteDxccContext ? satelliteDxccStatus(dxcc)
                                 : dxccStatus(dxcc, band, mode);
+}
+
+DxccStatus Data::currentDxccStatusForScope(int dxcc, const QString &band, const QString &mode, DxccStatusScope scope)
+{
+    // The satellite status is already evaluated per entity
+    return satelliteDxccContext ? satelliteDxccStatus(dxcc)
+                                : dxccStatusForScope(dxcc, band, mode, scope);
 }
 
 DxccStatus Data::currentDxccNewStatusWhenQSOAdded(const DxccStatus &oldStatus,

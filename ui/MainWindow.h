@@ -77,7 +77,6 @@ private slots:
     void alertRuleSetting();
     void processSpotAlert(SpotAlert alert);
     void clearAlertEvent();
-    void beepSettingAlerts();
     void shortcutALTBackslash();
     void setManualContact(bool);
     void showEditLayout();

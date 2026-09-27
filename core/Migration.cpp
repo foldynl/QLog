@@ -330,6 +330,9 @@ bool DBSchemaMigration::functionMigration(int version)
     case 35:
         ret = removeSettings2DB();
         break;
+    case 43:
+        ret = bellToAlarmRules();
+        break;
     default:
         ret = true;
     }
@@ -1191,6 +1194,26 @@ QString DBSchemaMigration::fixIntlField(const QSqlQuery &query, const QString &c
     }
 
     return retValue;
+}
+
+// The global "Beep" of the alert menu became the "System bell" alarm of
+// each rule. Rules of an operator who had Beep switched on keep ringing.
+bool DBSchemaMigration::bellToAlarmRules()
+{
+    FCT_IDENTIFICATION;
+
+    if ( !LogParam::getMainWindowAlertBeep() )
+        return true;
+
+    QSqlQuery query;
+
+    if ( !query.exec("UPDATE alert_rules SET alarm = 1 WHERE alarm = 0") )
+    {
+        qWarning() << "Cannot convert Beep to the alarm of the rules" << query.lastError();
+        return false;
+    }
+
+    return true;
 }
 
 bool DBSchemaMigration::refreshUploadStatusTrigger()

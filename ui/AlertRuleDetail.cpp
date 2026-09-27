@@ -1,3 +1,6 @@
+#include <QComboBox>
+#include <QRadioButton>
+#include <QApplication>
 #include <QCheckBox>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -25,6 +28,17 @@ AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent, bool 
 
     ui->cqzEdit->setValidator(new QIntValidator(Data::getCQZMin(), Data::getCQZMax(), ui->cqzEdit));
     ui->ituEdit->setValidator(new QIntValidator(Data::getITUZMin(), Data::getITUZMax(), ui->ituEdit));
+
+    setupLogStatus();
+
+    /*********/
+    /* Alarm */
+    /*********/
+    connect(ui->alarmNoneRadio, &QRadioButton::toggled, this, &AlertRuleDetail::alarmTypeChanged);
+    connect(ui->alarmBellRadio, &QRadioButton::toggled, this, &AlertRuleDetail::alarmTypeChanged);
+    connect(ui->alarmCommandRadio, &QRadioButton::toggled, this, &AlertRuleDetail::alarmTypeChanged);
+    connect(ui->alarmTestButton, &QPushButton::clicked, this, &AlertRuleDetail::testAlarm);
+    alarmTypeChanged();
 
     /*************/
     /* Get Bands */
@@ -184,15 +198,12 @@ void AlertRuleDetail::save()
     /*****************
      * DX Log Status *
      *****************/
-    int status = 0;
-    if ( ui->newEntityCheckbox->isChecked() ) status |=  DxccStatus::NewEntity;
-    if ( ui->newBandCheckbox->isChecked() )   status |=  DxccStatus::NewBand;
-    if ( ui->newModeCheckbox->isChecked() )   status |=  DxccStatus::NewMode;
-    if ( ui->newSlotCheckbox->isChecked() )   status |=  DxccStatus::NewSlot;
-    if ( ui->workedCheckbox->isChecked() )    status |=  DxccStatus::Worked;
-    if ( ui->confirmedCheckbox->isChecked() ) status |=  DxccStatus::Confirmed;
-    if ( ui->allCheckbox->isChecked() )       status = DxccStatus::All;
-    rule.dxLogStatusMap = status;
+    // an unchecked Log Status box means that the log is not consulted
+    if ( ui->logStatusGroupBox->isChecked() )
+        rule.setLogStatus(static_cast<AlertRule::LogStatusNeed>(ui->logStatusNeedCombo->currentData().toInt()),
+                          static_cast<AlertRule::LogStatusUntil>(ui->logStatusUntilCombo->currentData().toInt()));
+    else
+        rule.setLogStatus(AlertRule::LogStatusNeed::Any, AlertRule::LogStatusUntil::Confirmed);
 
     /****************
      * DX Continent *
@@ -320,6 +331,13 @@ void AlertRuleDetail::save()
      **********/
     rule.wwff = ui->wwffCheckbox->isChecked();
 
+    /*********
+     * Alarm
+     ********/
+    rule.alarm = currentAlarmType();
+    rule.alarmCommand = ui->alarmCommandEdit->text().trimmed();
+    rule.alarmBackoff = ui->alarmBackoffSpin->value() * 60;
+
     qCDebug(runtime) << rule;
 
     if ( ! rule.save() )
@@ -367,33 +385,127 @@ void AlertRuleDetail::spotCommentChanged(const QString &enteredRE)
     ui->spotCommentEdit->setPalette(p);
 }
 
-void AlertRuleDetail::enabledLogStatusAll(bool enabled)
+void AlertRuleDetail::setupLogStatus()
 {
     FCT_IDENTIFICATION;
 
-    if ( enabled )
+    // The Log Status reads as a sentence: "I need this <need> until it is <until>"
+    QComboBox *need = ui->logStatusNeedCombo;
+
+    need->addItem(tr("New Entity"), static_cast<int>(AlertRule::LogStatusNeed::NewEntity));
+    need->addItem(tr("New Band"), static_cast<int>(AlertRule::LogStatusNeed::NewBand));
+    need->addItem(tr("New Mode"), static_cast<int>(AlertRule::LogStatusNeed::NewMode));
+    need->addItem(tr("New Band & Mode"), static_cast<int>(AlertRule::LogStatusNeed::NewBandMode));
+
+    QComboBox *until = ui->logStatusUntilCombo;
+
+    until->addItem(tr("Worked"), static_cast<int>(AlertRule::LogStatusUntil::Worked));
+    until->setItemData(until->count() - 1,
+                       tr("At least one QSO is in the log."),
+                       Qt::ToolTipRole);
+
+    until->addItem(tr("Confirmed"), static_cast<int>(AlertRule::LogStatusUntil::Confirmed));
+    until->setItemData(until->count() - 1,
+                       tr("A QSL is received: LoTW, eQSL or paper, "
+                          "as selected in Settings - Sync & QSL - DXCC Status."),
+                       Qt::ToolTipRole);
+
+    connect(until, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &AlertRuleDetail::updateLogStatusToolTips);
+
+    updateLogStatusToolTips();
+}
+
+void AlertRuleDetail::updateLogStatusToolTips()
+{
+    FCT_IDENTIFICATION;
+
+    // The explanations follow the "until it is" choice, so that "New Entity"
+    // reads as "not yet confirmed" or "not yet worked" depending on the rule
+    const bool confirmed = ui->logStatusUntilCombo->currentData().toInt()
+                           == static_cast<int>(AlertRule::LogStatusUntil::Confirmed);
+    const QString state = confirmed ? tr("confirmed") : tr("worked");
+
+    QComboBox *need = ui->logStatusNeedCombo;
+
+    need->setItemData(need->findData(static_cast<int>(AlertRule::LogStatusNeed::NewEntity)),
+                      tr("The country is not yet %1 on any band, in any mode.").arg(state),
+                      Qt::ToolTipRole);
+    need->setItemData(need->findData(static_cast<int>(AlertRule::LogStatusNeed::NewBand)),
+                      tr("The country is not yet %1 on this band, in any mode.").arg(state),
+                      Qt::ToolTipRole);
+    need->setItemData(need->findData(static_cast<int>(AlertRule::LogStatusNeed::NewMode)),
+                      tr("The country is not yet %1 in this mode, on any band.").arg(state),
+                      Qt::ToolTipRole);
+    need->setItemData(need->findData(static_cast<int>(AlertRule::LogStatusNeed::NewBandMode)),
+                      tr("The country is not yet %1 on this band in this mode.").arg(state),
+                      Qt::ToolTipRole);
+}
+
+AlertRule::AlarmType AlertRuleDetail::currentAlarmType() const
+{
+    FCT_IDENTIFICATION;
+
+    if ( ui->alarmBellRadio->isChecked() )    return AlertRule::AlarmType::Bell;
+    if ( ui->alarmCommandRadio->isChecked() ) return AlertRule::AlarmType::Command;
+    return AlertRule::AlarmType::None;
+}
+
+void AlertRuleDetail::alarmTypeChanged()
+{
+    FCT_IDENTIFICATION;
+
+    const AlertRule::AlarmType type = currentAlarmType();
+    const bool command = ( type == AlertRule::AlarmType::Command );
+    const bool any = ( type != AlertRule::AlarmType::None );
+
+    ui->alarmCommandLabel->setEnabled(command);
+    ui->alarmCommandEdit->setEnabled(command);
+    ui->alarmPlaceholdersLabel->setEnabled(command);
+    ui->alarmBackoffLabel->setEnabled(any);
+    ui->alarmBackoffPrefixLabel->setEnabled(any);
+    ui->alarmBackoffSpin->setEnabled(any);
+    ui->alarmBackoffSuffixLabel->setEnabled(any);
+    ui->alarmTestButton->setEnabled(any);
+}
+
+void AlertRuleDetail::testAlarm()
+{
+    FCT_IDENTIFICATION;
+
+    if ( currentAlarmType() == AlertRule::AlarmType::Bell )
     {
-        ui->newEntityCheckbox->setChecked(enabled);
-        ui->newBandCheckbox->setChecked(enabled);
-        ui->newModeCheckbox->setChecked(enabled);
-        ui->newSlotCheckbox->setChecked(enabled);
-        ui->workedCheckbox->setChecked(enabled);
-        ui->confirmedCheckbox->setChecked(enabled);
+        QApplication::beep();
+        return;
     }
 
-    ui->newEntityCheckbox->setEnabled(!enabled);
-    ui->newBandCheckbox->setEnabled(!enabled);
-    ui->newModeCheckbox->setEnabled(!enabled);
-    ui->newSlotCheckbox->setEnabled(!enabled);
-    ui->workedCheckbox->setEnabled(!enabled);
-    ui->confirmedCheckbox->setEnabled(!enabled);
+    // a sample spot so that the placeholders show something sensible
+    DxSpot sample;
+    sample.callsign = QStringLiteral("6Y9A");
+    sample.band = QStringLiteral("10m");
+    sample.modeGroupString = BandPlan::MODE_GROUP_STRING_CW;
+    sample.freq = 28.025;
+    sample.dxcc.country = QStringLiteral("Jamaica");
+
+    const QStringList commandLine = AlertRule::alarmCommandLine(ui->alarmCommandEdit->text(),
+                                                                sample,
+                                                                ui->ruleNameEdit->text());
+
+    if ( commandLine.isEmpty() || !AlertEvaluator::startAlarm(commandLine) )
+    {
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
+                             tr("The command could not be started:<br><b>%1</b>")
+                                 .arg(ui->alarmCommandEdit->text().toHtmlEscaped()));
+    }
 }
 
 void AlertRuleDetail::setDefaultValues()
 {
     FCT_IDENTIFICATION;
 
-    ui->allCheckbox->setChecked(true);
+    ui->logStatusGroupBox->setChecked(false);
+    ui->logStatusNeedCombo->setCurrentIndex(ui->logStatusNeedCombo->findData(static_cast<int>(AlertRule::LogStatusNeed::NewEntity)));
+    ui->logStatusUntilCombo->setCurrentIndex(ui->logStatusUntilCombo->findData(static_cast<int>(AlertRule::LogStatusUntil::Confirmed)));
     ui->countryCombo->setCurrentValue(ALLCOUNTRYIDX, 1);
 }
 
@@ -469,14 +581,11 @@ void AlertRuleDetail::loadRule(const QString &ruleName)
         /*****************
          * DX Log Status *
          *****************/
-        uint statusSetting = rule.dxLogStatusMap;
-        ui->allCheckbox->setChecked(statusSetting == DxccStatus::All);
-        ui->newEntityCheckbox->setChecked(statusSetting & DxccStatus::NewEntity);
-        ui->newBandCheckbox->setChecked(statusSetting & DxccStatus::NewBand);
-        ui->newModeCheckbox->setChecked(statusSetting & DxccStatus::NewMode);
-        ui->newSlotCheckbox->setChecked(statusSetting & DxccStatus::NewSlot);
-        ui->workedCheckbox->setChecked(statusSetting & DxccStatus::Worked);
-        ui->confirmedCheckbox->setChecked(statusSetting & DxccStatus::Confirmed);
+        const bool consultsLog = ( rule.logStatusNeed() != AlertRule::LogStatusNeed::Any );
+        ui->logStatusGroupBox->setChecked(consultsLog);
+        ui->logStatusNeedCombo->setCurrentIndex(ui->logStatusNeedCombo->findData(static_cast<int>(consultsLog ? rule.logStatusNeed()
+                                                                                                              : AlertRule::LogStatusNeed::NewEntity)));
+        ui->logStatusUntilCombo->setCurrentIndex(ui->logStatusUntilCombo->findData(static_cast<int>(rule.logStatusUntil())));
 
         /*************
          * Continent *
@@ -608,6 +717,18 @@ void AlertRuleDetail::loadRule(const QString &ruleName)
          * WWFF
          **********/
         ui->wwffCheckbox->setChecked(rule.wwff);
+
+        /*********
+         * Alarm
+         ********/
+        switch ( rule.alarm )
+        {
+        case AlertRule::AlarmType::Bell:    ui->alarmBellRadio->setChecked(true); break;
+        case AlertRule::AlarmType::Command: ui->alarmCommandRadio->setChecked(true); break;
+        default:                            ui->alarmNoneRadio->setChecked(true); break;
+        }
+        ui->alarmCommandEdit->setText(rule.alarmCommand);
+        ui->alarmBackoffSpin->setValue(rule.alarmBackoff / 60);
     }
     else
         qCDebug(runtime) << "Cannot load rule " << ruleName;

@@ -32,10 +32,14 @@ private:
 
 
 private slots:
-    void enabledLogStatusAll(bool enabled);
+    void updateLogStatusToolTips();
+    void alarmTypeChanged();
+    void testAlarm();
 
 private:
     void setDefaultValues();
+    void setupLogStatus();
+    AlertRule::AlarmType currentAlarmType() const;
     bool ruleExists(const QString &ruleName);
     void loadRuleNames();
     void loadRule(const QString &ruleName);

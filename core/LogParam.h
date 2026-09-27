@@ -440,6 +440,8 @@ public:
      *************/
     static bool getMainWindowAlertBeep();
     static void setMainWindowAlertBeep(bool state);
+    static bool getMainWindowAlarmsMuted();
+    static void setMainWindowAlarmsMuted(bool state);
     static int getMainWindowDarkMode();
     static void setMainWindowDarkMode(int state);
     static bool getShowDxccFlags();
