@@ -1,4 +1,4 @@
-name: CI Linux/macOS
+name: CI Linux
 
 on:
   push:
@@ -84,56 +84,6 @@ jobs:
         QLOG_RUN_ADI_IMPORT_BENCHMARK: '1'
       run: make -j2 check
 
-  macos-build:
-     name: MacOS CI
-     if: vars.ENABLE_MACOS == 'true'
-     strategy:
-       matrix:
-         os: [macos-15]
-
-     runs-on: ${{ matrix.os }}
-
-     steps:
-     - name: Install dependencies
-       run: |
-         unset HOMEBREW_NO_INSTALL_FROM_API
-         brew update
-         brew upgrade || true
-         brew install qt6
-         brew link qt6 --force
-         brew install hamlib
-         brew link hamlib --force
-         brew install qtkeychain
-         brew install dbus-glib
-         brew install brotli
-         brew install icu4c
-         brew install pkg-config
-
-     - name: Checkout code
-       uses: actions/checkout@v5
-       with:
-         fetch-depth: 0
-     - name: Get version from tag
-       run : |
-         TAGVERSION=$(git describe --tags)
-         echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
-     - name: Configure and compile
-       run: |
-         cd build
-         qmake6 -config release ..
-         make -j4
-     - name: Configure tests
-       run: |
-         mkdir -p tests/build
-         cd tests/build
-         qmake6 ../tests.pro
-     - name: Build and run tests
-       working-directory: tests/build
-       env:
-         QT_QPA_PLATFORM: offscreen
-         QLOG_RUN_ADI_IMPORT_BENCHMARK: '1'
-       run: make -j4 check
-
   deb-package:
     name: DEB Package Build
     needs: [ubuntu-build-qt5, ubuntu-build-qt6]
@@ -163,10 +113,10 @@ jobs:
       run: lintian --no-tag-display-limit --fail-on error ../qlog_*.changes 
 
     - name: Upload DEB artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: deb-package
-        path: /home/runner/work/QLog/qlog_*.deb
+        path: ../qlog_*.deb
         retention-days: 1
 
   deb-smoke-test:
@@ -176,7 +126,7 @@ jobs:
 
     steps:
     - name: Download DEB artifact
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v7
       with:
         name: deb-package
 
@@ -200,7 +150,7 @@ jobs:
       run: CONTAINER_ENGINE=docker ./packaging/rpm/build-container.sh 43
 
     - name: Upload RPM artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: rpm-package
         path: dist/rpm/fedora-43/x86_64/QLog-*.x86_64.rpm
@@ -216,7 +166,7 @@ jobs:
 
     steps:
     - name: Download RPM artifact
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v7
       with:
         name: rpm-package
         path: dist/rpm/fedora-43/x86_64
