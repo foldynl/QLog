@@ -454,8 +454,8 @@ public:
     /**************
      * Main Window
      *************/
-    static bool getMainWindowAlertBeep();
-    static void setMainWindowAlertBeep(bool state);
+    static bool getAlertNotificationEnabled();
+    static void setAlertNotificationEnabled(bool enabled);
     static int getMainWindowDarkMode();
     static void setMainWindowDarkMode(int state);
     static bool getShowDxccFlags();

@@ -23,6 +23,7 @@ public slots:
     void ruleNameChanged(const QString&);
     void callsignChanged(const QString&);
     void spotCommentChanged(const QString&);
+    void testNotification();
 
 private:
     Ui::AlertRuleDetail *ui;

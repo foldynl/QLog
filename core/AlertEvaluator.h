@@ -20,6 +20,13 @@ class AlertRule : public QObject
     Q_OBJECT
 
 public:
+    enum
+    {
+        MIN_NOTIFICATION_REPEAT_MINUTES = 1,
+        DEFAULT_NOTIFICATION_REPEAT_MINUTES = 5,
+        MAX_NOTIFICATION_REPEAT_MINUTES = 1440
+    };
+
     explicit AlertRule(QObject *parent = nullptr);
     ~AlertRule() {};
 
@@ -36,6 +43,9 @@ public:
 public:
     QString ruleName;
     bool enabled;
+    bool notificationEnabled;
+    bool notificationSoundEnabled;
+    int notificationRepeatMinutes;
     int sourceMap;
     QString dxCallsign;
     int dxCountry;
@@ -87,8 +97,7 @@ signals:
     void spotAlert(SpotAlert alert);
 
 private:
-    DxccConfirmationResolver confirmationResolverForSpot(
-        QHash<int, DxccConfirmationResult> &results) const;
+    DxccConfirmationResolver confirmationResolverForSpot(QHash<int, DxccConfirmationResult> &results) const;
     QList<AlertRule *>ruleList;
     DxccConfirmationResolver confirmationResolver;
 };

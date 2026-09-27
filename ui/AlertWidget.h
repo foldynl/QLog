@@ -44,6 +44,7 @@ private slots:
 
 signals:
     void alertsCleared();
+    void alertsManuallyCleared();
     void tuneDx(DxSpot);
     void tuneWsjtx(WsjtxEntry);
     void rulesChanged();

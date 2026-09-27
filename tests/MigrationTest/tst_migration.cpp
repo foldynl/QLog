@@ -156,6 +156,9 @@ void MigrationSqlTest::migrateVersion()
             insert.bindValue(QStringLiteral(":status"), status);
             QVERIFY2(insert.exec(), qPrintable(insert.lastError().text()));
         }
+
+        QVERIFY(insert.exec(QStringLiteral(
+            "INSERT INTO log_param(name, value) VALUES ('mainwindow/alertbeep', 0)")));
     }
 
     QVERIFY2(executeSqlFile(targetVersion),
@@ -165,7 +168,8 @@ void MigrationSqlTest::migrateVersion()
     if ( targetVersion == 42 )
     {
         QSqlQuery query(QStringLiteral(
-            "SELECT dx_logstatus, dx_alert_goal, dx_alert_context "
+            "SELECT dx_logstatus, dx_alert_goal, dx_alert_context, "
+            "notification_enabled, notification_repeat_minutes "
             "FROM alert_rules ORDER BY dx_logstatus"));
         QVERIFY2(query.isActive(), qPrintable(query.lastError().text()));
 
@@ -175,9 +179,23 @@ void MigrationSqlTest::migrateVersion()
             QCOMPARE(query.value(0).toInt(), legacyAlertStatuses.at(row));
             QVERIFY(query.value(1).isNull());
             QVERIFY(query.value(2).isNull());
+            QCOMPARE(query.value(3).toInt(), 1);
+            QCOMPARE(query.value(4).toInt(), 5);
             ++row;
         }
         QCOMPARE(row, legacyAlertStatuses.size());
+
+        QVERIFY(query.exec(QStringLiteral(
+            "SELECT value FROM log_param WHERE name = 'alert/notification/enabled'")));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toBool(), false);
+        QVERIFY(!query.next());
+
+        QVERIFY(query.exec(QStringLiteral(
+            "SELECT COUNT(*) FROM log_param "
+            "WHERE name = 'mainwindow/alertbeep'")));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toInt(), 0);
     }
 }
 

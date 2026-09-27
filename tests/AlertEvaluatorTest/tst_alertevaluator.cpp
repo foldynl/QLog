@@ -9,6 +9,7 @@
 #include "core/AlertEvaluator.h"
 #undef private
 
+#include "notification/AlertNotification.h"
 #include "data/SpotAlert.h"
 #include "data/WsjtxEntry.h"
 #include "data/DxSpot.h"
@@ -226,6 +227,7 @@ private slots:
     void newDxccConditionWsjtx();
     void newDxccConditionFailures();
     void newDxccConditionSatellite();
+    void notificationsAreAggregatedAndRepeatedPerBandMode();
     void confirmationResolverIsSharedAcrossRules();
 };
 
@@ -1523,6 +1525,85 @@ void AlertEvaluatorTest::newDxccConditionSatellite()
     QCOMPARE(resolverCalls, 0);
 }
 
+void AlertEvaluatorTest::notificationsAreAggregatedAndRepeatedPerBandMode()
+{
+    QSqlDatabase database = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"));
+    database.setDatabaseName(QStringLiteral(":memory:"));
+    QVERIFY2(database.open(), qPrintable(database.lastError().text()));
+
+    QSqlQuery query;
+    QVERIFY(query.exec(QStringLiteral(
+        "CREATE TABLE alert_rules (rule_name TEXT PRIMARY KEY, "
+        "notification_enabled INTEGER, notification_sound_enabled INTEGER, "
+        "notification_repeat_minutes INTEGER)")));
+    QVERIFY(query.exec(QStringLiteral(
+        "INSERT INTO alert_rules VALUES "
+        "('New DXCC', 1, 0, 5), ('CW Wanted', 1, 1, 5), "
+        "('Muted rule', 0, 1, 5)")));
+
+    {
+        AlertNotification notifier;
+        notifier.setEnabled(true);
+
+        DxSpot spot;
+        spot.callsign = QStringLiteral("3Y0K");
+        spot.band = QStringLiteral("20m");
+        spot.modeGroupString = QStringLiteral("CW");
+        spot.dxcc.country = QStringLiteral("Bouvet Island");
+        spot.freq = 14.025;
+        SpotAlert alert({QStringLiteral("New DXCC"),
+                         QStringLiteral("CW Wanted"),
+                         QStringLiteral("Muted rule")}, spot);
+
+        qRegisterMetaType<DesktopNotificationCategory>("DesktopNotificationCategory");
+        QSignalSpy notificationSpy(&notifier, &AlertNotification::notificationRequested);
+        notifier.processSpotAlert(alert);
+        QCOMPARE(notificationSpy.size(), 1);
+        const QList<QVariant> notification = notificationSpy.takeFirst();
+        QCOMPARE(notification.at(0).value<DesktopNotificationCategory>(),
+                 DesktopNotificationCategory::ALERT);
+        QVERIFY(notification.at(1).toString().contains(QStringLiteral("3Y0K")));
+        QVERIFY(notification.at(1).toString().contains(QStringLiteral("New DXCC")));
+        QVERIFY(notification.at(1).toString().contains(QStringLiteral("CW Wanted")));
+        QVERIFY(!notification.at(1).toString().contains(QStringLiteral("Muted rule")));
+        QCOMPARE(notification.at(3).toBool(), true);
+
+        notifier.processSpotAlert(alert);
+        QCOMPARE(notificationSpy.size(), 0);
+
+        notifier.clearAlertHistory();
+        notifier.processSpotAlert(alert);
+        QCOMPARE(notificationSpy.size(), 1);
+        notificationSpy.clear();
+
+        alert.spot.band = QStringLiteral("15m");
+        notifier.processSpotAlert(alert);
+        QCOMPARE(notificationSpy.size(), 1);
+        notificationSpy.clear();
+
+        alert.spot.modeGroupString = QStringLiteral("PHONE");
+        notifier.processSpotAlert(alert);
+        QCOMPARE(notificationSpy.size(), 1);
+        notificationSpy.clear();
+
+        alert.spot.band = QStringLiteral("10m");
+        SpotAlert silentAlert({QStringLiteral("New DXCC")}, alert.spot);
+        notifier.processSpotAlert(silentAlert);
+        QCOMPARE(notificationSpy.size(), 1);
+        QCOMPARE(notificationSpy.takeFirst().at(3).toBool(), false);
+
+        notifier.setEnabled(false);
+        alert.spot.band = QStringLiteral("6m");
+        notifier.processSpotAlert(alert);
+        QCOMPARE(notificationSpy.size(), 0);
+    }
+
+    query = QSqlQuery();
+    database.close();
+    database = QSqlDatabase();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
+
 void AlertEvaluatorTest::confirmationResolverIsSharedAcrossRules()
 {
     QSqlDatabase database = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"));
@@ -1532,15 +1613,17 @@ void AlertEvaluatorTest::confirmationResolverIsSharedAcrossRules()
     QSqlQuery query;
     QVERIFY(query.exec(QStringLiteral(
         "CREATE TABLE alert_rules ("
-        "rule_name TEXT PRIMARY KEY, enabled INTEGER, source INTEGER, dx_callsign TEXT, "
+        "rule_name TEXT PRIMARY KEY, enabled INTEGER, notification_enabled INTEGER, "
+        "notification_sound_enabled INTEGER, notification_repeat_minutes INTEGER, "
+        "source INTEGER, dx_callsign TEXT, "
         "dx_country INTEGER, dx_logstatus INTEGER, dx_alert_goal INTEGER, dx_alert_context INTEGER, "
         "dx_continent TEXT, spot_comment TEXT, mode TEXT, band TEXT, spotter_country INTEGER, "
         "spotter_continent TEXT, dx_member TEXT, ituz INTEGER, cqz INTEGER, "
         "pota INTEGER, sota INTEGER, iota INTEGER, wwff INTEGER)")));
     QVERIFY(query.exec(QStringLiteral(
         "INSERT INTO alert_rules VALUES "
-        "('first', 1, 1, '.*', 0, 127, 1, 0, '*', '.*', '*', '*', 0, '*', '*', 0, 0, 0, 0, 0, 0), "
-        "('second', 1, 1, '.*', 0, 127, 1, 0, '*', '.*', '*', '*', 0, '*', '*', 0, 0, 0, 0, 0, 0)")));
+        "('first', 1, 1, 1, 5, 1, '.*', 0, 127, 1, 0, '*', '.*', '*', '*', 0, '*', '*', 0, 0, 0, 0, 0, 0), "
+        "('second', 1, 1, 1, 5, 1, '.*', 0, 127, 1, 0, '*', '.*', '*', '*', 0, '*', '*', 0, 0, 0, 0, 0, 0)")));
 
     int resolverCalls = 0;
     {
@@ -1558,6 +1641,22 @@ void AlertEvaluatorTest::confirmationResolverIsSharedAcrossRules()
     }
 
     QCOMPARE(resolverCalls, 1);
+
+    AlertRule storedRule;
+    QVERIFY(storedRule.load(QStringLiteral("first")));
+    QCOMPARE(storedRule.notificationEnabled, true);
+    QCOMPARE(storedRule.notificationSoundEnabled, true);
+    QCOMPARE(storedRule.notificationRepeatMinutes, 5);
+    storedRule.notificationEnabled = false;
+    storedRule.notificationSoundEnabled = false;
+    storedRule.notificationRepeatMinutes = 17;
+    QVERIFY(storedRule.save());
+
+    AlertRule updatedRule;
+    QVERIFY(updatedRule.load(QStringLiteral("first")));
+    QCOMPARE(updatedRule.notificationEnabled, false);
+    QCOMPARE(updatedRule.notificationSoundEnabled, false);
+    QCOMPARE(updatedRule.notificationRepeatMinutes, 17);
 
     database.close();
     database = QSqlDatabase();

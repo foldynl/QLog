@@ -1132,7 +1132,7 @@ bool DBSchemaMigration::settings2DB()
         LogParam::setLogbookFilterClub(settings.value("logbook/filters/member").toString());
 
     if (settings.contains("alertbeep"))
-        LogParam::setMainWindowAlertBeep(settings.value("alertbeep").toBool());
+        LogParam::setAlertNotificationEnabled(settings.value("alertbeep").toBool());
     if (settings.contains("darkmode"))
         LogParam::setMainWindowDarkMode(settings.value("darkmode").toBool());
     if (settings.contains("geometry"))

@@ -150,6 +150,9 @@ void AlertEvaluator::loadRules()
 AlertRule::AlertRule(QObject *parent) :
     QObject(parent),
     enabled(false),
+    notificationEnabled(true),
+    notificationSoundEnabled(true),
+    notificationRepeatMinutes(DEFAULT_NOTIFICATION_REPEAT_MINUTES),
     sourceMap(SpotAlert::UKNOWN),
     dxCountry(-1),
     dxLogStatusMap(0),
@@ -181,11 +184,11 @@ bool AlertRule::save()
 
     QSqlQuery insertUpdateStmt;
 
-    if ( ! insertUpdateStmt.prepare("INSERT INTO alert_rules(rule_name, enabled, source, dx_callsign, dx_country, "
+    if ( ! insertUpdateStmt.prepare("INSERT INTO alert_rules(rule_name, enabled, notification_enabled, notification_sound_enabled, notification_repeat_minutes, source, dx_callsign, dx_country, "
                                     "dx_logstatus, dx_alert_goal, dx_alert_context, dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff) "
-                                    " VALUES (:ruleName, :enabled, :source, :dxCallsign, :dxCountry, "
+                                    " VALUES (:ruleName, :enabled, :notificationEnabled, :notificationSoundEnabled, :notificationRepeatMinutes, :source, :dxCallsign, :dxCountry, "
                                     ":dxLogstatus, :dxAlertGoal, :dxAlertContext, :dxContinent, :spotComment, :mode, :band, :spotterCountry, :spotterContinent, :dxMember, :ituz, :cqz, :pota, :sota, :iota, :wwff) "
-                                    " ON CONFLICT(rule_name) DO UPDATE SET enabled = :enabled, source = :source, dx_callsign =:dxCallsign, "
+                                    " ON CONFLICT(rule_name) DO UPDATE SET enabled = :enabled, notification_enabled = :notificationEnabled, notification_sound_enabled = :notificationSoundEnabled, notification_repeat_minutes = :notificationRepeatMinutes, source = :source, dx_callsign =:dxCallsign, "
                                     "dx_country = :dxCountry, dx_logstatus = :dxLogstatus, dx_alert_goal = :dxAlertGoal, dx_alert_context = :dxAlertContext, dx_continent = :dxContinent, spot_comment = :spotComment, "
                                     "mode = :mode, band = :band, spotter_country = :spotterCountry, spotter_continent = :spotterContinent, dx_member = :dxMember, ituz = :ituz, cqz = :cqz, pota = :pota, sota = :sota, iota = :iota, wwff = :wwff "
                                     " WHERE rule_name = :ruleName"))
@@ -196,12 +199,19 @@ bool AlertRule::save()
 
     insertUpdateStmt.bindValue(":ruleName", ruleName);
     insertUpdateStmt.bindValue(":enabled", enabled);
+    insertUpdateStmt.bindValue(":notificationEnabled", notificationEnabled);
+    insertUpdateStmt.bindValue(":notificationSoundEnabled", notificationSoundEnabled);
+    insertUpdateStmt.bindValue(":notificationRepeatMinutes", qBound<int>(MIN_NOTIFICATION_REPEAT_MINUTES,
+                                                                         notificationRepeatMinutes,
+                                                                         MAX_NOTIFICATION_REPEAT_MINUTES));
     insertUpdateStmt.bindValue(":source", sourceMap);
     insertUpdateStmt.bindValue(":dxCallsign", dxCallsign);
     insertUpdateStmt.bindValue(":dxCountry", dxCountry);
     insertUpdateStmt.bindValue(":dxLogstatus", dxLogStatusMap);
-    insertUpdateStmt.bindValue(":dxAlertGoal", dxAlertGoalSet ? QVariant(dxAlertGoal) : QVariant());
-    insertUpdateStmt.bindValue(":dxAlertContext", dxAlertContextSet ? QVariant(dxAlertContext) : QVariant());
+    insertUpdateStmt.bindValue(":dxAlertGoal", dxAlertGoalSet ? QVariant(dxAlertGoal)
+                                                              : QVariant());
+    insertUpdateStmt.bindValue(":dxAlertContext", dxAlertContextSet ? QVariant(dxAlertContext)
+                                                                    : QVariant());
     insertUpdateStmt.bindValue(":dxContinent", dxContinent);
     insertUpdateStmt.bindValue(":dxMember", dxMember.join(","));
     insertUpdateStmt.bindValue(":spotComment", dxComment);
@@ -218,7 +228,8 @@ bool AlertRule::save()
 
     if ( ! insertUpdateStmt.exec() )
     {
-        qCDebug(runtime)<< "Cannot Update Alert Rules - " << insertUpdateStmt.lastError().text();
+        qCDebug(runtime) << "Cannot Update Alert Rules - "
+                         << insertUpdateStmt.lastError().text();
         return false;
     }
     return true;
@@ -232,7 +243,7 @@ bool AlertRule::load(const QString &in_ruleName)
 
     QSqlQuery query;
 
-    if ( ! query.prepare("SELECT rule_name, enabled, source, dx_callsign, dx_country, dx_logstatus, dx_alert_goal, dx_alert_context, "
+    if ( ! query.prepare("SELECT rule_name, enabled, notification_enabled, notification_sound_enabled, notification_repeat_minutes, source, dx_callsign, dx_country, dx_logstatus, dx_alert_goal, dx_alert_context, "
                          "dx_continent, spot_comment, mode, band, spotter_country, spotter_continent, dx_member, ituz, cqz, pota, sota, iota, wwff "
                          "FROM alert_rules "
                          "WHERE rule_name = :rule") )
@@ -251,6 +262,11 @@ bool AlertRule::load(const QString &in_ruleName)
 
         ruleName         = in_ruleName;
         enabled          = record.value("enabled").toBool();
+        notificationEnabled = record.value("notification_enabled").toBool();
+        notificationSoundEnabled = record.value("notification_sound_enabled").toBool();
+        notificationRepeatMinutes = qBound<int>(MIN_NOTIFICATION_REPEAT_MINUTES,
+                                                record.value("notification_repeat_minutes").toInt(),
+                                                MAX_NOTIFICATION_REPEAT_MINUTES);
         sourceMap        = record.value("source").toInt();
         dxCallsign       = record.value("dx_callsign").toString();
         dxCountry        = record.value("dx_country").toInt();

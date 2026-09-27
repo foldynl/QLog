@@ -1,10 +1,10 @@
 #include <QUuid>
 
 #include "NetworkNotification.h"
-#include "debug.h"
-#include "LogParam.h"
+#include "core/debug.h"
+#include "core/LogParam.h"
 
-MODULE_IDENTIFICATION("qlog.ui.networknotification");
+MODULE_IDENTIFICATION("qlog.notification.networknotification");
 
 NetworkNotification::NetworkNotification(QObject *parent)
     : QObject(parent)

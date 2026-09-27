@@ -97,7 +97,6 @@ SOURCES += \
         core/MembershipQE.cpp \
         core/Migration.cpp \
         core/MqttClient.cpp \
-        core/NetworkNotification.cpp \
         core/PasswordCipher.cpp \
         core/PlatformParameterManager.cpp \
         core/PotaQE.cpp \
@@ -113,6 +112,9 @@ SOURCES += \
         core/IBPBeacon.cpp \
         core/main.cpp \
         3rdparty/bertoldvdb/zonedetect/library/zonedetect.c \
+        notification/DesktopNotification.cpp \
+        notification/NetworkNotification.cpp \
+        notification/AlertNotification.cpp \
         cwkey/CWKeyer.cpp \
         cwkey/drivers/CWCatKey.cpp \
         cwkey/drivers/CWDaemonKey.cpp \
@@ -298,7 +300,6 @@ HEADERS += \
         core/MembershipQE.h \
         core/Migration.h \
         core/MqttClient.h \
-        core/NetworkNotification.h \
         core/PasswordCipher.h \
         core/PlatformParameterManager.h \
         core/PotaQE.h \
@@ -315,6 +316,10 @@ HEADERS += \
         core/EmergencyFrequency.h \
         core/IBPBeacon.h \
         3rdparty/bertoldvdb/zonedetect/library/zonedetect.h \
+        notification/DesktopNotification.h \
+        notification/NetworkNotification.h \
+        notification/DesktopNotificationCategory.h \
+        notification/AlertNotification.h \
         cwkey/CWKeyer.h \
         cwkey/drivers/CWCatKey.h \
         cwkey/drivers/CWDaemonKey.h \
@@ -643,6 +648,8 @@ isEmpty(HAMLIBVERSION_PATCH){
 }
 
 unix:!macx {
+   SOURCES += notification/linux/DesktopNotificationLinux.cpp
+
    isEmpty(PREFIX) {
      PREFIX = /usr/local
    }
@@ -671,6 +678,9 @@ unix:!macx {
 }
 
 macx: {
+   QMAKE_TARGET_BUNDLE_PREFIX = io.github.foldynl
+   OBJECTIVE_SOURCES += notification/macos/DesktopNotificationMac.mm
+
    # This allows the app to be shipped in a non-bundeled version
    !isEmpty(PREFIX) {
       target.path = $$PREFIX
@@ -678,7 +688,7 @@ macx: {
    }
 
    INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
-   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto
+   LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto -framework UserNotifications
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
    DISTFILES +=
@@ -690,6 +700,7 @@ win32: {
         $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/
 
    SOURCES += \
+        notification/windows/DesktopNotificationWindows.cpp \
         rig/drivers/OmnirigRigDrv.cpp \
         rig/drivers/Omnirigv2RigDrv.cpp \
         $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/sqlite3.c
@@ -705,7 +716,7 @@ win32: {
    QMAKE_TARGET_COMPANY = OK1MLG
    QMAKE_TARGET_DESCRIPTION = Hamradio logging
 
-   LIBS += -lws2_32 -llibhamlib-4 -lzlib -llibssl -llibcrypto
+   LIBS += -lws2_32 -lruntimeobject -lole32 -lshell32 -lpropsys -llibhamlib-4 -lzlib -llibssl -llibcrypto
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
 

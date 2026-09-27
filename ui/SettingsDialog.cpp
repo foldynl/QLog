@@ -37,7 +37,7 @@
 #include "data/Gridsquare.h"
 #include "core/FldigiUDPReceiver.h"
 #include "core/WsjtxUDPReceiver.h"
-#include "core/NetworkNotification.h"
+#include "notification/NetworkNotification.h"
 #include "rig/Rig.h"
 #include "rig/RigCaps.h"
 #include "rig/RigctldManager.h"

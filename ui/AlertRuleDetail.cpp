@@ -8,6 +8,7 @@
 #include "ui_AlertRuleDetail.h"
 #include "ui/AlertRuleLogStatusDialog.h"
 #include "core/debug.h"
+#include "notification/DesktopNotification.h"
 #include "../models/SqlListModel.h"
 #include "data/Data.h"
 #include "data/SpotAlert.h"
@@ -151,6 +152,13 @@ void AlertRuleDetail::save()
      * Enabled *
      ***********/
     rule.enabled = ui->ruleEnabledCheckBox->isChecked();
+
+    /****************
+     * Notification *
+     ****************/
+    rule.notificationEnabled = ui->notificationCheckBox->isChecked();
+    rule.notificationSoundEnabled = ui->notificationSoundCheckBox->isChecked();
+    rule.notificationRepeatMinutes = ui->notificationRepeatSpinBox->value();
 
     /**********
      * Source *
@@ -391,6 +399,21 @@ void AlertRuleDetail::spotCommentChanged(const QString &enteredRE)
     ui->spotCommentEdit->setPalette(p);
 }
 
+void AlertRuleDetail::testNotification()
+{
+    FCT_IDENTIFICATION;
+
+    DesktopNotification *const notification = DesktopNotification::instance();
+    if ( notification->show(DesktopNotificationCategory::ALERT,
+                            tr("QLog Test Notification"),
+                            tr("This is a test notification from QLog."),
+                            ui->notificationSoundCheckBox->isChecked()) )
+        return;
+
+    QMessageBox::warning(this, tr("QLog Info"),
+                         tr("The notification could not be sent. Check notification settings in your operating system."));
+}
+
 void AlertRuleDetail::logStatusEnabled(bool)
 {
     FCT_IDENTIFICATION;
@@ -573,6 +596,9 @@ void AlertRuleDetail::setDefaultValues()
 {
     FCT_IDENTIFICATION;
 
+    ui->notificationCheckBox->setChecked(true);
+    ui->notificationSoundCheckBox->setChecked(true);
+    ui->notificationRepeatSpinBox->setValue(AlertRule::DEFAULT_NOTIFICATION_REPEAT_MINUTES);
     updatingLogStatusUi = true;
     logStatusStorage = LogStatusStorage::NewCondition;
     legacyLogStatus = DxccStatus::All;
@@ -628,6 +654,13 @@ void AlertRuleDetail::loadRule(const QString &ruleName)
          * Enabled *
          ***********/
         ui->ruleEnabledCheckBox->setChecked(rule.enabled);
+
+        /****************
+         * Notification *
+         ****************/
+        ui->notificationCheckBox->setChecked(rule.notificationEnabled);
+        ui->notificationSoundCheckBox->setChecked(rule.notificationSoundEnabled);
+        ui->notificationRepeatSpinBox->setValue(rule.notificationRepeatMinutes);
 
         /**********
          * Source *

@@ -1635,14 +1635,18 @@ void LogParam::removeSourcePlatform()
     removeParamGroup("sourceplatform");
 }
 
-bool LogParam::getMainWindowAlertBeep()
+bool LogParam::getAlertNotificationEnabled()
 {
-    return getParam("mainwindow/alertbeep", false).toBool();
+    FCT_IDENTIFICATION;
+
+    return getParam("alert/notification/enabled", true).toBool();
 }
 
-void LogParam::setMainWindowAlertBeep(bool state)
+void LogParam::setAlertNotificationEnabled(bool enabled)
 {
-    setParam("mainwindow/alertbeep", state);
+    FCT_IDENTIFICATION;
+
+    setParam("alert/notification/enabled", enabled);
 }
 
 int LogParam::getMainWindowDarkMode()

@@ -6,8 +6,10 @@
 #include <QActionGroup>
 #include <QSet>
 #include "ui/StatisticsWidget.h"
-#include "core/NetworkNotification.h"
 #include "core/AlertEvaluator.h"
+#include "notification/DesktopNotification.h"
+#include "notification/NetworkNotification.h"
+#include "notification/AlertNotification.h"
 #include "core/PropConditions.h"
 #include "service/clublog/ClubLog.h"
 
@@ -78,7 +80,8 @@ private slots:
     void alertRuleSetting();
     void processSpotAlert(SpotAlert alert);
     void clearAlertEvent();
-    void beepSettingAlerts();
+    void notificationSettingAlerts();
+    void showNotification(DesktopNotificationCategory category);
     void shortcutALTBackslash();
     void setManualContact(bool);
     void showEditLayout();
@@ -121,6 +124,7 @@ private:
     StatisticsWidget* stats;
     NetworkNotification networknotification;
     AlertEvaluator alertEvaluator;
+    AlertNotification alertNotification;
     PropConditions *conditions;
     bool isFusionStyle;
     ClubLogUploader* clublogRT;

@@ -8,3 +8,4 @@ Exec=qlog
 Icon=qlog
 Categories=Utility;HamRadio;
 Keywords=QLog;Ham;Radio;HamRadio;AmateurRadio;Log;
+X-GNOME-UsesNotifications=true

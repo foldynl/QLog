@@ -1,5 +1,5 @@
-#ifndef QLOG_CORE_NETWORKNOTIFICATION_H
-#define QLOG_CORE_NETWORKNOTIFICATION_H
+#ifndef QLOG_NOTIFICATION_NETWORKNOTIFICATION_H
+#define QLOG_NOTIFICATION_NETWORKNOTIFICATION_H
 
 #include <QObject>
 #include <QSqlRecord>
@@ -164,4 +164,4 @@ private:
     void send(const QByteArray &, const HostsPortString &);
 };
 
-#endif // QLOG_CORE_NETWORKNOTIFICATION_H
+#endif // QLOG_NOTIFICATION_NETWORKNOTIFICATION_H

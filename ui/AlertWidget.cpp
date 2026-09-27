@@ -70,6 +70,7 @@ void AlertWidget::clearAllAlerts()
     FCT_IDENTIFICATION;
 
     alertTableModel->clear();
+    emit alertsManuallyCleared();
     emit alertsCleared();
 }
 
@@ -92,6 +93,7 @@ void AlertWidget::clearSelectedAlerts()
     for ( const int row : sourceRows )
         alertTableModel->removeRow(row);
 
+    emit alertsManuallyCleared();
     emit alertsCleared();
 }
 

@@ -187,8 +187,9 @@ MainWindow::MainWindow(QWidget* parent) :
     menuAlert->addAction(ui->actionClearAlerts);
     menuAlert->addSeparator();
     menuAlert->addAction(ui->actionEditAlertRules);
-    menuAlert->addAction(ui->actionBeepSettingAlert);
-    ui->actionBeepSettingAlert->setChecked(LogParam::getMainWindowAlertBeep());
+    menuAlert->addAction(ui->actionNotification);
+    ui->actionNotification->setChecked(LogParam::getAlertNotificationEnabled());
+    alertNotification.setEnabled(ui->actionNotification->isChecked());
     alertButton->setMenu(menuAlert);
 
     alertTextButton = new QPushButton(" ", ui->statusBar);
@@ -479,6 +480,10 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, this, &MainWindow::processSpotAlert);
     connect(&alertEvaluator, &AlertEvaluator::spotAlert, &networknotification, &NetworkNotification::spotAlert);
+    connect(&alertEvaluator, &AlertEvaluator::spotAlert, &alertNotification, &AlertNotification::processSpotAlert);
+    DesktopNotification *const desktopNotification = DesktopNotification::instance();
+    connect(&alertNotification, &AlertNotification::notificationRequested, desktopNotification, &DesktopNotification::show);
+    connect(desktopNotification, &DesktopNotification::activated, this, &MainWindow::showNotification);
 
     connect(ui->bandmapWidget, &BandmapWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
     connect(ui->bandmapWidget, &BandmapWidget::nearestSpotFound, ui->newContactWidget, &NewContactWidget::setNearestSpot);
@@ -510,6 +515,8 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->onlineMapWidget->setHeardMeMode(ui->newContactWidget->getMode());
 
     connect(ui->alertsWidget, &AlertWidget::rulesChanged, &alertEvaluator, &AlertEvaluator::loadRules);
+    connect(ui->alertsWidget, &AlertWidget::rulesChanged, &alertNotification, &AlertNotification::loadAlertRules);
+    connect(ui->alertsWidget, &AlertWidget::alertsManuallyCleared, &alertNotification, &AlertNotification::clearAlertHistory);
     connect(ui->alertsWidget, &AlertWidget::alertsCleared, this, &MainWindow::clearAlertEvent);
     connect(ui->alertsWidget, &AlertWidget::tuneDx, ui->newContactWidget, &NewContactWidget::tuneDx);
     connect(ui->alertsWidget, &AlertWidget::tuneWsjtx, wsjtx, &WsjtxUDPReceiver::sendReply);
@@ -1167,8 +1174,6 @@ void MainWindow::processSpotAlert(SpotAlert alert)
         else
             ui->newContactWidget->tuneDx(alert.getDxSpot());
     });
-
-    if ( ui->actionBeepSettingAlert->isChecked() ) QApplication::beep();
 }
 
 void MainWindow::clearAlertEvent()
@@ -1188,13 +1193,30 @@ void MainWindow::clearAlertEvent()
     }
 }
 
-void MainWindow::beepSettingAlerts()
+void MainWindow::notificationSettingAlerts()
 {
     FCT_IDENTIFICATION;
 
-    LogParam::setMainWindowAlertBeep(ui->actionBeepSettingAlert->isChecked());
+    const bool enabled = ui->actionNotification->isChecked();
+    LogParam::setAlertNotificationEnabled(enabled);
+    alertNotification.setEnabled(enabled);
+}
 
-    if ( ui->actionBeepSettingAlert->isChecked() ) QApplication::beep();
+void MainWindow::showNotification(DesktopNotificationCategory category)
+{
+    FCT_IDENTIFICATION;
+
+    switch ( category )
+    {
+        case DesktopNotificationCategory::ALERT:
+            if ( isMinimized() )
+                setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+            show();
+            raise();
+            activateWindow();
+            showAlerts();
+            break;
+    }
 }
 
 void MainWindow::shortcutALTBackslash()
