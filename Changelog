@@ -1,4 +1,5 @@
 TBC - 0.54.0
+- Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI: DEB artifact path assumes the repository is named QLog (issue #1182)
 
 2026/09/18 - 0.53.0
