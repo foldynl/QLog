@@ -1,4 +1,4 @@
-name: CI Linux/macOS
+name: CI Linux
 
 on:
   push:
@@ -83,56 +83,6 @@ jobs:
         QT_QPA_PLATFORM: offscreen
         QLOG_RUN_ADI_IMPORT_BENCHMARK: '1'
       run: make -j2 check
-
-  macos-build:
-     name: MacOS CI
-     if: vars.ENABLE_MACOS == 'true'
-     strategy:
-       matrix:
-         os: [macos-15]
-
-     runs-on: ${{ matrix.os }}
-
-     steps:
-     - name: Install dependencies
-       run: |
-         unset HOMEBREW_NO_INSTALL_FROM_API
-         brew update
-         brew upgrade || true
-         brew install qt6
-         brew link qt6 --force
-         brew install hamlib
-         brew link hamlib --force
-         brew install qtkeychain
-         brew install dbus-glib
-         brew install brotli
-         brew install icu4c
-         brew install pkg-config
-
-     - name: Checkout code
-       uses: actions/checkout@v5
-       with:
-         fetch-depth: 0
-     - name: Get version from tag
-       run : |
-         TAGVERSION=$(git describe --tags)
-         echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
-     - name: Configure and compile
-       run: |
-         cd build
-         qmake6 -config release ..
-         make -j4
-     - name: Configure tests
-       run: |
-         mkdir -p tests/build
-         cd tests/build
-         qmake6 ../tests.pro
-     - name: Build and run tests
-       working-directory: tests/build
-       env:
-         QT_QPA_PLATFORM: offscreen
-         QLOG_RUN_ADI_IMPORT_BENCHMARK: '1'
-       run: make -j4 check
 
   deb-package:
     name: DEB Package Build
