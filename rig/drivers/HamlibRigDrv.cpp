@@ -441,21 +441,26 @@ void HamlibRigDrv::setSplit(bool enabled)
         return;
     }
 
-    // Force RX to A/MAIN before enabling split — this guarantees
-    // a known VFO state regardless of rig's get_vfo support.
-    // Same strategy as WSJT-X (HamlibTransceiver::do_start).
+    vfo_t rxVfo = QLOG_HAMLIB_STATE(rig)->current_vfo;
+
     if ( enabled )
     {
-        vfo_t rxVfo = (QLOG_HAMLIB_STATE(rig)->vfo_list & RIG_VFO_A) ? RIG_VFO_A : RIG_VFO_MAIN;
+        // Force RX to A/MAIN before enabling split — this guarantees
+        // a known VFO state regardless of rig's get_vfo support.
+        // Same strategy as WSJT-X (HamlibTransceiver::do_start).
+        rxVfo = (QLOG_HAMLIB_STATE(rig)->vfo_list & RIG_VFO_A) ? RIG_VFO_A
+                                                               : RIG_VFO_MAIN;
         int rcVfo = rig_set_vfo(rig, rxVfo);
         qCDebug(runtime) << "Forced RX VFO to" << hamlibVFO2String(rxVfo)
                          << "result:" << rcVfo;
         commandSleep();
     }
+    else if ( rxVfo == RIG_VFO_NONE )
+        rxVfo = RIG_VFO_CURR;
 
-    vfo_t txVfo = getTxVfo();
+    vfo_t txVfo = enabled ? getTxVfo() : rxVfo;
     split_t splitVal = enabled ? RIG_SPLIT_ON : RIG_SPLIT_OFF;
-    int status = rig_set_split_vfo(rig, RIG_VFO_TX, splitVal, txVfo);
+    int status = rig_set_split_vfo(rig, rxVfo, splitVal, txVfo);
     isRigRespOK(status, tr("Set Split Error"), false);
     futureSplit = (status == RIG_OK && enabled);
 
@@ -710,6 +715,8 @@ void HamlibRigDrv::checkChanges()
 {
     FCT_IDENTIFICATION;
 
+    checkVFOChange();
+
     if ( !checkFreqChange() )
         return;
 
@@ -718,7 +725,6 @@ void HamlibRigDrv::checkChanges()
     if ( !checkModeChange() )
         return;
 
-    checkVFOChange();
     checkSplitChange();
     checkPWRChange();
     checkRITChange();
