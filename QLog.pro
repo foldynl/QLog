@@ -72,6 +72,7 @@ SOURCES += \
         awards/AwardSOTA.cpp \
         awards/AwardWAAC.cpp \
         awards/AwardWAIP.cpp \
+        awards/AwardWAJA.cpp \
         awards/AwardWANA.cpp \
         awards/AwardWorkedAllRAC.cpp \
         awards/SecondarySubdivisionAward.cpp \
@@ -270,6 +271,7 @@ HEADERS += \
         awards/AwardSOTA.h \
         awards/AwardWAAC.h \
         awards/AwardWAIP.h \
+        awards/AwardWAJA.h \
         awards/AwardWANA.h \
         awards/AwardWorkedAllRAC.h \
         awards/SecondarySubdivisionAward.h \

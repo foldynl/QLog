@@ -25,6 +25,7 @@
 #include "awards/AwardUSCounty.h"
 #include "awards/AwardRDA.h"
 #include "awards/AwardJapan.h"
+#include "awards/AwardWAJA.h"
 #include "awards/AwardNZ.h"
 #include "awards/AwardSpanishDME.h"
 #include "awards/AwardUKD.h"
@@ -251,6 +252,7 @@ QList<AwardDefinition*> AwardsDialog::createAwards()
         new AwardUSCounty(),
         new AwardRDA(),
         new AwardJapan(),
+        new AwardWAJA(),
         new AwardNZ(),
         new AwardSpanishDME(),
         new AwardUKD(),
