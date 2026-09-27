@@ -163,7 +163,7 @@ jobs:
       run: lintian --no-tag-display-limit --fail-on error ../qlog_*.changes 
 
     - name: Upload DEB artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: deb-package
         path: ../qlog_*.deb
@@ -176,7 +176,7 @@ jobs:
 
     steps:
     - name: Download DEB artifact
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v7
       with:
         name: deb-package
 
@@ -200,7 +200,7 @@ jobs:
       run: CONTAINER_ENGINE=docker ./packaging/rpm/build-container.sh 43
 
     - name: Upload RPM artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: rpm-package
         path: dist/rpm/fedora-43/x86_64/QLog-*.x86_64.rpm
@@ -216,7 +216,7 @@ jobs:
 
     steps:
     - name: Download RPM artifact
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v7
       with:
         name: rpm-package
         path: dist/rpm/fedora-43/x86_64
