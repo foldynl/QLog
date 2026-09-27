@@ -297,6 +297,98 @@ bool LogParam::getBandmapGuideEnabled()
     return getParam("bandmap/guide/enabled", false).toBool();
 }
 
+QString LogParam::getAwardsLastAward()
+{
+    FCT_IDENTIFICATION;
+
+    return getParam("awards/lastaward").toString();
+}
+
+void LogParam::setAwardsLastAward(const QString &award)
+{
+    FCT_IDENTIFICATION;
+
+    setParam("awards/lastaward", award);
+}
+
+QString LogParam::getAwardsLastMyEntity()
+{
+    FCT_IDENTIFICATION;
+
+    return getParam("awards/lastmyentity").toString();
+}
+
+void LogParam::setAwardsLastMyEntity(const QString &entity)
+{
+    FCT_IDENTIFICATION;
+
+    setParam("awards/lastmyentity", entity);
+}
+
+QString LogParam::getAwardsLastUserFilter()
+{
+    FCT_IDENTIFICATION;
+
+    return getParam("awards/lastuserfilter").toString();
+}
+
+void LogParam::setAwardsLastUserFilter(const QString &filter)
+{
+    FCT_IDENTIFICATION;
+
+    setParam("awards/lastuserfilter", filter);
+}
+
+bool LogParam::getAwardsConfirmedByState(const QString &name)
+{
+    FCT_IDENTIFICATION;
+
+    bool defaultState = false;
+    if ( name == "lotw" )
+        defaultState = getDxccConfirmedByLotwState();
+    else if ( name == "paper" )
+        defaultState = getDxccConfirmedByPaperState();
+    else if ( name == "eqsl" )
+        defaultState = getDxccConfirmedByEqslState();
+
+    return getParam("awards/confirmedby/" + name, defaultState).toBool();
+}
+
+void LogParam::setAwardsConfirmedByState(const QString &name, bool state)
+{
+    FCT_IDENTIFICATION;
+
+    setParam("awards/confirmedby/" + name, state);
+}
+
+bool LogParam::getAwardsModeState(const QString &name)
+{
+    FCT_IDENTIFICATION;
+
+    return getParam("awards/mode/" + name, true).toBool();
+}
+
+void LogParam::setAwardsModeState(const QString &name, bool state)
+{
+    FCT_IDENTIFICATION;
+
+    setParam("awards/mode/" + name, state);
+}
+
+bool LogParam::getAwardsShowState(const QString &name)
+{
+    FCT_IDENTIFICATION;
+
+    return getParam("awards/show/" + name, false).toBool();
+}
+
+void LogParam::setAwardsShowState(const QString &name, bool state)
+{
+    FCT_IDENTIFICATION;
+
+    setParam("awards/show/" + name, state);
+}
+
 QString LogParam::getUploadQSOLastCall()
 {
     return getParam("uploadqso/lastcall").toString();

@@ -93,6 +93,22 @@ public:
     static bool setBandmapGuideEnabled(bool state);
     static bool getBandmapGuideEnabled();
 
+    /*****************
+     * Awards Dialog
+     *****************/
+    static QString getAwardsLastAward();
+    static void setAwardsLastAward(const QString &award);
+    static QString getAwardsLastMyEntity();
+    static void setAwardsLastMyEntity(const QString &entity);
+    static QString getAwardsLastUserFilter();
+    static void setAwardsLastUserFilter(const QString &filter);
+    static bool getAwardsConfirmedByState(const QString &name);
+    static void setAwardsConfirmedByState(const QString &name, bool state);
+    static bool getAwardsModeState(const QString &name);
+    static void setAwardsModeState(const QString &name, bool state);
+    static bool getAwardsShowState(const QString &name);
+    static void setAwardsShowState(const QString &name, bool state);
+
     /*******************
      * UploadQSO Dialog
      *******************/

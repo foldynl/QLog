@@ -1,6 +1,7 @@
 TBC - 0.54.0
 - [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
 - [NEW] - Awards - Added WAJA
+- [NEW] - Awards - Remember dialog filter selection
 - Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)
 - Fixed link to Awards Japanese Cities
