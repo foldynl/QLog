@@ -10,8 +10,8 @@ Release: 1%{?dist}
 # 3rdparty/vincentlaucsb/csv-parser/csv.hpp (MIT)
 # 3rdparty/bertoldvdb/zonedetect/library/zonedetect.c (BSD 3 clause)
 # 3rdparty/bertoldvdb/zonedetect/library/zonedetect.h (BSD 3 clause)
-# devtools/timezones/builder/builder.cpp (BSD 3 clause)
-# devtools/timezones/timezone_DATA_LICENSE (ODbL)
+# 3rdparty/bertoldvdb/zonedetect/database/builder/builder.cpp (BSD 3 clause)
+# 3rdparty/bertoldvdb/zonedetect/database/timezone_DATA_LICENSE (ODbL)
 # res/data/cty.csv (MIT)
 License: GPL-3.0-or-later AND BSD-3-Clause AND MIT AND ODbL-1.0
 Group: Productivity/Hamradio/Logging
@@ -57,7 +57,7 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %license LICENSE.BSD-3-Clause
 %license LICENSE.MIT
 %license LICENSE.CTY
-%license devtools/timezones/timezone_DATA_LICENSE
+%license 3rdparty/bertoldvdb/zonedetect/database/timezone_DATA_LICENSE
 %doc README.md Changelog
 %{_datadir}/applications/qlog.desktop
 %{_datadir}//icons/hicolor/256x256/apps/qlog.png

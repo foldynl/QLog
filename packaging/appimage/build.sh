@@ -2,13 +2,14 @@
 
 set -euo pipefail
 
-HAMLIB_VERSION="4.7.2"
-QTKEYCHAIN_VERSION="0.17.0"
-
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 PACKAGING="$ROOT/packaging/appimage"
 RUNTIME="$PACKAGING/runtime"
 CHECKSUMS="$PACKAGING/checksums.sha256"
+
+# shellcheck source=versions.sh
+source "$PACKAGING/versions.sh"
+
 NATIVE_ARCH="$(uname -m)"
 JOBS="${JOBS:-$(nproc)}"
 
@@ -168,7 +169,7 @@ HAMLIB_STAMP="$PREFIX/.hamlib-${HAMLIB_VERSION}-verified"
 
 if [[ ! -f "$HAMLIB_STAMP" || ! -x "$PREFIX/bin/rigctld" || ! -e "$PREFIX/lib/libhamlib.so" ]]; then
     download \
-        "https://github.com/Hamlib/Hamlib/releases/download/${HAMLIB_VERSION}/hamlib-${HAMLIB_VERSION}.tar.gz" \
+        "${HAMLIB_REPOSITORY}/releases/download/${HAMLIB_VERSION}/hamlib-${HAMLIB_VERSION}.tar.gz" \
         "$HAMLIB_ARCHIVE"
 
     rm -rf "$HAMLIB_SOURCE"
@@ -193,7 +194,7 @@ QTKEYCHAIN_STAMP="$PREFIX/.qtkeychain-${QTKEYCHAIN_VERSION}-verified"
 
 if [[ ! -f "$QTKEYCHAIN_STAMP" || ! -e "$QTKEYCHAIN_LIBRARY" ]]; then
     download \
-        "https://github.com/frankosterfeld/qtkeychain/archive/refs/tags/${QTKEYCHAIN_VERSION}.tar.gz" \
+        "${QTKEYCHAIN_REPOSITORY}/archive/refs/tags/${QTKEYCHAIN_VERSION}.tar.gz" \
         "$QTKEYCHAIN_ARCHIVE"
 
     rm -rf "$QTKEYCHAIN_SOURCE" "$QTKEYCHAIN_BUILD"
@@ -256,10 +257,10 @@ LINUXDEPLOY="$TOOLS/linuxdeploy-${APPIMAGE_ARCH}.AppImage"
 QT_PLUGIN="$TOOLS/linuxdeploy-plugin-qt-${APPIMAGE_ARCH}.AppImage"
 
 download \
-    "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${APPIMAGE_ARCH}.AppImage" \
+    "${LINUXDEPLOY_REPOSITORY}/releases/download/continuous/linuxdeploy-${APPIMAGE_ARCH}.AppImage" \
     "$LINUXDEPLOY"
 download \
-    "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${APPIMAGE_ARCH}.AppImage" \
+    "${LINUXDEPLOY_QT_REPOSITORY}/releases/download/continuous/linuxdeploy-plugin-qt-${APPIMAGE_ARCH}.AppImage" \
     "$QT_PLUGIN"
 
 chmod +x "$LINUXDEPLOY" "$QT_PLUGIN"

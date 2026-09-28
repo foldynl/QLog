@@ -5,6 +5,9 @@ set -euo pipefail
 CONTAINER_ENGINE="${CONTAINER_ENGINE:-podman}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
+# shellcheck source=versions.sh
+source "$ROOT/packaging/appimage/versions.sh"
+
 if [[ $# -ne 0 ]]; then
     echo "Usage: $0" >&2
     echo "The AppImage is always built for the host architecture." >&2
@@ -43,9 +46,9 @@ case "${CONTAINER_ENGINE##*/}" in
         ;;
 esac
 
-BASE_IMAGE="docker.io/library/ubuntu:22.04"
-
 echo "Building QLog AppImage natively for $ARCH with ${CONTAINER_ENGINE##*/}"
+
+"$CONTAINER_ENGINE" pull "$APPIMAGE_BASE_IMAGE"
 
 "$CONTAINER_ENGINE" run \
     "${RUN_OPTIONS[@]}" \
@@ -58,5 +61,5 @@ echo "Building QLog AppImage natively for $ARCH with ${CONTAINER_ENGINE##*/}"
     -e JOBS="${JOBS:-}" \
     -v "$ROOT:/src" \
     -w /src \
-    "$BASE_IMAGE" \
+    "$APPIMAGE_BASE_IMAGE" \
     ./packaging/appimage/build-in-container.sh

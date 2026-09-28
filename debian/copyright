@@ -28,7 +28,7 @@ Copyright: 2018, Bertold Van den Bergh <vandenbergh@bertold.org>
 	   2022-2023, Ladislav Foldyna <ok1mlg@gmail.com>
 License: BSD-3-Clause
 
-Files: devtools/timezones/*
+Files: 3rdparty/bertoldvdb/zonedetect/database/*
 Copyright: 2018, Bertold Van den Bergh <vandenbergh@bertold.org>
 	   2022-2024, Ladislav Foldyna <ok1mlg@gmail.com>
 License: ODbL-1.0
@@ -50,7 +50,7 @@ Files: res/data/cty.csv
 Copyright: 1994-, Jim Reisert AD1C
 License: Expat
 
-Files: devtools/timezones/builder/builder.cpp
+Files: 3rdparty/bertoldvdb/zonedetect/database/builder/builder.cpp
 Copyright: 
 	   2018, Bertold Van den Bergh <vandenbergh@bertold.org>
 	   2022-2024, Ladislav Foldyna <ok1mlg@gmail.com>
@@ -656,4 +656,3 @@ License: Expat
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-

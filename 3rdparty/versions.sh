@@ -1,4 +1,4 @@
-# This file is maintained by devtools/thirdparty/update.sh.
+# This file is maintained by devtools/3rdparty/update.sh.
 
 CSV_PARSER_REPOSITORY="https://github.com/vincentlaucsb/csv-parser"
 CSV_PARSER_TAG="5.3.0"

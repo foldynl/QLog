@@ -5,10 +5,10 @@ phases:
     commands:
        - apt update
        - apt install -y libshp-dev
-       - cd database/builder
+       - cd 3rdparty/bertoldvdb/zonedetect/database/builder
        - ./makedb.sh
 
 artifacts:
   files:
-    - database/builder/db.zip
+    - 3rdparty/bertoldvdb/zonedetect/database/builder/db.zip
   discard-paths: yes

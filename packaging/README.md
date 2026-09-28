@@ -20,6 +20,8 @@ closure are discovered during every build.
 Hamlib, QtKeychain, linuxdeploy, and the Qt deployment plugin are pinned by
 version and SHA-256 checksum. Hamlib and QtKeychain are cached per architecture
 below `build-appimage/`. QLog itself and AppDir are rebuilt from scratch.
+Manual dependency check and update commands are documented in
+`../devtools/dependencies/README.md`.
 
 The AppImage has a deliberate runtime boundary:
 

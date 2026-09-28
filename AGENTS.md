@@ -49,6 +49,7 @@ For structural codebase exploration, use the installed `codebase-memory` skill.
 - Preserve all user changes. Never revert or rewrite unrelated worktree changes.
 - If an unexpected change overlaps the files or behavior needed for the task, stop and ask how to proceed. If it is unrelated, preserve it and work around it.
 - Read-only Git inspection is allowed when useful. Do not perform state-changing Git operations unless the user requests them.
+- When moving or renaming a file or directory already tracked by Git, always use `git mv`; do not use a filesystem-only move followed by delete/add.
 - Do not use destructive commands such as `git reset --hard` or `git checkout --` unless explicitly requested.
 - Use `rg` and `rg --files` for text and file searches.
 - Preserve semantic diffs. Do not run broad formatters or create formatting-only churn in pre-existing code.

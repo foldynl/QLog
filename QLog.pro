@@ -717,6 +717,6 @@ DISTFILES += \
     3rdparty/bertoldvdb/zonedetect/LICENSE \
     3rdparty/vincentlaucsb/csv-parser/LICENSE \
     3rdparty/versions.sh \
-    devtools/thirdparty/update.sh \
+    devtools/3rdparty/update.sh \
     i18n/dbstrings.tri \
     res/data/sat_modes

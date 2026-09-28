@@ -4,6 +4,13 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LOCK_FILE="${ROOT_DIR}/3rdparty/versions.sh"
+OK_MARK="✓"
+OUTDATED_MARK="✗"
+if [[ -t 1 ]]
+then
+    OK_MARK=$'\033[32m✓\033[0m'
+    OUTDATED_MARK=$'\033[31m✗\033[0m'
+fi
 
 # shellcheck source=../../3rdparty/versions.sh
 source "${LOCK_FILE}"
@@ -42,7 +49,7 @@ require_clean()
 save_versions()
 {
     cat > "${LOCK_FILE}.tmp" <<EOF
-# This file is maintained by devtools/thirdparty/update.sh.
+# This file is maintained by devtools/3rdparty/update.sh.
 
 CSV_PARSER_REPOSITORY="${CSV_PARSER_REPOSITORY}"
 CSV_PARSER_TAG="${CSV_PARSER_TAG}"
@@ -75,12 +82,12 @@ check_csv_parser()
        cmp -s "${header}" "${directory}/csv.hpp" &&
        cmp -s "${license}" "${directory}/LICENSE"
     then
-        echo "csv-parser: ${CSV_PARSER_TAG#v} is up to date"
+        echo "csv-parser: ${CSV_PARSER_TAG#v} is up to date ${OK_MARK}"
         return
     fi
 
     UPDATE_AVAILABLE=1
-    echo "csv-parser: update available (${CSV_PARSER_TAG#v} -> ${version})"
+    echo "csv-parser: update available (${CSV_PARSER_TAG#v} -> ${version}) ${OUTDATED_MARK}"
     [[ "${MODE}" == "--update" ]] || return 0
 
     require_clean "${directory#${ROOT_DIR}/}/csv.hpp" "${directory#${ROOT_DIR}/}/LICENSE"
@@ -93,11 +100,21 @@ check_csv_parser()
 check_zonedetect()
 {
     local directory="${ROOT_DIR}/3rdparty/bertoldvdb/zonedetect"
-    local repository_path="${ZONEDETECT_REPOSITORY#https://github.com/}"
     local commit
     commit="$(git ls-remote "${ZONEDETECT_REPOSITORY}.git" refs/heads/master | awk '{print $1}')"
     [[ "${commit}" =~ ^[0-9a-f]{40}$ ]] || die "cannot determine ZoneDetect commit"
 
+    if [[ "${commit}" == "${ZONEDETECT_COMMIT}" ]]
+    then
+        echo "ZoneDetect: ${ZONEDETECT_COMMIT:0:12} is up to date ${OK_MARK}"
+        return
+    fi
+
+    UPDATE_AVAILABLE=1
+    echo "ZoneDetect: update available (${ZONEDETECT_COMMIT:0:12} -> ${commit:0:12}) ${OUTDATED_MARK}"
+    [[ "${MODE}" == "--update" ]] || return 0
+
+    local repository_path="${ZONEDETECT_REPOSITORY#https://github.com/}"
     local source="${TEMP_DIR}/zonedetect.c"
     local header="${TEMP_DIR}/zonedetect.h"
     local license="${TEMP_DIR}/zonedetect.LICENSE"
@@ -106,24 +123,6 @@ check_zonedetect()
     download "${raw_url}/library/zonedetect.h" "${header}"
     download "${raw_url}/LICENSE" "${license}"
     grep -Fq 'ZoneDetect *ZDOpenDatabase' "${header}" || die "invalid ZoneDetect header"
-
-    if [[ "${commit}" == "${ZONEDETECT_COMMIT}" ]] &&
-       cmp -s "${source}" "${directory}/library/zonedetect.c" &&
-       cmp -s "${header}" "${directory}/library/zonedetect.h" &&
-       cmp -s "${license}" "${directory}/LICENSE"
-    then
-        echo "ZoneDetect: ${ZONEDETECT_COMMIT:0:12} is up to date"
-        return
-    fi
-
-    UPDATE_AVAILABLE=1
-    if [[ "${commit}" == "${ZONEDETECT_COMMIT}" ]]
-    then
-        echo "ZoneDetect: vendored files differ from commit ${ZONEDETECT_COMMIT:0:12}"
-    else
-        echo "ZoneDetect: update available (${ZONEDETECT_COMMIT:0:12} -> ${commit:0:12})"
-    fi
-    [[ "${MODE}" == "--update" ]] || return 0
 
     require_clean "${directory#${ROOT_DIR}/}/library/zonedetect.c" \
                   "${directory#${ROOT_DIR}/}/library/zonedetect.h" \
