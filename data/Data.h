@@ -8,7 +8,7 @@
 #include "SOTAEntity.h"
 #include "WWFFEntity.h"
 #include "POTAEntity.h"
-#include "core/zonedetect.h"
+#include "3rdparty/bertoldvdb/zonedetect/library/zonedetect.h"
 #include "core/QuadKeyCache.h"
 
 class QCompleter;

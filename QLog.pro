@@ -112,7 +112,7 @@ SOURCES += \
         core/EmergencyFrequency.cpp \
         core/IBPBeacon.cpp \
         core/main.cpp \
-        core/zonedetect.c \
+        3rdparty/bertoldvdb/zonedetect/library/zonedetect.c \
         cwkey/CWKeyer.cpp \
         cwkey/drivers/CWCatKey.cpp \
         cwkey/drivers/CWDaemonKey.cpp \
@@ -308,11 +308,11 @@ HEADERS += \
         core/QSOFilterDateRange.h \
         core/QuadKeyCache.h \
         core/WsjtxUDPReceiver.h \
-        core/csv.hpp \
+        3rdparty/vincentlaucsb/csv-parser/csv.hpp \
         core/debug.h \
         core/EmergencyFrequency.h \
         core/IBPBeacon.h \
-        core/zonedetect.h \
+        3rdparty/bertoldvdb/zonedetect/library/zonedetect.h \
         cwkey/CWKeyer.h \
         cwkey/drivers/CWCatKey.h \
         cwkey/drivers/CWDaemonKey.h \
@@ -714,5 +714,9 @@ DEFINES += HAMLIBVERSION_PATCH=$$HAMLIBVERSION_PATCH
 
 DISTFILES += \
     Changelog \
+    3rdparty/bertoldvdb/zonedetect/LICENSE \
+    3rdparty/vincentlaucsb/csv-parser/LICENSE \
+    3rdparty/versions.sh \
+    devtools/thirdparty/update.sh \
     i18n/dbstrings.tri \
     res/data/sat_modes

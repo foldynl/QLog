@@ -21,7 +21,7 @@
 #include "FileCompressor.h"
 #include "debug.h"
 #include "data/Data.h"
-#include "core/csv.hpp"
+#include "3rdparty/vincentlaucsb/csv-parser/csv.hpp"
 #include "core/FileCompressor.h"
 
 MODULE_IDENTIFICATION("qlog.core.lovdownloader");

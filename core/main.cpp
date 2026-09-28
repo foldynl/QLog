@@ -19,7 +19,7 @@
 #include "rotator/Rotator.h"
 #include "cwkey/CWKeyer.h"
 #include "AppGuard.h"
-#include "core/zonedetect.h"
+#include "3rdparty/bertoldvdb/zonedetect/library/zonedetect.h"
 #include "ui/SplashScreen.h"
 #include "core/MembershipQE.h"
 #include "service/kstchat/KSTChat.h"

@@ -7,9 +7,9 @@ Release: 1%{?dist}
 
 
 # QLog is generally GPL 3+, with the following exceptions:
-# core/csv.hpp (MIT)
-# core/zonedetect.c (BSD 3 clause)
-# core/zonedetect.h (BSD 3 clause)
+# 3rdparty/vincentlaucsb/csv-parser/csv.hpp (MIT)
+# 3rdparty/bertoldvdb/zonedetect/library/zonedetect.c (BSD 3 clause)
+# 3rdparty/bertoldvdb/zonedetect/library/zonedetect.h (BSD 3 clause)
 # devtools/timezones/builder/builder.cpp (BSD 3 clause)
 # devtools/timezones/timezone_DATA_LICENSE (ODbL)
 # res/data/cty.csv (MIT)
