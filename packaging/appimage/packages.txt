@@ -9,16 +9,17 @@ autoconf
 automake
 libtool
 extra-cmake-modules
-qt6-base-dev
-qt6-tools-dev
-qt6-l10n-tools
-qt6-webengine-dev
-qt6-webengine-dev-tools
-qt6-charts-dev
-qt6-serialport-dev
-qt6-svg-dev
-qt6-websockets-dev
-qt6-wayland
+# Ubuntu 22.04 is required for the older glibc baseline. Keep this build on
+# Qt 5 because its Qt 6 WebEngine 6.2.4 lacks the QTBUG-101201 fix and can abort
+# with multi-layout XKB configurations.
+qtbase5-dev
+qttools5-dev
+qttools5-dev-tools
+qtwebengine5-dev
+libqt5charts5-dev
+libqt5serialport5-dev
+libqt5svg5-dev
+libqt5websockets5-dev
 libgl-dev
 libsecret-1-dev
 libusb-1.0-0-dev

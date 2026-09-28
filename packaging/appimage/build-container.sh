@@ -43,7 +43,7 @@ case "${CONTAINER_ENGINE##*/}" in
         ;;
 esac
 
-BASE_IMAGE="docker.io/library/debian:12"
+BASE_IMAGE="docker.io/library/ubuntu:22.04"
 
 echo "Building QLog AppImage natively for $ARCH with ${CONTAINER_ENGINE##*/}"
 

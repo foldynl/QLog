@@ -4,7 +4,7 @@ set -eu
 
 APPDIR="${APPDIR:-$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)}"
 
-# Do not mix Qt or GLib plugins from the host with the Debian runtime bundled
+# Do not mix Qt or GLib plugins from the host with the Ubuntu runtime bundled
 # in the AppImage. Secret Service itself remains a host D-Bus service.
 export LD_LIBRARY_PATH="$APPDIR/usr/lib"
 export PATH="$APPDIR/usr/bin:$PATH"

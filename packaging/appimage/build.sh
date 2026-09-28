@@ -96,7 +96,7 @@ find_library()
     '
 }
 
-bundle_debian_runtime()
+bundle_package_runtime()
 {
     local package="$1"
     local source
@@ -109,7 +109,7 @@ bundle_debian_runtime()
 
     while IFS= read -r source; do
         case "$source" in
-            *.so|*.chk)
+            *.so|*.so.*|*.chk)
                 if [[ ! -f "$source" ]]; then
                     echo "Error: $package runtime file not found: $source" >&2
                     exit 1
@@ -136,37 +136,27 @@ bundle_debian_runtime()
     done < <(dpkg-query -L "$package")
 
     if [[ $count -eq 0 ]]; then
-        echo "Error: no runtime files found in Debian package $package." >&2
+        echo "Error: no runtime files found in package $package." >&2
         exit 1
     fi
 }
 
-copy_qt_plugin_group()
-{
-    local group="$1"
-    local pattern="$2"
-    local required="$3"
-    local source
-    local count=0
+BUILD_PLATFORM_ID="$(. /etc/os-release && printf '%s:%s' "$ID" "$VERSION_ID")"
+export QT_SELECT=qt5
+QMAKE_BIN="$(command -v qmake)"
+QT_VERSION="$("$QMAKE_BIN" -query QT_VERSION)"
 
-    mkdir -p "$APPDIR/usr/plugins/$group"
+if [[ "$QT_VERSION" != 5.* ]]; then
+    echo "Error: the AppImage build requires Qt 5, found Qt $QT_VERSION." >&2
+    exit 1
+fi
 
-    while IFS= read -r -d '' source; do
-        cp -v "$source" "$APPDIR/usr/plugins/$group/"
-        count=$((count + 1))
-    done < <(find "$QT_PLUGIN_DIR/$group" -maxdepth 1 -type f -name "$pattern" -print0 2>/dev/null)
-
-    if [[ "$required" == "required" && $count -eq 0 ]]; then
-        echo "Error: no Qt plugins matching $group/$pattern were found." >&2
-        exit 1
-    fi
-}
-
-DEPS_ID="hamlib=${HAMLIB_VERSION}:$(expected_checksum "hamlib-${HAMLIB_VERSION}.tar.gz");qtkeychain=${QTKEYCHAIN_VERSION}:$(expected_checksum "qtkeychain-${QTKEYCHAIN_VERSION}.tar.gz")"
+QTKEYCHAIN_LIBRARY="$PREFIX/lib/libqt5keychain.so"
+DEPS_ID="platform=${BUILD_PLATFORM_ID};qt=${QT_VERSION};hamlib=${HAMLIB_VERSION}:$(expected_checksum "hamlib-${HAMLIB_VERSION}.tar.gz");qtkeychain=${QTKEYCHAIN_VERSION}:$(expected_checksum "qtkeychain-${QTKEYCHAIN_VERSION}.tar.gz")"
 DEPS_STATE="$PREFIX/.qlog-appimage-dependencies"
 
 if [[ -f "$DEPS_STATE" && "$(cat "$DEPS_STATE")" != "$DEPS_ID" ]]; then
-    echo "Dependency versions changed; resetting $PREFIX"
+    echo "Dependency build environment changed; resetting $PREFIX"
     rm -rf "$PREFIX"
     mkdir -p "$PREFIX"
 fi
@@ -201,7 +191,7 @@ fi
 
 QTKEYCHAIN_STAMP="$PREFIX/.qtkeychain-${QTKEYCHAIN_VERSION}-verified"
 
-if [[ ! -f "$QTKEYCHAIN_STAMP" || ! -e "$PREFIX/lib/libqt6keychain.so" ]]; then
+if [[ ! -f "$QTKEYCHAIN_STAMP" || ! -e "$QTKEYCHAIN_LIBRARY" ]]; then
     download \
         "https://github.com/frankosterfeld/qtkeychain/archive/refs/tags/${QTKEYCHAIN_VERSION}.tar.gz" \
         "$QTKEYCHAIN_ARCHIVE"
@@ -217,8 +207,7 @@ if [[ ! -f "$QTKEYCHAIN_STAMP" || ! -e "$PREFIX/lib/libqt6keychain.so" ]]; then
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX="$PREFIX" \
         -DCMAKE_INSTALL_LIBDIR=lib \
-        -DBUILD_WITH_QT5=OFF \
-        -DBUILD_WITH_QT6=ON \
+        -DBUILD_WITH_QT5=ON \
         -DBUILD_SHARED_LIBS=ON \
         -DBUILD_TRANSLATIONS=ON \
         -DBUILD_TESTING=OFF \
@@ -242,7 +231,7 @@ export LD_LIBRARY_PATH="$PREFIX/lib:${LD_LIBRARY_PATH:-}"
 rm -rf "$QLOG_BUILD"
 mkdir -p "$QLOG_BUILD"
 cd "$QLOG_BUILD"
-qmake6 "$ROOT/QLog.pro" \
+"$QMAKE_BIN" "$ROOT/QLog.pro" \
     CONFIG+=release \
     CONFIG-=debug \
     PREFIX=/usr \
@@ -289,7 +278,7 @@ while IFS= read -r library; do
     DEPLOY_LIBRARIES+=(--library "$library_path")
 done < "$RUNTIME/bundle-libraries.txt"
 
-export QMAKE="$(command -v qmake6)"
+export QMAKE="$QMAKE_BIN"
 export APPIMAGE_EXTRACT_AND_RUN=1
 export ARCH="$APPIMAGE_ARCH"
 export PATH="$TOOLS:$PATH"
@@ -300,35 +289,26 @@ cd "$WORK"
     --executable "$APPDIR/usr/bin/qlog" \
     --executable "$APPDIR/usr/bin/rigctld" \
     --library "$(readlink -f "$PREFIX/lib/libhamlib.so")" \
-    --library "$(readlink -f "$PREFIX/lib/libqt6keychain.so")" \
+    --library "$(readlink -f "$QTKEYCHAIN_LIBRARY")" \
     "${DEPLOY_LIBRARIES[@]}" \
     --desktop-file "$APPDIR/usr/share/applications/qlog.desktop" \
     --icon-file "$APPDIR/usr/share/icons/hicolor/256x256/apps/qlog.png" \
     --plugin qt
 
-# NSS runtime modules
+if [[ ! -x "$APPDIR/usr/libexec/QtWebEngineProcess" ]]; then
+    echo "Error: linuxdeploy did not bundle QtWebEngineProcess." >&2
+    exit 1
+fi
+
+# NSS and OpenSSL runtime modules
 
 # Complete package families listed here contain modules loaded through dlopen().
 # Keeping each package intact prevents a host module from being paired with an
 # older bundled core library.
 while IFS= read -r package; do
     [[ -z "$package" || "$package" == \#* ]] && continue
-    bundle_debian_runtime "$package"
+    bundle_package_runtime "$package"
 done < "$RUNTIME/bundle-packages.txt"
-
-# Qt TLS backend
-
-QT_PLUGIN_DIR="$(qmake6 -query QT_INSTALL_PLUGINS)"
-copy_qt_plugin_group tls 'libqopensslbackend.so' required
-copy_qt_plugin_group tls 'libqcertonlybackend.so' required
-
-# The Qt deployment plugin only sees plugins installed in the build image.
-# Ship both X11 and native Wayland backends and their dynamically loaded helper
-# plugins so the same AppImage can run in either desktop session.
-copy_qt_plugin_group platforms 'libqwayland*.so' required
-copy_qt_plugin_group wayland-decoration-client '*.so' optional
-copy_qt_plugin_group wayland-graphics-integration-client '*.so' optional
-copy_qt_plugin_group wayland-shell-integration '*.so' optional
 
 rm -f "$APPDIR/AppRun"
 install -m 0755 "$RUNTIME/AppRun" "$APPDIR/AppRun"

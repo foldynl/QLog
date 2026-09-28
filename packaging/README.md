@@ -4,12 +4,12 @@ The packaging builds run in temporary containers and write their results below
 `dist/`. Podman is used by default, but Docker is also supported. All
 distro-specific dependencies are installed inside the build containers.
 
-The AppImage build uses Qt 6. The RPM build deliberately follows the existing
-Qt 5 `BuildRequires` in `rpm/qlog.spec`.
+The AppImage and RPM builds use Qt 5. Ubuntu 22.04's Qt 6 WebEngine 6.2.4
+predates the QTBUG-101201 fix and can abort with multi-layout XKB configurations.
 
 ## AppImage
 
-Debian build dependencies are declared in `appimage/packages.txt`. Complete
+Ubuntu 22.04 build dependencies are declared in `appimage/packages.txt`. Complete
 runtime package families loaded through `dlopen()` are declared separately in
 `appimage/runtime/bundle-packages.txt`; additional dynamic libraries are in
 `appimage/runtime/bundle-libraries.txt`. This prevents a bundled core library
@@ -79,7 +79,7 @@ host. To produce both architectures, run the same scripts once on an x86_64
 system and once on an ARM64 system.
 
 Build containers are removed on success, failure, or interruption. The small
-Fedora/Debian base images remain in the selected engine's cache because
+Fedora/Ubuntu base images remain in the selected engine's cache because
 subsequent builds reuse them.
 
 ## Windows
