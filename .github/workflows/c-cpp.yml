@@ -112,11 +112,14 @@ jobs:
     - name: Run lintian
       run: lintian --no-tag-display-limit --fail-on error ../qlog_*.changes 
 
+    - name: Stage DEB artifact
+      run: mv ../qlog_*.deb .
+
     - name: Upload DEB artifact
       uses: actions/upload-artifact@v6
       with:
         name: deb-package
-        path: ../qlog_*.deb
+        path: ${{ github.workspace }}/qlog_*.deb
         retention-days: 1
 
   deb-smoke-test:
