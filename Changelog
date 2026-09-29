@@ -4,6 +4,8 @@ TBC - 0.54.0
 - [NEW] - Awards - Remember dialog filter selection
 - [NEW] - Settings - Rig - Added Winkeyer multi-output support (issue #1034)
 - [NEW] - Alerts - Added OS Native Notifications
+- [NEW] - ADIF 3.1.8 - Added new mode JTTY
+- [NEW] - ADIF 3.1.8 - Added new Contest IDs
 - [CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting
 - Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)
