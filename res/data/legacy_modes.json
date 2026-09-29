@@ -173,5 +173,10 @@
   "FT2": { "mode": "MFSK", "submode": "FT2" },
   "RIBBIT_PIX": { "mode": "OFDM", "submode": "RIBBIT_PIX" },
   "RIBBIT_SMS": { "mode": "OFDM", "submode": "RIBBIT_SMS" },
-  "FREEDATA": { "mode": "DYNAMIC", "submode": "FREEDATA" }
+  "FREEDATA": { "mode": "DYNAMIC", "submode": "FREEDATA" },
+  "OPERA-BEACON": { "mode": "OPERA", "submode": "OPERA-BEACON" },
+  "OPERA-QSO": { "mode": "OPERA", "submode": "OPERA-QSO" },
+  "PAC2": { "mode": "PAC", "submode": "PAC2" },
+  "PAC3": { "mode": "PAC", "submode": "PAC3" },
+  "PAC4": { "mode": "PAC", "submode": "PAC4" }
 }

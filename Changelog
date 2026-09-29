@@ -9,6 +9,7 @@ TBC - 0.54.0
 - Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)
 - Fixed link to Awards Japanese Cities
 - Fixed AppImage not possible to run on older distros
+- Fixed missing ADIF Modes - ARDOP, JT44, OPERA, PAC
 - Hamlib - Improved Split Disable
 - Hamlib - Adjusted the checkChanges sequence
 
