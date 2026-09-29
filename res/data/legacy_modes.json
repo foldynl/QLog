@@ -178,5 +178,6 @@
   "OPERA-QSO": { "mode": "OPERA", "submode": "OPERA-QSO" },
   "PAC2": { "mode": "PAC", "submode": "PAC2" },
   "PAC3": { "mode": "PAC", "submode": "PAC3" },
-  "PAC4": { "mode": "PAC", "submode": "PAC4" }
+  "PAC4": { "mode": "PAC", "submode": "PAC4" },
+  "JTTY": { "mode": "MFSK", "submode": "JTTY" }
 }

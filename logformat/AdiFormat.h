@@ -92,7 +92,7 @@ protected:
 
     static QHash<QString, AdiFormat::ExportParams> DB2ADIFExportParams;
 
-    const QString ADIF_VERSION_STRING = "3.1.7";
+    const QString ADIF_VERSION_STRING = "3.1.8";
     const QString PROGRAMID_STRING = "QLog";
 
 private:

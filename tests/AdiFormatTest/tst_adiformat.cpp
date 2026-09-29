@@ -292,7 +292,7 @@ void AdiFormatTest::exportStartWritesAdifHeader()
     format.exportStart();
     stream.flush();
 
-    QVERIFY(output.startsWith(" <ADIF_VER:5>3.1.7\n"));
+    QVERIFY(output.startsWith(" <ADIF_VER:5>3.1.8\n"));
     QVERIFY(output.contains("<PROGRAMID:4>QLog\n"));
     QVERIFY(output.contains("<PROGRAMVERSION:4>test\n"));
     QVERIFY(output.contains("<CREATED_TIMESTAMP:15>"));

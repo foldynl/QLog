@@ -111,7 +111,7 @@ void AdxFormatTest::exportStartWritesAdxHeader()
     }
     QVERIFY(!reader.hasError());
 
-    QCOMPARE(headerValues.value(QStringLiteral("ADIF_VER")), QStringLiteral("3.1.7"));
+    QCOMPARE(headerValues.value(QStringLiteral("ADIF_VER")), QStringLiteral("3.1.8"));
     QCOMPARE(headerValues.value(QStringLiteral("PROGRAMID")), QStringLiteral("QLog"));
     QCOMPARE(headerValues.value(QStringLiteral("PROGRAMVERSION")), QStringLiteral("test"));
     QCOMPARE(headerValues.value(QStringLiteral("CREATED_TIMESTAMP")).length(), 15);
