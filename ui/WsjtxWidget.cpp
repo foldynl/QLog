@@ -1,6 +1,10 @@
 #include <QDebug>
+#include <QApplication>
+#include <QPainter>
 #include <QSortFilterProxyModel>
 #include <QScrollBar>
+#include <QStyle>
+#include <QStyledItemDelegate>
 
 #include "WsjtxWidget.h"
 #include "ui_WsjtxWidget.h"
@@ -20,6 +24,74 @@
 
 MODULE_IDENTIFICATION("qlog.ui.wsjtxswidget");
 
+class WsjtxActivityDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void paint(QPainter *painter,
+               const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override
+    {
+        QStyleOptionViewItem cellOption(option);
+        initStyleOption(&cellOption, index);
+        cellOption.text.clear();
+
+        QStyle *style = cellOption.widget ? cellOption.widget->style()
+                                          : QApplication::style();
+        style->drawControl(QStyle::CE_ItemViewItem,
+                           &cellOption,
+                           painter,
+                           cellOption.widget);
+
+        const QVariantList history = index.data(WsjtxTableModel::ACTIVITY_HISTORY_ROLE).toList();
+        if ( history.isEmpty() )
+            return;
+
+        const QRect graphRect = option.rect.adjusted(4, 3, -4, -3);
+        const int gap = 2;
+        const int barWidth = qMax(2,
+                                  (graphRect.width() - gap * (history.size() - 1))
+                                  / history.size());
+        const int graphWidth = barWidth * history.size() + gap * (history.size() - 1);
+        const int graphLeft = graphRect.left() + (graphRect.width() - graphWidth) / 2;
+        const bool selected = option.state & QStyle::State_Selected;
+        const QColor activeColor = cellOption.palette.color(selected ? QPalette::HighlightedText
+                                                                     : QPalette::Highlight);
+        QColor inactiveColor = cellOption.palette.color(selected ? QPalette::HighlightedText
+                                                                 : QPalette::Mid);
+        inactiveColor.setAlpha(selected ? 90 : 55);
+
+        painter->save();
+        painter->setClipRect(option.rect);
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setPen(Qt::NoPen);
+
+        for ( int i = 0; i < history.size(); ++i )
+        {
+            const int left = graphLeft + i * (barWidth + gap);
+            if ( !history.at(i).isValid() )
+            {
+                painter->setBrush(inactiveColor);
+                painter->drawRect(QRect(left, graphRect.bottom(), barWidth, 1));
+                continue;
+            }
+
+            painter->setBrush(activeColor);
+            const int level = WsjtxActivity::signalLevel(history.at(i).toInt());
+            const int height = 4 + (level - 1) * 6;
+            painter->drawRoundedRect(QRect(left,
+                                           graphRect.bottom() - height + 1,
+                                           barWidth,
+                                           height),
+                                     1.0,
+                                     1.0);
+        }
+
+        painter->restore();
+    }
+};
+
 WsjtxWidget::WsjtxWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::WsjtxWidget),
@@ -37,7 +109,9 @@ WsjtxWidget::WsjtxWidget(QWidget *parent) :
 
     ui->tableView->setModel(proxyModel);
     ui->tableView->setSortingEnabled(true);
-    ui->tableView->sortByColumn(WsjtxTableModel::COLUMN_LAST_ACTIVITY, Qt::DescendingOrder);
+    ui->tableView->sortByColumn(WsjtxTableModel::COLUMN_ACTIVITY, Qt::DescendingOrder);
+    ui->tableView->setItemDelegateForColumn(WsjtxTableModel::COLUMN_ACTIVITY,
+                                            new WsjtxActivityDelegate(ui->tableView));
     ui->tableView->setItemDelegateForColumn(WsjtxTableModel::COLUMN_DISTANCE,
                                             new DistanceFormatDelegate(1, 0.1, ui->tableView));
     ui->tableView->setItemDelegateForColumn(WsjtxTableModel::COLUMN_FREQUENCY,
@@ -46,6 +120,7 @@ WsjtxWidget::WsjtxWidget(QWidget *parent) :
     ui->tableView->addAction(ui->actionFilter);
     ui->tableView->addAction(ui->actionDisplayedColumns);
 
+    ui->tableView->setColumnWidth(WsjtxTableModel::COLUMN_ACTIVITY, 64);
     restoreTableHeaderState();
 
     reloadSetting();

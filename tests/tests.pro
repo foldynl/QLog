@@ -23,4 +23,5 @@ SUBDIRS += CallsignTest \
            QTableQSOViewTest \
            QSOFilterManagerTest \
            QSOFilterDetailTest \
-           RigctldManagerTest
+           RigctldManagerTest \
+           WsjtxActivityTest

@@ -2,8 +2,10 @@
 #define QLOG_MODELS_WSJTXTABLEMODEL_H
 
 #include <QAbstractTableModel>
+#include <QHash>
 #include <QSet>
 #include "data/WsjtxEntry.h"
+#include "models/WsjtxActivity.h"
 
 class WsjtxTableModel : public QAbstractTableModel {
     Q_OBJECT
@@ -15,10 +17,15 @@ public:
         COLUMN_GRID = 1,
         COLUMN_DISTANCE = 2,
         COLUMN_SNR = 3,
-        COLUMN_LAST_ACTIVITY = 4,
+        COLUMN_ACTIVITY = 4,
         COLUMN_LAST_MESSAGE = 5,
         COLUMN_MEMBER = 6,
         COLUMN_FREQUENCY = 7,
+    };
+
+    enum data_role
+    {
+        ACTIVITY_HISTORY_ROLE = Qt::UserRole + 1
     };
 
     WsjtxTableModel(QObject* parent = nullptr) : QAbstractTableModel(parent) {}
@@ -40,7 +47,29 @@ public:
     QList<WsjtxEntry> entries() const;
 
 private:
-    QList<WsjtxEntry> wsjtxData;
+    struct Row
+    {
+        WsjtxEntry entry;
+        WsjtxActivity activity;
+    };
+
+    struct SourceActivity
+    {
+        SourceActivity() : periodMilliseconds(0) {}
+
+        QDateTime referencePeriod;
+        int periodMilliseconds;
+    };
+
+    int findRow(const WsjtxEntry &entry) const;
+    static int periodMilliseconds(const WsjtxEntry &entry);
+    QDateTime referencePeriod(const Row &row) const;
+    bool updateSourceActivity(const WsjtxEntry &entry,
+                              const QDateTime &decodedAt);
+    void emitSourceActivityChanged(const QString &id);
+
+    QList<Row> wsjtxData;
+    QHash<QString, SourceActivity> sourceActivity;
 };
 
 #endif // QLOG_MODELS_WSJTXTABLEMODEL_H

@@ -158,6 +158,7 @@ SOURCES += \
         models/SearchFilterProxyModel.cpp \
         models/ShortcutEditorModel.cpp \
         models/SqlListModel.cpp \
+        models/WsjtxActivity.cpp \
         models/WsjtxTableModel.cpp \
         rig/Rig.cpp \
         rig/RigCaps.cpp \
@@ -381,6 +382,7 @@ HEADERS += \
         models/SearchFilterProxyModel.h \
         models/ShortcutEditorModel.h \
         models/SqlListModel.h \
+        models/WsjtxActivity.h \
         models/WsjtxTableModel.h \
         rig/Rig.h \
         rig/RigCaps.h \
