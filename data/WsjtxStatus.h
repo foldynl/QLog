@@ -9,12 +9,17 @@ public:
     QString id, mode, tx_mode, sub_mode;
     QString dx_call, dx_grid, de_call, de_grid;
     QString report;
-    quint64 dial_freq;
-    qint32 rx_df, tx_df;
-    bool tx_enabled, transmitting, decoding;
-    bool tx_watchdog, fast_mode;
-    quint8 special_op_mode;
-    quint32 freq_tolerance, tr_period;
+    quint64 dial_freq = 0;
+    qint32 rx_df = 0;
+    qint32 tx_df = 0;
+    bool tx_enabled = false;
+    bool transmitting = false;
+    bool decoding = false;
+    bool tx_watchdog = false;
+    bool fast_mode = false;
+    quint8 special_op_mode = 0;
+    quint32 freq_tolerance = 0;
+    quint32 tr_period = 0;
     QString conf_name, tx_message;
 
     operator QString() const

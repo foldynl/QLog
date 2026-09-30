@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QHostAddress>
+#include <QHash>
 #include <QSqlRecord>
 #include <QNetworkDatagram>
 
@@ -54,13 +55,15 @@ public:
 signals:
     void statusReceived(WsjtxStatus);
     void decodeReceived(WsjtxDecode);
+    void decodesCleared(QString id);
+    void clientClosed(QString id);
     void addContact(QSqlRecord);
 
 public slots:
     void sendReply(const WsjtxEntry&);
     void sendHighlightCallsign(const WsjtxEntry&);
     void sendClearHighlightCallsign(const WsjtxEntry&);
-    void sendClearAllHighlightCallsign();
+    void sendClearAllHighlightCallsign(const QString &id = QString());
     void reloadSetting();
 
 private slots:
@@ -70,11 +73,16 @@ private slots:
     void insertContact(WsjtxLogADIF log);
 
 private:
+    struct ClientEndpoint
+    {
+        QHostAddress address;
+        quint16 port;
+    };
+
     QUdpSocket* socket;
-    QHostAddress wsjtxAddress;
-    quint16 wsjtxPort;
+    QHash<QString, ClientEndpoint> clientEndpoints;
     bool isOutputColorCQSpotEnabled;
-    UpdatableSQLRecord wsjtSQLRecord;
+    QHash<QString, UpdatableSQLRecord *> wsjtSQLRecords;
 
     static const int DEFAULT_PORT = 2237;
     const quint32 UDP_MAGIC_NUMBER = 0xadbccbda;
@@ -87,6 +95,9 @@ private:
 
     void openPort();
     void forwardDatagram(const QNetworkDatagram &);
+    void rememberClientEndpoint(const QString &id, const QNetworkDatagram &datagram);
+    void sendDatagram(const QByteArray &data, const QString &id);
+    UpdatableSQLRecord *sqlRecord(const QString &id);
     void sendHighlightCallsignColor(const WsjtxEntry &entry,
                                     const QColor &fgColor,
                                     const QColor &bgColor,

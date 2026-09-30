@@ -30,7 +30,7 @@ public:
 
 signals:
     void chatCallsignPressed(QString);
-    void wsjtxCallsignPressed(QString);
+    void wsjtxCallsignPressed(QString id, QString callsign);
     void heardMeLayerVisibilityChanged(bool visible);
     void antennaAzimuthRequested(double azimuth);
 
@@ -48,7 +48,7 @@ public slots:
     void flyToMyQTH();
     void drawChatUsers(const QList<KSTUsersInfo> &list);
     void drawWSJTXSpot(const WsjtxEntry &spot);
-    void clearWSJTXSpots();
+    void clearWSJTXSpots(const QString &id);
     void clearHeardMeSpots();
     void setHeardMeMode(const QString &mode);
     void addHeardMePoint(const PskDecode &spot,
@@ -58,7 +58,7 @@ public slots:
 protected slots:
     void finishLoading();
     void chatCallsignTrigger(const QString&);
-    void wsjtxCallsignTrigger(const QString&);
+    void wsjtxCallsignTrigger(const QString &id, const QString &callsign);
     void IBPCallsignTrigger(const QString&, double);
 
 private:

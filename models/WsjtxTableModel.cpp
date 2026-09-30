@@ -4,7 +4,8 @@
 
 bool operator==(const WsjtxEntry& a, const WsjtxEntry& b)
 {
-    return a.callsign == b.callsign;
+    return a.decode.id == b.decode.id
+           && a.callsign == b.callsign;
 }
 
 int WsjtxTableModel::rowCount(const QModelIndex&) const
@@ -14,7 +15,7 @@ int WsjtxTableModel::rowCount(const QModelIndex&) const
 
 int WsjtxTableModel::columnCount(const QModelIndex&) const
 {
-    return 7;
+    return COLUMN_FREQUENCY + 1;
 }
 
 QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
@@ -32,6 +33,7 @@ QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
         case COLUMN_LAST_ACTIVITY: return entry.decode.time.toString();
         case COLUMN_LAST_MESSAGE: return entry.comment;
         case COLUMN_MEMBER: return entry.memberList2StringList().join(", ");
+        case COLUMN_FREQUENCY: return entry.freq;
         default: return QVariant();
         }
     }
@@ -47,7 +49,7 @@ QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
     }
     else if (index.column() > COLUMN_CALLSIGN && role == Qt::BackgroundRole)
     {
-        if ( entry.receivedTime.secsTo(QDateTime::currentDateTimeUtc()) >= spotPeriod * 0.8)
+        if ( entry.receivedTime.secsTo(QDateTime::currentDateTimeUtc()) >= entry.spotPeriod * 0.8)
             /* -20% time of period because WSTX sends messages in waves and not exactly in time period */
         {
             return QColor(Qt::darkGray);
@@ -56,6 +58,10 @@ QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
     else if (index.column() == COLUMN_CALLSIGN && role == Qt::ToolTipRole)
     {
         return  QCoreApplication::translate("DBStrings", entry.dxcc.country.toUtf8().constData()) + " [" + Data::statusToText(entry.status) + "]";
+    }
+    else if (index.column() == COLUMN_FREQUENCY && role == Qt::ToolTipRole)
+    {
+        return entry.decode.id;
     }
     else if ( role == Qt::UserRole )
     {
@@ -69,6 +75,9 @@ QVariant WsjtxTableModel::data(const QModelIndex& index, int role) const
             break;
         case COLUMN_LAST_ACTIVITY:
             return data(index, Qt::DisplayRole).toTime();
+            break;
+        case COLUMN_FREQUENCY:
+            return entry.freq;
             break;
         default:
             return data(index, Qt::DisplayRole);
@@ -91,6 +100,7 @@ QVariant WsjtxTableModel::headerData(int section, Qt::Orientation orientation, i
     case COLUMN_LAST_ACTIVITY: return tr("Last Activity");
     case COLUMN_LAST_MESSAGE: return tr("Last Message");
     case COLUMN_MEMBER: return tr("Member");
+    case COLUMN_FREQUENCY: return tr("Frequency");
     default: return QVariant();
     }
 }
@@ -109,11 +119,20 @@ void WsjtxTableModel::addOrReplaceEntry(const WsjtxEntry &entry)
         wsjtxData[idx].status = entry.status;
         wsjtxData[idx].dxccStatusSatellite = entry.dxccStatusSatellite;
         wsjtxData[idx].decode = entry.decode;
+        if ( !entry.replyDecode.id.isEmpty() )
+            wsjtxData[idx].replyDecode = entry.replyDecode;
         wsjtxData[idx].receivedTime = entry.receivedTime;
         wsjtxData[idx].dupeCount = entry.dupeCount;
+        wsjtxData[idx].freq = entry.freq;
+        wsjtxData[idx].band = entry.band;
+        wsjtxData[idx].decodedMode = entry.decodedMode;
+        wsjtxData[idx].bandPlanMode = entry.bandPlanMode;
+        wsjtxData[idx].modeGroupString = entry.modeGroupString;
+        wsjtxData[idx].comment = entry.comment;
+        wsjtxData[idx].spotPeriod = entry.spotPeriod;
         // does not update club info
 
-        emit dataChanged(createIndex(idx,0), createIndex(idx,4));
+        emit dataChanged(createIndex(idx, 0), createIndex(idx, COLUMN_FREQUENCY));
     }
     else
     {
@@ -151,18 +170,14 @@ const WsjtxEntry WsjtxTableModel::getEntry(QModelIndex idx) const
     return wsjtxData.at(idx.row());
 }
 
-const WsjtxEntry WsjtxTableModel::getEntry(const QString &callsign) const
+const WsjtxEntry WsjtxTableModel::getEntry(const QString &id, const QString &callsign) const
 {
     WsjtxEntry entry;
+    entry.decode.id = id;
     entry.callsign = callsign;
     int index = wsjtxData.indexOf(entry);
 
     return (index < 0) ? WsjtxEntry() : wsjtxData.at(index);
-}
-
-void WsjtxTableModel::setCurrentSpotPeriod(float period)
-{
-    spotPeriod = period;
 }
 
 void WsjtxTableModel::clear()
@@ -172,19 +187,48 @@ void WsjtxTableModel::clear()
     endResetModel();
 }
 
+void WsjtxTableModel::removeSource(const QString &id)
+{
+    for ( int row = wsjtxData.size() - 1; row >= 0; )
+    {
+        if ( wsjtxData.at(row).decode.id != id )
+        {
+            --row;
+            continue;
+        }
+
+        const int lastRow = row;
+        while ( row >= 0 && wsjtxData.at(row).decode.id == id )
+            --row;
+        const int firstRow = row + 1;
+
+        beginRemoveRows(QModelIndex(), firstRow, lastRow);
+        for ( int removeRow = lastRow; removeRow >= firstRow; --removeRow )
+            wsjtxData.removeAt(removeRow);
+        endRemoveRows();
+    }
+}
+
 void WsjtxTableModel::removeSpot(const QString &callsign)
 {
-    beginResetModel();
-
-    QMutableListIterator<WsjtxEntry> entry(wsjtxData);
-
-    while ( entry.hasNext() )
+    for ( int row = wsjtxData.size() - 1; row >= 0; )
     {
-        if ( entry.next().callsign == callsign )
-            entry.remove();
-    }
+        if ( wsjtxData.at(row).callsign != callsign )
+        {
+            --row;
+            continue;
+        }
 
-    endResetModel();
+        const int lastRow = row;
+        while ( row >= 0 && wsjtxData.at(row).callsign == callsign )
+            --row;
+        const int firstRow = row + 1;
+
+        beginRemoveRows(QModelIndex(), firstRow, lastRow);
+        for ( int removeRow = lastRow; removeRow >= firstRow; --removeRow )
+            wsjtxData.removeAt(removeRow);
+        endRemoveRows();
+    }
 }
 
 void WsjtxTableModel::refreshStatusColors()

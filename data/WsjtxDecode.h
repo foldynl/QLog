@@ -8,11 +8,13 @@ class WsjtxDecode
 {
 public:
     QString id, mode, message;
-    bool is_new, low_confidence, off_air;
+    bool is_new = false;
+    bool low_confidence = false;
+    bool off_air = false;
     QTime time;
-    qint32 snr;
-    quint32 df;
-    double dt;
+    qint32 snr = 0;
+    quint32 df = 0;
+    double dt = 0.0;
     operator QString() const
     {
         return QString("WsjtxDecode: ")

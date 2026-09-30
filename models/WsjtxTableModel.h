@@ -18,9 +18,10 @@ public:
         COLUMN_LAST_ACTIVITY = 4,
         COLUMN_LAST_MESSAGE = 5,
         COLUMN_MEMBER = 6,
+        COLUMN_FREQUENCY = 7,
     };
 
-    WsjtxTableModel(QObject* parent = nullptr) : QAbstractTableModel(parent) {spotPeriod = 120;}
+    WsjtxTableModel(QObject* parent = nullptr) : QAbstractTableModel(parent) {}
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
@@ -28,10 +29,10 @@ public:
     void addOrReplaceEntry(const WsjtxEntry &entry);
     void spotAging();
     bool callsignExists(const WsjtxEntry &);
-    const WsjtxEntry getEntry(const QString &callsign) const;
+    const WsjtxEntry getEntry(const QString &id, const QString &callsign) const;
     const WsjtxEntry getEntry(QModelIndex idx) const;
-    void setCurrentSpotPeriod(float);
     void clear();
+    void removeSource(const QString &id);
     void removeSpot(const QString &callsign);
     void refreshStatusColors();
     void recalculateDxccStatus();
@@ -40,7 +41,6 @@ public:
 
 private:
     QList<WsjtxEntry> wsjtxData;
-    float spotPeriod;
 };
 
 #endif // QLOG_MODELS_WSJTXTABLEMODEL_H

@@ -40,6 +40,8 @@ WsjtxWidget::WsjtxWidget(QWidget *parent) :
     ui->tableView->sortByColumn(WsjtxTableModel::COLUMN_LAST_ACTIVITY, Qt::DescendingOrder);
     ui->tableView->setItemDelegateForColumn(WsjtxTableModel::COLUMN_DISTANCE,
                                             new DistanceFormatDelegate(1, 0.1, ui->tableView));
+    ui->tableView->setItemDelegateForColumn(WsjtxTableModel::COLUMN_FREQUENCY,
+                                            new UnitFormatDelegate("", 6, 0.001, ui->tableView));
     ui->tableView->horizontalHeader()->setSectionsMovable(true);
     ui->tableView->addAction(ui->actionFilter);
     ui->tableView->addAction(ui->actionDisplayedColumns);
@@ -55,6 +57,14 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
 
     qCDebug(function_parameters)<<decode.message;
 
+    const auto clientIt = clients.constFind(decode.id);
+    if ( clientIt == clients.constEnd() || !clientIt->initialized )
+    {
+        qCDebug(runtime) << "Ignoring WSJT-X decode without status" << decode.id;
+        return;
+    }
+
+    const ClientState &client = clientIt.value();
     const StationProfile &profile = StationProfilesManager::instance()->getCurProfile1();
 
     if ( decode.message.startsWith("CQ") )
@@ -67,22 +77,24 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
 
             entry.dateTime = QDateTime::currentDateTime().toTimeZone(QTimeZone::utc());
             entry.decode = decode;
+            entry.replyDecode = decode;
             entry.callsign = match.captured(3);
             entry.grid = match.captured(4);
             entry.dxcc = Data::instance()->lookupDxcc(entry.callsign);
             entry.status = Data::instance()->currentDxccStatus(entry.dxcc.dxcc,
-                                                               currBand,
+                                                               client.band,
                                                                BandPlan::MODE_GROUP_STRING_DIGITAL);
             entry.dxccStatusSatellite = Data::instance()->isSatelliteDxccContext();
             entry.receivedTime = QDateTime::currentDateTimeUtc();
-            entry.freq = currFreq;
-            entry.band = currBand;
-            entry.decodedMode = status.mode;
-            entry.bandPlanMode = ( status.mode == "FT8" ) ? BandPlan::BAND_MODE_FT8
-                   : ( status.mode == "FT4" ) ? BandPlan::BAND_MODE_FT4
-                   : ( status.mode == "FT2" ) ? BandPlan::BAND_MODE_FT2
+            entry.freq = client.frequency;
+            entry.band = client.band;
+            entry.decodedMode = client.status.mode;
+            entry.bandPlanMode = ( client.status.mode == "FT8" ) ? BandPlan::BAND_MODE_FT8
+                   : ( client.status.mode == "FT4" ) ? BandPlan::BAND_MODE_FT4
+                   : ( client.status.mode == "FT2" ) ? BandPlan::BAND_MODE_FT2
                    : BandPlan::BAND_MODE_DIGITAL;
             entry.modeGroupString = BandPlan::bandMode2BandModeGroupString(entry.bandPlanMode);
+            entry.spotPeriod = client.spotPeriod;
             entry.spotter = profile.callsign.toUpper();
             entry.comment = decode.message;
             entry.dxcc_spotter = Data::instance()->lookupDxcc(entry.spotter);
@@ -147,6 +159,7 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
         if ( decodedElements.count() > 1 )
         {
             WsjtxEntry entry;
+            entry.decode = decode;
             entry.callsign = decodedElements.at(1);
 
             if ( wsjtxTableModel->callsignExists(entry) )
@@ -154,20 +167,20 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
                 entry.dateTime = QDateTime::currentDateTime().toTimeZone(QTimeZone::utc());
                 entry.dxcc = Data::instance()->lookupDxcc(entry.callsign);
                 entry.status = Data::instance()->currentDxccStatus(entry.dxcc.dxcc,
-                                                                   currBand,
+                                                                   client.band,
                                                                    BandPlan::MODE_GROUP_STRING_DIGITAL);
                 entry.dxccStatusSatellite = Data::instance()->isSatelliteDxccContext();
-                entry.decode = decode;
                 entry.receivedTime = QDateTime::currentDateTimeUtc();
-                entry.freq = currFreq;
-                entry.band = currBand;
-                entry.decodedMode = status.mode;
+                entry.freq = client.frequency;
+                entry.band = client.band;
+                entry.decodedMode = client.status.mode;
                 entry.comment = decode.message;
-                entry.bandPlanMode = ( status.mode == "FT8" ) ? BandPlan::BAND_MODE_FT8
-                   : ( status.mode == "FT4" ) ? BandPlan::BAND_MODE_FT4
-                   : ( status.mode == "FT2" ) ? BandPlan::BAND_MODE_FT2
+                entry.bandPlanMode = ( client.status.mode == "FT8" ) ? BandPlan::BAND_MODE_FT8
+                   : ( client.status.mode == "FT4" ) ? BandPlan::BAND_MODE_FT4
+                   : ( client.status.mode == "FT2" ) ? BandPlan::BAND_MODE_FT2
                    : BandPlan::BAND_MODE_DIGITAL;
                 entry.modeGroupString = BandPlan::bandMode2BandModeGroupString(entry.bandPlanMode);
+                entry.spotPeriod = client.spotPeriod;
                 entry.spotter = profile.callsign.toUpper();
                 entry.dxcc_spotter = Data::instance()->lookupDxcc(entry.spotter);
                 // fix dxcc_spotter based on station prifile setting - cont is not calculated
@@ -180,7 +193,7 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
                 // it is not needed to update entry.callsign_clubs because addOrReplaceEntry does not
                 // update it. Only CQ provides the club membeship info
 
-                entry.grid = wsjtxTableModel->getEntry(entry.callsign).grid;
+                entry.grid = wsjtxTableModel->getEntry(decode.id, entry.callsign).grid;
                 wsjtxTableModel->addOrReplaceEntry(entry);
                 emit filteredCQSpot(entry);
                 emit updatedCQSpot(entry);
@@ -197,39 +210,149 @@ void WsjtxWidget::statusReceived(WsjtxStatus newStatus)
 {
     FCT_IDENTIFICATION;
 
-    if ( this->status.dial_freq != newStatus.dial_freq )
+    if ( newStatus.id.isEmpty() )
+        return;
+
+    ClientState &client = clients[newStatus.id];
+    const bool firstStatus = !client.initialized;
+    const bool frequencyHasChanged = firstStatus
+                                     || client.status.dial_freq != newStatus.dial_freq;
+    const bool modeHasChanged = firstStatus
+                                || client.status.mode != newStatus.mode;
+    const bool targetHasChanged = !firstStatus
+                                  && (client.status.dx_call != newStatus.dx_call
+                                      || client.status.dx_grid != newStatus.dx_grid);
+    const bool replyConfirmed = pendingReplyId == newStatus.id
+                                && !pendingReplyCallsign.isEmpty()
+                                && pendingReplyCallsign == newStatus.dx_call;
+    const bool claimsOwnership = !newStatus.dx_call.isEmpty()
+                                 && (firstStatus
+                                     || client.status.dx_call != newStatus.dx_call
+                                     || replyConfirmed);
+
+    if ( !firstStatus && (frequencyHasChanged || modeHasChanged) )
+        clearSpots(newStatus.id);
+
+    client.status = newStatus;
+    client.frequency = Hz2MHz(newStatus.dial_freq);
+    client.band = BandPlan::freq2Band(client.frequency).name;
+    if ( modeHasChanged )
+        client.spotPeriod = WsjtxUDPReceiver::modePeriodLength(newStatus.mode);
+    client.initialized = true;
+
+    bool ownerChanged = false;
+    // Routine status traffic must not make another WSJT-X instance active.
+    // A changed non-empty DX call is the protocol event that claims New QSO.
+    if ( newQSOOwnerId.isEmpty()
+         && (!ownerClaimRequired || claimsOwnership) )
     {
-        currFreq = Hz2MHz(newStatus.dial_freq);
-        currBand = BandPlan::freq2Band(currFreq).name;
-        clearTable();
+        newQSOOwnerId = newStatus.id;
+        ownerClaimRequired = false;
+        ownerChanged = true;
+    }
+    else if ( newQSOOwnerId != newStatus.id
+              && claimsOwnership
+              && (!firstStatus || replyConfirmed) )
+    {
+        newQSOOwnerId = newStatus.id;
+        ownerClaimRequired = false;
+        ownerChanged = true;
     }
 
-    if ( this->status.dx_call != newStatus.dx_call
-         || this->status.dx_grid != newStatus.dx_grid )
+    if ( newQSOOwnerId == newStatus.id )
     {
-        emit callsignSelected(newStatus.dx_call, newStatus.dx_grid, newStatus.id);
+        emitOwnerState(client,
+                       ownerChanged || frequencyHasChanged || modeHasChanged,
+                       (ownerChanged && !client.status.dx_call.isEmpty())
+                       || targetHasChanged);
     }
 
-    if ( this->status.mode != newStatus.mode )
+    if ( replyConfirmed )
     {
-        wsjtxTableModel->setCurrentSpotPeriod(WsjtxUDPReceiver::modePeriodLength(newStatus.mode)); /*currently, only Status has a correct Mode in the message */
-        clearTable();
+        pendingReplyId.clear();
+        pendingReplyCallsign.clear();
     }
 
-    if ( !Rig::instance()->isRigConnected() )
-    {
-        const QPair<QString, QString>& legacy = Data::instance()->legacyMode(newStatus.mode);
-        QString mode = ( !legacy.first.isEmpty() ) ? legacy.first
-                                                   : newStatus.mode.toUpper();
-        QString submode = ( !legacy.first.isEmpty() ) ? legacy.second
-                                                      : QString();
-        emit modeChanged(VFO1, newStatus.mode, mode, submode, 0);
-        emit frequencyChanged(VFO1, currFreq, currFreq, currFreq);
-    }
-
-    status = newStatus;
     wsjtxTableModel->spotAging();
     ui->tableView->repaint();
+}
+
+void WsjtxWidget::emitOwnerState(const ClientState &client,
+                                 bool radioChanged,
+                                 bool targetChanged)
+{
+    FCT_IDENTIFICATION;
+
+    if ( radioChanged && !Rig::instance()->isRigConnected() )
+    {
+        emit frequencyChanged(VFO1,
+                              client.frequency,
+                              client.frequency,
+                              client.frequency);
+
+        const QPair<QString, QString> legacy = Data::instance()->legacyMode(client.status.mode);
+        const QString mode = !legacy.first.isEmpty() ? legacy.first
+                                                     : client.status.mode.toUpper();
+        const QString submode = !legacy.first.isEmpty() ? legacy.second
+                                                        : QString();
+        emit modeChanged(VFO1, client.status.mode, mode, submode, 0);
+    }
+
+    if ( targetChanged )
+        emit callsignSelected(client.status.dx_call,
+                              client.status.dx_grid,
+                              client.status.id);
+}
+
+void WsjtxWidget::clearSpots(const QString &id)
+{
+    FCT_IDENTIFICATION;
+
+    if ( id.isEmpty() )
+        wsjtxTableModel->clear();
+    else
+        wsjtxTableModel->removeSource(id);
+
+    emit spotsCleared(id);
+}
+
+void WsjtxWidget::clientClosed(const QString &id)
+{
+    FCT_IDENTIFICATION;
+
+    const bool ownerClosed = newQSOOwnerId == id;
+    clients.remove(id);
+    if ( pendingReplyId == id )
+    {
+        pendingReplyId.clear();
+        pendingReplyCallsign.clear();
+    }
+    if ( ownerClosed )
+        newQSOOwnerId.clear();
+
+    if ( !newQSOOwnerId.isEmpty() )
+        return;
+
+    if ( clients.isEmpty() )
+    {
+        ownerClaimRequired = false;
+        if ( ownerClosed )
+            emit callsignSelected(QString(), QString(), id);
+        return;
+    }
+
+    if ( clients.size() == 1 )
+    {
+        const auto replacement = clients.constBegin();
+        newQSOOwnerId = replacement.key();
+        ownerClaimRequired = false;
+        emitOwnerState(replacement.value(), true, true);
+    }
+    else if ( ownerClosed )
+    {
+        ownerClaimRequired = true;
+        emit callsignSelected(QString(), QString(), id);
+    }
 }
 
 void WsjtxWidget::tableViewDoubleClicked(QModelIndex index)
@@ -240,18 +363,27 @@ void WsjtxWidget::tableViewDoubleClicked(QModelIndex index)
 
     const WsjtxEntry entry = wsjtxTableModel->getEntry(source_index);
     //emit callsignSelected(entry.callsign, entry.grid); // it is not needed to send this - Qlog receives the change via WSJTX
-    emit reply(entry);
+    requestReply(entry);
 }
 
-void WsjtxWidget::callsignClicked(QString callsign)
+void WsjtxWidget::callsignClicked(QString id, QString callsign)
 {
     FCT_IDENTIFICATION;
 
-    const WsjtxEntry entry = wsjtxTableModel->getEntry(callsign);
+    const WsjtxEntry entry = wsjtxTableModel->getEntry(id, callsign);
     if ( entry.callsign.isEmpty() )
         return;
 
-    emit callsignSelected(callsign, entry.grid, entry.decode.id);
+    requestReply(entry);
+}
+
+void WsjtxWidget::requestReply(const WsjtxEntry &entry)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << entry.decode.id << entry.callsign;
+
+    pendingReplyId = entry.decode.id;
+    pendingReplyCallsign = entry.callsign;
     emit reply(entry);
 }
 
@@ -351,8 +483,7 @@ void WsjtxWidget::clearTable()
 {
     FCT_IDENTIFICATION;
 
-    wsjtxTableModel->clear();
-    emit spotsCleared();
+    clearSpots(QString());
 }
 
 void WsjtxWidget::refreshStatusColors()
@@ -381,7 +512,9 @@ void WsjtxWidget::updateSpotsDxccStatus(const QSet<uint> &entities)
 
 void WsjtxWidget::redrawMapSpots()
 {
-    emit spotsCleared();
+    FCT_IDENTIFICATION;
+
+    emit spotsCleared(QString());
     const QList<WsjtxEntry> entries = wsjtxTableModel->entries();
     for ( const WsjtxEntry &entry : entries )
         emit filteredCQSpot(entry);

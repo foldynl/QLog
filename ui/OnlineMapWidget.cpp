@@ -257,13 +257,13 @@ void OnlineMapWidget::chatCallsignTrigger(const QString &callsign)
     emit chatCallsignPressed(callsign);
 }
 
-void OnlineMapWidget::wsjtxCallsignTrigger(const QString &callsign)
+void OnlineMapWidget::wsjtxCallsignTrigger(const QString &id, const QString &callsign)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << callsign;
+    qCDebug(function_parameters) << id << callsign;
 
-    emit wsjtxCallsignPressed(callsign);
+    emit wsjtxCallsignPressed(id, callsign);
 }
 
 void OnlineMapWidget::IBPCallsignTrigger(const QString &callsign, double freq)
@@ -326,6 +326,7 @@ void OnlineMapWidget::drawWSJTXSpot(const WsjtxEntry &spot)
         mapController->addWsjtxSpot(MapPoint(spot.callsign,
                                              spotGrid.getLatitude(),
                                              spotGrid.getLongitude()),
+                                    spot.decode.id,
                                     Data::colorToHTMLColor(background),
                                     Data::colorToHTMLColor(Data::textColorForBackground(background,
                                                                                        QColor(Qt::black))),
@@ -333,11 +334,11 @@ void OnlineMapWidget::drawWSJTXSpot(const WsjtxEntry &spot)
     }
 }
 
-void OnlineMapWidget::clearWSJTXSpots()
+void OnlineMapWidget::clearWSJTXSpots(const QString &id)
 {
     FCT_IDENTIFICATION;
 
-    mapController->clearWsjtxSpots();
+    mapController->clearWsjtxSpots(id);
 }
 
 void OnlineMapWidget::clearHeardMeSpots()

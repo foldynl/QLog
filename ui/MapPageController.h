@@ -126,10 +126,11 @@ public:
     void setHeardMeMode(const QString &mode);
 
     void addWsjtxSpot(const MapPoint &point,
+                      const QString &id,
                       const QString &color,
                       const QString &textColor,
                       bool halo);
-    void clearWsjtxSpots();
+    void clearWsjtxSpots(const QString &id);
     void clearHeardMeSpots();
     void addHeardMePoint(const MapPoint &point,
                          qint32 report,
@@ -143,7 +144,7 @@ signals:
     void loaded();
     void layerVisibilityChanged(QString key, bool visible);
     void chatCallsignPressed(QString callsign);
-    void wsjtxCallsignPressed(QString callsign);
+    void wsjtxCallsignPressed(QString id, QString callsign);
     void IBPPressed(QString callsign, double frequency);
     void antennaAzimuthRequested(double azimuth);
 

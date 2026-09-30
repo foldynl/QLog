@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QAbstractTableModel>
+#include <QHash>
 #include <QSortFilterProxyModel>
 #include "data/WsjtxEntry.h"
 #include "models/WsjtxTableModel.h"
@@ -28,8 +29,10 @@ public:
 public slots:
     void decodeReceived(WsjtxDecode);
     void statusReceived(WsjtxStatus);
+    void clearSpots(const QString &id);
+    void clientClosed(const QString &id);
     void tableViewDoubleClicked(QModelIndex);
-    void callsignClicked(QString);
+    void callsignClicked(QString id, QString callsign);
     void tableViewClicked(QModelIndex);
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
     void updateSpotsDxccStatus(const QSet<uint> &entities);
@@ -46,11 +49,22 @@ signals:
     void CQSpot(WsjtxEntry);
     void filteredCQSpot(WsjtxEntry);
     void updatedCQSpot(WsjtxEntry);
-    void spotsCleared();
+    void spotsCleared(QString id);
     void frequencyChanged(VFOID, double, double, double);
     void modeChanged(VFOID, QString, QString, QString, qint32);
 
 private:
+    struct ClientState
+    {
+        ClientState() : frequency(0.0), spotPeriod(120.0f), initialized(false) {}
+
+        WsjtxStatus status;
+        QString band;
+        double frequency;
+        float spotPeriod;
+        bool initialized;
+    };
+
     uint dxccStatusFilterValue() const;
     QString contFilterRegExp() const;
     int getDistanceFilterValue() const;
@@ -59,11 +73,17 @@ private:
     void reloadSetting();
     void clearTable();
     void redrawMapSpots();
+    void emitOwnerState(const ClientState &client,
+                        bool radioChanged,
+                        bool targetChanged);
+    void requestReply(const WsjtxEntry &entry);
 
     WsjtxTableModel* wsjtxTableModel;
-    WsjtxStatus status;
-    QString currBand;
-    double currFreq;
+    QHash<QString, ClientState> clients;
+    QString newQSOOwnerId;
+    QString pendingReplyId;
+    QString pendingReplyCallsign;
+    bool ownerClaimRequired = false;
     Ui::WsjtxWidget *ui;
     QSortFilterProxyModel *proxyModel;
     QRegularExpression contregexp;

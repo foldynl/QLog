@@ -1510,7 +1510,7 @@
     setInterval(function(){updateBeacon()}, 250);
 
     function wsjtxCallsignPressed(e) {
-       sendToQt('wsjtxCallsignClicked', this.callsign);
+       sendToQt('wsjtxCallsignClicked', { id: this.sourceId, callsign: this.callsign });
     }
 
     var wsjtxStationsLayer = L.layerGroup();
@@ -1668,7 +1668,7 @@
     }
 
     // this function show WSJTX spots
-    function addWSJTXSpot(point, color, textColor, halo) {
+    function addWSJTXSpot(point, sourceId, color, textColor, halo) {
         const spot = normalizePoint(point);
         const fadeSchedule = [
             { timeout: 30000, className: 'fade-out75' },
@@ -1684,6 +1684,7 @@
         function createSpotMarker(latitude, longitude) {
             const marker = new L.marker([latitude, longitude], { opacity: 0.001 });
             marker.callsign = spot.label;
+            marker.sourceId = sourceId;
 
             marker.bindTooltip(spot.label, {
                 pane: 'lowestPane',
@@ -1733,8 +1734,18 @@
         }, 60000);
     }
 
-    function clearWSJTXSpots() {
-        wsjtxStationsLayer.clearLayers();
+    function clearWSJTXSpots(sourceId) {
+        if (!sourceId) {
+            wsjtxStationsLayer.clearLayers();
+            return;
+        }
+
+        const markers = [];
+        wsjtxStationsLayer.eachLayer(marker => {
+            if (marker.sourceId === sourceId)
+                markers.push(marker);
+        });
+        markers.forEach(marker => wsjtxStationsLayer.removeLayer(marker));
     }
 
     function setStaticMapTime(newDate) {

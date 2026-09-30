@@ -351,6 +351,8 @@ MainWindow::MainWindow(QWidget* parent) :
     wsjtx = new WsjtxUDPReceiver(this);
     connect(wsjtx, &WsjtxUDPReceiver::statusReceived, ui->wsjtxWidget, &WsjtxWidget::statusReceived);
     connect(wsjtx, &WsjtxUDPReceiver::decodeReceived, ui->wsjtxWidget, &WsjtxWidget::decodeReceived);
+    connect(wsjtx, &WsjtxUDPReceiver::decodesCleared, ui->wsjtxWidget, &WsjtxWidget::clearSpots);
+    connect(wsjtx, &WsjtxUDPReceiver::clientClosed, ui->wsjtxWidget, &WsjtxWidget::clientClosed);
     connect(wsjtx, &WsjtxUDPReceiver::addContact, ui->newContactWidget, &NewContactWidget::saveExternalContact);
     connect(ui->wsjtxWidget, &WsjtxWidget::CQSpot, &networknotification, &NetworkNotification::WSJTXCQSpot);
     connect(ui->wsjtxWidget, &WsjtxWidget::CQSpot, &alertEvaluator, &AlertEvaluator::WSJTXCQSpot);

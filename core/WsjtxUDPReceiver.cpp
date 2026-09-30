@@ -32,7 +32,6 @@ WsjtxUDPReceiver::WsjtxUDPReceiver(QObject *parent) :
     reloadSetting();
 
     connect(socket, &QUdpSocket::readyRead, this, &WsjtxUDPReceiver::readPendingDatagrams);
-    connect(&wsjtSQLRecord, &UpdatableSQLRecord::recordReady, this, &WsjtxUDPReceiver::contactReady);
 }
 
 void WsjtxUDPReceiver::openPort()
@@ -249,12 +248,7 @@ void WsjtxUDPReceiver::readPendingDatagrams()
     while (socket->hasPendingDatagrams()) {
         QNetworkDatagram datagram = socket->receiveDatagram();
 
-        /* remember WSJT receiving address becuase WSJT does not listen multicast address
-         * but only UDP address. Therefore the command must be sent via UDP unicast */
-        wsjtxAddress = datagram.senderAddress();
-        wsjtxPort = datagram.senderPort();
-
-        qCDebug(runtime) << "Received from" << wsjtxAddress;
+        qCDebug(runtime) << "Received from" << datagram.senderAddress();
 
         QDataStream stream(datagram.data());
 
@@ -273,6 +267,19 @@ void WsjtxUDPReceiver::readPendingDatagrams()
         forwardDatagram(datagram);
 
         switch (mtype) {
+        /* WSJTX Heartbeat message */
+        case 0: {
+            QByteArray id, version, revision;
+            quint32 maxSchema;
+
+            stream >> id >> maxSchema >> version >> revision;
+            Q_UNUSED(maxSchema)
+            Q_UNUSED(version)
+            Q_UNUSED(revision)
+
+            rememberClientEndpoint(QString(id), datagram);
+            break;
+        }
         /* WSJTX Status message */
         case 1: {
             QByteArray id, mode, tx_mode, sub_mode, report, dx_call, dx_grid, de_call, de_grid, conf_name, tx_message;
@@ -297,6 +304,7 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             status.conf_name = QString(conf_name);
             status.tx_message = QString(tx_message);
 
+            rememberClientEndpoint(status.id, datagram);
             qCDebug(runtime)<<status;
 
             emit statusReceived(status);
@@ -314,6 +322,8 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             decode.mode = QString(mode);
             decode.message = QString(message);
 
+            rememberClientEndpoint(decode.id, datagram);
+
 #if 0
             if ( isJTDXId(decode.id) )
             {
@@ -330,6 +340,22 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             qCDebug(runtime) << decode;
 
             emit decodeReceived(decode);
+            break;
+        }
+        /* WSJTX Clear message */
+        case 3: {
+            QByteArray id;
+            quint8 window;
+
+            stream >> id >> window;
+            Q_UNUSED(window)
+
+            const QString clientId = QString(id);
+            if ( clientId.isEmpty() )
+                break;
+
+            rememberClientEndpoint(clientId, datagram);
+            emit decodesCleared(clientId);
             break;
         }
         /* WSJTX Log message */
@@ -358,6 +384,8 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             log.exch_rcvd = QString(exch_rcvd);
             log.prop_mode = QString(prop_mode);
 
+            rememberClientEndpoint(log.id, datagram);
+
             if ( isJTDXId(log.id) )
             {
                 /* It's a workaround for JTDX only.
@@ -374,6 +402,21 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             qCDebug(runtime) << log;
 
             insertContact(log);
+            break;
+        }
+        /* WSJTX Close message */
+        case 6: {
+            QByteArray id;
+
+            stream >> id;
+            const QString clientId = QString(id);
+            if ( clientId.isEmpty() )
+                break;
+
+            rememberClientEndpoint(clientId, datagram);
+            emit decodesCleared(clientId);
+            emit clientClosed(clientId);
+            clientEndpoints.remove(clientId);
             break;
         }
         /* WSJTX LogADIF message */
@@ -398,11 +441,70 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             log.id = QString(id);
             log.log_adif = QString(adif_text);
 
+            rememberClientEndpoint(log.id, datagram);
             insertContact(log);
             break;
         }
         }
     }
+}
+
+void WsjtxUDPReceiver::rememberClientEndpoint(const QString &id,
+                                               const QNetworkDatagram &datagram)
+{
+    FCT_IDENTIFICATION;
+
+    if ( id.isEmpty() )
+        return;
+
+    const ClientEndpoint endpoint = {
+        datagram.senderAddress(),
+        static_cast<quint16>(datagram.senderPort())
+    };
+    const auto existing = clientEndpoints.constFind(id);
+
+    if ( existing != clientEndpoints.constEnd()
+         && (existing->address != endpoint.address || existing->port != endpoint.port) )
+    {
+        qCWarning(runtime) << "WSJT-X client ID moved to another endpoint"
+                           << id << existing->address << existing->port
+                           << endpoint.address << endpoint.port;
+    }
+
+    clientEndpoints.insert(id, endpoint);
+}
+
+void WsjtxUDPReceiver::sendDatagram(const QByteArray &data, const QString &id)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !socket )
+        return;
+
+    const auto endpoint = clientEndpoints.constFind(id);
+    if ( endpoint == clientEndpoints.constEnd() )
+    {
+        qCWarning(runtime) << "No endpoint for WSJT-X client" << id;
+        return;
+    }
+
+    qCDebug(runtime) << "Sending to" << id << endpoint->address << endpoint->port;
+    socket->writeDatagram(data, endpoint->address, endpoint->port);
+}
+
+UpdatableSQLRecord *WsjtxUDPReceiver::sqlRecord(const QString &id)
+{
+    FCT_IDENTIFICATION;
+
+    UpdatableSQLRecord *record = wsjtSQLRecords.value(id, nullptr);
+    if ( record )
+        return record;
+
+    record = new UpdatableSQLRecord(500, 2, this);
+    connect(record, &UpdatableSQLRecord::recordReady,
+            this, &WsjtxUDPReceiver::contactReady);
+    wsjtSQLRecords.insert(id, record);
+    return record;
 }
 
 void WsjtxUDPReceiver::insertContact(WsjtxLog log)
@@ -518,12 +620,8 @@ void WsjtxUDPReceiver::insertContact(WsjtxLog log)
         record.setValue("station_callsign", log.my_call);
     }
 
-    // The QSO record can be received in two formats from WSJTX (raw and ADIF).
-    // Therefore, it is necessary to save the first record and possibly update it
-    // with the second record and then emit the result.
-    // For this we create an updatable SQLRecord
-    wsjtSQLRecord.updateRecord(record);
-    //emit addContact(record);
+    // Raw and ADIF messages from concurrent clients must never be merged together.
+    sqlRecord(log.id)->updateRecord(record);
 }
 
 void WsjtxUDPReceiver::contactReady(QSqlRecord record)
@@ -561,26 +659,17 @@ void WsjtxUDPReceiver::insertContact(WsjtxLogADIF log)
     record.remove(record.indexOf("lotw_qsl_sent"));
     record.remove(record.indexOf("eqsl_qsl_sent"));
 
-    // The QSO record can be received in two formats from WSJTX (raw and ADIF).
-    // Therefore, it is necessary to save the first record and possibly update it
-    // with the second record and then emit the result.
-    // For this we create an updatable SQLRecord
-    wsjtSQLRecord.updateRecord(record);
-    //emit addContact(record);
+    // Raw and ADIF messages from concurrent clients must never be merged together.
+    sqlRecord(log.id)->updateRecord(record);
 }
 
 void WsjtxUDPReceiver::sendReply(const WsjtxEntry &entry)
 {
     FCT_IDENTIFICATION;
 
-    const WsjtxDecode &decode = entry.decode;
+    const WsjtxDecode &decode = entry.replyDecode.id.isEmpty() ? entry.decode
+                                                               : entry.replyDecode;
     qCDebug(function_parameters) << decode;
-
-    if (!socket) return;
-
-    /* sending to WSJT to UDP address, not multicast address because
-     * WSJTX does not listen multicast address */
-    qCDebug(runtime) << "Sending to" << wsjtxAddress;
 
     QByteArray data;
     QDataStream stream(&data, QIODevice::ReadWrite);
@@ -642,7 +731,7 @@ void WsjtxUDPReceiver::sendReply(const WsjtxEntry &entry)
     stream << decode.low_confidence;
     stream << quint8(0);
 
-    socket->writeDatagram(data, wsjtxAddress, wsjtxPort);
+    sendDatagram(data, decode.id);
 }
 
 void WsjtxUDPReceiver::sendHighlightCallsign(const WsjtxEntry &entry)
@@ -671,13 +760,19 @@ void WsjtxUDPReceiver::sendClearHighlightCallsign(const WsjtxEntry &entry)
     sendHighlightCallsignColor(entry, QColor(), QColor());
 }
 
-void WsjtxUDPReceiver::sendClearAllHighlightCallsign()
+void WsjtxUDPReceiver::sendClearAllHighlightCallsign(const QString &id)
 {
     FCT_IDENTIFICATION;
 
-    WsjtxEntry tmp;
-    tmp.callsign = "CLEARALL!";
-    sendHighlightCallsignColor(tmp, QColor(), QColor(), false);
+    const QStringList clientIds = id.isEmpty() ? clientEndpoints.keys()
+                                               : QStringList(id);
+    for ( const QString &clientId : clientIds )
+    {
+        WsjtxEntry entry;
+        entry.decode.id = clientId;
+        entry.callsign = "CLEARALL!";
+        sendHighlightCallsignColor(entry, QColor(), QColor(), false);
+    }
 }
 
 void WsjtxUDPReceiver::sendHighlightCallsignColor(const WsjtxEntry &entry,
@@ -698,10 +793,6 @@ void WsjtxUDPReceiver::sendHighlightCallsignColor(const WsjtxEntry &entry,
     const WsjtxDecode &decode = entry.decode;
 
     qCDebug(function_parameters) << decode << fgColor << bgColor << highlightLast;
-
-    /* sending to WSJT to UDP address, not multicast address because
-     * WSJTX does not listen multicast address */
-    qCDebug(runtime) << "Sending to" << wsjtxAddress;
 
     QByteArray data;
     QDataStream out(&data, QIODevice::WriteOnly);
@@ -749,9 +840,9 @@ void WsjtxUDPReceiver::sendHighlightCallsignColor(const WsjtxEntry &entry,
     out << entry.callsign.toUtf8();
     out << bgColor; // Background Color
     out << fgColor; // Foreground Color
-    out << true;    // Highlight last
+    out << highlightLast;
 
-    socket->writeDatagram(data, wsjtxAddress, wsjtxPort);
+    sendDatagram(data, decode.id);
 }
 
 

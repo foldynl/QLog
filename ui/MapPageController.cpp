@@ -434,24 +434,27 @@ void MapPageController::setHeardMeMode(const QString &mode)
 }
 
 void MapPageController::addWsjtxSpot(const MapPoint &point,
+                                     const QString &id,
                                      const QString &color,
                                      const QString &textColor,
                                      bool halo)
 {
     FCT_IDENTIFICATION;
 
-    runJavaScript(QStringLiteral("addWSJTXSpot(%1, %2, %3, %4);")
+    runJavaScript(QStringLiteral("addWSJTXSpot(%1, %2, %3, %4, %5);")
                   .arg(jsonObject(pointObject(point)))
+                  .arg(jsonString(id))
                   .arg(jsonString(color))
                   .arg(jsonString(textColor))
                   .arg(halo ? QLatin1String("true") : QLatin1String("false")));
 }
 
-void MapPageController::clearWsjtxSpots()
+void MapPageController::clearWsjtxSpots(const QString &id)
 {
     FCT_IDENTIFICATION;
 
-    runJavaScript(QLatin1String("clearWSJTXSpots();"));
+    runJavaScript(QStringLiteral("clearWSJTXSpots(%1);")
+                  .arg(jsonString(id)));
 }
 
 void MapPageController::clearHeardMeSpots()
@@ -611,7 +614,9 @@ void MapPageController::wsjtxCallsignClicked(const QVariant &data)
 {
     FCT_IDENTIFICATION;
 
-    emit wsjtxCallsignPressed(data.toString());
+    const QVariantMap spot = data.toMap();
+    emit wsjtxCallsignPressed(spot.value(QStringLiteral("id")).toString(),
+                              spot.value(QStringLiteral("callsign")).toString());
 }
 
 void MapPageController::IBPCallsignClicked(const QVariant &callsign, const QVariant &freq)
