@@ -254,18 +254,20 @@ void WsjtxTableModel::removeSource(const QString &id)
     sourceActivity.remove(id);
 }
 
-void WsjtxTableModel::removeSpot(const QString &callsign)
+void WsjtxTableModel::removeSpot(const QString &callsign, const QString &band)
 {
     for ( int row = wsjtxData.size() - 1; row >= 0; )
     {
-        if ( wsjtxData.at(row).entry.callsign != callsign )
+        if ( wsjtxData.at(row).entry.callsign != callsign
+             || wsjtxData.at(row).entry.band != band )
         {
             --row;
             continue;
         }
 
         const int lastRow = row;
-        while ( row >= 0 && wsjtxData.at(row).entry.callsign == callsign )
+        while ( row >= 0 && wsjtxData.at(row).entry.callsign == callsign
+                && wsjtxData.at(row).entry.band == band )
             --row;
         const int firstRow = row + 1;
 

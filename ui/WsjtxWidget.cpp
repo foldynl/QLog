@@ -339,7 +339,7 @@ void WsjtxWidget::statusReceived(WsjtxStatus newStatus)
         emitOwnerState(client,
                        ownerChanged || frequencyHasChanged || modeHasChanged,
                        (ownerChanged && !client.status.dx_call.isEmpty())
-                       || targetHasChanged);
+                       || targetHasChanged || replyConfirmed);
     }
 
     if ( replyConfirmed )
@@ -475,7 +475,8 @@ void WsjtxWidget::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
 {
     FCT_IDENTIFICATION;
 
-    wsjtxTableModel->removeSpot(record.value("callsign").toString());
+    wsjtxTableModel->removeSpot(record.value("callsign").toString(),
+                                record.value("band").toString());
 }
 
 void WsjtxWidget::displayedColumns()

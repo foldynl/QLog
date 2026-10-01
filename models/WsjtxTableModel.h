@@ -40,7 +40,7 @@ public:
     const WsjtxEntry getEntry(QModelIndex idx) const;
     void clear();
     void removeSource(const QString &id);
-    void removeSpot(const QString &callsign);
+    void removeSpot(const QString &callsign, const QString &band);
     void refreshStatusColors();
     void recalculateDxccStatus();
     bool updateSpotsDxccStatus(const QSet<uint> &entities);
