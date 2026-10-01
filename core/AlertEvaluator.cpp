@@ -308,6 +308,9 @@ bool AlertRule::load(const QString &in_ruleName)
         return false;
     }
 
+    if ( hasInvalidDxAlertCondition() )
+        qCWarning(runtime) << "Invalid DXCC alert condition in rule" << ruleName;
+
     qCDebug(runtime) << "Rule: " << ruleName << " was loaded";
 
     ruleValid = true;
@@ -370,7 +373,7 @@ bool AlertRule::match(const WsjtxEntry &wsjtx,
 
     const bool ret = callsignRE.match(wsjtx.callsign).hasMatch()
                      && commentRE.match(wsjtx.decode.message).hasMatch()
-                     && matchDxccStatus(wsjtx, confirmationResolver);
+                     && logStatusCondition().match(wsjtx, confirmationResolver);
 
     qCDebug(runtime) << "Rule name: " << ruleName << " - result " << ret;
     return ret;
@@ -445,123 +448,47 @@ bool AlertRule::match(const DxSpot &spot,
     const bool ret =
         callsignRE.match(spot.callsign).hasMatch() &&
         commentRE.match(spot.comment).hasMatch() &&
-        matchDxccStatus(spot, confirmationResolver);
+        logStatusCondition().match(spot, confirmationResolver);
 
     qCDebug(runtime) << "Rule name:" << ruleName << "- result" << ret;
     return ret;
 }
 
-bool AlertRule::matchDxccStatus(const DxSpot &spot,
-                                const DxccConfirmationResolver &confirmationResolver) const
+DxccLogStatusCondition AlertRule::logStatusCondition() const
 {
     FCT_IDENTIFICATION;
 
-    const bool newCondition = hasDxAlertCondition();
+    DxccLogStatusCondition condition(dxLogStatusMap);
+    condition.goal = dxAlertGoal;
+    condition.context = dxAlertContext;
+    condition.goalSet = dxAlertGoalSet;
+    condition.contextSet = dxAlertContextSet;
+    return condition;
+}
 
-    if ( !newCondition && (dxAlertGoalSet || dxAlertContextSet) )
-    {
-        qCWarning(runtime) << "Invalid DXCC alert condition in rule" << ruleName;
-        return false;
-    }
+void AlertRule::setLogStatusCondition(const DxccLogStatusCondition &condition)
+{
+    FCT_IDENTIFICATION;
 
-    if ( !newCondition )
-        return spot.status & dxLogStatusMap;
-
-    if ( spot.status == DxccStatus::UnknownStatus )
-        return false;
-
-    const AlertDxccGoal goal = static_cast<AlertDxccGoal>(dxAlertGoal);
-    const AlertDxccContext context = static_cast<AlertDxccContext>(dxAlertContext);
-
-    if ( spot.dxccStatusSatellite )
-    {
-        return goal == AlertDxccGoal::Worked
-                   ? spot.status == DxccStatus::NewEntity
-                   : spot.status != DxccStatus::Confirmed;
-    }
-
-    if ( goal == AlertDxccGoal::Worked )
-    {
-        switch ( context )
-        {
-            case AlertDxccContext::Anywhere:
-                return spot.status == DxccStatus::NewEntity;
-            case AlertDxccContext::Band:
-                return spot.status == DxccStatus::NewEntity
-                    || spot.status == DxccStatus::NewBand
-                    || spot.status == DxccStatus::NewBandMode;
-            case AlertDxccContext::Mode:
-                return spot.status == DxccStatus::NewEntity
-                    || spot.status == DxccStatus::NewMode
-                    || spot.status == DxccStatus::NewBandMode;
-            case AlertDxccContext::BandMode:
-                return spot.status == DxccStatus::NewEntity
-                    || spot.status == DxccStatus::NewBand
-                    || spot.status == DxccStatus::NewMode
-                    || spot.status == DxccStatus::NewBandMode
-                    || spot.status == DxccStatus::NewSlot;
-        }
-    }
-
-    if ( context == AlertDxccContext::BandMode )
-        return spot.status != DxccStatus::Confirmed;
-
-    if ( spot.status == DxccStatus::Confirmed )
-        return false;
-
-    if ( context == AlertDxccContext::Anywhere
-         && spot.status == DxccStatus::NewEntity )
-        return true;
-
-    if ( context == AlertDxccContext::Band
-         && (spot.status == DxccStatus::NewEntity
-             || spot.status == DxccStatus::NewBand
-             || spot.status == DxccStatus::NewBandMode) )
-        return true;
-
-    if ( context == AlertDxccContext::Mode
-         && (spot.status == DxccStatus::NewEntity
-             || spot.status == DxccStatus::NewMode
-             || spot.status == DxccStatus::NewBandMode) )
-        return true;
-
-    if ( !confirmationResolver )
-    {
-        qCWarning(runtime) << "DXCC confirmation resolver is not available for rule" << ruleName;
-        return false;
-    }
-
-    const DxccConfirmationResult result = confirmationResolver(spot.dxcc.dxcc,
-                                                                spot.band,
-                                                                spot.modeGroupString,
-                                                                context);
-
-    if ( result == DxccConfirmationResult::Error )
-    {
-        qCWarning(runtime) << "Cannot resolve DXCC confirmation for rule" << ruleName;
-        return false;
-    }
-
-    return result == DxccConfirmationResult::NotConfirmed;
+    dxLogStatusMap = condition.mask;
+    dxAlertGoal = condition.goal;
+    dxAlertContext = condition.context;
+    dxAlertGoalSet = condition.goalSet;
+    dxAlertContextSet = condition.contextSet;
 }
 
 bool AlertRule::hasDxAlertCondition() const
 {
     FCT_IDENTIFICATION;
 
-    const bool validGoal = dxAlertGoal == static_cast<int>(AlertDxccGoal::Worked)
-                           || dxAlertGoal == static_cast<int>(AlertDxccGoal::Confirmed);
-    const bool validContext = dxAlertContext >= static_cast<int>(AlertDxccContext::Anywhere)
-                              && dxAlertContext <= static_cast<int>(AlertDxccContext::BandMode);
-
-    return dxAlertGoalSet && dxAlertContextSet && validGoal && validContext;
+    return logStatusCondition().hasCondition();
 }
 
 bool AlertRule::hasInvalidDxAlertCondition() const
 {
     FCT_IDENTIFICATION;
 
-    return (dxAlertGoalSet || dxAlertContextSet) && !hasDxAlertCondition();
+    return logStatusCondition().isInvalid();
 }
 
 bool AlertRule::isValid() const

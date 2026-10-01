@@ -1,3 +1,5 @@
+#include <QMessageBox>
+
 #include "WsjtxFilterDialog.h"
 #include "ui_WsjtxFilterDialog.h"
 #include "core/debug.h"
@@ -12,23 +14,15 @@ WsjtxFilterDialog::WsjtxFilterDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WsjtxFilterDialog)
 {
+    FCT_IDENTIFICATION;
+
     ui->setupUi(this);
 
     QString unit;
     Gridsquare::distance2localeUnitDistance(0, unit, locale);
     ui->distanceSpinBox->setSuffix(" " + unit);
 
-    /*********************/
-    /* Status Checkboxes */
-    /*********************/
-    uint statusSetting = LogParam::getWsjtxFilterDxccStatus();
-
-    ui->newEntityCheckBox->setChecked(statusSetting & DxccStatus::NewEntity);
-    ui->newBandCheckBox->setChecked(statusSetting & DxccStatus::NewBand);
-    ui->newModeCheckBox->setChecked(statusSetting & DxccStatus::NewMode);
-    ui->newSlotCheckBox->setChecked(statusSetting & DxccStatus::NewSlot);
-    ui->workedCheckBox->setChecked(statusSetting & DxccStatus::Worked);
-    ui->confirmedCheckBox->setChecked(statusSetting & DxccStatus::Confirmed);
+    ui->logStatusWidget->setCondition(LogParam::getWsjtxFilterLogStatus());
 
     /************************/
     /* Continent Checkboxes */
@@ -64,18 +58,11 @@ void WsjtxFilterDialog::accept()
 {
     FCT_IDENTIFICATION;    
 
-    /*********************/
-    /* Status Checkboxes */
-    /*********************/
-    uint status = 0;
-
-    if ( ui->newEntityCheckBox->isChecked() ) status |=  DxccStatus::NewEntity;
-    if ( ui->newBandCheckBox->isChecked() ) status |=  DxccStatus::NewBand;
-    if ( ui->newModeCheckBox->isChecked() ) status |=  DxccStatus::NewMode;
-    if ( ui->newSlotCheckBox->isChecked() ) status |=  DxccStatus::NewSlot;
-    if ( ui->workedCheckBox->isChecked() ) status |=  DxccStatus::Worked;
-    if ( ui->confirmedCheckBox->isChecked() ) status |=  DxccStatus::Confirmed;
-    LogParam::setWsjtxFilterDxccStatus(status);
+    if ( !LogParam::setWsjtxFilterLogStatus(ui->logStatusWidget->condition()) )
+    {
+        QMessageBox::critical(this, tr("QLog Error"), tr("Cannot save Log Status filter."));
+        return;
+    }
 
     /************************/
     /* Continent Checkboxes */

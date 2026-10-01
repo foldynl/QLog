@@ -22,7 +22,7 @@ public:
     static QString normalizedMode(const QString &mode);
 
 private:
-    QuadKeyCache<DxccConfirmationResult> cache;
+    QuadKeyCache<DxccConfirmationResult> cache {2048};
     DxccConfirmationSources cachedSources;
     bool cachedSourcesSet = false;
 };

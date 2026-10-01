@@ -8,6 +8,7 @@ INCLUDEPATH += $$PWD/../..
 SOURCES += \
     tst_alertevaluator.cpp \
     ../../core/AlertEvaluator.cpp \
+    ../../data/DxccLogStatusCondition.cpp \
     ../../data/BandPlan.cpp \
     ../../notification/AlertNotification.cpp
 

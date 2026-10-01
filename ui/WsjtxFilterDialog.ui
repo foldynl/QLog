@@ -25,59 +25,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QGroupBox" name="statusGroupBox">
-         <property name="title">
-          <string>Log Status</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="1">
-             <widget class="QCheckBox" name="newBandCheckBox">
-              <property name="text">
-               <string>New Band</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QCheckBox" name="newModeCheckBox">
-              <property name="text">
-               <string>New Mode</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="newEntityCheckBox">
-              <property name="text">
-               <string>New Entity</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="newSlotCheckBox">
-              <property name="text">
-               <string>New Slot</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QCheckBox" name="workedCheckBox">
-              <property name="text">
-               <string>Worked</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QCheckBox" name="confirmedCheckBox">
-              <property name="text">
-               <string>Confirmed</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
+        <widget class="DxccLogStatusWidget" name="logStatusWidget"/>
        </item>
        <item>
         <widget class="QGroupBox" name="continentGroupBox">
@@ -256,6 +204,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DxccLogStatusWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/component/DxccLogStatusWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

@@ -913,16 +913,9 @@ QString DxWidget::bandFilterRegExp()
 
     for ( const Band &band : bands )
         if ( !exludedBandFilter.contains(band.name) )
-            regexp.append("|^" + band.name);
+            regexp.append("|^" + QRegularExpression::escape(band.name) + "$");
 
     return regexp;
-}
-
-uint DxWidget::dxccStatusFilterValue()
-{
-    FCT_IDENTIFICATION;
-
-    return LogParam::getDXCFilterDxccStatus();
 }
 
 int DxWidget::getDedupTimeValue()
@@ -1504,7 +1497,9 @@ void DxWidget::reloadSetting()
     contregexp.setPattern(contFilterRegExp());
     spottercontregexp.setPattern(spotterContFilterRegExp());
     bandregexp.setPattern(bandFilterRegExp());
-    dxccStatusFilter = dxccStatusFilterValue();
+    logStatusFilter = LogParam::getDXCFilterLogStatus();
+    if ( logStatusFilter.isInvalid() )
+        qCWarning(runtime) << "Invalid DX Cluster Log Status filter";
     deduplicateSpots = spotDedupValue();
     deduplicatetime = getDedupTimeValue();
     deduplicatefreq = getDedupFreqValue();
@@ -1668,9 +1663,7 @@ bool DxWidget::isFilterEnabled() const
 {
     FCT_IDENTIFICATION;
 
-    return dxccStatusFilter != (DxccStatus::NewEntity | DxccStatus::NewBand |
-                                DxccStatus::NewMode   | DxccStatus::NewSlot |
-                                DxccStatus::Worked    | DxccStatus::Confirmed)
+    return logStatusFilter.isFiltered()
         || contregexp.pattern().count("|") != 7
         || !dxMemberFilter.isEmpty()
         // || deduplicateSpots  // deduplication does not mean filtring.
@@ -2048,10 +2041,10 @@ void DxWidget::processDxSpot(const QString &spotter,
          && spot.dxcc.cont.contains(contregexp)
          && spot.dxcc_spotter.cont.contains(spottercontregexp)
          && spot.band.contains(bandregexp)
-         && ( spot.status & dxccStatusFilter)
          && ( dxMemberFilter.size() == 0
             || (dxMemberFilter.size() && spot.memberList2Set().intersects(dxMemberFilter)) )
          && spot.dupeCount == 0
+         && Data::instance()->matchesDxccLogStatus(spot, logStatusFilter)
         )
     {
         if ( dxTableModel->addEntry(spot, deduplicateSpots, deduplicatetime, deduplicatefreq) )

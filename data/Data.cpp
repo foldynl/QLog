@@ -393,7 +393,7 @@ DxccConfirmationSources Data::dxccConfirmationSources()
 }
 
 #define RETCODE(a)  \
-    dxccStatusCache.insert(dxcc, myDXCC, band, mode, new DxccStatus(a)); \
+    dxccStatusCache.insert(dxcc, myDXCC, band, modeForQuery, new DxccStatus(a)); \
     return ((a));
 
 DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
@@ -404,12 +404,11 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
 
     const int myDXCC = StationProfilesManager::instance()->getCurProfile1().dxcc;
 
-    DxccStatus *statusFromCache = dxccStatusCache.value(dxcc, myDXCC, band, mode);
+    const QString modeForQuery = DxccConfirmation::normalizedMode(mode);
+    DxccStatus *statusFromCache = dxccStatusCache.value(dxcc, myDXCC, band, modeForQuery);
 
     if ( statusFromCache )
         return *statusFromCache;
-
-    const QString modeForQuery = DxccConfirmation::normalizedMode(mode);
 
     QString sql_mode(":mode");
 
@@ -500,6 +499,17 @@ DxccStatus Data::dxccStatus(int dxcc, const QString &band, const QString &mode)
     }
 
     RETCODE(DxccStatus::UnknownStatus);
+}
+
+bool Data::matchesDxccLogStatus(const DxSpot &spot, const DxccLogStatusCondition &condition)
+{
+    FCT_IDENTIFICATION;
+
+    return condition.match(spot, [this](int dxcc, const QString &band,
+                                       const QString &mode, AlertDxccContext context)
+    {
+        return dxccConfirmationStatus(dxcc, band, mode, context);
+    });
 }
 
 DxccConfirmationResult Data::dxccConfirmationStatus(int dxcc,

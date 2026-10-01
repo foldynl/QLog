@@ -12,6 +12,8 @@ class QuadKeyCache : public QCache<QPair<QPair<int, int>, QPair<QString, QString
 public:
     using Key = QPair<QPair<int, int>, QPair<QString, QString>>;
 
+    explicit QuadKeyCache(int maxCost = 100) : QCache<Key, Value>(maxCost) {}
+
     void insert(const int keyA, const int keyB, const QString& keyC, const QString& keyD, Value* value)
     {
         Key key = qMakePair(qMakePair(keyA, keyB), qMakePair(keyC, keyD));

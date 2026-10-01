@@ -6,7 +6,6 @@
 
 #include "AlertRuleDetail.h"
 #include "ui_AlertRuleDetail.h"
-#include "ui/AlertRuleLogStatusDialog.h"
 #include "core/debug.h"
 #include "notification/DesktopNotification.h"
 #include "../models/SqlListModel.h"
@@ -24,12 +23,6 @@ AlertRuleDetail::AlertRuleDetail(const QString &ruleName, QWidget *parent, bool 
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
-    ui->editLogStatusButton->setVisible(false);
-
-    updatingLogStatusUi = true;
-    populateLogStatusCombos();
-    setLogStatusCombos(AlertDxccGoal::Confirmed, AlertDxccContext::Anywhere);
-    updatingLogStatusUi = false;
 
     ui->cqzEdit->setValidator(new QIntValidator(Data::getCQZMin(), Data::getCQZMax(), ui->cqzEdit));
     ui->ituEdit->setValidator(new QIntValidator(Data::getITUZMin(), Data::getITUZMax(), ui->ituEdit));
@@ -199,32 +192,7 @@ void AlertRuleDetail::save()
     /*****************
      * DX Log Status *
      *****************/
-    rule.dxLogStatusMap = DxccStatus::All;
-    rule.dxAlertGoalSet = false;
-    rule.dxAlertContextSet = false;
-
-    if ( ui->logStatusCheckBox->isChecked() )
-    {
-        if ( logStatusStorage == LogStatusStorage::LegacyCondition )
-        {
-            rule.dxLogStatusMap = legacyLogStatus;
-        }
-        else if ( logStatusStorage == LogStatusStorage::InvalidCondition )
-        {
-            rule.dxLogStatusMap = legacyLogStatus;
-            rule.dxAlertGoal = loadedDxAlertGoal;
-            rule.dxAlertContext = loadedDxAlertContext;
-            rule.dxAlertGoalSet = loadedDxAlertGoalSet;
-            rule.dxAlertContextSet = loadedDxAlertContextSet;
-        }
-        else
-        {
-            rule.dxAlertGoal = ui->dxAlertGoalCombo->currentData().toInt();
-            rule.dxAlertContext = ui->dxAlertContextCombo->currentData().toInt();
-            rule.dxAlertGoalSet = true;
-            rule.dxAlertContextSet = true;
-        }
-    }
+    rule.setLogStatusCondition(ui->logStatusWidget->condition());
 
     /****************
      * DX Continent *
@@ -414,184 +382,6 @@ void AlertRuleDetail::testNotification()
                          tr("The notification could not be sent. Check notification settings in your operating system."));
 }
 
-void AlertRuleDetail::logStatusEnabled(bool)
-{
-    FCT_IDENTIFICATION;
-
-    if ( !updatingLogStatusUi )
-        updateLogStatusUi();
-}
-
-void AlertRuleDetail::logStatusConditionChanged()
-{
-    FCT_IDENTIFICATION;
-
-    if ( updatingLogStatusUi ) return;
-
-    const int goal = ui->dxAlertGoalCombo->currentData().toInt();
-    if ( goal == SELECTED_DXCC_STATUSES )
-    {
-        editLogStatuses();
-        return;
-    }
-
-    if ( goal == INVALID_DXCC_CONDITION ) return;
-
-    currentDxAlertGoal = goal;
-    currentDxAlertContext = ui->dxAlertContextCombo->currentData().toInt();
-    logStatusStorage = LogStatusStorage::NewCondition;
-    updateLogStatusUi();
-}
-
-void AlertRuleDetail::editLogStatuses()
-{
-    FCT_IDENTIFICATION;
-
-    const int status = logStatusStorage == LogStatusStorage::LegacyCondition
-                       ? legacyLogStatus : 0;
-    AlertRuleLogStatusDialog dialog(status, this);
-    if ( dialog.exec() != QDialog::Accepted )
-    {
-        updateLogStatusUi();
-        return;
-    }
-
-    logStatusStorage = LogStatusStorage::LegacyCondition;
-    legacyLogStatus = dialog.status();
-    updateLogStatusUi();
-}
-
-void AlertRuleDetail::updateLogStatusUi()
-{
-    FCT_IDENTIFICATION;
-
-    const bool invalid = logStatusStorage == LogStatusStorage::InvalidCondition;
-    bool selectedStatuses = false;
-    AlertDxccGoal goal = static_cast<AlertDxccGoal>(currentDxAlertGoal);
-    AlertDxccContext context = static_cast<AlertDxccContext>(currentDxAlertContext);
-
-    if ( logStatusStorage == LogStatusStorage::LegacyCondition )
-    {
-        selectedStatuses = !legacyStatusAsNewCondition(legacyLogStatus, goal, context);
-    }
-
-    updatingLogStatusUi = true;
-    int invalidIndex = ui->dxAlertGoalCombo->findData(INVALID_DXCC_CONDITION);
-    if ( invalid )
-    {
-        if ( invalidIndex < 0 )
-        {
-            ui->dxAlertGoalCombo->addItem(tr("Invalid log status condition"),
-                                          INVALID_DXCC_CONDITION);
-            invalidIndex = ui->dxAlertGoalCombo->count() - 1;
-        }
-        ui->dxAlertGoalCombo->setCurrentIndex(invalidIndex);
-    }
-    else
-    {
-        if ( invalidIndex >= 0 )
-            ui->dxAlertGoalCombo->removeItem(invalidIndex);
-
-        if ( selectedStatuses )
-            ui->dxAlertGoalCombo->setCurrentIndex(
-                ui->dxAlertGoalCombo->findData(SELECTED_DXCC_STATUSES));
-        else
-            setLogStatusCombos(goal, context);
-    }
-    updatingLogStatusUi = false;
-
-    const bool showContext = !invalid && !selectedStatuses;
-    ui->dxAlertContextLabel->setVisible(showContext);
-    ui->dxAlertContextCombo->setVisible(showContext);
-
-    ui->editLogStatusButton->setVisible(selectedStatuses);
-    ui->editLogStatusButton->setEnabled(selectedStatuses && ui->logStatusCheckBox->isChecked());
-}
-
-void AlertRuleDetail::populateLogStatusCombos()
-{
-    FCT_IDENTIFICATION;
-
-    ui->dxAlertGoalCombo->addItem(tr("DXCC has not been worked"),
-                                  static_cast<int>(AlertDxccGoal::Worked));
-    ui->dxAlertGoalCombo->addItem(tr("DXCC has not been confirmed"),
-                                  static_cast<int>(AlertDxccGoal::Confirmed));
-    ui->dxAlertGoalCombo->addItem(tr("Selected DXCC statuses..."),
-                                  SELECTED_DXCC_STATUSES);
-    ui->dxAlertGoalCombo->setItemData(
-        0, tr("Alert if no qualifying QSO exists in the log."), Qt::ToolTipRole);
-    ui->dxAlertGoalCombo->setItemData(
-        1,
-        tr("Alert if no qualifying QSO is confirmed using the DXCC confirmation sources selected in Settings."),
-        Qt::ToolTipRole);
-    ui->dxAlertGoalCombo->setItemData(
-        2,
-        tr("Alert for any of the individually selected DXCC statuses."),
-        Qt::ToolTipRole);
-
-    ui->dxAlertContextCombo->addItem(tr("All bands and modes"),
-                                     static_cast<int>(AlertDxccContext::Anywhere));
-    ui->dxAlertContextCombo->addItem(tr("Spot's band, any mode"),
-                                     static_cast<int>(AlertDxccContext::Band));
-    ui->dxAlertContextCombo->addItem(tr("Any band, spot's mode"),
-                                     static_cast<int>(AlertDxccContext::Mode));
-    ui->dxAlertContextCombo->addItem(tr("Spot's band and mode"),
-                                     static_cast<int>(AlertDxccContext::BandMode));
-    ui->dxAlertContextCombo->setItemData(
-        0, tr("Any band and any DXCC mode."), Qt::ToolTipRole);
-    ui->dxAlertContextCombo->setItemData(
-        1, tr("The band of the evaluated spot, regardless of mode."), Qt::ToolTipRole);
-    ui->dxAlertContextCombo->setItemData(
-        2, tr("The DXCC mode of the evaluated spot, regardless of band."), Qt::ToolTipRole);
-    ui->dxAlertContextCombo->setItemData(
-        3, tr("Both the band and DXCC mode of the evaluated spot."), Qt::ToolTipRole);
-}
-
-void AlertRuleDetail::setLogStatusCombos(AlertDxccGoal goal, AlertDxccContext context)
-{
-    FCT_IDENTIFICATION;
-
-    currentDxAlertGoal = static_cast<int>(goal);
-    currentDxAlertContext = static_cast<int>(context);
-    ui->dxAlertGoalCombo->setCurrentIndex(
-        ui->dxAlertGoalCombo->findData(currentDxAlertGoal));
-    ui->dxAlertContextCombo->setCurrentIndex(
-        ui->dxAlertContextCombo->findData(currentDxAlertContext));
-}
-
-bool AlertRuleDetail::legacyStatusAsNewCondition(int status,
-                                                 AlertDxccGoal &goal,
-                                                 AlertDxccContext &context) const
-{
-    FCT_IDENTIFICATION;
-
-    goal = AlertDxccGoal::Worked;
-
-    switch ( status )
-    {
-        case DxccStatus::NewEntity:
-            context = AlertDxccContext::Anywhere;
-            return true;
-        case DxccStatus::NewEntity | DxccStatus::NewBand:
-            context = AlertDxccContext::Band;
-            return true;
-        case DxccStatus::NewEntity | DxccStatus::NewMode:
-            context = AlertDxccContext::Mode;
-            return true;
-        case DxccStatus::NewEntity | DxccStatus::NewBand
-             | DxccStatus::NewMode | DxccStatus::NewSlot:
-            context = AlertDxccContext::BandMode;
-            return true;
-        case DxccStatus::NewEntity | DxccStatus::NewBand
-             | DxccStatus::NewMode | DxccStatus::NewSlot | DxccStatus::Worked:
-            goal = AlertDxccGoal::Confirmed;
-            context = AlertDxccContext::BandMode;
-            return true;
-        default:
-            return false;
-    }
-}
-
 void AlertRuleDetail::setDefaultValues()
 {
     FCT_IDENTIFICATION;
@@ -599,13 +389,7 @@ void AlertRuleDetail::setDefaultValues()
     ui->notificationCheckBox->setChecked(true);
     ui->notificationSoundCheckBox->setChecked(true);
     ui->notificationRepeatSpinBox->setValue(AlertRule::DEFAULT_NOTIFICATION_REPEAT_MINUTES);
-    updatingLogStatusUi = true;
-    logStatusStorage = LogStatusStorage::NewCondition;
-    legacyLogStatus = DxccStatus::All;
-    setLogStatusCombos(AlertDxccGoal::Confirmed, AlertDxccContext::Anywhere);
-    ui->logStatusCheckBox->setChecked(false);
-    updatingLogStatusUi = false;
-    updateLogStatusUi();
+    ui->logStatusWidget->setCondition(DxccLogStatusCondition());
     ui->countryCombo->setCurrentValue(ALLCOUNTRYIDX, 1);
 }
 
@@ -688,39 +472,7 @@ void AlertRuleDetail::loadRule(const QString &ruleName)
         /*****************
          * DX Log Status *
          *****************/
-        updatingLogStatusUi = true;
-        legacyLogStatus = rule.dxLogStatusMap;
-        loadedDxAlertGoal = rule.dxAlertGoal;
-        loadedDxAlertContext = rule.dxAlertContext;
-        loadedDxAlertGoalSet = rule.dxAlertGoalSet;
-        loadedDxAlertContextSet = rule.dxAlertContextSet;
-
-        if ( rule.hasDxAlertCondition() )
-        {
-            logStatusStorage = LogStatusStorage::NewCondition;
-            setLogStatusCombos(static_cast<AlertDxccGoal>(rule.dxAlertGoal),
-                               static_cast<AlertDxccContext>(rule.dxAlertContext));
-            ui->logStatusCheckBox->setChecked(true);
-        }
-        else if ( rule.hasInvalidDxAlertCondition() )
-        {
-            logStatusStorage = LogStatusStorage::InvalidCondition;
-            ui->logStatusCheckBox->setChecked(true);
-        }
-        else if ( rule.dxLogStatusMap == DxccStatus::All )
-        {
-            logStatusStorage = LogStatusStorage::NewCondition;
-            setLogStatusCombos(AlertDxccGoal::Confirmed, AlertDxccContext::Anywhere);
-            ui->logStatusCheckBox->setChecked(false);
-        }
-        else
-        {
-            logStatusStorage = LogStatusStorage::LegacyCondition;
-            ui->logStatusCheckBox->setChecked(true);
-        }
-
-        updatingLogStatusUi = false;
-        updateLogStatusUi();
+        ui->logStatusWidget->setCondition(rule.logStatusCondition());
 
         /*************
          * Continent *

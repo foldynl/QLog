@@ -9,6 +9,7 @@
 #include <QVariant>
 #include <QMutex>
 #include <QList>
+#include "data/DxccLogStatusCondition.h"
 
 struct AdifRecoveryConfig;
 struct AdifRecoveryState;
@@ -361,6 +362,8 @@ public:
      ***************/
     static uint getWsjtxFilterDxccStatus();
     static void setWsjtxFilterDxccStatus(uint mask);
+    static DxccLogStatusCondition getWsjtxFilterLogStatus();
+    static bool setWsjtxFilterLogStatus(const DxccLogStatusCondition &condition);
     static QString getWsjtxFilterContRE();
     static void setWsjtxFilterContRE(const QString &re);
     static int getWsjtxFilterDistance();
@@ -379,6 +382,8 @@ public:
      ******************/
     static uint getDXCFilterDxccStatus();
     static void setDXCFilterDxccStatus(uint mask);
+    static DxccLogStatusCondition getDXCFilterLogStatus();
+    static bool setDXCFilterLogStatus(const DxccLogStatusCondition &condition);
     static QString getDXCFilterContRE();
     static void setDXCFilterContRE(const QString &re);
     static QString getDXCFilterSpotterContRE();

@@ -1,4 +1,4 @@
-QT += testlib core gui sql
+QT += testlib core gui sql network
 CONFIG += console testcase c++11
 TEMPLATE = app
 TARGET = tst_bandmapguide
@@ -11,7 +11,8 @@ SOURCES += \
     ../../data/BandmapGuide.cpp \
     ../../data/BandPlan.cpp \
     ../../core/AdifRecovery.cpp \
-    ../../core/LogParam.cpp
+    ../../core/LogParam.cpp \
+    ../../data/DxccLogStatusCondition.cpp
 
 HEADERS += \
     ../../data/BandmapGuide.h \

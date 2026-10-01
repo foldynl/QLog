@@ -1262,6 +1262,22 @@ void LogParam::setWsjtxFilterDxccStatus(uint mask)
     setParam("wsjtx/filter/dxccstatus", mask);
 }
 
+DxccLogStatusCondition LogParam::getWsjtxFilterLogStatus()
+{
+    FCT_IDENTIFICATION;
+
+    const QVariant value = getParam("wsjtx/filter/logstatus");
+    return value.isValid() ? DxccLogStatusCondition::fromJson(value.toString())
+                           : DxccLogStatusCondition(getWsjtxFilterDxccStatus());
+}
+
+bool LogParam::setWsjtxFilterLogStatus(const DxccLogStatusCondition &condition)
+{
+    FCT_IDENTIFICATION;
+
+    return setParam("wsjtx/filter/logstatus", condition.toJson());
+}
+
 QString LogParam::getWsjtxFilterContRE()
 {
     return getParam("wsjtx/filter/contregexp", "NOTHING|AF|AN|AS|EU|NA|OC|SA").toString();
@@ -1332,6 +1348,22 @@ uint LogParam::getDXCFilterDxccStatus()
 void LogParam::setDXCFilterDxccStatus(uint mask)
 {
     setParam("dxc/filter/dx/dxccstatus", mask);
+}
+
+DxccLogStatusCondition LogParam::getDXCFilterLogStatus()
+{
+    FCT_IDENTIFICATION;
+
+    const QVariant value = getParam("dxc/filter/dx/logstatus");
+    return value.isValid() ? DxccLogStatusCondition::fromJson(value.toString())
+                           : DxccLogStatusCondition(getDXCFilterDxccStatus());
+}
+
+bool LogParam::setDXCFilterLogStatus(const DxccLogStatusCondition &condition)
+{
+    FCT_IDENTIFICATION;
+
+    return setParam("dxc/filter/dx/logstatus", condition.toJson());
 }
 
 QString LogParam::getDXCFilterContRE()

@@ -207,59 +207,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Log Status</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
-          <item>
-           <layout class="QGridLayout" name="status_group">
-            <item row="0" column="2">
-             <widget class="QCheckBox" name="newModecheckbox">
-              <property name="text">
-               <string>New Mode</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="newEntitycheckbox">
-              <property name="text">
-               <string>New Entity</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QCheckBox" name="newBandcheckbox">
-              <property name="text">
-               <string>New Band</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="newSlotcheckbox">
-              <property name="text">
-               <string>New Slot</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QCheckBox" name="workedcheckbox">
-              <property name="text">
-               <string>Worked</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QCheckBox" name="confirmedcheckbox">
-              <property name="text">
-               <string>Confirmed</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
+        <widget class="DxccLogStatusWidget" name="logStatusWidget"/>
        </item>
       </layout>
      </widget>
@@ -462,12 +410,7 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>newEntitycheckbox</tabstop>
-  <tabstop>newBandcheckbox</tabstop>
-  <tabstop>newModecheckbox</tabstop>
-  <tabstop>newSlotcheckbox</tabstop>
-  <tabstop>workedcheckbox</tabstop>
-  <tabstop>confirmedcheckbox</tabstop>
+  <tabstop>logStatusWidget</tabstop>
   <tabstop>cwcheckbox</tabstop>
   <tabstop>phonecheckbox</tabstop>
   <tabstop>digitalcheckbox</tabstop>
@@ -491,6 +434,13 @@
   <tabstop>dedupFreqDiffSpinbox</tabstop>
   <tabstop>memberGroupBox</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>DxccLogStatusWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/component/DxccLogStatusWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

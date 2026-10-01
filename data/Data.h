@@ -11,6 +11,7 @@
 #include "3rdparty/bertoldvdb/zonedetect/library/zonedetect.h"
 #include "core/QuadKeyCache.h"
 #include "data/DxccConfirmation.h"
+#include "data/DxccLogStatusCondition.h"
 
 class QCompleter;
 
@@ -160,6 +161,7 @@ public:
 
     static QString safeQueryString(const QUrlQuery &query);
     DxccStatus dxccStatus(int dxcc, const QString &band, const QString &mode);
+    bool matchesDxccLogStatus(const DxSpot &spot, const DxccLogStatusCondition &condition);
     DxccConfirmationResult dxccConfirmationStatus(int dxcc,
                                                   const QString &band,
                                                   const QString &mode,
@@ -266,7 +268,7 @@ private:
     bool isPOTAQueryValid;
     bool isDXCCIDAD1CQueryValid;
     bool isDXCCIDClublogQueryValid;
-    QuadKeyCache<DxccStatus> dxccStatusCache;
+    QuadKeyCache<DxccStatus> dxccStatusCache {2048};
     DxccConfirmation dxccConfirmation;
     DxccConfirmationSources currentDxccConfirmationSources;
     bool dxccConfirmationSourcesValid = false;

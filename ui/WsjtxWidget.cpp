@@ -204,7 +204,7 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
             qCDebug(runtime)
                     << "Continent" << entry.dxcc.cont.contains(contregexp)
                     << "Continent RegExp" << contregexp
-                    << "DX Status" << (entry.status & dxccStatusFilter)
+                    << "DX Status" << entry.status
                     << "Distance" << (entry.distance >= distanceFilter)
                     << "Curr Distance" << entry.distance << distanceFilter
                     << "SNR"<< (entry.decode.snr >= snrFilter )
@@ -214,12 +214,12 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
                              && entry.memberList2Set().intersects(dxMemberFilter)));
 
             if ( entry.dxcc.cont.contains(contregexp)
-                 && ( entry.status & dxccStatusFilter )
                  && Gridsquare::distance2localeUnitDistance(entry.distance, unit, locale) >= distanceFilter
                  && entry.decode.snr >= snrFilter
                  && ( dxMemberFilter.size() == 0
                       || (dxMemberFilter.size() && entry.memberList2Set().intersects(dxMemberFilter)))
-                  && entry.dupeCount == 0
+                 && entry.dupeCount == 0
+                 && Data::instance()->matchesDxccLogStatus(entry, logStatusFilter)
                )
             {
                 wsjtxTableModel->addOrReplaceEntry(entry);
@@ -269,6 +269,12 @@ void WsjtxWidget::decodeReceived(WsjtxDecode decode)
                 // update it. Only CQ provides the club membeship info
 
                 entry.grid = wsjtxTableModel->getEntry(decode.id, entry.callsign).grid;
+                if ( !Data::instance()->matchesDxccLogStatus(entry, logStatusFilter) )
+                {
+                    wsjtxTableModel->removeSpot(entry.callsign, entry.band);
+                    redrawMapSpots();
+                    return;
+                }
                 wsjtxTableModel->addOrReplaceEntry(entry);
                 emit filteredCQSpot(entry);
                 emit updatedCQSpot(entry);
@@ -501,13 +507,6 @@ void WsjtxWidget::actionFilter()
     }
 }
 
-uint WsjtxWidget::dxccStatusFilterValue() const
-{
-    FCT_IDENTIFICATION;
-
-    return LogParam::getWsjtxFilterDxccStatus();
-}
-
 QString WsjtxWidget::contFilterRegExp() const
 {
     FCT_IDENTIFICATION;
@@ -542,7 +541,9 @@ void WsjtxWidget::reloadSetting()
 
     contregexp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
     contregexp.setPattern(contFilterRegExp());
-    dxccStatusFilter = dxccStatusFilterValue();
+    logStatusFilter = LogParam::getWsjtxFilterLogStatus();
+    if ( logStatusFilter.isInvalid() )
+        qCWarning(runtime) << "Invalid WSJT-X Log Status filter";
     distanceFilter = getDistanceFilterValue();
     snrFilter = getSNRFilterValue();
     QStringList tmp = dxMemberList();
@@ -592,8 +593,20 @@ void WsjtxWidget::redrawMapSpots()
 
     emit spotsCleared(QString());
     const QList<WsjtxEntry> entries = wsjtxTableModel->entries();
-    for ( const WsjtxEntry &entry : entries )
-        emit filteredCQSpot(entry);
+    const bool refreshStatus = logStatusFilter.hasCondition();
+    for ( WsjtxEntry entry : entries )
+    {
+        // Replay must use the current profile and confirmation sources, not an old row's status.
+        if ( refreshStatus )
+        {
+            entry.status = Data::instance()->currentDxccStatus(entry.dxcc.dxcc,
+                                                               entry.band,
+                                                               entry.modeGroupString);
+            entry.dxccStatusSatellite = Data::instance()->isSatelliteDxccContext();
+        }
+        if ( Data::instance()->matchesDxccLogStatus(entry, logStatusFilter) )
+            emit filteredCQSpot(entry);
+    }
 }
 
 void WsjtxWidget::saveTableHeaderState()
@@ -619,9 +632,7 @@ bool WsjtxWidget::isFilterEnabled()
 {
     FCT_IDENTIFICATION;
 
-    return dxccStatusFilter != (DxccStatus::NewEntity | DxccStatus::NewBand |
-                                DxccStatus::NewMode   | DxccStatus::NewSlot |
-                                DxccStatus::Worked    | DxccStatus::Confirmed)
+    return logStatusFilter.isFiltered()
         || contregexp.pattern().count("|") != 7
         || distanceFilter > 0
         || snrFilter > -41

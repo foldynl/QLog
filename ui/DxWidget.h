@@ -9,6 +9,7 @@
 #include <QLabel>
 
 #include "data/DxSpot.h"
+#include "data/DxccLogStatusCondition.h"
 #include "data/WCYSpot.h"
 #include "data/WWVSpot.h"
 #include "data/ToAllSpot.h"
@@ -211,7 +212,7 @@ private:
     QRegularExpression contregexp;
     QRegularExpression spottercontregexp;
     QRegularExpression bandregexp;
-    uint dxccStatusFilter;
+    DxccLogStatusCondition logStatusFilter;
     bool deduplicateSpots;
     int deduplicatetime;
     int deduplicatefreq;
@@ -237,7 +238,6 @@ private:
     QString contFilterRegExp();
     QString spotterContFilterRegExp();
     QString bandFilterRegExp();
-    uint dxccStatusFilterValue();
     bool spotDedupValue();
     int getDedupTimeValue();
     int getDedupFreqValue();

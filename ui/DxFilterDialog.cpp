@@ -1,3 +1,5 @@
+#include <QMessageBox>
+
 #include <QDebug>
 #include <QCheckBox>
 #include <QSqlRecord>
@@ -44,16 +46,7 @@ DxFilterDialog::DxFilterDialog(QWidget *parent) :
         i++;
     }
 
-    /*********************/
-    /* Status Checkboxes */
-    /*********************/
-    uint statusSetting = LogParam::getDXCFilterDxccStatus();
-    ui->newEntitycheckbox->setChecked(statusSetting & DxccStatus::NewEntity);
-    ui->newBandcheckbox->setChecked(statusSetting & DxccStatus::NewBand);
-    ui->newModecheckbox->setChecked(statusSetting & DxccStatus::NewMode);
-    ui->newSlotcheckbox->setChecked(statusSetting & DxccStatus::NewSlot);
-    ui->workedcheckbox->setChecked(statusSetting & DxccStatus::Worked);
-    ui->confirmedcheckbox->setChecked(statusSetting & DxccStatus::Confirmed);
+    ui->logStatusWidget->setCondition(LogParam::getDXCFilterLogStatus());
 
     /*******************/
     /* Mode Checkboxes */
@@ -106,6 +99,12 @@ void DxFilterDialog::accept()
 {
     FCT_IDENTIFICATION;
 
+    if ( !LogParam::setDXCFilterLogStatus(ui->logStatusWidget->condition()) )
+    {
+        QMessageBox::critical(this, tr("QLog Error"), tr("Cannot save Log Status filter."));
+        return;
+    }
+
     /********************/
     /* Bands Checkboxes */
     /********************/
@@ -120,18 +119,6 @@ void DxFilterDialog::accept()
             excludedBands << bandcheckbox->property("bandName").toString();
     }
     LogParam::setDXCExcludedBands(excludedBands);
-
-    /*********************/
-    /* Status Checkboxes */
-    /*********************/
-    uint status = 0;
-    if ( ui->newEntitycheckbox->isChecked() ) status |=  DxccStatus::NewEntity;
-    if ( ui->newBandcheckbox->isChecked() ) status |=  DxccStatus::NewBand;
-    if ( ui->newModecheckbox->isChecked() ) status |=  DxccStatus::NewMode;
-    if ( ui->newSlotcheckbox->isChecked() ) status |=  DxccStatus::NewSlot;
-    if ( ui->workedcheckbox->isChecked() ) status |=  DxccStatus::Worked;
-    if ( ui->confirmedcheckbox->isChecked() ) status |=  DxccStatus::Confirmed;
-    LogParam::setDXCFilterDxccStatus(status);
 
     /*******************/
     /* Mode Checkboxes */

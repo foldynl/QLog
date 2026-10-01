@@ -12,6 +12,7 @@
 
 #include "core/LogLocale.h"
 #include "data/WsjtxStatus.h"
+#include "data/DxccLogStatusCondition.h"
 
 namespace Ui {
 class WsjtxWidget;
@@ -65,7 +66,6 @@ private:
         bool initialized;
     };
 
-    uint dxccStatusFilterValue() const;
     QString contFilterRegExp() const;
     int getDistanceFilterValue() const;
     int getSNRFilterValue() const;
@@ -90,7 +90,7 @@ private:
     QRegularExpression cqRE;
     int distanceFilter;
     int snrFilter;
-    uint dxccStatusFilter;
+    DxccLogStatusCondition logStatusFilter;
     QSet<QString> dxMemberFilter;
     LogLocale locale;
 

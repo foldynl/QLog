@@ -5,15 +5,9 @@
 #include "data/DxSpot.h"
 #include "data/WsjtxEntry.h"
 #include "data/SpotAlert.h"
+#include "data/DxccLogStatusCondition.h"
 #include <QHash>
 #include <QRegularExpression>
-#include <functional>
-
-using DxccConfirmationResolver = std::function<DxccConfirmationResult(
-    int,
-    const QString &,
-    const QString &,
-    AlertDxccContext)>;
 
 class AlertRule : public QObject
 {
@@ -39,6 +33,8 @@ public:
     bool isValid() const;
     bool hasDxAlertCondition() const;
     bool hasInvalidDxAlertCondition() const;
+    DxccLogStatusCondition logStatusCondition() const;
+    void setLogStatusCondition(const DxccLogStatusCondition &condition);
     operator QString() const;
 public:
     QString ruleName;
@@ -69,8 +65,6 @@ public:
     bool wwff;
 
 private:
-    bool matchDxccStatus(const DxSpot &spot,
-                         const DxccConfirmationResolver &confirmationResolver) const;
     bool ruleValid;
     QRegularExpression callsignRE;
     QRegularExpression commentRE;

@@ -241,94 +241,8 @@
          <property name="verticalSpacing">
           <number>2</number>
          </property>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="logStatusCheckBox">
-           <property name="toolTip">
-            <string>Restrict this rule by DXCC progress in the log. When disabled, log status is ignored.</string>
-           </property>
-           <property name="text">
-            <string>Log Status</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QGridLayout" name="logStatusLayout">
-           <property name="horizontalSpacing">
-            <number>6</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>2</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="dxAlertGoalLabel">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Condition:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="dxAlertGoalCombo">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="dxAlertContextLabel">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Defines the band and mode grouping used to evaluate the DXCC condition.</string>
-             </property>
-             <property name="text">
-              <string>QSO group:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="dxAlertContextCombo">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="editLogStatusButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Select individual DXCC statuses</string>
-             </property>
-             <property name="text">
-              <string>Edit...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3" rowspan="2">
-            <spacer name="logStatusSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+         <item row="0" column="0" colspan="2">
+          <widget class="DxccLogStatusWidget" name="logStatusWidget"/>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="dxCallsignLabel">
@@ -983,6 +897,11 @@
    <extends>QComboBox</extends>
    <header>ui/component/SmartSearchBox.h</header>
   </customwidget>
+  <customwidget>
+   <class>DxccLogStatusWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/component/DxccLogStatusWidget.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>ruleNameEdit</tabstop>
@@ -993,10 +912,7 @@
   <tabstop>notificationSoundCheckBox</tabstop>
   <tabstop>testNotificationButton</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>logStatusCheckBox</tabstop>
-  <tabstop>dxAlertGoalCombo</tabstop>
-  <tabstop>editLogStatusButton</tabstop>
-  <tabstop>dxAlertContextCombo</tabstop>
+  <tabstop>logStatusWidget</tabstop>
   <tabstop>dxCallsignEdit</tabstop>
   <tabstop>countryCombo</tabstop>
   <tabstop>ituEdit</tabstop>
@@ -1193,134 +1109,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>logStatusCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>AlertRuleDetail</receiver>
-   <slot>logStatusEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logStatusCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dxAlertGoalLabel</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logStatusCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dxAlertGoalCombo</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logStatusCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dxAlertContextLabel</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logStatusCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dxAlertContextCombo</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dxAlertGoalCombo</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>AlertRuleDetail</receiver>
-   <slot>logStatusConditionChanged()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dxAlertContextCombo</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>AlertRuleDetail</receiver>
-   <slot>logStatusConditionChanged()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>editLogStatusButton</sender>
-   <signal>clicked()</signal>
-   <receiver>AlertRuleDetail</receiver>
-   <slot>editLogStatuses()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>save()</slot>
@@ -1328,8 +1116,5 @@
   <slot>callsignChanged(QString)</slot>
   <slot>spotCommentChanged(QString)</slot>
   <slot>testNotification()</slot>
-  <slot>logStatusEnabled(bool)</slot>
-  <slot>logStatusConditionChanged()</slot>
-  <slot>editLogStatuses()</slot>
  </slots>
 </ui>

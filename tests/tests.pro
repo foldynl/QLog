@@ -8,6 +8,7 @@ SUBDIRS += CallsignTest \
            CredentialStoreTest \
            DataTest \
            DxccConfirmationTest \
+           DxccLogStatusTest \
            FileCompressorTest \
            CabrilloFormatTest \
            FreqQSpinBoxTest \

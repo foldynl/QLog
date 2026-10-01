@@ -1,4 +1,4 @@
-QT += testlib core widgets sql
+QT += testlib core widgets sql network
 CONFIG += console testcase c++11
 TEMPLATE = app
 TARGET = tst_credentialstore
@@ -11,7 +11,8 @@ SOURCES += \
     ../../core/CredentialStore.cpp \
     ../../core/PasswordCipher.cpp \
     ../../core/AdifRecovery.cpp \
-    ../../core/LogParam.cpp
+    ../../core/LogParam.cpp \
+    ../../data/DxccLogStatusCondition.cpp
 
 HEADERS += \
     ../../core/CredentialStore.h \

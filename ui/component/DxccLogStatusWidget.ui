@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DxccLogStatusWidget</class>
+ <widget class="QWidget" name="DxccLogStatusWidget">
+  <property name="focusPolicy"><enum>Qt::StrongFocus</enum></property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin"><number>0</number></property>
+   <property name="topMargin"><number>0</number></property>
+   <property name="rightMargin"><number>0</number></property>
+   <property name="bottomMargin"><number>0</number></property>
+   <property name="horizontalSpacing"><number>6</number></property>
+   <property name="verticalSpacing"><number>2</number></property>
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="enabledCheckBox">
+     <property name="text"><string>Log Status</string></property>
+     <property name="toolTip"><string>Restrict spots by DXCC progress in the log. When disabled, log status is ignored.</string></property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="goalLabel">
+     <property name="text"><string>Condition:</string></property>
+     <property name="buddy"><cstring>goalCombo</cstring></property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="goalCombo">
+     <property name="sizeAdjustPolicy"><enum>QComboBox::AdjustToContents</enum></property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="editButton">
+     <property name="text"><string>Edit...</string></property>
+     <property name="toolTip"><string>Select individual DXCC statuses</string></property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="contextLabel">
+     <property name="text"><string>Band / mode:</string></property>
+     <property name="buddy"><cstring>contextCombo</cstring></property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QComboBox" name="contextCombo">
+     <property name="sizeAdjustPolicy"><enum>QComboBox::AdjustToContents</enum></property>
+     <property name="toolTip"><string>Defines the band and DXCC mode grouping used to evaluate the condition. Satellite operation uses the DXCC entity only.</string></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>enabledCheckBox</tabstop>
+  <tabstop>goalCombo</tabstop>
+  <tabstop>editButton</tabstop>
+  <tabstop>contextCombo</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>enabledCheckBox</sender><signal>toggled(bool)</signal>
+   <receiver>DxccLogStatusWidget</receiver><slot>updateUi()</slot>
+  </connection>
+  <connection>
+   <sender>goalCombo</sender><signal>currentIndexChanged(int)</signal>
+   <receiver>DxccLogStatusWidget</receiver><slot>conditionChanged()</slot>
+  </connection>
+  <connection>
+   <sender>contextCombo</sender><signal>currentIndexChanged(int)</signal>
+   <receiver>DxccLogStatusWidget</receiver><slot>conditionChanged()</slot>
+  </connection>
+  <connection>
+   <sender>editButton</sender><signal>clicked()</signal>
+   <receiver>DxccLogStatusWidget</receiver><slot>editLogStatuses()</slot>
+  </connection>
+ </connections>
+ <slots>
+  <slot>updateUi()</slot><slot>conditionChanged()</slot><slot>editLogStatuses()</slot>
+ </slots>
+</ui>
