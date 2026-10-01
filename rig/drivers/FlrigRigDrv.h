@@ -104,6 +104,7 @@ private:
     double currFreq;
     double currTxFreq;
     bool currSplitEnabled;
+    bool splitKnown;
     QString currVFO;
     QString currRawMode;
     qint32 currBW;

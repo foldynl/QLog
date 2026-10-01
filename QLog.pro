@@ -150,6 +150,9 @@ SOURCES += \
         logformat/JsonFormat.cpp \
         logformat/LogFormat.cpp \
         logformat/PotaAdiFormat.cpp \
+        mcpbridge/RuntimeContext.cpp \
+        mcpbridge/RuntimeProvider.cpp \
+        mcpbridge/RuntimeServer.cpp \
         models/AlertTableModel.cpp \
         models/AwardsTableModel.cpp \
         models/DxccTableModel.cpp \
@@ -162,6 +165,7 @@ SOURCES += \
         models/WsjtxActivity.cpp \
         models/WsjtxTableModel.cpp \
         rig/Rig.cpp \
+        rig/RigRuntimeProvider.cpp \
         rig/RigCaps.cpp \
         rig/RigctldManager.cpp \
         rig/drivers/FlrigRigDrv.cpp \
@@ -376,6 +380,9 @@ HEADERS += \
         logformat/JsonFormat.h \
         logformat/LogFormat.h \
         logformat/PotaAdiFormat.h \
+        mcpbridge/RuntimeContext.h \
+        mcpbridge/RuntimeProvider.h \
+        mcpbridge/RuntimeServer.h \
         models/AlertTableModel.h \
         models/AwardsTableModel.h \
         models/DxccTableModel.h \
@@ -388,6 +395,7 @@ HEADERS += \
         models/WsjtxActivity.h \
         models/WsjtxTableModel.h \
         rig/Rig.h \
+        rig/RigRuntimeProvider.h \
         rig/RigCaps.h \
         rig/RigctldManager.h \
         rig/drivers/FlrigRigDrv.h \

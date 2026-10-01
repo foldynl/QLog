@@ -25,4 +25,7 @@ SUBDIRS += CallsignTest \
            QSOFilterManagerTest \
            QSOFilterDetailTest \
            RigctldManagerTest \
+           RigReportingTest \
+           RuntimeContextTest \
+           RuntimeServerTest \
            WsjtxActivityTest

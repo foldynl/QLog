@@ -26,6 +26,8 @@
 #include "data/Data.h"
 #include "service/GenericCallbook.h"
 #include "core/LogDatabase.h"
+#include "mcpbridge/RuntimeContext.h"
+#include "mcpbridge/RuntimeServer.h"
 
 MODULE_IDENTIFICATION("qlog.core.main");
 
@@ -163,12 +165,41 @@ static void createDataDirectory() {
     }
 }
 
-static void startRigThread() {
+static void startRigThread(RuntimeContext &runtimeContext)
+{
     FCT_IDENTIFICATION;
 
     rigThreadHandle = new QThread;
     Rig* rig = Rig::instance();
     rig->moveToThread(rigThreadHandle);
+    if ( !runtimeContext.addProvider(QStringLiteral("rig"),
+            QStringLiteral("Latest state of the transceiver controlled by QLog: whether the radio "
+                           "driver has a ready connection, active radio-control profile and "
+                           "backend (Hamlib, OmniRig, FLRig or TCI), configured Hamlib radio "
+                           "model/driver label when known, main VFO frequency and label, adjusted "
+                           "RX/TX frequencies, manual RX/TX profile offsets, "
+                           "operating mode, receiver filter width, RF power setting, CAT CW keying "
+                           "speed, CAT RIT/XIT offsets and split state. Use for questions about "
+                           "the connected radio, tuned "
+                           "amateur band, mode, power, tuning offsets or split operation. "
+                           "Frequencies, offsets and filter width are in hertz, power in watts "
+                           "and CW speed in WPM; read the field schema for precise meanings. "
+                           "Values are the latest held by QLog and can change at any time; each "
+                           "current-state question needs a new read, without hardware polling. "
+                           "Readings depend on the backend, radio model and enabled profile "
+                           "settings. Null means disconnected, unsupported, disabled or not yet "
+                           "reported; profile offsets are configuration values, where zero means "
+                           "no offset. Profile offsets are distinct from CAT RIT/XIT, although "
+                           "QLog may label them RIT/XIT in its rig panel. Power is a setting "
+                           "(estimated for TCI), not an RF meter reading. RX/TX values already "
+                           "include the driver's adjustments; do not add offsets again. During "
+                           "split, TX is the separate VFO report; with unknown split state, TX "
+                           "is QLog's main-VFO value and does not verify actual radio split. "
+                           "This source "
+                           "does not report PTT, antenna, external keyer state, historical QSOs "
+                           "or logging-station identity."),
+            rig->getRuntimeProvider()) )
+        qCWarning(runtime) << "Cannot register radio runtime provider";
     QObject::connect(rigThreadHandle, SIGNAL(started()), rig, SLOT(start()));
     rigThreadHandle->start();
 }
@@ -505,13 +536,17 @@ int main(int argc, char* argv[])
 
     QCoreApplication::processEvents();
 
-    startRigThread();
-    startRotThread();
-    startCWKeyerThread();
-
     int rc = 0;
 
     {
+        RuntimeContext runtimeContext;
+        startRigThread(runtimeContext);
+        startRotThread();
+        startCWKeyerThread();
+
+        RuntimeServer runtimeServer(runtimeContext);
+        runtimeServer.listen(QStringLiteral("qlog-runtime"));
+
         MainWindow w;
         QIcon icon(":/res/qlog.png");
 
