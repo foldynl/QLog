@@ -17,16 +17,16 @@ enum DxccStatus {
 
 enum class AlertDxccGoal
 {
-    Worked,
-    Confirmed
+    Worked = 0,
+    Confirmed = 1
 };
 
 enum class AlertDxccContext
 {
-    Anywhere,
-    Band,
-    Mode,
-    BandMode
+    Anywhere = 0,
+    Band = 1,
+    Mode = 2,
+    BandMode = 3
 };
 
 enum class DxccConfirmationResult
