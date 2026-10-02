@@ -7,6 +7,8 @@ TBC - 0.54.0
 - [NEW] - ADIF 3.1.8 - Added new mode JTTY
 - [NEW] - ADIF 3.1.8 - Added new Contest IDs
 - [NEW] - WSJTX - Added support for multiple WSJT-X instances (issue #1184)
+- [NEW] - MCP Bridge - Added read-only bridge between QLog-MCP and QLog
+- [NEW] - MCP Bridge - Added Rig, Rotator, Antenna and Station information
 - [CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting
 - [CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"
 - Fixed Limit Grid input field to 8 characters (issue #1028)

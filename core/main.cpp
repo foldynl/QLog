@@ -26,6 +26,7 @@
 #include "data/Data.h"
 #include "data/StationProfile.h"
 #include "data/AntProfile.h"
+#include "data/ActivityProfile.h"
 #include "service/GenericCallbook.h"
 #include "core/LogDatabase.h"
 #include "mcpbridge/RuntimeContext.h"
@@ -599,6 +600,27 @@ int main(int argc, char* argv[])
                                                         "different owners, not one atomic hardware snapshot."),
                                          AntProfilesManager::instance()->getRuntimeProvider()) )
             qCWarning(runtime) << "Cannot register antenna runtime provider";
+        if ( !runtimeContext.addProvider(QStringLiteral("activity"),
+                                         QStringLiteral("Currently selected Activity preset: its name, "
+                                                        "requested station, rig and antenna profiles, "
+                                                        "Rotator Override and rig/rotator connection "
+                                                        "requests. Use to understand my operating setup "
+                                                        "and why QLog selects particular equipment. These "
+                                                        "are preset instructions applied on activation, "
+                                                        "not confirmation of actual connection or an "
+                                                        "ongoing contact. Compare with station, antenna, "
+                                                        "rig and rotator for actual state; manual changes "
+                                                        "or asynchronous setup can make them differ. A "
+                                                        "Rotator Override takes priority over the antenna's "
+                                                        "assigned rotator. Empty profile names explicitly "
+                                                        "select None; null means unspecified or no Activity. "
+                                                        "The antenna's offset still corrects rotator_azimuth; "
+                                                        "never apply it twice. Selection and preset contents "
+                                                        "can change while QLog runs; read anew for each "
+                                                        "current-state question. Sources are collected in "
+                                                        "their owners' threads, not one atomic snapshot."),
+                                         ActivityProfilesManager::instance()->getRuntimeProvider()) )
+            qCWarning(runtime) << "Cannot register activity runtime provider";
         startRigThread(runtimeContext);
         startRotThread(runtimeContext);
         startCWKeyerThread();

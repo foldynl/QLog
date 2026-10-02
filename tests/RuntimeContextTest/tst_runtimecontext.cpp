@@ -8,6 +8,7 @@
 #include "rotator/RotatorRuntimeProvider.h"
 #include "data/StationProfile.h"
 #include "data/AntProfile.h"
+#include "data/ActivityProfile.h"
 
 class RuntimeWorker : public QThread
 {
@@ -50,6 +51,8 @@ private slots:
     void antennaStateTracksSelectedProfile();
     void antennaStateHandlesUnsetAndInvalidNumbers();
     void antennaStateReadFromAnotherThread();
+    void activityStateTracksSelectedProfile();
+    void activityStateReadFromAnotherThread();
     void readsInOwnerThread();
     void addingFieldUsesSameCollectionPath();
     void fieldWithoutDescriptionCannotBeRegistered();
@@ -91,6 +94,19 @@ void RuntimeContextTest::initTestCase()
     QVERIFY(query.exec("INSERT INTO ant_profiles VALUES "
                        "('Beam', 1, 'Two-element beam', 60, 20, '[\"20m\",\"15m\"]', 'Roof'), "
                        "('Wire', NULL, '', 0, 0, '[]', '')"));
+    QVERIFY(query.exec("CREATE TABLE activity_profiles (profile_name TEXT PRIMARY KEY, "
+                       "selected INTEGER, config TEXT)"));
+    QVERIFY(query.prepare("INSERT INTO activity_profiles VALUES ('Home activity', 1, :config)"));
+    query.bindValue(":config", R"({"profiles":[
+        {"profileType":1,"name":"Home"},
+        {"profileType":2,"name":"Radio","params":[{"name":"connect","value":true}]},
+        {"profileType":0,"name":"Beam"},
+        {"profileType":3,"name":"Roof","params":[{"name":"connect","value":false}]}
+    ]})");
+    QVERIFY(query.exec());
+    QVERIFY(query.exec("INSERT INTO activity_profiles VALUES "
+                       "('None override', NULL, '{\"profiles\":[{\"profileType\":3,\"name\":\"\"}]}'), "
+                       "('No overrides', NULL, '{}')"));
 }
 
 void RuntimeContextTest::init()
@@ -100,6 +116,106 @@ void RuntimeContextTest::init()
                        "CASE WHEN profile_name = 'Home' THEN 1 ELSE NULL END"));
     QVERIFY(query.exec("UPDATE ant_profiles SET selected = "
                        "CASE WHEN profile_name = 'Beam' THEN 1 ELSE NULL END"));
+    QVERIFY(query.exec("UPDATE activity_profiles SET selected = "
+                       "CASE WHEN profile_name = 'Home activity' THEN 1 ELSE NULL END"));
+}
+
+void RuntimeContextTest::activityStateTracksSelectedProfile()
+{
+    ActivityProfilesManager manager;
+    auto provider = manager.findChild<RuntimeProvider *>();
+    QVERIFY(provider);
+    QCOMPARE(provider->parent(), &manager);
+    QCOMPARE(provider->thread(), manager.thread());
+    RuntimeContext context;
+    QVERIFY(context.addProvider("activity", "Current Activity configuration", provider));
+    QObject owner;
+    RuntimeProvider radio(&owner);
+    radio.addBoolean("rig_connected", "Actual radio connection", []() { return false; });
+    QVERIFY(context.addProvider("rig", "Radio state", &radio));
+    const QJsonObject fields = context.schema({"activity"}).value("fields").toObject();
+    QCOMPARE(fields.size(), 7);
+    QVERIFY(!fields.contains("rig_connected"));
+    for ( const QJsonValue &field : fields )
+    {
+        const QJsonObject metadata = field.toObject();
+        QVERIFY(!metadata.value("description").toString().isEmpty());
+        QCOMPARE(metadata.value("nullable"), QJsonValue(true));
+        QCOMPARE(metadata.value("source").toString(), QString("activity"));
+    }
+    QCOMPARE(fields.value("activity_rotator_connect").toObject().value("type").toString(),
+             QString("boolean"));
+    QSignalSpy ready(&context, &RuntimeContext::contextReady);
+    context.collect(1, 1000, {"activity"});
+    QTRY_COMPARE(ready.count(), 1);
+    QJsonObject values = ready.last().at(1).toJsonObject().value("values").toObject();
+    const QJsonObject expected{{"activity_profile", "Home activity"},
+                              {"activity_station_profile", "Home"}, {"activity_rig_profile", "Radio"},
+                              {"activity_antenna_profile", "Beam"}, {"activity_rotator_profile", "Roof"},
+                              {"activity_rig_connect", true}, {"activity_rotator_connect", false}};
+    QCOMPARE(values, expected);
+    QVERIFY(ready.last().at(1).toJsonObject().value("issues").toObject().isEmpty());
+
+    // Change selection without applying equipment presets: this suite tests the read-only bridge.
+    QVERIFY(manager.__setCurProfile1("None override"));
+    context.collect(2, 1000, {"activity"});
+    QTRY_COMPARE(ready.count(), 2);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("activity_rotator_profile"), QJsonValue(""));
+    QVERIFY(values.value("activity_rotator_connect").isNull());
+    QVERIFY(values.value("activity_rig_profile").isNull());
+    QVERIFY(values.value("activity_rig_connect").isNull());
+
+    QVERIFY(manager.__setCurProfile1("No overrides"));
+    context.collect(3, 1000, {"activity"});
+    QTRY_COMPARE(ready.count(), 3);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("activity_profile"), QJsonValue("No overrides"));
+    QVERIFY(values.value("activity_rotator_profile").isNull());
+
+    ActivityProfile profile = manager.getCurProfile1();
+    profile.profiles[ActivityProfile::RIG_PROFILE].name = "Updated radio";
+    profile.profiles[ActivityProfile::RIG_PROFILE].params[ActivityProfile::CONNECT] = false;
+    manager.addProfile(profile.profileName, profile);
+    context.collect(4, 1000, {"activity"});
+    QTRY_COMPARE(ready.count(), 4);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("activity_rig_profile"), QJsonValue("Updated radio"));
+    QCOMPARE(values.value("activity_rig_connect"), QJsonValue(false));
+
+    QVERIFY(manager.__setCurProfile1(QString()));
+    context.collect(5, 1000, {"activity"});
+    QTRY_COMPARE(ready.count(), 5);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.size(), 7);
+    for ( const QJsonValue &value : values )
+        QVERIFY(value.isNull());
+    QVERIFY(ready.last().at(1).toJsonObject().value("issues").toObject().isEmpty());
+}
+
+void RuntimeContextTest::activityStateReadFromAnotherThread()
+{
+    ActivityProfilesManager manager;
+    auto provider = manager.findChild<RuntimeProvider *>();
+    QVERIFY(provider);
+    QJsonObject result;
+    QThread *collectionThread = nullptr;
+    connect(provider, &RuntimeProvider::snapshotReady, this,
+            [&collectionThread]() { collectionThread = QThread::currentThread(); }, Qt::DirectConnection);
+    auto context = new RuntimeContext;
+    QVERIFY(context->addProvider("activity", "Current Activity configuration", provider));
+    connect(context, &RuntimeContext::contextReady, this,
+            [&result](quint64, const QJsonObject &snapshot) { result = snapshot; }, Qt::QueuedConnection);
+    RuntimeWorker worker(context);
+    worker.start();
+    QVERIFY(manager.__setCurProfile1("None override"));
+    context->collect(1, 1000, {"activity"});
+    QTRY_VERIFY(!result.isEmpty());
+    QCOMPARE(collectionThread, manager.thread());
+    const QJsonObject values = result.value("values").toObject();
+    QCOMPARE(values.value("activity_profile"), QJsonValue("None override"));
+    QCOMPARE(values.value("activity_rotator_profile"), QJsonValue(""));
+    QVERIFY(result.value("issues").toObject().isEmpty());
 }
 
 void RuntimeContextTest::antennaStateTracksSelectedProfile()
