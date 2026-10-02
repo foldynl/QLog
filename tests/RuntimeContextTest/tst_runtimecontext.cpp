@@ -5,6 +5,7 @@
 #include "mcpbridge/RuntimeContext.h"
 #include "mcpbridge/RuntimeProvider.h"
 #include "rig/RigRuntimeProvider.h"
+#include "rotator/RotatorRuntimeProvider.h"
 
 class RuntimeWorker : public QThread
 {
@@ -39,6 +40,8 @@ private slots:
     void extendedRigStateRejectsInvalidValues_data();
     void extendedRigStateRejectsInvalidValues();
     void extendedRigStateInWorkerThread();
+    void rotatorStateTracksAvailability();
+    void rotatorStateInWorkerThread();
     void readsInOwnerThread();
     void addingFieldUsesSameCollectionPath();
     void fieldWithoutDescriptionCannotBeRegistered();
@@ -485,6 +488,97 @@ void RuntimeContextTest::extendedRigStateInWorkerThread()
     QCOMPARE(values.value("rig_rx_offset"), QJsonValue(-500));
     QCOMPARE(values.value("rig_tx_offset"), QJsonValue(500));
     QCOMPARE(values.value("rig_tx_frequency"), QJsonValue(7025000));
+}
+
+void RuntimeContextTest::rotatorStateTracksAvailability()
+{
+    Rotator::Status status;
+    QObject owner;
+    auto provider = createRotatorRuntimeProvider(&owner, status);
+    QSignalSpy ready(provider, &RuntimeProvider::snapshotReady);
+    status.isConnected = true;
+    provider->collect(1);
+    QJsonObject values = ready.last().at(1).toJsonObject();
+    QVERIFY(values.value("rotator_azimuth").isNull());
+    QVERIFY(values.value("rotator_elevation").isNull());
+    status.azimuthKnown = true;
+    provider->collect(2);
+    values = ready.last().at(1).toJsonObject();
+    QCOMPARE(values.value("rotator_azimuth"), QJsonValue(0));
+    QVERIFY(values.value("rotator_elevation").isNull());
+    status.elevationKnown = true;
+    status.elevation = -10;
+    provider->collect(3);
+    QCOMPARE(ready.last().at(1).toJsonObject().value("rotator_elevation"), QJsonValue(-10));
+    status.elevation = 120;
+    provider->collect(4);
+    QCOMPARE(ready.last().at(1).toJsonObject().value("rotator_elevation"), QJsonValue(120));
+    for ( const double angle : {-1.0, 360.0, std::numeric_limits<double>::infinity(),
+                               std::numeric_limits<double>::quiet_NaN()} )
+    {
+        status.azimuth = angle;
+        provider->collect(5);
+        QVERIFY(ready.last().at(1).toJsonObject().value("rotator_azimuth").isNull());
+    }
+    for ( const double angle : {std::numeric_limits<double>::infinity(),
+                               std::numeric_limits<double>::quiet_NaN()} )
+    {
+        status.elevation = angle;
+        provider->collect(6);
+        QVERIFY(ready.last().at(1).toJsonObject().value("rotator_elevation").isNull());
+    }
+    status.isConnected = false;
+    status.azimuth = 90;
+    status.elevation = 45;
+    status.profile = "Old profile";
+    status.backend = "Hamlib";
+    status.modelName = "Old model";
+    provider->collect(7);
+    values = ready.last().at(1).toJsonObject();
+    QCOMPARE(values.value("rotator_connected"), QJsonValue(false));
+    for ( auto field = values.constBegin(); field != values.constEnd(); ++field )
+        if ( field.key() != "rotator_connected" )
+            QVERIFY2(field.value().isNull(), qPrintable(field.key()));
+}
+
+void RuntimeContextTest::rotatorStateInWorkerThread()
+{
+    Rotator::Status status;
+    auto owner = new QObject;
+    auto provider = createRotatorRuntimeProvider(owner, status);
+    RuntimeWorker worker(owner);
+    RuntimeContext context;
+    QVERIFY(context.addProvider("rotator", "Rotator state", provider));
+    QSignalSpy ready(&context, &RuntimeContext::contextReady);
+    worker.start();
+    QVERIFY(QMetaObject::invokeMethod(owner, [&status]()
+    {
+        status.isConnected = true;
+        status.profile = "Roof";
+        status.backend = "PSTRotator";
+        status.azimuth = 270;
+        status.azimuthKnown = true;
+    }, Qt::QueuedConnection));
+    context.collect(1, 1000, {"rotator"});
+    QTRY_COMPARE(ready.count(), 1);
+    QJsonObject values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("rotator_connected"), QJsonValue(true));
+    QCOMPARE(values.value("rotator_profile").toString(), QString("Roof"));
+    QCOMPARE(values.value("rotator_backend").toString(), QString("PSTRotator"));
+    QCOMPARE(values.value("rotator_azimuth"), QJsonValue(270));
+    QVERIFY(values.value("rotator_elevation").isNull());
+    QVERIFY(QMetaObject::invokeMethod(owner, [&status]()
+    {
+        status.azimuth = 90;
+        status.elevation = 0;
+        status.elevationKnown = true;
+    }, Qt::QueuedConnection));
+    context.collect(2, 1000, {"rotator"});
+    QTRY_COMPARE(ready.count(), 2);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("rotator_azimuth"), QJsonValue(90));
+    QCOMPARE(values.value("rotator_elevation"), QJsonValue(0));
+    QVERIFY(ready.last().at(1).toJsonObject().value("issues").toObject().isEmpty());
 }
 
 void RuntimeContextTest::readsInOwnerThread()

@@ -21,6 +21,8 @@ public:
     virtual void setPosition(double azimuth, double elevation) = 0;
     virtual void stopTimers() = 0;
     double normalizeAzimuth(double azimuth) const;
+    bool isAzimuthKnown() const { return azimuthKnown; }
+    bool isElevationKnown() const { return elevationKnown; }
 
 signals:
     void rotIsReady();
@@ -38,6 +40,9 @@ protected:
     bool opened;
     double azimuth;
     double elevation;
+    // Set independently only after a successful report for the respective axis.
+    bool azimuthKnown = false;
+    bool elevationKnown = false;
 };
 
 #endif // QLOG_ROTATOR_DRIVERS_GENERICROTDRV_H

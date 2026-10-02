@@ -204,13 +204,33 @@ static void startRigThread(RuntimeContext &runtimeContext)
     rigThreadHandle->start();
 }
 
-static void startRotThread() {
+static void startRotThread(RuntimeContext &runtimeContext)
+{
     FCT_IDENTIFICATION;
 
     rotThreadHandle = new QThread;
     Rotator* rot = Rotator::instance();
     rot->moveToThread(rotThreadHandle);
-    QObject::connect(rotThreadHandle, SIGNAL(started()), rot, SLOT(start()));
+    if ( !runtimeContext.addProvider(QStringLiteral("rotator"),
+            QStringLiteral("Latest state of the antenna rotator controlled by QLog: ready driver "
+                           "connection, rotator-control profile, backend (Hamlib or PSTRotator), "
+                           "configured Hamlib model/driver label when known, and reported antenna "
+                           "azimuth and elevation in degrees. Use for questions about where the "
+                           "antenna is pointing, its elevation, or the rotator connection. "
+                           "Azimuth is clockwise from north in [0, 360), with the antenna-profile "
+                           "offset already applied; do not add it again. These are last reported "
+                           "positions, not requested targets, movement status, or proof that a "
+                           "target has been reached. PSTRotator connection means the UDP interface "
+                           "is open, not verified physical hardware readiness. Axes can arrive "
+                           "separately; null means disconnected, unsupported, not yet reported "
+                           "or invalid, while zero can be a valid reading. Values can change at "
+                           "any time; make a new read for each current-state question. Reading "
+                           "this source does not poll or move the hardware. This source does "
+                           "not provide antenna identity, radio state or historical QSO bearings; "
+                           "read its field schema for exact meanings and limitations."),
+            rot->getRuntimeProvider()) )
+        qCWarning(runtime) << "Cannot register rotator runtime provider";
+    QObject::connect(rotThreadHandle, &QThread::started, rot, &Rotator::start);
     rotThreadHandle->start();
 }
 
@@ -541,7 +561,7 @@ int main(int argc, char* argv[])
     {
         RuntimeContext runtimeContext;
         startRigThread(runtimeContext);
-        startRotThread();
+        startRotThread(runtimeContext);
         startCWKeyerThread();
 
         RuntimeServer runtimeServer(runtimeContext);

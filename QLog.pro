@@ -174,6 +174,7 @@ SOURCES += \
         rig/drivers/TCIRigDrv.cpp \
         rotator/RotCaps.cpp \
         rotator/Rotator.cpp \
+        rotator/RotatorRuntimeProvider.cpp \
         rotator/drivers/GenericRotDrv.cpp \
         rotator/drivers/HamlibRotDrv.cpp \
         rotator/drivers/PSTRotDrv.cpp \
@@ -406,6 +407,7 @@ HEADERS += \
         rig/macros.h \
         rotator/RotCaps.h \
         rotator/Rotator.h \
+        rotator/RotatorRuntimeProvider.h \
         rotator/drivers/GenericRotDrv.h \
         rotator/drivers/HamlibRotDrv.h \
         rotator/drivers/PSTRotDrv.h \

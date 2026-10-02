@@ -1,5 +1,6 @@
 #include <QNetworkDatagram>
 #include <QHostInfo>
+#include <QtMath>
 #include "core/debug.h"
 #include "PSTRotDrv.h"
 
@@ -230,14 +231,32 @@ void PSTRotDrv::readPendingDatagrams()
         double newAzimuth = azimuth;
         double newElevation = elevation;
 
-        if ( data.startsWith("EL:") )
-            newElevation = data.mid(3).toDouble();
-        else if ( data.startsWith("AZ:") )
-            newAzimuth = fromRotatorAzimuth(data.mid(3).toDouble());
-        else
+        const bool isElevation = data.startsWith("EL:");
+        const bool isAzimuth = data.startsWith("AZ:");
+        if ( !isElevation && !isAzimuth )
         {
             qCWarning(runtime) << "Unexpected packet - skipping";
             continue;
+        }
+
+        bool valid = false;
+        const double value = data.mid(3).toDouble(&valid);
+        if ( !valid || !qIsFinite(value) )
+        {
+            qCWarning(runtime) << "Invalid rotator position - skipping";
+            continue;
+        }
+
+        const bool firstReport = isElevation ? !elevationKnown : !azimuthKnown;
+        if ( isElevation )
+        {
+            newElevation = value;
+            elevationKnown = true;
+        }
+        else
+        {
+            newAzimuth = fromRotatorAzimuth(value);
+            azimuthKnown = true;
         }
 
         timeoutTimer.stop();
@@ -250,7 +269,7 @@ void PSTRotDrv::readPendingDatagrams()
                          << azimuth
                          << elevation;
 
-        if ( newAzimuth != azimuth
+        if ( firstReport || newAzimuth != azimuth
              || newElevation != elevation
              || forceSendState )
         {

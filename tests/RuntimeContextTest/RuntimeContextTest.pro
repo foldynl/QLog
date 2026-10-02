@@ -10,9 +10,11 @@ SOURCES += \
     tst_runtimecontext.cpp \
     ../../mcpbridge/RuntimeProvider.cpp \
     ../../mcpbridge/RuntimeContext.cpp \
-    ../../rig/RigRuntimeProvider.cpp
+    ../../rig/RigRuntimeProvider.cpp \
+    ../../rotator/RotatorRuntimeProvider.cpp
 
 HEADERS += \
     ../../mcpbridge/RuntimeProvider.h \
     ../../mcpbridge/RuntimeContext.h \
-    ../../rig/RigRuntimeProvider.h
+    ../../rig/RigRuntimeProvider.h \
+    ../../rotator/RotatorRuntimeProvider.h
