@@ -19,6 +19,7 @@ SOURCES += \
     ../../rotator/drivers/PSTRotDrv.cpp \
     ../../rotator/RotCaps.cpp \
     ../../data/AntProfile.cpp \
+    ../../data/AntennaRuntimeProvider.cpp \
     ../../data/RotProfile.cpp \
     ../../data/SerialPort.cpp
 
@@ -30,6 +31,7 @@ HEADERS += \
     ../../rotator/drivers/GenericRotDrv.h \
     ../../rotator/drivers/PSTRotDrv.h \
     ../../data/AntProfile.h \
+    ../../data/AntennaRuntimeProvider.h \
     ../../data/RotProfile.h \
     ../../data/ProfileManager.h \
     ../../data/SerialPort.h

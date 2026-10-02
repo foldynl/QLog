@@ -147,6 +147,8 @@ void RotatorReportingTest::pstSnapshotKeepsUnreportedAxisUnknown()
     rotator.driverReady();
     RuntimeContext context;
     QVERIFY(context.addProvider("rotator", "Rotator state", rotator.getRuntimeProvider()));
+    QVERIFY(context.addProvider("antenna", "Antenna configuration",
+                                 AntProfilesManager::instance()->getRuntimeProvider()));
     QSignalSpy ready(&context, &RuntimeContext::contextReady);
     QUdpSocket sender;
     QCOMPARE(sender.writeDatagram("AZ:0", QHostAddress::LocalHost, driver->receiveSocket.localPort()), qint64(4));
@@ -173,11 +175,19 @@ void RotatorReportingTest::pstSnapshotKeepsUnreportedAxisUnknown()
     QCOMPARE(sender.writeDatagram("AZ:350", QHostAddress::LocalHost, driver->receiveSocket.localPort()), qint64(6));
     QTRY_VERIFY(driver->receiveSocket.hasPendingDatagrams());
     driver->readPendingDatagrams();
-    antenna.azimuthOffset = 0;
-    AntProfilesManager::instance()->addProfile(antenna.profileName, antenna);
     context.collect(3);
     QTRY_COMPARE(ready.count(), 3);
     values = ready.last().at(1).toJsonObject().value("values").toObject();
+    antenna.azimuthOffset = 0;
+    AntProfilesManager::instance()->addProfile(antenna.profileName, antenna);
+    QCOMPARE(values.value("antenna_azimuth_offset"), QJsonValue(30));
+    QCOMPARE(values.value("rotator_azimuth"), QJsonValue(20));
+
+    // Editing configuration does not rewrite the last position report.
+    context.collect(4);
+    QTRY_COMPARE(ready.count(), 4);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("antenna_azimuth_offset"), QJsonValue(0));
     QCOMPARE(values.value("rotator_azimuth"), QJsonValue(20));
     QCOMPARE(values.value("rotator_elevation"), QJsonValue(0));
 }

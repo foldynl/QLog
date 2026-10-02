@@ -124,6 +124,7 @@ SOURCES += \
         cwkey/drivers/CWWinKey.cpp \
         data/ActivityProfile.cpp \
         data/AntProfile.cpp \
+        data/AntennaRuntimeProvider.cpp \
         data/BandmapGuide.cpp \
         data/BandPlan.cpp \
         data/Accents.cpp \
@@ -338,6 +339,7 @@ HEADERS += \
         cwkey/drivers/CWWinKey.h \
         data/ActivityProfile.h \
         data/AntProfile.h \
+        data/AntennaRuntimeProvider.h \
         data/Band.h \
         data/BandmapGuide.h \
         data/BandPlan.h \

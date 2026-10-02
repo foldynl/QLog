@@ -7,6 +7,7 @@
 #include "rig/RigRuntimeProvider.h"
 #include "rotator/RotatorRuntimeProvider.h"
 #include "data/StationProfile.h"
+#include "data/AntProfile.h"
 
 class RuntimeWorker : public QThread
 {
@@ -46,6 +47,9 @@ private slots:
     void rotatorStateInWorkerThread();
     void stationStateTracksSelectedProfile();
     void stationStateReadFromAnotherThread();
+    void antennaStateTracksSelectedProfile();
+    void antennaStateHandlesUnsetAndInvalidNumbers();
+    void antennaStateReadFromAnotherThread();
     void readsInOwnerThread();
     void addingFieldUsesSameCollectionPath();
     void fieldWithoutDescriptionCannotBeRegistered();
@@ -82,6 +86,11 @@ void RuntimeContextTest::initTestCase()
     QVERIFY(query.exec("INSERT INTO station_profiles (profile_name, selected, callsign, locator, wwff) "
                        "VALUES ('Home', 1, 'OK1AAA', 'JO70AA', 'OKFF-0002'), "
                        "('Portable', NULL, 'OK1AAA/P', 'JN79AA', NULL)"));
+    QVERIFY(query.exec("CREATE TABLE ant_profiles (profile_name TEXT PRIMARY KEY, selected INTEGER, "
+                       "desc TEXT, azimuth_beamwidth REAL, azimuth_offset REAL, bands TEXT, rot_profile TEXT)"));
+    QVERIFY(query.exec("INSERT INTO ant_profiles VALUES "
+                       "('Beam', 1, 'Two-element beam', 60, 20, '[\"20m\",\"15m\"]', 'Roof'), "
+                       "('Wire', NULL, '', 0, 0, '[]', '')"));
 }
 
 void RuntimeContextTest::init()
@@ -89,6 +98,126 @@ void RuntimeContextTest::init()
     QSqlQuery query;
     QVERIFY(query.exec("UPDATE station_profiles SET selected = "
                        "CASE WHEN profile_name = 'Home' THEN 1 ELSE NULL END"));
+    QVERIFY(query.exec("UPDATE ant_profiles SET selected = "
+                       "CASE WHEN profile_name = 'Beam' THEN 1 ELSE NULL END"));
+}
+
+void RuntimeContextTest::antennaStateTracksSelectedProfile()
+{
+    AntProfilesManager manager;
+    auto provider = manager.findChild<RuntimeProvider *>();
+    QVERIFY(provider);
+    QCOMPARE(provider->parent(), &manager);
+    QCOMPARE(provider->thread(), manager.thread());
+    RuntimeContext context;
+    QVERIFY(context.addProvider("antenna", "Currently selected antenna configuration", provider));
+    QObject radioOwner;
+    RuntimeProvider radio(&radioOwner);
+    radio.addBoolean("rig_connected", "Radio connection", []() { return true; });
+    QVERIFY(context.addProvider("rig", "Radio state", &radio));
+    const QJsonObject fields = context.schema({"antenna"}).value("fields").toObject();
+    QCOMPARE(fields.size(), 6);
+    QVERIFY(!fields.contains("rig_connected"));
+    for ( const QJsonValue &field : fields )
+    {
+        const QJsonObject metadata = field.toObject();
+        QVERIFY(!metadata.value("description").toString().isEmpty());
+        QCOMPARE(metadata.value("nullable"), QJsonValue(true));
+        QCOMPARE(metadata.value("source").toString(), QString("antenna"));
+    }
+    QCOMPARE(fields.value("antenna_bands").toObject().value("type").toString(), QString("string"));
+    QCOMPARE(fields.value("antenna_azimuth_offset").toObject().value("unit").toString(), QString("deg"));
+    QCOMPARE(fields.value("antenna_azimuth_beamwidth").toObject().value("unit").toString(), QString("deg"));
+    QSignalSpy ready(&context, &RuntimeContext::contextReady);
+    context.collect(1, 1000, {"antenna"});
+    QTRY_COMPARE(ready.count(), 1);
+    QJsonObject values = ready.last().at(1).toJsonObject().value("values").toObject();
+    const QJsonObject expected{{"antenna_profile", "Beam"}, {"antenna_description", "Two-element beam"},
+                              {"antenna_bands", "20m,15m"}, {"antenna_azimuth_offset", 20},
+                              {"antenna_azimuth_beamwidth", 60}, {"antenna_rotator_profile", "Roof"}};
+    QCOMPARE(values, expected);
+    QVERIFY(ready.last().at(1).toJsonObject().value("issues").toObject().isEmpty());
+
+    context.collect(2, 1000, {"antenna"});
+    manager.setCurProfile1("Wire");
+    QTRY_COMPARE(ready.count(), 2);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("antenna_profile").toString(), QString("Wire"));
+    QCOMPARE(values.value("antenna_azimuth_offset"), QJsonValue(0));
+    QVERIFY(values.value("antenna_description").isNull());
+    QVERIFY(values.value("antenna_bands").isNull());
+    QVERIFY(values.value("antenna_azimuth_beamwidth").isNull());
+    QVERIFY(values.value("antenna_rotator_profile").isNull());
+
+    AntProfile profile = manager.getCurProfile1();
+    profile.azimuthOffset = -30;
+    profile.description = "Changed wire";
+    manager.addProfile(profile.profileName, profile);
+    context.collect(3, 1000, {"antenna"});
+    QTRY_COMPARE(ready.count(), 3);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("antenna_azimuth_offset"), QJsonValue(-30));
+    QCOMPARE(values.value("antenna_description").toString(), QString("Changed wire"));
+
+    manager.removeProfile("Wire");
+    context.collect(4, 1000, {"antenna"});
+    QTRY_COMPARE(ready.count(), 4);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.size(), 6);
+    for ( const QJsonValue &value : values )
+        QVERIFY(value.isNull());
+    QVERIFY(ready.last().at(1).toJsonObject().value("issues").toObject().isEmpty());
+}
+
+void RuntimeContextTest::antennaStateHandlesUnsetAndInvalidNumbers()
+{
+    AntProfilesManager manager;
+    auto provider = manager.findChild<RuntimeProvider *>();
+    QVERIFY(provider);
+    RuntimeContext context;
+    QVERIFY(context.addProvider("antenna", "Antenna configuration", provider));
+    QSignalSpy ready(&context, &RuntimeContext::contextReady);
+    AntProfile profile = manager.getCurProfile1();
+    for ( const double value : {0.0, -1.0, std::numeric_limits<double>::infinity(),
+                                std::numeric_limits<double>::quiet_NaN()} )
+    {
+        profile.azimuthOffset = value;
+        profile.azimuthBeamWidth = value;
+        manager.addProfile(profile.profileName, profile);
+        ready.clear();
+        context.collect(1, 1000, {"antenna"});
+        QTRY_COMPARE(ready.count(), 1);
+        const QJsonObject values = ready.last().at(1).toJsonObject().value("values").toObject();
+        QVERIFY(values.value("antenna_azimuth_beamwidth").isNull());
+        if ( qIsFinite(value) )
+            QCOMPARE(values.value("antenna_azimuth_offset"), QJsonValue(value));
+        else
+            QVERIFY(values.value("antenna_azimuth_offset").isNull());
+    }
+}
+
+void RuntimeContextTest::antennaStateReadFromAnotherThread()
+{
+    AntProfilesManager manager;
+    auto provider = manager.findChild<RuntimeProvider *>();
+    QVERIFY(provider);
+    QJsonObject result;
+    QThread *collectionThread = nullptr;
+    connect(provider, &RuntimeProvider::snapshotReady, this,
+            [&collectionThread]() { collectionThread = QThread::currentThread(); }, Qt::DirectConnection);
+    auto context = new RuntimeContext;
+    QVERIFY(context->addProvider("antenna", "Current antenna configuration", provider));
+    connect(context, &RuntimeContext::contextReady, this,
+            [&result](quint64, const QJsonObject &snapshot) { result = snapshot; }, Qt::QueuedConnection);
+    RuntimeWorker worker(context);
+    worker.start();
+    manager.setCurProfile1("Wire");
+    context->collect(1, 1000, {"antenna"});
+    QTRY_VERIFY(!result.isEmpty());
+    QCOMPARE(collectionThread, manager.thread());
+    QCOMPARE(result.value("values").toObject().value("antenna_profile").toString(), QString("Wire"));
+    QCOMPARE(result.value("values").toObject().value("antenna_azimuth_offset"), QJsonValue(0));
+    QVERIFY(result.value("issues").toObject().isEmpty());
 }
 
 void RuntimeContextTest::stationStateTracksSelectedProfile()

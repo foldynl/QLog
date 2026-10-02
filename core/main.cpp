@@ -25,6 +25,7 @@
 #include "service/kstchat/KSTChat.h"
 #include "data/Data.h"
 #include "data/StationProfile.h"
+#include "data/AntProfile.h"
 #include "service/GenericCallbook.h"
 #include "core/LogDatabase.h"
 #include "mcpbridge/RuntimeContext.h"
@@ -577,6 +578,27 @@ int main(int argc, char* argv[])
                                                         "values or no selected profile produce null fields."),
                                          StationProfilesManager::instance()->getRuntimeProvider()) )
             qCWarning(runtime) << "Cannot register station runtime provider";
+        if ( !runtimeContext.addProvider(QStringLiteral("antenna"),
+                                         QStringLiteral("Currently selected local antenna profile: name, "
+                                                        "user description, configured bands, horizontal "
+                                                        "beamwidth, signed azimuth offset and assigned "
+                                                        "rotator-control profile. Use for questions about "
+                                                        "my selected antenna, its settings or why antenna "
+                                                        "bearing differs from the raw rotator display. "
+                                                        "Read antenna and rotator together for their relation: "
+                                                        "rotator_azimuth already includes the antenna offset "
+                                                        "applied when the last position report arrived; never "
+                                                        "apply it again. Assignment is configuration; an "
+                                                        "Activity Rotator Override can choose a different "
+                                                        "rotator. rotator_profile and rotator_connected report "
+                                                        "the actual connection. Selecting an antenna does not "
+                                                        "verify physical connection, RF switching or tuning. "
+                                                        "Profiles and settings can change while QLog runs; "
+                                                        "read anew for each current-state question. Antenna "
+                                                        "settings and rotator reports are collected from "
+                                                        "different owners, not one atomic hardware snapshot."),
+                                         AntProfilesManager::instance()->getRuntimeProvider()) )
+            qCWarning(runtime) << "Cannot register antenna runtime provider";
         startRigThread(runtimeContext);
         startRotThread(runtimeContext);
         startCWKeyerThread();

@@ -20,7 +20,10 @@ RuntimeProvider *createRotatorRuntimeProvider(QObject *owner, const Rotator::Sta
     provider->addString("rotator_profile",
                         QStringLiteral("Name of the rotator-control profile used by the connected "
                                        "driver (device and connection settings). Not an antenna, "
-                                       "radio or logging-station profile. Null when disconnected "
+                                       "radio or logging-station profile. antenna_rotator_profile is "
+                                       "the selected antenna's configured assignment, which an Activity "
+                                       "Rotator Override may supersede; use this field for the actual "
+                                       "connected driver's profile. Null when disconnected "
                                        "or no profile name is known."),
                         [&status]()
                         {
@@ -55,8 +58,14 @@ RuntimeProvider *createRotatorRuntimeProvider(QObject *owner, const Rotator::Sta
     provider->addNumber("rotator_azimuth",
                         QStringLiteral("Latest antenna azimuth reported to QLog by the rotator driver, "
                                        "in degrees clockwise from north: 0 north, 90 east, 180 south, "
-                                       "270 west; range [0, 360). Includes the antenna-profile azimuth "
-                                       "offset already applied by the driver; do not add it again. "
+                                       "270 west; range [0, 360). Already corrected by the driver using "
+                                       "the selected antenna profile's antenna_azimuth_offset at report "
+                                       "time: normalize(raw rotator azimuth + offset). Never add or "
+                                       "subtract the offset again. Example: raw 100 degrees with +20 "
+                                       "offset produces 120 here. Read the antenna source to explain "
+                                       "configuration, not to recalculate this bearing. The current "
+                                       "antenna settings may have changed since the last report; reads "
+                                       "of different sources are not an atomic hardware snapshot. "
                                        "This is a reported position, not a requested target, bearing "
                                        "to a contact, or proof that movement has stopped. Null when "
                                        "disconnected or no valid azimuth report has arrived for this "

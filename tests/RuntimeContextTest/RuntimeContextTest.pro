@@ -14,6 +14,8 @@ SOURCES += \
     ../../rotator/RotatorRuntimeProvider.cpp \
     ../../data/StationProfile.cpp \
     ../../data/StationRuntimeProvider.cpp \
+    ../../data/AntProfile.cpp \
+    ../../data/AntennaRuntimeProvider.cpp \
     ../../data/Gridsquare.cpp \
     ../../core/LogLocale.cpp
 
@@ -24,4 +26,6 @@ HEADERS += \
     ../../rotator/RotatorRuntimeProvider.h \
     ../../data/StationProfile.h \
     ../../data/StationRuntimeProvider.h \
+    ../../data/AntProfile.h \
+    ../../data/AntennaRuntimeProvider.h \
     ../../data/ProfileManager.h
