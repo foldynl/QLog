@@ -6,6 +6,10 @@
 #include <QTemporaryDir>
 #include <QThread>
 #include <QUuid>
+#ifdef Q_OS_LINUX
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
 
 #include "mcpbridge/RuntimeContext.h"
 #include "mcpbridge/RuntimeProvider.h"
@@ -52,12 +56,35 @@ public:
     }
 };
 
+class RuntimeEnvironment
+{
+public:
+    const QByteArray original = qgetenv("XDG_RUNTIME_DIR");
+
+    explicit RuntimeEnvironment(const QString &directory)
+    {
+        qputenv("XDG_RUNTIME_DIR", QFile::encodeName(directory));
+    }
+
+    ~RuntimeEnvironment()
+    {
+        if ( original.isNull() )
+            qunsetenv("XDG_RUNTIME_DIR");
+        else
+            qputenv("XDG_RUNTIME_DIR", original);
+    }
+};
+
 class RuntimeServerTest : public QObject
 {
     Q_OBJECT
 
 private slots:
     void initTestCase();
+    void defaultEndpointUsesPrivateRuntimeDirectory_data();
+    void defaultEndpointUsesPrivateRuntimeDirectory();
+    void unsafeRuntimeDirectoryIsRejected_data();
+    void unsafeRuntimeDirectoryIsRejected();
     void serviceInformation_data();
     void serviceInformation();
     void fragmentedAndMultipleFrames();
@@ -90,6 +117,117 @@ void RuntimeServerTest::initTestCase()
 {
     QLoggingCategory::setFilterRules(QStringLiteral("*.debug=false"));
     QCoreApplication::setApplicationVersion("test-version");
+}
+
+void RuntimeServerTest::defaultEndpointUsesPrivateRuntimeDirectory_data()
+{
+    QTest::addColumn<bool>("existingDirectory");
+    QTest::addColumn<bool>("sandboxLink");
+    QTest::newRow("native-create") << false << false;
+    QTest::newRow("native-reuse") << true << false;
+    QTest::newRow("sandbox-app-link") << true << true;
+}
+
+void RuntimeServerTest::defaultEndpointUsesPrivateRuntimeDirectory()
+{
+#ifndef Q_OS_LINUX
+    QSKIP("The shared Flatpak endpoint is Linux-specific");
+#else
+    QFETCH(bool, existingDirectory);
+    QFETCH(bool, sandboxLink);
+    QTemporaryDir directory;
+    QTemporaryDir backing;
+    QVERIFY(directory.isValid());
+    QVERIFY(backing.isValid());
+    RuntimeEnvironment environment(directory.path());
+    if ( sandboxLink )
+        QVERIFY(QFile::link(backing.path(), directory.filePath("app")));
+    const QString appDirectory = directory.filePath("app/io.github.foldynl.QLog");
+    const QString endpoint = appDirectory + "/qlog-runtime";
+    if ( existingDirectory )
+    {
+        QVERIFY(QDir().mkpath(appDirectory));
+        QVERIFY(QFile::setPermissions(appDirectory, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner));
+    }
+    {
+        RuntimeContext context;
+        RuntimeServer server(context);
+        QVERIFY(server.listen());
+        struct stat info;
+        QVERIFY(::stat(QFile::encodeName(appDirectory).constData(), &info) == 0);
+        QCOMPARE(info.st_mode & 0777, mode_t(0700));
+        QCOMPARE(info.st_uid, ::geteuid());
+        QVERIFY(::lstat(QFile::encodeName(endpoint).constData(), &info) == 0);
+        QVERIFY(S_ISSOCK(info.st_mode));
+        QCOMPARE(info.st_mode & 0777, mode_t(0600));
+        QLocalSocket client;
+        client.connectToServer(endpoint);
+        QVERIFY(client.waitForConnected(1000));
+        client.write("{\"id\":1,\"method\":\"system.get_info\"}\n");
+        QCOMPARE(readReply(client).value("result").toObject().value("application").toString(), QString("QLog"));
+    }
+    QVERIFY(!QFile::exists(endpoint));
+    QVERIFY(QFile::exists(appDirectory));
+#endif
+}
+
+void RuntimeServerTest::unsafeRuntimeDirectoryIsRejected_data()
+{
+    QTest::addColumn<QString>("problem");
+    for ( const QString &problem : QStringList{"unset", "relative", "root-link", "shared-root", "shared-app", "app-link", "app-file"} )
+        QTest::newRow(qPrintable(problem)) << problem;
+}
+
+void RuntimeServerTest::unsafeRuntimeDirectoryIsRejected()
+{
+#ifndef Q_OS_LINUX
+    QSKIP("The shared Flatpak endpoint is Linux-specific");
+#else
+    QFETCH(QString, problem);
+    QTemporaryDir directory;
+    QTemporaryDir backing;
+    QVERIFY(directory.isValid());
+    QVERIFY(backing.isValid());
+    RuntimeEnvironment environment(problem == "relative" ? QString("relative") : directory.path());
+    if ( problem == "unset" )
+        qunsetenv("XDG_RUNTIME_DIR");
+    if ( problem == "root-link" )
+    {
+        const QString alias = directory.filePath("runtime-link");
+        QVERIFY(QFile::link(backing.path(), alias));
+        qputenv("XDG_RUNTIME_DIR", QFile::encodeName(alias));
+    }
+    const QString appDirectory = directory.filePath("app/io.github.foldynl.QLog");
+    if ( problem == "shared-root" )
+        QVERIFY(QFile::setPermissions(directory.path(), QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner | QFile::ReadOther | QFile::ExeOther));
+    if ( problem == "shared-app" )
+    {
+        QVERIFY(QDir().mkpath(appDirectory));
+        QVERIFY(QFile::setPermissions(appDirectory, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner | QFile::ReadOther | QFile::ExeOther));
+    }
+    if ( problem == "app-link" || problem == "app-file" )
+    {
+        QVERIFY(QDir().mkpath(directory.filePath("app")));
+        if ( problem == "app-link" )
+            QVERIFY(QFile::link(backing.path(), appDirectory));
+        else
+        {
+            QFile file(appDirectory);
+            QVERIFY(file.open(QIODevice::WriteOnly));
+            QCOMPARE(file.write("keep"), qint64(4));
+        }
+    }
+    RuntimeContext context;
+    RuntimeServer server(context);
+    QVERIFY(!server.listen());
+    QVERIFY(!QFile::exists(appDirectory + "/qlog-runtime"));
+    if ( problem == "app-file" )
+    {
+        QFile file(appDirectory);
+        QVERIFY(file.open(QIODevice::ReadOnly));
+        QCOMPARE(file.readAll(), QByteArray("keep"));
+    }
+#endif
 }
 
 QJsonObject RuntimeServerTest::readReply(QLocalSocket &client)

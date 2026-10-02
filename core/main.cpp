@@ -626,7 +626,7 @@ int main(int argc, char* argv[])
         startCWKeyerThread();
 
         RuntimeServer runtimeServer(runtimeContext);
-        runtimeServer.listen(QStringLiteral("qlog-runtime"));
+        runtimeServer.listen();
 
         MainWindow w;
         QIcon icon(":/res/qlog.png");

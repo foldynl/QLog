@@ -11,10 +11,15 @@
 #include <QTimer>
 #include <QtMath>
 #include <limits>
-#ifdef Q_OS_LINUX
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
+#include <QStandardPaths>
+#ifdef Q_OS_LINUX
 #include <sys/stat.h>
+#endif
+#ifdef Q_OS_UNIX
+#include <unistd.h>
 #endif
 
 MODULE_IDENTIFICATION("qlog.mcpbridge.runtimeserver");
@@ -26,6 +31,10 @@ RuntimeServer::RuntimeServer(RuntimeContext &context) :
 {
     FCT_IDENTIFICATION;
     Q_ASSERT(QThread::currentThread() == context.thread());
+#ifdef Q_OS_WIN
+    // Qt applies a user-only ACL to the named pipe; filesystem permissions do not apply.
+    server->setSocketOptions(QLocalServer::UserAccessOption);
+#endif
 
     connect(server, &QLocalServer::newConnection, this, &RuntimeServer::acceptConnections);
     connect(&context, &RuntimeContext::contextReady, this, &RuntimeServer::collectionReady);
@@ -44,37 +53,115 @@ RuntimeServer::~RuntimeServer()
     }
 }
 
+QString RuntimeServer::defaultEndpoint()
+{
+    FCT_IDENTIFICATION;
+
+#ifdef Q_OS_LINUX
+    // Do not use QStandardPaths' /tmp fallback: the MCP client must use the same desktop session.
+    const QString runtimeDirectory = QFile::decodeName(qgetenv("XDG_RUNTIME_DIR"));
+    if ( !QDir::isAbsolutePath(runtimeDirectory) || !isPrivateDirectory(QFileInfo(runtimeDirectory)) )
+    {
+        qCWarning(runtime) << "Cannot use private XDG_RUNTIME_DIR" << runtimeDirectory;
+        return QString();
+    }
+    // Flatpak bind-mounts this host directory; its intermediate 'app' path can be a symlink.
+    const QString appDirectory = QDir(runtimeDirectory).filePath("app/io.github.foldynl.QLog");
+#elif defined(Q_OS_MACOS)
+    // RuntimeLocation is ~/Library/Application Support on macOS, independent of GUI/CLI TMPDIR.
+    const QString runtimeDirectory = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
+    if ( !QDir::isAbsolutePath(runtimeDirectory) )
+    {
+        qCWarning(runtime) << "Cannot locate runtime directory" << runtimeDirectory;
+        return QString();
+    }
+    const QString appDirectory = QDir(runtimeDirectory).filePath("io.github.foldynl.QLog");
+#else
+    return QStringLiteral("qlog-runtime");
+#endif
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
+    QFileInfo appInfo(appDirectory);
+    if ( !appInfo.exists() && !appInfo.isSymLink() )
+    {
+        if ( !QDir().mkpath(appDirectory)
+             || !QFile::setPermissions(appDirectory, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner) )
+        {
+            qCWarning(runtime) << "Cannot create private runtime directory" << appDirectory;
+            return QString();
+        }
+        appInfo.refresh();
+    }
+    // Preserve existing directories and reject insecure permissions, files and final symlinks.
+    if ( !isPrivateDirectory(appInfo) )
+    {
+        qCWarning(runtime) << "Cannot use private runtime directory" << appDirectory;
+        return QString();
+    }
+    return QDir(appDirectory).filePath("qlog-runtime");
+#endif
+}
+
+#ifdef Q_OS_UNIX
+bool RuntimeServer::isPrivateDirectory(const QFileInfo &info)
+{
+    FCT_IDENTIFICATION;
+
+    const QFile::Permissions accessMask = QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner
+                                         | QFile::ReadGroup | QFile::WriteGroup | QFile::ExeGroup
+                                         | QFile::ReadOther | QFile::WriteOther | QFile::ExeOther;
+    const QFile::Permissions privatePermissions = QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner;
+    // QFileInfo also reports ReadUser/WriteUser/ExeUser; only the Unix owner/group/other bits matter.
+    return info.isDir() && !info.isSymLink() && info.ownerId() == uint(::geteuid())
+           && (info.permissions() & accessMask) == privatePermissions;
+}
+#endif
+
 bool RuntimeServer::listen(const QString &name)
 {
     FCT_IDENTIFICATION;
     qCDebug(function_parameters) << name;
     Q_ASSERT(QThread::currentThread() == thread());
 
-    bool listening = server->listen(name);
+    const QString endpoint = name.isEmpty() ? defaultEndpoint() : name;
+    if ( endpoint.isEmpty() )
+        return false;
+
+    // Unix keeps Qt's default bind behavior: access options can replace an existing endpoint.
+    bool listening = server->listen(endpoint);
 #ifdef Q_OS_LINUX
     // Other Unix systems can refuse connections even when a live listener's backlog is full.
     if ( !listening && server->serverError() == QAbstractSocket::AddressInUseError )
     {
         QLocalSocket probe;
-        probe.connectToServer(name);
+        probe.connectToServer(endpoint);
         // An inconclusive probe must not unlink a potentially live server.
         if ( !probe.waitForConnected(0) && probe.error() == QLocalSocket::ConnectionRefusedError )
         {
-            const QString path = QDir::isAbsolutePath(name) ? name : QDir::temp().filePath(name);
+            const QString path = QDir::isAbsolutePath(endpoint) ? endpoint : QDir::temp().filePath(endpoint);
             const QByteArray encodedPath = QFile::encodeName(path);
             struct stat fileInfo;
-            // Connection refusal alone also occurs for ordinary files; reject those and symlinks.
+            // QFileInfo has no socket type check; refusal also occurs for files, so keep lstat here.
             if ( ::lstat(encodedPath.constData(), &fileInfo) == 0 && S_ISSOCK(fileInfo.st_mode)
-                 && QLocalServer::removeServer(name) )
-                listening = server->listen(name);
+                 && fileInfo.st_uid == ::geteuid() && QLocalServer::removeServer(endpoint) )
+                listening = server->listen(endpoint);
         }
     }
 #endif
     if ( !listening )
     {
-        qCWarning(runtime) << "Cannot listen on runtime endpoint" << name << server->errorString();
+        qCWarning(runtime) << "Cannot listen on runtime endpoint" << endpoint << server->errorString();
         return false;
     }
+#ifdef Q_OS_UNIX
+    // The private app directory protects the default endpoint until its permissions are restricted.
+    if ( !QFile::setPermissions(server->fullServerName(), QFile::ReadOwner | QFile::WriteOwner) )
+    {
+        qCWarning(runtime) << "Cannot secure runtime socket" << server->fullServerName();
+        server->close();
+        return false;
+    }
+#endif
     qCDebug(runtime) << "Runtime endpoint" << server->fullServerName();
     return true;
 }

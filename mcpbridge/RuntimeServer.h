@@ -10,6 +10,7 @@
 class RuntimeContext;
 class QLocalServer;
 class QLocalSocket;
+class QFileInfo;
 
 // Protocol 1: UTF-8 JSON objects separated by '\n', with {id, method, params?}.
 // IDs are strings or integers in [-2^53 + 1, 2^53 - 1]. Schema/context params may
@@ -23,9 +24,15 @@ public:
     // Construct in the context's thread; the context owns the server.
     explicit RuntimeServer(RuntimeContext &context);
     ~RuntimeServer();
-    bool listen(const QString &name);
+    // Empty selects the fixed endpoint; named endpoints are used by isolated tests.
+    bool listen(const QString &name = QString());
 
 private:
+    static QString defaultEndpoint();
+#ifdef Q_OS_UNIX
+    static bool isPrivateDirectory(const QFileInfo &info);
+#endif
+
     struct PendingRequest
     {
         QPointer<QLocalSocket> client;
