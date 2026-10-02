@@ -24,6 +24,7 @@
 #include "core/MembershipQE.h"
 #include "service/kstchat/KSTChat.h"
 #include "data/Data.h"
+#include "data/StationProfile.h"
 #include "service/GenericCallbook.h"
 #include "core/LogDatabase.h"
 #include "mcpbridge/RuntimeContext.h"
@@ -560,6 +561,22 @@ int main(int argc, char* argv[])
 
     {
         RuntimeContext runtimeContext;
+        if ( !runtimeContext.addProvider(QStringLiteral("station"),
+                                         QStringLiteral("Currently selected local logging-station profile: "
+                                                        "station callsign, Maidenhead locator, operator name "
+                                                        "and callsign, QTH, country, county, DXCC entity, CQ/ITU "
+                                                        "zones, IOTA/POTA/SOTA/WWFF references, special-interest "
+                                                        "activity, VUCC boundary grids and DARC DOK. Use for "
+                                                        "questions about my station, who I am operating as, "
+                                                        "my configured location or activation references. "
+                                                        "These are profile settings, not GPS observations, "
+                                                        "contact data, or proof of an activation. Historical "
+                                                        "QSOs may use different station information. Profile "
+                                                        "selection and contents can change while QLog runs; "
+                                                        "read anew for each current-state question. Unset "
+                                                        "values or no selected profile produce null fields."),
+                                         StationProfilesManager::instance()->getRuntimeProvider()) )
+            qCWarning(runtime) << "Cannot register station runtime provider";
         startRigThread(runtimeContext);
         startRotThread(runtimeContext);
         startCWKeyerThread();

@@ -11,6 +11,8 @@
 
 #include "data/ProfileManager.h"
 
+class RuntimeProvider;
+
 class StationProfile
 {
 
@@ -65,9 +67,13 @@ public:
         return &instance;
     };
     void save();
+    RuntimeProvider *getRuntimeProvider() const;
     StationProfile findByCallsign(const QString &callsign);
     QList<StationProfile> findMatchingProfiles(const QString &callsign,
                                                const QString &locator);
+
+private:
+    RuntimeProvider *statusProvider;
 };
 
 

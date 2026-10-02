@@ -6,6 +6,7 @@
 #include "mcpbridge/RuntimeProvider.h"
 #include "rig/RigRuntimeProvider.h"
 #include "rotator/RotatorRuntimeProvider.h"
+#include "data/StationProfile.h"
 
 class RuntimeWorker : public QThread
 {
@@ -31,6 +32,7 @@ class RuntimeContextTest : public QObject
 
 private slots:
     void initTestCase();
+    void init();
     void rigSchemaAndSnapshot();
     void disconnectedRigDoesNotExposeOldValues();
     void invalidFrequencyIsUnavailable();
@@ -42,6 +44,8 @@ private slots:
     void extendedRigStateInWorkerThread();
     void rotatorStateTracksAvailability();
     void rotatorStateInWorkerThread();
+    void stationStateTracksSelectedProfile();
+    void stationStateReadFromAnotherThread();
     void readsInOwnerThread();
     void addingFieldUsesSameCollectionPath();
     void fieldWithoutDescriptionCannotBeRegistered();
@@ -66,6 +70,147 @@ private slots:
 void RuntimeContextTest::initTestCase()
 {
     QLoggingCategory::setFilterRules(QStringLiteral("*.debug=false"));
+    QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE");
+    database.setDatabaseName(":memory:");
+    QVERIFY(database.open());
+    QSqlQuery query;
+    QVERIFY(query.exec("CREATE TABLE station_profiles (profile_name TEXT PRIMARY KEY, selected INTEGER, "
+                       "callsign TEXT, locator TEXT, operator_name TEXT, operator_callsign TEXT, "
+                       "qth_name TEXT, iota TEXT, sota TEXT, pota TEXT, sig TEXT, sig_info TEXT, "
+                       "vucc TEXT, wwff TEXT, ituz INTEGER, cqz INTEGER, dxcc INTEGER, "
+                       "country TEXT, county TEXT, darc_dok TEXT)"));
+    QVERIFY(query.exec("INSERT INTO station_profiles (profile_name, selected, callsign, locator, wwff) "
+                       "VALUES ('Home', 1, 'OK1AAA', 'JO70AA', 'OKFF-0002'), "
+                       "('Portable', NULL, 'OK1AAA/P', 'JN79AA', NULL)"));
+}
+
+void RuntimeContextTest::init()
+{
+    QSqlQuery query;
+    QVERIFY(query.exec("UPDATE station_profiles SET selected = "
+                       "CASE WHEN profile_name = 'Home' THEN 1 ELSE NULL END"));
+}
+
+void RuntimeContextTest::stationStateTracksSelectedProfile()
+{
+    StationProfilesManager manager;
+    auto provider = manager.findChild<RuntimeProvider *>();
+    QVERIFY(provider);
+    QCOMPARE(provider->parent(), &manager);
+    QCOMPARE(provider->thread(), manager.thread());
+    RuntimeContext context;
+    QVERIFY(context.addProvider("station", "Currently selected logging-station profile", provider));
+    QObject radioOwner;
+    RuntimeProvider radio(&radioOwner);
+    radio.addBoolean("rig_connected", "Radio connection", []() { return true; });
+    QVERIFY(context.addProvider("rig", "Radio state", &radio));
+    const QJsonObject fields = context.schema({"station"}).value("fields").toObject();
+    QCOMPARE(fields.size(), 19);
+    QVERIFY(!fields.contains("rig_connected"));
+    for ( const QJsonValue &field : fields )
+    {
+        const QJsonObject metadata = field.toObject();
+        QVERIFY(!metadata.value("description").toString().isEmpty());
+        QCOMPARE(metadata.value("nullable"), QJsonValue(true));
+        QCOMPARE(metadata.value("source").toString(), QString("station"));
+    }
+    QCOMPARE(fields.value("station_callsign").toObject().value("type").toString(), QString("string"));
+    QCOMPARE(fields.value("station_dxcc").toObject().value("type").toString(), QString("number"));
+    QSignalSpy ready(&context, &RuntimeContext::contextReady);
+    context.collect(1, 1000, {"station"});
+    QTRY_COMPARE(ready.count(), 1);
+    QJsonObject values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("station_profile").toString(), QString("Home"));
+    QCOMPARE(values.value("station_callsign").toString(), QString("OK1AAA"));
+    QCOMPARE(values.value("station_locator").toString(), QString("JO70AA"));
+    QCOMPARE(values.value("station_wwff").toString(), QString("OKFF-0002"));
+    QVERIFY(values.value("station_dxcc").isNull());
+    QVERIFY(values.value("station_cq_zone").isNull());
+    QVERIFY(values.value("station_itu_zone").isNull());
+    QVERIFY(values.value("station_operator_callsign").isNull());
+    QVERIFY(values.value("station_pota").isNull());
+
+    // Selection happens after the request, before its queued getters run.
+    context.collect(2, 1000, {"station"});
+    manager.setCurProfile1("Portable");
+    QTRY_COMPARE(ready.count(), 2);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.value("station_profile").toString(), QString("Portable"));
+    QCOMPARE(values.value("station_callsign").toString(), QString("OK1AAA/P"));
+    QCOMPARE(values.value("station_locator").toString(), QString("JN79AA"));
+
+    StationProfile profile = manager.getCurProfile1();
+    profile.operatorName = "Alice";
+    profile.operatorCallsign = "OK2BBB";
+    profile.qthName = "Test campsite";
+    profile.iota = "EU-001";
+    profile.pota = "CZ-0001,CZ-0002";
+    profile.sota = "OK/ST-001";
+    profile.sig = "Test activity";
+    profile.sigInfo = "Test reference";
+    profile.vucc = "JN79,JO70";
+    profile.wwff = "OKFF-0001";
+    profile.ituz = 28;
+    profile.cqz = 15;
+    profile.dxcc = 503;
+    profile.country = "Czech Republic";
+    profile.county = "Test county";
+    profile.darcDOK = "A01";
+    manager.addProfile(profile.profileName, profile);
+    context.collect(3, 1000, {"station"});
+    QTRY_COMPARE(ready.count(), 3);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    const QJsonObject expected{{"station_profile", "Portable"}, {"station_callsign", "OK1AAA/P"},
+                              {"station_locator", "JN79AA"}, {"station_operator_name", "Alice"},
+                              {"station_operator_callsign", "OK2BBB"}, {"station_qth", "Test campsite"},
+                              {"station_iota", "EU-001"}, {"station_pota", "CZ-0001,CZ-0002"},
+                              {"station_sota", "OK/ST-001"}, {"station_sig", "Test activity"},
+                              {"station_sig_info", "Test reference"}, {"station_vucc_grids", "JN79,JO70"},
+                              {"station_wwff", "OKFF-0001"}, {"station_itu_zone", 28},
+                              {"station_cq_zone", 15}, {"station_dxcc", 503},
+                              {"station_country", "Czech Republic"}, {"station_county", "Test county"},
+                              {"station_darc_dok", "A01"}};
+    QCOMPARE(values, expected);
+    QVERIFY(ready.last().at(1).toJsonObject().value("issues").toObject().isEmpty());
+
+    manager.removeProfile("Portable");
+    context.collect(4, 1000, {"station"});
+    QTRY_COMPARE(ready.count(), 4);
+    values = ready.last().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.size(), 19);
+    for ( const QJsonValue &value : values )
+        QVERIFY(value.isNull());
+    QVERIFY(ready.last().at(1).toJsonObject().value("issues").toObject().isEmpty());
+}
+
+void RuntimeContextTest::stationStateReadFromAnotherThread()
+{
+    StationProfilesManager manager;
+    auto provider = manager.getRuntimeProvider();
+    manager.setCurProfile1("Home");
+    QJsonObject result;
+    QThread *collectionThread = nullptr;
+    connect(provider, &RuntimeProvider::snapshotReady, this,
+            [&collectionThread]() { collectionThread = QThread::currentThread(); }, Qt::DirectConnection);
+    auto context = new RuntimeContext;
+    QVERIFY(context->addProvider("station", "Current logging-station profile", provider));
+    connect(context, &RuntimeContext::contextReady, this,
+            [&result](quint64, const QJsonObject &snapshot) { result = snapshot; }, Qt::QueuedConnection);
+    RuntimeWorker worker(context);
+    worker.start();
+    context->collect(1, 1000, {"station"});
+    QTRY_VERIFY(!result.isEmpty());
+    QCOMPARE(collectionThread, manager.thread());
+    QCOMPARE(result.value("values").toObject().value("station_profile").toString(), QString("Home"));
+    QVERIFY(result.value("issues").toObject().isEmpty());
+
+    result = QJsonObject();
+    manager.setCurProfile1("Portable");
+    context->collect(2, 1000, {"station"});
+    QTRY_VERIFY(!result.isEmpty());
+    QCOMPARE(result.value("values").toObject().value("station_profile").toString(), QString("Portable"));
+    QCOMPARE(result.value("values").toObject().value("station_callsign").toString(), QString("OK1AAA/P"));
+    QVERIFY(result.value("issues").toObject().isEmpty());
 }
 
 void RuntimeContextTest::rigSchemaAndSnapshot()

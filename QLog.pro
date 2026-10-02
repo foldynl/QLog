@@ -142,6 +142,7 @@ SOURCES += \
         data/RotUsrButtonsProfile.cpp \
         data/SerialPort.cpp \
         data/StationProfile.cpp \
+        data/StationRuntimeProvider.cpp \
         data/UpdatableSQLRecord.cpp \
         logformat/AdiFormat.cpp \
         logformat/AdxFormat.cpp \
@@ -364,6 +365,7 @@ HEADERS += \
         data/SerialPort.h \
         data/SpotAlert.h \
         data/StationProfile.h \
+        data/StationRuntimeProvider.h \
         data/ToAllSpot.h \
         data/UpdatableSQLRecord.h \
         data/WCYSpot.h \

@@ -11,10 +11,17 @@ SOURCES += \
     ../../mcpbridge/RuntimeProvider.cpp \
     ../../mcpbridge/RuntimeContext.cpp \
     ../../rig/RigRuntimeProvider.cpp \
-    ../../rotator/RotatorRuntimeProvider.cpp
+    ../../rotator/RotatorRuntimeProvider.cpp \
+    ../../data/StationProfile.cpp \
+    ../../data/StationRuntimeProvider.cpp \
+    ../../data/Gridsquare.cpp \
+    ../../core/LogLocale.cpp
 
 HEADERS += \
     ../../mcpbridge/RuntimeProvider.h \
     ../../mcpbridge/RuntimeContext.h \
     ../../rig/RigRuntimeProvider.h \
-    ../../rotator/RotatorRuntimeProvider.h
+    ../../rotator/RotatorRuntimeProvider.h \
+    ../../data/StationProfile.h \
+    ../../data/StationRuntimeProvider.h \
+    ../../data/ProfileManager.h
