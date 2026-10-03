@@ -17,6 +17,7 @@
 #include "data/DxServerString.h"
 #include "models/SearchFilterProxyModel.h"
 #include "component/ShutdownAwareWidget.h"
+#include "component/DxCommandEdit.h"
 #include "NewContactWidget.h"
 
 // in sec
@@ -194,12 +195,7 @@ private:
         OPERATION = 5
     };
 
-    enum DXCType
-    {
-        UNKNOWN = 0,
-        DXSPIDER = 1,
-        CCCluster = 2
-    };
+    using DXCType = DxCommandEdit::ClusterType;
 
     DxTableModel* dxTableModel;
     WCYTableModel* wcyTableModel;
@@ -216,7 +212,7 @@ private:
     bool deduplicateSpots;
     int deduplicatetime;
     int deduplicatefreq;
-    DXCType dxcType = UNKNOWN;
+    DXCType dxcType = DXCType::UNKNOWN;
     QMenu *commandsMenu;
     QSet<QString> dxMemberFilter;
     QSqlRecord lastQSO;
@@ -246,7 +242,7 @@ private:
     void saveAutoconnectServer(bool);
     bool getKeepQSOs();
     void saveKeepQSOs(bool);
-    void sendCommand(const QString&,
+    bool sendCommand(const QString&,
                      bool switchToConsole = false);
     void saveWidgetSetting();
     void restoreWidgetSetting();

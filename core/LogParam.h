@@ -421,6 +421,8 @@ public:
     static bool setDXCTrendContinent(const QString &cont);
     static QString getDXCTrendContinent(const QString &def);
     static void removeDXCTrendContinent();
+    static QByteArray getDXCCommandHistory(const QString &server);
+    static bool setDXCCommandHistory(const QString &server, const QByteArray &history);
 
     /**************
      * Export ADIF

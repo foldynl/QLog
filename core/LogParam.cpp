@@ -1516,6 +1516,20 @@ void LogParam::setDXCLastServer(const QString &server)
     setParam("dxc/lastserver", server);
 }
 
+QByteArray LogParam::getDXCCommandHistory(const QString &server)
+{
+    FCT_IDENTIFICATION;
+
+    return getParam(QStringLiteral("dxc/commandhistory/%1").arg(server)).toByteArray();
+}
+
+bool LogParam::setDXCCommandHistory(const QString &server, const QByteArray &history)
+{
+    FCT_IDENTIFICATION;
+
+    return setParam(QStringLiteral("dxc/commandhistory/%1").arg(server), history);
+}
+
 QString LogParam::getDXCFilterModeRE()
 {
     QString defaultValue = "NOTHING|"

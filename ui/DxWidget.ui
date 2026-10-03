@@ -586,12 +586,12 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="commandEdit">
+      <widget class="DxCommandEdit" name="commandEdit">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::StrongFocus</enum>
        </property>
        <property name="toolTip">
         <string>Send DX Cluster Command</string>
@@ -738,6 +738,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DxCommandEdit</class>
+   <extends>QLineEdit</extends>
+   <header>ui/component/DxCommandEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../res/icons/icons.qrc"/>
  </resources>

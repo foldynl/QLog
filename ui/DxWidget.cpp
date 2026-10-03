@@ -781,6 +781,9 @@ void DxWidget::connectCluster()
                      << "host:" << connectedServerString->getHostname()
                      << "port:" << connectedServerString->getPort();
 
+    ui->commandEdit->setServer(QStringLiteral("%1:%2").arg(connectedServerString->getHostname().toLower())
+                                                    .arg(connectedServerString->getPort()));
+
     socket = new QTcpSocket(this);
 
     connect(socket, &QTcpSocket::readyRead, this, &DxWidget::receive, Qt::QueuedConnection); // QueuedConnection is needed because error is send together with disconnect
@@ -848,7 +851,9 @@ void DxWidget::disconnectCluster(bool tryReconnect)
         ui->serverSelect->setStyleSheet(QStringLiteral("QComboBox {color: red}"));
     }
     connectionState = DISCONNECTED;
-    dxcType = UNKNOWN;
+    dxcType = DXCType::UNKNOWN;
+    ui->commandEdit->setClusterType(dxcType);
+    ui->commandEdit->setServer(QString());
     if ( connectedServerString )
     {
         delete connectedServerString;
@@ -974,19 +979,22 @@ void DxWidget::saveKeepQSOs(bool state)
     LogParam::setDXCKeepQSOs(state);
 }
 
-void DxWidget::sendCommand(const QString & command,
+bool DxWidget::sendCommand(const QString & command,
                            bool switchToConsole)
 {
     FCT_IDENTIFICATION;
 
-    if ( socket && socket->isOpen() )
-        socket->write((command + QLatin1String("\r\n")).toLatin1());
+    const QByteArray payload = (command + QLatin1String("\r\n")).toLatin1();
+    const bool sent = socket && socket->isOpen() && socket->write(payload) == payload.size();
+    if ( !sent )
+        qCWarning(runtime) << "Cannot send DX cluster command";
 
     // switch to raw mode to see a response
     if ( switchToConsole )
     {
         ui->viewModeCombo->setCurrentIndex(CONSOLE_VIEW);
     }
+    return sent;
 }
 
 void DxWidget::saveWidgetSetting()
@@ -1026,7 +1034,11 @@ void DxWidget::send()
 {
     FCT_IDENTIFICATION;
 
-    sendCommand(ui->commandEdit->text());
+    const QString command = ui->commandEdit->text();
+    if ( !sendCommand(command) )
+        return;
+    if ( connectionState == OPERATION )
+        ui->commandEdit->rememberCommand(command);
     ui->commandEdit->clear();
 }
 
@@ -1095,6 +1107,24 @@ void DxWidget::receive()
         // Skip empty lines
         if ( line.isEmpty() ) continue;
 
+        // Banners may arrive before login or after the first spot, but spot/chat text is not a banner.
+        if ( dxcType == DXCType::UNKNOWN
+             && !line.startsWith(QLatin1String("DX de "), Qt::CaseInsensitive)
+             && !line.startsWith(QLatin1String("To "), Qt::CaseInsensitive)
+             && !line.startsWith(wcyPrefix, Qt::CaseInsensitive)
+             && !line.startsWith(wwvPrefix, Qt::CaseInsensitive) )
+        {
+            if ( line.contains(dxSpiderStr, Qt::CaseInsensitive) )
+                dxcType = DXCType::DXSPIDER;
+            else if ( line.contains(ccClusterStr, Qt::CaseInsensitive) )
+                dxcType = DXCType::CC_CLUSTER;
+            if ( dxcType != DXCType::UNKNOWN )
+            {
+                qCDebug(runtime) << "DX cluster type detected" << dxcType;
+                updateCommandsMenu();
+            }
+        }
+
         if ( connectionState == CONNECTED )
         {
             if ( line.startsWith(loginStr, Qt::CaseInsensitive) || line.contains(loginRE) )
@@ -1103,14 +1133,6 @@ void DxWidget::receive()
                 sendLine(connectedServerString->getUsername());
                 connectionState = LOGIN_SENT;
                 qCDebug(runtime) << "Login sent";
-                continue;
-            }
-
-            if ( line.contains(ccClusterStr, Qt::CaseInsensitive) )
-            {
-                dxcType = CCCluster;
-                qCDebug(runtime) << "CC Cluster Detected";
-                updateCommandsMenu();
                 continue;
             }
         }
@@ -1168,25 +1190,11 @@ void DxWidget::receive()
             continue;
         }
 
-        if ( connectionState == LOGIN_SENT || connectionState == PASSWORD_SENT )
+        if ( (connectionState == LOGIN_SENT || connectionState == PASSWORD_SENT)
+             && (dxcType == DXCType::CC_CLUSTER || line.contains(dxSpiderStr, Qt::CaseInsensitive)) )
         {
-
-            if ( line.contains(dxSpiderStr, Qt::CaseInsensitive) )
-            {
-                connectionState = OPERATION;
-                dxcType = DXSPIDER;
-                qCDebug(runtime) << "dxspider Detected";
-                updateCommandsMenu();
-                ui->commandButton->setEnabled(true);
-                continue;
-            }
-            // the difference compared to DXSpider is that CC Cluster type
-            // is detected before login, but DXSpider type is detected after login
-            if ( dxcType == CCCluster )
-            {
-                connectionState = OPERATION;
-                ui->commandButton->setEnabled(true);
-            }
+            connectionState = OPERATION;
+            ui->commandButton->setEnabled(true);
         }
 
         /********************/
@@ -1956,9 +1964,11 @@ void DxWidget::updateCommandsMenu()
 {
     FCT_IDENTIFICATION;
 
+    ui->commandEdit->setClusterType(dxcType);
+
     switch (dxcType)
     {
-    case CCCluster:
+    case DXCType::CC_CLUSTER:
         if ( ui->commandButton->defaultAction() == ui->actionShowHFStats
              || ui->commandButton->defaultAction() == ui->actionShowVHFStats )
             ui->commandButton->setDefaultAction(ui->actionSpotQSO);
@@ -1967,7 +1977,7 @@ void DxWidget::updateCommandsMenu()
         commandsMenu->removeAction(ui->actionShowVHFStats);
         break;
 
-    case DXSPIDER:
+    case DXCType::DXSPIDER:
         commandsMenu->addAction(ui->actionShowHFStats);
         commandsMenu->addAction(ui->actionShowVHFStats);
         break;

@@ -250,6 +250,7 @@ SOURCES += \
         ui/WsjtxWidget.cpp \
         ui/component/BaseDoubleSpinBox.cpp \
         ui/component/EditLine.cpp \
+        ui/component/DxCommandEdit.cpp \
         ui/component/FreqQSpinBox.cpp \
         ui/component/ModeSubmodeDelegate.cpp \
         ui/component/MultilineTextDelegate.cpp \
@@ -484,6 +485,7 @@ HEADERS += \
         ui/component/BaseDoubleSpinBox.h \
         ui/component/ButtonStyle.h \
         ui/component/EditLine.h \
+        ui/component/DxCommandEdit.h \
         ui/component/FreqQSpinBox.h \
         ui/component/ModeSubmodeDelegate.h \
         ui/component/MultilineTextDelegate.h \
