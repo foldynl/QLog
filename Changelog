@@ -17,6 +17,7 @@ TBC - 0.54.0
 - Fixed link to Awards Japanese Cities
 - Fixed AppImage not possible to run on older distros
 - Fixed missing ADIF Modes - ARDOP, JT44, OPERA, PAC
+- Fixed Removed incorrect JTMSK mode entry (issue #1190)
 - Hamlib - Improved Split Disable
 - Hamlib - Adjusted the checkChanges sequence
 

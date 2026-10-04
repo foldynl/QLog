@@ -19,3 +19,5 @@ INSERT INTO modes (name, submodes, rprt, dxcc, enabled) VALUES ('OPERA', '["OPER
 INSERT INTO modes (name, submodes, rprt, dxcc, enabled) VALUES ('PAC', '["PAC2", "PAC3", "PAC4"]', NULL, 'DIGITAL', 0);
 
 UPDATE modes SET submodes = '["FSQCALL", "FST4", "FST4W", "FT2", "FT4", "JS8", "JTMS", "JTTY", "MFSK4", "MFSK8", "MFSK11", "MFSK16", "MFSK22", "MFSK31", "MFSK32", "MFSK64", "MFSK64L", "MFSK128", "MFSK128L", "Q65"]' WHERE name = 'MFSK';
+
+DELETE from modes where name = 'JTMSK';
