@@ -157,6 +157,7 @@ HamlibRigDrv::HamlibRigDrv(const RigProfile &profile,
       forceSendState(false),
       currPTT(false),
       currFreq(Hz(0)),
+      freqRequested(Hz(0)),
       currPBWidth(Hz(0)),
       currModeId(RIG_MODE_NONE),
       currVFO(RIG_VFO_NONE),
@@ -418,7 +419,9 @@ void HamlibRigDrv::setFrequency(VFOID vfoid, double newFreq)
     else
     {
         int status = rig_set_freq(rig, RIG_VFO_CURR, newFreq);
-        isRigRespOK(status, tr("Set Frequency Error"), false);
+
+        if ( isRigRespOK(status, tr("Set Frequency Error"), false) )
+            freqRequested = newFreq;
     }
 
     commandSleep();
@@ -505,8 +508,22 @@ void HamlibRigDrv::__setMode(rmode_t newModeID)
          && newModeID != currModeId )
     {
         int status = rig_set_mode(rig, RIG_VFO_CURR, newModeID, RIG_PASSBAND_NOCHANGE);
-        isRigRespOK(status, tr("Set Mode Error"), false);
+        const bool modeSet = isRigRespOK(status, tr("Set Mode Error"), false);
         commandSleep();
+
+        // Some rigs move the dial together with the mode, e.g. the Yaesu FTDX
+        // series by the CW pitch when switching between SSB and CW (issue #453).
+        // When QLog itself put the rig on a frequency and the operator has not
+        // tuned away since, that frequency is sent once more, so that the rig
+        // ends up exactly there. Reading the dial back instead would not help:
+        // Hamlib answers from its cache for a while after a set command, on
+        // the client and in rigctld.
+        if ( modeSet && freqRequested != Hz(0) )
+        {
+            status = rig_set_freq(rig, RIG_VFO_CURR, freqRequested);
+            isRigRespOK(status, tr("Set Frequency Error"), false);
+            commandSleep();
+        }
     }
 
 #if 0 // SPLIT MODE
@@ -820,6 +837,10 @@ bool HamlibRigDrv::checkFreqChange()
         {
             qCDebug(runtime) << "Rig Freq: "<< QSTRING_FREQ(Hz2MHz(vfo_freq));
             qCDebug(runtime) << "Object Freq: "<< QSTRING_FREQ(Hz2MHz(currFreq));
+
+            // the operator tuned the rig away from the frequency QLog asked for
+            if ( vfo_freq != freqRequested )
+                freqRequested = Hz(0);
 
             if ( vfo_freq != currFreq || forceSendState )
             {

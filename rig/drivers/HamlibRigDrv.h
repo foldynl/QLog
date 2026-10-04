@@ -98,6 +98,7 @@ private:
     bool forceSendState;
     bool currPTT;
     double currFreq;
+    double freqRequested; // last frequency QLog asked for, 0 once the operator tuned away
     pbwidth_t currPBWidth;
     rmode_t currModeId;
     vfo_t currVFO;
