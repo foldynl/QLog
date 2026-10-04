@@ -1,5 +1,6 @@
 #include <QColor>
 #include <QPalette>
+#include <QtMath>
 
 #include "TCIRigDrv.h"
 #include "rig/macros.h"
@@ -59,7 +60,12 @@ TCIRigDrv::TCIRigDrv(const RigProfile &profile, QObject *parent)
       currXIT(0.0),
       RITEnabled(false),
       XITEnabled(false),
-      currSplitEnabled(false)
+      ritEnabledKnown(false),
+      xitEnabledKnown(false),
+      ritOffsetKnown(false),
+      xitOffsetKnown(false),
+      currSplitEnabled(false),
+      splitKnown(false)
 {
     FCT_IDENTIFICATION;
 
@@ -747,7 +753,7 @@ void TCIRigDrv::rspVFO(const QStringList &cmdArgs)
     if ( cmdArgs.at(1) == "1" )
     {
         // VFO 1 — TX frequency (relevant when split is active)
-        if ( !rigProfile.getSplitInfo )
+        if ( !rigProfile.getSplitInfo || !splitKnown || !currSplitEnabled )
             return;
 
         bool ok;
@@ -911,17 +917,20 @@ void TCIRigDrv::rspRIT_OFFSET(const QStringList &cmdArgs)
     }
 
     bool ok;
-    currRIT = cmdArgs.at(1).toDouble(&ok);
+    const double offset = cmdArgs.at(1).toDouble(&ok);
 
-    if ( ok )
+    if ( ok && qIsFinite(offset) )
     {
+        currRIT = offset;
+        ritOffsetKnown = true;
         qCDebug(runtime) << "Rig RIT" << RITEnabled << currRIT;
         qCDebug(runtime) << "emitting RIT changed" << QSTRING_FREQ(Hz2MHz(getRawRIT()));
         qCDebug(runtime) << "emitting FREQ changed " << QSTRING_FREQ(Hz2MHz(currFreq))
                                                      << QSTRING_FREQ(Hz2MHz(getRITFreq()))
                                                      << QSTRING_FREQ(Hz2MHz(getXITFreq()));
 
-        emit ritChanged(Hz2MHz(getRawRIT()));
+        if ( ritEnabledKnown )
+            emit ritChanged(Hz2MHz(getRawRIT()));
         emit frequencyChanged(Hz2MHz(currFreq),
                               Hz2MHz(getRITFreq()),
                               Hz2MHz(getXITFreq()));
@@ -950,17 +959,20 @@ void TCIRigDrv::rspXIT_OFFSET(const QStringList &cmdArgs)
     }
 
     bool ok;
-    currXIT = cmdArgs.at(1).toDouble(&ok);
+    const double offset = cmdArgs.at(1).toDouble(&ok);
 
-    if ( ok )
+    if ( ok && qIsFinite(offset) )
     {
+        currXIT = offset;
+        xitOffsetKnown = true;
         qCDebug(runtime) << "Rig XIT" << XITEnabled << currXIT;
         qCDebug(runtime) << "emitting XIT changed" << QSTRING_FREQ(Hz2MHz(getRawXIT()));
         qCDebug(runtime) << "emitting FREQ changed " << QSTRING_FREQ(Hz2MHz(currFreq))
                                                      << QSTRING_FREQ(Hz2MHz(getRITFreq()))
                                                      << QSTRING_FREQ(Hz2MHz(getXITFreq()));
 
-        emit xitChanged(Hz2MHz(getRawXIT()));
+        if ( xitEnabledKnown )
+            emit xitChanged(Hz2MHz(getRawXIT()));
         emit frequencyChanged(Hz2MHz(currFreq),
                               Hz2MHz(getRITFreq()),
                               Hz2MHz(getXITFreq()));
@@ -979,7 +991,7 @@ void TCIRigDrv::rspCW_MACROS_SPEED(const QStringList &cmdArgs)
     CHECK_PARAMS_COUNT(cmdArgs.size(), 1);
 
     bool ok;
-    unsigned int wpm = cmdArgs.at(0).toInt(&ok);
+    const unsigned int wpm = cmdArgs.at(0).toUInt(&ok);
 
     if ( ok )
     {
@@ -1011,10 +1023,12 @@ void TCIRigDrv::rspRIT_ENABLE(const QStringList &cmdArgs)
     }
 
     RITEnabled = ( cmdArgs.at(1).toLower() == "true" );
+    ritEnabledKnown = true;
 
     qCDebug(runtime) << "Rig RIT status changed" << RITEnabled << currRIT;
     qCDebug(runtime) << "emitting RIT changed" << QSTRING_FREQ(Hz2MHz(getRawRIT()));
-    emit ritChanged(Hz2MHz(getRawRIT()));
+    if ( !RITEnabled || ritOffsetKnown )
+        emit ritChanged(Hz2MHz(getRawRIT()));
     emit frequencyChanged(Hz2MHz(currFreq),
                           Hz2MHz(getRITFreq()),
                           Hz2MHz(getXITFreq()));
@@ -1039,10 +1053,12 @@ void TCIRigDrv::rspXIT_ENABLE(const QStringList &cmdArgs)
     }
 
     XITEnabled = ( cmdArgs.at(1).toLower() == "true" );
+    xitEnabledKnown = true;
 
     qCDebug(runtime) << "Rig XIT status changed" << XITEnabled << currXIT;
     qCDebug(runtime) << "emitting XIT changed" << QSTRING_FREQ(Hz2MHz(getRawXIT()));
-    emit xitChanged(Hz2MHz(getRawXIT()));
+    if ( !XITEnabled || xitOffsetKnown )
+        emit xitChanged(Hz2MHz(getRawXIT()));
     emit frequencyChanged(Hz2MHz(currFreq),
                           Hz2MHz(getRITFreq()),
                           Hz2MHz(getXITFreq()));
@@ -1070,8 +1086,9 @@ void TCIRigDrv::rspSPLIT_ENABLE(const QStringList &cmdArgs)
 
     qCDebug(runtime) << "Rig Split status changed" << newSplitEnabled;
 
-    if ( newSplitEnabled != currSplitEnabled )
+    if ( !splitKnown || newSplitEnabled != currSplitEnabled )
     {
+        splitKnown = true;
         currSplitEnabled = newSplitEnabled;
         qCDebug(runtime) << "emitting SPLIT changed" << currSplitEnabled;
         emit splitChanged(currSplitEnabled);

@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 
 #include "AntProfile.h"
+#include "AntennaRuntimeProvider.h"
 #include "core/debug.h"
 
 MODULE_IDENTIFICATION("qlog.data.antprofile");
@@ -62,6 +63,14 @@ AntProfilesManager::AntProfilesManager() :
     }
     else
         qInfo() << "Ant Profile DB select error " << profileQuery.lastError().text();
+
+    statusProvider = createAntennaRuntimeProvider(this);
+}
+
+RuntimeProvider *AntProfilesManager::getRuntimeProvider() const
+{
+    FCT_IDENTIFICATION;
+    return statusProvider;
 }
 
 void AntProfilesManager::save()

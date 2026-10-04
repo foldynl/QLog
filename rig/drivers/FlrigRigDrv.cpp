@@ -571,8 +571,9 @@ void FlrigRigDrv::rspGET_SPLIT(const QVariant &value)
     qCDebug(runtime) << "Rig Split:" << newSplitEnabled;
     qCDebug(runtime) << "Object Split:" << currSplitEnabled;
 
-    if ( newSplitEnabled != currSplitEnabled )
+    if ( !splitKnown || newSplitEnabled != currSplitEnabled )
     {
+        splitKnown = true;
         currSplitEnabled = newSplitEnabled;
         qCDebug(runtime) << "emitting SPLIT changed" << currSplitEnabled;
         emit splitChanged(currSplitEnabled);
@@ -620,10 +621,13 @@ void FlrigRigDrv::rspGET_TX_FREQ(const QVariant &value)
 
 void FlrigRigDrv::resetCurrStates()
 {
+    FCT_IDENTIFICATION;
+
     // clear current values means emiting all params
     currFreq = 0.0;
     currTxFreq = 0.0;
     currSplitEnabled = false;
+    splitKnown = false; // The first confirmed off state must also be reported.
     currVFO.clear();
     currRawMode.clear();
     currPWR = -1;

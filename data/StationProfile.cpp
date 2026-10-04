@@ -1,4 +1,5 @@
 #include "data/StationProfile.h"
+#include "data/StationRuntimeProvider.h"
 #include "data/Gridsquare.h"
 #include "core/debug.h"
 
@@ -51,7 +52,7 @@ StationProfilesManager::StationProfilesManager() :
 
     if ( ! profileQuery.prepare("SELECT profile_name, callsign, locator, "
                                 "operator_name, qth_name, iota, sota, sig, sig_info, vucc, pota, "
-                                "ituz, cqz, dxcc, country, county, operator_callsign, darc_dok "
+                                "ituz, cqz, dxcc, country, county, operator_callsign, darc_dok, wwff "
                                 "FROM station_profiles") )
     {
         qWarning()<< "Cannot prepare select";
@@ -80,6 +81,7 @@ StationProfilesManager::StationProfilesManager() :
             profileDB.county = profileQuery.value(15).toString();
             profileDB.operatorCallsign = profileQuery.value(16).toString();
             profileDB.darcDOK = profileQuery.value(17).toString();
+            profileDB.wwff = profileQuery.value(18).toString();
 
             addProfile(profileDB.profileName, profileDB);
         }
@@ -88,6 +90,14 @@ StationProfilesManager::StationProfilesManager() :
     {
         qInfo() << "Station Profile DB select error " << profileQuery.lastError().text();
     }
+
+    statusProvider = createStationRuntimeProvider(this);
+}
+
+RuntimeProvider *StationProfilesManager::getRuntimeProvider() const
+{
+    FCT_IDENTIFICATION;
+    return statusProvider;
 }
 
 void StationProfilesManager::save()

@@ -339,12 +339,15 @@ void HamlibRotDrv::checkAzEl()
              qCDebug(runtime) << "Rot Position: " << newAzimuth << newElevation;
              qCDebug(runtime) << "Object Position: "<< azimuth << elevation;
 
-            if ( newAzimuth != azimuth
+            if ( !azimuthKnown || !elevationKnown
+                 || newAzimuth != azimuth
                  || newElevation != elevation
                  || forceSendState)
             {
                 azimuth = newAzimuth;
                 elevation = newElevation;
+                azimuthKnown = true;
+                elevationKnown = true;
                 qCDebug(runtime) << "emitting POSITIONING changed";
                 emit positioningChanged(azimuth, elevation);
             }

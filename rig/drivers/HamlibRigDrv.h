@@ -104,6 +104,10 @@ private:
     unsigned int currPWR;
     double currRIT;
     double currXIT;
+    // A successful first zero must be emitted even after the initial read failed.
+    bool powerKnown;
+    bool ritKnown;
+    bool xitKnown;
     unsigned int keySpeed;
     bool morseOverCatSupported;
     bool currSplitEnabled;

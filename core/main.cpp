@@ -24,8 +24,13 @@
 #include "core/MembershipQE.h"
 #include "service/kstchat/KSTChat.h"
 #include "data/Data.h"
+#include "data/StationProfile.h"
+#include "data/AntProfile.h"
+#include "data/ActivityProfile.h"
 #include "service/GenericCallbook.h"
 #include "core/LogDatabase.h"
+#include "mcpbridge/RuntimeContext.h"
+#include "mcpbridge/RuntimeServer.h"
 
 MODULE_IDENTIFICATION("qlog.core.main");
 
@@ -163,23 +168,72 @@ static void createDataDirectory() {
     }
 }
 
-static void startRigThread() {
+static void startRigThread(RuntimeContext &runtimeContext)
+{
     FCT_IDENTIFICATION;
 
     rigThreadHandle = new QThread;
     Rig* rig = Rig::instance();
     rig->moveToThread(rigThreadHandle);
+    if ( !runtimeContext.addProvider(QStringLiteral("rig"),
+            QStringLiteral("Latest state of the transceiver controlled by QLog: whether the radio "
+                           "driver has a ready connection, active radio-control profile and "
+                           "backend (Hamlib, OmniRig, FLRig or TCI), configured Hamlib radio "
+                           "model/driver label when known, main VFO frequency and label, adjusted "
+                           "RX/TX frequencies, manual RX/TX profile offsets, "
+                           "operating mode, receiver filter width, RF power setting, CAT CW keying "
+                           "speed, CAT RIT/XIT offsets and split state. Use for questions about "
+                           "the connected radio, tuned "
+                           "amateur band, mode, power, tuning offsets or split operation. "
+                           "Frequencies, offsets and filter width are in hertz, power in watts "
+                           "and CW speed in WPM; read the field schema for precise meanings. "
+                           "Values are the latest held by QLog and can change at any time; each "
+                           "current-state question needs a new read, without hardware polling. "
+                           "Readings depend on the backend, radio model and enabled profile "
+                           "settings. Null means disconnected, unsupported, disabled or not yet "
+                           "reported; profile offsets are configuration values, where zero means "
+                           "no offset. Profile offsets are distinct from CAT RIT/XIT, although "
+                           "QLog may label them RIT/XIT in its rig panel. Power is a setting "
+                           "(estimated for TCI), not an RF meter reading. RX/TX values already "
+                           "include the driver's adjustments; do not add offsets again. During "
+                           "split, TX is the separate VFO report; with unknown split state, TX "
+                           "is QLog's main-VFO value and does not verify actual radio split. "
+                           "This source "
+                           "does not report PTT, antenna, external keyer state, historical QSOs "
+                           "or logging-station identity."),
+            rig->getRuntimeProvider()) )
+        qCWarning(runtime) << "Cannot register radio runtime provider";
     QObject::connect(rigThreadHandle, SIGNAL(started()), rig, SLOT(start()));
     rigThreadHandle->start();
 }
 
-static void startRotThread() {
+static void startRotThread(RuntimeContext &runtimeContext)
+{
     FCT_IDENTIFICATION;
 
     rotThreadHandle = new QThread;
     Rotator* rot = Rotator::instance();
     rot->moveToThread(rotThreadHandle);
-    QObject::connect(rotThreadHandle, SIGNAL(started()), rot, SLOT(start()));
+    if ( !runtimeContext.addProvider(QStringLiteral("rotator"),
+            QStringLiteral("Latest state of the antenna rotator controlled by QLog: ready driver "
+                           "connection, rotator-control profile, backend (Hamlib or PSTRotator), "
+                           "configured Hamlib model/driver label when known, and reported antenna "
+                           "azimuth and elevation in degrees. Use for questions about where the "
+                           "antenna is pointing, its elevation, or the rotator connection. "
+                           "Azimuth is clockwise from north in [0, 360), with the antenna-profile "
+                           "offset already applied; do not add it again. These are last reported "
+                           "positions, not requested targets, movement status, or proof that a "
+                           "target has been reached. PSTRotator connection means the UDP interface "
+                           "is open, not verified physical hardware readiness. Axes can arrive "
+                           "separately; null means disconnected, unsupported, not yet reported "
+                           "or invalid, while zero can be a valid reading. Values can change at "
+                           "any time; make a new read for each current-state question. Reading "
+                           "this source does not poll or move the hardware. This source does "
+                           "not provide antenna identity, radio state or historical QSO bearings; "
+                           "read its field schema for exact meanings and limitations."),
+            rot->getRuntimeProvider()) )
+        qCWarning(runtime) << "Cannot register rotator runtime provider";
+    QObject::connect(rotThreadHandle, &QThread::started, rot, &Rotator::start);
     rotThreadHandle->start();
 }
 
@@ -505,13 +559,75 @@ int main(int argc, char* argv[])
 
     QCoreApplication::processEvents();
 
-    startRigThread();
-    startRotThread();
-    startCWKeyerThread();
-
     int rc = 0;
 
     {
+        RuntimeContext runtimeContext;
+        if ( !runtimeContext.addProvider(QStringLiteral("station"),
+                                         QStringLiteral("Currently selected local logging-station profile: "
+                                                        "station callsign, Maidenhead locator, operator name "
+                                                        "and callsign, QTH, country, county, DXCC entity, CQ/ITU "
+                                                        "zones, IOTA/POTA/SOTA/WWFF references, special-interest "
+                                                        "activity, VUCC boundary grids and DARC DOK. Use for "
+                                                        "questions about my station, who I am operating as, "
+                                                        "my configured location or activation references. "
+                                                        "These are profile settings, not GPS observations, "
+                                                        "contact data, or proof of an activation. Historical "
+                                                        "QSOs may use different station information. Profile "
+                                                        "selection and contents can change while QLog runs; "
+                                                        "read anew for each current-state question. Unset "
+                                                        "values or no selected profile produce null fields."),
+                                         StationProfilesManager::instance()->getRuntimeProvider()) )
+            qCWarning(runtime) << "Cannot register station runtime provider";
+        if ( !runtimeContext.addProvider(QStringLiteral("antenna"),
+                                         QStringLiteral("Currently selected local antenna profile: name, "
+                                                        "user description, configured bands, horizontal "
+                                                        "beamwidth, signed azimuth offset and assigned "
+                                                        "rotator-control profile. Use for questions about "
+                                                        "my selected antenna, its settings or why antenna "
+                                                        "bearing differs from the raw rotator display. "
+                                                        "Read antenna and rotator together for their relation: "
+                                                        "rotator_azimuth already includes the antenna offset "
+                                                        "applied when the last position report arrived; never "
+                                                        "apply it again. Assignment is configuration; an "
+                                                        "Activity Rotator Override can choose a different "
+                                                        "rotator. rotator_profile and rotator_connected report "
+                                                        "the actual connection. Selecting an antenna does not "
+                                                        "verify physical connection, RF switching or tuning. "
+                                                        "Profiles and settings can change while QLog runs; "
+                                                        "read anew for each current-state question. Antenna "
+                                                        "settings and rotator reports are collected from "
+                                                        "different owners, not one atomic hardware snapshot."),
+                                         AntProfilesManager::instance()->getRuntimeProvider()) )
+            qCWarning(runtime) << "Cannot register antenna runtime provider";
+        if ( !runtimeContext.addProvider(QStringLiteral("activity"),
+                                         QStringLiteral("Currently selected Activity preset: its name, "
+                                                        "requested station, rig and antenna profiles, "
+                                                        "Rotator Override and rig/rotator connection "
+                                                        "requests. Use to understand my operating setup "
+                                                        "and why QLog selects particular equipment. These "
+                                                        "are preset instructions applied on activation, "
+                                                        "not confirmation of actual connection or an "
+                                                        "ongoing contact. Compare with station, antenna, "
+                                                        "rig and rotator for actual state; manual changes "
+                                                        "or asynchronous setup can make them differ. A "
+                                                        "Rotator Override takes priority over the antenna's "
+                                                        "assigned rotator. Empty profile names explicitly "
+                                                        "select None; null means unspecified or no Activity. "
+                                                        "The antenna's offset still corrects rotator_azimuth; "
+                                                        "never apply it twice. Selection and preset contents "
+                                                        "can change while QLog runs; read anew for each "
+                                                        "current-state question. Sources are collected in "
+                                                        "their owners' threads, not one atomic snapshot."),
+                                         ActivityProfilesManager::instance()->getRuntimeProvider()) )
+            qCWarning(runtime) << "Cannot register activity runtime provider";
+        startRigThread(runtimeContext);
+        startRotThread(runtimeContext);
+        startCWKeyerThread();
+
+        RuntimeServer runtimeServer(runtimeContext);
+        runtimeServer.listen();
+
         MainWindow w;
         QIcon icon(":/res/qlog.png");
 

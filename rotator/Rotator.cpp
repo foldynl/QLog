@@ -1,4 +1,5 @@
 #include "rotator/Rotator.h"
+#include "RotatorRuntimeProvider.h"
 #include "core/debug.h"
 #include "rotator/drivers/HamlibRotDrv.h"
 #include "rotator/drivers/PSTRotDrv.h"
@@ -18,12 +19,11 @@ MODULE_IDENTIFICATION("qlog.rotator.rotator");
 Rotator::Rotator(QObject *parent) :
     QObject{parent},
     rotDriver(nullptr),
-    connected(false),
-    cacheAzimuth(0.0),
-    cacheElevation(0.0),
     openRequestSequence(0)
 {
     FCT_IDENTIFICATION;
+
+    statusProvider = createRotatorRuntimeProvider(this, rotStatus);
 
     drvMapping[HAMLIB_DRIVER] = DrvParams(HAMLIB_DRIVER,
                                           "Hamlib",
@@ -57,9 +57,9 @@ bool Rotator::getPosition(double &azimuth, double &elevation) const
     FCT_IDENTIFICATION;
 
     QMutexLocker locker(&stateLock);
-    azimuth = cacheAzimuth;
-    elevation = cacheElevation;
-    return connected;
+    azimuth = rotStatus.azimuth;
+    elevation = rotStatus.elevation;
+    return rotStatus.isConnected;
 }
 
 bool Rotator::isRotConnected() const
@@ -67,7 +67,14 @@ bool Rotator::isRotConnected() const
     FCT_IDENTIFICATION;
 
     QMutexLocker locker(&stateLock);
-    return connected;
+    return rotStatus.isConnected;
+}
+
+RuntimeProvider *Rotator::getRuntimeProvider() const
+{
+    FCT_IDENTIFICATION;
+
+    return statusProvider;
 }
 
 const QList<QPair<int, QString> > Rotator::getModelList(const DriverID &id) const
@@ -284,8 +291,10 @@ void Rotator::driverPositionChanged(double azimuth, double elevation)
 
     {
         QMutexLocker locker(&stateLock);
-        cacheAzimuth = azimuth;
-        cacheElevation = elevation;
+        rotStatus.azimuth = azimuth;
+        rotStatus.elevation = elevation;
+        rotStatus.azimuthKnown = rotDriver->isAzimuthKnown();
+        rotStatus.elevationKnown = rotDriver->isElevationKnown();
     }
     emit positionChanged(azimuth, elevation);
 }
@@ -302,9 +311,27 @@ void Rotator::driverReady()
 {
     FCT_IDENTIFICATION;
 
+    const RotProfile profile = rotDriver->getCurrRotProfile();
+    QString modelName;
+    if ( profile.driver == HAMLIB_DRIVER && profile.model != ROT_MODEL_NETROTCTL )
+    {
+        const auto models = getModelList(HAMLIB_DRIVER);
+        for ( const auto &model : models )
+        {
+            if ( model.first == profile.model )
+            {
+                modelName = model.second;
+                break;
+            }
+        }
+    }
+
     {
         QMutexLocker locker(&stateLock);
-        connected = true;
+        rotStatus.profile = profile.profileName;
+        rotStatus.backend = drvMapping.value(profile.driver).driverName;
+        rotStatus.modelName = modelName;
+        rotStatus.isConnected = true;
     }
 
     emit rotConnected();
@@ -371,7 +398,9 @@ void Rotator::__closeRot()
     rotDriver = nullptr;
     {
         QMutexLocker locker(&stateLock);
-        connected = false;
+        rotStatus.isConnected = false;
+        rotStatus.azimuthKnown = false;
+        rotStatus.elevationKnown = false;
     }
     emit rotDisconnected();
 }

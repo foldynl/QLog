@@ -163,6 +163,9 @@ HamlibRigDrv::HamlibRigDrv(const RigProfile &profile,
       currPWR(0),
       currRIT(0.0),
       currXIT(0.0),
+      powerKnown(false),
+      ritKnown(false),
+      xitKnown(false),
       keySpeed(0),
       morseOverCatSupported(false),
       currSplitEnabled(false),
@@ -964,8 +967,9 @@ void HamlibRigDrv::checkPWRChange()
                 qCDebug(runtime) << "Rig PWR: "<< rigPower;
                 qCDebug(runtime) << "Object PWR: "<< currPWR;
 
-                if ( rigPower != currPWR || forceSendState )
+                if ( !powerKnown || rigPower != currPWR || forceSendState )
                 {
+                    powerKnown = true;
                     currPWR = rigPower;
 
                     qCDebug(runtime) << "emitting PWR changed " << mW2W(currPWR);
@@ -1004,7 +1008,7 @@ void HamlibRigDrv::checkRITChange()
                 /* RIT is on */
                 status = rig_get_rit(rig, RIG_VFO_CURR, &rit);
                 if ( !isRigRespOK(status, tr("Get RIT Error"), false) )
-                    rit = s_Hz(0);
+                    return;
             }
             else
             {
@@ -1015,8 +1019,9 @@ void HamlibRigDrv::checkRITChange()
             qCDebug(runtime) << "Rig RIT:"<< rit << "Rig RIT Status:" << ritStatus;
             qCDebug(runtime) << "Object RIT: "<< currRIT;
 
-            if ( static_cast<double>(rit) != currRIT || forceSendState )
+            if ( !ritKnown || static_cast<double>(rit) != currRIT || forceSendState )
             {
+                ritKnown = true;
                 currRIT = static_cast<double>(rit);
 
                 qCDebug(runtime) << "emitting RIT changed" << QSTRING_FREQ(Hz2MHz(currRIT));
@@ -1061,7 +1066,7 @@ void HamlibRigDrv::checkXITChange()
                 /* XIT is on */
                 status = rig_get_xit(rig, RIG_VFO_CURR, &xit);
                 if ( !isRigRespOK(status, tr("Get XIT Error"), false) )
-                    xit = s_Hz(0);
+                    return;
             }
             else
             {
@@ -1072,8 +1077,9 @@ void HamlibRigDrv::checkXITChange()
             qCDebug(runtime) << "RIG XIT: "<< xit << "Rig XIT Status:" << xitStatus;;
             qCDebug(runtime) << "Object XIT: "<< currXIT;
 
-            if ( static_cast<double>(xit) != currXIT || forceSendState )
+            if ( !xitKnown || static_cast<double>(xit) != currXIT || forceSendState )
             {
+                xitKnown = true;
                 currXIT = static_cast<double>(xit);
 
                 qCDebug(runtime) << "emitting XIT changed" << QSTRING_FREQ(Hz2MHz(currXIT));

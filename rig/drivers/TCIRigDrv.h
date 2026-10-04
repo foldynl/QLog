@@ -91,7 +91,13 @@ private:
     double currXIT;
     bool RITEnabled;
     bool XITEnabled;
+    // TCI delivers enable and offset separately; an enabled offset needs both.
+    bool ritEnabledKnown;
+    bool xitEnabledKnown;
+    bool ritOffsetKnown;
+    bool xitOffsetKnown;
     bool currSplitEnabled;
+    bool splitKnown;
 
     const int READY_TIMEOUT_MS = 10000;
 

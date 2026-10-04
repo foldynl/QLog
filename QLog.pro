@@ -124,7 +124,9 @@ SOURCES += \
         cwkey/drivers/CWKey.cpp \
         cwkey/drivers/CWWinKey.cpp \
         data/ActivityProfile.cpp \
+        data/ActivityRuntimeProvider.cpp \
         data/AntProfile.cpp \
+        data/AntennaRuntimeProvider.cpp \
         data/BandmapGuide.cpp \
         data/BandPlan.cpp \
         data/Accents.cpp \
@@ -143,6 +145,7 @@ SOURCES += \
         data/RotUsrButtonsProfile.cpp \
         data/SerialPort.cpp \
         data/StationProfile.cpp \
+        data/StationRuntimeProvider.cpp \
         data/UpdatableSQLRecord.cpp \
         logformat/AdiFormat.cpp \
         logformat/AdxFormat.cpp \
@@ -151,6 +154,9 @@ SOURCES += \
         logformat/JsonFormat.cpp \
         logformat/LogFormat.cpp \
         logformat/PotaAdiFormat.cpp \
+        mcpbridge/RuntimeContext.cpp \
+        mcpbridge/RuntimeProvider.cpp \
+        mcpbridge/RuntimeServer.cpp \
         models/AlertTableModel.cpp \
         models/AwardsTableModel.cpp \
         models/DxccTableModel.cpp \
@@ -163,6 +169,7 @@ SOURCES += \
         models/WsjtxActivity.cpp \
         models/WsjtxTableModel.cpp \
         rig/Rig.cpp \
+        rig/RigRuntimeProvider.cpp \
         rig/RigCaps.cpp \
         rig/RigctldManager.cpp \
         rig/drivers/FlrigRigDrv.cpp \
@@ -171,6 +178,7 @@ SOURCES += \
         rig/drivers/TCIRigDrv.cpp \
         rotator/RotCaps.cpp \
         rotator/Rotator.cpp \
+        rotator/RotatorRuntimeProvider.cpp \
         rotator/drivers/GenericRotDrv.cpp \
         rotator/drivers/HamlibRotDrv.cpp \
         rotator/drivers/PSTRotDrv.cpp \
@@ -335,7 +343,9 @@ HEADERS += \
         cwkey/drivers/CWKey.h \
         cwkey/drivers/CWWinKey.h \
         data/ActivityProfile.h \
+        data/ActivityRuntimeProvider.h \
         data/AntProfile.h \
+        data/AntennaRuntimeProvider.h \
         data/Band.h \
         data/BandmapGuide.h \
         data/BandPlan.h \
@@ -363,6 +373,7 @@ HEADERS += \
         data/SerialPort.h \
         data/SpotAlert.h \
         data/StationProfile.h \
+        data/StationRuntimeProvider.h \
         data/ToAllSpot.h \
         data/UpdatableSQLRecord.h \
         data/WCYSpot.h \
@@ -380,6 +391,9 @@ HEADERS += \
         logformat/JsonFormat.h \
         logformat/LogFormat.h \
         logformat/PotaAdiFormat.h \
+        mcpbridge/RuntimeContext.h \
+        mcpbridge/RuntimeProvider.h \
+        mcpbridge/RuntimeServer.h \
         models/AlertTableModel.h \
         models/AwardsTableModel.h \
         models/DxccTableModel.h \
@@ -392,6 +406,7 @@ HEADERS += \
         models/WsjtxActivity.h \
         models/WsjtxTableModel.h \
         rig/Rig.h \
+        rig/RigRuntimeProvider.h \
         rig/RigCaps.h \
         rig/RigctldManager.h \
         rig/drivers/FlrigRigDrv.h \
@@ -402,6 +417,7 @@ HEADERS += \
         rig/macros.h \
         rotator/RotCaps.h \
         rotator/Rotator.h \
+        rotator/RotatorRuntimeProvider.h \
         rotator/drivers/GenericRotDrv.h \
         rotator/drivers/HamlibRotDrv.h \
         rotator/drivers/PSTRotDrv.h \

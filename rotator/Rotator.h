@@ -7,6 +7,8 @@
 #include "rotator/drivers/GenericRotDrv.h"
 #include "RotCaps.h"
 
+class RuntimeProvider;
+
 class Rotator : public QObject
 {
     Q_OBJECT
@@ -20,6 +22,19 @@ public:
         PSTROTATOR_DRIVER = 2
     };
 
+    struct Status
+    {
+        QString profile;
+        QString backend;
+        QString modelName;
+        bool isConnected = false;
+        double azimuth = 0.0;
+        double elevation = 0.0;
+        // Drivers may report axes separately; defaults are not position readings.
+        bool azimuthKnown = false;
+        bool elevationKnown = false;
+    };
+
     static Rotator* instance()
     {
         static Rotator instance;
@@ -27,6 +42,7 @@ public:
     };
     bool getPosition(double &azimuth, double &elevation) const;
     bool isRotConnected() const;
+    RuntimeProvider *getRuntimeProvider() const;
 
     const QList<QPair<int, QString>> getModelList(const DriverID &id) const;
     const QList<QPair<int, QString>> getDriverList() const;
@@ -101,9 +117,9 @@ private:
     GenericRotDrv *rotDriver;
     QMutex rotLock;
     mutable QMutex stateLock;
-    bool connected;
-    double cacheAzimuth;
-    double cacheElevation;
+    // Written and collected in the owner thread; stateLock protects existing cross-thread readers.
+    Status rotStatus;
+    RuntimeProvider *statusProvider;
     std::atomic<quint64> openRequestSequence;
 };
 

@@ -1,4 +1,5 @@
 #include "ActivityProfile.h"
+#include "ActivityRuntimeProvider.h"
 #include "core/debug.h"
 #include "data/ProfileManager.h"
 #include "data/AntProfile.h"
@@ -271,6 +272,13 @@ ActivityProfilesManager::ActivityProfilesManager() :
 
     connect (this, &ActivityProfilesManager::profileChanged,
              this, &ActivityProfilesManager::setAllProfiles);
+    statusProvider = createActivityRuntimeProvider(this);
+}
+
+RuntimeProvider *ActivityProfilesManager::getRuntimeProvider() const
+{
+    FCT_IDENTIFICATION;
+    return statusProvider;
 }
 
 void ActivityProfilesManager::save()

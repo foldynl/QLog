@@ -7,6 +7,7 @@
 
 #include "data/ProfileManager.h"
 
+class RuntimeProvider;
 
 #define DEFAULT_ROT_MODEL 1
 
@@ -46,10 +47,13 @@ public:
         return &instance;
     };
     void save();
+    RuntimeProvider *getRuntimeProvider() const;
     QStringList profileNamesForBand(const QString &bandName);
     QString profileNameForBand(const QString &bandName,
                                const QString &preferredProfileName = QString());
 
+private:
+    RuntimeProvider *statusProvider;
 };
 
 

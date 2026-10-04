@@ -10,6 +10,7 @@
 #include "data/DxSpot.h"
 
 class RigctldManager;
+class RuntimeProvider;
 
 class Rig : public QObject
 {
@@ -31,7 +32,15 @@ public:
     struct Status
     {
         QString profile;
+        QString backend;
+        QString modelName;
         double freq = 0.0;
+        // Main-VFO RX/TX values already adjusted by the driver, in MHz.
+        double rxFreq = 0.0;
+        double mainTxFreq = 0.0;
+        // Configured profile offsets, independent of CAT RIT/XIT reports, in MHz.
+        double rxOffset = 0.0;
+        double txOffset = 0.0;
         QString mode;
         QString submode;
         QString rawmode;
@@ -44,25 +53,23 @@ public:
         qint32 bandwidth = 0;
         bool isConnected = false;
         bool splitEnabled = false;
+        // Separate TX VFO report during split, in MHz.
         double txFreq = 0.0;
+
+        // Defaults are not device readings. Set these only on enabled, supported
+        // driver reports so runtime getters can distinguish unknown from zero/false.
+        bool powerKnown = false;
+        bool keySpeedKnown = false;
+        bool vfoKnown = false;
+        bool ritKnown = false;
+        bool xitKnown = false;
+        bool bandwidthKnown = false;
+        bool splitKnown = false;
+        bool txFrequencyKnown = false;
 
         void clear()
         {
-            profile.clear();
-            freq = 0.0;
-            mode.clear();
-            submode.clear();
-            rawmode.clear();
-            ptt = -1;
-            power = 0.0;
-            keySpeed = 0;
-            vfo="Curr";
-            rit = 0.0;
-            xit = 0.0;
-            bandwidth = 0;
-            isConnected = false;
-            splitEnabled = false;
-            txFreq = 0.0;
+            *this = Status();
         };
     };
 
@@ -77,6 +84,8 @@ public:
 
     explicit Rig(QObject *parent = nullptr);
     ~Rig();
+
+    RuntimeProvider *getRuntimeProvider() const;
 
     bool isRigConnected();
     bool isMorseOverCatSupported();
@@ -185,6 +194,7 @@ private:
     GenericRigDrv *rigDriver;
     QMutex rigLock;
     Rig::Status rigStatus;
+    RuntimeProvider *statusProvider;
     bool connected;
     QTimer *heartBeatTimer;
     const quint16 HEARTBEATPERIOD = 1000; // in ms
