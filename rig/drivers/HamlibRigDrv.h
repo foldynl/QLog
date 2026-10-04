@@ -41,6 +41,7 @@ public:
     virtual void sendState() override;
     virtual void stopTimers() override;
     virtual void sendDXSpot(const DxSpot &spot) override;
+    virtual void sendRawCommand(const QString &command) override;
 
 private slots:
     void checkRigStateChange();

@@ -3550,6 +3550,14 @@ void NewContactWidget::tuneDx(const DxSpot &spot)
             }
             emit userModeChanged(VFO1, QString(), mode, subMode, bandwidthFilter);
         }
+
+        // The rig profile may name a raw CAT command for the end of a spot
+        // tune, e.g. "SY2;" lets a Yaesu FTDX101 take its second receiver
+        // along to the same frequency and mode.
+        const QString &spotTuneCommand = RigProfilesManager::instance()->getCurProfile1().spotTuneCommand;
+
+        if ( !spotTuneCommand.isEmpty() )
+            rig->sendRawCommand(spotTuneCommand);
     }
 
     resetContact();

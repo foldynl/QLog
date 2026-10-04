@@ -1990,6 +1990,23 @@
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QLabel" name="rigSpotTuneCommandLabel">
+                     <property name="text">
+                      <string>CAT after spot tuning:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="rigSpotTuneCommandEdit">
+                     <property name="toolTip">
+                      <string>Raw CAT command sent to the rig after QLog has tuned it to a spot. Example for the Yaesu FTDX101: SY2; synchronizes the second receiver (frequency and mode) with the main receiver. Leave empty if not needed.</string>
+                     </property>
+                     <property name="placeholderText">
+                      <string>e.g. SY2;</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="11" column="1">

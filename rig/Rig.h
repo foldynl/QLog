@@ -106,6 +106,7 @@ public slots:
     void stopMorse();
     void sendState();
     void sendDXSpot(DxSpot spot);
+    void sendRawCommand(const QString &command);
 
 signals:
     void frequencyChanged(VFOID, double, double, double);
@@ -142,6 +143,7 @@ private slots:
     void stopMorseImpl();
     void sendStateImpl();
     void sendDXSpotImpl(const DxSpot &spot);
+    void sendRawCommandImpl(const QString &command);
     void sendHeartBeat();
 
 private:

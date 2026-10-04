@@ -41,6 +41,7 @@ public:
     virtual void sendState() = 0;
     virtual void stopTimers() = 0;
     virtual void sendDXSpot(const DxSpot &spot) = 0;
+    virtual void sendRawCommand(const QString &command);
 
 signals:
     // STATE Signals

@@ -102,6 +102,7 @@ public:
     bool dxSpot2Rig;
     bool shareRigctld;
     bool getSplitInfo;
+    QString spotTuneCommand;
 
     bool operator== (const RigProfile &profile);
     bool operator!= (const RigProfile &profile);

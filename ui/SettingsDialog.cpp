@@ -998,6 +998,7 @@ void SettingsDialog::addRigProfile()
     profile.getKeySpeed = ui->rigGetKeySpeedCheckBox->isChecked();
     profile.keySpeedSync = ui->rigKeySpeedSyncCheckBox->isChecked();
     profile.dxSpot2Rig = ui->rigDXSpots2RigCheckBox->isChecked();
+    profile.spotTuneCommand = ui->rigSpotTuneCommandEdit->text().trimmed();
     profile.getSplitInfo = ui->rigGetSplitCheckBox->isChecked();
 
     // Rigctld sharing settings
@@ -1076,6 +1077,7 @@ void SettingsDialog::doubleClickRigProfile(QModelIndex i)
     ui->rigGetKeySpeedCheckBox->setChecked(profile.getKeySpeed);
     ui->rigKeySpeedSyncCheckBox->setChecked(profile.keySpeedSync);
     ui->rigDXSpots2RigCheckBox->setChecked(profile.dxSpot2Rig);
+    ui->rigSpotTuneCommandEdit->setText(profile.spotTuneCommand);
     ui->rigGetSplitCheckBox->setChecked(profile.getSplitInfo);
 
     setComboByData(ui->rigFlowControlSelect, profile.flowcontrol.toLower());

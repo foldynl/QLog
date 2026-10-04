@@ -44,3 +44,12 @@ void GenericRigDrv::setSplit(bool)
 
     // Default: do nothing — driver does not support split
 }
+
+void GenericRigDrv::sendRawCommand(const QString &command)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << command;
+
+    // Default: do nothing - driver has no raw command channel
+}

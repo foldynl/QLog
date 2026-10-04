@@ -1,4 +1,5 @@
 #include <QtGlobal>
+#include <QTcpSocket>
 
 #include <QRegularExpression>
 #include "HamlibRigDrv.h"
@@ -458,6 +459,60 @@ void HamlibRigDrv::setSplit(bool enabled)
     int status = rig_set_split_vfo(rig, RIG_VFO_TX, splitVal, txVfo);
     isRigRespOK(status, tr("Set Split Error"), false);
     futureSplit = (status == RIG_OK && enabled);
+
+    commandSleep();
+}
+
+void HamlibRigDrv::sendRawCommand(const QString &command)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << command;
+
+    MUTEXLOCKER;
+
+    if ( !rig )
+    {
+        qCWarning(runtime) << "Rig is not active";
+        return;
+    }
+
+    if ( rigProfile.model == RIG_MODEL_NETRIGCTL )
+    {
+        // The Hamlib link speaks the rigctld protocol, so raw bytes cannot go
+        // down that socket. rigctld takes further clients: a short second
+        // connection forwards the command with rigctld's "send_cmd_rx" and
+        // 0 reply bytes, so a set command returns at once and the protocol
+        // state of the Hamlib link is not touched.
+        QTcpSocket socket;
+
+        socket.connectToHost(rigProfile.hostname, rigProfile.netport);
+
+        if ( !socket.waitForConnected(1000) )
+        {
+            qCWarning(runtime) << "Raw command failed, rigctld not reachable" << command << socket.errorString();
+            return;
+        }
+
+        socket.write(QString("W %1 0\n").arg(command).toLatin1());
+        socket.waitForBytesWritten(1000);
+        socket.waitForReadyRead(1000); // rigctld's answer line, nothing to evaluate for a set command
+        socket.disconnectFromHost();
+    }
+    else
+    {
+#if HAMLIB_VERSION >= HAMLIB_VERSION_CHECK(4,5,0)
+        const QByteArray bytes = command.toLatin1();
+        const int status = rig_send_raw(rig,
+                                        reinterpret_cast<const unsigned char *>(bytes.constData()), bytes.size(),
+                                        nullptr, 0, nullptr);
+
+        if ( status < 0 )
+            qCWarning(runtime) << "Raw command failed" << command << rigerror(status);
+#else
+        qCWarning(runtime) << "Raw CAT commands need Hamlib 4.5 or newer" << command;
+#endif
+    }
 
     commandSleep();
 }

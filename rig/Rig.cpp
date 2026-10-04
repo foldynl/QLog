@@ -742,6 +742,30 @@ void Rig::sendDXSpotImpl(const DxSpot &spot)
     rigDriver->sendDXSpot(spot);
 }
 
+void Rig::sendRawCommand(const QString &command)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << command;
+
+    QMetaObject::invokeMethod(this, "sendRawCommandImpl", Qt::QueuedConnection,
+                              Q_ARG(QString, command));
+}
+
+void Rig::sendRawCommandImpl(const QString &command)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << command;
+
+    MUTEXLOCKER;
+
+    if ( ! rigDriver )
+        return;
+
+    rigDriver->sendRawCommand(command);
+}
+
 GenericRigDrv *Rig::getDriver(const RigProfile &profile, qint32 controlledRigModel)
 {
     FCT_IDENTIFICATION;
