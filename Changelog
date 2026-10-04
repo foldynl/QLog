@@ -7,8 +7,11 @@ TBC - 0.54.0
 - [NEW] - ADIF 3.1.8 - Added new mode JTTY
 - [NEW] - ADIF 3.1.8 - Added new Contest IDs
 - [NEW] - WSJTX - Added support for multiple WSJT-X instances (issue #1184)
+- [NEW] - DXC - Added Command History and Help (issue #1168)
+- [NEW] - DXC - Added Editable DX Comment Template (issue #1168)
 - [CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting
 - [CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"
+- [CHANGED] - DXC - Send Last QSO dynamically switches to Spot QSO
 - Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)
 - Fixed link to Awards Japanese Cities
