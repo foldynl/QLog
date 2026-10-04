@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PGAHunterTable</class>
+ <widget class="QTableView" name="PGAHunterTable">
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
+  <property name="toolTip">
+   <string>Local HF progress. Official PGA credits are determined by SPGA from activator logs.</string>
+  </property>
+  <property name="editTriggers">
+   <set>QAbstractItemView::NoEditTriggers</set>
+  </property>
+  <property name="alternatingRowColors">
+   <bool>true</bool>
+  </property>
+  <property name="selectionMode">
+   <enum>QAbstractItemView::SingleSelection</enum>
+  </property>
+  <property name="verticalScrollMode">
+   <enum>QAbstractItemView::ScrollPerPixel</enum>
+  </property>
+  <property name="horizontalScrollMode">
+   <enum>QAbstractItemView::ScrollPerPixel</enum>
+  </property>
+  <attribute name="horizontalHeaderCascadingSectionResizes">
+   <bool>true</bool>
+  </attribute>
+  <attribute name="verticalHeaderVisible">
+   <bool>false</bool>
+  </attribute>
+  <attribute name="verticalHeaderHighlightSections">
+   <bool>false</bool>
+  </attribute>
+  <attribute name="verticalHeaderMinimumSectionSize">
+   <number>20</number>
+  </attribute>
+  <attribute name="verticalHeaderDefaultSectionSize">
+   <number>20</number>
+  </attribute>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

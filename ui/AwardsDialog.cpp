@@ -19,6 +19,7 @@
 #include "awards/AwardWPX.h"
 #include "awards/AwardIOTA.h"
 #include "awards/AwardPOTAHunter.h"
+#include "awards/AwardPGAHunter.h"
 #include "awards/AwardPOTAActivator.h"
 #include "awards/AwardSOTA.h"
 #include "awards/AwardWWFF.h"
@@ -100,13 +101,17 @@ void AwardsDialog::refreshTable(int)
         return;
 
     if ( !ui->notWorkedCheckBox->isHidden() )
-    {
         notWorkedChecked = ui->notWorkedCheckBox->isChecked();
+    if ( !ui->notConfirmedCheckBox->isHidden() )
         notConfirmedChecked = ui->notConfirmedCheckBox->isChecked();
-    }
 
     setEntityInputEnabled(award->entityInputEnabled());
-    setNotWorkedEnabled(award->notWorkedEnabled());
+    const bool confirmationEnabled = award->confirmationInputEnabled();
+    setNotWorkedEnabled(award->notWorkedEnabled(), confirmationEnabled);
+    ui->confirmedLabel->setVisible(confirmationEnabled);
+    ui->lotwCheckBox->setVisible(confirmationEnabled);
+    ui->eqslCheckBox->setVisible(confirmationEnabled);
+    ui->paperCheckBox->setVisible(confirmationEnabled);
     updateRulesButton(award);
 
     if ( ui->eqslCheckBox->isEnabled() )
@@ -275,7 +280,7 @@ void AwardsDialog::setEntityInputEnabled(bool enabled)
     ui->myEntityLabel->setVisible(enabled);
 }
 
-void AwardsDialog::setNotWorkedEnabled(bool enabled)
+void AwardsDialog::setNotWorkedEnabled(bool enabled, bool confirmationEnabled)
 {
     FCT_IDENTIFICATION;
 
@@ -285,8 +290,8 @@ void AwardsDialog::setNotWorkedEnabled(bool enabled)
     ui->notWorkedCheckBox->setChecked(enabled && notWorkedChecked);
     ui->notWorkedCheckBox->blockSignals(false);
     ui->notConfirmedCheckBox->blockSignals(true);
-    ui->notConfirmedCheckBox->setVisible(enabled);
-    ui->notConfirmedCheckBox->setChecked(enabled && notConfirmedChecked);
+    ui->notConfirmedCheckBox->setVisible(enabled && confirmationEnabled);
+    ui->notConfirmedCheckBox->setChecked(enabled && confirmationEnabled && notConfirmedChecked);
     ui->notConfirmedCheckBox->blockSignals(false);
 }
 
@@ -301,6 +306,8 @@ void AwardsDialog::updateRulesButton(const AwardDefinition *award)
 
 QList<AwardDefinition*> AwardsDialog::createAwards()
 {
+    FCT_IDENTIFICATION;
+
     return {
         new AwardDXCC(),
         new AwardITU(),
@@ -310,6 +317,7 @@ QList<AwardDefinition*> AwardsDialog::createAwards()
         new AwardWPX(),
         new AwardIOTA(),
         new AwardPOTAHunter(),
+        new AwardPGAHunter(),
         new AwardPOTAActivator(),
         new AwardSOTA(),
         new AwardWWFF(),

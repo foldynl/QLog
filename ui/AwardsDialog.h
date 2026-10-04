@@ -40,7 +40,7 @@ private:
     void saveDialogState() const;
     void openRulesUrl() const;
     void setEntityInputEnabled(bool);
-    void setNotWorkedEnabled(bool);
+    void setNotWorkedEnabled(bool enabled, bool confirmationEnabled);
     void updateRulesButton(const AwardDefinition *award);
 
     static QList<AwardDefinition*> createAwards();

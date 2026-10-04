@@ -46,6 +46,9 @@ public:
     /*Whether the Not-Worked / Not-Confirmed checkboxes are shown. Default: true. */
     virtual bool notWorkedEnabled() const;
 
+    /* Local progress views may have no QSL-based confirmation status. */
+    virtual bool confirmationInputEnabled() const { return true; }
+
     /*Whether eQSL confirmations are valid for this award. Default: true. */
     virtual bool acceptsEqslConfirmation() const;
 

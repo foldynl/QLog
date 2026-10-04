@@ -144,8 +144,13 @@ void MigrationSqlTest::migrateVersion()
     QCOMPARE(currentVersion(), expectedCurrent);
 
     const QList<int> legacyAlertStatuses = {1, 6, 31, 127};
+    int existingSubdivisionCount = 0;
     if ( targetVersion == 42 )
     {
+        QSqlQuery subdivisions(QStringLiteral("SELECT COUNT(*) FROM adif_enum_secondary_subdivision"));
+        QVERIFY(subdivisions.next());
+        existingSubdivisionCount = subdivisions.value(0).toInt();
+
         QSqlQuery insert;
         QVERIFY(insert.prepare(QStringLiteral(
             "INSERT INTO alert_rules(rule_name, dx_logstatus) VALUES (:name, :status)")));
@@ -196,6 +201,32 @@ void MigrationSqlTest::migrateVersion()
             "WHERE name = 'mainwindow/alertbeep'")));
         QVERIFY(query.next());
         QCOMPARE(query.value(0).toInt(), 0);
+
+        QVERIFY(query.exec(QStringLiteral(
+            "SELECT COUNT(*) FROM adif_enum_secondary_subdivision WHERE dxcc <> 269")));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toInt(), existingSubdivisionCount);
+
+        QVERIFY(query.exec(QStringLiteral(
+            "SELECT COUNT(*), SUM(aux = 'suspended') "
+            "FROM adif_enum_secondary_subdivision WHERE dxcc = 269")));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toInt(), 2482);
+        QCOMPARE(query.value(1).toInt(), 3);
+
+        QVERIFY(query.exec(QStringLiteral(
+            "SELECT code, subdivision_name, primary_code "
+            "FROM adif_enum_secondary_subdivision "
+            "WHERE dxcc = 269 AND code IN ('KQ04', 'WA01') ORDER BY code")));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QStringLiteral("KQ04"));
+        QCOMPARE(query.value(1).toString(), QStringLiteral("Marciszów"));
+        QCOMPARE(query.value(2).toString(), QStringLiteral("D"));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QStringLiteral("WA01"));
+        QCOMPARE(query.value(1).toString(), QStringLiteral("Andrychów"));
+        QCOMPARE(query.value(2).toString(), QStringLiteral("M"));
+        QVERIFY(!query.next());
     }
 }
 

@@ -1,6 +1,6 @@
 TBC - 0.54.0
 - [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
-- [NEW] - Awards - Added WAJA
+- [NEW] - Awards - Added WAJA, Polish PGA
 - [NEW] - Awards - Remember dialog filter selection
 - [NEW] - Settings - Rig - Added Winkeyer multi-output support (issue #1034)
 - [NEW] - Alerts - Added OS Native Notifications

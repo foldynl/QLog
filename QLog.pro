@@ -69,6 +69,7 @@ SOURCES += \
         awards/AwardUSCounty.cpp \
         awards/AwardPOTAActivator.cpp \
         awards/AwardPOTAHunter.cpp \
+        awards/AwardPGAHunter.cpp \
         awards/AwardSOTA.cpp \
         awards/AwardWAAC.cpp \
         awards/AwardWAIP.cpp \
@@ -286,6 +287,7 @@ HEADERS += \
         awards/AwardUSCounty.h \
         awards/AwardPOTAActivator.h \
         awards/AwardPOTAHunter.h \
+        awards/AwardPGAHunter.h \
         awards/AwardSOTA.h \
         awards/AwardWAAC.h \
         awards/AwardWAIP.h \
@@ -519,6 +521,7 @@ HEADERS += \
         ui/component/SwitchButton.h
 
 FORMS += \
+        awards/PGAHunterTable.ui \
         ui/AlertRuleLogStatusDialog.ui \
         ui/QSOFilterRule.ui \
         ui/component/QSOFilterDateRangeEdit.ui \

@@ -19,6 +19,7 @@ SUBDIRS += CallsignTest \
            DxServerStringTest \
            HostsPortStringTest \
            MigrationTest \
+           PGAHunterTest \
            MacroExpanderTest \
            PasswordCipherTest \
            QuadKeyCacheTest \
