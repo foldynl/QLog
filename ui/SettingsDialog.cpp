@@ -45,6 +45,7 @@
 #include "rotator/Rotator.h"
 #include "rotator/RotCaps.h"
 #include "core/LogParam.h"
+#include "core/MacroExpander.h"
 #include "data/Callsign.h"
 #include "core/MembershipQE.h"
 #include "data/BandmapGuide.h"
@@ -436,6 +437,14 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     FCT_IDENTIFICATION;
 
     ui->setupUi(this);
+    const QString macroHelp = MacroExpander::helpText()
+                             + tr("\n<+> = Speed +5 WPM (<++> = +10 WPM, etc.)\n"
+                                  "<-> = Speed -5 WPM (<--> = -10 WPM, etc.)");
+    for ( QLineEdit *edit : {ui->cwShortcutF1MacroEdit, ui->cwShortcutF2MacroEdit,
+                             ui->cwShortcutF3MacroEdit, ui->cwShortcutF4MacroEdit,
+                             ui->cwShortcutF5MacroEdit, ui->cwShortcutF6MacroEdit,
+                             ui->cwShortcutF7MacroEdit} )
+        edit->setToolTip(macroHelp);
     snapshotEquipmentProfiles();
     setupAdifRecoveryTab();
     setupQsoStatusColorsTable();

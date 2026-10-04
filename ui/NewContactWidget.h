@@ -21,6 +21,7 @@
 #include "data/StationProfile.h"
 #include "core/PropConditions.h"
 #include "core/LogLocale.h"
+#include "core/MacroExpander.h"
 #include "models/LogbookModel.h"
 #include "ui/component/EditLine.h"
 #include "data/DxSpot.h"
@@ -193,10 +194,14 @@ public:
 
     void assignPropConditions(PropConditions *);
     QString getCallsign() const;
+    MacroExpander::Context getMacroContext() const;
+    double getRXFrequency() const;
     QString getName() const;
     QString getRST() const;
     QString getGreeting() const;
     QString getQTH() const;
+    QString getLocator() const;
+    QString getPropagationMode() const;
     QString getMyCallsign() const;
     QString getMyName() const;
     QString getMyQTH() const;

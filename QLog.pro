@@ -94,6 +94,7 @@ SOURCES += \
         core/LogDatabase.cpp \
         core/LogLocale.cpp \
         core/LogParam.cpp \
+        core/MacroExpander.cpp \
         core/MembershipQE.cpp \
         core/Migration.cpp \
         core/MqttClient.cpp \
@@ -208,6 +209,7 @@ SOURCES += \
         ui/DownloadQSLDialog.cpp \
         ui/DxFilterDialog.cpp \
         ui/DxWidget.cpp \
+        ui/SpotCommentDialog.cpp \
         ui/DxccTableWidget.cpp \
         ui/EditActivitiesDialog.cpp \
         ui/CabrilloExportDialog.cpp \
@@ -301,6 +303,7 @@ HEADERS += \
         core/LogDatabase.h \
         core/LogLocale.h \
         core/LogParam.h \
+        core/MacroExpander.h \
         core/MembershipQE.h \
         core/Migration.h \
         core/MqttClient.h \
@@ -438,6 +441,7 @@ HEADERS += \
         ui/DownloadQSLDialog.h \
         ui/DxFilterDialog.h \
         ui/DxWidget.h \
+        ui/SpotCommentDialog.h \
         ui/DxccTableWidget.h \
         ui/EditActivitiesDialog.h \
         ui/CabrilloExportDialog.h \
@@ -522,6 +526,7 @@ FORMS += \
         ui/DownloadQSLDialog.ui \
         ui/DxFilterDialog.ui \
         ui/DxWidget.ui \
+        ui/SpotCommentDialog.ui \
         ui/EditActivitiesDialog.ui \
         ui/CabrilloExportDialog.ui \
         ui/CabrilloTemplateDialog.ui \

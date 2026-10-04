@@ -423,6 +423,8 @@ public:
     static void removeDXCTrendContinent();
     static QByteArray getDXCCommandHistory(const QString &server);
     static bool setDXCCommandHistory(const QString &server, const QByteArray &history);
+    static QString getDXCSpotCommentTemplate();
+    static bool setDXCSpotCommentTemplate(const QString &text);
 
     /**************
      * Export ADIF

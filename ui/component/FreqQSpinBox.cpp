@@ -9,6 +9,9 @@
 #include <QStyle>
 #include "data/BandPlan.h"
 #include "rig/macros.h"
+#include "core/debug.h"
+
+MODULE_IDENTIFICATION("qlog.ui.component.freqqspinbox");
 
 FreqQSpinBox::FreqQSpinBox(QWidget *parent) :
     BaseDoubleSpinBox(parent),
@@ -136,6 +139,22 @@ bool FreqQSpinBox::hasBand() const
 bool FreqQSpinBox::hasFrequency() const
 {
     return !hasBand() && value() > minimum();
+}
+
+double FreqQSpinBox::displayedFrequency() const
+{
+    FCT_IDENTIFICATION;
+
+    // No-focus actions can read the editor before Qt commits keyboard input.
+    QString input = text();
+    if ( hasBand() && input == selectedBand() )
+        return 0.0;
+
+    int position = lineEdit()->cursorPosition();
+    if ( validate(input, position) != QValidator::Acceptable )
+        return 0.0;
+
+    return valueFromText(input);
 }
 
 QString FreqQSpinBox::selectedBand() const

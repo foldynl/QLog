@@ -162,6 +162,7 @@ public slots:
 
 private slots:
     void actionCommandSpotQSO();
+    void actionSpotComment();
     void actionCommandShowHFStats();
     void actionCommandShowVHFStats();
     void actionCommandShowWCY();
@@ -171,6 +172,7 @@ private slots:
     void actionForgetPassword();
     void actionKeepSpots();
     void actionClear();
+    void updateSpotAction();
 
     void displayedColumns();
     void trendDoubleClicked(int row, int column);
@@ -183,6 +185,9 @@ signals:
     void newWWVSpot(WWVSpot);
     void newToAllSpot(ToAllSpot);
     void newFilteredSpot(DxSpot);
+
+protected:
+    bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
     enum DXCConnectionState
@@ -228,6 +233,9 @@ private:
     const NewContactWidget *newContactWidget;
 
     void connectCluster();
+    void prepareSpot(double frequency, const MacroExpander::Context &context);
+    void setCommandWarning(const QString &warning);
+    bool hasCurrentQSO() const;
     void disconnectCluster(bool tryReconnect = false);
     void saveDXCServers();
     QString modeFilterRegExp();

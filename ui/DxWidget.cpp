@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QFontMetrics>
 #include <QActionGroup>
+#include <QToolTip>
 
 #ifdef Q_OS_WIN
 #include <Ws2tcpip.h>
@@ -29,10 +30,12 @@
 #include "ui/ColumnSettingDialog.h"
 #include "core/CredentialStore.h"
 #include "ui/InputPasswordDialog.h"
+#include "ui/SpotCommentDialog.h"
 #include "data/BandPlan.h"
 #include "rig/macros.h"
 #include "data/Callsign.h"
 #include "core/LogParam.h"
+#include "core/MacroExpander.h"
 #include "core/PotaQE.h"
 
 #define CONSOLE_VIEW 4
@@ -621,6 +624,14 @@ DxWidget::DxWidget(QWidget *parent) :
 
     ui->setupUi(this);
 
+    ui->commandEdit->addAction(ui->actionCommandWarning, QLineEdit::LeadingPosition);
+    ui->actionCommandWarning->setVisible(false);
+    connect(ui->commandEdit, &QLineEdit::textChanged, this, [this](const QString &text)
+    {
+        if ( text.isEmpty() && ui->actionCommandWarning->isVisible() )
+            setCommandWarning(QString());
+    });
+
     setSearchClosed();
 
     ui->serverSelect->setStyleSheet(QStringLiteral("QComboBox {color: red}"));
@@ -681,16 +692,21 @@ DxWidget::DxWidget(QWidget *parent) :
     serverComboSetup();
 
     commandsMenu->addAction(ui->actionSpotQSO);
+    commandsMenu->addAction(ui->actionSpotComment);
     commandsMenu->addSeparator();
     commandsMenu->addAction(ui->actionShowWCY);
     commandsMenu->addAction(ui->actionShowWWV);
     ui->commandButton->setMenu(commandsMenu);
     ui->commandButton->setDefaultAction(ui->actionSpotQSO);
     ui->commandButton->setEnabled(false);
+    ui->commandButton->installEventFilter(this);
+    connect(commandsMenu, &QMenu::aboutToShow, this, &DxWidget::updateSpotAction);
+    updateSpotAction();
 
     QMenu *mainWidgetMenu = new QMenu(this);
     mainWidgetMenu->addAction(ui->actionDeleteServer);
     mainWidgetMenu->addAction(ui->actionForgetPassword);
+    mainWidgetMenu->addAction(ui->actionSpotComment);
     mainWidgetMenu->addSeparator();
     mainWidgetMenu->addAction(ui->actionConnectOnStartup);
     QMenu *trendContinentMenu = new QMenu(tr("My Continent"), mainWidgetMenu);
@@ -822,6 +838,7 @@ void DxWidget::disconnectCluster(bool tryReconnect)
     FCT_IDENTIFICATION;
 
     reconnectTimer.stop();
+    setCommandWarning(QString());
     ui->commandEdit->clear();
     ui->commandEdit->setEnabled(false);
     ui->commandButton->setEnabled(false);
@@ -1039,6 +1056,7 @@ void DxWidget::send()
         return;
     if ( connectionState == OPERATION )
         ui->commandEdit->rememberCommand(command);
+    setCommandWarning(QString());
     ui->commandEdit->clear();
 }
 
@@ -1488,6 +1506,7 @@ void DxWidget::setLastQSO(QSqlRecord qsoRecord)
     FCT_IDENTIFICATION;
 
     lastQSO = qsoRecord;
+    updateSpotAction();
 }
 
 void DxWidget::updateSpotsStatusWhenQSOAdded(const QSqlRecord &record)
@@ -1548,30 +1567,123 @@ void DxWidget::prepareQSOSpot(QSqlRecord qso)
 
     qCDebug(runtime) << "QSO" << qso;
 
+    if ( !qso.contains(QStringLiteral("start_time"))
+         || !qso.contains(QStringLiteral("freq"))
+         || !qso.contains(QStringLiteral("callsign")) )
+        return;
+
+    const double frequency = qso.value("freq_rx").toDouble() != 0.0 ? qso.value("freq_rx").toDouble()
+                                                                    : qso.value("freq").toDouble();
+    prepareSpot(frequency, MacroExpander::fromQSO(qso));
+}
+
+void DxWidget::prepareSpot(double frequency, const MacroExpander::Context &context)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << frequency;
+
     if ( !ui->commandEdit->isEnabled() )
         return;
 
-    if ( qso.contains(QStringLiteral("start_time")) )
+    const QString callsign = context.value(QStringLiteral("callsign")).trimmed();
+    if ( callsign.isEmpty() )
     {
-        //qso is valid record
-        if ( qso.contains(QStringLiteral("freq"))
-             && qso.contains(QStringLiteral("callsign")) )
-        {
-            double spotFreq = ( qso.contains("freq_rx")
-                                && qso.value("freq_rx").toDouble() != 0.0 ) ? qso.value("freq_rx").toDouble()
-                                                                            : qso.value("freq").toDouble();
-
-            if ( spotFreq <= 0.0 )
-                QMessageBox::warning(this, tr("QLog Warning"),
-                                     tr("An exact frequency is required to spot a QSO"));
-
-            // DX Spider allow to enter QSO freq in MHz but it is not reliable for SHF bands.
-            // a more reliable way is to send a spot with kHz value
-            ui->commandEdit->setText(QString("dx %1 %2 ").arg(QString::number(Hz2kHz(MHz2Hz(spotFreq)), 'f', 1),
-                                                              qso.value("callsign").toString()));
-            ui->commandEdit->setFocus();
-        }
+        setCommandWarning(tr("A callsign is required to spot a QSO."));
+        return;
     }
+
+    if ( !qIsFinite(frequency) || frequency <= 0.0 )
+    {
+        setCommandWarning(tr("An exact frequency is required to spot a QSO"));
+        return;
+    }
+
+    // kHz values also work reliably on SHF bands, unlike DX Spider's MHz shorthand.
+    QString command = QStringLiteral("dx %1 %2 ").arg(QString::number(Hz2kHz(MHz2Hz(frequency)), 'f', 1), callsign);
+    const MacroExpander::Result result = MacroExpander::expandSpotComment(LogParam::getDXCSpotCommentTemplate(), context);
+    if ( result.missingMacros.isEmpty() )
+        command += result.text;
+
+    ui->commandEdit->setText(command);
+    ui->commandEdit->setFocus();
+
+    setCommandWarning(result.missingMacros.isEmpty() ? QString()
+                      : tr("Comment not added: missing %1.")
+                        .arg(result.missingMacros.join(QStringLiteral(", "))));
+}
+
+void DxWidget::setCommandWarning(const QString &warning)
+{
+    FCT_IDENTIFICATION;
+
+    if ( QToolTip::text() == ui->actionCommandWarning->toolTip() )
+        QToolTip::hideText();
+    const QString tooltip = warning.isEmpty() ? QString()
+                            : QStringLiteral("<qt>%1</qt>").arg(warning.toHtmlEscaped());
+    ui->actionCommandWarning->setToolTip(tooltip);
+    ui->actionCommandWarning->setVisible(!warning.isEmpty());
+    if ( !warning.isEmpty() )
+        QToolTip::showText(ui->commandEdit->mapToGlobal(QPoint(0, ui->commandEdit->height())),
+                          tooltip, ui->commandEdit, QRect(), 5000);
+}
+
+void DxWidget::actionSpotComment()
+{
+    FCT_IDENTIFICATION;
+
+    const bool currentQSO = hasCurrentQSO();
+    const MacroExpander::Context context = currentQSO ? newContactWidget->getMacroContext()
+                                                    : MacroExpander::fromQSO(lastQSO);
+    SpotCommentDialog dialog(context, currentQSO, this);
+    dialog.exec();
+}
+
+bool DxWidget::hasCurrentQSO() const
+{
+    FCT_IDENTIFICATION;
+
+    // Band-only must not switch the spot to another station from the logbook.
+    return newContactWidget && !newContactWidget->getCallsign().trimmed().isEmpty();
+}
+
+void DxWidget::updateSpotAction()
+{
+    FCT_IDENTIFICATION;
+
+    const bool currentQSO = hasCurrentQSO();
+    QString tooltip;
+    if ( !currentQSO && !lastQSO.contains(QStringLiteral("start_time")) )
+        tooltip = tr("No last QSO is available. Log a QSO first.");
+    else
+    {
+        const QString callsign = currentQSO ? newContactWidget->getCallsign().trimmed()
+                                           : lastQSO.value(QStringLiteral("callsign")).toString().trimmed();
+        const double frequency = currentQSO ? newContactWidget->getRXFrequency()
+                                           : (lastQSO.value(QStringLiteral("freq_rx")).toDouble() != 0.0
+                                              ? lastQSO.value(QStringLiteral("freq_rx")).toDouble()
+                                              : lastQSO.value(QStringLiteral("freq")).toDouble());
+        tooltip = qIsFinite(frequency) && frequency > 0.0
+                  ? tr("Prepare a spot for %1 at %2 kHz.")
+                    .arg(callsign, QString::number(Hz2kHz(MHz2Hz(frequency)), 'f', 1))
+                  : tr("Prepare a spot for %1. An exact frequency is required.").arg(callsign);
+    }
+
+    // QAction changes also copy its enabled state to the default tool button.
+    const bool buttonEnabled = ui->commandButton->isEnabledTo(this);
+    ui->actionSpotQSO->setText(currentQSO ? tr("Spot QSO") : tr("Last QSO"));
+    ui->actionSpotQSO->setToolTip(tooltip);
+    ui->commandButton->setEnabled(buttonEnabled);
+}
+
+bool DxWidget::eventFilter(QObject *object, QEvent *event)
+{
+    FCT_IDENTIFICATION;
+
+    // Read pending frequency input just before Qt displays the tooltip.
+    if ( event->type() == QEvent::ToolTip && object == ui->commandButton )
+        updateSpotAction();
+
+    return QWidget::eventFilter(object, event);
 }
 
 void DxWidget::setSearch(const QString &text)
@@ -1641,6 +1753,12 @@ void DxWidget::registerContactWidget(const NewContactWidget *contactWidget)
     FCT_IDENTIFICATION;
 
     newContactWidget = contactWidget;
+    if ( newContactWidget )
+    {
+        connect(newContactWidget, &NewContactWidget::callsignChanged, this, &DxWidget::updateSpotAction);
+        connect(newContactWidget, &NewContactWidget::contactReset, this, &DxWidget::updateSpotAction);
+    }
+    updateSpotAction();
 }
 
 void DxWidget::setDxTrend(QHash<QString, QHash<QString, QHash<QString, int>>> trend)
@@ -1774,9 +1892,12 @@ void DxWidget::actionCommandSpotQSO()
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(runtime) << "Last QSO" << lastQSO;
-
-    prepareQSOSpot(lastQSO);
+    if ( hasCurrentQSO() )
+        prepareSpot(newContactWidget->getRXFrequency(), newContactWidget->getMacroContext());
+    else if ( !lastQSO.contains(QStringLiteral("start_time")) )
+        setCommandWarning(tr("No last QSO is available. Log a QSO first."));
+    else
+        prepareQSOSpot(lastQSO);
     ui->commandButton->setDefaultAction(ui->actionSpotQSO);
 }
 

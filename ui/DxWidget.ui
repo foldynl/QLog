@@ -643,10 +643,24 @@
   </action>
   <action name="actionSpotQSO">
    <property name="text">
-    <string>Spot Last QSO</string>
+    <string>Spot QSO</string>
    </property>
    <property name="toolTip">
-    <string>Send last QSO spot</string>
+    <string>Prepare a spot for New QSO when its callsign is filled in; otherwise use the last saved QSO.</string>
+   </property>
+  </action>
+  <action name="actionSpotComment">
+   <property name="text">
+    <string>Comment Template</string>
+   </property>
+  </action>
+  <action name="actionCommandWarning">
+   <property name="icon">
+    <iconset resource="../res/icons/icons.qrc">
+     <normaloff>:/icons/warning.svg</normaloff>:/icons/warning.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Command Warning</string>
    </property>
   </action>
   <action name="actionShowHFStats">
@@ -859,6 +873,16 @@
      <x>170</x>
      <y>255</y>
     </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSpotComment</sender>
+   <signal>triggered()</signal>
+   <receiver>DxWidget</receiver>
+   <slot>actionSpotComment()</slot>
+   <hints>
+    <hint type="sourcelabel"><x>-1</x><y>-1</y></hint>
+    <hint type="destinationlabel"><x>-1</x><y>-1</y></hint>
    </hints>
   </connection>
   <connection>
@@ -1114,6 +1138,7 @@
   <slot>adjusteServerSelectSize(QString)</slot>
   <slot>serverSelectChanged(int)</slot>
   <slot>actionCommandSpotQSO()</slot>
+  <slot>actionSpotComment()</slot>
   <slot>actionCommandShowHFStats()</slot>
   <slot>actionCommandShowVHFStats()</slot>
   <slot>actionCommandShowWCY()</slot>

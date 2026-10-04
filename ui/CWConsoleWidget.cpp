@@ -8,6 +8,7 @@
 #include "cwkey/CWKeyer.h"
 #include "data/CWShortcutProfile.h"
 #include "core/LogParam.h"
+#include "core/MacroExpander.h"
 #include "component/RepeatButton.h"
 
 MODULE_IDENTIFICATION("qlog.ui.cwconsolewidget");
@@ -501,54 +502,8 @@ void CWConsoleWidget::expandMacros(QString &text)
 {
     FCT_IDENTIFICATION;
 
-    static QRegularExpression callRE("<DXCALL>");
-    static QRegularExpression nameRE("<NAME>");
-    static QRegularExpression rstRE("<RST>");
-    static QRegularExpression rstnRE("<RSTN>");
-    static QRegularExpression greetingRE("<GREETING>");
-    static QRegularExpression qthRE("<QTH>");
+    if ( !contact )
+        return;
 
-    static QRegularExpression myCallRE("<MYCALL>");
-    static QRegularExpression myNameRE("<MYNAME>");
-    static QRegularExpression myQTHRE("<MYQTH>");
-    static QRegularExpression myLocatorRE("<MYLOCATOR>");
-    static QRegularExpression myGridRE("<MYGRID>");
-    static QRegularExpression mySIGRE("<MYSIG>");
-    static QRegularExpression mySIGInfoRE("<MYSIGINFO>");
-    static QRegularExpression myIOTARE("<MYIOTA>");
-    static QRegularExpression mySOTARE("<MYSOTA>");
-    static QRegularExpression myWWFTRE("<MYWWFT>");
-    static QRegularExpression myVUCCRE("<MYVUCC>");
-    static QRegularExpression myPWRRE("<MYPWR>");
-    static QRegularExpression myEXCHSTRRE("<EXCHSTR>");
-    static QRegularExpression myEXCHNRRE("<EXCHNR>");
-    static QRegularExpression myEXCHNRNRE("<EXCHNRN>");
-
-    if ( contact )
-    {
-        text.replace(callRE, contact->getCallsign().toUpper());
-        text.replace(nameRE, contact->getName().toUpper());
-        text.replace(rstRE, contact->getRST().toUpper());
-        text.replace(rstnRE, contact->getRST().replace('9', 'N'));
-        text.replace(greetingRE, contact->getGreeting().toUpper());
-        text.replace(qthRE, contact->getQTH());
-
-        text.replace(myCallRE, contact->getMyCallsign().toUpper());
-        text.replace(myNameRE, contact->getMyName().toUpper());
-        text.replace(myQTHRE, contact->getMyQTH().toUpper());
-        text.replace(myLocatorRE, contact->getMyLocator().toUpper());
-        text.replace(myGridRE, contact->getMyLocator().toUpper());
-        text.replace(mySIGRE, contact->getMySIG().toUpper());
-        text.replace(mySIGInfoRE, contact->getMySIGInfo().toUpper());
-        text.replace(myIOTARE, contact->getMyIOTA().toUpper());
-        text.replace(mySOTARE, contact->getMySOTA().toUpper());
-        text.replace(myWWFTRE, contact->getMyWWFT().toUpper());
-        text.replace(myVUCCRE, contact->getMyVUCC().toUpper());
-        text.replace(myPWRRE, contact->getMyPWR().toUpper());
-        text.replace(myEXCHSTRRE, contact->getSentExch().toUpper());
-        text.replace(myEXCHNRRE, contact->getSentNr().rightJustified(3, '0'));
-        text.replace(myEXCHNRNRE, contact->getSentNr().rightJustified(3, '0')
-                                                      .replace('9', 'N')
-                                                      .replace('0', 'T'));
-    }
+    text = MacroExpander::expand(text, contact->getMacroContext()).text;
 }

@@ -3636,6 +3636,9 @@ void NewContactWidget::prepareWSJTXQSO(const QString &receivedCallsign,
         useFieldsFromPrevQSO(callsign, grid);
         finalizeCallsignEdit();
     }
+
+    // The cached callsign bypasses the editor's usual change notification.
+    emit callsignChanged(callsign);
 }
 
 void NewContactWidget::setDefaultReport()
@@ -3703,6 +3706,32 @@ QString NewContactWidget::getCallsign() const
     return ui->callsignEdit->text().toUpper();
 }
 
+MacroExpander::Context NewContactWidget::getMacroContext() const
+{
+    FCT_IDENTIFICATION;
+
+    return {
+        {"callsign", getCallsign()}, {"name_intl", getName()},
+        {"rst_sent", getRST()}, {"greeting", getGreeting()},
+        {"qth_intl", getQTH()}, {"station_callsign", getMyCallsign()},
+        {"my_name_intl", getMyName()}, {"my_city_intl", getMyQTH()},
+        {"my_gridsquare", getMyLocator()}, {"my_sig_intl", getMySIG()},
+        {"my_sig_info_intl", getMySIGInfo()}, {"my_iota", getMyIOTA()},
+        {"my_sota_ref", getMySOTA()}, {"my_wwff_ref", getMyWWFT()},
+        {"my_vucc_grids", getMyVUCC()}, {"tx_pwr", getMyPWR()},
+        {"stx_string", getSentExch()}, {"stx", getSentNr()},
+        {"gridsquare", getLocator()}, {"mode", getMode()},
+        {"prop_mode", getPropagationMode()}
+    };
+}
+
+double NewContactWidget::getRXFrequency() const
+{
+    FCT_IDENTIFICATION;
+
+    return ui->freqRXEdit->displayedFrequency();
+}
+
 QString NewContactWidget::getName() const
 {
     FCT_IDENTIFICATION;
@@ -3722,6 +3751,20 @@ QString NewContactWidget::getQTH() const
     FCT_IDENTIFICATION;
 
     return uiDynamic->qthEdit->text();
+}
+
+QString NewContactWidget::getLocator() const
+{
+    FCT_IDENTIFICATION;
+
+    return uiDynamic->gridEdit->text();
+}
+
+QString NewContactWidget::getPropagationMode() const
+{
+    FCT_IDENTIFICATION;
+
+    return Data::instance()->propagationModeTextToID(ui->propagationModeEdit->currentText());
 }
 
 

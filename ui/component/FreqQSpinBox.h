@@ -23,6 +23,7 @@ public:
     void setValue(double value);
     bool hasBand() const;
     bool hasFrequency() const;
+    double displayedFrequency() const;
     QString selectedBand() const;
 
 public slots:

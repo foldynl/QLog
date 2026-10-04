@@ -1530,6 +1530,20 @@ bool LogParam::setDXCCommandHistory(const QString &server, const QByteArray &his
     return setParam(QStringLiteral("dxc/commandhistory/%1").arg(server), history);
 }
 
+QString LogParam::getDXCSpotCommentTemplate()
+{
+    FCT_IDENTIFICATION;
+
+    return getParam(QStringLiteral("dxc/spotcommenttemplate")).toString();
+}
+
+bool LogParam::setDXCSpotCommentTemplate(const QString &text)
+{
+    FCT_IDENTIFICATION;
+
+    return setParam(QStringLiteral("dxc/spotcommenttemplate"), text);
+}
+
 QString LogParam::getDXCFilterModeRE()
 {
     QString defaultValue = "NOTHING|"
