@@ -4,6 +4,7 @@ TEMPLATE = app
 TARGET = tst_qsofilterdetail
 INCLUDEPATH += $$PWD/../..
 SOURCES += tst_qsofilterdetail.cpp \
+           ../../data/Accents.cpp \
            ../../core/QSOFilterManager.cpp \
            ../../core/QSOFilterDateRange.cpp \
            ../../core/LogLocale.cpp \

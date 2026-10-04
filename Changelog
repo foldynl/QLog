@@ -14,6 +14,7 @@ TBC - 0.54.0
 - [CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting
 - [CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"
 - [CHANGED] - DXC - Send Last QSO dynamically switches to Spot QSO
+- Fixed QSO Filter does not accept filtering by Country in selected language (issue #731)
 - Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)
 - Fixed link to Awards Japanese Cities

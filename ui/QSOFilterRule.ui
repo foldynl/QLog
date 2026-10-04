@@ -119,6 +119,40 @@
             </sizepolicy>
           </property>
           <widget class="QLineEdit" name="valueLineEdit"/>
+          <widget class="QComboBox" name="countryCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="editable">
+              <bool>true</bool>
+            </property>
+            <property name="insertPolicy">
+              <enum>QComboBox::NoInsert</enum>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToContents</enum>
+            </property>
+          </widget>
+          <widget class="QComboBox" name="countryAsciiCombo">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="editable">
+              <bool>true</bool>
+            </property>
+            <property name="insertPolicy">
+              <enum>QComboBox::NoInsert</enum>
+            </property>
+            <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToContents</enum>
+            </property>
+          </widget>
           <widget class="QDateEdit" name="valueDateEdit">
             <property name="focusPolicy">
               <enum>Qt::ClickFocus</enum>

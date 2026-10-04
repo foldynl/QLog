@@ -41,6 +41,7 @@ private:
     QString filterName;
     int condCount;
     QStringList filterNamesList;
+    QStringList countryNames;
     bool parametersOnly = false;
     QSOFilter editedFilter;
 
@@ -52,6 +53,7 @@ private:
     bool filterExists(const QString &filterName);
     static QWidget *fieldEditor(const Condition *row);
     void populateComboBox(QComboBox *, const QMap<QString, QString> &, const QString &);
+    void populateCountryComboBox(QComboBox *combo, const QString &value, bool ascii);
 
     LogLocale locale;
 };

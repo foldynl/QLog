@@ -5,6 +5,9 @@
 #include <QScrollBar>
 #include <QStackedWidget>
 #include <QStandardItemModel>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSet>
 #include "QSOFilterDetail.h"
 #include "ui_QSOFilterDetail.h"
 #include "ui_QSOFilterRule.h"
@@ -112,6 +115,8 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     qCDebug(function_parameters) << "FieldIDX: " << fieldIdx << " Operator: " << operatorId << " Value: " << value;
 
     auto *row = new Condition(ui->conditionsWidget);
+    if ( fieldIdx >= 0 )
+        row->originalRule = QSOFilterRule(fieldIdx, operatorId, value);
     auto &ruleUi = row->ui;
     auto *conditionLayout = ruleUi.conditionLayout;
     auto *fieldNameCombo = ruleUi.fieldNameCombo;
@@ -120,7 +125,8 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     auto *removeButton = ruleUi.removeButton;
     // Keep per-row object names without duplicating their .ui definitions.
     const QObjectList controls = {conditionLayout, fieldNameCombo, conditionCombo, stacked, removeButton,
-                                  ruleUi.valueLineEdit, ruleUi.valueDateEdit, ruleUi.valueDateTimeEdit};
+                                  ruleUi.valueLineEdit, ruleUi.valueDateEdit, ruleUi.valueDateTimeEdit,
+                                  ruleUi.countryCombo, ruleUi.countryAsciiCombo};
     for ( auto *control : controls ) control->setObjectName(control->objectName() + QString::number(condCount));
     fieldNameCombo->populate(LogbookFieldComboBox::ValueMode::ColumnId);
 
@@ -175,22 +181,53 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     auto *rangeEditor = new QSOFilterDateRangeEdit(value, stacked);
     stacked->addWidget(rangeEditor);
 
-    const auto updateEditor = [row, rangeEditor]()
+    const auto updateEditor = [this, row, rangeEditor]()
     {
         auto &ui = row->ui;
         auto *stacked = ui.stackedValueEdit;
         QWidget *editor = fieldEditor(row);
         const bool dateField = qobject_cast<QDateTimeEdit *>(editor) != nullptr;
-        const int op = ui.conditionCombo->currentData().toInt();
-        const bool dateOperator = op >= QSOFilterRule::InDateRange && op <= QSOFilterRule::AfterDateRange;
+        const bool countryField = editor == ui.countryCombo || editor == ui.countryAsciiCombo;
         auto *operators = qobject_cast<QStandardItemModel *>(ui.conditionCombo->model());
-        for ( auto id : {QSOFilterRule::InDateRange, QSOFilterRule::OutsideDateRange,
-                        QSOFilterRule::BeforeDateRange, QSOFilterRule::AfterDateRange} )
-            operators->item(ui.conditionCombo->findData(id))->setEnabled(dateField);
-        if ( !dateField && dateOperator )
+        for ( int i = 0; i < ui.conditionCombo->count(); ++i )
+        {
+            const int id = ui.conditionCombo->itemData(i).toInt();
+            const bool dateOperator = id >= QSOFilterRule::InDateRange && id <= QSOFilterRule::AfterDateRange;
+            operators->item(i)->setEnabled(countryField ? !dateOperator && id != QSOFilterRule::GreaterThan
+                                                                      && id != QSOFilterRule::LessThan
+                                                       : !dateOperator || dateField);
+        }
+        int op = ui.conditionCombo->currentData().toInt();
+        const bool invalidDateOperator = !dateField && op >= QSOFilterRule::InDateRange
+                                                   && op <= QSOFilterRule::AfterDateRange;
+        const bool countryComparison = countryField && (op == QSOFilterRule::GreaterThan
+                                                        || op == QSOFilterRule::LessThan);
+        // Keep legacy country comparisons intact, but do not offer them for new rules.
+        const bool legacyCountryOperator = countryField
+            && row->originalRule.tableFieldIndex == ui.fieldNameCombo->currentData().toInt()
+            && row->originalRule.operatorID == op;
+        if ( (invalidDateOperator || countryComparison) && !legacyCountryOperator )
+        {
             ui.conditionCombo->setCurrentIndex(ui.conditionCombo->findData(QSOFilterRule::Equal));
+            op = QSOFilterRule::Equal;
+        }
 
+        const bool dateOperator = op >= QSOFilterRule::InDateRange && op <= QSOFilterRule::AfterDateRange;
         if ( dateField && dateOperator ) editor = rangeEditor;
+        if ( countryField )
+        {
+            const QString currentValue = editorValue(stacked);
+            if ( op != QSOFilterRule::Equal && op != QSOFilterRule::NotEqual )
+                editor = ui.valueLineEdit;
+            if ( editor != stacked->currentWidget() )
+            {
+                if ( editor == ui.valueLineEdit )
+                    ui.valueLineEdit->setText(currentValue);
+                else
+                    populateCountryComboBox(qobject_cast<QComboBox *>(editor), currentValue,
+                                            editor == ui.countryAsciiCombo);
+            }
+        }
         stacked->setCurrentWidget(editor);
 
         // Hidden pages must not determine the width of every condition.
@@ -224,7 +261,6 @@ void QSOFilterDetail::addCondition(int fieldIdx, int operatorId, QString value)
     // Date editors and enum combos can otherwise normalize old values on save.
     if ( fieldIdx >= 0 )
     {
-        row->originalRule = QSOFilterRule(fieldIdx, operatorId, value);
         row->initialValue = editorValue(stacked);
     }
 
@@ -289,9 +325,17 @@ bool QSOFilterDetail::filterExists(const QString &filterName)
 
 QWidget *QSOFilterDetail::fieldEditor(const Condition *row)
 {
+    FCT_IDENTIFICATION;
+
     const auto &ui = row->ui;
     switch ( ui.fieldNameCombo->currentData().toInt() )
     {
+    case LogbookModel::COLUMN_COUNTRY:
+    case LogbookModel::COLUMN_MY_COUNTRY:
+        return ui.countryAsciiCombo;
+    case LogbookModel::COLUMN_COUNTRY_INTL:
+    case LogbookModel::COLUMN_MY_COUNTRY_INTL:
+        return ui.countryCombo;
     case LogbookModel::COLUMN_QSL_RCVD_DATE:
     case LogbookModel::COLUMN_QSL_SENT_DATE:
     case LogbookModel::COLUMN_LOTW_RCVD_DATE:
@@ -347,6 +391,48 @@ QWidget *QSOFilterDetail::fieldEditor(const Condition *row)
     default:
         return ui.valueLineEdit;
     }
+}
+
+void QSOFilterDetail::populateCountryComboBox(QComboBox *combo, const QString &value, bool ascii)
+{
+    FCT_IDENTIFICATION;
+
+    if ( combo->count() == 0 )
+    {
+        if ( countryNames.isEmpty() )
+        {
+            QSqlQuery query;
+            if ( query.exec("SELECT name FROM (SELECT name FROM dxcc_entities_ad1c "
+                            "UNION SELECT name FROM dxcc_entities_clublog) "
+                            "WHERE name IS NOT NULL AND name <> '' "
+                            "ORDER BY translate_to_locale(name) COLLATE LOCALEAWARE") )
+            {
+                while ( query.next() )
+                    countryNames.append(query.value(0).toString());
+            }
+            else
+                qCWarning(runtime) << "Cannot load filter countries" << query.lastError();
+        }
+
+        combo->addItem(tr("Blank"), QString());
+        QSet<QString> addedNames;
+        for ( const QString &name : countryNames )
+        {
+            const QString storedName = ascii ? Data::removeAccents(name) : name;
+            if ( addedNames.contains(storedName) ) continue;
+            addedNames.insert(storedName);
+            combo->addItem(QCoreApplication::translate("DBStrings", name.toUtf8().constData()), storedName);
+        }
+    }
+    const int index = combo->findData(value.isEmpty() ? QString() : value);
+    combo->setCurrentIndex(index);
+    if ( index < 0 )
+    {
+        combo->setEditText(value);
+        combo->lineEdit()->setModified(true);
+    }
+    else
+        combo->lineEdit()->setModified(false);
 }
 
 void QSOFilterDetail::populateComboBox(QComboBox *combo, const QMap<QString, QString> &mapping,
@@ -409,6 +495,8 @@ void QSOFilterDetail::save()
 
 QString QSOFilterDetail::editorValue(QStackedWidget *stack)
 {
+    FCT_IDENTIFICATION;
+
     QWidget *editor = stack->currentWidget();
     if ( auto *range = qobject_cast<QSOFilterDateRangeEdit *>(editor) ) return range->value();
     if ( auto *date = qobject_cast<QDateEdit *>(editor) ) return date->date().toString(Qt::ISODate);
@@ -418,8 +506,10 @@ QString QSOFilterDetail::editorValue(QStackedWidget *stack)
     if ( auto *line = qobject_cast<QLineEdit *>(editor) ) value = line->text();
     else if ( auto *combo = qobject_cast<QComboBox *>(editor) )
     {
-        value = combo->currentData().toString();
-        if ( value == " " ) value = QString();
+        // Qt may activate a matching caption on focus loss; it is still literal input.
+        const bool literal = combo->isEditable() && combo->lineEdit()->isModified();
+        value = literal ? combo->currentText() : combo->currentData().toString();
+        if ( !literal && value == " " ) value = QString();
     }
     return value.isEmpty() ? QString() : value;
 }
