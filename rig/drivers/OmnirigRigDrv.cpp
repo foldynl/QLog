@@ -12,6 +12,7 @@
 #include <QMutexLocker>
 
 #include "OmnirigRigDrv.h"
+#include "OmniRigRigFile.h"
 #include "core/debug.h"
 #include "rig/macros.h"
 
@@ -591,6 +592,16 @@ void OmnirigRigDrv::__rigTypeChange(int rigID)
 
     qCDebug(runtime) << "R-params" << QString::number(readableParams, 16)
                      << "W-params" << QString::number(writableParams, 16);
+
+    // which of CW_U and CW_L is the rig's normal CW depends on the rig
+    BSTR type = nullptr;
+    rig->get_RigType(&type);
+
+    const bool normalIsUpper = OmniRigRigFile::normalCwIsUpper(QUuid(__uuidof(OmnirigV1::OmniRigX)),
+                                                               bstrToQString(type));
+
+    modeMap.insert(OmnirigV1::PM_CW_U, normalIsUpper ? "CW" : "CWR");
+    modeMap.insert(OmnirigV1::PM_CW_L, normalIsUpper ? "CWR" : "CW");
 }
 
 void OmnirigRigDrv::commandSleep()

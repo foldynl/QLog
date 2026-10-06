@@ -681,6 +681,7 @@ win32: {
         $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/
 
    SOURCES += \
+        rig/drivers/OmniRigRigFile.cpp \
         rig/drivers/OmnirigRigDrv.cpp \
         rig/drivers/Omnirigv2RigDrv.cpp \
         $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/sqlite3.c
@@ -690,6 +691,7 @@ win32: {
         rig/drivers/OmnirigRigDrv.h \
         rig/drivers/Omnirigv2RigDrv.h \
         rig/drivers/OmniRigEventSink.h \
+        rig/drivers/OmniRigRigFile.h \
         $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/sqlite3.h
 
    TARGET = qlog
