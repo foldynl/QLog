@@ -11,6 +11,7 @@
 
 #include "LogParam.h"
 #include "AdifRecovery.h"
+#include "DatabaseBackup.h"
 #include "debug.h"
 #include "data/Data.h"
 #include "models/LogbookModel.h"
@@ -46,6 +47,43 @@ bool LogParam::setLastBackupDate(const QDate date)
 QDate LogParam::getLastBackupDate()
 {
     return getParam("last_backup").toDate();
+}
+
+BackupConfig LogParam::getBackupConfig()
+{
+    FCT_IDENTIFICATION;
+
+    const QJsonObject values = QJsonDocument::fromJson(getParam("backup/config").toByteArray()).object();
+    BackupConfig config;
+    config.enabled = values.value("enabled").toBool();
+    config.directory = values.value("directory").toString(QDir::home().filePath("QLog/Backups"));
+    config.copies = qBound(1, values.value("copies").toInt(10), 1000);
+    return config;
+}
+
+bool LogParam::setBackupConfig(const BackupConfig &config)
+{
+    FCT_IDENTIFICATION;
+
+    if ( config.copies < 1 || config.copies > 1000 || (config.enabled && config.directory.isEmpty()) )
+        return false;
+    QJsonObject values;
+    values.insert("enabled", config.enabled);
+    values.insert("directory", config.directory);
+    values.insert("copies", config.copies);
+    return setParam("backup/config", QString::fromUtf8(QJsonDocument(values).toJson(QJsonDocument::Compact)));
+}
+
+QString LogParam::getBackupError()
+{
+    FCT_IDENTIFICATION;
+    return getParam("backup/error").toString();
+}
+
+bool LogParam::setBackupError(const QString &error)
+{
+    FCT_IDENTIFICATION;
+    return setParam("backup/error", error);
 }
 
 bool LogParam::setLogID(const QString &id)

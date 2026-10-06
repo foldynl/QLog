@@ -44,7 +44,7 @@ public:
 
     // Process pending import (called at startup)
     // Returns true if import was successful or no import was pending
-    bool processPendingImport();
+    bool processPendingImport(QString *backupSnapshot = nullptr);
 
     // Returns true if the last processPendingImport() failed to import passwords
     // (passwords were deleted but could not be restored from the encrypted store)
@@ -52,7 +52,7 @@ public:
 
     bool atomicCopy(const QString &filename);
     bool openDatabase();
-    bool schemaVersionUpgrade(bool force = false);
+    bool schemaVersionUpgrade(bool force = false, QString *backupSnapshot = nullptr);
     bool createSQLFunctions();
 
 private:

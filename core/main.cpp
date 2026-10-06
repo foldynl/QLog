@@ -13,7 +13,6 @@
 #include <QThread>
 
 #include "debug.h"
-#include "Migration.h"
 #include "ui/MainWindow.h"
 #include "rig/Rig.h"
 #include "rotator/Rotator.h"
@@ -29,6 +28,8 @@
 #include "data/ActivityProfile.h"
 #include "service/GenericCallbook.h"
 #include "core/LogDatabase.h"
+#include "core/DatabaseBackup.h"
+#include "core/LogParam.h"
 #include "mcpbridge/RuntimeContext.h"
 #include "mcpbridge/RuntimeServer.h"
 
@@ -362,6 +363,7 @@ void wayland_hacks()
 
 int main(int argc, char* argv[])
 {
+    FCT_IDENTIFICATION;
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -497,6 +499,7 @@ int main(int argc, char* argv[])
     splash.ensureFirstPaint();
 
     createDataDirectory();
+    QString backupSnapshot;
 
     // Process pending database import if exists
     if ( LogDatabase::hasPendingImport() )
@@ -504,7 +507,7 @@ int main(int argc, char* argv[])
         splash.showMessage(QObject::tr("Importing Database"), Qt::AlignBottom|Qt::AlignCenter);
         QCoreApplication::processEvents();
 
-        if ( !LogDatabase::instance()->processPendingImport() )
+        if ( !LogDatabase::instance()->processPendingImport(&backupSnapshot) )
         {
             QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
                                   QMessageBox::tr("Failed to process pending database import."));
@@ -532,22 +535,11 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        splash.showMessage(QObject::tr("Backuping Database"), Qt::AlignBottom|Qt::AlignCenter);
-
-        QCoreApplication::processEvents();
-
-        /* a migration can break a database therefore a backup is call before it */
-        if (!DBSchemaMigration::backupAllQSOsToADX())
-        {
-            QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                                  QMessageBox::tr("Could not export a QLog database to ADIF as a backup.<p>Try to export your log to ADIF manually"));
-        }
-
         splash.showMessage(QObject::tr("Migrating Database"), Qt::AlignBottom|Qt::AlignCenter);
 
         QCoreApplication::processEvents();
 
-        if ( ! LogDatabase::instance()->schemaVersionUpgrade(isForceLOVUpdate) )
+        if ( ! LogDatabase::instance()->schemaVersionUpgrade(isForceLOVUpdate, &backupSnapshot) )
         {
             QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
                                   QMessageBox::tr("Database migration failed."));
@@ -560,6 +552,8 @@ int main(int argc, char* argv[])
     QCoreApplication::processEvents();
 
     int rc = 0;
+    DatabaseBackup backup(LogParam::getBackupConfig(), backupSnapshot, &app);
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, &backup, &QThread::requestInterruption);
 
     {
         RuntimeContext runtimeContext;
@@ -637,6 +631,9 @@ int main(int argc, char* argv[])
         w.show();
 
         w.setLayoutGeometry();
+
+        QObject::connect(&backup, &QThread::finished, &w, &MainWindow::updateBackupStatus);
+        backup.start();
 
         // check version only for Windows and MacOS. Linux has own distribution points
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)

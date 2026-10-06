@@ -18,6 +18,7 @@ public:
                                QMap<QString, QString> *applTags = nullptr) override;
     virtual void exportStart() override;
     virtual void exportEnd() override;
+    bool hasExportError() const;
 
 protected:
     virtual void writeField(const QString &name,

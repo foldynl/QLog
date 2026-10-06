@@ -44,6 +44,9 @@ DEFINES += VERSION=\\\"$$VERSION\\\"
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS QT_MESSAGELOGCONTEXT
 
+# Test automatic backups at every startup, ignoring the interval and today's ADX.
+#DEFINES += QLOG_FORCE_AUTO_BACKUP
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -93,6 +96,7 @@ SOURCES += \
         core/FldigiUDPReceiver.cpp \
         core/LOVDownloader.cpp \
         core/LogDatabase.cpp \
+        core/DatabaseBackup.cpp \
         core/LogLocale.cpp \
         core/LogParam.cpp \
         core/MacroExpander.cpp \
@@ -311,6 +315,7 @@ HEADERS += \
         core/FldigiUDPReceiver.h \
         core/LOVDownloader.h \
         core/LogDatabase.h \
+        core/DatabaseBackup.h \
         core/LogLocale.h \
         core/LogParam.h \
         core/MacroExpander.h \

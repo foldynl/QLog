@@ -3,6 +3,7 @@ TBC - 0.54.0
 - [NEW] - Awards - Added WAJA, Polish PGA
 - [NEW] - Awards - Remember dialog filter selection
 - [NEW] - Settings - Rig - Added Winkeyer multi-output support (issue #1034)
+- [NEW} - Settings - Backup - Added new option for alternative folder (issue #678)
 - [NEW] - Alerts - Added OS Native Notifications
 - [NEW] - ADIF 3.1.8 - Added new mode JTTY
 - [NEW] - ADIF 3.1.8 - Added new Contest IDs
@@ -14,6 +15,7 @@ TBC - 0.54.0
 - [CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting
 - [CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"
 - [CHANGED] - DXC - Send Last QSO dynamically switches to Spot QSO
+- [CHANGED] - Autobackup - Backup is performed in the background using a copy of DB.
 - Fixed QSO Filter does not accept filtering by Country in selected language (issue #731)
 - Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)

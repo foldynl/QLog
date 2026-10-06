@@ -264,12 +264,12 @@ bool LogDatabase::openDatabase()
     return createSQLFunctions();
 }
 
-bool LogDatabase::schemaVersionUpgrade(bool force)
+bool LogDatabase::schemaVersionUpgrade(bool force, QString *backupSnapshot)
 {
     FCT_IDENTIFICATION;
 
     DBSchemaMigration m;
-    return m.run(force);
+    return m.run(force, backupSnapshot);
 }
 
 DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
@@ -360,7 +360,7 @@ bool LogDatabase::hasPendingImport()
     return exists;
 }
 
-bool LogDatabase::processPendingImport()
+bool LogDatabase::processPendingImport(QString *backupSnapshot)
 {
     FCT_IDENTIFICATION;
 
@@ -408,7 +408,7 @@ bool LogDatabase::processPendingImport()
         return false;
     }
 
-    if ( !schemaVersionUpgrade() )
+    if ( !schemaVersionUpgrade(false, backupSnapshot) )
     {
         qCritical() << "Schema migration failed";
         return false;

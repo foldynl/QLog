@@ -11,6 +11,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QSignalBlocker>
+#include <QStyle>
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -206,6 +207,9 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->statusBar->addWidget(contestLabel);
     ui->statusBar->addWidget(conditionsLabel);
 
+    ui->backupWarningButton->setIcon(style()->standardIcon(QStyle::SP_MessageBoxWarning));
+    ui->backupWarningButton->hide();
+    ui->statusBar->addPermanentWidget(ui->backupWarningButton);
     ui->statusBar->addPermanentWidget(alertTextButton);
     ui->statusBar->addPermanentWidget(alertButton);
     ui->statusBar->addPermanentWidget(themeButton);
@@ -2348,6 +2352,15 @@ qint32 MainWindow::currentRigCWKeyOutput() const
 
     qCDebug(runtime) << "Using default CW key output because no rig profile is selected";
     return CWKey::CWKEY_OUTPUT_DEFAULT;
+}
+
+void MainWindow::updateBackupStatus()
+{
+    FCT_IDENTIFICATION;
+
+    const QString error = LogParam::getBackupError();
+    ui->backupWarningButton->setToolTip(tr("Backup could not be completed. Check Settings → Backup.\n\n%1").arg(error));
+    ui->backupWarningButton->setVisible(!error.isEmpty());
 }
 
 void MainWindow::showSettings()

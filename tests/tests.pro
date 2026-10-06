@@ -7,6 +7,7 @@ SUBDIRS += CallsignTest \
            AdifRecoveryTest \
            CredentialStoreTest \
            DataTest \
+           DatabaseBackupTest \
            DxccConfirmationTest \
            DxccLogStatusTest \
            FileCompressorTest \

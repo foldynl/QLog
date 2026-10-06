@@ -13,6 +13,7 @@
 
 struct AdifRecoveryConfig;
 struct AdifRecoveryState;
+struct BackupConfig;
 
 class LogParam : public QObject
 {
@@ -31,6 +32,10 @@ public:
      ********/
     static bool setLastBackupDate(const QDate date);
     static QDate getLastBackupDate();
+    static BackupConfig getBackupConfig();
+    static bool setBackupConfig(const BackupConfig &config);
+    static QString getBackupError();
+    static bool setBackupError(const QString &error);
 
     /*********
      * LogID

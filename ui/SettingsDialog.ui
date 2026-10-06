@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>836</height>
+    <height>874</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -3906,8 +3906,7 @@
                 <string>Browse</string>
                </property>
                <property name="icon">
-                <iconset theme="folder-open">
-                 <normaloff>.</normaloff>.</iconset>
+                <iconset theme="folder-open"/>
                </property>
               </widget>
              </item>
@@ -4525,8 +4524,7 @@
             <string>Manage</string>
            </property>
            <property name="icon">
-            <iconset theme="preferences-system">
-             <normaloff>.</normaloff>.</iconset>
+            <iconset theme="preferences-system"/>
            </property>
           </widget>
          </item>
@@ -5310,6 +5308,175 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="backupsTab">
+      <attribute name="title">
+       <string>Backup</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="backupsLayout">
+       <item>
+        <widget class="QLabel" name="backupDescriptionLabel">
+         <property name="text">
+          <string>QLog automatically backs up your QSOs in ADX format every seven days at startup, and before an upgrade. ADX preserves accented characters. These backups contain QSOs, not all QLog settings.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="backupEnabledCheckBox">
+         <property name="toolTip">
+          <string>Changes take effect at the next startup.</string>
+         </property>
+         <property name="text">
+          <string>Keep an additional copy in another folder</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="backupOptionsWidget">
+         <layout class="QFormLayout" name="backupOptionsLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="backupDirectoryLabel">
+            <property name="text">
+             <string>Folder</string>
+            </property>
+            <property name="buddy">
+             <cstring>backupDirectoryEdit</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="backupDirectoryLayout">
+            <item>
+             <widget class="QLineEdit" name="backupDirectoryEdit">
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="backupBrowseButton">
+              <property name="text">
+               <string>Browse</string>
+              </property>
+              <property name="icon">
+               <iconset theme="folder-open"/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="backupCopiesLabel">
+            <property name="text">
+             <string>Copies to keep</string>
+            </property>
+            <property name="buddy">
+             <cstring>backupCopiesSpinBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="backupCopiesSpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="backupLastSuccessLabel">
+         <property name="text">
+          <string>No successful backup yet.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="backupErrorLabel">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel#backupErrorLabel {
+ background-color: #ffc107;
+ color: #212121;
+ border: 1px solid #a66a00;
+}</string>
+         </property>
+         <property name="text">
+          <string>Backup could not be completed.</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="margin">
+          <number>6</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="backupOpenFoldersLayout">
+         <item>
+          <widget class="QPushButton" name="backupOpenFolderButton">
+           <property name="text">
+            <string>Open Copy Folder</string>
+           </property>
+           <property name="icon">
+            <iconset theme="folder-open"/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="backupOpenInternalFolderButton">
+           <property name="text">
+            <string>Open Internal Backup Folder</string>
+           </property>
+           <property name="icon">
+            <iconset theme="folder-open"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="backupVerticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="dangeZoneTab">
       <attribute name="title">
        <string>Danger Zone</string>
@@ -5619,9 +5786,75 @@
   <tabstop>qsoStatusColorsTable</tabstop>
   <tabstop>qsoStatusColorsDefaultsButton</tabstop>
   <tabstop>shortcutsTableView</tabstop>
+  <tabstop>backupEnabledCheckBox</tabstop>
+  <tabstop>backupDirectoryEdit</tabstop>
+  <tabstop>backupBrowseButton</tabstop>
+  <tabstop>backupCopiesSpinBox</tabstop>
+  <tabstop>backupOpenFolderButton</tabstop>
+  <tabstop>backupOpenInternalFolderButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
+  <connection>
+   <sender>backupEnabledCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>backupOptionsWidget</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>backupEnabledCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>backupOpenFolderButton</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>backupBrowseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>browseBackupFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>backupOpenFolderButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>openBackupFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>backupOpenInternalFolderButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>openInternalBackupFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>qsoStatusColorsDefaultsButton</sender>
    <signal>clicked()</signal>
@@ -6920,6 +7153,9 @@
   </connection>
  </connections>
  <slots>
+  <slot>browseBackupFolder()</slot>
+  <slot>openBackupFolder()</slot>
+  <slot>openInternalBackupFolder()</slot>
   <slot>save()</slot>
   <slot>addRigProfile()</slot>
   <slot>delRigProfile()</slot>
@@ -6998,9 +7234,8 @@
   <slot>bandmapGuideChanged(int)</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

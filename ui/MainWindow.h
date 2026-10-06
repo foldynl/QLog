@@ -52,6 +52,7 @@ public slots:
     void setLayoutGeometry();
     void setSimplyLayoutGeometry();
     void checkNewVersion();
+    void updateBackupStatus();
 
 private slots:
     void rigConnect();

@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QHeaderView>
 #include <QSignalBlocker>
+#include <QTemporaryFile>
 #include <QTableWidgetItem>
 #include <algorithm>
 
@@ -45,6 +46,8 @@
 #include "rotator/Rotator.h"
 #include "rotator/RotCaps.h"
 #include "core/LogParam.h"
+#include "core/DatabaseBackup.h"
+#include "core/LogDatabase.h"
 #include "core/MacroExpander.h"
 #include "data/Callsign.h"
 #include "core/MembershipQE.h"
@@ -447,6 +450,8 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
         edit->setToolTip(macroHelp);
     snapshotEquipmentProfiles();
     setupAdifRecoveryTab();
+    if ( DatabaseBackup *backup = qApp->findChild<DatabaseBackup *>() )
+        connect(backup, &QThread::finished, this, &SettingsDialog::refreshBackupStatus);
     setupQsoStatusColorsTable();
     refreshBandmapGuideCombo();
 
@@ -864,6 +869,31 @@ void SettingsDialog::save()
                                  QMessageBox::tr("Loop detected. Raw UDP forward uses the same port as the WSJT-X receiving port."));
             return;
         }
+    }
+
+    BackupConfig backupConfig;
+    backupConfig.enabled = ui->backupEnabledCheckBox->isChecked();
+    backupConfig.directory = ui->backupDirectoryEdit->text().trimmed();
+    backupConfig.copies = ui->backupCopiesSpinBox->value();
+    const BackupConfig previousBackupConfig = LogParam::getBackupConfig();
+    if ( backupConfig.enabled
+         && (!previousBackupConfig.enabled || backupConfig.directory != previousBackupConfig.directory) )
+    {
+        QTemporaryFile probe(QDir(backupConfig.directory).filePath(QStringLiteral(".qlog-backup-XXXXXX")));
+        if ( backupConfig.directory.isEmpty() || !QDir().mkpath(backupConfig.directory) || !probe.open() )
+        {
+            ui->backupErrorLabel->setText(tr("Cannot write to the backup folder. Choose another folder."));
+            ui->backupErrorLabel->show();
+            ui->tabWidget->setCurrentWidget(ui->backupsTab);
+            return;
+        }
+    }
+    if ( !LogParam::setBackupConfig(backupConfig) )
+    {
+        ui->backupErrorLabel->setText(tr("Could not save the backup settings."));
+        ui->backupErrorLabel->show();
+        ui->tabWidget->setCurrentWidget(ui->backupsTab);
+        return;
     }
 
     writeSettings();
@@ -2955,6 +2985,14 @@ void SettingsDialog::readSettings()
 {
     FCT_IDENTIFICATION;
 
+    const BackupConfig backupConfig = LogParam::getBackupConfig();
+    ui->backupEnabledCheckBox->setChecked(backupConfig.enabled);
+    ui->backupOptionsWidget->setEnabled(backupConfig.enabled);
+    ui->backupOpenFolderButton->setEnabled(backupConfig.enabled);
+    ui->backupDirectoryEdit->setText(backupConfig.directory);
+    ui->backupCopiesSpinBox->setValue(backupConfig.copies);
+    refreshBackupStatus();
+
     refreshStationProfilesView();
     refreshRigProfilesView();
     refreshRotProfilesView();
@@ -3090,6 +3128,44 @@ void SettingsDialog::readSettings()
     /******************/
     /* END OF Reading */
     /******************/
+}
+
+void SettingsDialog::browseBackupFolder()
+{
+    FCT_IDENTIFICATION;
+
+    const QString directory = QFileDialog::getExistingDirectory(this, tr("Select Backup Folder"),
+                                                               ui->backupDirectoryEdit->text());
+    if ( !directory.isEmpty() )
+        ui->backupDirectoryEdit->setText(directory);
+}
+
+void SettingsDialog::refreshBackupStatus()
+{
+    FCT_IDENTIFICATION;
+
+    const QDate backupDate = LogParam::getLastBackupDate();
+    ui->backupLastSuccessLabel->setText(backupDate.isValid()
+                                      ? tr("Last successful internal backup: %1").arg(backupDate.toString(locale.formatDateShortWithYYYY()))
+                                      : tr("No successful backup yet."));
+    ui->backupErrorLabel->setText(LogParam::getBackupError());
+    ui->backupErrorLabel->setVisible(!ui->backupErrorLabel->text().isEmpty());
+}
+
+void SettingsDialog::openBackupFolder()
+{
+    FCT_IDENTIFICATION;
+
+    const QString directory = ui->backupDirectoryEdit->text().trimmed();
+    if ( !directory.isEmpty() )
+        QDesktopServices::openUrl(QUrl::fromLocalFile(directory));
+}
+
+void SettingsDialog::openInternalBackupFolder()
+{
+    FCT_IDENTIFICATION;
+
+    QDesktopServices::openUrl(QUrl::fromLocalFile(LogDatabase::dbDirectory().absolutePath()));
 }
 
 void SettingsDialog::writeSettings()

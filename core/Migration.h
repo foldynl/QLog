@@ -11,8 +11,7 @@ class DBSchemaMigration : public QObject
 
 public:
     DBSchemaMigration(QObject *parent = nullptr) : QObject(parent) {}
-    bool run(bool force = false);
-    static bool backupAllQSOsToADX(bool force = false);
+    bool run(bool force = false, QString *backupSnapshot = nullptr);
 
     static constexpr int latestVersion = 42;
 

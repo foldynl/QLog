@@ -147,8 +147,12 @@ public slots:
     void addAdifRecoveryFile();
     void removeAdifRecoveryFile();
     void restoreDefaultQsoStatusColors();
+    void browseBackupFolder();
+    void openBackupFolder();
+    void openInternalBackupFolder();
 
 private:
+    void refreshBackupStatus();
     enum QsoStatusColorColumn
     {
         QsoStatusColumn,

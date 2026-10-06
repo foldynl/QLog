@@ -99,6 +99,12 @@ void AdxFormat::exportEnd()
     }
 }
 
+bool AdxFormat::hasExportError() const
+{
+    FCT_IDENTIFICATION;
+    return writer && writer->hasError();
+}
+
 void AdxFormat::exportContact(const QSqlRecord& record, QMap<QString, QString> *applTags)
 {
     FCT_IDENTIFICATION;

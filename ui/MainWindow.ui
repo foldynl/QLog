@@ -166,7 +166,34 @@
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <widget class="QPushButton" name="backupWarningButton">
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#backupWarningButton {
+ background-color: #ffc107;
+ color: #212121;
+ border: 1px solid #a66a00;
+}
+QPushButton#backupWarningButton:hover {
+ background-color: #ffd54f;
+}
+QPushButton#backupWarningButton:pressed {
+ background-color: #ffb300;
+}</string>
+    </property>
+    <property name="text">
+     <string>Backup failed</string>
+    </property>
+    <property name="toolTip">
+     <string>Backup could not be completed. Check Settings → Backup.</string>
+    </property>
+   </widget>
+  </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="enabled">
     <bool>true</bool>
@@ -1253,6 +1280,12 @@
   <include location="../res/icons/icons.qrc"/>
  </resources>
  <connections>
+  <connection>
+   <sender>backupWarningButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showSettings()</slot>
+  </connection>
   <connection>
    <sender>actionQuit</sender>
    <signal>triggered()</signal>
