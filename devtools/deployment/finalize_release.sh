@@ -8,7 +8,7 @@
 # Must be executed from the QLog root directory.
 # Changelog is the single source of truth.
 
-set -uo pipefail
+set -euo pipefail
 
 ROOTDIR=.
 CHANGELOG="${ROOTDIR}/Changelog"

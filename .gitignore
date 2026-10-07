@@ -16,6 +16,9 @@
 .claude/
 AGENT.md
 CLAUDE.md
+.superpowers/
+devtools/translator/__pycache__/
+devtools/deployment/create_github_release.sh
 
 # Qt-es
 object_script.*.Release
@@ -35,6 +38,7 @@ ui_*.h
 *.qmlc
 *.jsc
 Makefile*
+*.md
 
 # Qt unit tests
 target_wrapper.*
@@ -58,3 +62,5 @@ compile_commands.json
 /build
 /build-appimage/
 /dist/
+tests/build/
+
