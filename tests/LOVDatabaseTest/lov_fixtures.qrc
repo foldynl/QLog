@@ -1,0 +1,10 @@
+<RCC><qresource prefix="/res/data">
+<file alias="dxcc.json">../../res/data/dxcc.json</file>
+<file alias="cty.csv">../../res/data/cty.csv</file>
+</qresource><qresource prefix="/sql">
+<file alias="002.sql">../../res/sql/migration_002.sql</file>
+<file alias="013.sql">../../res/sql/migration_013.sql</file>
+<file alias="015.sql">../../res/sql/migration_015.sql</file>
+<file alias="017.sql">../../res/sql/migration_017.sql</file>
+<file alias="035.sql">../../res/sql/migration_035.sql</file>
+</qresource></RCC>

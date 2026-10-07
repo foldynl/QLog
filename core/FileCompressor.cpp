@@ -79,7 +79,7 @@ QByteArray FileCompressor::gunzip(const QByteArray &in)
 
     inflateEnd(&strm);
 
-    return out;
+    return ret == Z_STREAM_END ? out : QByteArray{};
 }
 
 bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile,

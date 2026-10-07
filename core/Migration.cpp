@@ -7,7 +7,6 @@
 #include "debug.h"
 #include "data/Data.h"
 #include "LogParam.h"
-#include "LOVDownloader.h"
 #include "service/clublog/ClubLog.h"
 #include "service/hrdlog/HRDLog.h"
 #include "core/DatabaseBackup.h"
@@ -20,7 +19,7 @@ MODULE_IDENTIFICATION("qlog.core.migration");
  * Migrate the database to the latest schema version.
  * Returns true on success.
  */
-bool DBSchemaMigration::run(bool force, QString *backupSnapshot)
+bool DBSchemaMigration::run(QString *backupSnapshot)
 {
     FCT_IDENTIFICATION;
 
@@ -39,7 +38,6 @@ bool DBSchemaMigration::run(bool force, QString *backupSnapshot)
 
     if (currentVersion == latestVersion) {
         qCDebug(runtime) << "Database schema already up to date";
-        updateExternalResource(force);
         // temporarily added to create a trigger without calling db migration
         //refreshUploadStatusTrigger();
         return true;
@@ -83,8 +81,6 @@ bool DBSchemaMigration::run(bool force, QString *backupSnapshot)
     }
 
     progress.close();
-
-    updateExternalResource(force);
 
     qCDebug(runtime) << "Database migration successful";
 
@@ -249,99 +245,6 @@ int DBSchemaMigration::tableRows(const QString &name)
     i = query.first() ? query.value(0).toInt() : 0;
     qCDebug(runtime) << i;
     return i;
-}
-
-bool DBSchemaMigration::updateExternalResource(bool force)
-{
-    FCT_IDENTIFICATION;
-
-    LOVDownloader downloader;
-
-    QProgressDialog progress;
-    progress.setWindowTitle(tr("Updating External Resources"));
-    progress.setAutoClose(false);
-    progress.setAutoReset(false);
-
-    connect(&downloader, &LOVDownloader::processingSize,
-            &progress, &QProgressDialog::setMaximum);
-    connect(&downloader, &LOVDownloader::progress,
-            &progress, &QProgressDialog::setValue);
-    connect(&downloader, &LOVDownloader::finished,
-            &progress, &QProgressDialog::done);
-    connect(&downloader, &LOVDownloader::noUpdate,
-            &progress, &QProgressDialog::cancel);
-    connect(&progress, &QProgressDialog::canceled,
-            &downloader, &LOVDownloader::abortRequest);
-
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::CTY, "(1/8)", force);
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::CLUBLOGCTY, "2/8", force);
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::SATLIST, "(3/8)", force);
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::SOTASUMMITS, "(4/8)", force);
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::WWFFDIRECTORY, "(5/8)", force);
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::IOTALIST, "(6/8)", force);
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::POTADIRECTORY, "(7/8)", force);
-    updateExternalResourceProgress(progress, downloader, LOVDownloader::MEMBERSHIPCONTENTLIST, "(8/8)", force);
-
-    return true;
-}
-
-void DBSchemaMigration::updateExternalResourceProgress(QProgressDialog& progress,
-                                               LOVDownloader& downloader,
-                                               const LOVDownloader::SourceType & sourceType,
-                                               const QString &counter,
-                                               bool force)
-{
-    FCT_IDENTIFICATION;
-
-    QString stringInfo;
-
-    progress.reset();
-    switch ( sourceType )
-    {
-    case LOVDownloader::SourceType::CTY:
-        stringInfo = tr("DXCC Entities");
-        break;
-    case LOVDownloader::SourceType::SATLIST:
-        stringInfo = tr("Sats Info");
-        break;
-    case LOVDownloader::SourceType::SOTASUMMITS:
-        stringInfo = tr("SOTA Summits");
-        break;
-    case LOVDownloader::SourceType::WWFFDIRECTORY:
-        stringInfo = tr("WWFF Records");
-        break;
-    case LOVDownloader::SourceType::IOTALIST:
-        stringInfo = tr("IOTA Records");
-        break;
-    case LOVDownloader::SourceType::POTADIRECTORY:
-        stringInfo = tr("POTA Records");
-        break;
-    case LOVDownloader::SourceType::MEMBERSHIPCONTENTLIST:
-        stringInfo = tr("Membership Directory Records");
-        break;
-    case LOVDownloader::SourceType::CLUBLOGCTY:
-        stringInfo = tr("Clublog CTY.XML");
-        break;
-    default:
-        stringInfo = tr("List of Values");
-    }
-
-    progress.setWindowFlags(Qt::Dialog | Qt::WindowStaysOnTopHint);
-    progress.setLabelText(tr("Updating ") + stringInfo + " " + counter +" ...");
-    progress.setMinimum(0);
-    progress.setModal(true);
-    progress.show();
-
-    downloader.update(sourceType, force);
-
-    if ( progress.wasCanceled() )
-        qCDebug(runtime) << "Update was canceled";
-    else
-    {
-        if ( !progress.exec() )
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
-                                 stringInfo + tr(" Update Failed"));
-    }
 }
 
 /* Fixing error when QLog stored UTF characters to non-Intl field of ADIF (contact) table */

@@ -16,6 +16,7 @@
 #include "core/LogParam.h"
 #include "core/CredentialStore.h"
 #include "core/PlatformParameterManager.h"
+#include "core/LOVDatabase.h"
 
 MODULE_IDENTIFICATION("qlog.core.logdatabase");
 
@@ -264,12 +265,12 @@ bool LogDatabase::openDatabase()
     return createSQLFunctions();
 }
 
-bool LogDatabase::schemaVersionUpgrade(bool force, QString *backupSnapshot)
+bool LogDatabase::schemaVersionUpgrade(QString *backupSnapshot)
 {
     FCT_IDENTIFICATION;
 
     DBSchemaMigration m;
-    return m.run(force, backupSnapshot);
+    return m.run(backupSnapshot);
 }
 
 DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
@@ -374,6 +375,10 @@ bool LogDatabase::processPendingImport(QString *backupSnapshot)
 
     qCDebug(runtime) << "Processing pending database import";
 
+    // Prepared lists belong to the database being replaced, including its schema.
+    if ( !LOVDatabase::discardPrepared(dbDirectory().path()) )
+        return false;
+
     const QString currentDbPath = dbFilename();
     const QString walPath = currentDbPath + "-wal"; // remove also support files
     const QString shmPath = currentDbPath + "-shm"; // remove also support files
@@ -408,7 +413,7 @@ bool LogDatabase::processPendingImport(QString *backupSnapshot)
         return false;
     }
 
-    if ( !schemaVersionUpgrade(false, backupSnapshot) )
+    if ( !schemaVersionUpgrade(backupSnapshot) )
     {
         qCritical() << "Schema migration failed";
         return false;
@@ -460,4 +465,3 @@ bool LogDatabase::processPendingImport(QString *backupSnapshot)
 
     return true;
 }
-

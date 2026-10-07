@@ -52,7 +52,7 @@ public:
 
     bool atomicCopy(const QString &filename);
     bool openDatabase();
-    bool schemaVersionUpgrade(bool force = false, QString *backupSnapshot = nullptr);
+    bool schemaVersionUpgrade(QString *backupSnapshot = nullptr);
     bool createSQLFunctions();
 
 private:

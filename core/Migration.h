@@ -1,9 +1,9 @@
 #ifndef QLOG_CORE_MIGRATION_H
 #define QLOG_CORE_MIGRATION_H
 
-#include "core/LOVDownloader.h"
+#include <QObject>
 
-class QProgressDialog;
+class QSqlQuery;
 
 class DBSchemaMigration : public QObject
 {
@@ -11,7 +11,7 @@ class DBSchemaMigration : public QObject
 
 public:
     DBSchemaMigration(QObject *parent = nullptr) : QObject(parent) {}
-    bool run(bool force = false, QString *backupSnapshot = nullptr);
+    bool run(QString *backupSnapshot = nullptr);
 
     static constexpr int latestVersion = 42;
 
@@ -22,12 +22,6 @@ private:
     bool setVersion(int version);
     bool runSqlFile(QString filename);
     int tableRows(const QString &name);
-    bool updateExternalResource(bool force = false);
-    void updateExternalResourceProgress(QProgressDialog&,
-                                        LOVDownloader&,
-                                        const LOVDownloader::SourceType & sourceType,
-                                        const QString &counter,
-                                        bool force = false);
     bool fixIntlFields();
     bool insertUUID();
     bool fillMyDXCC();

@@ -11,6 +11,9 @@
 #include <QTemporaryDir>
 #include <QStyleFactory>
 #include <QThread>
+#include <QTimer>
+#include <QEventLoop>
+#include <QProgressDialog>
 
 #include "debug.h"
 #include "ui/MainWindow.h"
@@ -28,6 +31,7 @@
 #include "data/ActivityProfile.h"
 #include "service/GenericCallbook.h"
 #include "core/LogDatabase.h"
+#include "core/LOVDatabase.h"
 #include "core/DatabaseBackup.h"
 #include "core/LogParam.h"
 #include "mcpbridge/RuntimeContext.h"
@@ -361,6 +365,110 @@ void wayland_hacks()
 }
 #endif
 
+static QString lovName(LOVDownloader::SourceType type)
+{
+    FCT_IDENTIFICATION;
+
+    switch ( type )
+    {
+    case LOVDownloader::CTY: return QObject::tr("DXCC Entities");
+    case LOVDownloader::CLUBLOGCTY: return QObject::tr("ClubLog DXCC");
+    case LOVDownloader::SATLIST: return QObject::tr("Sats Info");
+    case LOVDownloader::SOTASUMMITS: return QObject::tr("SOTA Summits");
+    case LOVDownloader::WWFFDIRECTORY: return QObject::tr("WWFF Records");
+    case LOVDownloader::IOTALIST: return QObject::tr("IOTA Records");
+    case LOVDownloader::POTADIRECTORY: return QObject::tr("POTA Records");
+    case LOVDownloader::MEMBERSHIPCONTENTLIST: return QObject::tr("Membership Directory Records");
+    default: return QObject::tr("List of Values");
+    }
+}
+
+static bool initializeLOV(LOVDownloader &downloader, SplashScreen &splash, bool force)
+{
+    FCT_IDENTIFICATION;
+
+    const QDir directory(LogDatabase::dbDirectory());
+    QStringList failed;
+
+    for ( const LOVDownloader::SourceType type : LOVDownloader::sources() )
+    {
+        const LOVDownloader::SourceDefinition source = LOVDownloader::sourceDefinition(type);
+        const QString pending = directory.filePath(source.packageStem + QStringLiteral(".pending.db"));
+
+        for ( const QString &suffix : {QString(), QStringLiteral("-journal"), QStringLiteral("-wal"), QStringLiteral("-shm")} )
+        {
+            if ( QFile::exists(pending + suffix) && !QFile::remove(pending + suffix) )
+                qCWarning(runtime) << "Cannot remove unfinished reference list" << pending + suffix;
+        }
+
+        splash.showMessage(QObject::tr("Updating %1").arg(lovName(type)), Qt::AlignBottom|Qt::AlignCenter);
+
+        QString error;
+        LOVDatabase::ApplyResult adopted = LOVDatabase::applyReady(source, directory.path(), &error);
+
+        if ( adopted == LOVDatabase::ApplyResult::DATABASE_ERROR )
+            return false;
+
+        if ( adopted == LOVDatabase::ApplyResult::INVALID )
+        {
+            qCWarning(runtime) << "Invalid reference-list package" << source.type << error;
+            if ( !QFile::remove(directory.filePath(source.packageStem + QStringLiteral(".ready.db"))) )
+                qCWarning(runtime) << "Cannot remove invalid reference-list package" << source.type;
+        }
+
+        if ( adopted == LOVDatabase::ApplyResult::RETRY )
+        {
+            failed << lovName(type);
+            continue;
+        }
+
+        if ( !force && downloader.isSourceAvailable(type) )
+            continue;
+
+        QProgressDialog progress;
+        progress.setWindowTitle(QObject::tr("Updating External Resources"));
+        progress.setLabelText(QObject::tr("Updating %1…").arg(lovName(type)));
+        progress.setAutoClose(false);
+        progress.setAutoReset(false);
+        progress.setWindowFlags(Qt::Dialog | Qt::WindowStaysOnTopHint);
+        progress.setModal(true);
+        progress.setRange(0, 0);
+        progress.show();
+        QEventLoop wait;
+        bool prepared = false;
+        QObject::connect(&downloader, &LOVDownloader::processingSize, &progress, &QProgressDialog::setMaximum);
+        QObject::connect(&downloader, &LOVDownloader::progress, &progress, &QProgressDialog::setValue);
+        QObject::connect(&downloader, &LOVDownloader::finished, &wait, [&](bool success)
+        {
+            prepared = success;
+            wait.quit();
+        });
+        QObject::connect(&downloader, &LOVDownloader::noUpdate, &wait, [&]()
+        {
+            prepared = true;
+            wait.quit();
+        });
+        QObject::connect(&progress, &QProgressDialog::canceled, &downloader, &LOVDownloader::abortRequest);
+
+        QTimer::singleShot(0, &downloader, [&downloader, type, force]() { downloader.update(type, force); });
+        // Startup needs an event loop for networking. Unlike dialog.exec(), cancellation
+        // must wait for the worker's terminal result before the next source or shared Data.
+        wait.exec();
+        progress.close();
+        adopted = prepared ? LOVDatabase::applyReady(source, directory.path(), &error) : LOVDatabase::ApplyResult::RETRY;
+
+        if ( adopted == LOVDatabase::ApplyResult::DATABASE_ERROR )
+            return false;
+
+        if ( adopted != LOVDatabase::ApplyResult::APPLIED && adopted != LOVDatabase::ApplyResult::NO_PACKAGE )
+            failed << lovName(type);
+    }
+    if ( !failed.isEmpty() )
+        QMessageBox::warning(nullptr, QObject::tr("QLog Warning"),
+                             QObject::tr("Could not update these reference lists: %1. Existing data have been kept.").arg(failed.join(QStringLiteral(", "))));
+    return true;
+}
+
 int main(int argc, char* argv[])
 {
     FCT_IDENTIFICATION;
@@ -539,13 +647,21 @@ int main(int argc, char* argv[])
 
         QCoreApplication::processEvents();
 
-        if ( ! LogDatabase::instance()->schemaVersionUpgrade(isForceLOVUpdate, &backupSnapshot) )
+        if ( ! LogDatabase::instance()->schemaVersionUpgrade(&backupSnapshot) )
         {
             QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
                                   QMessageBox::tr("Database migration failed."));
             return 1;
         }
     }
+
+    LOVDownloader lovDownloader;
+    if ( !initializeLOV(lovDownloader, splash, isForceLOVUpdate) )
+    {
+        QMessageBox::critical(nullptr, QObject::tr("QLog Error"), QObject::tr("Could not complete reference-list initialization."));
+        return 1;
+    }
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, &lovDownloader, &LOVDownloader::stopUpdates);
 
     splash.showMessage(QObject::tr("Starting Application"), Qt::AlignBottom|Qt::AlignCenter);
 
@@ -554,7 +670,6 @@ int main(int argc, char* argv[])
     int rc = 0;
     DatabaseBackup backup(LogParam::getBackupConfig(), backupSnapshot, &app);
     QObject::connect(&app, &QCoreApplication::aboutToQuit, &backup, &QThread::requestInterruption);
-
     {
         RuntimeContext runtimeContext;
         if ( !runtimeContext.addProvider(QStringLiteral("station"),
@@ -615,6 +730,7 @@ int main(int argc, char* argv[])
                                                         "their owners' threads, not one atomic snapshot."),
                                          ActivityProfilesManager::instance()->getRuntimeProvider()) )
             qCWarning(runtime) << "Cannot register activity runtime provider";
+
         startRigThread(runtimeContext);
         startRotThread(runtimeContext);
         startCWKeyerThread();
@@ -634,6 +750,7 @@ int main(int argc, char* argv[])
 
         QObject::connect(&backup, &QThread::finished, &w, &MainWindow::updateBackupStatus);
         backup.start();
+        QTimer::singleShot(0, &lovDownloader, &LOVDownloader::startUpdates);
 
         // check version only for Windows and MacOS. Linux has own distribution points
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)

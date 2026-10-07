@@ -16,6 +16,7 @@ TBC - 0.54.0
 - [CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"
 - [CHANGED] - DXC - Send Last QSO dynamically switches to Spot QSO
 - [CHANGED] - Autobackup - Backup is performed in the background using a copy of DB.
+- [CHANGED] - List of Values - Prepare updates in the background and apply them at startup (issue #949)
 - Fixed QSO Filter does not accept filtering by Country in selected language (issue #731)
 - Fixed Limit Grid input field to 8 characters (issue #1028)
 - Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)

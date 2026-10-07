@@ -95,6 +95,7 @@ SOURCES += \
         core/FldigiTCPServer.cpp \
         core/FldigiUDPReceiver.cpp \
         core/LOVDownloader.cpp \
+        core/LOVDatabase.cpp \
         core/LogDatabase.cpp \
         core/DatabaseBackup.cpp \
         core/LogLocale.cpp \
@@ -314,6 +315,7 @@ HEADERS += \
         core/FldigiTCPServer.h \
         core/FldigiUDPReceiver.h \
         core/LOVDownloader.h \
+        core/LOVDatabase.h \
         core/LogDatabase.h \
         core/DatabaseBackup.h \
         core/LogLocale.h \
