@@ -178,3 +178,64 @@ jobs:
       run: |
         dnf install -y dist/rpm/fedora-43/x86_64/QLog-*.x86_64.rpm
         QT_QPA_PLATFORM=offscreen qlog --help 2>&1 | grep -q "QLog Help"
+
+  appimage-build:
+    name: AppImage Build (${{ matrix.arch }})
+    needs: [ubuntu-build-qt5, ubuntu-build-qt6]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Build AppImage
+      run: CONTAINER_ENGINE=docker ./packaging/appimage/build-container.sh
+
+    - name: Upload AppImage artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: appimage-${{ matrix.arch }}
+        path: dist/appimage/QLog-*-${{ matrix.arch }}.AppImage
+        if-no-files-found: error
+        retention-days: 1
+
+  appimage-smoke-test:
+    name: AppImage Smoke Test (${{ matrix.arch }})
+    needs: appimage-build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+    - name: Download AppImage artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: appimage-${{ matrix.arch }}
+        path: build/appimage-smoke
+
+    - name: Install smoke test dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb xauth libusb-1.0-0 libasound2t64
+
+    - name: Run smoke test
+      working-directory: build/appimage-smoke
+      env:
+        APPIMAGE_EXTRACT_AND_RUN: '1'
+        QT_QPA_PLATFORM: xcb
+      run: |
+        chmod +x QLog-*-${{ matrix.arch }}.AppImage
+        xvfb-run -a ./QLog-*-${{ matrix.arch }}.AppImage --help 2>&1 | grep -q "QLog Help"
