@@ -1,7 +1,14 @@
 #include <QtTest>
 #include "data/BandmapGuide.h"
+#include "data/RigProfile.h"
 
 // Reading Activity state must not apply a preset or change Bandmap Guide settings.
+RigProfilesManager::RigProfilesManager()
+    : ProfileManagerSQL<RigProfile>("rig_profiles")
+{
+    QFAIL("Runtime collection must not apply a Rig profile");
+}
+
 void BandmapGuide::setEnabled(bool)
 {
     QFAIL("Runtime collection must not change Bandmap Guide settings");

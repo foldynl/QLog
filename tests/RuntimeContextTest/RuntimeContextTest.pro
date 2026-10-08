@@ -18,7 +18,6 @@ SOURCES += \
     ../../data/AntennaRuntimeProvider.cpp \
     ../../data/ActivityProfile.cpp \
     ../../data/ActivityRuntimeProvider.cpp \
-    ../../data/RigProfile.cpp \
     ../../data/MainLayoutProfile.cpp \
     ../../data/SerialPort.cpp \
     ../../data/Gridsquare.cpp \
