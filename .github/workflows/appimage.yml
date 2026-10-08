@@ -1,0 +1,84 @@
+name: AppImage
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: appimage-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  appimage-build:
+    name: AppImage Build (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Cache AppImage dependencies
+      uses: actions/cache@v5
+      with:
+        path: |
+          build-appimage/${{ matrix.arch }}/deps
+          build-appimage/${{ matrix.arch }}/downloads
+        key: appimage-${{ runner.os }}-${{ matrix.arch }}-${{ hashFiles('packaging/appimage/*.sh', 'packaging/appimage/*.txt', 'packaging/appimage/checksums.sha256', 'packaging/appimage/runtime/bundle-packages.txt') }}
+
+    - name: Build AppImage
+      id: appimage
+      run: |
+        CONTAINER_ENGINE=docker ./packaging/appimage/build-container.sh
+        appimage=(dist/appimage/QLog-*-${{ matrix.arch }}.AppImage)
+        echo "name=${appimage[0]##*/}" >> "$GITHUB_OUTPUT"
+
+    - name: Upload AppImage artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: ${{ steps.appimage.outputs.name }}
+        path: dist/appimage/QLog-*-${{ matrix.arch }}.AppImage
+        if-no-files-found: error
+        retention-days: 1
+
+  appimage-smoke-test:
+    name: AppImage Smoke Test (${{ matrix.arch }})
+    needs: appimage-build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+    - name: Download AppImage artifact
+      uses: actions/download-artifact@v7
+      with:
+        pattern: QLog-*-${{ matrix.arch }}.AppImage
+        path: build/appimage-smoke
+
+    - name: Install smoke test dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb xauth libusb-1.0-0 libasound2t64
+
+    - name: Run smoke test
+      working-directory: build/appimage-smoke
+      env:
+        APPIMAGE_EXTRACT_AND_RUN: '1'
+        QT_QPA_PLATFORM: xcb
+      run: |
+        chmod +x QLog-*-${{ matrix.arch }}.AppImage
+        xvfb-run -a ./QLog-*-${{ matrix.arch }}.AppImage --help 2>&1 | grep -q "QLog Help"

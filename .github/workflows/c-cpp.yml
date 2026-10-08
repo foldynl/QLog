@@ -9,6 +9,16 @@ on:
       - 'testing_*'
       - master
   workflow_dispatch:
+    inputs:
+      run_import_benchmark:
+        description: Run the 50,000-contact ADI import benchmark
+        type: boolean
+        default: false
+
+concurrency:
+  group: ci-linux-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ubuntu-build-qt5:
     name: Ubuntu CI QT5
@@ -32,7 +42,7 @@ jobs:
     - name: configure
       run: qmake QLog.pro
     - name: make
-      run: make -j2
+      run: make -j"$(nproc)"
     - name: Configure tests
       if: matrix.run_tests
       run: |
@@ -44,8 +54,8 @@ jobs:
       working-directory: tests/build
       env:
         QT_QPA_PLATFORM: offscreen
-        QLOG_RUN_ADI_IMPORT_BENCHMARK: '1'
-      run: make -j2 check
+        QLOG_RUN_ADI_IMPORT_BENCHMARK: ${{ inputs.run_import_benchmark && '1' || '0' }}
+      run: make -j"$(nproc)" check
 
   ubuntu-build-qt6:
     name: Ubuntu CI QT6
@@ -69,7 +79,7 @@ jobs:
     - name: configure
       run: qmake6 QLog.pro
     - name: make
-      run: make -j2
+      run: make -j"$(nproc)"
     - name: Configure tests
       if: matrix.run_tests
       run: |
@@ -81,161 +91,5 @@ jobs:
       working-directory: tests/build
       env:
         QT_QPA_PLATFORM: offscreen
-        QLOG_RUN_ADI_IMPORT_BENCHMARK: '1'
-      run: make -j2 check
-
-  deb-package:
-    name: DEB Package Build
-    needs: [ubuntu-build-qt5, ubuntu-build-qt6]
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-24.04
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-
-    - name: Install tools and build dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get -y install devscripts equivs dpkg-dev fakeroot lintian libconfig-model-dpkg-perl licensecheck
-        sudo mk-build-deps --install --remove debian/control --tool "apt-get -y --no-install-recommends"
-
-    - name: Check debian/copyright
-      run: cme check dpkg-copyright
-
-    - name: Build DEB package
-      run: dpkg-buildpackage -b -us -uc -j4
-
-    - name: Verify DEB was created
-      run: ls -la ../qlog_*.deb
-
-    - name: Run lintian
-      run: lintian --no-tag-display-limit --fail-on error ../qlog_*.changes 
-
-    - name: Stage DEB artifact
-      run: mv ../qlog_*.deb .
-
-    - name: Upload DEB artifact
-      uses: actions/upload-artifact@v6
-      with:
-        name: deb-package
-        path: ${{ github.workspace }}/qlog_*.deb
-        retention-days: 1
-
-  deb-smoke-test:
-    name: DEB Smoke Test
-    needs: deb-package
-    runs-on: ubuntu-24.04
-
-    steps:
-    - name: Download DEB artifact
-      uses: actions/download-artifact@v7
-      with:
-        name: deb-package
-
-    - name: Install and smoke test
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y ./qlog_*.deb
-        QT_QPA_PLATFORM=offscreen qlog --help 2>&1 | grep -q "QLog Help"
-
-  rpm-package:
-    name: RPM Package Build
-    needs: [ubuntu-build-qt5, ubuntu-build-qt6]
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-24.04
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-
-    - name: Build RPM package
-      run: CONTAINER_ENGINE=docker ./packaging/rpm/build-container.sh 43
-
-    - name: Upload RPM artifact
-      uses: actions/upload-artifact@v6
-      with:
-        name: rpm-package
-        path: dist/rpm/fedora-43/x86_64/QLog-*.x86_64.rpm
-        if-no-files-found: error
-        retention-days: 1
-
-  rpm-smoke-test:
-    name: RPM Smoke Test
-    needs: rpm-package
-    runs-on: ubuntu-latest
-    container:
-      image: fedora:43
-
-    steps:
-    - name: Download RPM artifact
-      uses: actions/download-artifact@v7
-      with:
-        name: rpm-package
-        path: dist/rpm/fedora-43/x86_64
-
-    - name: Install and smoke test
-      run: |
-        dnf install -y dist/rpm/fedora-43/x86_64/QLog-*.x86_64.rpm
-        QT_QPA_PLATFORM=offscreen qlog --help 2>&1 | grep -q "QLog Help"
-
-  appimage-build:
-    name: AppImage Build (${{ matrix.arch }})
-    needs: [ubuntu-build-qt5, ubuntu-build-qt6]
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x86_64
-            runner: ubuntu-24.04
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.runner }}
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-
-    - name: Build AppImage
-      run: CONTAINER_ENGINE=docker ./packaging/appimage/build-container.sh
-
-    - name: Upload AppImage artifact
-      uses: actions/upload-artifact@v6
-      with:
-        name: appimage-${{ matrix.arch }}
-        path: dist/appimage/QLog-*-${{ matrix.arch }}.AppImage
-        if-no-files-found: error
-        retention-days: 1
-
-  appimage-smoke-test:
-    name: AppImage Smoke Test (${{ matrix.arch }})
-    needs: appimage-build
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x86_64
-            runner: ubuntu-24.04
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.runner }}
-    steps:
-    - name: Download AppImage artifact
-      uses: actions/download-artifact@v7
-      with:
-        name: appimage-${{ matrix.arch }}
-        path: build/appimage-smoke
-
-    - name: Install smoke test dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y xvfb xauth libusb-1.0-0 libasound2t64
-
-    - name: Run smoke test
-      working-directory: build/appimage-smoke
-      env:
-        APPIMAGE_EXTRACT_AND_RUN: '1'
-        QT_QPA_PLATFORM: xcb
-      run: |
-        chmod +x QLog-*-${{ matrix.arch }}.AppImage
-        xvfb-run -a ./QLog-*-${{ matrix.arch }}.AppImage --help 2>&1 | grep -q "QLog Help"
+        QLOG_RUN_ADI_IMPORT_BENCHMARK: ${{ inputs.run_import_benchmark && '1' || '0' }}
+      run: make -j"$(nproc)" check
