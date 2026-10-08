@@ -969,6 +969,13 @@ void SettingsDialog::addRigProfile()
         return;
     }
 
+    if ( ui->rigStackedWidget->currentIndex() == STACKED_WIDGET_NETWORK_SETTING
+         && ui->rigHostNameEdit->text().trimmed().isEmpty() )
+    {
+        ui->rigHostNameEdit->setPlaceholderText(tr("Must not be empty"));
+        return;
+    }
+
     if ( ! ui->rigPortEdit->text().isEmpty()
          && ! ui->rigPortEdit->hasAcceptableInput())
     {
@@ -977,7 +984,8 @@ void SettingsDialog::addRigProfile()
         return;
     }
 
-    if ( ui->rigStackedWidget->currentIndex() == STACKED_WIDGET_SERIAL_SETTING )
+    if ( ui->rigStackedWidget->currentIndex() == STACKED_WIDGET_SERIAL_SETTING
+         && ui->rigInterfaceCombo->currentData().toInt() == Rig::HAMLIB_DRIVER )
     {
         if ( ui->rigPTTTypeCombo->currentIndex() != PTT_TYPE_NONE_INDEX
              && ui->rigPTTTypeCombo->currentIndex() != PTT_TYPE_CAT_INDEX

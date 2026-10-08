@@ -309,10 +309,11 @@ RigProfile::rigPortType RigProfile::getPortType() const
         || driver == Rig::OMNIRIGV2_DRIVER )
         return RigProfile::SPECIAL_OMNIRIG_ATTACHED;
 
-    if ( !hostname.isEmpty()
-         && portPath.isEmpty() )
-    {
+    const RigCaps caps = Rig::instance()->getRigCaps(static_cast<Rig::DriverID>(driver), model);
+
+    if ( caps.isNetworkOnly
+         || ( !hostname.isEmpty() && portPath.isEmpty() ) )
         return RigProfile::NETWORK_ATTACHED;
-    }
+
     return RigProfile::SERIAL_ATTACHED;
 }
