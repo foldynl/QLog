@@ -4,4 +4,4 @@ CSV_PARSER_REPOSITORY="https://github.com/vincentlaucsb/csv-parser"
 CSV_PARSER_TAG="v5.4.0"
 
 ZONEDETECT_REPOSITORY="https://github.com/BertoldVdb/ZoneDetect"
-ZONEDETECT_COMMIT="082fa6b14815340d0f0d9e23b1ded318ba77c82c"
+ZONEDETECT_COMMIT="81ede727f8771eda507150a95237cc8c518666d6"

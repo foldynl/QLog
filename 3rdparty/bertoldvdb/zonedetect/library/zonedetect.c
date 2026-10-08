@@ -25,8 +25,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* https://github.com/BertoldVdb/ZoneDetect/tree/master/library */
-
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -620,6 +618,7 @@ float* ZDPolygonToList(const ZoneDetect *library, uint32_t polygonId, size_t* le
         flData[i] = ZDFixedPointToFloat(lat, 90, library->precision);
         flData[i+1] = ZDFixedPointToFloat(lon, 180, library->precision);
     }
+    free(data);
 
     if(lengthPtr) {
         *lengthPtr = length;
