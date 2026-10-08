@@ -1,6 +1,6 @@
 #pragma once
 /*
-CSV for C++, version 5.3.0
+CSV for C++, version 5.4.0
 https://github.com/vincentlaucsb/csv-parser
 
 MIT License
@@ -2437,7 +2437,7 @@ namespace csv {
 #include <cstdint>
 
 /*
-classify_scalar, version 1.1.0
+classify_scalar, version 1.1.2
 https://github.com/vincentlaucsb/classify_scalar
 
 MIT License
@@ -2465,7 +2465,7 @@ SOFTWARE.
 
 
 #if defined(CLASSIFY_SCALAR_VERSION)
-#if CLASSIFY_SCALAR_VERSION >= 10100
+#if CLASSIFY_SCALAR_VERSION >= 10102
 #define CLASSIFY_SCALAR_SKIP_HEADER
 #else
 #error "A newer classify_scalar.hpp was included after an older copy. Include the newest copy first."
@@ -2473,8 +2473,8 @@ SOFTWARE.
 #else
 #define CLASSIFY_SCALAR_VERSION_MAJOR 1
 #define CLASSIFY_SCALAR_VERSION_MINOR 1
-#define CLASSIFY_SCALAR_VERSION_PATCH 0
-#define CLASSIFY_SCALAR_VERSION 10100
+#define CLASSIFY_SCALAR_VERSION_PATCH 2
+#define CLASSIFY_SCALAR_VERSION 10102
 #endif
 
 #ifndef CLASSIFY_SCALAR_SKIP_HEADER
@@ -2569,8 +2569,16 @@ SOFTWARE.
 #include <system_error>
 #endif
 
-#if defined(CLASSIFY_SCALAR_HAS_CXX17) && !defined(_LIBCPP_VERSION) && !defined(CLASSIFY_SCALAR_DISABLE_STD_FLOAT_FROM_CHARS)
+#if defined(CLASSIFY_SCALAR_HAS_CXX17) && !defined(CLASSIFY_SCALAR_DISABLE_STD_FLOAT_FROM_CHARS)
+// A build-system compile/link probe may override the standard feature macro.
+// A negative probe must not fall through to the feature-macro fallback.
+#if defined(CLASSIFY_SCALAR_USE_STD_FLOAT_FROM_CHARS)
+#if CLASSIFY_SCALAR_USE_STD_FLOAT_FROM_CHARS
 #define CLASSIFY_SCALAR_HAS_STD_FLOAT_FROM_CHARS
+#endif
+#elif defined(__cpp_lib_to_chars) && __cpp_lib_to_chars >= 201611L
+#define CLASSIFY_SCALAR_HAS_STD_FLOAT_FROM_CHARS
+#endif
 #endif
 
 namespace classify_scalar {
@@ -3109,8 +3117,6 @@ CLASSIFY_SCALAR_CONSTEXPR_VALUE_14 std::uint64_t signed_integer_limits[3] = {
     int64_positive_limit,
     int64_negative_limit
 };
-CLASSIFY_SCALAR_CONSTEXPR_VALUE_14 long double int64_min_long_double = static_cast<long double>(int64_min_value);
-CLASSIFY_SCALAR_CONSTEXPR_VALUE_14 long double int64_max_long_double = static_cast<long double>(int64_max_value);
 
 namespace parsing {
 
@@ -3241,6 +3247,9 @@ CLASSIFY_SCALAR_FORCE_INLINE std::int64_t days_from_civil(int year, const int mo
     return era * 146097 + static_cast<std::int64_t>(doe) - 719468;
 }
 
+// Accepts an ISO date or date-time with optional seconds, fraction, and Z or
+// signed HH:MM/HHMM offset. Fractions are truncated or padded to milliseconds;
+// output rejects instants before the Unix epoch.
 CLASSIFY_SCALAR_FORCE_INLINE bool parse_iso_timestamp(
     const char* first,
     const char* last,
@@ -3295,6 +3304,7 @@ CLASSIFY_SCALAR_FORCE_INLINE bool parse_iso_timestamp(
             if (current != last && *current == '.') {
                 ++current;
                 const char* fraction_first = current;
+                // Keep millisecond precision while consuming all fractional digits.
                 while (current != last && ascii_digits[static_cast<unsigned char>(*current)]) {
                     if (current - fraction_first < 3)
                         millisecond = millisecond * 10 + (*current - '0');
@@ -3341,6 +3351,7 @@ CLASSIFY_SCALAR_FORCE_INLINE bool parse_iso_timestamp(
     if (!out)
         return true;
 
+    // Convert the parsed local clock time and offset to UTC milliseconds.
     const std::int64_t timezone_offset_milliseconds =
         static_cast<std::int64_t>(timezone_sign)
         * (static_cast<std::int64_t>(timezone_hour) * 60 + timezone_minute)
@@ -3353,6 +3364,7 @@ CLASSIFY_SCALAR_FORCE_INLINE bool parse_iso_timestamp(
         + millisecond
         - timezone_offset_milliseconds;
 
+    // The unsigned output cannot represent instants before the Unix epoch.
     if (timestamp < 0)
         return false;
 
@@ -3555,6 +3567,8 @@ CLASSIFY_SCALAR_FORCE_INLINE floating_parse_status parse_floating_ascii(
         ++current;
 
     long double integral_part = 0;
+    std::uint64_t integral_digits = 0;
+    bool integral_digits_fit = true;
     long double decimal_part = 0;
     unsigned places_after_decimal = 0;
     int exponent = 0;
@@ -3567,10 +3581,22 @@ CLASSIFY_SCALAR_FORCE_INLINE floating_parse_status parse_floating_ascii(
 
     while (current != last && ascii_digits[static_cast<unsigned char>(*current)]) {
         const unsigned char digit = static_cast<unsigned char>(*current - '0');
-        integral_part = (integral_part * 10.0L) + digit;
+        // Accumulate exactly before floating conversion so values near int64
+        // boundaries do not lose bits when long double is only double precision.
+        if (integral_digits_fit && integral_digits <= (std::numeric_limits<std::uint64_t>::max() - digit) / 10) {
+            integral_digits = integral_digits * 10 + digit;
+        } else {
+            if (integral_digits_fit) {
+                integral_part = static_cast<long double>(integral_digits);
+                integral_digits_fit = false;
+            }
+            integral_part = (integral_part * 10.0L) + digit;
+        }
         has_digit = true;
         ++current;
     }
+    if (integral_digits_fit)
+        integral_part = static_cast<long double>(integral_digits);
 
     if (current != last && static_cast<unsigned char>(*current) == static_cast<unsigned char>(DecimalSymbol)) {
         ++current;
@@ -3724,7 +3750,10 @@ CLASSIFY_SCALAR_FORCE_INLINE floating_parse_status parse_floating(
 }
 
 CLASSIFY_SCALAR_FORCE_INLINE bool floating_is_integral(const double value, std::int64_t* out) noexcept {
-    if (value < int64_min_long_double || value > int64_max_long_double)
+    // The nearest double to INT64_MAX is 2^63, which is outside int64 even on
+    // platforms where long double has no extra precision (notably MSVC).
+    if (value < static_cast<double>(int64_min_value)
+            || value >= -static_cast<double>(int64_min_value))
         return false;
 
     const std::int64_t integer = static_cast<std::int64_t>(value);
@@ -6869,6 +6898,28 @@ namespace csv {
             return out;
         }
 
+        inline void append_json_number_without_leading_zeros(
+            std::string& out,
+            csv::string_view value
+        ) noexcept {
+            size_t first = 0;
+            if (first < value.size() && (value[first] == '+' || value[first] == '-')) {
+                if (value[first] == '-') {
+                    out += '-';
+                }
+                ++first;
+            }
+
+            while (first + 1 < value.size()
+                && value[first] == '0'
+                && value[first + 1] >= '0'
+                && value[first + 1] <= '9') {
+                ++first;
+            }
+
+            out.append(value.data() + first, value.size() - first);
+        }
+
         class JsonConverter {
         public:
             JsonConverter() = default;
@@ -6989,7 +7040,9 @@ namespace csv {
             void append_json_value(std::string& out, csv::string_view value) const {
                 const DataType type = internals::data_type(value);
                 if (type >= DataType::CSV_INT8 && type <= DataType::CSV_DOUBLE) {
-                    out.append(value.data(), value.size());
+                    append_json_number_without_leading_zeros(out, value);
+                } else if (type == DataType::CSV_NULL) {
+                    out += "null";
                 } else {
                     out += '"';
                     append_json_escaped(out, value);
@@ -7617,7 +7670,7 @@ namespace csv {
             "Attempted to convert a floating point value to an integral type.";
         static const std::string ERROR_NEG_TO_UNSIGNED = "Negative numbers cannot be converted to unsigned types.";
     
-        // Inside CSVField::get() or wherever you materialize the value
+        // Applied when CSVRow exposes a field view with configured whitespace trimming.
         csv::string_view get_trimmed(csv::string_view sv, const WhitespaceMap& ws_flags) noexcept;
     }
 
@@ -8133,8 +8186,10 @@ namespace csv {
 
         /** @name Value Retrieval */
         ///@{
+        /** Return the field at @p n. Throws std::runtime_error if the index is out of bounds. */
         CSVField operator[](size_t n) const;
-        CSVField operator[](csv::string_view) const;
+        /** Return the field named @p col_name. Throws std::runtime_error if the name is absent. */
+        CSVField operator[](csv::string_view col_name) const;
         inline std::string to_json(const std::vector<std::string>& subset = {}) const {
             const auto* converter = this->get_json_converter();
             return converter == nullptr ? "{}"
@@ -9092,15 +9147,13 @@ namespace csv {
                 // than scanning quote-heavy fields twice in the parser hot path.
                 auto allocation = data.quote_arena.allocate_contiguous(field_str.size());
                 char* out = allocation.data;
-                for (size_t i = 0; i < field_str.size(); ++i) {
-                    if (data.parse_flags[field_str[i] + CHAR_OFFSET] == ParseFlags::QUOTE
+                size_t i = 0;
+                while (i < field_str.size()) {
+                    const bool doubled_quote = data.parse_flags[field_str[i] + CHAR_OFFSET] == ParseFlags::QUOTE
                         && i + 1 < field_str.size()
-                        && data.parse_flags[field_str[i + 1] + CHAR_OFFSET] == ParseFlags::QUOTE) {
-                        *(out++) = field_str[i++];
-                        continue;
-                    }
-
+                        && data.parse_flags[field_str[i + 1] + CHAR_OFFSET] == ParseFlags::QUOTE;
                     *(out++) = field_str[i];
+                    i += doubled_quote ? 2 : 1;
                 }
 
                 realized_length = static_cast<size_t>(out - allocation.data);
@@ -11931,7 +11984,7 @@ namespace csv {
          */
         template<typename TStream,
             csv::enable_if_t<std::is_base_of<std::istream, TStream>::value, int> = 0>
-        CSVReader(TStream &source, CSVFormat format = CSVFormat::guess_csv())
+        CSVReader(TStream &source, const CSVFormat& format = CSVFormat::guess_csv())
             : _format(format),
               read_scheduler_(format.is_threading_enabled()) {
             this->init_from_stream(source, format);
@@ -12191,7 +12244,7 @@ namespace csv {
 
         template<typename TStream,
             csv::enable_if_t<std::is_base_of<std::istream, TStream>::value, int> = 0>
-        void init_from_stream(TStream& source, CSVFormat format) {
+        void init_from_stream(TStream& source, const CSVFormat& format) {
             this->init_parser(
                 std::unique_ptr<internals::parser::CSVParserDriverBase>(
                     new internals::parser::StreamParser<TStream>(source, format, this->col_names)
@@ -14929,7 +14982,7 @@ namespace csv {
      *  Rows already obtained from the reader remain valid, but unread rows
      *  still depend on the source view staying alive.
      */
-    inline CSVReader parse_unsafe(csv::string_view in, CSVFormat format = CSVFormat::guess_csv()) {
+    inline CSVReader parse_unsafe(csv::string_view in, const CSVFormat& format = CSVFormat::guess_csv()) {
         std::unique_ptr<std::istream> stream(new internals::StringViewStream(in));
         return CSVReader(std::move(stream), format);
     }
@@ -15555,26 +15608,10 @@ namespace csv {
         }
     }
 
-    /** Return a CSVField object corrsponding to the nth value in the row.
-     *
-     *  @note This method performs bounds checking, and will throw an
-     *        `std::runtime_error` if n is invalid.
-     *
-     *  @complexity
-     *  Constant, by calling csv::CSVRow::get_csv::string_view()
-     *
-     */
     CSV_INLINE CSVField CSVRow::operator[](size_t n) const {
         return this->make_field(n, this->data);
     }
 
-    /** Retrieve a value by its associated column name. If the column
-     *  specified can't be round, a runtime error is thrown.
-     *
-     *  @complexity
-     *  Constant. This calls the other CSVRow::operator[]() after
-     *  converting column names into indices using a hash table.
-     */
     CSV_INLINE CSVField CSVRow::operator[](csv::string_view col_name) const {
         auto & col_names = this->data->col_names;
         auto col_pos = col_names->index_of(col_name);
