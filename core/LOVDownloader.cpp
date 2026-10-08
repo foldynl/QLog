@@ -28,7 +28,7 @@ LOVDownloader::~LOVDownloader()
     stopUpdates();
 }
 
-QList<LOVDownloader::SourceType> LOVDownloader::sources()
+const QList<LOVDownloader::SourceType> LOVDownloader::sources()
 {
     FCT_IDENTIFICATION;
     return {

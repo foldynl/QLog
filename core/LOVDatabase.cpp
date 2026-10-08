@@ -494,7 +494,8 @@ bool LOVDatabase::parseIOTA(QSqlDatabase &database, QTextStream &data)
     }
 
     int count = 0;
-    for ( const QJsonValue &value : document.array() )
+    const QJsonArray array = document.array();
+    for ( const QJsonValue &value : array )
     {
         if ( isInterruptionRequested() )
             return false;
@@ -650,8 +651,8 @@ bool LOVDatabase::parseCTY(QSqlDatabase &database, QTextStream &data)
 {
     FCT_IDENTIFICATION;
 
-    const QRegularExpression separator("[\\s;]");
-    const QRegularExpression prefixFormat("^(=?)([A-Z0-9/]+)(?:\\((\\d+)\\))?(?:\\[(\\d+)\\])?$");
+    static const QRegularExpression separator("[\\s;]");
+    static const QRegularExpression prefixFormat("^(=?)([A-Z0-9/]+)(?:\\((\\d+)\\))?(?:\\[(\\d+)\\])?$");
 
     QSqlQuery entity(database), prefix(database);
     if ( !entity.prepare("INSERT INTO dxcc_entities_ad1c(id,name,prefix,cont,cqz,ituz,lat,lon,tz) "
@@ -756,7 +757,8 @@ bool LOVDatabase::parseClubLogCTY(QSqlDatabase &database, QTextStream &data)
     if ( !staticDocument.isArray() )
         return false;
 
-    for ( const QJsonValue &value : staticDocument.array() )
+    const QJsonArray array = staticDocument.array();
+    for ( const QJsonValue &value : array )
     {
         const QVariantMap row = value.toObject().toVariantMap();
         staticInfo.insert(row.value("id").toInt(), row);

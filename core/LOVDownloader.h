@@ -73,7 +73,7 @@ public:
         int ageTime;
     };
 
-    static QList<SourceType> sources();
+    static const QList<SourceType> sources();
     static SourceDefinition sourceDefinition(SourceType type);
     bool isSourceAvailable(SourceType type) const;
     void startUpdates();

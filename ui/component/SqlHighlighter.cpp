@@ -44,6 +44,7 @@ SqlHighlighter::SqlHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent),
       isDark(detectDarkMode())
 {
+    FCT_IDENTIFICATION;
     // -----------------------------------------------------------------------
     // Color palette - two sets so both themes are readable.
     //
@@ -119,6 +120,8 @@ SqlHighlighter::SqlHighlighter(QTextDocument *parent)
 
 void SqlHighlighter::setUserIdentifiers(const QStringList &identifiers)
 {
+    FCT_IDENTIFICATION;
+
     identifierRules.clear();
 
     // Re-derive the identifier color from m_isDark so it stays in sync.
@@ -142,6 +145,8 @@ void SqlHighlighter::setUserIdentifiers(const QStringList &identifiers)
 
 void SqlHighlighter::highlightBlock(const QString &text)
 {
+    FCT_IDENTIFICATION;
+
     // Schema identifiers first (lowest priority - keywords override them below)
     for ( const Rule &rule : static_cast<const QVector<Rule>&>(identifierRules) )
     {

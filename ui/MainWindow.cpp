@@ -654,11 +654,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     LogParam::setMainWindowState(saveState());
 
     if ( stats )
-    {
         stats->close();
-        stats->deleteLater();
-        stats = nullptr;
-    }
 
      const QList<QDockWidget*> docks = findChildren<QDockWidget*>();
      for (QDockWidget* dock : docks)
@@ -2656,6 +2652,8 @@ MainWindow::~MainWindow()
     CWKeyer::instance()->shutdown();
     Rotator::instance()->shutdown();
     Rig::instance()->shutdown();
+
+    delete stats;
 
     QSqlDatabase::database().close();
 
