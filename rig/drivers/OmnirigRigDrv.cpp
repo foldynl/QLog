@@ -75,6 +75,7 @@ OmnirigRigDrv::OmnirigRigDrv(const RigProfile &profile,
     : GenericRigDrv(profile, parent),
       currFreq(0),
       currTxFreq(0),
+      lastCwMode(0),
       currRIT(0),
       currXIT(0),
       currPTT(false),
@@ -102,14 +103,20 @@ OmnirigRigDrv::OmnirigRigDrv(const RigProfile &profile,
     if ( FAILED(hr) )
         qCWarning(runtime) << "CoInitializeEx failed, hr =" << QString::number(hr, 16);
 
-    modeMap.insert(OmnirigV1::PM_CW_U,  "CWR");
-    modeMap.insert(OmnirigV1::PM_CW_L,  "CW");
+    modeMap.insert(OmnirigV1::PM_CW_U,  "CW_U");
+    modeMap.insert(OmnirigV1::PM_CW_L,  "CW_L");
     modeMap.insert(OmnirigV1::PM_SSB_U, "USB");
     modeMap.insert(OmnirigV1::PM_SSB_L, "LSB");
     modeMap.insert(OmnirigV1::PM_DIG_U, "DIG_U");
     modeMap.insert(OmnirigV1::PM_DIG_L, "DIG_L");
     modeMap.insert(OmnirigV1::PM_AM,    "AM");
     modeMap.insert(OmnirigV1::PM_FM,    "FM");
+
+    // OmniRig configuration is platform-dependent, so keep this local state in QSettings.
+    // Hex-encode profile names to preserve case in Windows settings keys.
+    cwSettings.beginGroup(QStringLiteral("omnirig/cw/%1/%2/%3")
+                          .arg(rigProfile.driver).arg(rigProfile.model)
+                          .arg(QString::fromLatin1(rigProfile.profileName.toUtf8().toHex())));
 
     // Timer
     offlineTimer.setSingleShot(true);
@@ -489,6 +496,32 @@ void OmnirigRigDrv::setMode(const QString &mode, const QString &submode, bool di
 
     qCDebug(function_parameters) << mode << submode << digiVariant;
 
+    if ( mode.compare(QLatin1String("CW"), Qt::CaseInsensitive) == 0 && submode.isEmpty() )
+    {
+        if ( !rigProfile.getModeInfo || !rig ) return;
+
+        OmnirigV1::RigParamX currentMode = OmnirigV1::PM_UNKNOWN;
+        const HRESULT hr = rig->get_Mode(&currentMode);
+        if ( FAILED(hr) )
+        {
+            qCWarning(runtime) << "Cannot read OmniRig mode, hr =" << QString::number(hr, 16);
+            return;
+        }
+
+        if ( currentMode == OmnirigV1::PM_CW_U || currentMode == OmnirigV1::PM_CW_L )
+        {
+            rememberCwMode(currentMode);
+            return;
+        }
+
+        // CW_U is the first-use default, not a claim about the rig's normal CW.
+        const int cwMode = (lastCwMode & writableParams) ? lastCwMode
+                         : (writableParams & OmnirigV1::PM_CW_U) ? OmnirigV1::PM_CW_U
+                         : OmnirigV1::PM_CW_L;
+        setRawMode(modeMap.value(cwMode));
+        return;
+    }
+
     QString innerSubmode(submode);
 
     if ( digiVariant )
@@ -591,6 +624,32 @@ void OmnirigRigDrv::__rigTypeChange(int rigID)
 
     qCDebug(runtime) << "R-params" << QString::number(readableParams, 16)
                      << "W-params" << QString::number(writableParams, 16);
+
+    lastCwMode = 0;
+    BSTR type = nullptr;
+    const HRESULT hr = rig->get_RigType(&type);
+    rigType = bstrToQString(type);
+    if ( FAILED(hr) || rigType.isEmpty() || rigType == QLatin1String("NONE") )
+    {
+        rigType.clear();
+        qCWarning(runtime) << "Cannot identify OmniRig rig type, hr =" << QString::number(hr, 16);
+        return;
+    }
+
+    const QStringList state = cwSettings.value("lastCwMode").toStringList();
+    if ( state.size() == 2 && state.first() == rigType )
+    {
+        const int cwMode = modeMap.key(state.last(), 0);
+        if ( cwMode == OmnirigV1::PM_CW_U || cwMode == OmnirigV1::PM_CW_L )
+            lastCwMode = cwMode;
+    }
+    else if ( !state.isEmpty() )
+    {
+        cwSettings.remove("lastCwMode");
+        cwSettings.sync();
+        if ( cwSettings.status() != QSettings::NoError )
+            qCWarning(runtime) << "Cannot clear OmniRig CW mode preference";
+    }
 }
 
 void OmnirigRigDrv::commandSleep()
@@ -822,7 +881,12 @@ bool OmnirigRigDrv::checkModeChange(int params, bool force)
         if ( force )
         {
             OmnirigV1::RigParamX m = OmnirigV1::PM_UNKNOWN;
-            rig->get_Mode(&m);
+            const HRESULT hr = rig->get_Mode(&m);
+            if ( FAILED(hr) )
+            {
+                qCWarning(runtime) << "Cannot read OmniRig mode, hr =" << QString::number(hr, 16);
+                return false;
+            }
             inParams = m;
         }
 
@@ -831,6 +895,7 @@ bool OmnirigRigDrv::checkModeChange(int params, bool force)
         {
             if ( inParams & it.key() )
             {
+                rememberCwMode(it.key());
                 qCDebug(runtime) << "Rig Mode: "<< it.value();
                 qCDebug(runtime) << "Object Mode: "<< currModeID;
 
@@ -852,6 +917,24 @@ bool OmnirigRigDrv::checkModeChange(int params, bool force)
     }
 
     return true;
+}
+
+void OmnirigRigDrv::rememberCwMode(int mode)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << mode;
+
+    if ( (mode != OmnirigV1::PM_CW_U && mode != OmnirigV1::PM_CW_L) || mode == lastCwMode )
+        return;
+
+    lastCwMode = mode;
+    if ( rigType.isEmpty() ) return;
+
+    cwSettings.setValue("lastCwMode", QStringList{rigType, modeMap.value(mode)});
+    cwSettings.sync();
+    if ( cwSettings.status() != QSettings::NoError )
+        qCWarning(runtime) << "Cannot save OmniRig CW mode preference";
 }
 
 void OmnirigRigDrv::checkPTTChange(int params, bool force)
