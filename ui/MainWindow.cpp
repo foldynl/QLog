@@ -1545,52 +1545,18 @@ void MainWindow::showLoadDB()
         }
     }
 
-    // Replace the previous selection even when this import needs no adjustments.
-    if ( !PlatformParameterManager::saveParametersToFile(modifiedParams, modifiedProfileParams,
-                                                         PlatformParameterManager::pendingParametersPath()) )
+    // Keychain jobs run a nested event loop; prevent another import/settings action during preparation.
+    setEnabled(false);
+    const bool prepared = LogDatabase::instance()->preparePendingImport(decompressedFile, modifiedParams,
+                                                                       modifiedProfileParams, password);
+    setEnabled(true);
+    if ( !prepared )
     {
         QFile::remove(decompressedFile);
-        QMessageBox::warning(this, tr("Unpack Data && Settings"),
-                             tr("Failed to save settings for database import."));
+        QMessageBox::warning(this, tr("Unpack Data && Settings"), LogDatabase::instance()->pendingImportError());
         return;
     }
-
-    // Save import passphrase to SecureStore
-    if ( !password.isEmpty() && !CredentialStore::instance()->saveImportPassphrase(password) )
-    {
-        QFile::remove(PlatformParameterManager::pendingParametersPath());
-        QFile::remove(decompressedFile);
-        QMessageBox::warning(this, tr("Unpack Data && Settings"),
-                             tr("Failed to save the import passphrase."));
-        return;
-    }
-
-    // Move decompressed file to pending import location
-    const QString pendingPath = LogDatabase::pendingImportPath();
-
-    qCDebug(runtime) << "Decompressed file:" << decompressedFile << "exists:" << QFile::exists(decompressedFile);
-    qCDebug(runtime) << "Pending path:" << pendingPath;
-
-    // Remove existing pending file if any
-    if ( QFile::exists(pendingPath) )
-        QFile::remove(pendingPath);
-
-    if ( !QFile::rename(decompressedFile, pendingPath) )
-    {
-        qCDebug(runtime) << "Rename failed, trying copy";
-        // rename failed, try copy + remove
-        if ( !QFile::copy(decompressedFile, pendingPath) )
-        {
-            qWarning() << "Copy also failed from" << decompressedFile << "to" << pendingPath;
-            QFile::remove(PlatformParameterManager::pendingParametersPath());
-            QMessageBox::warning(this, tr("Unpack Data && Settings"),
-                                 tr("Failed to prepare database for import."));
-            CredentialStore::instance()->deleteImportPassphrase();
-            QFile::remove(decompressedFile);
-            return;
-        }
-        QFile::remove(decompressedFile);
-    }
+    QFile::remove(decompressedFile);
 
     // Restart the application
     restartApplication();
@@ -1602,9 +1568,6 @@ void MainWindow::restartApplication()
 
     qCDebug(runtime) << "Restarting application for database import";
 
-    // Wait a bit before starting new instance to ensure clean shutdown
-    QThread::msleep(500);
-
     // Get original arguments (first one is app path)
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();  // Remove app path
@@ -1615,7 +1578,14 @@ void MainWindow::restartApplication()
     // Add import-pending argument
     args << "--import-pending";
 
-    QProcess::startDetached(QCoreApplication::applicationFilePath(), args);
+    if ( !QProcess::startDetached(QCoreApplication::applicationFilePath(), args) )
+    {
+        const bool cancelled = LogDatabase::instance()->cancelPendingImport();
+        QMessageBox::warning(this, tr("Unpack Data && Settings"),
+                             cancelled ? tr("QLog could not be restarted. The prepared import was cancelled.")
+                                       : tr("QLog could not be restarted.\n%1").arg(LogDatabase::instance()->pendingImportError()));
+        return;
+    }
 
     // Quit current instance
     qApp->quit();

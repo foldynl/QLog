@@ -5,6 +5,7 @@ SUBDIRS += CallsignTest \
            AdiImportBenchmark \
            AdxFormatTest \
            AdifRecoveryTest \
+           AppGuardTest \
            CredentialStoreTest \
            CredentialStoreImportTest \
            DataTest \

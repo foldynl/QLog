@@ -164,7 +164,7 @@ void LoadDatabaseDialog::openImportDatabase()
     FCT_IDENTIFICATION;
 
     // Create temporary file for decompressed database
-    QTemporaryFile tempFile;
+    QTemporaryFile tempFile(LogDatabase::dbDirectory().filePath("qlog-import-XXXXXX.db"));
     tempFile.setAutoRemove(false);  // We manage deletion ourselves
     if ( !tempFile.open() )
     {

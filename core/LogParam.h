@@ -20,6 +20,7 @@ class LogParam : public QObject
     Q_OBJECT
 public:
     explicit LogParam(QObject *parent = nullptr);
+    static void clearCache();
 
     /*********
      * LOV
@@ -242,7 +243,7 @@ public:
     static QString getLoTWCallbookUsername();
     static void setLoTWCallbookUsername(const QString& username);
     static QString getLoTWTQSLPath(const QString &defaultPath);
-    static void setLoTWTQSLPath(const QString& path);
+    static bool setLoTWTQSLPath(const QString& path);
     static bool isLoTWTQSLPathKey(const QString &key);
 
     /*******************
@@ -460,10 +461,10 @@ public:
      ************************/
     static QByteArray getEncryptedPasswords();
     static bool setEncryptedPasswords(const QByteArray &data);
-    static void removeEncryptedPasswords();
+    static bool removeEncryptedPasswords();
     static QString getSourcePlatform();
     static bool setSourcePlatform(const QString &platform);
-    static void removeSourcePlatform();
+    static bool removeSourcePlatform();
 
     /**************
      * Main Window
@@ -594,7 +595,7 @@ private:
     static bool setParam(const QString&, const QStringList &);
     static QVariant getParam(const QString&, const QVariant &defaultValue = QVariant());
     static QStringList getParamStringList(const QString&, const QStringList &defaultValue = QStringList());
-    static void removeParamGroup(const QString&);
+    static bool removeParamGroup(const QString&);
     static QStringList getKeys(const QString &);
     static QString escapeString(const QString &input, QChar escapeChar = '\\', QChar delimiter = ',');
     static QString unescapeString(const QString &input, QChar escapeChar = '\\');

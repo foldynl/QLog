@@ -1,5 +1,7 @@
 #include <QCryptographicHash>
 #include <QLoggingCategory>
+#include <QElapsedTimer>
+#include <QThread>
 #if QT_VERSION >= QT_VERSION_CHECK(6,6,0)
 #include <QNativeIpcKey>
 #endif
@@ -57,9 +59,7 @@ AppGuard::AppGuard( const QString& key )
 #endif
                          );
         if ( fix.attach() )
-        {
             fix.detach();
-        }
     }
     memLock.release();
 }
@@ -80,40 +80,48 @@ bool AppGuard::isAnotherRunning(void)
     const bool isRunning = sharedMem.attach();
 
     if ( isRunning )
-    {
         sharedMem.detach();
-    }
 
     memLock.release();
 
     return isRunning;
 }
 
-bool AppGuard::tryToRun(void)
+bool AppGuard::tryToRun(int timeoutMs)
 {
     FCT_IDENTIFICATION;
 
-    if ( isAnotherRunning() )   // Extra check
+    qCDebug(function_parameters) << timeoutMs;
+
+    QElapsedTimer timer;
+    timer.start();
+
+    do
     {
-        return false;
+        if ( !isAnotherRunning() )
+        {
+            memLock.acquire();
+
+            // Required before create() on Qt 6.6/macOS; see issue #257.
+            sharedMem.attach();
+            const bool result = sharedMem.create(sizeof(quint64));
+            memLock.release();
+
+            if ( result )
+                return true;
+
+            release();
+
+            if ( sharedMem.error() != QSharedMemory::AlreadyExists )
+                return false;
+        }
+        const qint64 remaining = timeoutMs - timer.elapsed();
+        if ( remaining > 0 )
+            QThread::msleep(static_cast<unsigned long>(qMin<qint64>(BUSY_WAIT_TIME, remaining)));
     }
+    while ( timer.elapsed() < timeoutMs );
 
-    memLock.acquire();
-
-    // The following 'attach' call is a workaround required for 'create' to run properly under QT 6.6 and MacOS.
-    // See more details about it in issue #257.
-    // It has no impact on other platforms and versions of Qt, therefore there is no compilation condition.
-    sharedMem.attach();
-
-    const bool result = sharedMem.create( sizeof( quint64 ) );
-    memLock.release();
-    if ( !result )
-    {
-        release();
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 void AppGuard::release(void)
@@ -123,9 +131,7 @@ void AppGuard::release(void)
     memLock.acquire();
 
     if ( sharedMem.isAttached() )
-    {
         sharedMem.detach();
-    }
 
     memLock.release();
 }

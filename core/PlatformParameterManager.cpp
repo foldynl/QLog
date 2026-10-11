@@ -1,11 +1,6 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QFile>
-#include <QSaveFile>
 
 #include "PlatformParameterManager.h"
 #include "core/LogParam.h"
@@ -104,54 +99,37 @@ QList<PlatformParameter> PlatformParameterManager::getParameters(const QString &
     return result;
 }
 
-void PlatformParameterManager::applyParameters(const QList<PlatformParameter> &params)
+bool PlatformParameterManager::applyParameters(const QList<PlatformParameter> &params)
 {
     FCT_IDENTIFICATION;
 
     for ( const PlatformParameter &p : params )
     {
-        // Only apply if user provided a new value
-        if ( !p.newValue.isEmpty() )
-        {
-            qCDebug(runtime) << "Applying parameter:" << p.key << "=" << p.newValue;
-
-            // Use LogParam to set the value in the current database
-            // This method is called when the imported DB becomes the default DB.
-            // Therefore, we can use the LogParam class.
-            if ( LogParam::isLoTWTQSLPathKey(p.key) ) LogParam::setLoTWTQSLPath(p.newValue);
-            // Add more parameter handlers here as needed
-        }
+        if ( p.newValue.isEmpty() )
+            continue;
+        if ( !LogParam::isLoTWTQSLPathKey(p.key) || !LogParam::setLoTWTQSLPath(p.newValue) )
+            return false;
     }
+    return true;
 }
 
-void PlatformParameterManager::applyFlatpakFixedPaths()
+bool PlatformParameterManager::applyFlatpakFixedPaths()
 {
     FCT_IDENTIFICATION;
 
-    const QString currentPlatform = LogDatabase::currentPlatformId();
+    if ( LogDatabase::currentPlatformId() != LogDatabase::PLATFORM_LINUXFLATPAK )
+        return true;
 
-    if ( currentPlatform != LogDatabase::PLATFORM_LINUXFLATPAK )
-    {
-        qCDebug(runtime) << "Not Flatpak target, skipping fixed paths";
-        return;
-    }
+    if ( !LogParam::setLoTWTQSLPath(QString()) )
+        return false;
 
-    qCDebug(runtime) << "Applying Flatpak fixed paths";
-
-    // Set TQSL path to fixed Flatpak location - empty is OK because flatpak has built-in value.
-    LogParam::setLoTWTQSLPath("");
-
-    // Clear rigctld_path in all rig profiles (empty = autodetect will find /app/bin/rigctld)
     QSqlQuery query;
-    if ( query.exec("UPDATE rig_profiles SET rigctld_path = NULL") )
-        qCDebug(runtime) << "Cleared rigctld_path in all rig profiles";
-    else
-        qWarning() << "Failed to clear rigctld_path:" << query.lastError().text();
-}
-
-QString PlatformParameterManager::pendingParametersPath()
-{
-    return LogDatabase::dbDirectory().filePath("qlog.db.pending.params");
+    if ( !query.exec("UPDATE rig_profiles SET rigctld_path = NULL") )
+    {
+        qCWarning(runtime) << "Cannot clear rigctld paths:" << query.lastError();
+        return false;
+    }
+    return true;
 }
 
 QList<ProfileParameter> PlatformParameterManager::getProfileParameters(const QString &importDbPath,
@@ -243,7 +221,7 @@ QList<ProfileParameter> PlatformParameterManager::getProfileParameters(const QSt
     return result;
 }
 
-void PlatformParameterManager::applyProfileParameters(const QList<ProfileParameter> &params)
+bool PlatformParameterManager::applyProfileParameters(const QList<ProfileParameter> &params)
 {
     FCT_IDENTIFICATION;
 
@@ -252,189 +230,38 @@ void PlatformParameterManager::applyProfileParameters(const QList<ProfileParamet
         if ( p.newValue.isEmpty() )
             continue;
 
-        qCDebug(runtime) << "Applying profile port parameter:" << p.tableName
-                         << p.profileName << p.columnName << "=" << p.newValue;
+        const bool validColumn = p.columnName == "port_pathname"
+                                 && (p.tableName == "rig_profiles"
+                                     || p.tableName == "rot_profiles"
+                                     || p.tableName == "cwkey_profiles");
+        const bool validRigColumn = p.tableName == "rig_profiles"
+                                    && (p.columnName == "ptt_port_pathname"
+                                        || p.columnName == "rigctld_path");
+
+        if ( !validColumn && !validRigColumn )
+        {
+            qCWarning(runtime) << "Invalid import profile field:" << p.tableName << p.columnName;
+            return false;
+        }
 
         QSqlQuery query;
-        QString sql = QString("UPDATE %1 SET %2 = :value WHERE profile_name = :profile")
-                          .arg(p.tableName, p.columnName);
+        const QString sql = QString("UPDATE %1 SET %2 = :value WHERE profile_name = :profile")
+                                .arg(p.tableName, p.columnName);
 
         if ( !query.prepare(sql) )
         {
-            qWarning() << "Cannot prepare update query:" << query.lastError().text();
-            continue;
+            qCWarning(runtime) << "Cannot prepare profile update:" << query.lastError();
+            return false;
         }
 
         query.bindValue(":value", p.newValue);
         query.bindValue(":profile", p.profileName);
 
-        if ( !query.exec() )
-            qWarning() << "Cannot update profile port:" << query.lastError().text();
-    }
-}
-
-bool PlatformParameterManager::saveParametersToFile(const QList<PlatformParameter> &params,
-                                                     const QList<ProfileParameter> &profileParams,
-                                                     const QString &filePath)
-{
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << filePath;
-
-    QJsonObject root;
-
-    // Save log_param parameters
-    QJsonArray paramArray;
-    for ( const PlatformParameter &p : params )
-    {
-        if ( !p.newValue.isEmpty() )
+        if ( !query.exec() || query.numRowsAffected() != 1 )
         {
-            QJsonObject obj;
-            obj["key"] = p.key;
-            obj["newValue"] = p.newValue;
-            paramArray.append(obj);
+            qCWarning(runtime) << "Cannot update import profile:" << p.profileName << query.lastError();
+            return false;
         }
     }
-    root["parameters"] = paramArray;
-
-    // Save profile port parameters
-    QJsonArray profileArray;
-    for ( const ProfileParameter &p : profileParams )
-    {
-        if ( !p.newValue.isEmpty() )
-        {
-            QJsonObject obj;
-            obj["tableName"] = p.tableName;
-            obj["profileName"] = p.profileName;
-            obj["columnName"] = p.columnName;
-            obj["newValue"] = p.newValue;
-            obj["isExec"] = p.isExecutablePath;
-            profileArray.append(obj);
-        }
-    }
-    root["profilePorts"] = profileArray;
-
-    QJsonDocument doc(root);
-    QSaveFile file(filePath);
-    file.setDirectWriteFallback(false);
-
-    if ( !file.open(QIODevice::WriteOnly) )
-    {
-        qCWarning(runtime) << "Cannot open file for writing:" << filePath << file.errorString();
-        return false;
-    }
-
-    const QByteArray data = doc.toJson(QJsonDocument::Compact);
-    // Some Qt5 builds do not propagate buffered write failures from commit().
-    if ( file.write(data) != data.size() || !file.flush() || !file.commit() )
-    {
-        qCWarning(runtime) << "Cannot save import parameters:" << filePath << file.errorString();
-        return false;
-    }
-
-    qCDebug(runtime) << "Saved" << paramArray.size() << "params and"
-                     << profileArray.size() << "profile ports to" << filePath;
     return true;
-}
-
-QList<PlatformParameter> PlatformParameterManager::loadParametersFromFile(const QString &filePath)
-{
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << filePath;
-
-    QList<PlatformParameter> result;
-
-    QFile file(filePath);
-    if ( !file.exists() )
-    {
-        qCDebug(runtime) << "No parameters file found";
-        return result;
-    }
-
-    if ( !file.open(QIODevice::ReadOnly) )
-    {
-        qWarning() << "Cannot open parameters file:" << filePath;
-        return result;
-    }
-
-    QByteArray data = file.readAll();
-    file.close();
-
-    QJsonParseError error;
-    const QJsonDocument doc = QJsonDocument::fromJson(data, &error);
-
-    if ( error.error != QJsonParseError::NoError )
-    {
-        qWarning() << "JSON parse error:" << error.errorString();
-        return result;
-    }
-
-    const QJsonObject root = doc.object();
-    const QJsonArray array = root["parameters"].toArray();
-
-    for ( const QJsonValue &val : array )
-    {
-        QJsonObject obj = val.toObject();
-        PlatformParameter p;
-        p.key = obj["key"].toString();
-        p.newValue = obj["newValue"].toString();
-        p.requiresChange = false;
-        result.append(p);
-    }
-
-    qCDebug(runtime) << "Loaded" << result.size() << "parameters from" << filePath;
-    return result;
-}
-
-QList<ProfileParameter> PlatformParameterManager::loadProfileParametersFromFile(const QString &filePath)
-{
-    FCT_IDENTIFICATION;
-
-    qCDebug(function_parameters) << filePath;
-
-    QList<ProfileParameter> result;
-
-    QFile file(filePath);
-    if ( !file.exists() )
-    {
-        qCDebug(runtime) << "No parameters file found";
-        return result;
-    }
-
-    if ( !file.open(QIODevice::ReadOnly) )
-    {
-        qWarning() << "Cannot open parameters file:" << filePath;
-        return result;
-    }
-
-    QByteArray data = file.readAll();
-    file.close();
-
-    QJsonParseError error;
-    const QJsonDocument doc = QJsonDocument::fromJson(data, &error);
-
-    if ( error.error != QJsonParseError::NoError )
-    {
-        qWarning() << "JSON parse error:" << error.errorString();
-        return result;
-    }
-
-    const QJsonObject root = doc.object();
-    const QJsonArray array = root["profilePorts"].toArray();
-
-    for ( const QJsonValue &val : array )
-    {
-        QJsonObject obj = val.toObject();
-        ProfileParameter p;
-        p.tableName = obj["tableName"].toString();
-        p.profileName = obj["profileName"].toString();
-        p.columnName = obj["columnName"].toString();
-        p.newValue = obj["newValue"].toString();
-        p.isExecutablePath = obj["isExec"].toBool();
-        result.append(p);
-    }
-
-    qCDebug(runtime) << "Loaded" << result.size() << "profile port parameters from" << filePath;
-    return result;
 }

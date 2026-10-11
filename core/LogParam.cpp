@@ -889,9 +889,10 @@ QString LogParam::getLoTWTQSLPath(const QString &defaultPath)
     return getParam("services/lotw/callbook/tqsl", defaultPath).toString().trimmed();
 }
 
-void LogParam::setLoTWTQSLPath(const QString &path)
+bool LogParam::setLoTWTQSLPath(const QString &path)
 {
-    setParam("services/lotw/callbook/tqsl", path);
+    FCT_IDENTIFICATION;
+    return setParam("services/lotw/callbook/tqsl", path);
 }
 
 bool LogParam::isLoTWTQSLPathKey(const QString &key)
@@ -1715,9 +1716,10 @@ bool LogParam::setEncryptedPasswords(const QByteArray &data)
     return setParam("security/encryptedpasswords", data.toBase64());
 }
 
-void LogParam::removeEncryptedPasswords()
+bool LogParam::removeEncryptedPasswords()
 {
-    removeParamGroup("security/encryptedpasswords");
+    FCT_IDENTIFICATION;
+    return removeParamGroup("security/encryptedpasswords");
 }
 
 QString LogParam::getSourcePlatform()
@@ -1732,9 +1734,10 @@ bool LogParam::setSourcePlatform(const QString &platform)
     return setParam("sourceplatform", platform);
 }
 
-void LogParam::removeSourcePlatform()
+bool LogParam::removeSourcePlatform()
 {
-    removeParamGroup("sourceplatform");
+    FCT_IDENTIFICATION;
+    return removeParamGroup("sourceplatform");
 }
 
 bool LogParam::getAlertNotificationEnabled()
@@ -2440,7 +2443,14 @@ QStringList LogParam::getParamStringList(const QString &name, const QStringList 
     return deserializeStringList(getParam(name, serializeStringList(defaultValue)).toString());
 }
 
-void LogParam::removeParamGroup(const QString &paramGroup)
+void LogParam::clearCache()
+{
+    FCT_IDENTIFICATION;
+    QMutexLocker locker(&cacheMutex);
+    localCache.clear();
+}
+
+bool LogParam::removeParamGroup(const QString &paramGroup)
 {
     FCT_IDENTIFICATION;
 
@@ -2457,16 +2467,18 @@ void LogParam::removeParamGroup(const QString &paramGroup)
 
     if ( ! query.prepare("DELETE FROM log_param WHERE name LIKE :group ") )
     {
-        qWarning()<< "Cannot prepare delete parameter statement for" << paramGroup;
-        return;
+        qCWarning(runtime) << "Cannot prepare delete parameter statement:" << paramGroup << query.lastError();
+        return false;
     }
 
     query.bindValue(":group", paramGroup + "%");
 
     if ( ! query.exec() )
-        qWarning() << "Cannot execute removeParamGroup statement for" << paramGroup;
-
-    return;
+    {
+        qCWarning(runtime) << "Cannot remove parameter group:" << paramGroup << query.lastError();
+        return false;
+    }
+    return true;
 }
 
 QStringList LogParam::getKeys(const QString &group)

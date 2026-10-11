@@ -545,14 +545,6 @@ int main(int argc, char* argv[])
     bool isImportPending = parser.isSet(importPending);
     bool isForceLOVUpdate = parser.isSet(forceLOVUpdate);
 
-    // If started with --import-pending, wait a bit for the previous instance to fully terminate
-    if ( isImportPending )
-    {
-        qCDebug(runtime) << "Start postponed";
-        QCoreApplication::processEvents();
-        QThread::msleep(1000);
-    }
-
     app.setOrganizationName("hamradio");
     app.setApplicationName("QLog" + ((environment.isEmpty()) ? "" : environment.prepend("-")));
 
@@ -593,7 +585,7 @@ int main(int argc, char* argv[])
      * there is a port conflict.
      */
     AppGuard guard( "QLog" );
-    if ( !guard.tryToRun() )
+    if ( !guard.tryToRun(isImportPending ? 20000 : 0) )
     {
         QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
                               QMessageBox::tr("QLog is already running"));
@@ -618,16 +610,8 @@ int main(int argc, char* argv[])
         if ( !LogDatabase::instance()->processPendingImport(&backupSnapshot) )
         {
             QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                                  QMessageBox::tr("Failed to process pending database import."));
+                                  LogDatabase::instance()->pendingImportError());
             return 1;
-        }
-
-        if ( LogDatabase::instance()->hadPasswordImportWarning() )
-        {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
-                                 QMessageBox::tr("The database was imported successfully, but the stored passwords "
-                                                 "could not be restored (decryption failed or the data is corrupted). "
-                                                 "All service passwords have been cleared and must be re-entered in Settings."));
         }
     }
     else

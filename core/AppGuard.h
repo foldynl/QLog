@@ -13,10 +13,11 @@ public:
     ~AppGuard();
 
     bool isAnotherRunning(void);
-    bool tryToRun(void);
+    bool tryToRun(int timeoutMs = 0);
     void release(void);
 
 private:
+    const int BUSY_WAIT_TIME = 50;
     const QString key;
     const QString memLockKey;
     const QString sharedmemKey;

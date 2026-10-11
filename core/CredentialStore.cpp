@@ -33,7 +33,7 @@ void CredentialRegistry::add(const QString &, const std::function<QList<Credenti
     callbacks.append(fn);
 }
 
-QList<CredentialDescriptor> CredentialRegistry::allDescriptors() const
+const QList<CredentialDescriptor> CredentialRegistry::allDescriptors() const
 {
     FCT_IDENTIFICATION;
 
@@ -178,6 +178,12 @@ bool CredentialStore::exportPasswords(const QString &passphrase)
 {
     FCT_IDENTIFICATION;
 
+    if ( LogDatabase::hasPendingImport() )
+    {
+        qCWarning(runtime) << "Cannot overwrite unfinished import credentials";
+        return false;
+    }
+
     /*
      * Password storage format:
      * 1. Build JSON object:
@@ -267,11 +273,21 @@ bool CredentialStore::importPasswords(const QString &passphrase)
 {
     FCT_IDENTIFICATION;
 
+    QJsonArray credentials;
+    return decodePasswords(passphrase, credentials) && restorePasswords(credentials);
+}
+
+bool CredentialStore::decodePasswords(const QString &passphrase, QJsonArray &credentials)
+{
+    FCT_IDENTIFICATION;
+
+    credentials = QJsonArray();
+
     /*
      * Import process (reverse of exportPasswords):
      * 1. Read base64-encoded ciphertext from LogParam ("security/encryptedpasswords")
      * 2. Decrypt with AES-256-GCM using passphrase (via PasswordCipher)
-     * 3. Parse JSON and restore each credential to the credential store
+     * 3. Validate the complete batch before any database publication or keychain write
      *    (padding field is ignored)
      */
 
@@ -304,7 +320,7 @@ bool CredentialStore::importPasswords(const QString &passphrase)
     }
 
     QJsonObject root = doc.object();
-    QJsonArray credArray = root["credentials"].toArray();
+    const QJsonArray credArray = root["credentials"].toArray();
 
     // Validate the whole batch before the first keychain write.
     for ( const QJsonValue &val : credArray )
@@ -319,7 +335,15 @@ bool CredentialStore::importPasswords(const QString &passphrase)
         }
     }
 
-    for (const QJsonValue &val : static_cast<const QJsonArray>(credArray))
+    credentials = credArray;
+    return true;
+}
+
+bool CredentialStore::restorePasswords(const QJsonArray &credentials)
+{
+    FCT_IDENTIFICATION;
+
+    for ( const QJsonValue &val : credentials )
     {
         QJsonObject entry = val.toObject();
         QString storageKey = entry["storagekey"].toString();
@@ -368,11 +392,11 @@ QString CredentialStore::getImportPassphrase()
                        QStringLiteral("import"));
 }
 
-void CredentialStore::deleteImportPassphrase()
+bool CredentialStore::deleteImportPassphrase()
 {
     FCT_IDENTIFICATION;
 
     // special one-time password when QLog import external DB
-    deletePassword(QStringLiteral("ImportPassphrase"),
-                   QStringLiteral("import"));
+    return deletePassword(QStringLiteral("ImportPassphrase"),
+                          QStringLiteral("import"));
 }

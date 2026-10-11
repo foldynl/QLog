@@ -11,6 +11,12 @@ QString LogDatabase::currentPlatformId()
     return QStringLiteral("TestPlatform");
 }
 
+// These credential-only fixtures have no pending database import.
+bool LogDatabase::hasPendingImport()
+{
+    return false;
+}
+
 // Stubs for BandPlan constants used in LogParam
 const QString BandPlan::MODE_GROUP_STRING_PHONE = QStringLiteral("PHONE");
 const QString BandPlan::MODE_GROUP_STRING_CW = QStringLiteral("CW");

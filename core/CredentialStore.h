@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QJsonArray>
 
 // - Central registry of all services that use the CredentialStore.
 // - Each service registers its credential descriptor statically at load time
@@ -33,7 +34,7 @@ public:
              const std::function<QList<CredentialDescriptor>()> &fn);
 
     // Returns all known credential descriptors (collected from all services).
-    QList<CredentialDescriptor> allDescriptors() const;
+    const QList<CredentialDescriptor> allDescriptors() const;
 };
 
 // Macro used in each service to force the presence of registerCredentials()
@@ -65,6 +66,7 @@ class CredentialStore : public QObject
 
     template <typename Derived>
     friend class SecureServiceBase;
+    friend class LogDatabase;
 
 public:
 
@@ -81,7 +83,7 @@ public:
     // Methods for storing import passphrase in SecureStore during application restart
     bool saveImportPassphrase(const QString &passphrase);
     QString getImportPassphrase();
-    void deleteImportPassphrase();
+    bool deleteImportPassphrase();
 
 private:
     explicit CredentialStore(QObject *parent = nullptr);
@@ -91,6 +93,8 @@ private:
     int savePassword(const QString &storage_key, const QString &user, const QString &pass);
     QString getPassword(const QString &storage_key, const QString &user, bool *success = nullptr);
     bool deletePassword(const QString &storage_key, const QString &user);
+    bool decodePasswords(const QString &passphrase, QJsonArray &credentials);
+    bool restorePasswords(const QJsonArray &credentials);
 
 private:
     // Verifies that the given service (storage_key) is registered.

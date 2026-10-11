@@ -38,11 +38,11 @@ public:
 
     // Apply user-provided values to the current database
     // params: list of parameters with newValue set by user
-    static void applyParameters(const QList<PlatformParameter> &params);
+    static bool applyParameters(const QList<PlatformParameter> &params);
 
     // Apply fixed paths for Flatpak target (called during import)
     // Sets TQSL path to /app/bin/tqsl and clears rigctld_path in all profiles
-    static void applyFlatpakFixedPaths();
+    static bool applyFlatpakFixedPaths();
 
     // Get list of profile port parameters from imported DB
     // sourcePlatform: platform from which the DB was exported
@@ -50,21 +50,7 @@ public:
                                                                  const QString &sourcePlatform);
 
     // Apply profile port parameters to the current database
-    static void applyProfileParameters(const QList<ProfileParameter> &params);
-
-    // Save parameters to a JSON file for later application after restart
-    static bool saveParametersToFile(const QList<PlatformParameter> &params,
-                                     const QList<ProfileParameter> &profileParams,
-                                     const QString &filePath);
-
-    // Load parameters from JSON file
-    static QList<PlatformParameter> loadParametersFromFile(const QString &filePath);
-
-    // Load profile port parameters from JSON file
-    static QList<ProfileParameter> loadProfileParametersFromFile(const QString &filePath);
-
-    // Get path to pending parameters file
-    static QString pendingParametersPath();
+    static bool applyProfileParameters(const QList<ProfileParameter> &params);
 
 private:
     // Structure for known platform-dependent parameters

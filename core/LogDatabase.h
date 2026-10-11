@@ -2,7 +2,13 @@
 #define QLOG_CORE_LOGDATABASE_H
 
 #include <QString>
+#include <QStringList>
 #include <QDir>
+#include <QJsonObject>
+#include "PlatformParameterManager.h"
+
+class QSqlDatabase;
+class QJsonArray;
 
 struct DatabaseInfo
 {
@@ -45,19 +51,50 @@ public:
     // Process pending import (called at startup)
     // Returns true if import was successful or no import was pending
     bool processPendingImport(QString *backupSnapshot = nullptr);
-
-    // Returns true if the last processPendingImport() failed to import passwords
-    // (passwords were deleted but could not be restored from the encrypted store)
-    bool hadPasswordImportWarning() const;
+    // Consumes a colocated temporary DB on success; other sources use atomic copying.
+    bool preparePendingImport(const QString &sourceFile,
+                              const QList<PlatformParameter> &parameters,
+                              const QList<ProfileParameter> &profileParameters,
+                              const QString &passphrase);
+    bool cancelPendingImport();
+    QString pendingImportError() const;
 
     bool atomicCopy(const QString &filename);
-    bool openDatabase();
+    bool openDatabase(const QString &filename = dbFilename());
     bool schemaVersionUpgrade(QString *backupSnapshot = nullptr);
     bool createSQLFunctions();
 
 private:
+    static const QString DATABASE_FILENAME;
+    static const QString IMPORT_DATABASE_FILENAME;
+    static const QString IMPORT_RECORD_FILENAME;
+    static const QString IMPORT_BACKUP_FILENAME;
+    static const QString SQLITE_WAL_SUFFIX;
+    static const QString SQLITE_SHM_SUFFIX;
+
+    // Keep the order aligned with IMPORT_PHASE_NAMES; persisted phases remain strings.
+    enum class ImportPhase
+    {
+        INVALID = -1,
+        PREPARED,
+        READY,
+        PUBLISHED,
+        CREDENTIALS_RESTORED,
+        ABORTED
+    };
+    static const QStringList IMPORT_PHASE_NAMES;
+
     LogDatabase();
-    bool passwordImportWarning = false;
+    QString importError;
+    bool failImport(const QString &message);
+    bool prepareImportDatabase(QJsonObject &record, QJsonArray &incoming, QString *backupSnapshot);
+    bool publishImportDatabase(QJsonObject &record, QJsonArray &incoming, bool decoded);
+    bool finishImport(QJsonObject &record, ImportPhase phase, QJsonArray &incoming, bool decoded);
+    static bool decodeImportPasswords(bool requiresPassphrase, QJsonArray &incoming);
+    static bool readImportRecord(QJsonObject &record, ImportPhase &phase);
+    static bool writeImportRecord(QJsonObject &record, ImportPhase phase);
+    static bool checkpointDatabase(QSqlDatabase database);
+    static bool readLogId(const QString &filename, QString &logId);
 };
 
 #endif // QLOG_CORE_LOGDATABASE_H
