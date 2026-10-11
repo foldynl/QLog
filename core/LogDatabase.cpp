@@ -79,7 +79,7 @@ bool LogDatabase::createSQLFunctions()
     }
 
     sqlite3_initialize();
-    sqlite3_create_function(db_handle,
+    const int functionResult = sqlite3_create_function(db_handle,
                             "translate_to_locale",
                             1,
                             SQLITE_UTF8 | SQLITE_DETERMINISTIC,
@@ -113,7 +113,14 @@ bool LogDatabase::createSQLFunctions()
                                     sqlite3_result_error(ctx, "Invalid arguments", -1);
                                 }
                             }, nullptr, nullptr);
-    sqlite3_create_collation(db_handle,
+    if ( functionResult != SQLITE_OK )
+    {
+        qCWarning(runtime) << "Cannot register SQLite translation function:"
+                           << functionResult << sqlite3_errmsg(db_handle);
+        return false;
+    }
+
+    const int collationResult = sqlite3_create_collation(db_handle,
                              "LOCALEAWARE",
                              SQLITE_UTF16,
                              nullptr,
@@ -122,6 +129,12 @@ bool LogDatabase::createSQLFunctions()
                                 const QString &right = QString::fromUtf16(reinterpret_cast<const char16_t *>(r), rl/2);
                                 return QString::localeAwareCompare(left, right); // controlled by LC_COLLATE
                              });
+    if ( collationResult != SQLITE_OK )
+    {
+        qCWarning(runtime) << "Cannot register SQLite locale collation:"
+                           << collationResult << sqlite3_errmsg(db_handle);
+        return false;
+    }
 
     return true;
 }

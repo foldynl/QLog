@@ -23,9 +23,6 @@
 // in sec
 #define DEDUPLICATION_TIME 3
 
-// in kHz
-#define DEDUPLICATION_FREQ_TOLERANCE 5
-
 namespace Ui {
 class DxWidget;
 }

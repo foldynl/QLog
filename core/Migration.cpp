@@ -6,11 +6,12 @@
 #include "core/Migration.h"
 #include "debug.h"
 #include "data/Data.h"
+#include "data/BandPlan.h"
+#include "data/DxSpot.h"
 #include "LogParam.h"
 #include "service/clublog/ClubLog.h"
 #include "service/hrdlog/HRDLog.h"
 #include "core/DatabaseBackup.h"
-#include "ui/DxWidget.h"
 #include "core/LogDatabase.h"
 
 MODULE_IDENTIFICATION("qlog.core.migration");
@@ -45,44 +46,76 @@ bool DBSchemaMigration::run(QString *backupSnapshot)
 
     qCDebug(runtime) << "Starting database migration";
 
-    QProgressDialog progress("Migrating the database...", nullptr, currentVersion, latestVersion);
+    QProgressDialog progress(tr("Migrating the database..."), nullptr, currentVersion, latestVersion);
     progress.setWindowTitle(tr("Database Migration"));
     progress.show();
 
-    while ((currentVersion = getVersion()) < latestVersion)
+    // Historical migrations rebuild tables and may temporarily violate current
+    // foreign keys. Validate the final schema before committing its last step.
+    bool result = setForeignKeysEnabled(false);
+    while ( result && currentVersion < latestVersion )
     {
-        bool res = migrate(currentVersion+1);
-        if ( !res || getVersion() == currentVersion )
+        if ( !migrate(currentVersion+1) )
         {
-            progress.close();
-            return false;
+            result = false;
+            break;
         }
+        ++currentVersion;
         // sometimes (especially when DROP INDEX is called), it is needed to
         // reopen database. (issue occurs between DB versions 15 and 16)
         QSqlDatabase::database().close();
 
         if ( !QSqlDatabase::database().open() )
         {
-            progress.close();
             qCritical() << QSqlDatabase::database().lastError();
-            return false;
+            result = false;
+            break;
         }
-        // Re-register custom SQL functions after connection reopen
-        // (sqlite3_create_function bindings are lost on close/open)
-        LogDatabase::instance()->createSQLFunctions();
+
+        // Connection-local settings and SQL functions are lost on close/open.
+        result = setForeignKeysEnabled(false)
+                 && LogDatabase::instance()->createSQLFunctions();
         progress.setValue(currentVersion);
     }
 
-    if ( !refreshUploadStatusTrigger() )
+    if ( result && !refreshUploadStatusTrigger() )
     {
         qCritical() << "Cannot refresh Upload Status Trigger";
-        progress.close();
+        result = false;
+    }
+
+    // Restore enforcement even after a failed migration and rollback.
+    const bool foreignKeysRestored = setForeignKeysEnabled(true);
+    progress.close();
+    if ( !result || !foreignKeysRestored )
+        return false;
+
+    qCDebug(runtime) << "Database migration successful";
+
+    return true;
+}
+
+bool DBSchemaMigration::setForeignKeysEnabled(bool enabled)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << enabled;
+
+    const QSqlDatabase db = QSqlDatabase::database(QSqlDatabase::defaultConnection, false);
+    if ( !db.isOpen() )
+    {
+        qCWarning(runtime) << "Cannot set foreign-key enforcement on a closed database:" << db.lastError();
         return false;
     }
 
-    progress.close();
-
-    qCDebug(runtime) << "Database migration successful";
+    QSqlQuery query(db);
+    if ( !query.exec(enabled ? "PRAGMA foreign_keys = ON" : "PRAGMA foreign_keys = OFF")
+         || !query.exec("PRAGMA foreign_keys")
+         || !query.next()
+         || query.value(0).toInt() != int(enabled) )
+    {
+        qCWarning(runtime) << "Cannot set foreign-key enforcement:" << enabled << query.lastError();
+        return false;
+    }
 
     return true;
 }
@@ -151,6 +184,14 @@ bool DBSchemaMigration::migrate(int toVersion)
 
     result = result && functionMigration(toVersion);
 
+    if ( result && toVersion == latestVersion )
+    {
+        QSqlQuery query;
+        result = query.exec("PRAGMA foreign_key_check") && !query.next() && !query.lastError().isValid();
+        if ( !result )
+            qCWarning(runtime) << "Foreign-key check failed after migration:" << query.lastError() << query.record();
+    }
+
     if (result && setVersion(toVersion) && db.commit()) {
         return true;
     }
@@ -169,7 +210,11 @@ bool DBSchemaMigration::runSqlFile(QString filename)
     qCDebug(function_parameters) << filename;
 
     QFile sqlFile(filename);
-    sqlFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    if ( !sqlFile.open(QIODevice::ReadOnly | QIODevice::Text) )
+    {
+        qCWarning(runtime) << "Cannot open migration SQL file:" << filename << sqlFile.errorString();
+        return false;
+    }
 
     const QStringList &sqlQueries = QTextStream(&sqlFile).readAll().split('\n').join(" ").split(';');
     qCDebug(runtime) << sqlQueries;
@@ -183,7 +228,7 @@ bool DBSchemaMigration::runSqlFile(QString filename)
         QSqlQuery query;
         if (!query.exec(sqlQuery))
         {
-            qCDebug(runtime) << query.lastError();
+            qCWarning(runtime) << "Migration SQL failed:" << query.lastError();
             return false;
         }
         query.finish();

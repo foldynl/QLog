@@ -6,6 +6,9 @@
 #include "core/MembershipQE.h"
 #include "data/BandPlan.h"
 
+// in kHz
+#define DEDUPLICATION_FREQ_TOLERANCE 5
+
 class DxSpot
 {
 
