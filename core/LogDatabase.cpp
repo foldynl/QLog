@@ -299,24 +299,34 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
     do {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
         db.setDatabaseName(filename);
+        db.setConnectOptions("QSQLITE_OPEN_READONLY");
 
         if ( !db.open() )
         {
             info.errorMessage = db.lastError().text();
-            qWarning() << "Cannot open database for inspection:" << info.errorMessage;
+            qCWarning(runtime) << "Cannot open database for inspection:" << info.errorMessage;
             break;
         }
 
         // Check if it's a valid QLog database by looking for schema_versions table
         QSqlQuery query(db);
-        if ( !query.exec("SELECT version FROM schema_versions ORDER BY version DESC LIMIT 1") )
+        if ( !query.exec("SELECT version FROM schema_versions ORDER BY version DESC LIMIT 1")
+             || !query.first() )
         {
+            qCWarning(runtime) << "Cannot read database schema version:" << query.lastError();
             info.errorMessage = QObject::tr("Not a valid QLog database");
             db.close();
             break;
         }
 
-        info.schemaVersion = ( query.first() ) ? query.value(0).toInt() : 0;
+        bool validVersion = false;
+        info.schemaVersion = query.value(0).toInt(&validVersion);
+        if ( !validVersion || info.schemaVersion <= 0 )
+        {
+            info.errorMessage = QObject::tr("Not a valid QLog database");
+            db.close();
+            break;
+        }
 
         // Check if schema version is too new
         if ( info.schemaVersion > DBSchemaMigration::latestVersion )
@@ -326,25 +336,33 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
             break;
         }
 
-        // Read source platform and encrypted passwords from log_param
-        if ( query.exec("SELECT value FROM log_param WHERE name = 'sourceplatform'") )
+        if ( !query.exec("SELECT id, callsign FROM contacts LIMIT 0") )
         {
-            if ( query.first() )
-                info.sourcePlatform = query.value(0).toString();
-
-            if ( info.sourcePlatform.isEmpty() )
-            {
-                info.errorMessage = QObject::tr("Database is not QLog Export file");
-                db.close();
-                break;
-            }
+            qCWarning(runtime) << "Cannot inspect contacts:" << query.lastError();
+            info.errorMessage = QObject::tr("Not a valid QLog database");
+            db.close();
+            break;
         }
 
-        if ( query.exec("SELECT value FROM log_param WHERE name = 'security/encryptedpasswords'") )
+        // Export metadata is required, even when the credentials list is empty.
+        if ( !query.exec("SELECT value FROM log_param WHERE name = 'sourceplatform'")
+             || !query.first() || query.value(0).toString().isEmpty() )
         {
-            if ( query.first() && !query.value(0).toString().isEmpty() )
-                info.hasEncryptedPasswords = true;
+            qCWarning(runtime) << "Cannot read export platform:" << query.lastError();
+            info.errorMessage = QObject::tr("Database is not QLog Export file");
+            db.close();
+            break;
         }
+        info.sourcePlatform = query.value(0).toString();
+
+        if ( !query.exec("SELECT value FROM log_param WHERE name = 'security/encryptedpasswords'") )
+        {
+            qCWarning(runtime) << "Cannot read export credentials metadata:" << query.lastError();
+            info.errorMessage = QObject::tr("Not a valid QLog database");
+            db.close();
+            break;
+        }
+        info.hasEncryptedPasswords = query.first() && !query.value(0).toString().isEmpty();
 
         info.valid = true;
         db.close();

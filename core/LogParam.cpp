@@ -1708,9 +1708,11 @@ QByteArray LogParam::getEncryptedPasswords()
     return QByteArray::fromBase64(getParam("security/encryptedpasswords").toByteArray());
 }
 
-void LogParam::setEncryptedPasswords(const QByteArray &data)
+bool LogParam::setEncryptedPasswords(const QByteArray &data)
 {
-    setParam("security/encryptedpasswords", data.toBase64());
+    FCT_IDENTIFICATION;
+
+    return setParam("security/encryptedpasswords", data.toBase64());
 }
 
 void LogParam::removeEncryptedPasswords()
@@ -1723,9 +1725,11 @@ QString LogParam::getSourcePlatform()
     return getParam("sourceplatform").toString();
 }
 
-void LogParam::setSourcePlatform(const QString &platform)
+bool LogParam::setSourcePlatform(const QString &platform)
 {
-    setParam("sourceplatform", platform);
+    FCT_IDENTIFICATION;
+
+    return setParam("sourceplatform", platform);
 }
 
 void LogParam::removeSourcePlatform()

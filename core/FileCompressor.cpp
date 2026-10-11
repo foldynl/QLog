@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QSaveFile>
 #include <QFileInfo>
 #include <QProgressDialog>
 #include <QCoreApplication>
@@ -92,14 +93,15 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
     QFile source(sourceFile);
     if ( !source.open(QIODevice::ReadOnly) )
     {
-        qWarning() << "Cannot open source file:" << sourceFile;
+        qCWarning(runtime) << "Cannot open source file:" << sourceFile;
         return false;
     }
 
-    QFile dest(destFile);
+    QSaveFile dest(destFile);
+    dest.setDirectWriteFallback(false);
     if ( !dest.open(QIODevice::WriteOnly) )
     {
-        qWarning() << "Cannot create dest file:" << destFile;
+        qCWarning(runtime) << "Cannot create dest file:" << destFile;
         return false;
     }
 
@@ -112,7 +114,7 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
     if ( deflateInit2(&strm, Z_BEST_SPEED, Z_DEFLATED,
                       16 + MAX_WBITS, 8, Z_DEFAULT_STRATEGY) != Z_OK )
     {
-        qWarning() << "deflateInit2 failed";
+        qCWarning(runtime) << "deflateInit2 failed";
         return false;
     }
 
@@ -127,7 +129,7 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
         qint64 bytesRead = source.read(inBuffer, sizeof(inBuffer));
         if ( bytesRead < 0 )
         {
-            qWarning() << "Read error";
+            qCWarning(runtime) << "Read error";
             success = false;
             break;
         }
@@ -145,7 +147,7 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
             ret = deflate(&strm, flush);
             if ( ret == Z_STREAM_ERROR )
             {
-                qWarning() << "deflate error";
+                qCWarning(runtime) << "deflate error";
                 success = false;
                 break;
             }
@@ -153,7 +155,7 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
             qint64 have = sizeof(outBuffer) - strm.avail_out;
             if ( dest.write(outBuffer, have) != have )
             {
-                qWarning() << "Write error";
+                qCWarning(runtime) << "Write error";
                 success = false;
                 break;
             }
@@ -175,9 +177,12 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
     deflateEnd(&strm);
 
     if ( !success || ret != Z_STREAM_END )
+        return false;
+
+    // Some Qt5 builds do not propagate buffered write failures from commit().
+    if ( !dest.flush() || !dest.commit() )
     {
-        dest.close();
-        QFile::remove(destFile);
+        qCWarning(runtime) << "Cannot commit compressed file:" << destFile << dest.errorString();
         return false;
     }
 
@@ -195,14 +200,15 @@ bool FileCompressor::gunzipFile(const QString &sourceFile, const QString &destFi
     QFile source(sourceFile);
     if ( !source.open(QIODevice::ReadOnly) )
     {
-        qWarning() << "Cannot open source file:" << sourceFile;
+        qCWarning(runtime) << "Cannot open source file:" << sourceFile;
         return false;
     }
 
-    QFile dest(destFile);
+    QSaveFile dest(destFile);
+    dest.setDirectWriteFallback(false);
     if ( !dest.open(QIODevice::WriteOnly) )
     {
-        qWarning() << "Cannot create dest file:" << destFile;
+        qCWarning(runtime) << "Cannot create dest file:" << destFile;
         return false;
     }
 
@@ -214,7 +220,7 @@ bool FileCompressor::gunzipFile(const QString &sourceFile, const QString &destFi
     // 16 + MAX_WBITS tells zlib to parse gzip header/footer
     if ( inflateInit2(&strm, 16 + MAX_WBITS) != Z_OK )
     {
-        qWarning() << "inflateInit2 failed";
+        qCWarning(runtime) << "inflateInit2 failed";
         return false;
     }
 
@@ -229,7 +235,7 @@ bool FileCompressor::gunzipFile(const QString &sourceFile, const QString &destFi
         qint64 bytesRead = source.read(inBuffer, sizeof(inBuffer));
         if ( bytesRead < 0 )
         {
-            qWarning() << "Read error";
+            qCWarning(runtime) << "Read error";
             success = false;
             break;
         }
@@ -249,7 +255,7 @@ bool FileCompressor::gunzipFile(const QString &sourceFile, const QString &destFi
             if ( ret == Z_STREAM_ERROR || ret == Z_NEED_DICT ||
                  ret == Z_DATA_ERROR || ret == Z_MEM_ERROR )
             {
-                qWarning() << "inflate error:" << ret;
+                qCWarning(runtime) << "inflate error:" << ret;
                 success = false;
                 break;
             }
@@ -257,7 +263,7 @@ bool FileCompressor::gunzipFile(const QString &sourceFile, const QString &destFi
             qint64 have = sizeof(outBuffer) - strm.avail_out;
             if ( dest.write(outBuffer, have) != have )
             {
-                qWarning() << "Write error";
+                qCWarning(runtime) << "Write error";
                 success = false;
                 break;
             }
@@ -275,10 +281,15 @@ bool FileCompressor::gunzipFile(const QString &sourceFile, const QString &destFi
 
     inflateEnd(&strm);
 
-    if ( !success )
+    if ( !success || ret != Z_STREAM_END )
     {
-        dest.close();
-        QFile::remove(destFile);
+        qCWarning(runtime) << "Incomplete or invalid compressed file:" << sourceFile;
+        return false;
+    }
+
+    if ( !dest.flush() || !dest.commit() )
+    {
+        qCWarning(runtime) << "Cannot commit decompressed file:" << destFile << dest.errorString();
         return false;
     }
 

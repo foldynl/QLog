@@ -459,10 +459,10 @@ public:
      * Encrypted Passwords
      ************************/
     static QByteArray getEncryptedPasswords();
-    static void setEncryptedPasswords(const QByteArray &data);
+    static bool setEncryptedPasswords(const QByteArray &data);
     static void removeEncryptedPasswords();
     static QString getSourcePlatform();
-    static void setSourcePlatform(const QString &platform);
+    static bool setSourcePlatform(const QString &platform);
     static void removeSourcePlatform();
 
     /**************

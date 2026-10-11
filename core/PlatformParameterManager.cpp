@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QFile>
+#include <QSaveFile>
 
 #include "PlatformParameterManager.h"
 #include "core/LogParam.h"
@@ -313,23 +314,23 @@ bool PlatformParameterManager::saveParametersToFile(const QList<PlatformParamete
     }
     root["profilePorts"] = profileArray;
 
-    if ( paramArray.isEmpty() && profileArray.isEmpty() )
-    {
-        qCDebug(runtime) << "No parameters to save";
-        return true;
-    }
-
     QJsonDocument doc(root);
-    QFile file(filePath);
+    QSaveFile file(filePath);
+    file.setDirectWriteFallback(false);
 
     if ( !file.open(QIODevice::WriteOnly) )
     {
-        qWarning() << "Cannot open file for writing:" << filePath;
+        qCWarning(runtime) << "Cannot open file for writing:" << filePath << file.errorString();
         return false;
     }
 
-    file.write(doc.toJson(QJsonDocument::Compact));
-    file.close();
+    const QByteArray data = doc.toJson(QJsonDocument::Compact);
+    // Some Qt5 builds do not propagate buffered write failures from commit().
+    if ( file.write(data) != data.size() || !file.flush() || !file.commit() )
+    {
+        qCWarning(runtime) << "Cannot save import parameters:" << filePath << file.errorString();
+        return false;
+    }
 
     qCDebug(runtime) << "Saved" << paramArray.size() << "params and"
                      << profileArray.size() << "profile ports to" << filePath;

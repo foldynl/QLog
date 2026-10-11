@@ -76,10 +76,10 @@ public:
 
     bool exportPasswords(const QString &passphrase);
     bool importPasswords(const QString &passphrase);
-    void deleteAllPasswords();
+    bool deleteAllPasswords();
 
     // Methods for storing import passphrase in SecureStore during application restart
-    void saveImportPassphrase(const QString &passphrase);
+    bool saveImportPassphrase(const QString &passphrase);
     QString getImportPassphrase();
     void deleteImportPassphrase();
 
@@ -89,8 +89,8 @@ private:
     // Protected methods — accessible only from derived service classes.
     // Direct use elsewhere is discouraged by design.
     int savePassword(const QString &storage_key, const QString &user, const QString &pass);
-    QString getPassword(const QString &storage_key, const QString &user);
-    void deletePassword(const QString &storage_key, const QString &user);
+    QString getPassword(const QString &storage_key, const QString &user, bool *success = nullptr);
+    bool deletePassword(const QString &storage_key, const QString &user);
 
 private:
     // Verifies that the given service (storage_key) is registered.

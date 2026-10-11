@@ -1441,7 +1441,18 @@ void MainWindow::showDumpDB()
 
     // Add .dbe suffix if not present
     if ( !filename.endsWith(".dbe", Qt::CaseInsensitive) )
+    {
         filename.append(".dbe");
+        if ( QFile::exists(filename)
+             && QMessageBox::question(this, tr("Pack Data && Settings"),
+                                      tr("The file %1 already exists. Replace it?").arg(filename),
+                                      QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes )
+        {
+            LogParam::removeEncryptedPasswords();
+            LogParam::removeSourcePlatform();
+            return;
+        }
+    }
 
     // Create temporary file for uncompressed database
     QTemporaryFile tempFile;
@@ -1476,15 +1487,19 @@ void MainWindow::showDumpDB()
 
     if ( ok )
     {
-        if ( deletePasswords )
-            CredentialStore::instance()->deleteAllPasswords();
+        if ( deletePasswords && !CredentialStore::instance()->deleteAllPasswords() )
+        {
+            QMessageBox::warning(this, tr("Pack Data && Settings"),
+                                 tr("Database successfully dumped to\n%1\n"
+                                    "Some credentials could not be removed.").arg(filename));
+            return;
+        }
 
         QMessageBox::information(this, tr("Pack Data && Settings"),
                                  tr("Database successfully dumped to\n%1").arg(filename));
     }
     else
     {
-        QFile::remove(filename);
         QMessageBox::warning(this, tr("Pack Data && Settings"),
                              tr("Failed to compress the database."));
     }
@@ -1504,6 +1519,9 @@ void MainWindow::showLoadDB()
     // Take ownership of decompressed file (we must delete it)
     const QString decompressedFile = loadDialog.takeDecompressedFile();
 
+    QList<PlatformParameter> modifiedParams;
+    QList<ProfileParameter> modifiedProfileParams;
+
     // Handle cross-platform settings if needed
     if ( crossPlatform )
     {
@@ -1522,17 +1540,30 @@ void MainWindow::showLoadDB()
                 return;
             }
 
-            // Save modified parameters to a JSON file for later application
-            QList<PlatformParameter> modifiedParams = settingsDialog.getParameters();
-            QList<ProfileParameter> modifiedProfileParams = settingsDialog.getProfilePortParameters();
-            PlatformParameterManager::saveParametersToFile(modifiedParams, modifiedProfileParams,
-                PlatformParameterManager::pendingParametersPath());
+            modifiedParams = settingsDialog.getParameters();
+            modifiedProfileParams = settingsDialog.getProfilePortParameters();
         }
     }
 
+    // Replace the previous selection even when this import needs no adjustments.
+    if ( !PlatformParameterManager::saveParametersToFile(modifiedParams, modifiedProfileParams,
+                                                         PlatformParameterManager::pendingParametersPath()) )
+    {
+        QFile::remove(decompressedFile);
+        QMessageBox::warning(this, tr("Unpack Data && Settings"),
+                             tr("Failed to save settings for database import."));
+        return;
+    }
+
     // Save import passphrase to SecureStore
-    if ( !password.isEmpty() )
-        CredentialStore::instance()->saveImportPassphrase(password);
+    if ( !password.isEmpty() && !CredentialStore::instance()->saveImportPassphrase(password) )
+    {
+        QFile::remove(PlatformParameterManager::pendingParametersPath());
+        QFile::remove(decompressedFile);
+        QMessageBox::warning(this, tr("Unpack Data && Settings"),
+                             tr("Failed to save the import passphrase."));
+        return;
+    }
 
     // Move decompressed file to pending import location
     const QString pendingPath = LogDatabase::pendingImportPath();

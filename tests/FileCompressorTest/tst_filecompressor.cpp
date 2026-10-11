@@ -3,6 +3,10 @@
 #include <QTemporaryFile>
 #include <QFile>
 #include <QRandomGenerator>
+#ifdef Q_OS_UNIX
+#include <sys/resource.h>
+#include <signal.h>
+#endif
 
 #include "core/FileCompressor.h"
 
@@ -29,6 +33,14 @@ private slots:
     void gzipFile_invalidDestPath_returnsFalse();
     void gzipFile_progressCallback_isCalled();
     void gzipFile_progressCallbackCancel_stopsCompression();
+    void gzipFile_failurePreservesDestination_data();
+    void gzipFile_failurePreservesDestination();
+    void gzipFile_successPublishesCompleteArchive();
+    void gzipFile_commitFailureReturnsFalse();
+    void fileWriteFailurePreservesDestination_data();
+    void fileWriteFailurePreservesDestination();
+    void gunzipFile_requiresStreamEnd_data();
+    void gunzipFile_requiresStreamEnd();
 
     // Benchmarks
     void gzip_benchmark_compression();
@@ -285,6 +297,170 @@ void FileCompressorTest::gzipFile_progressCallbackCancel_stopsCompression()
     QVERIFY(!FileCompressor::gzipFile(sourceFile, compressedFile, progressCallback));
     // Destination file should be cleaned up
     QVERIFY(!QFile::exists(compressedFile));
+}
+
+void FileCompressorTest::gzipFile_failurePreservesDestination_data()
+{
+    QTest::addColumn<bool>("missingSource");
+    QTest::newRow("missing-source") << true;
+    QTest::newRow("cancelled") << false;
+}
+
+void FileCompressorTest::gzipFile_failurePreservesDestination()
+{
+    QFETCH(bool, missingSource);
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source");
+    const QString destinationPath = directory.filePath("backup.dbe");
+    const QByteArray previousBackup("previous backup");
+    QFile destination(destinationPath);
+    QVERIFY(destination.open(QIODevice::WriteOnly));
+    QCOMPARE(destination.write(previousBackup), qint64(previousBackup.size()));
+    destination.close();
+    if ( !missingSource )
+    {
+        QFile source(sourcePath);
+        QVERIFY(source.open(QIODevice::WriteOnly));
+        QCOMPARE(source.write("new data"), qint64(8));
+    }
+
+    QVERIFY(!FileCompressor::gzipFile(sourcePath, destinationPath,
+                                      [](qint64, qint64) { return false; }));
+    QVERIFY(destination.open(QIODevice::ReadOnly));
+    QCOMPARE(destination.readAll(), previousBackup);
+}
+
+void FileCompressorTest::gzipFile_successPublishesCompleteArchive()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source");
+    const QString destinationPath = directory.filePath("backup.dbe");
+    const QByteArray original("complete replacement data");
+    QFile source(sourcePath);
+    QVERIFY(source.open(QIODevice::WriteOnly));
+    QCOMPARE(source.write(original), qint64(original.size()));
+    source.close();
+    QFile destination(destinationPath);
+    QVERIFY(destination.open(QIODevice::WriteOnly));
+    QCOMPARE(destination.write("old backup"), qint64(10));
+    destination.close();
+
+    QVERIFY(FileCompressor::gzipFile(sourcePath, destinationPath));
+    QVERIFY(destination.open(QIODevice::ReadOnly));
+    QCOMPARE(FileCompressor::gunzip(destination.readAll()), original);
+}
+
+void FileCompressorTest::gzipFile_commitFailureReturnsFalse()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source");
+    const QString destinationPath = directory.filePath("backup.dbe");
+    QFile source(sourcePath);
+    QVERIFY(source.open(QIODevice::WriteOnly));
+    QCOMPARE(source.write("new data"), qint64(8));
+    source.close();
+    bool destinationBlocked = false;
+
+    const bool result = FileCompressor::gzipFile(sourcePath, destinationPath,
+        [&](qint64, qint64)
+        {
+            // A directory at the target makes final publication fail on all platforms.
+            QFile::remove(destinationPath);
+            destinationBlocked = QDir().mkdir(destinationPath);
+            return true;
+        });
+    QVERIFY(destinationBlocked);
+    QVERIFY(!result);
+    QVERIFY(QFileInfo(destinationPath).isDir());
+}
+
+void FileCompressorTest::gunzipFile_requiresStreamEnd_data()
+{
+    QTest::addColumn<QByteArray>("archive");
+    QTest::addColumn<bool>("valid");
+    const QByteArray compressed = FileCompressor::gzip("complete replacement data");
+    QVERIFY(compressed.size() > 8);
+    QTest::newRow("valid") << compressed << true;
+    QTest::newRow("missing-footer") << compressed.left(compressed.size() - 8) << false;
+    QTest::newRow("truncated-payload") << compressed.left(compressed.size() / 2) << false;
+    QByteArray badCrc = compressed;
+    badCrc[badCrc.size() - 8] = char(badCrc.at(badCrc.size() - 8) ^ 1);
+    QTest::newRow("invalid-crc") << badCrc << false;
+    QTest::newRow("empty") << QByteArray() << false;
+}
+
+void FileCompressorTest::fileWriteFailurePreservesDestination_data()
+{
+    QTest::addColumn<bool>("decompress");
+    QTest::newRow("gzip") << false;
+    QTest::newRow("gunzip") << true;
+}
+
+void FileCompressorTest::fileWriteFailurePreservesDestination()
+{
+#ifdef Q_OS_UNIX
+    QFETCH(bool, decompress);
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source");
+    const QString destinationPath = directory.filePath("output");
+    const QByteArray original("complete replacement data");
+    const QByteArray sourceData = decompress ? FileCompressor::gzip(original) : original;
+    QFile source(sourcePath);
+    QVERIFY(source.open(QIODevice::WriteOnly));
+    QCOMPARE(source.write(sourceData), qint64(sourceData.size()));
+    source.close();
+    QFile destination(destinationPath);
+    QVERIFY(destination.open(QIODevice::WriteOnly));
+    QCOMPARE(destination.write("previous output"), qint64(15));
+    destination.close();
+
+    struct rlimit originalLimit;
+    QVERIFY(getrlimit(RLIMIT_FSIZE, &originalLimit) == 0);
+    struct rlimit restrictedLimit = originalLimit;
+    restrictedLimit.rlim_cur = 0;
+    const auto previousSignal = signal(SIGXFSZ, SIG_IGN);
+    const int restricted = setrlimit(RLIMIT_FSIZE, &restrictedLimit);
+    bool result = false;
+    if ( restricted == 0 )
+        result = decompress ? FileCompressor::gunzipFile(sourcePath, destinationPath)
+                            : FileCompressor::gzipFile(sourcePath, destinationPath);
+    const int restored = setrlimit(RLIMIT_FSIZE, &originalLimit);
+    signal(SIGXFSZ, previousSignal);
+    QVERIFY(restricted == 0);
+    QVERIFY(restored == 0);
+    QVERIFY(!result);
+    QVERIFY(destination.open(QIODevice::ReadOnly));
+    QCOMPARE(destination.readAll(), QByteArray("previous output"));
+#else
+    QSKIP("Requires the Unix file-size limit to force a real write failure.");
+#endif
+}
+
+void FileCompressorTest::gunzipFile_requiresStreamEnd()
+{
+    QFETCH(QByteArray, archive);
+    QFETCH(bool, valid);
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source.gz");
+    const QString destinationPath = directory.filePath("output");
+    QFile source(sourcePath);
+    QVERIFY(source.open(QIODevice::WriteOnly));
+    QCOMPARE(source.write(archive), qint64(archive.size()));
+    source.close();
+    QFile destination(destinationPath);
+    QVERIFY(destination.open(QIODevice::WriteOnly));
+    QCOMPARE(destination.write("previous output"), qint64(15));
+    destination.close();
+
+    QCOMPARE(FileCompressor::gunzipFile(sourcePath, destinationPath), valid);
+    QVERIFY(destination.open(QIODevice::ReadOnly));
+    QCOMPARE(destination.readAll(), valid ? QByteArray("complete replacement data")
+                                        : QByteArray("previous output"));
 }
 
 // ============================================================================

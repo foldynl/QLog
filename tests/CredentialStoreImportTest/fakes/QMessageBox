@@ -1,0 +1,8 @@
+#include <QObject>
+
+// Credential outcomes are tested without displaying the existing error dialogs.
+class QMessageBox : public QObject
+{
+public:
+    static void critical(QObject *, const QString &, const QString &) {}
+};
