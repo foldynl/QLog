@@ -2716,6 +2716,11 @@
     <name>DBSchemaMigration</name>
     <message>
         <location filename="../core/Migration.cpp" line="49"/>
+        <source>Migrating the database...</source>
+        <translation type="unfinished">正在迁移数据库...</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="50"/>
         <source>Database Migration</source>
         <translation>迁移数据库</translation>
     </message>
@@ -7861,8 +7866,8 @@ The password will be needed to restore them later.</source>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="29"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Current database will be DELETED!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;All stored passwords will be DELETED!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;当前数据库将被删除！&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;所有存储的密码将被删除！&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;应用程序将在加载后重启&lt;/span&gt;。&lt;/p&gt;&lt;p&gt;要保留数据，请先使用打包数据 &amp;amp; 设置或导出 QSO。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The current logbook will be replaced after validation.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Imported passwords will replace the configured accounts.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=" font-weight:700;"&gt;验证后将替换当前通联日志。&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;导入的密码将替换已配置账户的密码。&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;应用程序将在加载后重启&lt;/span&gt;。&lt;/p&gt;&lt;p&gt;要保留数据，请先使用打包数据 &amp;amp; 设置或导出 QSO。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="39"/>
@@ -9813,7 +9818,7 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="127"/>
-        <location filename="../ui/MainWindow.cpp" line="2049"/>
+        <location filename="../ui/MainWindow.cpp" line="2057"/>
         <source>Contest</source>
         <translation>比赛</translation>
     </message>
@@ -9844,18 +9849,22 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="375"/>
-        <location filename="../ui/MainWindow.cpp" line="1427"/>
-        <location filename="../ui/MainWindow.cpp" line="1435"/>
-        <location filename="../ui/MainWindow.cpp" line="1456"/>
-        <location filename="../ui/MainWindow.cpp" line="1472"/>
-        <location filename="../ui/MainWindow.cpp" line="1486"/>
-        <location filename="../ui/MainWindow.cpp" line="1492"/>
+        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <location filename="../ui/MainWindow.cpp" line="1432"/>
+        <location filename="../ui/MainWindow.cpp" line="1448"/>
+        <location filename="../ui/MainWindow.cpp" line="1463"/>
+        <location filename="../ui/MainWindow.cpp" line="1474"/>
+        <location filename="../ui/MainWindow.cpp" line="1490"/>
+        <location filename="../ui/MainWindow.cpp" line="1503"/>
+        <location filename="../ui/MainWindow.cpp" line="1509"/>
+        <location filename="../ui/MainWindow.cpp" line="1514"/>
         <source>Pack Data &amp;&amp; Settings</source>
         <translation>打包数据 &amp;&amp; 设置</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="383"/>
-        <location filename="../ui/MainWindow.cpp" line="1559"/>
+        <location filename="../ui/MainWindow.cpp" line="1567"/>
+        <location filename="../ui/MainWindow.cpp" line="1595"/>
         <source>Unpack Data &amp;&amp; Settings</source>
         <translation>解压数据 &amp;&amp; 设置</translation>
     </message>
@@ -10073,218 +10082,244 @@ Submode: %2</source>
         <translation>导出 Cabrillo</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="102"/>
+        <location filename="../ui/MainWindow.cpp" line="103"/>
         <source>Color Theme</source>
         <translation>颜色主题</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="125"/>
+        <location filename="../ui/MainWindow.cpp" line="126"/>
         <source>Not enabled for non-Fusion style</source>
         <translation>非融合样式不允许使用</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="200"/>
+        <location filename="../ui/MainWindow.cpp" line="201"/>
         <source>Press to tune the alert</source>
         <translation>按下调节提醒</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="343"/>
+        <location filename="../ui/MainWindow.cpp" line="344"/>
         <source>FLDigi</source>
         <translation>FLDigi</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="344"/>
+        <location filename="../ui/MainWindow.cpp" line="345"/>
         <source>FLDigi test message received.</source>
         <translation>已收到 FLDigi 测试消息。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="352"/>
+        <location filename="../ui/MainWindow.cpp" line="353"/>
         <source>Startup ADI</source>
         <translation>启动 ADI</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="543"/>
+        <location filename="../ui/MainWindow.cpp" line="544"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Clublog 立即上传出错</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="788"/>
-        <location filename="../ui/MainWindow.cpp" line="801"/>
-        <location filename="../ui/MainWindow.cpp" line="811"/>
+        <location filename="../ui/MainWindow.cpp" line="785"/>
+        <location filename="../ui/MainWindow.cpp" line="798"/>
+        <location filename="../ui/MainWindow.cpp" line="808"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation>&lt;b&gt;错误详情:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="835"/>
+        <location filename="../ui/MainWindow.cpp" line="832"/>
         <source>op: </source>
         <translation>操作员: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1012"/>
+        <location filename="../ui/MainWindow.cpp" line="1009"/>
         <source>A New Version</source>
         <translation>新版本</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1013"/>
+        <location filename="../ui/MainWindow.cpp" line="1010"/>
         <source>A new version %1 is available.</source>
         <translation>新版本 %1 可用。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1017"/>
+        <location filename="../ui/MainWindow.cpp" line="1014"/>
         <source>Remind Me Later</source>
         <translation>稍后提醒我</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1018"/>
+        <location filename="../ui/MainWindow.cpp" line="1015"/>
         <source>Download</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1276"/>
-        <location filename="../ui/MainWindow.cpp" line="1324"/>
+        <location filename="../ui/MainWindow.cpp" line="1273"/>
+        <location filename="../ui/MainWindow.cpp" line="1321"/>
         <source>QLog Warning</source>
         <translation>QLog 警告</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1277"/>
+        <location filename="../ui/MainWindow.cpp" line="1274"/>
         <source>LoTW is not configured properly.&lt;p&gt;Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW 配置不正确。&lt;p&gt;请使用 &lt;b&gt;设置&lt;/b&gt; 对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1298"/>
-        <location filename="../ui/MainWindow.cpp" line="1376"/>
+        <location filename="../ui/MainWindow.cpp" line="1295"/>
+        <location filename="../ui/MainWindow.cpp" line="1373"/>
         <source>QLog Error</source>
         <translation>QLog 错误</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1299"/>
+        <location filename="../ui/MainWindow.cpp" line="1296"/>
         <source>Cannot load local DXCC entities from the logbook: </source>
         <translation>无法从日志簿中加载本地 DXCC 实体: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1313"/>
+        <location filename="../ui/MainWindow.cpp" line="1310"/>
         <source>Unknown DXCC Entity</source>
         <translation>未知的 DXCC 实体</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1325"/>
+        <location filename="../ui/MainWindow.cpp" line="1322"/>
         <source>Cannot determine a local DXCC entity from logbook contacts.</source>
         <translation>无法从日志簿联系人中确定本地 DXCC 实体。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1331"/>
+        <location filename="../ui/MainWindow.cpp" line="1328"/>
         <source>LoTW DXCC Credits</source>
         <translation>LoTW DXCC 积分</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1332"/>
+        <location filename="../ui/MainWindow.cpp" line="1329"/>
         <source>Select the local DXCC entity for which LoTW DXCC credits will be downloaded:</source>
         <translation>选择要下载 LoTW DXCC 积分的本地 DXCC 实体:</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1343"/>
+        <location filename="../ui/MainWindow.cpp" line="1340"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1344"/>
+        <location filename="../ui/MainWindow.cpp" line="1341"/>
         <source>LoTW DXCC Credit Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1348"/>
+        <location filename="../ui/MainWindow.cpp" line="1345"/>
         <source>Downloading LoTW DXCC credits</source>
         <translation>正在下载 LoTW DXCC 积分</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1356"/>
+        <location filename="../ui/MainWindow.cpp" line="1353"/>
         <source>Processing LoTW DXCC credits</source>
         <translation>正在处理 LoTW DXCC 积分</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1368"/>
+        <location filename="../ui/MainWindow.cpp" line="1365"/>
         <source>LoTW DXCC Credit Import Summary</source>
         <translation>LoTW DXCC 积分导入摘要</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1376"/>
+        <location filename="../ui/MainWindow.cpp" line="1373"/>
         <source>LoTW DXCC credit import failed: </source>
         <translation>LoTW DXCC 积分导入失败: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1428"/>
+        <location filename="../ui/MainWindow.cpp" line="1425"/>
         <source>Failed to encrypt credentials.</source>
         <translation>加密凭据失败。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1437"/>
+        <location filename="../ui/MainWindow.cpp" line="1434"/>
         <source>Database files (*.dbe);;All files (*)</source>
         <translation>数据库文件 (*.dbe);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1457"/>
+        <location filename="../ui/MainWindow.cpp" line="1449"/>
+        <source>The file %1 already exists. Replace it?</source>
+        <translation type="unfinished">文件 %1 已存在。是否替换？</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1464"/>
+        <source>Choose a different file. The export destination points to the open database.</source>
+        <translation type="unfinished">请选择其他文件。导出目标是当前打开的数据库。</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1475"/>
         <source>Failed to create temporary file.</source>
         <translation>创建临时文件失败。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1473"/>
+        <location filename="../ui/MainWindow.cpp" line="1491"/>
         <source>Failed to dump the database.</source>
         <translation>转储数据库失败。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1478"/>
+        <location filename="../ui/MainWindow.cpp" line="1496"/>
         <source>Compressing database...</source>
         <translation>正在压缩数据库...</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1487"/>
+        <location filename="../ui/MainWindow.cpp" line="1504"/>
+        <source>Database successfully dumped to
+%1
+Some credentials could not be removed.</source>
+        <translation type="unfinished">数据库已成功导出至
+%1
+部分凭据未能移除。</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1510"/>
         <source>Database successfully dumped to
 %1</source>
         <translation>数据库成功转储到
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1493"/>
+        <location filename="../ui/MainWindow.cpp" line="1515"/>
         <source>Failed to compress the database.</source>
         <translation>压缩数据库失败。   </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1560"/>
-        <source>Failed to prepare database for import.</source>
-        <translation>准备数据库导入失败。</translation>
+        <location filename="../ui/MainWindow.cpp" line="1596"/>
+        <source>QLog could not be restarted. The prepared import was cancelled.</source>
+        <translation type="unfinished">无法重启 QLog。已取消准备好的导入操作。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1737"/>
+        <location filename="../ui/MainWindow.cpp" line="1597"/>
+        <source>QLog could not be restarted.
+%1</source>
+        <translation type="unfinished">无法重启 QLog。
+%1</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1745"/>
         <source>Classic</source>
         <translation>经典</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1974"/>
+        <location filename="../ui/MainWindow.cpp" line="1982"/>
         <source>Accept any received exchange. %1 is updated only when the received exchange is valid for this field.</source>
         <translation>接受任何接收到的交换信息。仅当接收到的交换信息对此字段有效时，才会更新 %1。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1996"/>
+        <location filename="../ui/MainWindow.cpp" line="2004"/>
         <source>Standard Linking</source>
         <translation>标准链接</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2012"/>
+        <location filename="../ui/MainWindow.cpp" line="2020"/>
         <source>Flexible Linking</source>
         <translation>灵活链接</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2050"/>
+        <location filename="../ui/MainWindow.cpp" line="2058"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>你要删除比赛过滤器 %1 吗？</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2081"/>
+        <location filename="../ui/MainWindow.cpp" line="2089"/>
         <source>Contest: </source>
         <translation>比赛: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2362"/>
+        <location filename="../ui/MainWindow.cpp" line="2370"/>
         <source>Backup could not be completed. Check Settings → Backup.
 
 %1</source>
@@ -10293,17 +10328,17 @@ Submode: %2</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2484"/>
+        <location filename="../ui/MainWindow.cpp" line="2492"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;基于 Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;图标由 &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt; 提供&lt;br /&gt;卫星图像由 &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt; 提供&lt;br /&gt;ZoneDetect 由 &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt; 提供&lt;br /&gt;时区数据库由 &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt; 提供</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2515"/>
+        <location filename="../ui/MainWindow.cpp" line="2523"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2566"/>
+        <location filename="../ui/MainWindow.cpp" line="2574"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
@@ -11055,19 +11090,19 @@ You can leave fields empty and configure them later in Settings.</source>
 <context>
     <name>QMessageBox</name>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="80"/>
-        <location filename="../core/CredentialStore.cpp" line="123"/>
+        <location filename="../core/CredentialStore.cpp" line="85"/>
+        <location filename="../core/CredentialStore.cpp" line="133"/>
         <location filename="../core/MembershipQE.cpp" line="323"/>
         <source>QLog Critical</source>
         <translation>Qlog 临界值</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="81"/>
+        <location filename="../core/CredentialStore.cpp" line="86"/>
         <source>Cannot save a password for %1 to the Credential Store</source>
         <translation>无法将 %1 的密码保存到凭据数据库</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="124"/>
+        <location filename="../core/CredentialStore.cpp" line="134"/>
         <source>Cannot get a password for %1 from the Credential Store</source>
         <translation>无法从凭据数据库获取 %1 密码</translation>
     </message>
@@ -11076,31 +11111,30 @@ You can leave fields empty and configure them later in Settings.</source>
         <location filename="../core/MembershipQE.cpp" line="211"/>
         <location filename="../core/MembershipQE.cpp" line="338"/>
         <location filename="../core/MembershipQE.cpp" line="345"/>
-        <location filename="../core/main.cpp" line="627"/>
         <location filename="../ui/ExportDialog.cpp" line="182"/>
         <location filename="../ui/ImportDialog.cpp" line="343"/>
-        <location filename="../ui/MainWindow.cpp" line="786"/>
-        <location filename="../ui/MainWindow.cpp" line="799"/>
-        <location filename="../ui/MainWindow.cpp" line="809"/>
+        <location filename="../ui/MainWindow.cpp" line="783"/>
+        <location filename="../ui/MainWindow.cpp" line="796"/>
+        <location filename="../ui/MainWindow.cpp" line="806"/>
         <location filename="../ui/NewContactWidget.cpp" line="1740"/>
         <location filename="../ui/SettingsDialog.cpp" line="823"/>
         <location filename="../ui/SettingsDialog.cpp" line="848"/>
         <location filename="../ui/SettingsDialog.cpp" line="857"/>
         <location filename="../ui/SettingsDialog.cpp" line="868"/>
-        <location filename="../ui/SettingsDialog.cpp" line="975"/>
-        <location filename="../ui/SettingsDialog.cpp" line="993"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1353"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1715"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1788"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1833"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2018"/>
+        <location filename="../ui/SettingsDialog.cpp" line="982"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1361"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1723"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1796"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1841"/>
         <location filename="../ui/SettingsDialog.cpp" line="2026"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2033"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2041"/>
         <location filename="../ui/SettingsDialog.cpp" line="2050"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2057"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2064"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2539"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2072"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2547"/>
         <source>QLog Warning</source>
         <translation>QLog 告警</translation>
     </message>
@@ -11130,42 +11164,32 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>网络错误。无法下载俱乐部列表</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="598"/>
-        <location filename="../core/main.cpp" line="620"/>
-        <location filename="../core/main.cpp" line="641"/>
-        <location filename="../core/main.cpp" line="652"/>
+        <location filename="../core/main.cpp" line="590"/>
+        <location filename="../core/main.cpp" line="612"/>
+        <location filename="../core/main.cpp" line="625"/>
+        <location filename="../core/main.cpp" line="636"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="327"/>
         <location filename="../ui/ExportDialog.cpp" line="204"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
         <location filename="../ui/NewContactWidget.cpp" line="2023"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="488"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1009"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1018"/>
         <source>QLog Error</source>
         <translation>QLog 出错</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="599"/>
+        <location filename="../core/main.cpp" line="591"/>
         <source>QLog is already running</source>
         <translation>已经有 QLog 实例正在运行</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="621"/>
-        <source>Failed to process pending database import.</source>
-        <translation>处理待处理的数据库导入失败。</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="628"/>
-        <source>The database was imported successfully, but the stored passwords could not be restored (decryption failed or the data is corrupted). All service passwords have been cleared and must be re-entered in Settings.</source>
-        <translation>数据库导入成功，但存储的密码无法恢复（解密失败或数据已损坏）。所有服务密码已被清除，必须在“设置”中重新输入。</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="642"/>
+        <location filename="../core/main.cpp" line="626"/>
         <source>Could not connect to database.</source>
         <translation>无法连接至数据库。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="653"/>
+        <location filename="../core/main.cpp" line="637"/>
         <source>Database migration failed.</source>
         <translation>数据库迁移失败。</translation>
     </message>
@@ -11270,17 +11294,17 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>过滤器名称已存在。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="787"/>
+        <location filename="../ui/MainWindow.cpp" line="784"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;设备出错:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="800"/>
+        <location filename="../ui/MainWindow.cpp" line="797"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;旋转云台出错:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="810"/>
+        <location filename="../ui/MainWindow.cpp" line="807"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;CW 键控器出错:&lt;/b&gt; </translation>
     </message>
@@ -11296,7 +11320,7 @@ You can leave fields empty and configure them later in Settings.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="824"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2540"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2548"/>
         <source>Please, define at least one Station Locations Profile</source>
         <translation>请至少定义一个站点配置文件</translation>
     </message>
@@ -11311,77 +11335,77 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>检测到循环。原始 UDP 转发使用与 WSJT-X 接收端口相同的端口。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="976"/>
+        <location filename="../ui/SettingsDialog.cpp" line="983"/>
         <source>Rig port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>设备端口必须是一个有效的 COM 端口。&lt;br&gt;Windows 使用 COMxxx，对于unix-like OS 使用设备路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="994"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
         <source>Rig PTT port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>电台PTT端口必须为可用的串口。&lt;br&gt;Windows是类似COMxx，类UNIX操作系统则为设备路径名</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be 0.</source>
         <translation>&lt;b&gt;TX 范围&lt;/b&gt;: 最大频率不能为 0。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1011"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1019"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be under Min Frequency.</source>
         <translation>&lt;b&gt;TX 范围&lt;/b&gt;: 最大频率不能低于最小频率。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1362"/>
         <source>Rotator port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>旋转云台端口必须是一个有效的 COM 端口。&lt;br&gt;对于Windows 使用 COMxxx，对于unix-like OS 使用设备路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1724"/>
         <source>CW Keyer port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>CW 键控器端口必须是一个有效的 COM 端口。&lt;br&gt;对于Windows 使用 COMxxx，对于unix-like OS 使用设备路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1789"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1797"/>
         <source>Cannot change the CW Keyer Model to &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;No Morse over CAT support for Rig(s) &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>无法将 CW 键控器模型改为 &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;设备 &lt;b&gt;%1&lt;/b&gt;不支持Morse over CAT</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1834"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1842"/>
         <source>Cannot delete the CW Keyer Profile&lt;br&gt;The CW Key Profile is used by Rig(s): &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>无法删除 CW 键控器配置文件&lt;br&gt;本 CW 键控器配置文件正在被设备&lt;b&gt;%1&lt;/b&gt;使用</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2019"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
         <source>Callsign has an invalid format</source>
         <translation>呼号格式无效</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2035"/>
         <source>Operator Callsign has an invalid format</source>
         <translation>操作员呼号格式无效</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
         <source>Gridsquare has an invalid format</source>
         <translation>网格坐标格式无效</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2043"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
         <source>VUCC Grids have an invalid format (must be 2 or 4 Gridsquares separated by &apos;,&apos;)</source>
         <translation>VUCC 网格格式无效 (必须是 2 或 4 个被 &apos;,&apos; 分隔的网格坐标)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2059"/>
         <source>Country must not be empty</source>
         <translation>国家/地区 不能为空</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2066"/>
         <source>CQZ must not be empty</source>
         <translation>CQ 分区不能为空</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2073"/>
         <source>ITU must not be empty</source>
         <translation>ITU 不能为空</translation>
     </message>
@@ -11516,32 +11540,32 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation type="unfinished">无法更新以下参考列表：%1。已保留原有数据。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="615"/>
+        <location filename="../core/main.cpp" line="607"/>
         <source>Importing Database</source>
         <translation>导入数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="635"/>
+        <location filename="../core/main.cpp" line="619"/>
         <source>Opening Database</source>
         <translation>打开数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="646"/>
+        <location filename="../core/main.cpp" line="630"/>
         <source>Migrating Database</source>
         <translation>迁移数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="645"/>
         <source>QLog Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="645"/>
         <source>Could not complete reference-list initialization.</source>
         <translation type="unfinished">无法完成参考列表初始化。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="666"/>
+        <location filename="../core/main.cpp" line="650"/>
         <source>Starting Application</source>
         <translation>启动应用程序</translation>
     </message>
@@ -11667,53 +11691,241 @@ You can leave fields empty and configure them later in Settings.</source>
         </translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="301"/>
+        <location filename="../core/LogDatabase.cpp" line="345"/>
+        <location filename="../core/LogDatabase.cpp" line="354"/>
+        <location filename="../core/LogDatabase.cpp" line="370"/>
+        <location filename="../core/LogDatabase.cpp" line="389"/>
         <source>Not a valid QLog database</source>
         <translation>不是有效的 QLog 数据库</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="311"/>
+        <location filename="../core/LogDatabase.cpp" line="362"/>
         <source>Database version too new (requires newer QLog version)</source>
         <translation>数据库版本过新（需要更新的 QLog 版本）</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="324"/>
+        <location filename="../core/LogDatabase.cpp" line="380"/>
         <source>Database is not QLog Export file</source>
         <translation>数据库不是 QLog 导出文件</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="25"/>
+        <location filename="../core/LogDatabase.cpp" line="512"/>
+        <source>An unfinished import already exists in %1. Preserve these files and finish or explicitly cancel that import first.</source>
+        <translation type="unfinished">%1 中已有未完成的导入。请保留这些文件，先完成或明确取消该导入。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="521"/>
+        <source>The active database cannot be used as an import candidate.</source>
+        <translation type="unfinished">不能将当前使用的数据库作为待导入数据库。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="524"/>
+        <source>The import passphrase is required.</source>
+        <translation type="unfinished">必须提供导入口令。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="528"/>
+        <source>The source database has unfinished writes and cannot be imported.</source>
+        <translation type="unfinished">源数据库有尚未完成的写入，无法导入。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="568"/>
+        <source>The temporary database files could not be released for import.</source>
+        <translation type="unfinished">无法在导入前清理临时数据库文件。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="571"/>
+        <source>Failed to prepare the database for import.</source>
+        <translation type="unfinished">准备数据库导入失败。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="574"/>
+        <source>Failed to save the import passphrase.</source>
+        <translation type="unfinished">无法保存导入口令。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="608"/>
+        <source>Failed to prepare the database for import. The current database was preserved.</source>
+        <translation type="unfinished">准备数据库导入失败。当前数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="677"/>
+        <source>This import cannot be cancelled safely. Its recovery files were preserved.</source>
+        <translation type="unfinished">无法安全取消此次导入。其恢复文件已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="683"/>
+        <source>Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting.</source>
+        <translation type="unfinished">取消失败。准备好的导入操作仍然存在，可能在下次启动时执行。请保留相关文件，并在重启前解决取消失败的问题。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="685"/>
+        <source>The import candidate was removed, but cancellation could not be recorded. The current database was preserved.</source>
+        <translation type="unfinished">待导入数据库已移除，但无法记录取消状态。当前数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="690"/>
+        <source>The import was cancelled, but its temporary files could not be removed.</source>
+        <translation type="unfinished">导入已取消，但无法移除其临时文件。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="693"/>
+        <source>The import was cancelled, but its passphrase could not be removed.</source>
+        <translation type="unfinished">导入已取消，但无法移除其口令。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="696"/>
+        <source>The import was cancelled, but its progress file could not be removed.</source>
+        <translation type="unfinished">导入已取消，但无法移除其进度文件。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="710"/>
+        <source>The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.</source>
+        <translation type="unfinished">未完成的导入缺少准备数据，或准备数据无效。请保留 %1 中的文件，并手动重新准备导入。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="718"/>
+        <source>The import was cancelled, but the current database could not be opened or migrated.</source>
+        <translation type="unfinished">导入已取消，但无法打开或迁移当前数据库。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="770"/>
+        <source>The prepared import does not match its recovery files. The original database was preserved.</source>
+        <translation type="unfinished">准备好的导入操作与其恢复文件不匹配。原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="773"/>
+        <source>The imported database could not be opened or migrated. The original database was preserved.</source>
+        <translation type="unfinished">无法打开或迁移导入的数据库。原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="795"/>
+        <source>Failed to start the import settings transaction.</source>
+        <translation type="unfinished">无法启动用于导入设置的事务。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="807"/>
+        <source>Import settings could not be applied. The original database was preserved.</source>
+        <translation type="unfinished">无法应用导入的设置。原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="824"/>
+        <source>The imported database failed its integrity check. The original database was preserved.</source>
+        <translation type="unfinished">导入的数据库未通过完整性检查。原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="829"/>
+        <source>The import passphrase is unavailable or the passwords could not be decrypted. All recovery files were preserved.</source>
+        <translation type="unfinished">导入口令不可用，或无法解密密码。所有恢复文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="832"/>
+        <source>Failed to finalize the prepared database. The original database was preserved.</source>
+        <translation type="unfinished">无法对准备好的数据库完成最终处理。原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="865"/>
+        <source>The interrupted import has inconsistent recovery files. All files were preserved for recovery.</source>
+        <translation type="unfinished">中断导入的恢复文件不一致。所有文件均已保留，以便恢复。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="870"/>
+        <source>The import passwords could not be restored. All recovery files were preserved.</source>
+        <translation type="unfinished">无法恢复导入的密码。所有恢复文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="872"/>
+        <source>Failed to finish database writes before import.</source>
+        <translation type="unfinished">无法在导入前完成数据库写入。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="878"/>
+        <source>Failed to discard prepared reference lists before import.</source>
+        <translation type="unfinished">无法在导入前清除已准备的参考列表。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="894"/>
+        <source>The original database could not be preserved. Import was stopped.</source>
+        <translation type="unfinished">无法保留原数据库。导入已停止。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="901"/>
+        <source>The prepared database could not be installed. All recovery files were preserved.</source>
+        <translation type="unfinished">无法将准备好的数据库放置到位。所有恢复文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="906"/>
+        <source>The imported database was installed, but its progress could not be saved. Restart to retry.</source>
+        <translation type="unfinished">导入的数据库已就位，但无法保存导入进度。请重启后重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="931"/>
+        <source>The imported database does not match its recovery files. All files were preserved.</source>
+        <translation type="unfinished">导入的数据库与其恢复文件不匹配。所有文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="934"/>
+        <source>The imported database could not be opened. Its recovery files were preserved.</source>
+        <translation type="unfinished">无法打开导入的数据库。其恢复文件已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="939"/>
+        <source>The imported database was retained, but password restoration is incomplete. Restart QLog to retry.</source>
+        <translation type="unfinished">导入的数据库已保留，但密码尚未完全恢复。请重启 QLog 后重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="959"/>
+        <source>The imported database was retained, but password replacement is incomplete. Restart QLog to retry.</source>
+        <translation type="unfinished">导入的数据库已保留，但密码尚未完全替换。请重启 QLog 后重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="965"/>
+        <source>The import is complete, but cleanup could not be started. Restart to retry.</source>
+        <translation type="unfinished">导入已完成，但无法开始清理。请重启后重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="975"/>
+        <source>The import is complete, but cleanup failed. Restart to retry.</source>
+        <translation type="unfinished">导入已完成，但清理失败。请重启后重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="983"/>
+        <source>The import is complete, but its recovery files could not be removed. Restart to retry.</source>
+        <translation type="unfinished">导入已完成，但无法移除其恢复文件。请重启后重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/PlatformParameterManager.cpp" line="21"/>
         <source>TQSL Path</source>
         <translation>TQSL路径</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="89"/>
-        <location filename="../core/PlatformParameterManager.cpp" line="228"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="85"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="207"/>
         <source>(Flatpak internal path)</source>
         <translation>(Flatpak 内部路径)</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="192"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="171"/>
         <source>Rig</source>
         <translation>设备</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="193"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="172"/>
         <source>Rig PTT</source>
         <translation>设备 PTT</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="194"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="173"/>
         <source>Rig rigctld</source>
         <translation>设备 rigctld</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="195"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="174"/>
         <source>Rotator</source>
         <translation>云台</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="196"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="175"/>
         <source>CW Keyer</source>
         <translation>CW 电键</translation>
     </message>
@@ -14060,7 +14272,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3787"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
         <source>Callsign</source>
         <translation>呼号</translation>
     </message>
@@ -14130,20 +14342,20 @@ Please install Hamlib or specify the path manually.</source>
         <location filename="../ui/SettingsDialog.ui" line="3036"/>
         <location filename="../ui/SettingsDialog.ui" line="4050"/>
         <location filename="../ui/SettingsDialog.ui" line="4193"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1017"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1217"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1359"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1475"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1544"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1615"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1629"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1698"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1795"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1893"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1907"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1977"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2071"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2188"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1025"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1225"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1367"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1483"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1552"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1623"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1637"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1706"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1803"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1901"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1915"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1985"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2079"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2196"/>
         <source>Add</source>
         <translation>添加</translation>
     </message>
@@ -14726,7 +14938,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2042"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2880"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2888"/>
         <source>Start rigctld daemon to share rig with other applications (e.g. WSJT-X)</source>
         <translation>启动 rigctld 守护进程以与其他应用程序（例如 WSJT-X）共享电台</translation>
     </message>
@@ -14852,7 +15064,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4122"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
         <source>API Key</source>
         <translation>API密钥</translation>
     </message>
@@ -14923,9 +15135,9 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3352"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3360"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3679"/>
         <source>Custom</source>
         <translation>自定义</translation>
     </message>
@@ -15061,7 +15273,7 @@ Please install Hamlib or specify the path manually.</source>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3413"/>
         <location filename="../ui/SettingsDialog.cpp" line="661"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2698"/>
         <source>HamQTH</source>
         <translation>HamQTH</translation>
     </message>
@@ -15088,7 +15300,7 @@ Please install Hamlib or specify the path manually.</source>
         <location filename="../ui/SettingsDialog.ui" line="3453"/>
         <location filename="../ui/SettingsDialog.ui" line="3962"/>
         <location filename="../ui/SettingsDialog.cpp" line="662"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2683"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2691"/>
         <source>QRZ.com</source>
         <translation>QRZ.com</translation>
     </message>
@@ -15376,7 +15588,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="5405"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3150"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3158"/>
         <source>No successful backup yet.</source>
         <translation type="unfinished">尚无成功的备份。</translation>
     </message>
@@ -15543,7 +15755,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="464"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1305"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1313"/>
         <source>Special - Omnirig</source>
         <translation>特别的 - Ominirig</translation>
     </message>
@@ -15586,14 +15798,14 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="660"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2682"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2689"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2697"/>
         <source>Disabled</source>
         <translation>禁用</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="117"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1422"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1430"/>
         <source>None</source>
         <translation>无</translation>
     </message>
@@ -15609,10 +15821,10 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="124"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3350"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3607"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3651"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3667"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3358"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3615"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3659"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3675"/>
         <source>No</source>
         <translation>否</translation>
     </message>
@@ -15863,20 +16075,20 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="843"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1016"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1175"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1358"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1454"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1542"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1597"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1628"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1681"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1793"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1873"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1906"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1959"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2069"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2159"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1024"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1183"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1366"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1462"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1605"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1636"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1689"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1801"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1881"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1914"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1967"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2077"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2167"/>
         <source>Modify</source>
         <translation>修改</translation>
     </message>
@@ -15892,193 +16104,194 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="968"/>
-        <location filename="../ui/SettingsDialog.cpp" line="986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1346"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1538"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1624"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1708"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1902"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2000"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2006"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2012"/>
+        <location filename="../ui/SettingsDialog.cpp" line="975"/>
+        <location filename="../ui/SettingsDialog.cpp" line="994"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1546"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1632"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1910"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2008"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2014"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2020"/>
         <source>Must not be empty</source>
         <translation>不能为空</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2384"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2392"/>
         <source>Select File</source>
         <translation>选择文件</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2420"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2428"/>
         <source>Auto Detect</source>
         <translation>自动检测</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2421"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2429"/>
         <source>TQSL was not found on this system.
 Please install TQSL or specify the path manually.</source>
         <translation>TQSL 在此系统上未找到。
 请安装 TQSL 或手动指定路径。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2437"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2445"/>
         <source>Not found</source>
         <translation>未找到</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2779"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2787"/>
         <source>RTS is controlled by hardware flow control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2875"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2883"/>
         <source>Rig sharing is only available for Hamlib driver</source>
         <translation>天线共享仅适用于 Hamlib 驱动</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2877"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2885"/>
         <source>Rig sharing is not available for network connection</source>
         <translation>网络连接不支持天线共享</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2895"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2903"/>
         <source>Off</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2950"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
         <source>Delete Passwords</source>
         <translation>删除密码</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2950"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
         <source>All passwords have been deleted</source>
         <translation>所有密码已被删除</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2961"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2969"/>
         <source>Deleting all QSOs...</source>
         <translation>正在删除所有 QSO...</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2962"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2970"/>
         <source>Delete QSOs Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
         <source>Failed to delete all QSOs.</source>
         <translation>删除所有 QSO 失败。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3137"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3145"/>
         <source>Select Backup Folder</source>
         <translation type="unfinished">选择备份文件夹</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3149"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3157"/>
         <source>Last successful internal backup: %1</source>
         <translation type="unfinished">上次成功的内部备份：%1</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3311"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3319"/>
         <source>Enabled</source>
         <translation>启用</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3312"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3320"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
         <source>Station Profile</source>
         <translation>台站配置</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
         <source>Missing QSL Sent</source>
         <translation>缺失的 QSL 发送</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3314"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3322"/>
         <source>Last Recovery</source>
         <translation>最后恢复</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3347"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3604"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3672"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3355"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3612"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3680"/>
         <source>Queued</source>
         <translation>排队中</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3348"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3606"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3647"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3356"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3614"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
         <source>Ignored</source>
         <translation>已忽视</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3349"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3605"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3649"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3665"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3357"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3613"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3657"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3673"/>
         <source>Requested</source>
         <translation>已请求</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3351"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3608"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3653"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3669"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3359"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3616"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3661"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3677"/>
         <source>Yes</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3391"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3399"/>
         <source>Station Profile does not exist. Select another profile and enable this row again.</source>
         <translation>台站配置不存在。请选择另一个配置并重新启用此行。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3407"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
         <source>File exists</source>
         <translation>文件存在</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3407"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
         <source>File does not exist</source>
         <translation>文件不存在</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3536"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3544"/>
         <source>Startup ADI initialized</source>
         <translation>启动 ADI 已初始化</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3558"/>
         <source>Select ADIF File</source>
         <translation>选择 ADIF 文件</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3552"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3560"/>
         <source>ADIF Files (*.adi *.adif);;All Files (*)</source>
         <translation>ADIF 文件 (*.adi *.adif);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3814"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3822"/>
         <source>members</source>
         <translation>成员</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3821"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
         <source>Required internet connection during application start</source>
         <translation>在应用程序启动时需要互联网连接</translation>
     </message>

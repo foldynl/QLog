@@ -2719,6 +2719,11 @@
     <name>DBSchemaMigration</name>
     <message>
         <location filename="../core/Migration.cpp" line="49"/>
+        <source>Migrating the database...</source>
+        <translation type="unfinished">Datenbank wird migriert...</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="50"/>
         <source>Database Migration</source>
         <translation>Datenbank migrieren</translation>
     </message>
@@ -7876,8 +7881,8 @@ Dieses Passwort wird später benötigt, um sie wiederherzustellen.</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="29"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Current database will be DELETED!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;All stored passwords will be DELETED!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Die aktuelle Datenbank wird GELÖSCHT!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Alle gespeicherten Passwörter werden GELÖSCHT!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Die Anwendung wird nach dem Laden neu gestartet&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Um Daten zu sichern, verwenden Sie zuerst Pack Data &amp;amp; Settings oder Export QSOs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The current logbook will be replaced after validation.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Imported passwords will replace the configured accounts.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="39"/>
@@ -9772,18 +9777,22 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="375"/>
-        <location filename="../ui/MainWindow.cpp" line="1427"/>
-        <location filename="../ui/MainWindow.cpp" line="1435"/>
-        <location filename="../ui/MainWindow.cpp" line="1456"/>
-        <location filename="../ui/MainWindow.cpp" line="1472"/>
-        <location filename="../ui/MainWindow.cpp" line="1486"/>
-        <location filename="../ui/MainWindow.cpp" line="1492"/>
+        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <location filename="../ui/MainWindow.cpp" line="1432"/>
+        <location filename="../ui/MainWindow.cpp" line="1448"/>
+        <location filename="../ui/MainWindow.cpp" line="1463"/>
+        <location filename="../ui/MainWindow.cpp" line="1474"/>
+        <location filename="../ui/MainWindow.cpp" line="1490"/>
+        <location filename="../ui/MainWindow.cpp" line="1503"/>
+        <location filename="../ui/MainWindow.cpp" line="1509"/>
+        <location filename="../ui/MainWindow.cpp" line="1514"/>
         <source>Pack Data &amp;&amp; Settings</source>
         <translation>Daten und Einstellungen packen</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="383"/>
-        <location filename="../ui/MainWindow.cpp" line="1559"/>
+        <location filename="../ui/MainWindow.cpp" line="1567"/>
+        <location filename="../ui/MainWindow.cpp" line="1595"/>
         <source>Unpack Data &amp;&amp; Settings</source>
         <translation>Daten und Einstellungen entpacken</translation>
     </message>
@@ -10053,7 +10062,7 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="127"/>
-        <location filename="../ui/MainWindow.cpp" line="2049"/>
+        <location filename="../ui/MainWindow.cpp" line="2057"/>
         <source>Contest</source>
         <translation>Contest</translation>
     </message>
@@ -10083,7 +10092,7 @@ Submode: %2</source>
         <translation>Alerts anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2515"/>
+        <location filename="../ui/MainWindow.cpp" line="2523"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
@@ -10094,218 +10103,244 @@ Submode: %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="102"/>
+        <location filename="../ui/MainWindow.cpp" line="103"/>
         <source>Color Theme</source>
         <translation>Farbschema</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="125"/>
+        <location filename="../ui/MainWindow.cpp" line="126"/>
         <source>Not enabled for non-Fusion style</source>
         <translation>Für keinen anderen Stil als Fusion zulässig</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="200"/>
+        <location filename="../ui/MainWindow.cpp" line="201"/>
         <source>Press to tune the alert</source>
         <translation>Drücken zum Einstellen des Alarms</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="343"/>
+        <location filename="../ui/MainWindow.cpp" line="344"/>
         <source>FLDigi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="344"/>
+        <location filename="../ui/MainWindow.cpp" line="345"/>
         <source>FLDigi test message received.</source>
         <translation>FLDigi-Testnachricht empfangen.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="352"/>
+        <location filename="../ui/MainWindow.cpp" line="353"/>
         <source>Startup ADI</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="543"/>
+        <location filename="../ui/MainWindow.cpp" line="544"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Clublog-Sofort-Upload-Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="788"/>
-        <location filename="../ui/MainWindow.cpp" line="801"/>
-        <location filename="../ui/MainWindow.cpp" line="811"/>
+        <location filename="../ui/MainWindow.cpp" line="785"/>
+        <location filename="../ui/MainWindow.cpp" line="798"/>
+        <location filename="../ui/MainWindow.cpp" line="808"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="835"/>
+        <location filename="../ui/MainWindow.cpp" line="832"/>
         <source>op: </source>
         <translation>op: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1012"/>
+        <location filename="../ui/MainWindow.cpp" line="1009"/>
         <source>A New Version</source>
         <translation>Eine neue Version</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1013"/>
+        <location filename="../ui/MainWindow.cpp" line="1010"/>
         <source>A new version %1 is available.</source>
         <translation>Eine neue Version %1 ist verfügbar.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1017"/>
+        <location filename="../ui/MainWindow.cpp" line="1014"/>
         <source>Remind Me Later</source>
         <translation>Später erinnern</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1018"/>
+        <location filename="../ui/MainWindow.cpp" line="1015"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1276"/>
-        <location filename="../ui/MainWindow.cpp" line="1324"/>
+        <location filename="../ui/MainWindow.cpp" line="1273"/>
+        <location filename="../ui/MainWindow.cpp" line="1321"/>
         <source>QLog Warning</source>
         <translation>QLog Warnung</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1277"/>
+        <location filename="../ui/MainWindow.cpp" line="1274"/>
         <source>LoTW is not configured properly.&lt;p&gt;Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW ist nicht richtig konfiguriert.&lt;p&gt;Bitte verwenden Sie den Dialog &lt;b&gt;Einstellungen&lt;/b&gt;, um es zu konfigurieren.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1298"/>
-        <location filename="../ui/MainWindow.cpp" line="1376"/>
+        <location filename="../ui/MainWindow.cpp" line="1295"/>
+        <location filename="../ui/MainWindow.cpp" line="1373"/>
         <source>QLog Error</source>
         <translation>QLog Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1299"/>
+        <location filename="../ui/MainWindow.cpp" line="1296"/>
         <source>Cannot load local DXCC entities from the logbook: </source>
         <translation>Lokale DXCC-Entities können nicht aus dem Logbuch geladen werden: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1313"/>
+        <location filename="../ui/MainWindow.cpp" line="1310"/>
         <source>Unknown DXCC Entity</source>
         <translation>Unbekannte DXCC-Entity</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1325"/>
+        <location filename="../ui/MainWindow.cpp" line="1322"/>
         <source>Cannot determine a local DXCC entity from logbook contacts.</source>
         <translation>Lokale DXCC-Entity kann aus den Logbuchkontakten nicht bestimmt werden.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1331"/>
+        <location filename="../ui/MainWindow.cpp" line="1328"/>
         <source>LoTW DXCC Credits</source>
         <translation>LoTW-DXCC-Credits</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1332"/>
+        <location filename="../ui/MainWindow.cpp" line="1329"/>
         <source>Select the local DXCC entity for which LoTW DXCC credits will be downloaded:</source>
         <translation>Wählen Sie die lokale DXCC-Entity aus, für die LoTW-DXCC-Credits heruntergeladen werden:</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1343"/>
+        <location filename="../ui/MainWindow.cpp" line="1340"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1344"/>
+        <location filename="../ui/MainWindow.cpp" line="1341"/>
         <source>LoTW DXCC Credit Download</source>
         <translation>Download der DXCC-Credits von LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1348"/>
+        <location filename="../ui/MainWindow.cpp" line="1345"/>
         <source>Downloading LoTW DXCC credits</source>
         <translation>LoTW-DXCC-Credits werden heruntergeladen</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1356"/>
+        <location filename="../ui/MainWindow.cpp" line="1353"/>
         <source>Processing LoTW DXCC credits</source>
         <translation>LoTW-DXCC-Credits werden verarbeitet</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1368"/>
+        <location filename="../ui/MainWindow.cpp" line="1365"/>
         <source>LoTW DXCC Credit Import Summary</source>
         <translation>Zusammenfassung des LoTW-DXCC-Credit-Imports</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1376"/>
+        <location filename="../ui/MainWindow.cpp" line="1373"/>
         <source>LoTW DXCC credit import failed: </source>
         <translation>Import der LoTW-DXCC-Credits fehlgeschlagen: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1428"/>
+        <location filename="../ui/MainWindow.cpp" line="1425"/>
         <source>Failed to encrypt credentials.</source>
         <translation>Verschlüsseln der Zugangsdaten fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1437"/>
+        <location filename="../ui/MainWindow.cpp" line="1434"/>
         <source>Database files (*.dbe);;All files (*)</source>
         <translation>Datenbankdateien (*.dbe);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1457"/>
+        <location filename="../ui/MainWindow.cpp" line="1449"/>
+        <source>The file %1 already exists. Replace it?</source>
+        <translation type="unfinished">Die Datei %1 ist bereits vorhanden. Ersetzen?</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1464"/>
+        <source>Choose a different file. The export destination points to the open database.</source>
+        <translation type="unfinished">Wählen Sie eine andere Datei. Das Exportziel verweist auf die geöffnete Datenbank.</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1475"/>
         <source>Failed to create temporary file.</source>
         <translation>Temporäre Datei konnte nicht erstellt werden.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1473"/>
+        <location filename="../ui/MainWindow.cpp" line="1491"/>
         <source>Failed to dump the database.</source>
         <translation>Datenbank-Dump fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1478"/>
+        <location filename="../ui/MainWindow.cpp" line="1496"/>
         <source>Compressing database...</source>
         <translation>Datenbank wird komprimiert…</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1487"/>
+        <location filename="../ui/MainWindow.cpp" line="1504"/>
+        <source>Database successfully dumped to
+%1
+Some credentials could not be removed.</source>
+        <translation type="unfinished">Datenbank erfolgreich exportiert:
+%1
+Einige Zugangsdaten konnten nicht entfernt werden.</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1510"/>
         <source>Database successfully dumped to
 %1</source>
         <translation>Datenbank erfolgreich exportiert nach
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1493"/>
+        <location filename="../ui/MainWindow.cpp" line="1515"/>
         <source>Failed to compress the database.</source>
         <translation>Datenbank konnte nicht komprimiert werden.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1560"/>
-        <source>Failed to prepare database for import.</source>
-        <translation>Datenbank konnte nicht für den Import vorbereitet werden.</translation>
+        <location filename="../ui/MainWindow.cpp" line="1596"/>
+        <source>QLog could not be restarted. The prepared import was cancelled.</source>
+        <translation type="unfinished">QLog konnte nicht neu gestartet werden. Der vorbereitete Import wurde abgebrochen.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1737"/>
+        <location filename="../ui/MainWindow.cpp" line="1597"/>
+        <source>QLog could not be restarted.
+%1</source>
+        <translation type="unfinished">QLog konnte nicht neu gestartet werden.
+%1</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1745"/>
         <source>Classic</source>
         <translation>Klassisch</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1974"/>
+        <location filename="../ui/MainWindow.cpp" line="1982"/>
         <source>Accept any received exchange. %1 is updated only when the received exchange is valid for this field.</source>
         <translation>Jeden empfangenen Exchange akzeptieren. %1 wird nur aktualisiert, wenn der empfangene Exchange für dieses Feld gültig ist.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1996"/>
+        <location filename="../ui/MainWindow.cpp" line="2004"/>
         <source>Standard Linking</source>
         <translation>Standardverknüpfung</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2012"/>
+        <location filename="../ui/MainWindow.cpp" line="2020"/>
         <source>Flexible Linking</source>
         <translation>Flexible Verknüpfung</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2050"/>
+        <location filename="../ui/MainWindow.cpp" line="2058"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>Möchten Sie den Contest-Filter %1 entfernen?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2081"/>
+        <location filename="../ui/MainWindow.cpp" line="2089"/>
         <source>Contest: </source>
         <translation>Contest: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2362"/>
+        <location filename="../ui/MainWindow.cpp" line="2370"/>
         <source>Backup could not be completed. Check Settings → Backup.
 
 %1</source>
@@ -10314,12 +10349,12 @@ Submode: %2</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2484"/>
+        <location filename="../ui/MainWindow.cpp" line="2492"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2566"/>
+        <location filename="../ui/MainWindow.cpp" line="2574"/>
         <source>N/A</source>
         <translation></translation>
     </message>
@@ -11071,42 +11106,32 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
 <context>
     <name>QMessageBox</name>
     <message>
-        <location filename="../core/main.cpp" line="598"/>
-        <location filename="../core/main.cpp" line="620"/>
-        <location filename="../core/main.cpp" line="641"/>
-        <location filename="../core/main.cpp" line="652"/>
+        <location filename="../core/main.cpp" line="590"/>
+        <location filename="../core/main.cpp" line="612"/>
+        <location filename="../core/main.cpp" line="625"/>
+        <location filename="../core/main.cpp" line="636"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="327"/>
         <location filename="../ui/ExportDialog.cpp" line="204"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
         <location filename="../ui/NewContactWidget.cpp" line="2023"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="488"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1009"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1018"/>
         <source>QLog Error</source>
         <translation>QLog Fehler</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="599"/>
+        <location filename="../core/main.cpp" line="591"/>
         <source>QLog is already running</source>
         <translation>QLog wird bereits ausgeführt</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="621"/>
-        <source>Failed to process pending database import.</source>
-        <translation>Ausstehenden Datenbankimport konnte nicht verarbeitet werden.</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="628"/>
-        <source>The database was imported successfully, but the stored passwords could not be restored (decryption failed or the data is corrupted). All service passwords have been cleared and must be re-entered in Settings.</source>
-        <translation>Die Datenbank wurde erfolgreich importiert, aber die gespeicherten Passwörter konnten nicht wiederhergestellt werden (Entschlüsselung fehlgeschlagen oder Daten sind beschädigt). Alle Service-Passwörter wurden gelöscht und müssen in den Einstellungen erneut eingegeben werden.</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="642"/>
+        <location filename="../core/main.cpp" line="626"/>
         <source>Could not connect to database.</source>
         <translation>Keine Verbindung zur Datenbank möglich.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="653"/>
+        <location filename="../core/main.cpp" line="637"/>
         <source>Database migration failed.</source>
         <translation>Migration der Datenbank fehlgeschlagen.</translation>
     </message>
@@ -11115,31 +11140,30 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
         <location filename="../core/MembershipQE.cpp" line="211"/>
         <location filename="../core/MembershipQE.cpp" line="338"/>
         <location filename="../core/MembershipQE.cpp" line="345"/>
-        <location filename="../core/main.cpp" line="627"/>
         <location filename="../ui/ExportDialog.cpp" line="182"/>
         <location filename="../ui/ImportDialog.cpp" line="343"/>
-        <location filename="../ui/MainWindow.cpp" line="786"/>
-        <location filename="../ui/MainWindow.cpp" line="799"/>
-        <location filename="../ui/MainWindow.cpp" line="809"/>
+        <location filename="../ui/MainWindow.cpp" line="783"/>
+        <location filename="../ui/MainWindow.cpp" line="796"/>
+        <location filename="../ui/MainWindow.cpp" line="806"/>
         <location filename="../ui/NewContactWidget.cpp" line="1740"/>
         <location filename="../ui/SettingsDialog.cpp" line="823"/>
         <location filename="../ui/SettingsDialog.cpp" line="848"/>
         <location filename="../ui/SettingsDialog.cpp" line="857"/>
         <location filename="../ui/SettingsDialog.cpp" line="868"/>
-        <location filename="../ui/SettingsDialog.cpp" line="975"/>
-        <location filename="../ui/SettingsDialog.cpp" line="993"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1353"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1715"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1788"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1833"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2018"/>
+        <location filename="../ui/SettingsDialog.cpp" line="982"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1361"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1723"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1796"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1841"/>
         <location filename="../ui/SettingsDialog.cpp" line="2026"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2033"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2041"/>
         <location filename="../ui/SettingsDialog.cpp" line="2050"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2057"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2064"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2539"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2072"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2547"/>
         <source>QLog Warning</source>
         <translation>QLog Warnung</translation>
     </message>
@@ -11154,19 +11178,19 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
         <translation>Aktualisierung der Clubliste fehlgeschlagen. Kann keine neuen Downloads durchführen</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="80"/>
-        <location filename="../core/CredentialStore.cpp" line="123"/>
+        <location filename="../core/CredentialStore.cpp" line="85"/>
+        <location filename="../core/CredentialStore.cpp" line="133"/>
         <location filename="../core/MembershipQE.cpp" line="323"/>
         <source>QLog Critical</source>
         <translation>QLog kritischer Fehler</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="81"/>
+        <location filename="../core/CredentialStore.cpp" line="86"/>
         <source>Cannot save a password for %1 to the Credential Store</source>
         <translation>Das Passwort für %1 kann nicht im Passwort Speicher gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="124"/>
+        <location filename="../core/CredentialStore.cpp" line="134"/>
         <source>Cannot get a password for %1 from the Credential Store</source>
         <translation>Es kann kein Passwort für %1 aus dem Passwort Speicher abgerufen werden</translation>
     </message>
@@ -11263,7 +11287,7 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="824"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2540"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2548"/>
         <source>Please, define at least one Station Locations Profile</source>
         <translation>Bitte definieren Sie mindestens ein Stationsstandortprofil</translation>
     </message>
@@ -11278,77 +11302,77 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
         <translation>Schleife erkannt. Raw-UDP-Weiterleitung verwendet denselben Port wie der WSJT-X-Empfangsport.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="976"/>
+        <location filename="../ui/SettingsDialog.cpp" line="983"/>
         <source>Rig port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Rig port muss ein gültiger COM-Port sein.&lt;br&gt;Für Windows verwende COMxx, für Unix-ähnliche Betriebssysteme verwende einen Pfad zum Gerät</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="994"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
         <source>Rig PTT port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Rig-PTT-Port muss ein gültiger COM-Port sein. Für Windows verwenden Sie COMxx, für Unix-ähnliche Betriebssysteme verwenden Sie einen Pfad zum Gerät</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be 0.</source>
         <translation>&lt;b&gt;TX-Bereich&lt;/b&gt;: Max Frequenz darf nicht 0 sein.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1011"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1019"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be under Min Frequency.</source>
         <translation>&lt;b&gt;TX-Bereich&lt;/b&gt;: Die Maximalfrequenz darf nicht niedriger als die Minimalfrequenz sein.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1362"/>
         <source>Rotator port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Rotor-Port muss ein gültiger COM-Port sein.&lt;br&gt;Für Windows verwenden Sie COMxx, für Unix-ähnliche Betriebssysteme verwenden Sie einen Pfad zum Gerät</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1724"/>
         <source>CW Keyer port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>CW Keyer Port muss ein gültiger COM-Port sein.&lt;br&gt;Für Windows verwenden Sie COMxx, für unix-ähnliche Betriebssysteme verwenden Sie einen Pfad zum Gerät</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1789"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1797"/>
         <source>Cannot change the CW Keyer Model to &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;No Morse over CAT support for Rig(s) &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Kann das CW-Keyer Modell nicht zu &lt;b&gt;CW-über-CAT&lt;/b&gt; ändern.&lt;br&gt;Keine CW-über-CAT Unterstützung für Rig(s) &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1834"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1842"/>
         <source>Cannot delete the CW Keyer Profile&lt;br&gt;The CW Key Profile is used by Rig(s): &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Kann das CW-Keyer Profil nicht löschen.&lt;br&gt;Das Profil wird verwendet von Rig(s): &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2035"/>
         <source>Operator Callsign has an invalid format</source>
         <translation>Das Operator-Rufzeichen hat ein ungültiges Format</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
         <source>Gridsquare has an invalid format</source>
         <translation>Gitterfeld hat ein falsches Format</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2043"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
         <source>VUCC Grids have an invalid format (must be 2 or 4 Gridsquares separated by &apos;,&apos;)</source>
         <translation>VUCC Gitterfeld hat ein falsches Format (es müssen 2 oder 4 Gitterfelder sein, getrennt durch &apos;,&apos;)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2059"/>
         <source>Country must not be empty</source>
         <translation>Das Land darf nicht leer sein</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2066"/>
         <source>CQZ must not be empty</source>
         <translation>CQZ darf nicht leer sein</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2073"/>
         <source>ITU must not be empty</source>
         <translation>ITU darf nicht leer sein</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2019"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
         <source>Callsign has an invalid format</source>
         <translation>Rufzeichen hat ein falsches Format</translation>
     </message>
@@ -11393,17 +11417,17 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
         <translation>QSO-Filter kann nicht aktualisiert werden</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="787"/>
+        <location filename="../ui/MainWindow.cpp" line="784"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="800"/>
+        <location filename="../ui/MainWindow.cpp" line="797"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="810"/>
+        <location filename="../ui/MainWindow.cpp" line="807"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation type="unfinished"></translation>
     </message>
@@ -11528,32 +11552,32 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
         <translation type="unfinished">Diese Referenzlisten konnten nicht aktualisiert werden: %1. Die vorhandenen Daten wurden beibehalten.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="615"/>
+        <location filename="../core/main.cpp" line="607"/>
         <source>Importing Database</source>
         <translation>Datenbank wird importiert</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="635"/>
+        <location filename="../core/main.cpp" line="619"/>
         <source>Opening Database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="646"/>
+        <location filename="../core/main.cpp" line="630"/>
         <source>Migrating Database</source>
         <translation>Datenbank migrieren</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="645"/>
         <source>QLog Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="645"/>
         <source>Could not complete reference-list initialization.</source>
         <translation type="unfinished">Die Initialisierung der Referenzlisten konnte nicht abgeschlossen werden.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="666"/>
+        <location filename="../core/main.cpp" line="650"/>
         <source>Starting Application</source>
         <translation>Anwendung starten</translation>
     </message>
@@ -11687,53 +11711,241 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
         <translation>mil</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="301"/>
+        <location filename="../core/LogDatabase.cpp" line="345"/>
+        <location filename="../core/LogDatabase.cpp" line="354"/>
+        <location filename="../core/LogDatabase.cpp" line="370"/>
+        <location filename="../core/LogDatabase.cpp" line="389"/>
         <source>Not a valid QLog database</source>
         <translation>Keine gültige QLog-Datenbank</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="311"/>
+        <location filename="../core/LogDatabase.cpp" line="362"/>
         <source>Database version too new (requires newer QLog version)</source>
         <translation>Datenbankversion zu neu (erfordert neuere QLog-Version)</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="324"/>
+        <location filename="../core/LogDatabase.cpp" line="380"/>
         <source>Database is not QLog Export file</source>
         <translation>Datenbank ist keine QLog-Exportdatei</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="25"/>
+        <location filename="../core/LogDatabase.cpp" line="512"/>
+        <source>An unfinished import already exists in %1. Preserve these files and finish or explicitly cancel that import first.</source>
+        <translation type="unfinished">In %1 ist bereits ein unvollständiger Import vorhanden. Bewahren Sie diese Dateien auf und schließen Sie diesen Import zuerst ab oder brechen Sie ihn ausdrücklich ab.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="521"/>
+        <source>The active database cannot be used as an import candidate.</source>
+        <translation type="unfinished">Die aktive Datenbank kann nicht als Importquelle verwendet werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="524"/>
+        <source>The import passphrase is required.</source>
+        <translation type="unfinished">Die Passphrase für den Import ist erforderlich.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="528"/>
+        <source>The source database has unfinished writes and cannot be imported.</source>
+        <translation type="unfinished">Die Quelldatenbank enthält noch nicht abgeschlossene Schreibvorgänge und kann nicht importiert werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="568"/>
+        <source>The temporary database files could not be released for import.</source>
+        <translation type="unfinished">Die temporären Datenbankdateien konnten nicht für den Import freigegeben werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="571"/>
+        <source>Failed to prepare the database for import.</source>
+        <translation type="unfinished">Datenbank konnte nicht für den Import vorbereitet werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="574"/>
+        <source>Failed to save the import passphrase.</source>
+        <translation type="unfinished">Die Passphrase für den Import konnte nicht gespeichert werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="608"/>
+        <source>Failed to prepare the database for import. The current database was preserved.</source>
+        <translation type="unfinished">Datenbank konnte nicht für den Import vorbereitet werden. Die aktuelle Datenbank blieb erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="677"/>
+        <source>This import cannot be cancelled safely. Its recovery files were preserved.</source>
+        <translation type="unfinished">Dieser Import kann nicht sicher abgebrochen werden. Seine Wiederherstellungsdateien blieben erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="683"/>
+        <source>Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting.</source>
+        <translation type="unfinished">Der Abbruch ist fehlgeschlagen. Der vorbereitete Import ist weiterhin vorhanden und wird möglicherweise beim nächsten Start ausgeführt. Bewahren Sie die zugehörigen Dateien auf und beheben Sie das Problem beim Abbruch, bevor Sie neu starten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="685"/>
+        <source>The import candidate was removed, but cancellation could not be recorded. The current database was preserved.</source>
+        <translation type="unfinished">Die für den Import vorgesehene Datenbank wurde entfernt, aber der Abbruch konnte nicht gespeichert werden. Die aktuelle Datenbank blieb erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="690"/>
+        <source>The import was cancelled, but its temporary files could not be removed.</source>
+        <translation type="unfinished">Der Import wurde abgebrochen, aber seine temporären Dateien konnten nicht entfernt werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="693"/>
+        <source>The import was cancelled, but its passphrase could not be removed.</source>
+        <translation type="unfinished">Der Import wurde abgebrochen, aber seine Passphrase konnte nicht entfernt werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="696"/>
+        <source>The import was cancelled, but its progress file could not be removed.</source>
+        <translation type="unfinished">Der Import wurde abgebrochen, aber die Datei mit dem Importfortschritt konnte nicht entfernt werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="710"/>
+        <source>The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.</source>
+        <translation type="unfinished">Für den unvollständigen Import fehlen Vorbereitungsdaten oder sie sind ungültig. Bewahren Sie die Dateien in %1 auf und bereiten Sie den Import ausdrücklich erneut vor.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="718"/>
+        <source>The import was cancelled, but the current database could not be opened or migrated.</source>
+        <translation type="unfinished">Der Import wurde abgebrochen, aber die aktuelle Datenbank konnte nicht geöffnet oder migriert werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="770"/>
+        <source>The prepared import does not match its recovery files. The original database was preserved.</source>
+        <translation type="unfinished">Der vorbereitete Import stimmt nicht mit seinen Wiederherstellungsdateien überein. Die ursprüngliche Datenbank blieb erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="773"/>
+        <source>The imported database could not be opened or migrated. The original database was preserved.</source>
+        <translation type="unfinished">Die importierte Datenbank konnte nicht geöffnet oder migriert werden. Die ursprüngliche Datenbank blieb erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="795"/>
+        <source>Failed to start the import settings transaction.</source>
+        <translation type="unfinished">Die Transaktion zum Übernehmen der importierten Einstellungen konnte nicht gestartet werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="807"/>
+        <source>Import settings could not be applied. The original database was preserved.</source>
+        <translation type="unfinished">Die importierten Einstellungen konnten nicht übernommen werden. Die ursprüngliche Datenbank wurde beibehalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="824"/>
+        <source>The imported database failed its integrity check. The original database was preserved.</source>
+        <translation type="unfinished">Die Integritätsprüfung der importierten Datenbank ist fehlgeschlagen. Die ursprüngliche Datenbank blieb erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="829"/>
+        <source>The import passphrase is unavailable or the passwords could not be decrypted. All recovery files were preserved.</source>
+        <translation type="unfinished">Die Passphrase für den Import ist nicht verfügbar oder die Passwörter konnten nicht entschlüsselt werden. Alle Wiederherstellungsdateien blieben erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="832"/>
+        <source>Failed to finalize the prepared database. The original database was preserved.</source>
+        <translation type="unfinished">Die vorbereitete Datenbank konnte nicht fertiggestellt werden. Die ursprüngliche Datenbank blieb erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="865"/>
+        <source>The interrupted import has inconsistent recovery files. All files were preserved for recovery.</source>
+        <translation type="unfinished">Die Wiederherstellungsdateien des unterbrochenen Imports sind inkonsistent. Alle Dateien blieben für die Wiederherstellung erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="870"/>
+        <source>The import passwords could not be restored. All recovery files were preserved.</source>
+        <translation type="unfinished">Die importierten Passwörter konnten nicht wiederhergestellt werden. Alle Wiederherstellungsdateien blieben erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="872"/>
+        <source>Failed to finish database writes before import.</source>
+        <translation type="unfinished">Die Schreibvorgänge in der Datenbank konnten vor dem Import nicht abgeschlossen werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="878"/>
+        <source>Failed to discard prepared reference lists before import.</source>
+        <translation type="unfinished">Die vorbereiteten Referenzlisten konnten vor dem Import nicht verworfen werden.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="894"/>
+        <source>The original database could not be preserved. Import was stopped.</source>
+        <translation type="unfinished">Die ursprüngliche Datenbank konnte nicht beibehalten werden. Der Import wurde gestoppt.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="901"/>
+        <source>The prepared database could not be installed. All recovery files were preserved.</source>
+        <translation type="unfinished">Die vorbereitete Datenbank konnte nicht übernommen werden. Alle Wiederherstellungsdateien blieben erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="906"/>
+        <source>The imported database was installed, but its progress could not be saved. Restart to retry.</source>
+        <translation type="unfinished">Die importierte Datenbank wurde übernommen, aber der Importfortschritt konnte nicht gespeichert werden. Starten Sie die Anwendung neu, um es erneut zu versuchen.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="931"/>
+        <source>The imported database does not match its recovery files. All files were preserved.</source>
+        <translation type="unfinished">Die importierte Datenbank stimmt nicht mit ihren Wiederherstellungsdateien überein. Alle Dateien blieben erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="934"/>
+        <source>The imported database could not be opened. Its recovery files were preserved.</source>
+        <translation type="unfinished">Die importierte Datenbank konnte nicht geöffnet werden. Ihre Wiederherstellungsdateien blieben erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="939"/>
+        <source>The imported database was retained, but password restoration is incomplete. Restart QLog to retry.</source>
+        <translation type="unfinished">Die importierte Datenbank blieb erhalten, aber die Wiederherstellung der Passwörter ist unvollständig. Starten Sie QLog neu, um es erneut zu versuchen.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="959"/>
+        <source>The imported database was retained, but password replacement is incomplete. Restart QLog to retry.</source>
+        <translation type="unfinished">Die importierte Datenbank blieb erhalten, aber die Passwörter wurden nicht vollständig ersetzt. Starten Sie QLog neu, um es erneut zu versuchen.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="965"/>
+        <source>The import is complete, but cleanup could not be started. Restart to retry.</source>
+        <translation type="unfinished">Der Import ist abgeschlossen, aber die Bereinigung konnte nicht gestartet werden. Starten Sie die Anwendung neu, um es erneut zu versuchen.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="975"/>
+        <source>The import is complete, but cleanup failed. Restart to retry.</source>
+        <translation type="unfinished">Der Import ist abgeschlossen, aber die Bereinigung ist fehlgeschlagen. Starten Sie die Anwendung neu, um es erneut zu versuchen.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="983"/>
+        <source>The import is complete, but its recovery files could not be removed. Restart to retry.</source>
+        <translation type="unfinished">Der Import ist abgeschlossen, aber seine Wiederherstellungsdateien konnten nicht entfernt werden. Starten Sie die Anwendung neu, um es erneut zu versuchen.</translation>
+    </message>
+    <message>
+        <location filename="../core/PlatformParameterManager.cpp" line="21"/>
         <source>TQSL Path</source>
         <translation>TQSL Pfad</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="89"/>
-        <location filename="../core/PlatformParameterManager.cpp" line="228"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="85"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="207"/>
         <source>(Flatpak internal path)</source>
         <translation>(Interner Flatpak-Pfad)</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="192"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="171"/>
         <source>Rig</source>
         <translation>Rig</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="193"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="172"/>
         <source>Rig PTT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="194"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="173"/>
         <source>Rig rigctld</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="195"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="174"/>
         <source>Rotator</source>
         <translation>Rotor</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="196"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="175"/>
         <source>CW Keyer</source>
         <translation>CW Key</translation>
     </message>
@@ -14029,7 +14241,7 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3787"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
         <source>Callsign</source>
         <translation>Rufzeichen</translation>
     </message>
@@ -14060,20 +14272,20 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
         <location filename="../ui/SettingsDialog.ui" line="3036"/>
         <location filename="../ui/SettingsDialog.ui" line="4050"/>
         <location filename="../ui/SettingsDialog.ui" line="4193"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1017"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1217"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1359"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1475"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1544"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1615"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1629"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1698"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1795"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1893"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1907"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1977"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2071"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2188"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1025"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1225"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1367"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1483"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1552"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1623"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1637"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1706"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1803"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1901"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1915"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1985"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2079"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2196"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
@@ -14338,7 +14550,7 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="117"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1422"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1430"/>
         <source>None</source>
         <translation></translation>
     </message>
@@ -14360,10 +14572,10 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="124"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3350"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3607"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3651"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3667"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3358"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3615"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3659"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3675"/>
         <source>No</source>
         <translation></translation>
     </message>
@@ -14590,7 +14802,7 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
         <location filename="../ui/SettingsDialog.ui" line="3453"/>
         <location filename="../ui/SettingsDialog.ui" line="3962"/>
         <location filename="../ui/SettingsDialog.cpp" line="662"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2683"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2691"/>
         <source>QRZ.com</source>
         <translation></translation>
     </message>
@@ -14910,7 +15122,7 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2042"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2880"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2888"/>
         <source>Start rigctld daemon to share rig with other applications (e.g. WSJT-X)</source>
         <translation>Rigctld-Daemon starten, um das Rig mit anderen Anwendungen zu teilen (z.&#x202f;B. WSJT-X)</translation>
     </message>
@@ -15069,7 +15281,7 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4122"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
         <source>API Key</source>
         <translation>API-Schlüssel</translation>
     </message>
@@ -15205,7 +15417,7 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="5405"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3150"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3158"/>
         <source>No successful backup yet.</source>
         <translation type="unfinished">Noch keine erfolgreiche Datensicherung.</translation>
     </message>
@@ -15416,9 +15628,9 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3352"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3360"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3679"/>
         <source>Custom</source>
         <translation>Benutzerdefiniert</translation>
     </message>
@@ -15588,7 +15800,7 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3413"/>
         <location filename="../ui/SettingsDialog.cpp" line="661"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2698"/>
         <source>HamQTH</source>
         <translation></translation>
     </message>
@@ -15645,8 +15857,8 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="660"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2682"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2689"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2697"/>
         <source>Disabled</source>
         <translation>Inaktiv</translation>
     </message>
@@ -15882,213 +16094,214 @@ Bitte installieren Sie Hamlib oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="968"/>
-        <location filename="../ui/SettingsDialog.cpp" line="986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1346"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1538"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1624"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1708"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1902"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2000"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2006"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2012"/>
+        <location filename="../ui/SettingsDialog.cpp" line="975"/>
+        <location filename="../ui/SettingsDialog.cpp" line="994"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1546"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1632"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1910"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2008"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2014"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2020"/>
         <source>Must not be empty</source>
         <translation>Darf nicht leer sein</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2420"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2428"/>
         <source>Auto Detect</source>
         <translation>Automatische Erkennung</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2421"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2429"/>
         <source>TQSL was not found on this system.
 Please install TQSL or specify the path manually.</source>
         <translation>TQSL wurde auf diesem System nicht gefunden.
 Bitte installieren Sie TQSL oder geben Sie den Pfad manuell an.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2437"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2445"/>
         <source>Not found</source>
         <translation>Nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2779"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2787"/>
         <source>RTS is controlled by hardware flow control</source>
         <translation>RTS wird durch die Hardware-Flusskontrolle gesteuert</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2875"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2883"/>
         <source>Rig sharing is only available for Hamlib driver</source>
         <translation>Rig-Freigabe ist nur für den Hamlib-Treiber verfügbar</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2877"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2885"/>
         <source>Rig sharing is not available for network connection</source>
         <translation>Rig-Freigabe ist für Netzwerkverbindungen nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2895"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2903"/>
         <source>Off</source>
         <translation>Aus</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2950"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
         <source>Delete Passwords</source>
         <translation>Passwörter löschen</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2950"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
         <source>All passwords have been deleted</source>
         <translation>Alle Passwörter wurden gelöscht</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2961"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2969"/>
         <source>Deleting all QSOs...</source>
         <translation>Alle QSOs werden gelöscht...</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2962"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2970"/>
         <source>Delete QSOs Progress</source>
         <translation>Fortschritt beim Löschen von QSOs</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
         <source>Failed to delete all QSOs.</source>
         <translation>Alle QSOs konnten nicht gelöscht werden.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3137"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3145"/>
         <source>Select Backup Folder</source>
         <translation type="unfinished">Sicherungsordner auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3149"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3157"/>
         <source>Last successful internal backup: %1</source>
         <translation type="unfinished">Letzte erfolgreiche interne Datensicherung: %1</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3311"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3319"/>
         <source>Enabled</source>
         <translation>Aktiv</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3312"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3320"/>
         <source>Path</source>
         <translation>Weg</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
         <source>Station Profile</source>
         <translation>Stationsprofil</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
         <source>Missing QSL Sent</source>
         <translation>Fehlendes QSL Sent</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3314"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3322"/>
         <source>Last Recovery</source>
         <translation>Letzte Wiederherstellung</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3347"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3604"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3672"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3355"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3612"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3680"/>
         <source>Queued</source>
         <translation>Wartend</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3348"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3606"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3647"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3356"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3614"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
         <source>Ignored</source>
         <translation>Ignoriert</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3349"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3605"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3649"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3665"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3357"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3613"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3657"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3673"/>
         <source>Requested</source>
         <translation>Angefordert</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3351"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3608"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3653"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3669"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3359"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3616"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3661"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3677"/>
         <source>Yes</source>
         <translation>Ja</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3391"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3399"/>
         <source>Station Profile does not exist. Select another profile and enable this row again.</source>
         <translation>Stationsprofil existiert nicht. Wählen Sie ein anderes Profil und aktivieren Sie diese Zeile erneut.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3407"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
         <source>File exists</source>
         <translation>Datei existiert</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3407"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
         <source>File does not exist</source>
         <translation>Datei existiert nicht</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3536"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3544"/>
         <source>Startup ADI initialized</source>
         <translation>Startup-ADI initialisiert</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3558"/>
         <source>Select ADIF File</source>
         <translation>ADIF-Datei auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3552"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3560"/>
         <source>ADIF Files (*.adi *.adif);;All Files (*)</source>
         <translation>ADIF-Dateien (*.adi *.adif);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3814"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3822"/>
         <source>members</source>
         <translation>Mitglieder</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3821"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
         <source>Required internet connection during application start</source>
         <translation>Erfordert Internetverbindung beim Start der Anwendung</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="843"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1016"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1175"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1358"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1454"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1542"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1597"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1628"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1681"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1793"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1873"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1906"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1959"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2069"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2159"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1024"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1183"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1366"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1462"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1605"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1636"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1689"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1801"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1881"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1914"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1967"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2077"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2167"/>
         <source>Modify</source>
         <translation>Ändern</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="464"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1305"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1313"/>
         <source>Special - Omnirig</source>
         <translation>Special - Omnirig</translation>
     </message>
@@ -16103,7 +16316,7 @@ Bitte installieren Sie TQSL oder geben Sie den Pfad manuell an.</translation>
         <translation>WinKey</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2384"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2392"/>
         <source>Select File</source>
         <translation>Datei auswählen</translation>
     </message>

@@ -631,7 +631,7 @@
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="6"/>
         <source>Custom Log Status Condition</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vlastní podmínka pro stav v deníku</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="12"/>
@@ -2722,6 +2722,11 @@
     <name>DBSchemaMigration</name>
     <message>
         <location filename="../core/Migration.cpp" line="49"/>
+        <source>Migrating the database...</source>
+        <translation type="unfinished">Probíhá migrace databáze...</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="50"/>
         <source>Database Migration</source>
         <translation>Migrace Databáze</translation>
     </message>
@@ -6161,7 +6166,7 @@ Příklad: %3</translation>
     <message>
         <location filename="../ui/DxFilterDialog.cpp" line="104"/>
         <source>Cannot save Log Status filter.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nelze uložit filtr stavu v deníku.</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.cpp" line="201"/>
@@ -7882,8 +7887,8 @@ Toto heslo bude později potřeba pro jejich obnovení.</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="29"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Current database will be DELETED!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;All stored passwords will be DELETED!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Aktuální databáze bude SMAZÁNA!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Všechna uložená hesla budou SMAZÁNA!&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Aplikace se po načtení restartuje&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Pro zachování dat nejprve použijte Pack Data &amp;amp; Settings nebo Export QSOs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The current logbook will be replaced after validation.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Imported passwords will replace the configured accounts.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=" font-weight:700;"&gt;Aktuální deník bude po ověření nahrazen.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;Importovaná hesla nahradí nastavené účty.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;Aplikace se po načtení restartuje&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Pro zachování dat nejprve použijte Pack Data &amp;amp; Settings nebo Export QSOs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="39"/>
@@ -9791,18 +9796,22 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="375"/>
-        <location filename="../ui/MainWindow.cpp" line="1427"/>
-        <location filename="../ui/MainWindow.cpp" line="1435"/>
-        <location filename="../ui/MainWindow.cpp" line="1456"/>
-        <location filename="../ui/MainWindow.cpp" line="1472"/>
-        <location filename="../ui/MainWindow.cpp" line="1486"/>
-        <location filename="../ui/MainWindow.cpp" line="1492"/>
+        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <location filename="../ui/MainWindow.cpp" line="1432"/>
+        <location filename="../ui/MainWindow.cpp" line="1448"/>
+        <location filename="../ui/MainWindow.cpp" line="1463"/>
+        <location filename="../ui/MainWindow.cpp" line="1474"/>
+        <location filename="../ui/MainWindow.cpp" line="1490"/>
+        <location filename="../ui/MainWindow.cpp" line="1503"/>
+        <location filename="../ui/MainWindow.cpp" line="1509"/>
+        <location filename="../ui/MainWindow.cpp" line="1514"/>
         <source>Pack Data &amp;&amp; Settings</source>
         <translation>Zabalit data a nastavení</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="383"/>
-        <location filename="../ui/MainWindow.cpp" line="1559"/>
+        <location filename="../ui/MainWindow.cpp" line="1567"/>
+        <location filename="../ui/MainWindow.cpp" line="1595"/>
         <source>Unpack Data &amp;&amp; Settings</source>
         <translation>Rozbalit data a nastavení</translation>
     </message>
@@ -10066,7 +10075,7 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="127"/>
-        <location filename="../ui/MainWindow.cpp" line="2049"/>
+        <location filename="../ui/MainWindow.cpp" line="2057"/>
         <source>Contest</source>
         <translation>Contest</translation>
     </message>
@@ -10091,7 +10100,7 @@ Submode: %2</source>
         <translation>Zobrazit upozornění</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2515"/>
+        <location filename="../ui/MainWindow.cpp" line="2523"/>
         <source>About</source>
         <translation>O aplikaci</translation>
     </message>
@@ -10101,218 +10110,244 @@ Submode: %2</source>
         <translation>Wsjtx</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="102"/>
+        <location filename="../ui/MainWindow.cpp" line="103"/>
         <source>Color Theme</source>
         <translation>Barevné téma</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="125"/>
+        <location filename="../ui/MainWindow.cpp" line="126"/>
         <source>Not enabled for non-Fusion style</source>
         <translation>Není povoleno pro jiný styl než Fusion</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="200"/>
+        <location filename="../ui/MainWindow.cpp" line="201"/>
         <source>Press to tune the alert</source>
         <translation>Stiskni pro naladění alertu</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="343"/>
+        <location filename="../ui/MainWindow.cpp" line="344"/>
         <source>FLDigi</source>
         <translation>FLDigi</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="344"/>
+        <location filename="../ui/MainWindow.cpp" line="345"/>
         <source>FLDigi test message received.</source>
         <translation>Testovací zpráva FLDigi přijata.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="352"/>
+        <location filename="../ui/MainWindow.cpp" line="353"/>
         <source>Startup ADI</source>
         <translation>Startup ADI</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="543"/>
+        <location filename="../ui/MainWindow.cpp" line="544"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Chyba Okamžitého nahrávání do Clublog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="788"/>
-        <location filename="../ui/MainWindow.cpp" line="801"/>
-        <location filename="../ui/MainWindow.cpp" line="811"/>
+        <location filename="../ui/MainWindow.cpp" line="785"/>
+        <location filename="../ui/MainWindow.cpp" line="798"/>
+        <location filename="../ui/MainWindow.cpp" line="808"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Detail chyby:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="835"/>
+        <location filename="../ui/MainWindow.cpp" line="832"/>
         <source>op: </source>
         <translation>op: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1012"/>
+        <location filename="../ui/MainWindow.cpp" line="1009"/>
         <source>A New Version</source>
         <translation>Nová verze</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1013"/>
+        <location filename="../ui/MainWindow.cpp" line="1010"/>
         <source>A new version %1 is available.</source>
         <translation>Je k dispozici nová verze %1.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1017"/>
+        <location filename="../ui/MainWindow.cpp" line="1014"/>
         <source>Remind Me Later</source>
         <translation>Připomenout později</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1018"/>
+        <location filename="../ui/MainWindow.cpp" line="1015"/>
         <source>Download</source>
         <translation>Stáhnout</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1276"/>
-        <location filename="../ui/MainWindow.cpp" line="1324"/>
+        <location filename="../ui/MainWindow.cpp" line="1273"/>
+        <location filename="../ui/MainWindow.cpp" line="1321"/>
         <source>QLog Warning</source>
         <translation>Upozornění QLog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1277"/>
+        <location filename="../ui/MainWindow.cpp" line="1274"/>
         <source>LoTW is not configured properly.&lt;p&gt;Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW není správně nakonfigurováno.&lt;p&gt;Pro konfiguraci použijte dialog &lt;b&gt;Nastavení&lt;/b&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1298"/>
-        <location filename="../ui/MainWindow.cpp" line="1376"/>
+        <location filename="../ui/MainWindow.cpp" line="1295"/>
+        <location filename="../ui/MainWindow.cpp" line="1373"/>
         <source>QLog Error</source>
         <translation>Chyba QLog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1299"/>
+        <location filename="../ui/MainWindow.cpp" line="1296"/>
         <source>Cannot load local DXCC entities from the logbook: </source>
         <translation>Nelze načíst lokální DXCC entity z deníku: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1313"/>
+        <location filename="../ui/MainWindow.cpp" line="1310"/>
         <source>Unknown DXCC Entity</source>
         <translation>Neznámá DXCC entita</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1325"/>
+        <location filename="../ui/MainWindow.cpp" line="1322"/>
         <source>Cannot determine a local DXCC entity from logbook contacts.</source>
         <translation>Nelze určit lokální DXCC entitu z kontaktů v deníku.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1331"/>
+        <location filename="../ui/MainWindow.cpp" line="1328"/>
         <source>LoTW DXCC Credits</source>
         <translation>LoTW DXCC kredity</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1332"/>
+        <location filename="../ui/MainWindow.cpp" line="1329"/>
         <source>Select the local DXCC entity for which LoTW DXCC credits will be downloaded:</source>
         <translation>Vyberte lokální DXCC entitu, pro kterou budou staženy LoTW DXCC kredity:</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1343"/>
+        <location filename="../ui/MainWindow.cpp" line="1340"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1344"/>
+        <location filename="../ui/MainWindow.cpp" line="1341"/>
         <source>LoTW DXCC Credit Download</source>
         <translation>Stažení DXCC kreditů z LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1348"/>
+        <location filename="../ui/MainWindow.cpp" line="1345"/>
         <source>Downloading LoTW DXCC credits</source>
         <translation>Stahování LoTW DXCC kreditů</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1356"/>
+        <location filename="../ui/MainWindow.cpp" line="1353"/>
         <source>Processing LoTW DXCC credits</source>
         <translation>Zpracování LoTW DXCC kreditů</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1368"/>
+        <location filename="../ui/MainWindow.cpp" line="1365"/>
         <source>LoTW DXCC Credit Import Summary</source>
         <translation>Souhrn importu LoTW DXCC kreditů</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1376"/>
+        <location filename="../ui/MainWindow.cpp" line="1373"/>
         <source>LoTW DXCC credit import failed: </source>
         <translation>Import LoTW DXCC kreditů selhal: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1428"/>
+        <location filename="../ui/MainWindow.cpp" line="1425"/>
         <source>Failed to encrypt credentials.</source>
         <translation>Nepodařilo se zašifrovat přihlašovací údaje.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1437"/>
+        <location filename="../ui/MainWindow.cpp" line="1434"/>
         <source>Database files (*.dbe);;All files (*)</source>
         <translation>Soubory databáze (*.dbe);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1457"/>
+        <location filename="../ui/MainWindow.cpp" line="1449"/>
+        <source>The file %1 already exists. Replace it?</source>
+        <translation type="unfinished">Soubor %1 již existuje. Chcete ho nahradit?</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1464"/>
+        <source>Choose a different file. The export destination points to the open database.</source>
+        <translation type="unfinished">Vyberte jiný soubor. Cílem exportu je právě otevřená databáze.</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1475"/>
         <source>Failed to create temporary file.</source>
         <translation>Nepodařilo se vytvořit dočasný soubor.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1473"/>
+        <location filename="../ui/MainWindow.cpp" line="1491"/>
         <source>Failed to dump the database.</source>
         <translation>Nepodařilo se exportovat databázi.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1478"/>
+        <location filename="../ui/MainWindow.cpp" line="1496"/>
         <source>Compressing database...</source>
         <translation>Komprimuje se databáze…</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1487"/>
+        <location filename="../ui/MainWindow.cpp" line="1504"/>
+        <source>Database successfully dumped to
+%1
+Some credentials could not be removed.</source>
+        <translation type="unfinished">Databáze byla úspěšně exportována do
+%1
+Některé přihlašovací údaje se nepodařilo odstranit.</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1510"/>
         <source>Database successfully dumped to
 %1</source>
         <translation>Databáze byla úspěšně exportována do
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1493"/>
+        <location filename="../ui/MainWindow.cpp" line="1515"/>
         <source>Failed to compress the database.</source>
         <translation>Nepodařilo se komprimovat databázi.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1560"/>
-        <source>Failed to prepare database for import.</source>
-        <translation>Nepodařilo se připravit databázi pro import.</translation>
+        <location filename="../ui/MainWindow.cpp" line="1596"/>
+        <source>QLog could not be restarted. The prepared import was cancelled.</source>
+        <translation type="unfinished">QLog se nepodařilo restartovat. Připravený import byl zrušen.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1737"/>
+        <location filename="../ui/MainWindow.cpp" line="1597"/>
+        <source>QLog could not be restarted.
+%1</source>
+        <translation type="unfinished">QLog se nepodařilo restartovat.
+%1</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1745"/>
         <source>Classic</source>
         <translation>Klasické</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1974"/>
+        <location filename="../ui/MainWindow.cpp" line="1982"/>
         <source>Accept any received exchange. %1 is updated only when the received exchange is valid for this field.</source>
         <translation>Přijmout libovolný přijatý exchange. %1 se aktualizuje pouze tehdy, pokud je přijatý exchange pro toto pole platný.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1996"/>
+        <location filename="../ui/MainWindow.cpp" line="2004"/>
         <source>Standard Linking</source>
         <translation>Standardní propojení</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2012"/>
+        <location filename="../ui/MainWindow.cpp" line="2020"/>
         <source>Flexible Linking</source>
         <translation>Flexibilní propojení</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2050"/>
+        <location filename="../ui/MainWindow.cpp" line="2058"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>Prejete si odstranit Contest filtr %1?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2081"/>
+        <location filename="../ui/MainWindow.cpp" line="2089"/>
         <source>Contest: </source>
         <translation>Contest: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2362"/>
+        <location filename="../ui/MainWindow.cpp" line="2370"/>
         <source>Backup could not be completed. Check Settings → Backup.
 
 %1</source>
@@ -10321,12 +10356,12 @@ Submode: %2</source>
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2484"/>
+        <location filename="../ui/MainWindow.cpp" line="2492"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Záloženo na Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Ikony &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satelitní snímky &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2566"/>
+        <location filename="../ui/MainWindow.cpp" line="2574"/>
         <source>N/A</source>
         <translation>-</translation>
     </message>
@@ -11082,31 +11117,30 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
         <location filename="../core/MembershipQE.cpp" line="211"/>
         <location filename="../core/MembershipQE.cpp" line="338"/>
         <location filename="../core/MembershipQE.cpp" line="345"/>
-        <location filename="../core/main.cpp" line="627"/>
         <location filename="../ui/ExportDialog.cpp" line="182"/>
         <location filename="../ui/ImportDialog.cpp" line="343"/>
-        <location filename="../ui/MainWindow.cpp" line="786"/>
-        <location filename="../ui/MainWindow.cpp" line="799"/>
-        <location filename="../ui/MainWindow.cpp" line="809"/>
+        <location filename="../ui/MainWindow.cpp" line="783"/>
+        <location filename="../ui/MainWindow.cpp" line="796"/>
+        <location filename="../ui/MainWindow.cpp" line="806"/>
         <location filename="../ui/NewContactWidget.cpp" line="1740"/>
         <location filename="../ui/SettingsDialog.cpp" line="823"/>
         <location filename="../ui/SettingsDialog.cpp" line="848"/>
         <location filename="../ui/SettingsDialog.cpp" line="857"/>
         <location filename="../ui/SettingsDialog.cpp" line="868"/>
-        <location filename="../ui/SettingsDialog.cpp" line="975"/>
-        <location filename="../ui/SettingsDialog.cpp" line="993"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1353"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1715"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1788"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1833"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2018"/>
+        <location filename="../ui/SettingsDialog.cpp" line="982"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1361"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1723"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1796"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1841"/>
         <location filename="../ui/SettingsDialog.cpp" line="2026"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2033"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2041"/>
         <location filename="../ui/SettingsDialog.cpp" line="2050"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2057"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2064"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2539"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2072"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2547"/>
         <source>QLog Warning</source>
         <translation>Upozornění QLog</translation>
     </message>
@@ -11121,19 +11155,19 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
         <translation>Nepovedlo se aktualizovat Club List. Není možné naplánovat stažení listů</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="80"/>
-        <location filename="../core/CredentialStore.cpp" line="123"/>
+        <location filename="../core/CredentialStore.cpp" line="85"/>
+        <location filename="../core/CredentialStore.cpp" line="133"/>
         <location filename="../core/MembershipQE.cpp" line="323"/>
         <source>QLog Critical</source>
         <translation>Chyba QLog</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="81"/>
+        <location filename="../core/CredentialStore.cpp" line="86"/>
         <source>Cannot save a password for %1 to the Credential Store</source>
         <translation>Do uložiště hesel nelze uložit heslo pro %1</translation>
     </message>
     <message>
-        <location filename="../core/CredentialStore.cpp" line="124"/>
+        <location filename="../core/CredentialStore.cpp" line="134"/>
         <source>Cannot get a password for %1 from the Credential Store</source>
         <translation>Z uložiště hesel nelze získat heslo pro %1</translation>
     </message>
@@ -11153,42 +11187,32 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
         <translation>Síťová chyba. Nepovedlo se stáhnout Club List pro</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="598"/>
-        <location filename="../core/main.cpp" line="620"/>
-        <location filename="../core/main.cpp" line="641"/>
-        <location filename="../core/main.cpp" line="652"/>
+        <location filename="../core/main.cpp" line="590"/>
+        <location filename="../core/main.cpp" line="612"/>
+        <location filename="../core/main.cpp" line="625"/>
+        <location filename="../core/main.cpp" line="636"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="327"/>
         <location filename="../ui/ExportDialog.cpp" line="204"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
         <location filename="../ui/NewContactWidget.cpp" line="2023"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="488"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1009"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1018"/>
         <source>QLog Error</source>
         <translation>Chyba QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="599"/>
+        <location filename="../core/main.cpp" line="591"/>
         <source>QLog is already running</source>
         <translation>QLog již běží</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="621"/>
-        <source>Failed to process pending database import.</source>
-        <translation>Nepodařilo se zpracovat čekající import databáze.</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="628"/>
-        <source>The database was imported successfully, but the stored passwords could not be restored (decryption failed or the data is corrupted). All service passwords have been cleared and must be re-entered in Settings.</source>
-        <translation>Databáze byla úspěšně importována, ale uložená hesla nebylo možné obnovit (dešifrování selhalo nebo jsou data poškozena). Všechna hesla služeb byla vymazána a musí být znovu zadána v Nastavení.</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="642"/>
+        <location filename="../core/main.cpp" line="626"/>
         <source>Could not connect to database.</source>
         <translation>Nelze se připojit k databázi.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="653"/>
+        <location filename="../core/main.cpp" line="637"/>
         <source>Database migration failed.</source>
         <translation>Migrace databaze selhala.</translation>
     </message>
@@ -11270,7 +11294,7 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="824"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2540"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2548"/>
         <source>Please, define at least one Station Locations Profile</source>
         <translation>Prosím, definujte alespoň jeden Profil Stanice</translation>
     </message>
@@ -11285,77 +11309,77 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
         <translation>Zjištěna smyčka. Raw UDP přesměrování používá stejný port jako příjem WSJT-X.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="976"/>
+        <location filename="../ui/SettingsDialog.cpp" line="983"/>
         <source>Rig port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Port musí být platný COM port.&lt;br&gt;Použijte COMxx pro Windows, pro ostatní cestu k souboru zařízení</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="994"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
         <source>Rig PTT port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>PTT Port musí být platný COM port.&lt;br&gt;Použijte COMxx pro Windows, pro ostatní cestu k souboru zařízení</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be 0.</source>
         <translation>&lt;b&gt;Rozsah TX&lt;/b&gt;: Koncová frekvence nesmí být 0.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1011"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1019"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be under Min Frequency.</source>
         <translation>&lt;b&gt;Rozsah TX&lt;/b&gt;: Koncová frekvence nesmí být menší než počáteční.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1362"/>
         <source>Rotator port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Port musí být platný COM port.&lt;br&gt;Použijte COMxx pro Windows, pro ostatní cestu k souboru zařízení</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1724"/>
         <source>CW Keyer port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Port musí být platný COM port.&lt;br&gt;Použijte COMxx pro Windows, pro ostatní cestu k souboru zařízení</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1789"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1797"/>
         <source>Cannot change the CW Keyer Model to &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;No Morse over CAT support for Rig(s) &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Nelze změnit Model klíče na &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;Nasledující zařízení nepodporuji Morse over CAT support &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1834"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1842"/>
         <source>Cannot delete the CW Keyer Profile&lt;br&gt;The CW Key Profile is used by Rig(s): &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Nelze vymazat Profil Klíče&lt;br&gt;Profil je pouzívám temito zařízeními:&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2035"/>
         <source>Operator Callsign has an invalid format</source>
         <translation>Značka operátora ma chybý format</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
         <source>Gridsquare has an invalid format</source>
         <translation>Lokátor má chybný formát</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2043"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
         <source>VUCC Grids have an invalid format (must be 2 or 4 Gridsquares separated by &apos;,&apos;)</source>
         <translation>VUCC lokátor má neplatný formát (musí být 2 nebo 4 lokátory oddělené &apos;,&apos;)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2059"/>
         <source>Country must not be empty</source>
         <translation>Zěme nesmí být prázdná</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2066"/>
         <source>CQZ must not be empty</source>
         <translation>CQZ nesmí být prázdné</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2073"/>
         <source>ITU must not be empty</source>
         <translation>ITU nesmí být prázdné</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2019"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
         <source>Callsign has an invalid format</source>
         <translation>Značka má chybný formát</translation>
     </message>
@@ -11391,17 +11415,17 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
         </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="787"/>
+        <location filename="../ui/MainWindow.cpp" line="784"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Chyba Rig:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="800"/>
+        <location filename="../ui/MainWindow.cpp" line="797"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Chyba Rotátoru:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="810"/>
+        <location filename="../ui/MainWindow.cpp" line="807"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Chyba CW Klíče:&lt;/b&gt; </translation>
     </message>
@@ -11536,32 +11560,32 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
         <translation type="unfinished">Nepodařilo se aktualizovat tyto číselníky: %1. Stávající data byla zachována.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="615"/>
+        <location filename="../core/main.cpp" line="607"/>
         <source>Importing Database</source>
         <translation>Importuji databázi</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="635"/>
+        <location filename="../core/main.cpp" line="619"/>
         <source>Opening Database</source>
         <translation>Načítání Databáze</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="646"/>
+        <location filename="../core/main.cpp" line="630"/>
         <source>Migrating Database</source>
         <translation>Migrace Databáze</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="645"/>
         <source>QLog Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="645"/>
         <source>Could not complete reference-list initialization.</source>
         <translation type="unfinished">Nepodařilo se dokončit inicializaci číselníků.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="666"/>
+        <location filename="../core/main.cpp" line="650"/>
         <source>Starting Application</source>
         <translation>Start aplikace</translation>
     </message>
@@ -11698,53 +11722,241 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
         <translation>mil</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="301"/>
+        <location filename="../core/LogDatabase.cpp" line="345"/>
+        <location filename="../core/LogDatabase.cpp" line="354"/>
+        <location filename="../core/LogDatabase.cpp" line="370"/>
+        <location filename="../core/LogDatabase.cpp" line="389"/>
         <source>Not a valid QLog database</source>
         <translation>Neplatná databáze QLog</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="311"/>
+        <location filename="../core/LogDatabase.cpp" line="362"/>
         <source>Database version too new (requires newer QLog version)</source>
         <translation>Verze databáze je příliš nová (vyžaduje novější verzi QLog)</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="324"/>
+        <location filename="../core/LogDatabase.cpp" line="380"/>
         <source>Database is not QLog Export file</source>
         <translation>Databáze není soubor QLog Export</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="25"/>
+        <location filename="../core/LogDatabase.cpp" line="512"/>
+        <source>An unfinished import already exists in %1. Preserve these files and finish or explicitly cancel that import first.</source>
+        <translation type="unfinished">V %1 již existuje nedokončený import. Zachovejte tyto soubory a nejprve import dokončete nebo výslovně zrušte.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="521"/>
+        <source>The active database cannot be used as an import candidate.</source>
+        <translation type="unfinished">Aktivní databázi nelze použít jako databázi určenou k importu.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="524"/>
+        <source>The import passphrase is required.</source>
+        <translation type="unfinished">Je nutné zadat heslovou frázi pro import.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="528"/>
+        <source>The source database has unfinished writes and cannot be imported.</source>
+        <translation type="unfinished">Zdrojová databáze obsahuje nedokončené zápisy a nelze ji importovat.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="568"/>
+        <source>The temporary database files could not be released for import.</source>
+        <translation type="unfinished">Dočasné databázové soubory se nepodařilo uvolnit pro import.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="571"/>
+        <source>Failed to prepare the database for import.</source>
+        <translation type="unfinished">Databázi se nepodařilo připravit k importu.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="574"/>
+        <source>Failed to save the import passphrase.</source>
+        <translation type="unfinished">Heslovou frázi pro import se nepodařilo uložit.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="608"/>
+        <source>Failed to prepare the database for import. The current database was preserved.</source>
+        <translation type="unfinished">Databázi se nepodařilo připravit k importu. Aktuální databáze byla zachována.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="677"/>
+        <source>This import cannot be cancelled safely. Its recovery files were preserved.</source>
+        <translation type="unfinished">Tento import nelze bezpečně zrušit. Jeho soubory pro obnovu byly zachovány.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="683"/>
+        <source>Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting.</source>
+        <translation type="unfinished">Zrušení se nezdařilo. Připravený import stále existuje a při příštím spuštění se může provést. Zachovejte jeho soubory a před restartem vyřešte jeho zrušení.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="685"/>
+        <source>The import candidate was removed, but cancellation could not be recorded. The current database was preserved.</source>
+        <translation type="unfinished">Databáze určená k importu byla odstraněna, ale zrušení se nepodařilo zaznamenat. Aktuální databáze byla zachována.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="690"/>
+        <source>The import was cancelled, but its temporary files could not be removed.</source>
+        <translation type="unfinished">Import byl zrušen, ale jeho dočasné soubory se nepodařilo odstranit.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="693"/>
+        <source>The import was cancelled, but its passphrase could not be removed.</source>
+        <translation type="unfinished">Import byl zrušen, ale jeho heslovou frázi se nepodařilo odstranit.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="696"/>
+        <source>The import was cancelled, but its progress file could not be removed.</source>
+        <translation type="unfinished">Import byl zrušen, ale soubor s údaji o jeho průběhu se nepodařilo odstranit.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="710"/>
+        <source>The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.</source>
+        <translation type="unfinished">U nedokončeného importu chybí údaje o přípravě nebo jsou neplatné. Zachovejte soubory v %1 a znovu spusťte přípravu importu.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="718"/>
+        <source>The import was cancelled, but the current database could not be opened or migrated.</source>
+        <translation type="unfinished">Import byl zrušen, ale aktuální databázi se nepodařilo otevřít nebo migrovat.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="770"/>
+        <source>The prepared import does not match its recovery files. The original database was preserved.</source>
+        <translation type="unfinished">Připravený import neodpovídá svým souborům pro obnovu. Původní databáze byla zachována.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="773"/>
+        <source>The imported database could not be opened or migrated. The original database was preserved.</source>
+        <translation type="unfinished">Importovanou databázi se nepodařilo otevřít nebo migrovat. Původní databáze byla zachována.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="795"/>
+        <source>Failed to start the import settings transaction.</source>
+        <translation type="unfinished">Při importu se nepodařilo zahájit transakci pro nastavení.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="807"/>
+        <source>Import settings could not be applied. The original database was preserved.</source>
+        <translation type="unfinished">Nastavení z importu se nepodařilo použít. Původní databáze byla zachována.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="824"/>
+        <source>The imported database failed its integrity check. The original database was preserved.</source>
+        <translation type="unfinished">Importovaná databáze neprošla kontrolou integrity. Původní databáze byla zachována.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="829"/>
+        <source>The import passphrase is unavailable or the passwords could not be decrypted. All recovery files were preserved.</source>
+        <translation type="unfinished">Heslová fráze pro import není dostupná nebo se nepodařilo dešifrovat hesla. Všechny soubory pro obnovu byly zachovány.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="832"/>
+        <source>Failed to finalize the prepared database. The original database was preserved.</source>
+        <translation type="unfinished">Nepodařilo se dokončit zpracování připravené databáze. Původní databáze byla zachována.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="865"/>
+        <source>The interrupted import has inconsistent recovery files. All files were preserved for recovery.</source>
+        <translation type="unfinished">Soubory pro obnovu přerušeného importu si navzájem neodpovídají. Všechny soubory byly zachovány pro obnovu.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="870"/>
+        <source>The import passwords could not be restored. All recovery files were preserved.</source>
+        <translation type="unfinished">Hesla z importu se nepodařilo obnovit. Všechny soubory pro obnovu byly zachovány.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="872"/>
+        <source>Failed to finish database writes before import.</source>
+        <translation type="unfinished">Před importem se nepodařilo dokončit zápisy do databáze.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="878"/>
+        <source>Failed to discard prepared reference lists before import.</source>
+        <translation type="unfinished">Před importem se nepodařilo odstranit připravené číselníky.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="894"/>
+        <source>The original database could not be preserved. Import was stopped.</source>
+        <translation type="unfinished">Původní databázi se nepodařilo zachovat. Import byl zastaven.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="901"/>
+        <source>The prepared database could not be installed. All recovery files were preserved.</source>
+        <translation type="unfinished">Připravenou databázi se nepodařilo nasadit. Všechny soubory pro obnovu byly zachovány.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="906"/>
+        <source>The imported database was installed, but its progress could not be saved. Restart to retry.</source>
+        <translation type="unfinished">Importovaná databáze byla nasazena, ale údaje o průběhu importu se nepodařilo uložit. Pro další pokus restartujte aplikaci.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="931"/>
+        <source>The imported database does not match its recovery files. All files were preserved.</source>
+        <translation type="unfinished">Importovaná databáze neodpovídá svým souborům pro obnovu. Všechny soubory byly zachovány.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="934"/>
+        <source>The imported database could not be opened. Its recovery files were preserved.</source>
+        <translation type="unfinished">Importovanou databázi se nepodařilo otevřít. Její soubory pro obnovu byly zachovány.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="939"/>
+        <source>The imported database was retained, but password restoration is incomplete. Restart QLog to retry.</source>
+        <translation type="unfinished">Importovaná databáze byla zachována, ale obnova hesel není dokončena. Pro další pokus restartujte QLog.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="959"/>
+        <source>The imported database was retained, but password replacement is incomplete. Restart QLog to retry.</source>
+        <translation type="unfinished">Importovaná databáze byla zachována, ale nahrazení hesel není dokončeno. Pro další pokus restartujte QLog.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="965"/>
+        <source>The import is complete, but cleanup could not be started. Restart to retry.</source>
+        <translation type="unfinished">Import je dokončen, ale nepodařilo se zahájit úklid. Pro další pokus restartujte aplikaci.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="975"/>
+        <source>The import is complete, but cleanup failed. Restart to retry.</source>
+        <translation type="unfinished">Import je dokončen, ale úklid se nezdařil. Pro další pokus restartujte aplikaci.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="983"/>
+        <source>The import is complete, but its recovery files could not be removed. Restart to retry.</source>
+        <translation type="unfinished">Import je dokončen, ale jeho soubory pro obnovu se nepodařilo odstranit. Pro další pokus restartujte aplikaci.</translation>
+    </message>
+    <message>
+        <location filename="../core/PlatformParameterManager.cpp" line="21"/>
         <source>TQSL Path</source>
         <translation>Cesta k TQSL</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="89"/>
-        <location filename="../core/PlatformParameterManager.cpp" line="228"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="85"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="207"/>
         <source>(Flatpak internal path)</source>
         <translation>(Interní cesta Flatpak)</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="192"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="171"/>
         <source>Rig</source>
         <translation>Rig</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="193"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="172"/>
         <source>Rig PTT</source>
         <translation>Importazione database</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="194"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="173"/>
         <source>Rig rigctld</source>
         <translation>Rig rigctld</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="195"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="174"/>
         <source>Rotator</source>
         <translation>Rotátor</translation>
     </message>
     <message>
-        <location filename="../core/PlatformParameterManager.cpp" line="196"/>
+        <location filename="../core/PlatformParameterManager.cpp" line="175"/>
         <source>CW Keyer</source>
         <translation>CW Klíč</translation>
     </message>
@@ -14078,26 +14290,26 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
         <location filename="../ui/SettingsDialog.ui" line="3036"/>
         <location filename="../ui/SettingsDialog.ui" line="4050"/>
         <location filename="../ui/SettingsDialog.ui" line="4193"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1017"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1217"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1359"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1475"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1544"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1615"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1629"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1698"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1795"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1893"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1907"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1977"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2071"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2188"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1025"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1225"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1367"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1483"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1552"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1623"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1637"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1706"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1803"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1901"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1915"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1985"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2079"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2196"/>
         <source>Add</source>
         <translation>Přidat</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3787"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
         <source>Callsign</source>
         <translation>Značka</translation>
     </message>
@@ -14510,7 +14722,7 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="117"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1422"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1430"/>
         <source>None</source>
         <translation>Žádné</translation>
     </message>
@@ -14532,10 +14744,10 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="124"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3350"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3607"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3651"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3667"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3358"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3615"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3659"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3675"/>
         <source>No</source>
         <translation>No</translation>
     </message>
@@ -14912,7 +15124,7 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2042"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2880"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2888"/>
         <source>Start rigctld daemon to share rig with other applications (e.g. WSJT-X)</source>
         <translation>Spustit démon rigctld pro sdílení transceiveru s jinými aplikacemi (např. WSJT-X)</translation>
     </message>
@@ -15070,7 +15282,7 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4122"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
         <source>API Key</source>
         <translation>Klíč API</translation>
     </message>
@@ -15206,7 +15418,7 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="5405"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3150"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3158"/>
         <source>No successful backup yet.</source>
         <translation type="unfinished">Zatím nebyla úspěšně vytvořena žádná záloha.</translation>
     </message>
@@ -15422,9 +15634,9 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3352"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3360"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3679"/>
         <source>Custom</source>
         <translation>Vlastní</translation>
     </message>
@@ -15476,7 +15688,7 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3413"/>
         <location filename="../ui/SettingsDialog.cpp" line="661"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2698"/>
         <source>HamQTH</source>
         <translation>HamQTH</translation>
     </message>
@@ -15503,7 +15715,7 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
         <location filename="../ui/SettingsDialog.ui" line="3453"/>
         <location filename="../ui/SettingsDialog.ui" line="3962"/>
         <location filename="../ui/SettingsDialog.cpp" line="662"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2683"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2691"/>
         <source>QRZ.com</source>
         <translation>QRZ.com</translation>
     </message>
@@ -15662,8 +15874,8 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="660"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2682"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2689"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2697"/>
         <source>Disabled</source>
         <translation>Vypnuto</translation>
     </message>
@@ -15679,40 +15891,41 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="968"/>
-        <location filename="../ui/SettingsDialog.cpp" line="986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1346"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1538"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1624"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1708"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1902"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2000"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2006"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2012"/>
+        <location filename="../ui/SettingsDialog.cpp" line="975"/>
+        <location filename="../ui/SettingsDialog.cpp" line="994"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1546"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1632"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1910"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2008"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2014"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2020"/>
         <source>Must not be empty</source>
         <translation>Nesmí být prázdné</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="843"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1016"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1175"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1358"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1454"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1542"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1597"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1628"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1681"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1793"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1873"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1906"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1959"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2069"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2159"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1024"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1183"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1366"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1462"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1605"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1636"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1689"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1801"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1881"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1914"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1967"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2077"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2167"/>
         <source>Modify</source>
         <translation>Upravit</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="464"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1305"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1313"/>
         <source>Special - Omnirig</source>
         <translation>Special - Omnirig</translation>
     </message>
@@ -15962,180 +16175,180 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
         <translation type="unfinished">Nepodařilo se uložit nastavení zálohování.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2384"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2392"/>
         <source>Select File</source>
         <translation>Vybrat soubor</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2420"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2428"/>
         <source>Auto Detect</source>
         <translation>Automatická detekce</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2421"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2429"/>
         <source>TQSL was not found on this system.
 Please install TQSL or specify the path manually.</source>
         <translation>TQSL nebyl na tomto systému nalezen.
 Nainstalujte prosím TQSL nebo zadejte cestu ručně.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2437"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2445"/>
         <source>Not found</source>
         <translation>Nenalezeno</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2779"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2787"/>
         <source>RTS is controlled by hardware flow control</source>
         <translation>RTS je řízeno hardwarovým řízením toku</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2875"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2883"/>
         <source>Rig sharing is only available for Hamlib driver</source>
         <translation>Sdílení transceiveru je k dispozici pouze pro ovladač Hamlib</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2877"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2885"/>
         <source>Rig sharing is not available for network connection</source>
         <translation>Sdílení transceiveru není k dispozici pro síťové připojení</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2895"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2903"/>
         <source>Off</source>
         <translation>Vypnuto</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2950"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
         <source>Delete Passwords</source>
         <translation>Smazat hesla</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2950"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
         <source>All passwords have been deleted</source>
         <translation>Všechna hesla byla smazána</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2961"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2969"/>
         <source>Deleting all QSOs...</source>
         <translation>Mažu všechna QSO...</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2962"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2970"/>
         <source>Delete QSOs Progress</source>
         <translation>Průběh mazání QSO</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
         <source>Failed to delete all QSOs.</source>
         <translation>Nepodařilo se smazat všechna QSO.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3137"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3145"/>
         <source>Select Backup Folder</source>
         <translation type="unfinished">Vyberte složku pro zálohy</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3149"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3157"/>
         <source>Last successful internal backup: %1</source>
         <translation type="unfinished">Poslední úspěšná interní záloha: %1</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3311"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3319"/>
         <source>Enabled</source>
         <translation>Zapnuto</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3312"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3320"/>
         <source>Path</source>
         <translation>Cesta</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
         <source>Station Profile</source>
         <translation>Profil stanice</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
         <source>Missing QSL Sent</source>
         <translation>Chybějící QSL Sent</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3314"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3322"/>
         <source>Last Recovery</source>
         <translation>Poslední obnova</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3347"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3604"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3672"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3355"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3612"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3680"/>
         <source>Queued</source>
         <translation>Ve frontě</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3348"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3606"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3647"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3356"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3614"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
         <source>Ignored</source>
         <translation>Ignorovat</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3349"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3605"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3649"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3665"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3357"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3613"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3657"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3673"/>
         <source>Requested</source>
         <translation>Vyžádáno</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3351"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3608"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3653"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3669"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3359"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3616"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3661"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3677"/>
         <source>Yes</source>
         <translation>Ano</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3391"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3399"/>
         <source>Station Profile does not exist. Select another profile and enable this row again.</source>
         <translation>Profil stanice neexistuje. Vyberte jiný profil a tento řádek znovu povolte.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3407"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
         <source>File exists</source>
         <translation>Soubor existuje</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3407"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
         <source>File does not exist</source>
         <translation>Soubor neexistuje</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3536"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3544"/>
         <source>Startup ADI initialized</source>
         <translation>Startup ADI inicializován</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3558"/>
         <source>Select ADIF File</source>
         <translation>Vybrat soubor ADIF</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3552"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3560"/>
         <source>ADIF Files (*.adi *.adif);;All Files (*)</source>
         <translation>Soubory ADIF (*.adi *.adif);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3814"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3822"/>
         <source>members</source>
         <translation>členů</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3821"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
         <source>Required internet connection during application start</source>
         <translation>Je vyžadováno připojení do internetu během startu aplikace</translation>
     </message>
