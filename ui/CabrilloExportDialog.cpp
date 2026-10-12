@@ -219,7 +219,7 @@ void CabrilloExportDialog::refreshCallsigns()
         if ( ui->dateRangeCheckBox->isChecked() )
         {
             query.bindValue(":start_date", ui->startDateEdit->dateTime().toUTC());
-            query.bindValue(":end_date", ui->endDateEdit->dateTime().toUTC());
+            query.bindValue(":end_date", ui->endDateEdit->dateTime().toUTC().addSecs(59));
         }
 
         if ( query.exec() )
@@ -426,7 +426,7 @@ void CabrilloExportDialog::bindWhereClause(QSqlQuery &query) const
     if ( ui->dateRangeCheckBox->isChecked() )
     {
         query.bindValue(":export_start_date", ui->startDateEdit->dateTime().toUTC());
-        query.bindValue(":export_end_date", ui->endDateEdit->dateTime().toUTC());
+        query.bindValue(":export_end_date", ui->endDateEdit->dateTime().toUTC().addSecs(59));
     }
 
     if ( bandFilterActive )
