@@ -23,6 +23,8 @@ private slots:
     void decrypt_corruptedData_fails();
     void decrypt_modifiedCiphertext_fails();
     void decrypt_modifiedTag_fails();
+    void decrypt_tagLength_data();
+    void decrypt_tagLength();
 
     // Edge cases
     void encrypt_emptyPassword_succeeds();
@@ -230,6 +232,34 @@ void PasswordCipherTest::decrypt_modifiedTag_fails()
 
     QByteArray decrypted;
     QVERIFY(!PasswordCipher::decrypt(password, modified, decrypted));
+}
+
+void PasswordCipherTest::decrypt_tagLength_data()
+{
+    QTest::addColumn<int>("tagLength");
+    QTest::addColumn<bool>("valid");
+    QTest::newRow("one-byte") << 1 << false;
+    QTest::newRow("twelve-bytes") << 12 << false;
+    QTest::newRow("fifteen-bytes") << 15 << false;
+    QTest::newRow("full-tag") << 16 << true;
+}
+
+void PasswordCipherTest::decrypt_tagLength()
+{
+    QFETCH(int, tagLength);
+    QFETCH(bool, valid);
+    const QString password("password");
+    const QByteArray plaintext("Data with protected integrity");
+    QByteArray encrypted;
+    QVERIFY(PasswordCipher::encrypt(password, plaintext, encrypted));
+    QByteArray blob = QByteArray::fromBase64(encrypted);
+    QCOMPARE(static_cast<quint8>(blob.at(9)), quint8(16));
+    // The version-1 header stores the tag length at byte 9.
+    blob[9] = static_cast<char>(tagLength);
+    blob.chop(16 - tagLength);
+    QByteArray decrypted("previous plaintext");
+    QCOMPARE(PasswordCipher::decrypt(password, blob.toBase64(), decrypted), valid);
+    QCOMPARE(decrypted, valid ? plaintext : QByteArray());
 }
 
 // ============================================================================

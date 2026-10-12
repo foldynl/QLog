@@ -319,7 +319,8 @@ bool PasswordCipher::decrypt(const QString& passphrase,
 
     if (ds.status()!=QDataStream::Ok) return false;
     if (ver != kVersion || kdf != kKdfPBKDF2 || aead != kAeadAES256GCM) return false;
-    if (slen==0 || ivlen==0 || tlen==0) return false;
+    if ( slen == 0 || ivlen == 0 || tlen != kTagLen )
+        return false;
     if (iters < 10000) return false; // sanity
 
     QByteArray salt(slen, 0), iv(ivlen, 0);
