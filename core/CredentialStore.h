@@ -86,6 +86,9 @@ public:
     bool deleteImportPassphrase();
 
 private:
+    static const QString IMPORT_PASSPHRASE_STORAGE_KEY;
+    static const QString IMPORT_PASSPHRASE_USERNAME;
+
     explicit CredentialStore(QObject *parent = nullptr);
 
     // Protected methods — accessible only from derived service classes.

@@ -20,6 +20,9 @@
 
 MODULE_IDENTIFICATION("qlog.core.credentialstore");
 
+const QString CredentialStore::IMPORT_PASSPHRASE_STORAGE_KEY = QStringLiteral("ImportPassphrase");
+const QString CredentialStore::IMPORT_PASSPHRASE_USERNAME = QStringLiteral("import");
+
 using namespace QKeychain;
 
 CredentialRegistry &CredentialRegistry::instance()
@@ -326,9 +329,13 @@ bool CredentialStore::decodePasswords(const QString &passphrase, QJsonArray &cre
     for ( const QJsonValue &val : credArray )
     {
         const QJsonObject entry = val.toObject();
+        // Windows credential targets are case-insensitive.
+        const bool isImportPassphrase = entry.value("storagekey").toString().compare(IMPORT_PASSPHRASE_STORAGE_KEY, Qt::CaseInsensitive) == 0
+                                       && entry.value("username").toString().compare(IMPORT_PASSPHRASE_USERNAME, Qt::CaseInsensitive) == 0;
         if ( !val.isObject() || entry.value("storagekey").toString().isEmpty()
              || entry.value("username").toString().isEmpty()
-             || entry.value("password").toString().isEmpty() )
+             || entry.value("password").toString().isEmpty()
+             || isImportPassphrase )
         {
             qCWarning(runtime) << "Invalid credential entry";
             return false;
@@ -378,9 +385,7 @@ bool CredentialStore::saveImportPassphrase(const QString &passphrase)
     FCT_IDENTIFICATION;
 
     // special one-time password when QLog import external DB
-    return savePassword(QStringLiteral("ImportPassphrase"),
-                        QStringLiteral("import"),
-                        passphrase) == 0;
+    return savePassword(IMPORT_PASSPHRASE_STORAGE_KEY, IMPORT_PASSPHRASE_USERNAME, passphrase) == 0;
 }
 
 QString CredentialStore::getImportPassphrase()
@@ -388,8 +393,7 @@ QString CredentialStore::getImportPassphrase()
     FCT_IDENTIFICATION;
 
     // special one-time password when QLog import external DB
-    return getPassword(QStringLiteral("ImportPassphrase"),
-                       QStringLiteral("import"));
+    return getPassword(IMPORT_PASSPHRASE_STORAGE_KEY, IMPORT_PASSPHRASE_USERNAME);
 }
 
 bool CredentialStore::deleteImportPassphrase()
@@ -397,6 +401,5 @@ bool CredentialStore::deleteImportPassphrase()
     FCT_IDENTIFICATION;
 
     // special one-time password when QLog import external DB
-    return deletePassword(QStringLiteral("ImportPassphrase"),
-                          QStringLiteral("import"));
+    return deletePassword(IMPORT_PASSPHRASE_STORAGE_KEY, IMPORT_PASSPHRASE_USERNAME);
 }

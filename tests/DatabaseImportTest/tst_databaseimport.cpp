@@ -445,7 +445,7 @@ void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal_data()
 {
     QTest::addColumn<QString>("failure");
     for ( const QString &failure : {QString("missing-profile"), QString("invalid-identifier"),
-                                   QString("settings-write"), QString("commit"), QString("integrity"),
+                                   QString("settings-write"), QString("commit"), QString("integrity"), QString("index-integrity"),
                                    QString("validation"), QString("migration")} )
         QTest::newRow(qPrintable(failure)) << failure;
 }
@@ -480,6 +480,26 @@ void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal()
         if ( failure == "settings-write" )
             QVERIFY(query.exec("CREATE TRIGGER reject_setting BEFORE INSERT ON log_param "
                                "WHEN NEW.name = 'services/lotw/callbook/tqsl' BEGIN SELECT RAISE(FAIL, 'test'); END"));
+        if ( failure == "index-integrity" )
+        {
+            QVERIFY(query.exec("CREATE INDEX contacts_callsign_idx ON contacts(callsign)"));
+            QVERIFY(query.exec("SELECT rootpage FROM sqlite_master WHERE name = 'contacts_callsign_idx'"));
+            QVERIFY(query.next());
+            const int rootPage = query.value(0).toInt();
+            QVERIFY(query.exec("PRAGMA writable_schema = ON"));
+            QVERIFY(query.exec("DELETE FROM sqlite_master WHERE name = 'contacts_callsign_idx'"));
+            query.finish();
+            db.close();
+            QVERIFY(db.open());
+            // Keep the index entries while changing the table through a connection without that index.
+            QVERIFY(query.exec("UPDATE contacts SET callsign = 'CHANGED' WHERE id = 1"));
+            QVERIFY(query.exec("PRAGMA writable_schema = ON"));
+            QVERIFY(query.prepare("INSERT INTO sqlite_master (type, name, tbl_name, rootpage, sql) "
+                                  "VALUES ('index', 'contacts_callsign_idx', 'contacts', :rootpage, "
+                                  "'CREATE INDEX contacts_callsign_idx ON contacts(callsign)')"));
+            query.bindValue(":rootpage", rootPage);
+            QVERIFY(query.exec());
+        }
         if ( failure == "commit" || failure == "integrity" )
         {
             QVERIFY(query.exec("CREATE TABLE parent (id INTEGER PRIMARY KEY)"));
@@ -496,7 +516,7 @@ void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal()
     QVERIFY(!LogDatabase::instance()->processPendingImport());
     QCOMPARE(readFile(LogDatabase::dbFilename()), original);
     QVERIFY(LogDatabase::hasPendingImport());
-    if ( failure != "validation" && failure != "integrity" )
+    if ( failure != "validation" && failure != "integrity" && failure != "index-integrity" )
         QCOMPARE(LogParam::getLoTWTQSLPath("original"), QString("original"));
 }
 

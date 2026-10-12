@@ -180,6 +180,13 @@ void CredentialStoreImportTest::importRejectsMalformedBatchBeforeWriting_data()
         {"storagekey":"TestService","username":"first","password":"one"},42]})");
     QTest::newRow("missing-password") << QByteArray(R"({"credentials":[
         {"storagekey":"TestService","username":"first"}]})");
+    QTest::newRow("reserved-import-passphrase") << QByteArray(R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"one"},
+        {"storagekey":"ImportPassphrase","username":"import","password":"replacement"}]})");
+    QTest::newRow("reserved-storage-case") << QByteArray(R"({"credentials":[
+        {"storagekey":"IMPORTPASSPHRASE","username":"import","password":"replacement"}]})");
+    QTest::newRow("reserved-user-case") << QByteArray(R"({"credentials":[
+        {"storagekey":"ImportPassphrase","username":"IMPORT","password":"replacement"}]})");
 }
 
 void CredentialStoreImportTest::importRejectsMalformedBatchBeforeWriting()
@@ -188,8 +195,11 @@ void CredentialStoreImportTest::importRejectsMalformedBatchBeforeWriting()
     QByteArray encrypted;
     QVERIFY(PasswordCipher::encrypt("passphrase", json, encrypted));
     LogParam::setEncryptedPasswords(encrypted);
+    QVERIFY(CredentialStore::instance()->saveImportPassphrase("passphrase"));
+    const auto previousPasswords = QKeychain::Job::passwords;
     QVERIFY(!CredentialStore::instance()->importPasswords("passphrase"));
-    QVERIFY(QKeychain::Job::passwords.isEmpty());
+    QVERIFY(QKeychain::Job::passwords == previousPasswords);
+    QCOMPARE(CredentialStore::instance()->getImportPassphrase(), QString("passphrase"));
 }
 
 QTEST_GUILESS_MAIN(CredentialStoreImportTest)

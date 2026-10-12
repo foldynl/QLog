@@ -808,12 +808,12 @@ bool LogDatabase::prepareImportDatabase(QJsonObject &record, QJsonArray &incomin
         }
 
         QSqlQuery query(db);
-        const bool quickCheckPassed = query.exec("PRAGMA quick_check")
-                                      && query.next()
-                                      && query.value(0).toString() == "ok"
-                                      && !query.next()
-                                      && !query.lastError().isValid();
-        const bool integrityValid = quickCheckPassed
+        const bool integrityCheckPassed = query.exec("PRAGMA integrity_check")
+                                          && query.next()
+                                          && query.value(0).toString() == "ok"
+                                          && !query.next()
+                                          && !query.lastError().isValid();
+        const bool integrityValid = integrityCheckPassed
                                     && query.exec("PRAGMA foreign_key_check")
                                     && !query.next()
                                     && !query.lastError().isValid();

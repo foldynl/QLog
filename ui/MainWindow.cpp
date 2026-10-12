@@ -12,6 +12,7 @@
 #include <QSqlError>
 #include <QSignalBlocker>
 #include <QStyle>
+#include <QFileInfo>
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -1452,6 +1453,16 @@ void MainWindow::showDumpDB()
             LogParam::removeSourcePlatform();
             return;
         }
+    }
+
+    const QString destinationPath = QFileInfo(filename).canonicalFilePath();
+    if ( !destinationPath.isEmpty() && destinationPath == QFileInfo(LogDatabase::dbFilename()).canonicalFilePath() )
+    {
+        LogParam::removeEncryptedPasswords();
+        LogParam::removeSourcePlatform();
+        QMessageBox::warning(this, tr("Pack Data && Settings"),
+                             tr("Choose a different file. The export destination points to the open database."));
+        return;
     }
 
     // Create temporary file for uncompressed database
