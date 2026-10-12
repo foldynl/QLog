@@ -6,6 +6,7 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QSaveFile>
 #include <QDir>
 #include <QProgressDialog>
 #include <QSettings>
@@ -529,7 +530,7 @@ void CabrilloExportDialog::accept()
         return;
     }
 
-    QFile file(ui->fileEdit->text());
+    QSaveFile file(ui->fileEdit->text());
     if ( !file.open(QIODevice::WriteOnly | QIODevice::Text) )
     {
         QMessageBox::critical(this, tr("QLog Error"),
@@ -554,8 +555,16 @@ void CabrilloExportDialog::accept()
 
     long count = format.runExport(records);
 
-    file.close();
+    stream.flush();
     progress.close();
+
+    if ( stream.status() != QTextStream::Ok || !file.commit() )
+    {
+        qCWarning(runtime) << "Failed to write Cabrillo export:" << file.fileName() << file.errorString();
+        QMessageBox::critical(this, tr("QLog Error"),
+                              tr("Failed to write Cabrillo file %1.").arg(ui->fileEdit->text()));
+        return;
+    }
 
     QMessageBox::information(this, tr("QLog Information"),
                              tr("Exported %n QSO(s) to Cabrillo file.", "", count));
