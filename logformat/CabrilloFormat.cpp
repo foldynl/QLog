@@ -337,6 +337,7 @@ void CabrilloFormat::loadTemplate()
     const TemplateInfo info = templateInfo(templateId);
     contestName = info.contestName;
     columns = loadTemplateColumns(templateId);
+    frequencyBands = BandPlan::bandsList();
 }
 
 QList<CabrilloFormat::ColumnDef> CabrilloFormat::loadTemplateColumns(int templateId)
@@ -483,11 +484,25 @@ QString CabrilloFormat::bandToFrequencyField(const QString &band)
 
 QString CabrilloFormat::formatFrequencyOrBand(const QString &frequency,
                                               const QString &band,
-                                              int width)
+                                              int width,
+                                              const QList<Band> &frequencyBands)
 {
-    if ( !frequency.trimmed().isEmpty() )
-        return formatField(frequency, FMT_FREQ_KHZ, width);
+    FCT_IDENTIFICATION;
 
+    const double frequencyMHz = frequency.toDouble();
+    if ( frequencyMHz > 0.0 )
+    {
+        if ( frequencyMHz < 50.0 )
+            return formatField(frequency, FMT_FREQ_KHZ, width);
+
+        for ( const Band &frequencyBand : frequencyBands )
+        {
+            if ( frequencyBand.contains(frequencyMHz) )
+                return formatField(bandToFrequencyField(frequencyBand.name), FMT_NONE, width);
+        }
+    }
+
+    // Keep the recorded band when the local band definitions do not cover the frequency.
     return formatField(bandToFrequencyField(band), FMT_NONE, width);
 }
 
@@ -611,7 +626,8 @@ void CabrilloFormat::exportContact(const QSqlRecord &record,
             value = record.value(fieldIndex).toString();
 
         if ( col.formatter == FMT_FREQ_KHZ )
-            line += " " + formatFrequencyOrBand(value, record.value("band").toString(), col.width);
+            line += " " + formatFrequencyOrBand(value, record.value("band").toString(),
+                                                col.width, frequencyBands);
         else
             line += " " + formatField(value, col.formatter, col.width);
     }

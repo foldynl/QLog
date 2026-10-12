@@ -2,6 +2,7 @@
 #define QLOG_LOGFORMAT_CABRILLOFORMAT_H
 
 #include "LogFormat.h"
+#include "data/BandPlan.h"
 #include <QList>
 #include <QMap>
 
@@ -74,7 +75,8 @@ public:
     static QString bandToFrequencyField(const QString &band);
     static QString formatFrequencyOrBand(const QString &frequency,
                                          const QString &band,
-                                         int width);
+                                         int width,
+                                         const QList<Band> &frequencyBands = BandPlan::bandsList());
 
     static QList<CategoryItem> bandCategories();
     static QList<CategoryItem> modeCategories();
@@ -187,6 +189,7 @@ private:
     int transmitterId;
     HeaderData headerData;
     QList<ColumnDef> columns;
+    QList<Band> frequencyBands;
     QString contestName;
     bool multiOpEnabled;
 
