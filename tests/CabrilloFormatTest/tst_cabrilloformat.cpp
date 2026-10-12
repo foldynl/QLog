@@ -13,6 +13,8 @@ class CabrilloFormatTest : public QObject
 private slots:
     void initTestCase();
     void cleanupTestCase();
+    void exportsLocationHeader_data();
+    void exportsLocationHeader();
     void formatsExactFrequency_data();
     void formatsExactFrequency();
     void formatsBandOnlyFrequencyField_data();
@@ -67,6 +69,38 @@ void CabrilloFormatTest::cleanupTestCase()
         db.close();
     }
     QSqlDatabase::removeDatabase(connectionName);
+}
+
+void CabrilloFormatTest::exportsLocationHeader_data()
+{
+    QTest::addColumn<QString>("location");
+    QTest::addColumn<QString>("expectedHeader");
+
+    QTest::newRow("dx") << QStringLiteral("DX") << QStringLiteral("\nLOCATION: DX\n");
+    QTest::newRow("section") << QStringLiteral("EMA") << QStringLiteral("\nLOCATION: EMA\n");
+    QTest::newRow("empty") << QString() << QString();
+}
+
+void CabrilloFormatTest::exportsLocationHeader()
+{
+    QFETCH(QString, location);
+    QFETCH(QString, expectedHeader);
+
+    QString output;
+    QTextStream stream(&output);
+    CabrilloFormat format(stream);
+    format.setTemplateId(1);
+
+    CabrilloFormat::HeaderData header;
+    header.location = location;
+    format.setHeaderData(header);
+    format.exportStart();
+    format.exportEnd();
+    stream.flush();
+
+    QCOMPARE(output.count(QStringLiteral("\nLOCATION: ")), expectedHeader.isEmpty() ? 0 : 1);
+    if ( !expectedHeader.isEmpty() )
+        QVERIFY2(output.contains(expectedHeader), qPrintable(output));
 }
 
 void CabrilloFormatTest::formatsExactFrequency_data()
