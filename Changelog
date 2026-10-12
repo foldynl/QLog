@@ -3,7 +3,7 @@ TBC - 0.54.0
 - [NEW] - Awards - Added WAJA, Polish PGA
 - [NEW] - Awards - Remember dialog filter selection
 - [NEW] - Settings - Rig - Added Winkeyer multi-output support (issue #1034)
-- [NEW} - Settings - Backup - Added new option for alternative folder (issue #678)
+- [NEW] - Settings - Backup - Added new option for alternative folder (issue #678)
 - [NEW] - Alerts - Added OS Native Notifications
 - [NEW] - ADIF 3.1.8 - Added new mode JTTY
 - [NEW] - ADIF 3.1.8 - Added new Contest IDs
@@ -27,6 +27,7 @@ TBC - 0.54.0
 - Fixed TCI rig profile saved without Host Name gets stuck (issue #1197)
 - Hamlib - Improved Split Disable
 - Hamlib - Adjusted the checkChanges sequence
+- Pack and Unpack DB and Setting Cleanup and hardening
 
 2026/09/18 - 0.53.0
 - [NEW] - Online Map - Added Maps localization (issue #873)
