@@ -107,20 +107,6 @@ private:
     LogLocale locale;
 };
 
-class DeleteHighlightedDXServerWhenDelPressedEventFilter : public QObject
-{
-     Q_OBJECT
-signals:
-    void deleteServerItem();
-
-public:
-    DeleteHighlightedDXServerWhenDelPressedEventFilter(QObject *parent) :
-        QObject(parent) {};
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event);
-};
-
 class DxWidget : public QWidget, public ShutdownAwareWidget
 {
     Q_OBJECT
@@ -141,7 +127,7 @@ public slots:
     void entryDoubleClicked(QModelIndex);
     void actionFilter();
     void adjusteServerSelectSize(QString);
-    void serverSelectChanged(int);
+    void serverSelectChanged();
     void setLastQSO(QSqlRecord);
     void updateSpotsStatusWhenQSOAdded(const QSqlRecord &record);
     void reloadSetting();
@@ -234,7 +220,7 @@ private:
     void setCommandWarning(const QString &warning);
     bool hasCurrentQSO() const;
     void disconnectCluster(bool tryReconnect = false);
-    void saveDXCServers();
+    void saveDXCServers(const QString &server = QString());
     QString modeFilterRegExp();
     QString contFilterRegExp();
     QString spotterContFilterRegExp();
@@ -252,8 +238,7 @@ private:
     void saveWidgetSetting();
     void restoreWidgetSetting();
 
-    QStringList getDXCServerList(void);
-    void serverComboSetup();
+    void serverSelectSetup();
     void clearAllPasswordIcons();
     void activateCurrPasswordIcon();
     void updateCommandsMenu();

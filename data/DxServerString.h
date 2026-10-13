@@ -6,11 +6,12 @@
 class DxServerString
 {
 public:
-    explicit DxServerString(const QString &connectString,
+    explicit DxServerString(const QString &serverString,
                             const QString &defaultUsername = QString());
 
     static bool isValidServerString(const QString &);
     bool isValid() const {return valid;};
+    QString getConnectString() const {return connectString;};
     QString getUsername() const {return username;};
     QString getHostname() const {return hostname;};
     int getPort() const {return port;};
@@ -19,6 +20,7 @@ public:
 private:
     static const QRegularExpression serverStringRegEx();
 
+    QString connectString;
     QString username, hostname;
     int port;
     bool valid;

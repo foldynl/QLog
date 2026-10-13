@@ -59,6 +59,13 @@ void SuggestionEdit::setPredefinedValues(const QStringList &values)
     refreshSuggestions();
 }
 
+QStringList SuggestionEdit::userValues() const
+{
+    FCT_IDENTIFICATION;
+
+    return userSuggestions;
+}
+
 void SuggestionEdit::setUserValues(const QStringList &values)
 {
     FCT_IDENTIFICATION;
@@ -97,6 +104,13 @@ void SuggestionEdit::setSuggestWhileTyping(bool enabled)
 
     suggestOnTyping = enabled;
     refreshSuggestions();
+}
+
+QAbstractItemView *SuggestionEdit::popup() const
+{
+    FCT_IDENTIFICATION;
+
+    return suggestionCompleter->popup();
 }
 
 void SuggestionEdit::populateSuggestions(const QString &query)
@@ -211,6 +225,7 @@ void SuggestionEdit::insertSuggestion(const QModelIndex &index)
     setFocus();
     if ( suggestOnTyping )
         updatePopup();
+    emit suggestionSelected(value);
 }
 
 void SuggestionEdit::showSuggestions()

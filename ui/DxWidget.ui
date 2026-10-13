@@ -72,7 +72,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="serverSelect">
+        <widget class="SuggestionEdit" name="serverSelect">
          <property name="focusPolicy">
           <enum>Qt::ClickFocus</enum>
          </property>
@@ -85,17 +85,8 @@
          <property name="inputMethodHints">
           <set>Qt::ImhNone</set>
          </property>
-         <property name="editable">
-          <bool>true</bool>
-         </property>
-         <property name="currentText">
-          <string notr="true"/>
-         </property>
-         <property name="insertPolicy">
-          <enum>QComboBox::InsertAtTop</enum>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
+         <property name="popupToolTip" stdset="0">
+          <string>Show DX Cluster Servers</string>
          </property>
         </widget>
        </item>
@@ -751,8 +742,25 @@
     <bool>true</bool>
    </property>
   </action>
+  <action name="actionServerPassword">
+   <property name="icon">
+    <iconset resource="../res/icons/icons.qrc">
+     <normaloff>:/icons/password.png</normaloff>:/icons/password.png</iconset>
+   </property>
+   <property name="text">
+    <string>Server Password</string>
+   </property>
+   <property name="toolTip">
+    <string>A password was used for this connection.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>SuggestionEdit</class>
+   <extends>QLineEdit</extends>
+   <header>ui/component/SuggestionEdit.h</header>
+  </customwidget>
   <customwidget>
    <class>DxCommandEdit</class>
    <extends>QLineEdit</extends>
@@ -829,7 +837,7 @@
   </connection>
   <connection>
    <sender>serverSelect</sender>
-   <signal>editTextChanged(QString)</signal>
+   <signal>textChanged(QString)</signal>
    <receiver>DxWidget</receiver>
    <slot>adjusteServerSelectSize(QString)</slot>
    <hints>
@@ -845,9 +853,9 @@
   </connection>
   <connection>
    <sender>serverSelect</sender>
-   <signal>currentIndexChanged(int)</signal>
+   <signal>returnPressed()</signal>
    <receiver>DxWidget</receiver>
-   <slot>serverSelectChanged(int)</slot>
+   <slot>serverSelectChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>44</x>
@@ -881,8 +889,14 @@
    <receiver>DxWidget</receiver>
    <slot>actionSpotComment()</slot>
    <hints>
-    <hint type="sourcelabel"><x>-1</x><y>-1</y></hint>
-    <hint type="destinationlabel"><x>-1</x><y>-1</y></hint>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
    </hints>
   </connection>
   <connection>
@@ -1136,7 +1150,7 @@
   <slot>actionFT8Filter()</slot>
   <slot>actionPhoneFilter(bool)</slot>
   <slot>adjusteServerSelectSize(QString)</slot>
-  <slot>serverSelectChanged(int)</slot>
+  <slot>serverSelectChanged()</slot>
   <slot>actionCommandSpotQSO()</slot>
   <slot>actionSpotComment()</slot>
   <slot>actionCommandShowHFStats()</slot>

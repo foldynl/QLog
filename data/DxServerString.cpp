@@ -4,8 +4,9 @@
 
 MODULE_IDENTIFICATION("qlog.core.dxserverstring");
 
-DxServerString::DxServerString(const QString &connectString,
+DxServerString::DxServerString(const QString &serverString,
                                const QString &defaultUsername) :
+    connectString(serverString.trimmed()),
     port(7300),
     valid(false)
 {
@@ -49,7 +50,7 @@ bool DxServerString::isValidServerString(const QString &connectString)
 {
     FCT_IDENTIFICATION;
 
-    QRegularExpressionMatch stringMatch = serverStringRegEx().match(connectString);
+    QRegularExpressionMatch stringMatch = serverStringRegEx().match(connectString.trimmed());
 
     bool ret = stringMatch.hasMatch();
     qCDebug(runtime) << ret;

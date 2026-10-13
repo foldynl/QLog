@@ -6,6 +6,7 @@
 #include <QStringList>
 
 class QAction;
+class QAbstractItemView;
 class QCompleter;
 class QStandardItemModel;
 
@@ -25,14 +26,19 @@ public:
     explicit SuggestionEdit(QWidget *parent = nullptr);
     QStringList predefinedValues() const;
     void setPredefinedValues(const QStringList &values);
+    QStringList userValues() const;
     void setUserValues(const QStringList &values);
     void setGroupLabels(const QString &predefined, const QString &user);
     QString popupToolTip() const;
     void setPopupToolTip(const QString &text);
     void setSuggestWhileTyping(bool enabled);
+    QAbstractItemView *popup() const;
 
 public slots:
     void showSuggestions();
+
+signals:
+    void suggestionSelected(const QString &value);
 
 protected:
     virtual void populateSuggestions(const QString &query);
