@@ -401,7 +401,7 @@
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="168"/>
         <source>Test</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">测试</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="177"/>
@@ -609,7 +609,7 @@
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="381"/>
         <source>QLog Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QLog 信息</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="382"/>
@@ -637,32 +637,32 @@
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="20"/>
         <source>New Entity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">新实体</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="25"/>
         <source>New Band</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">新波段</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="30"/>
         <source>New Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">新模式</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="35"/>
         <source>New Slot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">新组合</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="40"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">已通联</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="45"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">已确认</translation>
     </message>
 </context>
 <context>
@@ -6556,7 +6556,7 @@ Example: %3</source>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="38"/>
-        <source>Band / mode:</source>
+        <source>Band / Mode:</source>
         <translation type="unfinished">波段 / 工作模式：</translation>
     </message>
     <message>
@@ -6596,18 +6596,18 @@ Example: %3</source>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="24"/>
-        <source>All bands and modes</source>
-        <translation type="unfinished">所有波段和工作模式</translation>
+        <source>No restriction</source>
+        <translation type="unfinished">不限</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="25"/>
-        <source>Spot&apos;s band, any mode</source>
-        <translation type="unfinished">报点所在波段，任意工作模式</translation>
+        <source>Spot&apos;s band only</source>
+        <translation type="unfinished">仅报点所在波段</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="26"/>
-        <source>Any band, spot&apos;s mode</source>
-        <translation type="unfinished">任意波段，报点所用工作模式</translation>
+        <source>Spot&apos;s mode only</source>
+        <translation type="unfinished">仅报点所用工作模式</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="27"/>
@@ -9488,7 +9488,7 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="12"/>
         <source>DX Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">DX 呼号</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="13"/>
@@ -9518,12 +9518,12 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="18"/>
         <source>My Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">我的呼号</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="19"/>
         <source>My Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">我的姓名</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="20"/>
@@ -9534,7 +9534,7 @@ Submode: %2</source>
         <location filename="../core/MacroExpander.cpp" line="21"/>
         <location filename="../core/MacroExpander.cpp" line="22"/>
         <source>My Gridsquare</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">我的网格坐标</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="23"/>
@@ -9549,17 +9549,17 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="25"/>
         <source>My IOTA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">我的 IOTA</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="26"/>
         <source>My SOTA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">我的 SOTA</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="27"/>
         <source>My WWFF</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">我的 WWFF</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="28"/>
@@ -11955,7 +11955,7 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../awards/AwardPGAHunter.cpp" line="144"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">是</translation>
     </message>
     <message>
         <location filename="../awards/AwardPGAHunter.cpp" line="145"/>
@@ -12616,7 +12616,7 @@ You can leave fields empty and configure them later in Settings.</source>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="60"/>
         <source>Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">呼号</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="61"/>
@@ -16043,7 +16043,7 @@ Please install Hamlib or specify the path manually.</source>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="502"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">A</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="503"/>
@@ -16362,7 +16362,7 @@ Please install TQSL or specify the path manually.</source>
     <message>
         <location filename="../ui/SpotCommentDialog.ui" line="14"/>
         <source>Spot Comment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">报点备注</translation>
     </message>
     <message>
         <location filename="../ui/SpotCommentDialog.ui" line="20"/>
@@ -17233,7 +17233,7 @@ Please install TQSL or specify the path manually.</source>
     <message>
         <location filename="../models/WsjtxTableModel.cpp" line="118"/>
         <source>Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">频率</translation>
     </message>
     <message>
         <location filename="../models/WsjtxTableModel.cpp" line="116"/>

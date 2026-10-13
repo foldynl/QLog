@@ -405,7 +405,7 @@
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="168"/>
         <source>Test</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Test</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.ui" line="177"/>
@@ -613,7 +613,7 @@
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="381"/>
         <source>QLog Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QLog Info</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="382"/>
@@ -641,32 +641,32 @@
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="20"/>
         <source>New Entity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nová země</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="25"/>
         <source>New Band</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nové pásmo</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="30"/>
         <source>New Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nový druh provozu</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="35"/>
         <source>New Slot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nový slot</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="40"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pracováno</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="45"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Potvrzeno</translation>
     </message>
 </context>
 <context>
@@ -6173,7 +6173,7 @@ Příklad: %3</translation>
     <message>
         <location filename="../ui/DxFilterDialog.cpp" line="104"/>
         <source>QLog Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chyba QLog</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.cpp" line="104"/>
@@ -6559,7 +6559,7 @@ Příklad: %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="38"/>
-        <source>Band / mode:</source>
+        <source>Band / Mode:</source>
         <translation type="unfinished">Pásmo / druh provozu:</translation>
     </message>
     <message>
@@ -6599,18 +6599,18 @@ Příklad: %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="24"/>
-        <source>All bands and modes</source>
-        <translation type="unfinished">Všechna pásma a druhy provozu</translation>
+        <source>No restriction</source>
+        <translation type="unfinished">Bez omezení</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="25"/>
-        <source>Spot&apos;s band, any mode</source>
-        <translation type="unfinished">Pásmo spotu, libovolný druh provozu</translation>
+        <source>Spot&apos;s band only</source>
+        <translation type="unfinished">Pouze pásmo spotu</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="26"/>
-        <source>Any band, spot&apos;s mode</source>
-        <translation type="unfinished">Libovolné pásmo, druh provozu spotu</translation>
+        <source>Spot&apos;s mode only</source>
+        <translation type="unfinished">Pouze druh provozu spotu</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="27"/>
@@ -9511,7 +9511,7 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="12"/>
         <source>DX Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">DX Značka</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="13"/>
@@ -9541,12 +9541,12 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="18"/>
         <source>My Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moje značka</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="19"/>
         <source>My Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mé jméno</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="20"/>
@@ -9557,7 +9557,7 @@ Submode: %2</source>
         <location filename="../core/MacroExpander.cpp" line="21"/>
         <location filename="../core/MacroExpander.cpp" line="22"/>
         <source>My Gridsquare</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Můj lokátor</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="23"/>
@@ -9572,7 +9572,7 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="25"/>
         <source>My IOTA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moje IOTA</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="26"/>
@@ -9582,7 +9582,7 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="27"/>
         <source>My WWFF</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Můj WWFF</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="28"/>
@@ -11564,7 +11564,7 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
     <message>
         <location filename="../core/main.cpp" line="467"/>
         <source>QLog Warning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Upozornění QLog</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="468"/>
@@ -11589,7 +11589,7 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
     <message>
         <location filename="../core/main.cpp" line="645"/>
         <source>QLog Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chyba QLog</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="645"/>
@@ -12469,7 +12469,7 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="995"/>
         <source>QSL Manager</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QSL Manager</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1002"/>
@@ -12649,7 +12649,7 @@ Pole můžete nechat prázdná a nastavit je později v Nastavení.</translation
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="60"/>
         <source>Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Značka</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="61"/>
@@ -16139,7 +16139,7 @@ Nainstalujte prosím Hamlib nebo zadejte cestu ručně.</translation>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="502"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">A</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="503"/>
@@ -16419,7 +16419,7 @@ Nainstalujte prosím TQSL nebo zadejte cestu ručně.</translation>
     <message>
         <location filename="../ui/SpotCommentDialog.ui" line="14"/>
         <source>Spot Comment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spot komentář</translation>
     </message>
     <message>
         <location filename="../ui/SpotCommentDialog.ui" line="20"/>
@@ -17241,7 +17241,7 @@ Nainstalujte prosím TQSL nebo zadejte cestu ručně.</translation>
     <message>
         <location filename="../ui/WsjtxFilterDialog.cpp" line="63"/>
         <source>QLog Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chyba QLog</translation>
     </message>
     <message>
         <location filename="../ui/WsjtxFilterDialog.cpp" line="63"/>
@@ -17289,7 +17289,7 @@ Nainstalujte prosím TQSL nebo zadejte cestu ručně.</translation>
     <message>
         <location filename="../models/WsjtxTableModel.cpp" line="118"/>
         <source>Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Frekvence</translation>
     </message>
     <message>
         <location filename="../models/WsjtxTableModel.cpp" line="116"/>

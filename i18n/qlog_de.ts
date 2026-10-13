@@ -611,7 +611,7 @@
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="381"/>
         <source>QLog Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QLog Info</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleDetail.cpp" line="382"/>
@@ -639,32 +639,32 @@
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="20"/>
         <source>New Entity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neuer Eintrag</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="25"/>
         <source>New Band</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neues Band</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="30"/>
         <source>New Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neuer Mode</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="35"/>
         <source>New Slot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neuer Slot</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="40"/>
         <source>Worked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gearbeitet</translation>
     </message>
     <message>
         <location filename="../ui/AlertRuleLogStatusDialog.ui" line="45"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bestätigt</translation>
     </message>
 </context>
 <context>
@@ -6170,7 +6170,7 @@ Beispiel: %3</translation>
     <message>
         <location filename="../ui/DxFilterDialog.cpp" line="104"/>
         <source>QLog Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QLog Fehler</translation>
     </message>
     <message>
         <location filename="../ui/DxFilterDialog.cpp" line="104"/>
@@ -6556,7 +6556,7 @@ Beispiel: %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="38"/>
-        <source>Band / mode:</source>
+        <source>Band / Mode:</source>
         <translation type="unfinished">Band / Betriebsart:</translation>
     </message>
     <message>
@@ -6596,18 +6596,18 @@ Beispiel: %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="24"/>
-        <source>All bands and modes</source>
-        <translation type="unfinished">Alle Bänder und Betriebsarten</translation>
+        <source>No restriction</source>
+        <translation type="unfinished">Keine Einschränkung</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="25"/>
-        <source>Spot&apos;s band, any mode</source>
-        <translation type="unfinished">Band des Spots, beliebige Betriebsart</translation>
+        <source>Spot&apos;s band only</source>
+        <translation type="unfinished">Nur das Band des Spots</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="26"/>
-        <source>Any band, spot&apos;s mode</source>
-        <translation type="unfinished">Beliebiges Band, Betriebsart des Spots</translation>
+        <source>Spot&apos;s mode only</source>
+        <translation type="unfinished">Nur die Betriebsart des Spots</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="27"/>
@@ -7894,7 +7894,7 @@ Dieses Passwort wird später benötigt, um sie wiederherzustellen.</translation>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The current logbook will be replaced after validation.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Imported passwords will replace the configured accounts.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=" font-weight:700;"&gt;Das aktuelle Logbuch wird nach der Validierung ersetzt.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;Importierte Passwörter ersetzen die konfigurierten Konten.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;Die Anwendung wird nach dem Laden neu gestartet&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Um Daten zu sichern, verwenden Sie zuerst Pack Data &amp;amp; Settings oder Export QSOs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Das aktuelle Logbuch wird nach der Validierung ersetzt.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Importierte Passwörter ersetzen die konfigurierten Konten.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Die Anwendung wird nach dem Laden neu gestartet&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Um Daten zu sichern, verwenden Sie zuerst Pack Data &amp;amp; Settings oder Export QSOs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="39"/>
@@ -9504,7 +9504,7 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="12"/>
         <source>DX Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">DX Rufzeichen</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="13"/>
@@ -9534,12 +9534,12 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="18"/>
         <source>My Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eigenes Rufzeichen</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="19"/>
         <source>My Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eigener Name</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="20"/>
@@ -9565,17 +9565,17 @@ Submode: %2</source>
     <message>
         <location filename="../core/MacroExpander.cpp" line="25"/>
         <source>My IOTA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eigene IOTA Nummer</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="26"/>
         <source>My SOTA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eigene SOTA Nummer</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="27"/>
         <source>My WWFF</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eigener WWFF</translation>
     </message>
     <message>
         <location filename="../core/MacroExpander.cpp" line="28"/>
@@ -11556,7 +11556,7 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     <message>
         <location filename="../core/main.cpp" line="467"/>
         <source>QLog Warning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QLog Warnung</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="468"/>
@@ -11581,7 +11581,7 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     <message>
         <location filename="../core/main.cpp" line="645"/>
         <source>QLog Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QLog Fehler</translation>
     </message>
     <message>
         <location filename="../core/main.cpp" line="645"/>
@@ -11975,7 +11975,7 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     <message>
         <location filename="../awards/AwardPGAHunter.cpp" line="144"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ja</translation>
     </message>
     <message>
         <location filename="../awards/AwardPGAHunter.cpp" line="145"/>
@@ -12457,7 +12457,7 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="995"/>
         <source>QSL Manager</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QSL-Manager</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1002"/>
@@ -12637,7 +12637,7 @@ Sie können Felder leer lassen und später in den Einstellungen konfigurieren.</
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="60"/>
         <source>Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rufzeichen</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="61"/>
@@ -16387,7 +16387,7 @@ Bitte installieren Sie TQSL oder geben Sie den Pfad manuell an.</translation>
     <message>
         <location filename="../ui/SpotCommentDialog.ui" line="14"/>
         <source>Spot Comment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spot-Kommentar</translation>
     </message>
     <message>
         <location filename="../ui/SpotCommentDialog.ui" line="20"/>
@@ -17209,7 +17209,7 @@ Bitte installieren Sie TQSL oder geben Sie den Pfad manuell an.</translation>
     <message>
         <location filename="../ui/WsjtxFilterDialog.cpp" line="63"/>
         <source>QLog Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QLog Fehler</translation>
     </message>
     <message>
         <location filename="../ui/WsjtxFilterDialog.cpp" line="63"/>
@@ -17257,7 +17257,7 @@ Bitte installieren Sie TQSL oder geben Sie den Pfad manuell an.</translation>
     <message>
         <location filename="../models/WsjtxTableModel.cpp" line="118"/>
         <source>Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Frequenz</translation>
     </message>
     <message>
         <location filename="../models/WsjtxTableModel.cpp" line="116"/>
