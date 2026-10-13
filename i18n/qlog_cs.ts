@@ -6559,8 +6559,8 @@ Příklad: %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="38"/>
-        <source>Band / Mode:</source>
-        <translation type="unfinished">Pásmo / druh provozu:</translation>
+        <source>QSOs to evaluate:</source>
+        <translation type="unfinished">QSO k vyhodnocení:</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="45"/>
@@ -6599,23 +6599,23 @@ Příklad: %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="24"/>
-        <source>No restriction</source>
-        <translation type="unfinished">Bez omezení</translation>
+        <source>All QSOs from my DXCC</source>
+        <translation type="unfinished">Všechna QSO z mé země DXCC</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="25"/>
-        <source>Spot&apos;s band only</source>
-        <translation type="unfinished">Pouze pásmo spotu</translation>
+        <source>All QSOs from my DXCC on the spot&apos;s band</source>
+        <translation type="unfinished">Všechna QSO z mé země DXCC na stejném pásmu jako spot</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="26"/>
-        <source>Spot&apos;s mode only</source>
-        <translation type="unfinished">Pouze druh provozu spotu</translation>
+        <source>All QSOs from my DXCC in the spot&apos;s mode</source>
+        <translation type="unfinished">Všechna QSO z mé země DXCC stejným druhem provozu jako spot</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="27"/>
-        <source>Spot&apos;s band and mode</source>
-        <translation type="unfinished">Pásmo a druh provozu spotu</translation>
+        <source>All QSOs from my DXCC on the spot&apos;s band and mode</source>
+        <translation type="unfinished">Všechna QSO z mé země DXCC na stejném pásmu a stejným druhem provozu jako spot</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="76"/>

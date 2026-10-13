@@ -33,9 +33,20 @@
      <property name="toolTip"><string>Select individual DXCC statuses</string></property>
     </widget>
    </item>
+   <item row="0" column="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation"><enum>Qt::Horizontal</enum></property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="1" column="1">
     <widget class="QLabel" name="contextLabel">
-     <property name="text"><string>Band / Mode:</string></property>
+     <property name="text"><string>QSOs to evaluate:</string></property>
      <property name="buddy"><cstring>contextCombo</cstring></property>
     </widget>
    </item>

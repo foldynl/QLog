@@ -6556,8 +6556,8 @@ Exemple : %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="38"/>
-        <source>Band / Mode:</source>
-        <translation type="unfinished">Bande / mode :</translation>
+        <source>QSOs to evaluate:</source>
+        <translation type="unfinished">QSO à prendre en compte :</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="45"/>
@@ -6596,23 +6596,23 @@ Exemple : %3</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="24"/>
-        <source>No restriction</source>
-        <translation type="unfinished">Aucune restriction</translation>
+        <source>All QSOs from my DXCC</source>
+        <translation type="unfinished">Tous les QSO effectués depuis mon entité DXCC</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="25"/>
-        <source>Spot&apos;s band only</source>
-        <translation type="unfinished">Bande du spot uniquement</translation>
+        <source>All QSOs from my DXCC on the spot&apos;s band</source>
+        <translation type="unfinished">Tous les QSO effectués depuis mon entité DXCC sur la bande du spot</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="26"/>
-        <source>Spot&apos;s mode only</source>
-        <translation type="unfinished">Mode du spot uniquement</translation>
+        <source>All QSOs from my DXCC in the spot&apos;s mode</source>
+        <translation type="unfinished">Tous les QSO effectués depuis mon entité DXCC dans le mode du spot</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="27"/>
-        <source>Spot&apos;s band and mode</source>
-        <translation type="unfinished">Bande et mode du spot</translation>
+        <source>All QSOs from my DXCC on the spot&apos;s band and mode</source>
+        <translation type="unfinished">Tous les QSO effectués depuis mon entité DXCC sur la bande et dans le mode du spot</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="76"/>

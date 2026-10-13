@@ -6556,8 +6556,8 @@ Example: %3</source>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="38"/>
-        <source>Band / Mode:</source>
-        <translation type="unfinished">波段 / 工作模式：</translation>
+        <source>QSOs to evaluate:</source>
+        <translation type="unfinished">用于判断的 QSO：</translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.ui" line="45"/>
@@ -6596,23 +6596,23 @@ Example: %3</source>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="24"/>
-        <source>No restriction</source>
-        <translation type="unfinished">不限</translation>
+        <source>All QSOs from my DXCC</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="25"/>
-        <source>Spot&apos;s band only</source>
-        <translation type="unfinished">仅报点所在波段</translation>
+        <source>All QSOs from my DXCC on the spot&apos;s band</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="26"/>
-        <source>Spot&apos;s mode only</source>
-        <translation type="unfinished">仅报点所用工作模式</translation>
+        <source>All QSOs from my DXCC in the spot&apos;s mode</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="27"/>
-        <source>Spot&apos;s band and mode</source>
-        <translation type="unfinished">报点所在波段及所用工作模式</translation>
+        <source>All QSOs from my DXCC on the spot&apos;s band and mode</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/component/DxccLogStatusWidget.cpp" line="76"/>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>373</width>
-    <height>434</height>
+    <width>511</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="DxccLogStatusWidget" name="logStatusWidget"/>
+        <widget class="DxccLogStatusWidget" name="logStatusWidget" native="true"/>
        </item>
        <item>
         <widget class="QGroupBox" name="continentGroupBox">
@@ -35,7 +35,14 @@
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="2" column="0">
+            <item row="0" column="1">
+             <widget class="QCheckBox" name="anCheckBox">
+              <property name="text">
+               <string>Antarctica</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
              <widget class="QCheckBox" name="naCheckBox">
               <property name="text">
                <string>North America</string>
@@ -49,10 +56,17 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="0" column="3">
              <widget class="QCheckBox" name="saCheckBox">
               <property name="text">
                <string>South America</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QCheckBox" name="ocCheckBox">
+              <property name="text">
+               <string>Oceania</string>
               </property>
              </widget>
             </item>
@@ -63,24 +77,10 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QCheckBox" name="anCheckBox">
-              <property name="text">
-               <string>Antarctica</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="0">
              <widget class="QCheckBox" name="asCheckBox">
               <property name="text">
                <string>Asia</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QCheckBox" name="ocCheckBox">
-              <property name="text">
-               <string>Oceania</string>
               </property>
              </widget>
             </item>

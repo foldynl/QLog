@@ -21,10 +21,10 @@ DxccLogStatusWidget::DxccLogStatusWidget(QWidget *parent) :
     ui->goalCombo->setItemData(0, tr("Match if no qualifying QSO exists in the log."), Qt::ToolTipRole);
     ui->goalCombo->setItemData(1, tr("Match if no qualifying QSO is confirmed using the DXCC confirmation sources selected in Settings."), Qt::ToolTipRole);
     ui->goalCombo->setItemData(2, tr("Match any of the individually selected DXCC statuses."), Qt::ToolTipRole);
-    ui->contextCombo->addItem(tr("No restriction"), static_cast<int>(AlertDxccContext::Anywhere));
-    ui->contextCombo->addItem(tr("Spot's band only"), static_cast<int>(AlertDxccContext::Band));
-    ui->contextCombo->addItem(tr("Spot's mode only"), static_cast<int>(AlertDxccContext::Mode));
-    ui->contextCombo->addItem(tr("Spot's band and mode"), static_cast<int>(AlertDxccContext::BandMode));
+    ui->contextCombo->addItem(tr("All QSOs from my DXCC"), static_cast<int>(AlertDxccContext::Anywhere));
+    ui->contextCombo->addItem(tr("All QSOs from my DXCC on the spot's band"), static_cast<int>(AlertDxccContext::Band));
+    ui->contextCombo->addItem(tr("All QSOs from my DXCC in the spot's mode"), static_cast<int>(AlertDxccContext::Mode));
+    ui->contextCombo->addItem(tr("All QSOs from my DXCC on the spot's band and mode"), static_cast<int>(AlertDxccContext::BandMode));
     setCondition(DxccLogStatusCondition());
     setFocusProxy(ui->enabledCheckBox);
 }
