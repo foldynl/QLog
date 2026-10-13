@@ -1576,6 +1576,20 @@ QString LogParam::getDXCSpotCommentTemplate()
     return getParam(QStringLiteral("dxc/spotcommenttemplate")).toString();
 }
 
+QStringList LogParam::getDXCSpotCommentTemplateHistory()
+{
+    FCT_IDENTIFICATION;
+
+    return getParamStringList(QStringLiteral("dxc/spotcommenttemplatehistory"), {getDXCSpotCommentTemplate()});
+}
+
+bool LogParam::setDXCSpotCommentTemplateHistory(const QStringList &history)
+{
+    FCT_IDENTIFICATION;
+
+    return setParam(QStringLiteral("dxc/spotcommenttemplatehistory"), history);
+}
+
 bool LogParam::setDXCSpotCommentTemplate(const QString &text)
 {
     FCT_IDENTIFICATION;

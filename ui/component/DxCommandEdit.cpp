@@ -1,16 +1,8 @@
 #include "DxCommandEdit.h"
 
-#include <QAbstractItemView>
-#include <QAction>
-#include <QCompleter>
-#include <QEvent>
-#include <QFocusEvent>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QKeyEvent>
-#include <QStandardItemModel>
-#include <QStyle>
 #include <algorithm>
 #include <climits>
 #include "core/LogParam.h"
@@ -19,38 +11,13 @@
 MODULE_IDENTIFICATION("qlog.ui.component.dxcommandedit");
 
 DxCommandEdit::DxCommandEdit(QWidget *parent) :
-    QLineEdit(parent),
-    commandCompleter(new QCompleter(this)),
-    commandModel(new QStandardItemModel(this))
+    SuggestionEdit(parent)
 {
     FCT_IDENTIFICATION;
 
-    QAction *commandListAction = addAction(style()->standardIcon(QStyle::SP_ArrowDown),
-                                           QLineEdit::TrailingPosition);
-    commandListAction->setText(tr("Show DX Cluster Commands"));
-    commandListAction->setToolTip(tr("Show DX Cluster Commands"));
-    connect(commandListAction, &QAction::triggered, this, &DxCommandEdit::showCommands);
-
-    // Associate the popup without QLineEdit's automatic insertion on highlighting.
-    commandCompleter->setWidget(this);
-    commandCompleter->setModel(commandModel);
-    commandCompleter->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-    commandCompleter->setMaxVisibleItems(10);
-    commandCompleter->popup()->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    commandCompleter->popup()->installEventFilter(this);
-
-    connect(commandCompleter, QOverload<const QModelIndex &>::of(&QCompleter::activated),
-            this, &DxCommandEdit::insertCommand);
-    connect(this, &QLineEdit::textEdited, this, [this]()
-    {
-        updatePopup();
-    });
-    connect(this, &QLineEdit::textChanged, this, [this](const QString &text)
-    {
-        if ( text.isEmpty() )
-            commandCompleter->popup()->hide();
-    });
-
+    setPopupToolTip(tr("Show DX Cluster Commands"));
+    setGroupLabels(tr("Common commands"), tr("My commands"));
+    setSuggestWhileTyping(true);
     setClusterType(UNKNOWN);
 }
 
@@ -76,7 +43,7 @@ void DxCommandEdit::setServer(const QString &newServer)
     FCT_IDENTIFICATION;
     qCDebug(function_parameters) << newServer;
 
-    commandCompleter->popup()->hide();
+    hideSuggestions();
     server = newServer;
     history.clear();
     historyEnabled = true;
@@ -253,8 +220,7 @@ void DxCommandEdit::setClusterType(ClusterType type)
         commands.append({QStringLiteral("sh/filter"), tr("Show your cluster filters"), QString(), QString(), false});
     }
 
-    if ( commandCompleter->popup()->isVisible() )
-        updatePopup();
+    refreshSuggestions();
 }
 
 void DxCommandEdit::rememberCommand(const QString &text)
@@ -304,30 +270,13 @@ void DxCommandEdit::rememberCommand(const QString &text)
         qCWarning(runtime) << "Cannot save DX cluster command history";
 }
 
-void DxCommandEdit::addHeading(const QString &text)
+void DxCommandEdit::populateSuggestions(const QString &query)
 {
     FCT_IDENTIFICATION;
 
-    QStandardItem *item = new QStandardItem(text);
-    item->setFlags(Qt::NoItemFlags);
-    QFont headingFont = font();
-    headingFont.setBold(true);
-    item->setFont(headingFont);
-    commandModel->appendRow(item);
-}
-
-void DxCommandEdit::updatePopup(bool showAll)
-{
-    FCT_IDENTIFICATION;
-
-    if ( !isEnabled() || !hasFocus() || (!showAll && text().trimmed().size() < 2) )
-    {
-        commandCompleter->popup()->hide();
-        return;
-    }
-
-    commandModel->clear();
-    const QString query = showAll ? QString() : text().trimmed();
+    QList<Item> predefined;
+    QList<Item> user;
+    QString details;
     const QString name = commandName(query);
     const auto currentCommand = std::find_if(commands.cbegin(), commands.cend(), [&name](const Command &command)
     {
@@ -336,7 +285,7 @@ void DxCommandEdit::updatePopup(bool showAll)
 
     if ( currentCommand != commands.cend() )
     {
-        QString details = tr("%1\nSyntax: %2").arg(currentCommand->description, currentCommand->name);
+        details = tr("%1\nSyntax: %2").arg(currentCommand->description, currentCommand->name);
         if ( !currentCommand->parameters.isEmpty() )
         {
             const QString syntax = currentCommand->name
@@ -344,14 +293,6 @@ void DxCommandEdit::updatePopup(bool showAll)
                                    + currentCommand->parameters;
             details = tr("%1\nSyntax: %2\nExample: %3")
                       .arg(currentCommand->description, syntax, currentCommand->example);
-        }
-        // QCompleter sizes the popup using the first row; keep help rows single-line and above history.
-        const QStringList lines = details.split(QLatin1Char('\n'));
-        for ( const QString &line : lines )
-        {
-            QStandardItem *item = new QStandardItem(line);
-            item->setFlags(Qt::NoItemFlags);
-            commandModel->appendRow(item);
         }
     }
 
@@ -373,12 +314,7 @@ void DxCommandEdit::updatePopup(bool showAll)
         if ( !entry.command.contains(query, Qt::CaseInsensitive)
              && (definition == commands.cend() || !definition->description.contains(query, Qt::CaseInsensitive)) )
             continue;
-        if ( displayed.isEmpty() )
-            addHeading(tr("My commands"));
-        QStandardItem *item = new QStandardItem(entry.command);
-        item->setData(entry.command, Qt::UserRole);
-        item->setEditable(false);
-        commandModel->appendRow(item);
+        user.append({entry.command, entry.command});
         displayed.append(entry.command);
         if ( displayed.size() == MAX_MY_COMMANDS )
             break;
@@ -386,7 +322,6 @@ void DxCommandEdit::updatePopup(bool showAll)
 
     if ( currentCommand == commands.cend() )
     {
-        bool headingAdded = false;
         for ( const Command &command : commands )
         {
             if ( !command.name.contains(name, Qt::CaseInsensitive)
@@ -394,146 +329,11 @@ void DxCommandEdit::updatePopup(bool showAll)
                 continue;
             if ( displayed.contains(command.name, Qt::CaseInsensitive) )
                 continue;
-            if ( !headingAdded )
-            {
-                addHeading(tr("Common commands"));
-                headingAdded = true;
-            }
-            QStandardItem *item = new QStandardItem(tr("%1 — %2").arg(command.name, command.description));
-            item->setData(command.name + (command.parameters.isEmpty() || command.parameterSuffix
-                                         ? QString() : QStringLiteral(" ")),
-                          Qt::UserRole);
-            item->setEditable(false);
-            commandModel->appendRow(item);
+            predefined.append({tr("%1 — %2").arg(command.name, command.description),
+                               command.name + (command.parameters.isEmpty() || command.parameterSuffix
+                                               ? QString() : QStringLiteral(" "))});
         }
     }
 
-    if ( commandModel->rowCount() == 0 )
-    {
-        commandCompleter->popup()->hide();
-        return;
-    }
-
-    QRect popupRect = rect();
-    popupRect.setWidth(qMax(width(), commandCompleter->popup()->sizeHintForColumn(0)
-                                  + style()->pixelMetric(QStyle::PM_ScrollBarExtent)));
-    commandCompleter->complete(popupRect);
-    // Enter must keep sending the typed command until the operator explicitly selects a row.
-    commandCompleter->popup()->setCurrentIndex(QModelIndex());
-}
-
-void DxCommandEdit::insertCommand(const QModelIndex &index)
-{
-    FCT_IDENTIFICATION;
-
-    const QString command = index.data(Qt::UserRole).toString();
-    if ( command.isEmpty() )
-        return;
-    commandCompleter->popup()->hide();
-    setText(command);
-    setFocus();
-    updatePopup();
-}
-
-void DxCommandEdit::showCommands()
-{
-    FCT_IDENTIFICATION;
-
-    setFocus();
-    updatePopup(true);
-}
-
-bool DxCommandEdit::event(QEvent *event)
-{
-    FCT_IDENTIFICATION;
-
-    if ( event->type() == QEvent::Hide || (event->type() == QEvent::EnabledChange && !isEnabled()) )
-        commandCompleter->popup()->hide();
-    if ( event->type() == QEvent::ShortcutOverride && commandCompleter->popup()->isVisible() )
-    {
-        const int key = static_cast<QKeyEvent *>(event)->key();
-        if ( key == Qt::Key_Escape || key == Qt::Key_Return || key == Qt::Key_Enter
-             || key == Qt::Key_Up || key == Qt::Key_Down )
-        {
-            event->accept();
-            return true;
-        }
-    }
-    return QLineEdit::event(event);
-}
-
-bool DxCommandEdit::eventFilter(QObject *object, QEvent *event)
-{
-    FCT_IDENTIFICATION;
-
-    if ( object == commandCompleter->popup() && event->type() == QEvent::KeyPress )
-    {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        const int key = keyEvent->key();
-        if ( key == Qt::Key_Escape || key == Qt::Key_Return || key == Qt::Key_Enter
-             || key == Qt::Key_Up || key == Qt::Key_Down )
-        {
-            keyPressEvent(keyEvent);
-            return true;
-        }
-    }
-    return QLineEdit::eventFilter(object, event);
-}
-
-void DxCommandEdit::keyPressEvent(QKeyEvent *event)
-{
-    FCT_IDENTIFICATION;
-
-    QAbstractItemView *popup = commandCompleter->popup();
-    const int key = event->key();
-    if ( key == Qt::Key_Up || key == Qt::Key_Down )
-    {
-        if ( !popup->isVisible() )
-            showCommands();
-        const int step = key == Qt::Key_Down ? 1 : -1;
-        int row = popup->currentIndex().isValid() ? popup->currentIndex().row()
-                                                : (step > 0 ? -1 : commandModel->rowCount());
-        while ( (row += step) >= 0 && row < commandModel->rowCount() )
-        {
-            const QModelIndex index = commandCompleter->completionModel()->index(row, 0);
-            if ( index.flags() & Qt::ItemIsSelectable )
-            {
-                popup->setCurrentIndex(index);
-                popup->scrollTo(index);
-                break;
-            }
-        }
-        event->accept();
-        return;
-    }
-    if ( popup->isVisible() )
-    {
-        if ( key == Qt::Key_Escape )
-        {
-            popup->hide();
-            event->accept();
-            return;
-        }
-        if ( key == Qt::Key_Return || key == Qt::Key_Enter )
-        {
-            const QModelIndex index = popup->currentIndex();
-            popup->hide();
-            if ( index.flags() & Qt::ItemIsSelectable )
-            {
-                insertCommand(index);
-                event->accept();
-                return;
-            }
-        }
-    }
-    QLineEdit::keyPressEvent(event);
-}
-
-void DxCommandEdit::focusOutEvent(QFocusEvent *event)
-{
-    FCT_IDENTIFICATION;
-
-    if ( event->reason() != Qt::PopupFocusReason )
-        commandCompleter->popup()->hide();
-    QLineEdit::focusOutEvent(event);
+    setPopupItems(predefined, user, details);
 }

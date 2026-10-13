@@ -1,7 +1,5 @@
 #include "SpotCommentDialog.h"
 #include "ui_SpotCommentDialog.h"
-#include <QLineEdit>
-#include <QMenu>
 #include <QMessageBox>
 #include <QStyle>
 #include <QToolTip>
@@ -25,17 +23,12 @@ SpotCommentDialog::SpotCommentDialog(const MacroExpander::Context &context,
     ui->templateEdit->setText(LogParam::getDXCSpotCommentTemplate());
     ui->templateEdit->setToolTip(MacroExpander::helpText());
 
-    ui->actionShowTemplates->setIcon(style()->standardIcon(QStyle::SP_ArrowDown));
-    ui->templateEdit->addAction(ui->actionShowTemplates, QLineEdit::TrailingPosition);
-    connect(ui->actionShowTemplates, &QAction::triggered, this, [this]()
-    {
-        ui->templateEdit->setFocus();
-        ui->templateMenu->popup(ui->templateEdit->mapToGlobal(QPoint(0, ui->templateEdit->height())));
-    });
-    connect(ui->templateMenu, &QMenu::triggered, this, [this](QAction *action)
-    {
-        ui->templateEdit->setText(action->text());
-    });
+    QStringList userValues;
+    for ( const QString &value : LogParam::getDXCSpotCommentTemplateHistory() )
+        if ( !value.trimmed().isEmpty() )
+            userValues.append(value);
+    ui->templateEdit->setGroupLabels(tr("Common templates"), tr("My templates"));
+    ui->templateEdit->setUserValues(userValues);
 }
 
 SpotCommentDialog::~SpotCommentDialog()
@@ -49,12 +42,22 @@ void SpotCommentDialog::accept()
 {
     FCT_IDENTIFICATION;
 
-    if ( !LogParam::setDXCSpotCommentTemplate(ui->templateEdit->text()) )
+    const QString text = ui->templateEdit->text();
+    QStringList history = LogParam::getDXCSpotCommentTemplateHistory();
+    if ( !LogParam::setDXCSpotCommentTemplate(text) )
     {
         showWarning(ui->buttonBox->button(QDialogButtonBox::Ok),
                     tr("The spot comment template could not be saved."));
         return;
     }
+    if ( !text.trimmed().isEmpty() )
+    {
+        history.removeAll(text);
+        history.prepend(text);
+    }
+    history.removeAll(QString());
+    if ( !LogParam::setDXCSpotCommentTemplateHistory(history.mid(0, MAX_HISTORY)) )
+        qCWarning(runtime) << "Cannot save spot comment template history";
     clearWarning();
     QDialog::accept();
 }

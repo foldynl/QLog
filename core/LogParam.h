@@ -430,6 +430,8 @@ public:
     static QByteArray getDXCCommandHistory(const QString &server);
     static bool setDXCCommandHistory(const QString &server, const QByteArray &history);
     static QString getDXCSpotCommentTemplate();
+    static QStringList getDXCSpotCommentTemplateHistory();
+    static bool setDXCSpotCommentTemplateHistory(const QStringList &history);
     static bool setDXCSpotCommentTemplate(const QString &text);
 
     /**************

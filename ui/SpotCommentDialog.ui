@@ -25,12 +25,24 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="templateEdit">
+    <widget class="SuggestionEdit" name="templateEdit">
      <property name="placeholderText">
       <string notr="true">&lt;DXLOCATOR&gt;&lt;PROP&gt;&lt;MYLOCATOR&gt; &lt;MODE&gt; &lt;RST&gt;</string>
      </property>
      <property name="clearButtonEnabled">
       <bool>true</bool>
+     </property>
+     <property name="popupToolTip">
+      <string>Show Comment Templates</string>
+     </property>
+     <property name="predefinedValues">
+      <stringlist notr="true">
+       <string>&lt;MODE&gt;</string>
+       <string>&lt;MODE&gt; &lt;RST&gt;</string>
+       <string>&lt;MODE&gt; &lt;RST&gt; in &lt;MYLOCATOR&gt;</string>
+       <string>&lt;DXLOCATOR&gt;&lt;PROP&gt;&lt;MYLOCATOR&gt;</string>
+       <string>&lt;DXLOCATOR&gt;&lt;PROP&gt;&lt;MYLOCATOR&gt; &lt;MODE&gt; &lt;RST&gt;</string>
+      </stringlist>
      </property>
     </widget>
    </item>
@@ -59,47 +71,14 @@
     </layout>
    </item>
   </layout>
-  <widget class="QMenu" name="templateMenu">
-   <addaction name="actionTemplateMode"/>
-   <addaction name="actionTemplateReport"/>
-   <addaction name="actionTemplateMyLocator"/>
-   <addaction name="actionTemplatePropagation"/>
-   <addaction name="actionTemplateFull"/>
-  </widget>
-  <action name="actionShowTemplates">
-   <property name="text">
-    <string>Show Comment Templates</string>
-   </property>
-   <property name="toolTip">
-    <string>Show Comment Templates</string>
-   </property>
-  </action>
-  <action name="actionTemplateMode">
-   <property name="text">
-    <string notr="true">&lt;MODE&gt;</string>
-   </property>
-  </action>
-  <action name="actionTemplateReport">
-   <property name="text">
-    <string notr="true">&lt;MODE&gt; &lt;RST&gt;</string>
-   </property>
-  </action>
-  <action name="actionTemplateMyLocator">
-   <property name="text">
-    <string notr="true">&lt;MODE&gt; &lt;RST&gt; in &lt;MYLOCATOR&gt;</string>
-   </property>
-  </action>
-  <action name="actionTemplatePropagation">
-   <property name="text">
-    <string notr="true">&lt;DXLOCATOR&gt;&lt;PROP&gt;&lt;MYLOCATOR&gt;</string>
-   </property>
-  </action>
-  <action name="actionTemplateFull">
-   <property name="text">
-    <string notr="true">&lt;DXLOCATOR&gt;&lt;PROP&gt;&lt;MYLOCATOR&gt; &lt;MODE&gt; &lt;RST&gt;</string>
-   </property>
-  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SuggestionEdit</class>
+   <extends>QLineEdit</extends>
+   <header>ui/component/SuggestionEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>templateEdit</tabstop>
   <tabstop>testButton</tabstop>

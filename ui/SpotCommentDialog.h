@@ -28,6 +28,8 @@ private slots:
     void clearWarning();
 
 private:
+    static const int MAX_HISTORY = 10;
+
     void showWarning(QPushButton *button, const QString &warning);
 
     Ui::SpotCommentDialog *ui;
