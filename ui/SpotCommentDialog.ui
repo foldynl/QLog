@@ -59,6 +59,46 @@
     </layout>
    </item>
   </layout>
+  <widget class="QMenu" name="templateMenu">
+   <addaction name="actionTemplateMode"/>
+   <addaction name="actionTemplateReport"/>
+   <addaction name="actionTemplateMyLocator"/>
+   <addaction name="actionTemplatePropagation"/>
+   <addaction name="actionTemplateFull"/>
+  </widget>
+  <action name="actionShowTemplates">
+   <property name="text">
+    <string>Show Comment Templates</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Comment Templates</string>
+   </property>
+  </action>
+  <action name="actionTemplateMode">
+   <property name="text">
+    <string notr="true">&lt;MODE&gt;</string>
+   </property>
+  </action>
+  <action name="actionTemplateReport">
+   <property name="text">
+    <string notr="true">&lt;MODE&gt; &lt;RST&gt;</string>
+   </property>
+  </action>
+  <action name="actionTemplateMyLocator">
+   <property name="text">
+    <string notr="true">&lt;MODE&gt; &lt;RST&gt; in &lt;MYLOCATOR&gt;</string>
+   </property>
+  </action>
+  <action name="actionTemplatePropagation">
+   <property name="text">
+    <string notr="true">&lt;DXLOCATOR&gt;&lt;PROP&gt;&lt;MYLOCATOR&gt;</string>
+   </property>
+  </action>
+  <action name="actionTemplateFull">
+   <property name="text">
+    <string notr="true">&lt;DXLOCATOR&gt;&lt;PROP&gt;&lt;MYLOCATOR&gt; &lt;MODE&gt; &lt;RST&gt;</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>templateEdit</tabstop>

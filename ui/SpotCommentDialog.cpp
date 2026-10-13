@@ -1,5 +1,7 @@
 #include "SpotCommentDialog.h"
 #include "ui_SpotCommentDialog.h"
+#include <QLineEdit>
+#include <QMenu>
 #include <QMessageBox>
 #include <QStyle>
 #include <QToolTip>
@@ -22,6 +24,18 @@ SpotCommentDialog::SpotCommentDialog(const MacroExpander::Context &context,
     ui->setupUi(this);
     ui->templateEdit->setText(LogParam::getDXCSpotCommentTemplate());
     ui->templateEdit->setToolTip(MacroExpander::helpText());
+
+    ui->actionShowTemplates->setIcon(style()->standardIcon(QStyle::SP_ArrowDown));
+    ui->templateEdit->addAction(ui->actionShowTemplates, QLineEdit::TrailingPosition);
+    connect(ui->actionShowTemplates, &QAction::triggered, this, [this]()
+    {
+        ui->templateEdit->setFocus();
+        ui->templateMenu->popup(ui->templateEdit->mapToGlobal(QPoint(0, ui->templateEdit->height())));
+    });
+    connect(ui->templateMenu, &QMenu::triggered, this, [this](QAction *action)
+    {
+        ui->templateEdit->setText(action->text());
+    });
 }
 
 SpotCommentDialog::~SpotCommentDialog()

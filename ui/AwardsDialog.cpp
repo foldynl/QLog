@@ -317,7 +317,6 @@ QList<AwardDefinition*> AwardsDialog::createAwards()
         new AwardWPX(),
         new AwardIOTA(),
         new AwardPOTAHunter(),
-        new AwardPGAHunter(),
         new AwardPOTAActivator(),
         new AwardSOTA(),
         new AwardWWFF(),
@@ -336,5 +335,6 @@ QList<AwardDefinition*> AwardsDialog::createAwards()
         new AwardCanadaAward(),
         new AwardWANA(),
         new AwardWorkedAllRAC(),
+        new AwardPGAHunter(),
     };
 }
