@@ -35,7 +35,7 @@
    </item>
    <item row="1" column="1">
     <widget class="QLabel" name="contextLabel">
-     <property name="text"><string>Band / mode:</string></property>
+     <property name="text"><string>Band / Mode:</string></property>
      <property name="buddy"><cstring>contextCombo</cstring></property>
     </widget>
    </item>
