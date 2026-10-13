@@ -1929,140 +1929,152 @@
         <translation>Nom:</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="359"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="363"/>
         <source>Email:</source>
         <translation>Email:</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="369"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="373"/>
         <source>Address:</source>
         <translation>Adresse:</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="382"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="386"/>
         <source>Max 6 lines</source>
         <translation>Max. 6 lignes</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="389"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="393"/>
         <source>Gridsquare</source>
         <translation>Locator</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="399"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="403"/>
         <source>Location:</source>
         <translation>Emplacement:</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="409"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="413"/>
         <source>Club:</source>
         <translation>Club:</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="419"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="423"/>
         <source>Soapbox:</source>
         <translation>Commentaire libre:</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="436"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="440"/>
         <source>Off-Time:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.ui" line="449"/>
-        <location filename="../ui/CabrilloExportDialog.ui" line="452"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="453"/>
+        <location filename="../ui/CabrilloExportDialog.ui" line="456"/>
         <source>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</source>
         <translation>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="43"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="41"/>
         <source>&amp;Export</source>
         <translation>&amp;Exporter</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="123"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="121"/>
         <source>Cabrillo Files (*.log);;CBR Files (*.cbr);;All Files (*)</source>
         <translation>Fichiers Cabrillo (*.log);;Fichiers CBR (*.cbr);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="273"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="293"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="276"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="296"/>
         <source>QSO(s): %1</source>
         <translation>QSO(s) : %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="286"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="295"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="289"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="298"/>
         <source>QSOs: ?</source>
         <translation>QSOs: ?</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="450"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="457"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="464"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="525"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="463"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="470"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="477"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="485"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="548"/>
         <source>QLog Warning</source>
         <translation>Avertissement QLog</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="451"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="464"/>
         <source>Please select a contest template.</source>
         <translation>Veuillez sélectionner un modèle de concours.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="458"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="471"/>
         <source>Please select an output file.</source>
         <translation>Veuillez sélectionner un fichier de sortie.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="465"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="478"/>
         <source>No callsign available. Check your filters.</source>
         <translation>Aucun indicatif disponible. Vérifiez vos filtres.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="480"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="488"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="535"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="486"/>
+        <source>Off-Time must contain one UTC interval in the format yyyy-mm-dd hhmm yyyy-mm-dd hhmm. Use valid dates and times, with the end at or after the start.</source>
+        <translation type="unfinished">Off-Time doit contenir un seul intervalle en UTC au format yyyy-mm-dd hhmm yyyy-mm-dd hhmm. Saisissez des dates et heures valides, sans que la fin précède le début.</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="511"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="558"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="586"/>
         <source>QLog Error</source>
         <translation>Erreur QLog</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="480"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
         <source>Failed to prepare export query.</source>
         <translation>Impossible de préparer la requête d’exportation.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="488"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="511"/>
         <source>Failed to query QSOs for export.</source>
         <translation>Impossible de récupérer les QSO pour l’exportation.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="526"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="549"/>
         <source>Cabrillo does not define a frequency designator for band-only QSO(s) on: %1. Enter an exact frequency or exclude these QSOs from the export.</source>
         <translation>Cabrillo ne définit pas d’identificateur de fréquence pour les QSO ne contenant que la bande sur : %1. Saisissez une fréquence exacte ou excluez ces QSO de l’exportation.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="536"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="559"/>
         <source>Cannot open file %1 for writing.</source>
         <translation>Impossible d’ouvrir le fichier %1 en écriture.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="546"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="569"/>
         <source>Exporting Cabrillo...</source>
         <translation>Exportation Cabrillo…</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="547"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="570"/>
         <source>Cabrillo Export Progress</source>
         <translation>Progression de l’exportation Cabrillo</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="560"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="587"/>
+        <source>Failed to write Cabrillo file %1.</source>
+        <translation type="unfinished">Impossible d’écrire le fichier Cabrillo %1.</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="591"/>
         <source>QLog Information</source>
         <translation>Information QLog</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/CabrilloExportDialog.cpp" line="561"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="592"/>
         <source>Exported %n QSO(s) to Cabrillo file.</source>
         <translation>
             <numerusform>%n QSO exportés dans le fichier Cabrillo.</numerusform>
@@ -2073,257 +2085,257 @@
 <context>
     <name>CabrilloFormat</name>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="212"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="239"/>
         <source>All Bands</source>
         <translation>Toutes les bandes</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="221"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="248"/>
         <source>2m (144 MHz)</source>
         <translation>2m (144 MHz)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="222"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="249"/>
         <source>1.25m (222 MHz)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="223"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="250"/>
         <source>70cm (432 MHz)</source>
         <translation>70cm (432 MHz)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="224"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="251"/>
         <source>33cm (902 MHz)</source>
         <translation>33cm (902 MHz)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="225"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="252"/>
         <source>23cm (1.2 GHz)</source>
         <translation>23cm (1.2 GHz)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="226"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="253"/>
         <source>Light</source>
         <translation>Lumière</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="227"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="254"/>
         <source>VHF 3-Band</source>
         <translation>VHF 3 bandes</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="228"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="255"/>
         <source>VHF FM Only</source>
         <translation>VHF FM uniquement</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="239"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="266"/>
         <source>Digital</source>
         <translation>Numérique</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="240"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="267"/>
         <source>Mixed</source>
         <translation>Mixte</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="247"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="274"/>
         <source>High</source>
         <translation>Haut (High)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="248"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="275"/>
         <source>Low</source>
         <translation>Bas (Low)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="249"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="276"/>
         <source>QRP</source>
         <translation>QRP</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="256"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="283"/>
         <source>Single Operator</source>
         <translation>Opérateur unique</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="257"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="284"/>
         <source>Multi Operator</source>
         <translation>Multi-opérateurs</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="258"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="285"/>
         <source>Check Log</source>
         <translation>Vérifier le log</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="265"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="292"/>
         <source>Non-Assisted</source>
         <translation>Non assisté</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="266"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="293"/>
         <source>Assisted</source>
         <translation>Assisté</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="273"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="300"/>
         <source>Fixed</source>
         <translation>Fixe</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="274"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="301"/>
         <source>Mobile</source>
         <translation>Mobile</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="275"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="302"/>
         <source>Portable</source>
         <translation>Portable</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="276"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="303"/>
         <source>Rover</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="277"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="304"/>
         <source>Rover Limited</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="278"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="305"/>
         <source>Rover Unlimited</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="279"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="306"/>
         <source>Expedition</source>
         <translation>Expédition</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="280"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="307"/>
         <source>HQ</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="281"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="308"/>
         <source>School</source>
         <translation>école</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="282"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="309"/>
         <source>Distributed</source>
         <translation>Distribué</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="289"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="316"/>
         <source>One</source>
         <translation>Un</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="290"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="317"/>
         <source>Two</source>
         <translation>Deux</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="291"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="318"/>
         <source>Limited</source>
         <translation>Limité</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="292"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="319"/>
         <source>Unlimited</source>
         <translation>Illimité</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="293"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="320"/>
         <source>SWL</source>
         <translation>SWL</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="300"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="327"/>
         <source>6 Hours</source>
         <translation>6 heures</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="301"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="328"/>
         <source>12 Hours</source>
         <translation>12 heures</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="302"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="329"/>
         <source>24 Hours</source>
         <translation>24 heures</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="309"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="336"/>
         <source>Classic</source>
         <translation>Classique</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="310"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="337"/>
         <source>Rookie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="311"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="338"/>
         <source>TB Wires</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="312"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="339"/>
         <source>Novice/Tech</source>
         <translation>Novice/Technicien</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="313"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="340"/>
         <source>Over 50</source>
         <translation>Plus de 50</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="320"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="347"/>
         <source>Text (left-aligned)</source>
         <translation>Texte (aligné à gauche)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="321"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="348"/>
         <source>Frequency (kHz)</source>
         <translation>Fréquence (kHz)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="322"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="349"/>
         <source>Time (HHMM)</source>
         <translation>Heure (HHMM)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="323"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="350"/>
         <source>Date (YYYY-MM-DD)</source>
         <translation>Date (AAAA-MM-JJ)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="324"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="351"/>
         <source>RST Short (drop last digit)</source>
         <translation>RST court (sans le dernier chiffre)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="325"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="352"/>
         <source>Uppercase</source>
         <translation>Majuscules</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="326"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="353"/>
         <source>Mode (Cabrillo)</source>
         <translation>Mode (Cabrillo)</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="327"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="354"/>
         <source>Zero-Padded Nr.</source>
         <translation>Numéro avec zéros</translation>
     </message>
     <message>
-        <location filename="../logformat/CabrilloFormat.cpp" line="328"/>
+        <location filename="../logformat/CabrilloFormat.cpp" line="355"/>
         <source>Transmitter ID</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7870,7 +7882,7 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The current logbook will be replaced after validation.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Imported passwords will replace the configured accounts.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;The application will restart after loading&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;To preserve data, use Pack Data &amp;amp; Settings or Export QSOs first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=" font-weight:700;"&gt;Le carnet de trafic actuel sera remplacé après validation.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;Les mots de passe importés remplaceront les comptes configurés.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=" font-weight:700;"&gt;L’application redémarrera après le chargement&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Pour préserver les données, utilisez d’abord Pack Data &amp;amp; Settings ou Export QSOs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Le carnet de trafic actuel sera remplacé après validation.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;Les mots de passe importés remplaceront les comptes configurés.&lt;/span&gt;&lt;br/&gt;⚠ &lt;span style=&quot; font-weight:700;&quot;&gt;L’application redémarrera après le chargement&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Pour préserver les données, utilisez d’abord Pack Data &amp;amp; Settings ou Export QSOs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.ui" line="39"/>
