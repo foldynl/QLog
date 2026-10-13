@@ -25,7 +25,9 @@ TBC - 0.54.0
 - Fixed missing ADIF Modes - ARDOP, JT44, OPERA, PAC
 - Fixed Removed incorrect JTMSK mode entry (issue #1190)
 - Fixed TCI rig profile saved without Host Name gets stuck (issue #1197)
-- Fixed Cabrillo VHF frequency and band-only QSO export
+- Fixed Cabrillo VHF frequency and band-only QSO export and filtering
+- Fixed Cabrillo missing LOCATION Header
+- Fixed Cabrillo ending minute filter
 - Hamlib - Improved Split Disable
 - Hamlib - Adjusted the checkChanges sequence
 - Pack and Unpack DB and Setting Cleanup and hardening
