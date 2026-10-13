@@ -15,6 +15,8 @@ private slots:
     void cleanupTestCase();
     void exportsLocationHeader_data();
     void exportsLocationHeader();
+    void validatesOfftime_data();
+    void validatesOfftime();
     void formatsExactFrequency_data();
     void formatsExactFrequency();
     void formatsBandOnlyFrequencyField_data();
@@ -101,6 +103,47 @@ void CabrilloFormatTest::exportsLocationHeader()
     QCOMPARE(output.count(QStringLiteral("\nLOCATION: ")), expectedHeader.isEmpty() ? 0 : 1);
     if ( !expectedHeader.isEmpty() )
         QVERIFY2(output.contains(expectedHeader), qPrintable(output));
+}
+
+void CabrilloFormatTest::validatesOfftime_data()
+{
+    QTest::addColumn<QString>("offtime");
+    QTest::addColumn<bool>("valid");
+
+    QTest::newRow("empty") << QString() << true;
+    QTest::newRow("blank") << QStringLiteral(" \t\r\n") << true;
+    QTest::newRow("single-interval") << QStringLiteral("2026-10-10 0300 2026-10-10 0400") << true;
+    QTest::newRow("outer-whitespace") << QStringLiteral(" 2026-10-10 0300 2026-10-10 0400\r\n") << true;
+    QTest::newRow("same-minute") << QStringLiteral("2026-10-10 0300 2026-10-10 0300") << true;
+    QTest::newRow("midnight") << QStringLiteral("2026-10-10 2359 2026-10-11 0000") << true;
+    QTest::newRow("leap-day") << QStringLiteral("2024-02-29 0300 2024-03-01 0400") << true;
+    QTest::newRow("dst-transition") << QStringLiteral("2026-03-29 0200 2026-03-29 0230") << true;
+    QTest::newRow("reversed-time") << QStringLiteral("2026-10-10 0400 2026-10-10 0300") << false;
+    QTest::newRow("reversed-date") << QStringLiteral("2026-10-11 0000 2026-10-10 2359") << false;
+    QTest::newRow("invalid-start-date") << QStringLiteral("2026-02-29 0300 2026-03-01 0400") << false;
+    QTest::newRow("invalid-end-date") << QStringLiteral("2026-04-30 0300 2026-04-31 0400") << false;
+    QTest::newRow("invalid-start-hour") << QStringLiteral("2026-10-10 2400 2026-10-11 0400") << false;
+    QTest::newRow("invalid-end-minute") << QStringLiteral("2026-10-10 0300 2026-10-10 0460") << false;
+    QTest::newRow("invalid-year") << QStringLiteral("0000-10-10 0300 2026-10-10 0400") << false;
+    QTest::newRow("short-date") << QStringLiteral("2026-1-10 0300 2026-10-10 0400") << false;
+    QTest::newRow("short-time") << QStringLiteral("2026-10-10 300 2026-10-10 0400") << false;
+    QTest::newRow("time-colon") << QStringLiteral("2026-10-10 03:00 2026-10-10 04:00") << false;
+    QTest::newRow("missing-end") << QStringLiteral("2026-10-10 0300") << false;
+    QTest::newRow("extra-text") << QStringLiteral("2026-10-10 0300 2026-10-10 0400 UTC") << false;
+    QTest::newRow("header-prefix") << QStringLiteral("OFFTIME: 2026-10-10 0300 2026-10-10 0400") << false;
+    QTest::newRow("split-interval") << QStringLiteral("2026-10-10 0300\n2026-10-10 0400") << false;
+    QTest::newRow("multiple-intervals")
+        << QStringLiteral("2026-10-10 0300 2026-10-10 0400\r\n2026-10-10 0600 2026-10-10 0700") << false;
+    QTest::newRow("multiple-intervals-one-line")
+        << QStringLiteral("2026-10-10 0300 2026-10-10 0400 2026-10-10 0600 2026-10-10 0700") << false;
+}
+
+void CabrilloFormatTest::validatesOfftime()
+{
+    QFETCH(QString, offtime);
+    QFETCH(bool, valid);
+
+    QCOMPARE(CabrilloFormat::isValidOfftime(offtime), valid);
 }
 
 void CabrilloFormatTest::formatsExactFrequency_data()

@@ -479,6 +479,16 @@ void CabrilloExportDialog::accept()
         return;
     }
 
+    const CabrilloFormat::HeaderData headerData = buildHeaderData();
+    if ( !CabrilloFormat::isValidOfftime(headerData.offtime) )
+    {
+        QMessageBox::warning(this, tr("QLog Warning"),
+                             tr("Off-Time must contain one UTC interval in the format "
+                                "yyyy-mm-dd hhmm yyyy-mm-dd hhmm. Use valid dates and times, "
+                                "with the end at or after the start."));
+        return;
+    }
+
     resolveBandFilter();
 
     const QString whereClause = buildWhereClause();
@@ -553,7 +563,7 @@ void CabrilloExportDialog::accept()
     QTextStream stream(&file);
     CabrilloFormat format(stream);
     format.setTemplateId(ui->templateCombo->currentData().toInt());
-    format.setHeaderData(buildHeaderData());
+    format.setHeaderData(headerData);
     format.setTransmitterId(ui->transmitterIdSpin->value());
 
     QProgressDialog progress(tr("Exporting Cabrillo..."), QString(), 0, 100, this);

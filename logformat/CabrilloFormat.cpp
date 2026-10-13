@@ -4,6 +4,7 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QDateTime>
+#include <QRegularExpression>
 
 #include "core/debug.h"
 #include "data/BandPlan.h"
@@ -104,6 +105,32 @@ void CabrilloFormat::setHeaderData(const HeaderData &data)
 {
     FCT_IDENTIFICATION;
     headerData = data;
+}
+
+bool CabrilloFormat::isValidOfftime(const QString &offtime)
+{
+    FCT_IDENTIFICATION;
+
+    const QString value = offtime.trimmed();
+    if ( value.isEmpty() )
+        return true;
+
+    static const QRegularExpression intervalPattern(
+        "\\A([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9]{4}) "
+        "([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9]{4})\\z");
+    const QRegularExpressionMatch match = intervalPattern.match(value);
+    if ( !match.hasMatch() )
+        return false;
+
+    // UTC wall times must not be interpreted in the local time zone.
+    const QDate startDate = QDate::fromString(match.captured(1), Qt::ISODate);
+    const QTime startTime = QTime::fromString(match.captured(2), "hhmm");
+    const QDate endDate = QDate::fromString(match.captured(3), Qt::ISODate);
+    const QTime endTime = QTime::fromString(match.captured(4), "hhmm");
+
+    return startDate.isValid() && startTime.isValid()
+           && endDate.isValid() && endTime.isValid()
+           && ( startDate < endDate || ( startDate == endDate && startTime <= endTime ) );
 }
 
 void CabrilloFormat::setTransmitterId(int id)

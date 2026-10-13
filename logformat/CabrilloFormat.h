@@ -37,6 +37,7 @@ public:
     void setTemplateId(int id);
     void setHeaderData(const HeaderData &data);
     void setTransmitterId(int id);
+    static bool isValidOfftime(const QString &offtime);
 
     void exportStart() override;
     void exportContact(const QSqlRecord &record,
