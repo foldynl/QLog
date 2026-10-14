@@ -1006,6 +1006,12 @@ void MainWindow::showUpdateDialog(const QString &newVersion, const QString &repo
     QMessageBox msgBox;
     QSettings settings;
 
+#if defined(Q_OS_MACOS) && QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    // Native NSAlert can terminate QLog with NSInternalInconsistencyException
+    // while rasterizing a symbol with an invalid size when this startup dialog opens.
+    msgBox.setOption(QMessageBox::Option::DontUseNativeDialog);
+#endif
+
     msgBox.setWindowTitle(tr("A New Version"));
     msgBox.setText(tr("A new version %1 is available.").arg(newVersion));
     msgBox.setIcon(QMessageBox::Information);
