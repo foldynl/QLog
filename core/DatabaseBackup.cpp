@@ -5,6 +5,7 @@
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QUrl>
 #include <algorithm>
 #include <sqlite3.h>
 
@@ -363,8 +364,11 @@ bool DatabaseBackup::exportSnapshot(const QString &snapshot, const QString &outp
     const QString connectionName = QStringLiteral("BackupExport");
     {
         QSqlDatabase database = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connectionName);
-        database.setDatabaseName(snapshot);
-        database.setConnectOptions(QStringLiteral("QSQLITE_OPEN_READONLY"));
+        // Allow WAL sidecar creation without creating a missing snapshot; query_only below protects its data.
+        QUrl snapshotUrl = QUrl::fromLocalFile(snapshot);
+        snapshotUrl.setQuery(QStringLiteral("mode=rw"));
+        database.setDatabaseName(QString::fromUtf8(snapshotUrl.toEncoded()));
+        database.setConnectOptions(QStringLiteral("QSQLITE_OPEN_URI"));
 
         if ( database.open() )
         {
@@ -383,7 +387,8 @@ bool DatabaseBackup::exportSnapshot(const QString &snapshot, const QString &outp
             QSaveFile file(output);
             bool xmlError = false;
 
-            if ( query.exec(QStringLiteral("SELECT * FROM contacts ORDER BY start_time ASC"))
+            if ( query.exec(QStringLiteral("PRAGMA query_only=ON"))
+                 && query.exec(QStringLiteral("SELECT * FROM contacts ORDER BY start_time ASC"))
                  && file.open(QIODevice::WriteOnly) )
             {
                 QTextStream stream(&file);

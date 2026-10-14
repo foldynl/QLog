@@ -5,10 +5,48 @@
 #include <QTemporaryDir>
 #include <QStandardPaths>
 #include <QXmlStreamReader>
+#include <sqlite3.h>
 
 #include "core/DatabaseBackup.h"
 #include "core/LogDatabase.h"
 #include "core/LogParam.h"
+
+class ReadOnlyWalVfs : public sqlite3_vfs
+{
+public:
+    ReadOnlyWalVfs() : original(sqlite3_vfs_find(nullptr))
+    {
+        *static_cast<sqlite3_vfs *>(this) = *original;
+        zName = "qlog-readonly-wal-test";
+        pNext = nullptr;
+        xOpen = open;
+        sqlite3_vfs_register(this, 1);
+    }
+
+    ~ReadOnlyWalVfs()
+    {
+        sqlite3_vfs_register(original, 1);
+        sqlite3_vfs_unregister(this);
+    }
+
+private:
+    static int open(sqlite3_vfs *vfs, const char *name, sqlite3_file *file, int flags, int *outputFlags)
+    {
+        ReadOnlyWalVfs *testVfs = static_cast<ReadOnlyWalVfs *>(vfs);
+        if ( flags & SQLITE_OPEN_MAIN_DB )
+            testVfs->readOnly = flags & SQLITE_OPEN_READONLY;
+
+        // Model platforms that cannot create a missing WAL through a read-only connection.
+        if ( (flags & SQLITE_OPEN_WAL) && testVfs->readOnly
+             && !QFileInfo::exists(QString::fromUtf8(name)) )
+            return SQLITE_CANTOPEN;
+
+        return testVfs->original->xOpen(testVfs->original, name, file, flags, outputFlags);
+    }
+
+    sqlite3_vfs *original;
+    bool readOnly = false;
+};
 
 class DatabaseBackupTest : public QObject
 {
@@ -28,6 +66,8 @@ private slots:
     void firstLaunchDoesNotCreateBackup();
     void automaticBackupRespectsBuildMode();
     void exportUsesSnapshotAndPreservesUnicode();
+    void walSnapshotCanBeExported_data();
+    void walSnapshotCanBeExported();
     void successfulExportRemovesSnapshotSidecars();
     void orphanedSnapshotSidecarsAreCleaned();
     void migrationSnapshotSurvivesUntilNextStart();
@@ -167,6 +207,45 @@ void DatabaseBackupTest::exportUsesSnapshotAndPreservesUnicode()
     QCOMPARE(LogParam::getLastBackupDate(), QDate::currentDate());
     QVERIFY(DatabaseBackup::prepare());
     QVERIFY(snapshots().isEmpty());
+}
+
+void DatabaseBackupTest::walSnapshotCanBeExported_data()
+{
+    QTest::addColumn<bool>("committedWal");
+    QTest::newRow("missing-sidecars") << false;
+    QTest::newRow("committed-wal") << true;
+}
+
+void DatabaseBackupTest::walSnapshotCanBeExported()
+{
+    QFETCH(bool, committedWal);
+    createLog();
+    QVERIFY(DatabaseBackup::prepare(true));
+    const QString snapshot = LogDatabase::dbDirectory().filePath(snapshots().first());
+    QCOMPARE(readFile(snapshot).at(18), char(2));
+    QVERIFY(!QFile::exists(snapshot + "-wal"));
+    QVERIFY(!QFile::exists(snapshot + "-shm"));
+
+    if ( committedWal )
+    {
+        sqlite3 *database = nullptr;
+        QCOMPARE(sqlite3_open(snapshot.toUtf8().constData(), &database), SQLITE_OK);
+        const int configured = sqlite3_db_config(database, SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE, 1, nullptr);
+        const int updated = sqlite3_exec(database, "UPDATE contacts SET callsign='OK2XYZ'", nullptr, nullptr, nullptr);
+        const int closed = sqlite3_close(database);
+        QCOMPARE(configured, SQLITE_OK);
+        QCOMPARE(updated, SQLITE_OK);
+        QCOMPARE(closed, SQLITE_OK);
+        QVERIFY(QFileInfo(snapshot + "-wal").size() > 0);
+    }
+
+    ReadOnlyWalVfs vfs;
+    runBackup();
+    QCOMPARE(exports().size(), 1);
+    const QByteArray output = readFile(LogDatabase::dbDirectory().filePath(exports().first()));
+    QVERIFY(output.contains(committedWal ? "OK2XYZ" : "OK1ABC"));
+    QVERIFY(LogParam::getBackupError().isEmpty());
+    QCOMPARE(LogDatabase::dbDirectory().entryList({"*.db.ready"}, QDir::Files).size(), 1);
 }
 
 void DatabaseBackupTest::successfulExportRemovesSnapshotSidecars()
@@ -377,10 +456,16 @@ void DatabaseBackupTest::failedExportPreservesSnapshotAndOlderBackups()
     }
     runBackup();
     QCOMPARE(snapshots(), QStringList{pending});
-    QVERIFY(QFile::exists(LogDatabase::dbDirectory().filePath(pending + "-wal")));
-    QVERIFY(QFile::exists(LogDatabase::dbDirectory().filePath(pending + "-shm")));
     QCOMPARE(exports().size(), 11);
     QVERIFY(!LogParam::getLastBackupDate().isValid());
+    QVERIFY(!LogParam::getBackupError().isEmpty());
+
+    QVERIFY(LogDatabase::dbDirectory().rmdir(target));
+    runBackup();
+    QVERIFY(snapshots().isEmpty());
+    const QByteArray output = readFile(LogDatabase::dbDirectory().filePath(target));
+    QVERIFY(output.contains("OK1ABC"));
+    QVERIFY(output.contains(QString::fromUtf8("Jiří").toUtf8()));
 }
 
 void DatabaseBackupTest::externalCopyFailureKeepsInternalBackupAndRetries()
