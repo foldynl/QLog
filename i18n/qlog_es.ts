@@ -401,184 +401,184 @@
         <translation type="unfinished">Sonido</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="168"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="171"/>
         <source>Test</source>
         <translation type="unfinished">Probar</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="177"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="193"/>
         <source>Notification Popup</source>
         <translation type="unfinished">Notificación emergente</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="184"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="203"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="200"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="219"/>
         <source>Repeated spots for this callsign on the same band and mode are ignored for this time. A spot on another band or mode notifies immediately.</source>
         <translation type="unfinished">Durante este intervalo se ignoran los anuncios DX repetidos de este indicativo en la misma banda y modo. Un anuncio DX en otra banda o modo genera una notificación inmediata.</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="187"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="203"/>
         <source>Notification Dedup</source>
         <translation type="unfinished">Evitar notificaciones duplicadas</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="206"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="222"/>
         <source> min</source>
         <translation type="unfinished"> min</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="233"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="249"/>
         <source>DX</source>
         <translation>DX</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="250"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="266"/>
         <source>DX Callsign</source>
         <translation>Indicativo DX</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="257"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="427"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="273"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="443"/>
         <source>Use Perl-like regular expression</source>
         <translation>Utilice expresiones regulares similares a Perl</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="260"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="430"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="276"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="446"/>
         <source>.*</source>
         <translation>.*</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="270"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="760"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="286"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="776"/>
         <source>Country</source>
         <translation>País</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="420"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="436"/>
         <source>Spot Comment</source>
         <translation>Comentario Anunciado</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="305"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="321"/>
         <source>ITU</source>
         <translation>ITU</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="363"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="379"/>
         <source>CQZ</source>
         <translation>CQZ</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="452"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="468"/>
         <source>IOTA</source>
         <translation>IOTA</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="459"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="475"/>
         <source>SOTA</source>
         <translation>SOTA</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="466"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="482"/>
         <source>POTA</source>
         <translation>POTA</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="473"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="489"/>
         <source>WWFF</source>
         <translation>WWFF</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="440"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="456"/>
         <source>Special Programs</source>
         <translation>Especial</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="490"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="506"/>
         <source>Modes</source>
         <translation>Modos</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="531"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="547"/>
         <source>FTx (FT8/FT4)</source>
         <translation>FTx (FT8/FT4)</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="557"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="573"/>
         <source>Phone</source>
         <translation>Fonía</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="570"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="586"/>
         <source>CW</source>
         <translation>CW</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="544"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="560"/>
         <source>Digital</source>
         <translation>Digital</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="582"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="598"/>
         <source>Bands</source>
         <translation>Bandas</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="622"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="779"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="638"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="795"/>
         <source>Continent</source>
         <translation>Continente</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="671"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="833"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="687"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="849"/>
         <source>North America</source>
         <translation>Norteamérica</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="699"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="823"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="715"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="839"/>
         <source>Africa</source>
         <translation>África</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="664"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="793"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="680"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="809"/>
         <source>Antarctica</source>
         <translation>Antártida</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="657"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="853"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="673"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="869"/>
         <source>South America</source>
         <translation>Sudamérica</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="685"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="803"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="701"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="819"/>
         <source>Asia</source>
         <translation>Asia</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="692"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="813"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="708"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="829"/>
         <source>Europe</source>
         <translation>Europa</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="678"/>
-        <location filename="../ui/AlertRuleDetail.ui" line="843"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="694"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="859"/>
         <source>Oceania</source>
         <translation>Oceanía</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="711"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="727"/>
         <source>Member</source>
         <translation>Miembro</translation>
     </message>
     <message>
-        <location filename="../ui/AlertRuleDetail.ui" line="752"/>
+        <location filename="../ui/AlertRuleDetail.ui" line="768"/>
         <source>Spotter</source>
         <translation>Anunciante</translation>
     </message>
@@ -5515,519 +5515,518 @@ Example:
 <context>
     <name>DxCommandEdit</name>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="30"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="31"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="18"/>
         <source>Show DX Cluster Commands</source>
         <translation type="unfinished">Mostrar comandos del clúster DX</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="111"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="78"/>
         <source>Show cluster command help</source>
         <translation type="unfinished">Mostrar la ayuda de los comandos del clúster</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="112"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="79"/>
         <source>Show solar conditions (WWV)</source>
         <translation type="unfinished">Mostrar las condiciones solares (WWV)</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="113"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="80"/>
         <source>Show propagation reports (WCY)</source>
         <translation type="unfinished">Mostrar informes de propagación (WCY)</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="119"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="86"/>
         <source>[command]
 Optional: the command to explain.</source>
         <translation type="unfinished">[command]
 Opcional: el comando cuya explicación se desea consultar.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="121"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="123"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="88"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="90"/>
         <source>[count]
 Optional: the number of reports.</source>
         <translation type="unfinished">[count]
 Opcional: el número de informes.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="125"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="241"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="92"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="208"/>
         <source>Show recent DX spots</source>
         <translation type="unfinished">Mostrar anuncios DX recientes</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="126"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="93"/>
         <source>[count] [callsign/prefix] [on band] [by callsign] [info text] [day days]
 All optional: limit the count, station, band, spotter, comment or age.</source>
         <translation type="unfinished">[count] [callsign/prefix] [on band] [by callsign] [info text] [day days]
 Todo es opcional: permite limitar la cantidad, la estación, la banda, quién envía el anuncio DX, el comentario o la antigüedad.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="128"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="95"/>
         <source>Show DX spots for a DXCC entity</source>
         <translation type="unfinished">Mostrar anuncios DX de una entidad DXCC</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="129"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="96"/>
         <source>&lt;prefix&gt;
 Required: a prefix or callsign identifying the DXCC entity.</source>
         <translation type="unfinished">&lt;prefix&gt;
 Obligatorio: un prefijo o indicativo que identifique la entidad DXCC.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="131"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="98"/>
         <source>Show QSL information from DX spots</source>
         <translation type="unfinished">Mostrar información QSL de los anuncios DX</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="132"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="99"/>
         <source>&lt;callsign&gt;
 Required: the callsign to look up.</source>
         <translation type="unfinished">&lt;callsign&gt;
 Obligatorio: el indicativo que se desea consultar.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="134"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="101"/>
         <source>Show bearing and distance to a locator</source>
         <translation type="unfinished">Mostrar el rumbo y la distancia a un locator</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="135"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="102"/>
         <source>&lt;locator&gt; [second locator]
 Required: one locator. With two locators, the first is the starting point.</source>
         <translation type="unfinished">&lt;locator&gt; [second locator]
 Obligatorio: un locator. Si se indican dos, el primero es el punto de partida.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="137"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="250"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="104"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="217"/>
         <source>Set your station locator</source>
         <translation type="unfinished">Establecer el locator de su estación</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="138"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="251"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="105"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="218"/>
         <source>&lt;locator&gt;
 Required: your Maidenhead locator.</source>
         <translation type="unfinished">&lt;locator&gt;
 Obligatorio: su locator Maidenhead.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="140"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="253"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="107"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="220"/>
         <source>Show your cluster filters</source>
         <translation type="unfinished">Mostrar sus filtros del clúster</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="141"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="108"/>
         <source>Show HF activity statistics</source>
         <translation type="unfinished">Mostrar estadísticas de actividad en HF</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="142"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="145"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="109"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="112"/>
         <source>[days] [date]
 Optional: the number of days and the starting date.</source>
         <translation type="unfinished">[days] [date]
 Opcional: el número de días y la fecha de inicio.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="144"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="111"/>
         <source>Show VHF activity statistics</source>
         <translation type="unfinished">Mostrar estadísticas de actividad en VHF</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="147"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="244"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="114"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="211"/>
         <source>Show recent DX spots passing your filters</source>
         <translation type="unfinished">Mostrar anuncios DX recientes que pasan sus filtros</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="148"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="115"/>
         <source>[count] [callsign/prefix] [on band]
 Optional: the same options as sh/dx, with your spot filters applied.</source>
         <translation type="unfinished">[count] [callsign/prefix] [on band]
 Opcional: las mismas opciones que sh/dx, aplicando sus filtros de anuncios DX.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="150"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="117"/>
         <source>Look up a DXCC entity and its prefixes</source>
         <translation type="unfinished">Consultar una entidad DXCC y sus prefijos</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="151"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="118"/>
         <source>&lt;callsign/prefix&gt;
 Required: a callsign or prefix.</source>
         <translation type="unfinished">&lt;callsign/prefix&gt;
 Obligatorio: un indicativo o prefijo.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="153"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="120"/>
         <source>Show station details and connection status</source>
         <translation type="unfinished">Mostrar los datos de la estación y su estado de conexión</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="154"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="121"/>
         <source>[callsign ...]
 Optional: callsigns to look up; without them, show your own station.</source>
         <translation type="unfinished">[callsign ...]
 Opcional: indicativos que se desean consultar; si no se indican, se muestra su propia estación.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="156"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="123"/>
         <source>Show cluster nodes and connected users</source>
         <translation type="unfinished">Mostrar los nodos del clúster y los usuarios conectados</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="157"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="124"/>
         <source>[node/prefix/all]
 Optional: a node, prefix or all. The full list can be very long.</source>
         <translation type="unfinished">[node/prefix/all]
 Opcional: un nodo, un prefijo o all. La lista completa puede ser muy larga.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="159"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="126"/>
         <source>Show cluster band and frequency definitions</source>
         <translation type="unfinished">Mostrar las definiciones de bandas y frecuencias del clúster</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="160"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="127"/>
         <source>Show UTC and local standard time</source>
         <translation type="unfinished">Mostrar la hora UTC y la hora local estándar</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="161"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="128"/>
         <source>[callsign/prefix ...]
 Optional: destinations; without them, show the node&apos;s time.</source>
         <translation type="unfinished">[callsign/prefix ...]
 Opcional: destinos; si no se indican, se muestra la hora del nodo.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="163"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="130"/>
         <source>Show sunrise, sunset and the Sun&apos;s position</source>
         <translation type="unfinished">Mostrar la salida, la puesta y la posición del Sol</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="164"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="167"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="131"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="134"/>
         <source>[day offset] [callsign/prefix ...]
 Optional: days before or after today and destinations; defaults to your station.</source>
         <translation type="unfinished">[day offset] [callsign/prefix ...]
 Opcional: días antes o después de hoy y destinos; por defecto se usa su estación.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="166"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="133"/>
         <source>Show moonrise, moonset and the Moon&apos;s position</source>
         <translation type="unfinished">Mostrar la salida, la puesta y la posición de la Luna</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="169"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="136"/>
         <source>Estimate HF propagation to a destination</source>
         <translation type="unfinished">Estimar la propagación en HF hacia un destino</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="170"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="137"/>
         <source>&lt;prefix&gt; [hours] [long]
 Required: destination prefix. Optional: up to 24 hours and long-path prediction.</source>
         <translation type="unfinished">&lt;prefix&gt; [hours] [long]
 Obligatorio: el prefijo de destino. Opcional: hasta 24 horas y predicción por la vía larga.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="172"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="139"/>
         <source>Show HF spotter activity by DXCC entity</source>
         <translation type="unfinished">Mostrar la actividad de las estaciones que envían anuncios DX en HF por entidad DXCC</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="173"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="176"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="140"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="143"/>
         <source>[days] [date] [prefix ...]
 Optional: period, starting date and prefixes; defaults to your DXCC entity.</source>
         <translation type="unfinished">[days] [date] [prefix ...]
 Opcional: período, fecha de inicio y prefijos; por defecto se usa su entidad DXCC.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="175"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="142"/>
         <source>Show VHF spotter activity by DXCC entity</source>
         <translation type="unfinished">Mostrar la actividad de las estaciones que envían anuncios DX en VHF por entidad DXCC</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="178"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="145"/>
         <source>Search cluster command help</source>
         <translation type="unfinished">Buscar en la ayuda de los comandos del clúster</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="179"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="146"/>
         <source>&lt;text&gt;
 Required: a word to search for in the cluster help.</source>
         <translation type="unfinished">&lt;text&gt;
 Obligatorio: una palabra que se desea buscar en la ayuda del clúster.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="181"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="148"/>
         <source>Send a DX spot</source>
         <translation type="unfinished">Enviar un anuncio DX</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="182"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="149"/>
         <source>&lt;frequency&gt; &lt;callsign&gt; [comment]
 Required: frequency in kHz and spotted callsign. Optional: a comment.</source>
         <translation type="unfinished">&lt;frequency&gt; &lt;callsign&gt; [comment]
 Obligatorio: la frecuencia en kHz y el indicativo anunciado. Opcional: un comentario.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="184"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="151"/>
         <source>Send a private message to a connected station</source>
         <translation type="unfinished">Enviar un mensaje privado a una estación conectada</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="185"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="152"/>
         <source>&lt;callsign&gt; [text]
 Required: recipient. Include text for one message; without text, enter talk mode (leave with /ex).</source>
         <translation type="unfinished">&lt;callsign&gt; [text]
 Obligatorio: el destinatario. Incluya texto para enviar un solo mensaje; sin texto, se entra en modo de conversación (se sale con /ex).</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="187"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="154"/>
         <source>Send an announcement</source>
         <translation type="unfinished">Enviar un anuncio</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="188"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="155"/>
         <source>[full] &lt;text&gt;
 Required: announcement text. Optional: full broadcasts beyond the local node.</source>
         <translation type="unfinished">[full] &lt;text&gt;
 Obligatorio: el texto del anuncio. Opcional: full difunde el anuncio más allá del nodo local.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="190"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="157"/>
         <source>Send a message to a chat group</source>
         <translation type="unfinished">Enviar un mensaje a un grupo de chat</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="191"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="158"/>
         <source>&lt;group&gt; &lt;text&gt;
 Required: group name and message text.</source>
         <translation type="unfinished">&lt;group&gt; &lt;text&gt;
 Obligatorio: el nombre del grupo y el texto del mensaje.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="193"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="160"/>
         <source>Join a chat group</source>
         <translation type="unfinished">Unirse a un grupo de chat</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="194"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="196"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="161"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="163"/>
         <source>&lt;group&gt;
 Required: the group name.</source>
         <translation type="unfinished">&lt;group&gt;
 Obligatorio: el nombre del grupo.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="195"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="162"/>
         <source>Leave a chat group</source>
         <translation type="unfinished">Salir de un grupo de chat</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="197"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="164"/>
         <source>Show recent chat messages</source>
         <translation type="unfinished">Mostrar mensajes de chat recientes</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="198"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="165"/>
         <source>[group] [lines]
 Optional: group name and number of messages.</source>
         <translation type="unfinished">[group] [lines]
 Opcional: el nombre del grupo y el número de mensajes.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="200"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="167"/>
         <source>Set a filter for spots to receive</source>
         <translation type="unfinished">Establecer un filtro para los anuncios DX que se desean recibir</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="201"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="168"/>
         <source>[0-9] &lt;pattern&gt;
 Required: a filter such as on hf/cw, call OK or by_zone 14,15. Optional: filter line number.</source>
         <translation type="unfinished">[0-9] &lt;pattern&gt;
 Obligatorio: un filtro como on hf/cw, call OK o by_zone 14,15. Opcional: el número de línea del filtro.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="203"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="170"/>
         <source>Set a filter for spots to hide</source>
         <translation type="unfinished">Establecer un filtro para los anuncios DX que se desean ocultar</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="204"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="171"/>
         <source>[0-9] &lt;pattern&gt;
 Required: a filter such as on 6m, call OK or info FT8. Optional: filter line number.</source>
         <translation type="unfinished">[0-9] &lt;pattern&gt;
 Obligatorio: un filtro como on 6m, call OK o info FT8. Opcional: el número de línea del filtro.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="206"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="173"/>
         <source>Remove a spot filter</source>
         <translation type="unfinished">Eliminar un filtro de anuncios DX</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="207"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="174"/>
         <source>[0-9|all]
 Optional: a filter line number (default 1), or all to remove every spot filter.</source>
         <translation type="unfinished">[0-9|all]
 Opcional: el número de línea del filtro (por defecto 1), o all para eliminar todos los filtros de anuncios DX.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="209"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="176"/>
         <source>Set your operator name</source>
         <translation type="unfinished">Establecer su nombre de operador</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="210"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="177"/>
         <source>&lt;name&gt;
 Required: your name.</source>
         <translation type="unfinished">&lt;name&gt;
 Obligatorio: su nombre.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="211"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="178"/>
         <source>Set your station location name</source>
         <translation type="unfinished">Establecer el nombre de la ubicación de su estación</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="212"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="179"/>
         <source>&lt;location&gt;
 Required: your town or station location name.</source>
         <translation type="unfinished">&lt;location&gt;
 Obligatorio: su localidad o el nombre de la ubicación de su estación.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="214"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="181"/>
         <source>Set your station latitude and longitude</source>
         <translation type="unfinished">Establecer la latitud y la longitud de su estación</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="215"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="182"/>
         <source>&lt;latitude&gt; &lt;longitude&gt;
 Required: degrees, minutes and N/S or E/W for each coordinate.</source>
         <translation type="unfinished">&lt;latitude&gt; &lt;longitude&gt;
 Obligatorio: grados, minutos y N/S o E/W para cada coordenada.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="217"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="184"/>
         <source>Set cluster output paging</source>
         <translation type="unfinished">Configurar la paginación de la salida del clúster</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="218"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="185"/>
         <source>&lt;lines&gt;
 Required: lines per page; 0 disables paging.</source>
         <translation type="unfinished">&lt;lines&gt;
 Obligatorio: el número de líneas por página; 0 desactiva la paginación.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="220"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="187"/>
         <source>Enable live DX spots</source>
         <translation type="unfinished">Activar anuncios DX en tiempo real</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="221"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="188"/>
         <source>Disable live DX spots</source>
         <translation type="unfinished">Desactivar anuncios DX en tiempo real</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="222"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="189"/>
         <source>Enable live WWV reports</source>
         <translation type="unfinished">Activar informes WWV en tiempo real</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="223"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="190"/>
         <source>Disable live WWV reports</source>
         <translation type="unfinished">Desactivar informes WWV en tiempo real</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="224"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="191"/>
         <source>Enable live WCY reports</source>
         <translation type="unfinished">Activar informes WCY en tiempo real</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="225"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="192"/>
         <source>Disable live WCY reports</source>
         <translation type="unfinished">Desactivar informes WCY en tiempo real</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="226"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="193"/>
         <source>Enable announcements</source>
         <translation type="unfinished">Activar anuncios</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="227"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="194"/>
         <source>Disable announcements</source>
         <translation type="unfinished">Desactivar anuncios</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="228"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="195"/>
         <source>Enable private talk messages</source>
         <translation type="unfinished">Activar mensajes privados</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="229"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="196"/>
         <source>Disable private talk messages</source>
         <translation type="unfinished">Desactivar mensajes privados</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="230"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="197"/>
         <source>Show local connections</source>
         <translation type="unfinished">Mostrar conexiones locales</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="231"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="198"/>
         <source>Disconnect from the cluster</source>
         <translation type="unfinished">Desconectarse del clúster</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="235"/>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="238"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="202"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="205"/>
         <source>[/count]
 Optional: append / and the number of reports to the command.</source>
         <translation type="unfinished">[/count]
 Opcional: añadir / y el número de informes al comando.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="242"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="209"/>
         <source>[callsign/band]
 Optional: a callsign or band in metres. For a spot count, use sh/dx/count.</source>
         <translation type="unfinished">[callsign/band]
 Opcional: un indicativo o una banda en metros. Para especificar el número de spots, use sh/dx/count.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="245"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="212"/>
         <source>[callsign/band]
 Optional: a callsign or band in metres. For a spot count, use sh/mydx/count.</source>
         <translation type="unfinished">[callsign/band]
 Opcional: un indicativo o una banda en metros. Para especificar el número de spots, use sh/mydx/count.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="247"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="214"/>
         <source>Show bearing and distance</source>
         <translation type="unfinished">Mostrar el rumbo y la distancia</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="248"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="215"/>
         <source>&lt;callsign&gt;
 Required: the destination callsign.</source>
         <translation type="unfinished">&lt;callsign&gt;
 Obligatorio: el indicativo de destino.</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="339"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="288"/>
         <source>%1
 Syntax: %2</source>
         <translation type="unfinished">%1
 Sintaxis: %2</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="345"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="294"/>
         <source>%1
 Syntax: %2
 Example: %3</source>
@@ -6036,17 +6035,17 @@ Sintaxis: %2
 Ejemplo: %3</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="377"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="19"/>
         <source>My commands</source>
         <translation type="unfinished">Mis comandos</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="399"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="19"/>
         <source>Common commands</source>
         <translation type="unfinished">Comandos habituales</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxCommandEdit.cpp" line="402"/>
+        <location filename="../ui/component/DxCommandEdit.cpp" line="332"/>
         <source>%1 — %2</source>
         <translation type="unfinished">%1 — %2</translation>
     </message>
@@ -6059,131 +6058,131 @@ Ejemplo: %3</translation>
         <translation>Filtros del DX Cluster</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="39"/>
+        <location filename="../ui/DxFilterDialog.ui" line="45"/>
         <source>General Filters</source>
         <translation>Filtro Generales</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="45"/>
+        <location filename="../ui/DxFilterDialog.ui" line="51"/>
         <source>Bands</source>
         <translation>Bandas</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="82"/>
+        <location filename="../ui/DxFilterDialog.ui" line="88"/>
         <source>Modes</source>
         <translation>Modos</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="99"/>
+        <location filename="../ui/DxFilterDialog.ui" line="105"/>
         <source>Phone</source>
         <translation>Fonía</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="112"/>
+        <location filename="../ui/DxFilterDialog.ui" line="118"/>
         <source>CW</source>
         <translation>CW</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="125"/>
+        <location filename="../ui/DxFilterDialog.ui" line="131"/>
         <source>Digital</source>
         <translation>Digital</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="150"/>
+        <location filename="../ui/DxFilterDialog.ui" line="156"/>
         <source>Continent</source>
         <translation>Continente</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="158"/>
-        <location filename="../ui/DxFilterDialog.ui" line="244"/>
+        <location filename="../ui/DxFilterDialog.ui" line="164"/>
+        <location filename="../ui/DxFilterDialog.ui" line="250"/>
         <source>North America</source>
         <translation>Norteamérica</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="193"/>
-        <location filename="../ui/DxFilterDialog.ui" line="265"/>
+        <location filename="../ui/DxFilterDialog.ui" line="199"/>
+        <location filename="../ui/DxFilterDialog.ui" line="271"/>
         <source>Africa</source>
         <translation>África</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="179"/>
-        <location filename="../ui/DxFilterDialog.ui" line="237"/>
+        <location filename="../ui/DxFilterDialog.ui" line="185"/>
+        <location filename="../ui/DxFilterDialog.ui" line="243"/>
         <source>Antarctica</source>
         <translation>Antártida</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="165"/>
-        <location filename="../ui/DxFilterDialog.ui" line="230"/>
+        <location filename="../ui/DxFilterDialog.ui" line="171"/>
+        <location filename="../ui/DxFilterDialog.ui" line="236"/>
         <source>South America</source>
         <translation>Sudamérica</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="200"/>
-        <location filename="../ui/DxFilterDialog.ui" line="251"/>
+        <location filename="../ui/DxFilterDialog.ui" line="206"/>
+        <location filename="../ui/DxFilterDialog.ui" line="257"/>
         <source>Asia</source>
         <translation>Asia</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="186"/>
-        <location filename="../ui/DxFilterDialog.ui" line="258"/>
+        <location filename="../ui/DxFilterDialog.ui" line="192"/>
+        <location filename="../ui/DxFilterDialog.ui" line="264"/>
         <source>Europe</source>
         <translation>Europa</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="138"/>
+        <location filename="../ui/DxFilterDialog.ui" line="144"/>
         <source>FTx (FT8/FT4)</source>
         <translation>FTx (FT8/FT4)</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="172"/>
-        <location filename="../ui/DxFilterDialog.ui" line="272"/>
+        <location filename="../ui/DxFilterDialog.ui" line="178"/>
+        <location filename="../ui/DxFilterDialog.ui" line="278"/>
         <source>Oceania</source>
         <translation>Oceanía</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="216"/>
+        <location filename="../ui/DxFilterDialog.ui" line="222"/>
         <source>Extended Filters</source>
         <translation>Filtros Extendidos</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="222"/>
+        <location filename="../ui/DxFilterDialog.ui" line="228"/>
         <source>Spotter Continent</source>
         <translation>Continente del Anunciante</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="284"/>
+        <location filename="../ui/DxFilterDialog.ui" line="290"/>
         <source>Do not show the following spots when they have the same Callsign and their time difference is lower than Time Diff and their frequency difference is lower than Freq Diff</source>
         <translation>No mostrar los siguientes spots cuando tengan el mismo indicativo y su diferencia horaria sea inferior a Time Diff y su diferencia de frecuencia sea inferior a Freq Diff</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="287"/>
+        <location filename="../ui/DxFilterDialog.ui" line="293"/>
         <source>Spots Dedup</source>
         <translation>Deduplicación de Anuncios</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="314"/>
+        <location filename="../ui/DxFilterDialog.ui" line="320"/>
         <source>Time difference</source>
         <translatorcomment>Diferencia Horaria</translatorcomment>
         <translation>Diferencia Horaria</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="321"/>
+        <location filename="../ui/DxFilterDialog.ui" line="327"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="334"/>
+        <location filename="../ui/DxFilterDialog.ui" line="340"/>
         <source>Frequency difference</source>
         <translatorcomment>Diferencia de Frecuencia</translatorcomment>
         <translation>Diferencia de Frecuencia</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="341"/>
+        <location filename="../ui/DxFilterDialog.ui" line="347"/>
         <source> kHz</source>
         <translation>Khz</translation>
     </message>
     <message>
-        <location filename="../ui/DxFilterDialog.ui" line="360"/>
+        <location filename="../ui/DxFilterDialog.ui" line="366"/>
         <source>Member</source>
         <translation>Miembro</translation>
     </message>
@@ -6206,57 +6205,57 @@ Ejemplo: %3</translation>
 <context>
     <name>DxTableModel</name>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="203"/>
+        <location filename="../ui/DxWidget.cpp" line="204"/>
         <source>Time</source>
         <translation>Hora</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="204"/>
+        <location filename="../ui/DxWidget.cpp" line="205"/>
         <source>Callsign</source>
         <translation>Indicativo</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="205"/>
+        <location filename="../ui/DxWidget.cpp" line="206"/>
         <source>Frequency</source>
         <translation>Frecuencia</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="206"/>
+        <location filename="../ui/DxWidget.cpp" line="207"/>
         <source>Mode</source>
         <translation>Modo</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="207"/>
+        <location filename="../ui/DxWidget.cpp" line="208"/>
         <source>Spotter</source>
         <translation>Anunciante</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="208"/>
+        <location filename="../ui/DxWidget.cpp" line="209"/>
         <source>Comment</source>
         <translation>Comentario</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="209"/>
+        <location filename="../ui/DxWidget.cpp" line="210"/>
         <source>Continent</source>
         <translation>Continente</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="210"/>
+        <location filename="../ui/DxWidget.cpp" line="211"/>
         <source>Spotter Continent</source>
         <translation>Continente del Anunciante</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="211"/>
+        <location filename="../ui/DxWidget.cpp" line="212"/>
         <source>Band</source>
         <translation>Banda</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="212"/>
+        <location filename="../ui/DxWidget.cpp" line="213"/>
         <source>Member</source>
         <translation>Miembro</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="213"/>
+        <location filename="../ui/DxWidget.cpp" line="214"/>
         <source>Country</source>
         <translation>País</translation>
     </message>
@@ -6269,280 +6268,295 @@ Ejemplo: %3</translation>
         <translation>Inserte &lt;b&gt;nombre de host:puerto&lt;/b&gt; del servidor del  Cluster DX.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="116"/>
-        <location filename="../ui/DxWidget.cpp" line="867"/>
+        <location filename="../ui/DxWidget.ui" line="89"/>
+        <source>Show DX Cluster Servers</source>
+        <translation type="unfinished">Mostrar servidores del Cluster DX</translation>
+    </message>
+    <message>
+        <location filename="../ui/DxWidget.ui" line="107"/>
+        <location filename="../ui/DxWidget.cpp" line="852"/>
         <source>Connect</source>
         <translation>Conectar</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="132"/>
+        <location filename="../ui/DxWidget.ui" line="123"/>
         <source>Filtered</source>
         <translation>Filtrado</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="162"/>
+        <location filename="../ui/DxWidget.ui" line="153"/>
         <source>Spots</source>
         <translation>Anuncios</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="167"/>
+        <location filename="../ui/DxWidget.ui" line="158"/>
         <source>WCY</source>
         <translation>WCY</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="172"/>
+        <location filename="../ui/DxWidget.ui" line="163"/>
         <source>WWV</source>
         <translation>WWV</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="177"/>
+        <location filename="../ui/DxWidget.ui" line="168"/>
         <source>To All</source>
         <translation>A Todo</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="182"/>
+        <location filename="../ui/DxWidget.ui" line="173"/>
         <source>Console</source>
         <translation>Consola</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="187"/>
+        <location filename="../ui/DxWidget.ui" line="178"/>
         <source>15-min Trend</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="282"/>
+        <location filename="../ui/DxWidget.ui" line="273"/>
         <source>Full-text search</source>
         <translation>Búsqueda de texto completo</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="285"/>
+        <location filename="../ui/DxWidget.ui" line="276"/>
         <source>Search</source>
         <translation>Búsqueda</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="295"/>
+        <location filename="../ui/DxWidget.ui" line="286"/>
         <source>Close Search</source>
         <translation>Cerrar búsqueda</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="597"/>
+        <location filename="../ui/DxWidget.ui" line="588"/>
         <source>Send DX Cluster Command</source>
         <translation>Enviar comando de Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="638"/>
+        <location filename="../ui/DxWidget.ui" line="629"/>
         <source>Filter...</source>
         <translation>Filtrar...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="641"/>
+        <location filename="../ui/DxWidget.ui" line="632"/>
         <source>Filter DXC</source>
         <translation>Filtrar Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="646"/>
-        <location filename="../ui/DxWidget.cpp" line="1673"/>
+        <location filename="../ui/DxWidget.ui" line="637"/>
+        <location filename="../ui/DxWidget.cpp" line="1651"/>
         <source>Spot QSO</source>
         <translation type="unfinished">Anunciar QSO</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="649"/>
+        <location filename="../ui/DxWidget.ui" line="640"/>
         <source>Prepare a spot for New QSO when its callsign is filled in; otherwise use the last saved QSO.</source>
         <translation type="unfinished">Preparar un spot con los datos de Nuevo QSO si se ha introducido el indicativo; en caso contrario, usar el último QSO guardado.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="654"/>
+        <location filename="../ui/DxWidget.ui" line="645"/>
         <source>Comment Template</source>
         <translation type="unfinished">Plantilla de comentario</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="663"/>
+        <location filename="../ui/DxWidget.ui" line="654"/>
         <source>Command Warning</source>
         <translation type="unfinished">Advertencia sobre el comando</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="668"/>
+        <location filename="../ui/DxWidget.ui" line="659"/>
         <source>Show HF Stats</source>
         <translation>Mostrar Estadísticas de HF</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="673"/>
+        <location filename="../ui/DxWidget.ui" line="664"/>
         <source>Show VHF Stats</source>
         <translation>Mostrar Estadísticas de VHF</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="678"/>
+        <location filename="../ui/DxWidget.ui" line="669"/>
         <source>Show WCY</source>
         <translation>Mostrar WCY</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="683"/>
+        <location filename="../ui/DxWidget.ui" line="674"/>
         <source>Show WWV</source>
         <translation>Mostrar WWV</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="688"/>
+        <location filename="../ui/DxWidget.ui" line="679"/>
         <source>Column Visibility...</source>
         <translation>Visibilidad de Columnas...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="691"/>
+        <location filename="../ui/DxWidget.ui" line="682"/>
         <source>Which columns should be displayed</source>
         <translation>Qué columnas deben mostrarse</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="699"/>
+        <location filename="../ui/DxWidget.ui" line="690"/>
         <source>Connect on startup</source>
         <translation>Conectar al inicio</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="702"/>
+        <location filename="../ui/DxWidget.ui" line="693"/>
         <source>Automatic connection after start</source>
         <translation>Conectar automáticamente después de iniciar</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="707"/>
+        <location filename="../ui/DxWidget.ui" line="698"/>
         <source>Delete Server</source>
         <translation>Borrar Servidor</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="710"/>
+        <location filename="../ui/DxWidget.ui" line="701"/>
         <source>DXC - Delete Server</source>
         <translation>Cluster DX - Eliminar Servidor</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="715"/>
+        <location filename="../ui/DxWidget.ui" line="706"/>
         <source>Clear Password</source>
         <translation>Borrar Contraseña</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="723"/>
+        <location filename="../ui/DxWidget.ui" line="714"/>
         <source>Keep Spots</source>
         <translation>Mantener Anuncios</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="726"/>
+        <location filename="../ui/DxWidget.ui" line="717"/>
         <source>Spots are not cleared when connecting to a new DX Cluster.</source>
         <translation>Los anuncios no se borran al conectarse a un nuevo clúster DX.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="731"/>
+        <location filename="../ui/DxWidget.ui" line="722"/>
         <source>Clear</source>
         <translation>Borrar</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="734"/>
+        <location filename="../ui/DxWidget.ui" line="725"/>
         <source>Clear all data</source>
         <translation>Borrar todos los datos</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="739"/>
+        <location filename="../ui/DxWidget.ui" line="730"/>
         <source>Search...</source>
         <translation>Búsqueda...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="742"/>
+        <location filename="../ui/DxWidget.ui" line="733"/>
         <source>DXC - Search</source>
         <translation>DXC - Búsqueda</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="712"/>
+        <location filename="../ui/DxWidget.ui" line="751"/>
+        <source>Server Password</source>
+        <translation type="unfinished">Contraseña del servidor</translation>
+    </message>
+    <message>
+        <location filename="../ui/DxWidget.ui" line="754"/>
+        <source>A password was used for this connection.</source>
+        <translation type="unfinished">Se ha usado una contraseña para esta conexión.</translation>
+    </message>
+    <message>
+        <location filename="../ui/DxWidget.cpp" line="695"/>
         <source>My Continent</source>
         <translation>Mi continente</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="717"/>
+        <location filename="../ui/DxWidget.cpp" line="700"/>
         <source>Auto</source>
         <translation>Automático</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="815"/>
+        <location filename="../ui/DxWidget.cpp" line="800"/>
         <source>Connecting...</source>
         <translation>Conectando...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="861"/>
+        <location filename="../ui/DxWidget.cpp" line="846"/>
         <source>DX Cluster is temporarily unavailable</source>
         <translation>El Cluster DX no está disponible temporalmente</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1162"/>
+        <location filename="../ui/DxWidget.cpp" line="1140"/>
         <source>DXC Server Error</source>
         <translation>Error del Servidor del Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1163"/>
+        <location filename="../ui/DxWidget.cpp" line="1141"/>
         <source>An invalid callsign</source>
         <translation>Un indicativo inválido</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1174"/>
+        <location filename="../ui/DxWidget.cpp" line="1152"/>
         <source>DX Cluster Password</source>
         <translation>Contraseña del Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1175"/>
+        <location filename="../ui/DxWidget.cpp" line="1153"/>
         <source>Security Notice</source>
         <translation>Aviso de Seguridad</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1175"/>
+        <location filename="../ui/DxWidget.cpp" line="1153"/>
         <source>The password can be sent via an unsecured channel</source>
         <translation>La contraseña se puede enviar a través de un canal no seguro</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1177"/>
+        <location filename="../ui/DxWidget.cpp" line="1155"/>
         <source>Server</source>
         <translation>Servidor</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1179"/>
+        <location filename="../ui/DxWidget.cpp" line="1157"/>
         <source>Username</source>
         <translation>Nombre de Usuario</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1440"/>
+        <location filename="../ui/DxWidget.cpp" line="1424"/>
         <source>Disconnect</source>
         <translation>Desconectar</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1441"/>
+        <location filename="../ui/DxWidget.cpp" line="1425"/>
         <source>DX Cluster Command</source>
         <translation>Comando de DX Cluster</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1591"/>
+        <location filename="../ui/DxWidget.cpp" line="1569"/>
         <source>A callsign is required to spot a QSO.</source>
         <translation type="unfinished">Se necesita un indicativo para enviar un spot del QSO.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1611"/>
+        <location filename="../ui/DxWidget.cpp" line="1589"/>
         <source>Comment not added: missing %1.</source>
         <translation type="unfinished">No se ha añadido el comentario: falta %1.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1656"/>
-        <location filename="../ui/DxWidget.cpp" line="1898"/>
+        <location filename="../ui/DxWidget.cpp" line="1634"/>
+        <location filename="../ui/DxWidget.cpp" line="1887"/>
         <source>No last QSO is available. Log a QSO first.</source>
         <translation type="unfinished">No hay ningún QSO anterior disponible. Registre primero un QSO.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1666"/>
+        <location filename="../ui/DxWidget.cpp" line="1644"/>
         <source>Prepare a spot for %1 at %2 kHz.</source>
         <translation type="unfinished">Preparar un spot para %1 en %2 kHz.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1668"/>
+        <location filename="../ui/DxWidget.cpp" line="1646"/>
         <source>Prepare a spot for %1. An exact frequency is required.</source>
         <translation type="unfinished">Preparar un spot para %1. Se necesita una frecuencia exacta.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1673"/>
+        <location filename="../ui/DxWidget.cpp" line="1651"/>
         <source>Last QSO</source>
         <translation type="unfinished">Último QSO</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1597"/>
+        <location filename="../ui/DxWidget.cpp" line="1575"/>
         <source>An exact frequency is required to spot a QSO</source>
         <translation>Se requiere una frecuencia exacta para enviar un spot de un QSO</translation>
     </message>
@@ -6575,12 +6589,12 @@ Ejemplo: %3</translation>
         <translation type="unfinished">Seleccionar estados DXCC individuales</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxccLogStatusWidget.ui" line="38"/>
+        <location filename="../ui/component/DxccLogStatusWidget.ui" line="49"/>
         <source>QSOs to evaluate:</source>
         <translation type="unfinished">QSO a evaluar:</translation>
     </message>
     <message>
-        <location filename="../ui/component/DxccLogStatusWidget.ui" line="45"/>
+        <location filename="../ui/component/DxccLogStatusWidget.ui" line="56"/>
         <source>Defines the band and DXCC mode grouping used to evaluate the condition. Satellite operation uses the DXCC entity only.</source>
         <translation type="unfinished">Define la agrupación por banda y modo DXCC con la que se evalúa la condición. En los contactos vía satélite solo se tiene en cuenta la entidad DXCC.</translation>
     </message>
@@ -11283,27 +11297,27 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         <translation>No se pueden actualizar las reglas de alerta</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="767"/>
+        <location filename="../ui/DxWidget.cpp" line="750"/>
         <source>DXC Server Name Error</source>
         <translation>Error en el nombre del servidor del Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="768"/>
+        <location filename="../ui/DxWidget.cpp" line="751"/>
         <source>DXC Server address must be in format&lt;p&gt;&lt;b&gt;[username@]hostname:port&lt;/b&gt; (ex. hamqth.com:7300)&lt;/p&gt;</source>
         <translation>La dirección del servidor del Cluster DX debe tener el formato&lt;p&gt;&lt;b&gt;[nombre de usuario@]nombre de host:puerto&lt;/b&gt; (ej. hamqth.com:7300)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1206"/>
+        <location filename="../ui/DxWidget.cpp" line="1185"/>
         <source>DX Cluster Password</source>
         <translation>Contraseña del Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1207"/>
+        <location filename="../ui/DxWidget.cpp" line="1186"/>
         <source>Invalid Password</source>
         <translation>Contraseña incorrecta</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1372"/>
+        <location filename="../ui/DxWidget.cpp" line="1356"/>
         <source>DXC Server Connection Error</source>
         <translation>Error en la conexión del servidor del Cluster DX</translation>
     </message>
@@ -11486,42 +11500,42 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="412"/>
         <location filename="../service/kstchat/KSTChat.cpp" line="569"/>
-        <location filename="../ui/DxWidget.cpp" line="1342"/>
+        <location filename="../ui/DxWidget.cpp" line="1326"/>
         <source>Connection Refused</source>
         <translation>Conexión Denegada</translation>
     </message>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="416"/>
         <location filename="../service/kstchat/KSTChat.cpp" line="572"/>
-        <location filename="../ui/DxWidget.cpp" line="1345"/>
+        <location filename="../ui/DxWidget.cpp" line="1329"/>
         <source>Host closed the connection</source>
         <translation>El host cerró la conexión</translation>
     </message>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="421"/>
         <location filename="../service/kstchat/KSTChat.cpp" line="577"/>
-        <location filename="../ui/DxWidget.cpp" line="1350"/>
+        <location filename="../ui/DxWidget.cpp" line="1334"/>
         <source>Host not found</source>
         <translation>Host no encontrado</translation>
     </message>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="424"/>
         <location filename="../service/kstchat/KSTChat.cpp" line="580"/>
-        <location filename="../ui/DxWidget.cpp" line="1353"/>
+        <location filename="../ui/DxWidget.cpp" line="1337"/>
         <source>Timeout</source>
         <translation>Se agotó el tiempo de espera</translation>
     </message>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="428"/>
         <location filename="../service/kstchat/KSTChat.cpp" line="585"/>
-        <location filename="../ui/DxWidget.cpp" line="1357"/>
+        <location filename="../ui/DxWidget.cpp" line="1341"/>
         <source>Network Error</source>
         <translation>Error de red</translation>
     </message>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="431"/>
         <location filename="../service/kstchat/KSTChat.cpp" line="589"/>
-        <location filename="../ui/DxWidget.cpp" line="1360"/>
+        <location filename="../ui/DxWidget.cpp" line="1344"/>
         <source>Internal Error</source>
         <translation>Error Interno</translation>
     </message>
@@ -11721,7 +11735,7 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         <translation>Mi DXCC</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="1335"/>
+        <location filename="../ui/DxWidget.cpp" line="1319"/>
         <source>Cannot connect to DXC Server &lt;p&gt;Reason &lt;b&gt;: </source>
         <translation>No se puede conectar al servidor del Cluster DX &lt;p&gt;Razón &lt;b&gt;: </translation>
     </message>
@@ -16424,13 +16438,18 @@ Instale TQSL o especifique la ruta manualmente.</translation>
         <translation type="unfinished">Plantilla de comentario (dejar vacía para no añadir comentarios automáticos):</translation>
     </message>
     <message>
-        <location filename="../ui/SpotCommentDialog.ui" line="42"/>
-        <location filename="../ui/SpotCommentDialog.cpp" line="105"/>
+        <location filename="../ui/SpotCommentDialog.ui" line="36"/>
+        <source>Show Comment Templates</source>
+        <translation type="unfinished">Mostrar plantillas de comentarios</translation>
+    </message>
+    <message>
+        <location filename="../ui/SpotCommentDialog.ui" line="54"/>
+        <location filename="../ui/SpotCommentDialog.cpp" line="122"/>
         <source>Use New QSO when its callsign is filled in; otherwise use the last saved QSO. Nothing is saved or sent.</source>
         <translation type="unfinished">Se usan los datos de Nuevo QSO si se ha introducido el indicativo; en caso contrario, los del último QSO guardado. No se guarda ni se envía nada.</translation>
     </message>
     <message>
-        <location filename="../ui/SpotCommentDialog.ui" line="45"/>
+        <location filename="../ui/SpotCommentDialog.ui" line="57"/>
         <source>Test Macro</source>
         <translation type="unfinished">Probar macro</translation>
     </message>
@@ -16445,22 +16464,32 @@ Instale TQSL o especifique la ruta manualmente.</translation>
         <translation type="unfinished">Probar macro — Último QSO</translation>
     </message>
     <message>
-        <location filename="../ui/SpotCommentDialog.cpp" line="41"/>
+        <location filename="../ui/SpotCommentDialog.cpp" line="30"/>
+        <source>Common templates</source>
+        <translation type="unfinished">Plantillas comunes</translation>
+    </message>
+    <message>
+        <location filename="../ui/SpotCommentDialog.cpp" line="30"/>
+        <source>My templates</source>
+        <translation type="unfinished">Mis plantillas</translation>
+    </message>
+    <message>
+        <location filename="../ui/SpotCommentDialog.cpp" line="50"/>
         <source>The spot comment template could not be saved.</source>
         <translation type="unfinished">No se pudo guardar la plantilla de comentario del spot.</translation>
     </message>
     <message>
-        <location filename="../ui/SpotCommentDialog.cpp" line="54"/>
+        <location filename="../ui/SpotCommentDialog.cpp" line="71"/>
         <source>No QSO is available. Fill in a callsign in New QSO or log a QSO first.</source>
         <translation type="unfinished">No hay ningún QSO disponible. Introduzca un indicativo en Nuevo QSO o registre primero un QSO.</translation>
     </message>
     <message>
-        <location filename="../ui/SpotCommentDialog.cpp" line="56"/>
+        <location filename="../ui/SpotCommentDialog.cpp" line="73"/>
         <source>Missing QSO data for: %1.</source>
         <translation type="unfinished">Faltan datos del QSO para: %1.</translation>
     </message>
     <message>
-        <location filename="../ui/SpotCommentDialog.cpp" line="67"/>
+        <location filename="../ui/SpotCommentDialog.cpp" line="84"/>
         <source>Empty comment.</source>
         <translation type="unfinished">Comentario vacío.</translation>
     </message>
@@ -16715,6 +16744,14 @@ Instale TQSL o especifique la ruta manualmente.</translation>
     </message>
 </context>
 <context>
+    <name>SuggestionEdit</name>
+    <message>
+        <location filename="../ui/component/SuggestionEdit.cpp" line="23"/>
+        <source>Show Suggestions</source>
+        <translation type="unfinished">Mostrar sugerencias</translation>
+    </message>
+</context>
+<context>
     <name>TCIRigDrv</name>
     <message>
         <location filename="../rig/drivers/TCIRigDrv.cpp" line="21"/>
@@ -16769,17 +16806,17 @@ Instale TQSL o especifique la ruta manualmente.</translation>
 <context>
     <name>ToAllTableModel</name>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="569"/>
+        <location filename="../ui/DxWidget.cpp" line="570"/>
         <source>Time</source>
         <translation>Hora</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="570"/>
+        <location filename="../ui/DxWidget.cpp" line="571"/>
         <source>Spotter</source>
         <translation>Anunciante</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="571"/>
+        <location filename="../ui/DxWidget.cpp" line="572"/>
         <source>Message</source>
         <translation>Mensaje</translation>
     </message>
@@ -17085,47 +17122,47 @@ Instale TQSL o especifique la ruta manualmente.</translation>
 <context>
     <name>WCYTableModel</name>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="438"/>
+        <location filename="../ui/DxWidget.cpp" line="439"/>
         <source>Time</source>
         <translation>Hora</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="439"/>
+        <location filename="../ui/DxWidget.cpp" line="440"/>
         <source>K</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="440"/>
+        <location filename="../ui/DxWidget.cpp" line="441"/>
         <source>expK</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="441"/>
+        <location filename="../ui/DxWidget.cpp" line="442"/>
         <source>A</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="442"/>
+        <location filename="../ui/DxWidget.cpp" line="443"/>
         <source>R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="443"/>
+        <location filename="../ui/DxWidget.cpp" line="444"/>
         <source>SFI</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="444"/>
+        <location filename="../ui/DxWidget.cpp" line="445"/>
         <source>SA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="445"/>
+        <location filename="../ui/DxWidget.cpp" line="446"/>
         <source>GMF</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="446"/>
+        <location filename="../ui/DxWidget.cpp" line="447"/>
         <source>Au</source>
         <translation></translation>
     </message>
@@ -17133,27 +17170,27 @@ Instale TQSL o especifique la ruta manualmente.</translation>
 <context>
     <name>WWVTableModel</name>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="508"/>
+        <location filename="../ui/DxWidget.cpp" line="509"/>
         <source>Time</source>
         <translation>Hora</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="509"/>
+        <location filename="../ui/DxWidget.cpp" line="510"/>
         <source>SFI</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="510"/>
+        <location filename="../ui/DxWidget.cpp" line="511"/>
         <source>A</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="511"/>
+        <location filename="../ui/DxWidget.cpp" line="512"/>
         <source>K</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.cpp" line="512"/>
+        <location filename="../ui/DxWidget.cpp" line="513"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -17176,37 +17213,37 @@ Instale TQSL o especifique la ruta manualmente.</translation>
         <translation>Continente</translation>
     </message>
     <message>
-        <location filename="../ui/WsjtxFilterDialog.ui" line="41"/>
+        <location filename="../ui/WsjtxFilterDialog.ui" line="48"/>
         <source>North America</source>
         <translation>Norteamérica</translation>
     </message>
     <message>
-        <location filename="../ui/WsjtxFilterDialog.ui" line="48"/>
+        <location filename="../ui/WsjtxFilterDialog.ui" line="55"/>
         <source>Europe</source>
         <translation>Europa</translation>
     </message>
     <message>
-        <location filename="../ui/WsjtxFilterDialog.ui" line="55"/>
+        <location filename="../ui/WsjtxFilterDialog.ui" line="62"/>
         <source>South America</source>
         <translation>Sudamérica</translation>
     </message>
     <message>
-        <location filename="../ui/WsjtxFilterDialog.ui" line="62"/>
+        <location filename="../ui/WsjtxFilterDialog.ui" line="76"/>
         <source>Africa</source>
         <translation>África</translation>
     </message>
     <message>
-        <location filename="../ui/WsjtxFilterDialog.ui" line="69"/>
+        <location filename="../ui/WsjtxFilterDialog.ui" line="41"/>
         <source>Antarctica</source>
         <translation>Antártida</translation>
     </message>
     <message>
-        <location filename="../ui/WsjtxFilterDialog.ui" line="76"/>
+        <location filename="../ui/WsjtxFilterDialog.ui" line="83"/>
         <source>Asia</source>
         <translation>Asia</translation>
     </message>
     <message>
-        <location filename="../ui/WsjtxFilterDialog.ui" line="83"/>
+        <location filename="../ui/WsjtxFilterDialog.ui" line="69"/>
         <source>Oceania</source>
         <translation>Oceanía</translation>
     </message>
