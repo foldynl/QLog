@@ -8,17 +8,29 @@
 #include <QKeyEvent>
 #include <QStandardItemModel>
 #include <QStyle>
+#include <QToolButton>
+#include <QWidgetAction>
 #include "core/debug.h"
 
 MODULE_IDENTIFICATION("qlog.ui.component.suggestionedit");
 
 SuggestionEdit::SuggestionEdit(QWidget *parent) :
     QLineEdit(parent),
-    suggestionAction(addAction(style()->standardIcon(QStyle::SP_ArrowDown), QLineEdit::TrailingPosition)),
+    suggestionAction(new QWidgetAction(this)),
     suggestionCompleter(new QCompleter(this)),
     suggestionModel(new QStandardItemModel(this))
 {
     FCT_IDENTIFICATION;
+
+    // Let the style paint the arrow using the current palette instead of a fixed icon.
+    QToolButton *suggestionButton = new QToolButton(this);
+    suggestionButton->setArrowType(Qt::DownArrow);
+    suggestionButton->setAutoRaise(true);
+    suggestionButton->setFocusPolicy(Qt::NoFocus);
+    suggestionButton->setCursor(Qt::ArrowCursor);
+    suggestionButton->setDefaultAction(suggestionAction);
+    suggestionAction->setDefaultWidget(suggestionButton);
+    addAction(suggestionAction, QLineEdit::TrailingPosition);
 
     setPopupToolTip(tr("Show Suggestions"));
     connect(suggestionAction, &QAction::triggered, this, &SuggestionEdit::showSuggestions);

@@ -6,6 +6,7 @@
 
 class QAction;
 class QMenu;
+class QWidgetAction;
 
 class FreqQSpinBox : public BaseDoubleSpinBox
 {
@@ -67,7 +68,7 @@ private:
     bool   debounceEnabled = false;
     double pendingValue = 0.0;
     bool   hasPending = false;
-    QAction *bandMenuButton = nullptr;
+    QWidgetAction *bandMenuButton = nullptr;
     QMenu *bandMenu = nullptr;
     int bandIndex = -1;
     double lastFrequency = 0.0;

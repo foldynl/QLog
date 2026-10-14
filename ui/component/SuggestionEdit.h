@@ -5,10 +5,10 @@
 #include <QList>
 #include <QStringList>
 
-class QAction;
 class QAbstractItemView;
 class QCompleter;
 class QStandardItemModel;
+class QWidgetAction;
 
 class SuggestionEdit : public QLineEdit
 {
@@ -56,7 +56,7 @@ private:
     void insertSuggestion(const QModelIndex &index);
     void addGroup(const QList<Item> &items, const QString &label);
 
-    QAction *suggestionAction;
+    QWidgetAction *suggestionAction;
     QCompleter *suggestionCompleter;
     QStandardItemModel *suggestionModel;
     QStringList predefinedSuggestions;

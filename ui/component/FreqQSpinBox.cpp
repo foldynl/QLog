@@ -6,7 +6,8 @@
 #include <QMenu>
 #include <QPalette>
 #include <QSignalBlocker>
-#include <QStyle>
+#include <QToolButton>
+#include <QWidgetAction>
 #include "data/BandPlan.h"
 #include "rig/macros.h"
 #include "core/debug.h"
@@ -54,6 +55,8 @@ void FreqQSpinBox::setDebounceIntervalMs(int ms)
 
 void FreqQSpinBox::enableBandSelection()
 {
+    FCT_IDENTIFICATION;
+
     if ( bandMenuButton )
         return;
 
@@ -61,8 +64,16 @@ void FreqQSpinBox::enableBandSelection()
     connect(bandMenu, &QMenu::triggered,
             this, &FreqQSpinBox::bandMenuTriggered);
 
-    bandMenuButton = lineEdit()->addAction(style()->standardIcon(QStyle::SP_ArrowDown),
-                                           QLineEdit::TrailingPosition);
+    // Let the style paint the arrow using the current palette instead of a fixed icon.
+    bandMenuButton = new QWidgetAction(lineEdit());
+    QToolButton *button = new QToolButton(lineEdit());
+    button->setArrowType(Qt::DownArrow);
+    button->setAutoRaise(true);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->setCursor(Qt::ArrowCursor);
+    button->setDefaultAction(bandMenuButton);
+    bandMenuButton->setDefaultWidget(button);
+    lineEdit()->addAction(bandMenuButton, QLineEdit::TrailingPosition);
     bandMenuButton->setText(tr("Select Band or Frequency"));
     bandMenuButton->setToolTip(tr("Select Band or Frequency"));
     connect(bandMenuButton, &QAction::triggered,
