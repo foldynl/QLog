@@ -14,6 +14,9 @@ VERSION = 0.54.0dev
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
+# Enable ad hoc signing of macOS development bundles after linking. Disabled by default.
+#QLOG_MACOS_ADHOC_SIGN = 1
+
 # Define paths to HAMLIB. Leave empty if system libraries should be used
 #HAMLIBINCLUDEPATH =
 #HAMLIBLIBPATH =
@@ -722,6 +725,11 @@ unix:!macx {
 macx: {
    QMAKE_TARGET_BUNDLE_PREFIX = io.github.foldynl
    OBJECTIVE_SOURCES += notification/macos/DesktopNotificationMac.mm
+
+   equals(QLOG_MACOS_ADHOC_SIGN, 1):app_bundle {
+      QMAKE_POST_LINK += $$escape_expand(\\n\\t) \
+         codesign --force --sign - $$shell_quote($$absolute_path($$DESTDIR, $$OUT_PWD)/$${TARGET}.app)
+   }
 
    # This allows the app to be shipped in a non-bundeled version
    !isEmpty(PREFIX) {

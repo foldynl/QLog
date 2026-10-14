@@ -170,7 +170,23 @@ Configure Qt Creator to use the Homebrew Qt6 installation. Open `QLog.pro`, sele
 
 To expose the Homebrew installations on `PATH`, use `brew link qt6 --force` and `brew link hamlib --force`, or configure explicit kit and library paths.
 
-After building, `qlog.app` can be run from the build directory or copied to `~/Applications`. For distributable packages, see the [community macOS releases](https://github.com/aa5sh/QLog/releases).
+For local development, enable automatic ad hoc signing so macOS can authorize native alert notifications. Signing is disabled by default and requires no certificate when enabled. Add `QLOG_MACOS_ADHOC_SIGN=1` to the qmake arguments in Qt Creator, or configure from a build directory such as `build/macos`:
+
+```bash
+qmake ../../QLog.pro QLOG_MACOS_ADHOC_SIGN=1
+make -j"$(sysctl -n hw.ncpu)"
+open qlog.app
+```
+
+Re-run qmake and rebuild after changing this option. The bundle is signed after each link when the option is enabled. To sign an existing build manually, run these commands from its build directory:
+
+```bash
+codesign --force --sign - qlog.app
+codesign --verify --strict --verbose=2 qlog.app
+open qlog.app
+```
+
+The app bundle can also be copied to `~/Applications`. For distributable packages, see the [community macOS releases](https://github.com/aa5sh/QLog/releases).
 
 ## qmake options
 
@@ -191,6 +207,7 @@ Supply overrides as qmake command-line assignments. Leave path overrides unset t
 | `ZLIBLIBPATH` | zlib library directory |
 | `OPENSSLINCLUDEPATH` | OpenSSL header directory |
 | `OPENSSLLIBPATH` | OpenSSL library directory |
+| `QLOG_MACOS_ADHOC_SIGN` | Set to `1` to sign macOS app bundles after linking; disabled by default |
 | `PREFIX` | Linux installation prefix, default `/usr` |
 
 For example, from `build/qt6`, using a custom Hamlib installation:
