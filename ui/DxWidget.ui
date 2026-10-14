@@ -60,7 +60,8 @@
           <enum>Qt::ActionsContextMenu</enum>
          </property>
          <property name="styleSheet">
-          <string notr="true">::menu-indicator{ image: none; }</string>
+          <string notr="true">QPushButton { text-align: center; }
+::menu-indicator{ image: none; }</string>
          </property>
          <property name="text">
           <string/>
