@@ -762,7 +762,7 @@ win32: {
    equals(QT_MAJOR_VERSION, 6): LIBS += -lqt6keychain
    equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
 
-   DEFINES += WIN32_LEAN_AND_MEAN
+   DEFINES += WIN32_LEAN_AND_MEAN NOMINMAX
    DEFINES += ZD_EXPORT=
 }
 

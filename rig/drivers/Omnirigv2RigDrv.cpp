@@ -1,6 +1,5 @@
 // This module is compiled only under Windows - therefore no ifdef related to Windows is needed
 
-#define NOMINMAX
 #include <windows.h>
 #include <ocidl.h>
 #include <oleauto.h>
