@@ -4,12 +4,7 @@ TEMPLATE = app
 TARGET = tst_rigreporting
 
 INCLUDEPATH += $$PWD/../..
-!isEmpty(HAMLIBINCLUDEPATH): INCLUDEPATH += $$HAMLIBINCLUDEPATH
-!isEmpty(PTHREADINCLUDEPATH): INCLUDEPATH += $$PTHREADINCLUDEPATH
-!isEmpty(HAMLIBLIBPATH): LIBS += -L$$HAMLIBLIBPATH
-!isEmpty(PTHREADLIBPATH): LIBS += -L$$PTHREADLIBPATH
-unix: LIBS += -L/usr/local/lib -lhamlib
-win32: LIBS += -llibhamlib-4
+include(../hamlib.pri)
 
 SOURCES += \
     tst_rigreporting.cpp \

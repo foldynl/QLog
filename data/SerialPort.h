@@ -2,7 +2,6 @@
 #define QLOG_DATA_SERIALPORT_H
 
 #include <QObject>
-#include <hamlib/rig.h>
 
 class SerialPort : public QObject
 {
