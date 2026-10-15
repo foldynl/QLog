@@ -4,25 +4,20 @@ TEMPLATE = app
 TARGET = tst_lovdatabase
 DEFINES += VERSION=\\\"test\\\"
 INCLUDEPATH += $$PWD/../..
-!win32-msvc: QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
-unix:!macx: QMAKE_LFLAGS += -Wl,--gc-sections
-win32-g++: QMAKE_LFLAGS += -Wl,--gc-sections
-macx: QMAKE_LFLAGS += -Wl,-dead_strip
-win32-msvc {
-    QMAKE_CXXFLAGS += /Gy /Gw
-    QMAKE_LFLAGS += /OPT:REF
-}
 SOURCES += tst_lovdatabase.cpp \
-    ../AdxFormatTest/test_stubs.cpp \
     ../../core/LOVDatabase.cpp \
     ../../core/LOVDownloader.cpp \
     ../../core/LogParam.cpp \
+    ../../core/AdifRecovery.cpp \
+    ../../data/BandPlan.cpp \
+    ../../data/DxccLogStatusCondition.cpp \
     ../../core/FileCompressor.cpp
 HEADERS += ../../core/LOVDatabase.h \
     ../../core/LOVDownloader.h \
     ../../core/LogParam.h \
-    ../../data/Data.h \
-    ../../logformat/LogFormat.h
+    ../../core/AdifRecovery.h \
+    ../../data/BandPlan.h \
+    ../../data/DxccLogStatusCondition.h
 RESOURCES += lov_fixtures.qrc
 !isEmpty(ZLIBINCLUDEPATH): INCLUDEPATH += $$ZLIBINCLUDEPATH
 !isEmpty(ZLIBLIBPATH): LIBS += -L$$ZLIBLIBPATH

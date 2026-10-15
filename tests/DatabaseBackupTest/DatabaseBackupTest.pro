@@ -4,15 +4,6 @@ TEMPLATE = app
 TARGET = tst_databasebackup
 DEFINES += VERSION=\\\"test\\\"
 INCLUDEPATH += $$PWD/../..
-# Only the database and parameter paths used by this suite are linked.
-!win32-msvc: QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
-unix:!macx: QMAKE_LFLAGS += -Wl,--gc-sections
-win32-g++: QMAKE_LFLAGS += -Wl,--gc-sections
-macx: QMAKE_LFLAGS += -Wl,-dead_strip
-win32-msvc {
-    QMAKE_CXXFLAGS += /Gy /Gw
-    QMAKE_LFLAGS += /OPT:REF
-}
 win32 {
     INCLUDEPATH += $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite
     SOURCES += $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/sqlite3.c
@@ -21,18 +12,28 @@ win32 {
     LIBS += -lsqlite3
 }
 SOURCES += tst_databasebackup.cpp \
+    DatabaseBackupTestStubs.cpp \
+    ../MigrationTest/UnusedImportStubs.cpp \
     ../AdxFormatTest/test_stubs.cpp \
     ../../core/DatabaseBackup.cpp \
     ../../core/LogDatabase.cpp \
     ../../core/LogParam.cpp \
     ../../core/LogLocale.cpp \
+    ../../core/AdifRecovery.cpp \
     ../../data/Accents.cpp \
+    ../../data/BandPlan.cpp \
+    ../../data/DxccLogStatusCondition.cpp \
     ../../logformat/AdxFormat.cpp \
     ../../logformat/AdiFormat.cpp
 HEADERS += ../../core/DatabaseBackup.h \
+    ../../core/CredentialStore.h \
+    ../../core/Migration.h \
+    ../../core/AdifRecovery.h \
     ../../core/LogParam.h \
     ../../core/LogLocale.h \
     ../../data/Data.h \
+    ../../data/BandPlan.h \
+    ../../data/DxccLogStatusCondition.h \
     ../../logformat/AdxFormat.h \
     ../../logformat/AdiFormat.h \
     ../../logformat/LogFormat.h
