@@ -355,10 +355,23 @@ void DatabaseImportTest::initTestCase()
 
 void DatabaseImportTest::init()
 {
-    directory.reset(new QTemporaryDir);
-    QVERIFY(directory->isValid());
-    qputenv("XDG_DATA_HOME", directory->path().toUtf8());
     QCoreApplication::setApplicationName("DatabaseImportTest");
+    QString directoryTemplate;
+#ifndef Q_OS_LINUX
+    // A unique organization isolates Windows/macOS data while preserving credential service names.
+    QCoreApplication::setOrganizationName(QString());
+    const QDir parent = QFileInfo(LogDatabase::dbDirectory().absolutePath()).dir();
+    QVERIFY(QDir().mkpath(parent.absolutePath()));
+    directoryTemplate = parent.filePath("DatabaseImportTest-XXXXXX");
+#endif
+    directory.reset(new QTemporaryDir(directoryTemplate));
+    QVERIFY(directory->isValid());
+#ifdef Q_OS_LINUX
+    qputenv("XDG_DATA_HOME", directory->path().toUtf8());
+#else
+    QCoreApplication::setOrganizationName(QFileInfo(directory->path()).fileName());
+    QCOMPARE(QFileInfo(LogDatabase::dbDirectory().absolutePath()).dir().absolutePath(), directory->path());
+#endif
     QVERIFY(QDir().mkpath(LogDatabase::dbDirectory().path()));
     QKeychain::Job::passwords.clear();
     QKeychain::Job::failedKey.clear();
@@ -714,14 +727,6 @@ void DatabaseImportTest::unfinishedImportCannotOverwriteRecoveryCredentials()
 
 void DatabaseImportTest::orphanCandidatePreservesOriginal()
 {
-    QTemporaryDir directory;
-    QVERIFY(directory.isValid());
-    qputenv("XDG_DATA_HOME", directory.path().toUtf8());
-    QCoreApplication::setApplicationName("DatabaseImportTest");
-#ifndef Q_OS_LINUX
-    QStandardPaths::setTestModeEnabled(true);
-#endif
-    QVERIFY(QDir().mkpath(LogDatabase::dbDirectory().path()));
     QFile original(LogDatabase::dbFilename());
     QVERIFY(original.open(QIODevice::WriteOnly));
     QCOMPARE(original.write("original database"), qint64(17));
@@ -927,6 +932,9 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("DatabaseImportTest");
+#ifndef Q_OS_LINUX
+    QStandardPaths::setTestModeEnabled(true);
+#endif
     const QStringList arguments = app.arguments();
 #ifdef IMPORT_INTERRUPTION_WRAPPERS
     if ( arguments.value(1) == "--make-wal" )

@@ -147,7 +147,7 @@ for /r "%BUILDROOT%" %%F in (tst_*.exe) do (
   set /a COUNT+=1
   echo --- %%~nxF ---
   "%%F"
-  if errorlevel 1 (
+  if not "!errorlevel!"=="0" (
     echo FAILED: %%~nxF
     set "FAILED=1"
     goto :run_done
