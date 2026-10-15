@@ -122,6 +122,10 @@ echo === Running qmake (tests, release) ===
   "OPENSSLLIBPATH=%OPENSSLROOT%/lib"
 
 if errorlevel 1 exit /b 10
+
+echo === Generating test makefiles ===
+"%MAKE%" qmake_all
+if errorlevel 1 exit /b 11
 exit /b 0
 
 :doBuild
