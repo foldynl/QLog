@@ -19,7 +19,13 @@ win32-msvc {
     QMAKE_CXXFLAGS += /Gy /Gw
     QMAKE_LFLAGS += /OPT:REF
 }
-LIBS += -lsqlite3
+win32 {
+    INCLUDEPATH += $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite
+    SOURCES += $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/sqlite3.c
+    HEADERS += $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite/sqlite3.h
+} else {
+    LIBS += -lsqlite3
+}
 SOURCES += tst_databaseimport.cpp \
     ../MigrationTest/test_stubs.cpp \
     ../../core/LogDatabase.cpp ../../core/PlatformParameterManager.cpp \
