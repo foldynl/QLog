@@ -47,6 +47,8 @@ private slots:
     void checkErrorCounter();
 
 private:
+    friend class RigReportingTest;
+
 
 // https://github.com/Hamlib/Hamlib/issues/1647
 // use a newer HAMLIB API rig_list_foreach_model from 4.2

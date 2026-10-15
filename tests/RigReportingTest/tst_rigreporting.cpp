@@ -3,11 +3,9 @@
 #include <QtWebSockets>
 #include "rig/drivers/GenericRigDrv.h"
 
-#define private public
 #include "rig/drivers/FlrigRigDrv.h"
 #include "rig/drivers/TCIRigDrv.h"
 #include "rig/drivers/HamlibRigDrv.h"
-#undef private
 
 class RigReportingTest : public QObject
 {

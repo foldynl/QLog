@@ -20,6 +20,8 @@ public:
     ConditionResult getConditionSelected(const QModelIndex &index) const override;
 
 private:
+    friend class PGAHunterTest;
+
     class TableModel : public QSqlQueryModel
     {
     public:

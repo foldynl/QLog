@@ -72,6 +72,8 @@ private slots:
     void sendStateImpl();
 
 private:
+    friend class RotatorReportingTest;
+
     static const int SHUTDOWN_TIMEOUT_MS = 5000;
 
     Rotator(QObject *parent = nullptr);

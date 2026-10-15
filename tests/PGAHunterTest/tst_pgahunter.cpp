@@ -4,9 +4,7 @@
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 
-#define private public
 #include "awards/AwardPGAHunter.h"
-#undef private
 
 class PGAHunterTest : public QObject
 {

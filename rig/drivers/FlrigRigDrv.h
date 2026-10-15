@@ -50,6 +50,8 @@ private slots:
     void reqGET_TX_FREQ();
 
 private:
+    friend class RigReportingTest;
+
     enum XmlRpcCommandType
     {
         ControlCommand,

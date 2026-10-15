@@ -27,6 +27,8 @@ private slots:
     void checkErrorCounter();
 
 private:
+    friend class RotatorReportingTest;
+
     static int addRig(const struct rot_caps* caps, void* data);
 
     void checkChanges();

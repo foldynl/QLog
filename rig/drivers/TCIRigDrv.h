@@ -43,6 +43,8 @@ private slots:
     void onTextMessageReceived(const QString& message);
     void onSocketError(QAbstractSocket::SocketError socker_error);
 private:
+    friend class RigReportingTest;
+
 
     typedef void (TCIRigDrv::*parseFce)(const QStringList&);
 

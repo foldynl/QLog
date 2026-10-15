@@ -5,11 +5,9 @@
 #include "mcpbridge/RuntimeContext.h"
 #include "mcpbridge/RuntimeProvider.h"
 
-#define private public
 #include "rotator/drivers/HamlibRotDrv.h"
 #include "rotator/drivers/PSTRotDrv.h"
 #include "rotator/Rotator.h"
-#undef private
 
 class RotatorReportingTest : public QObject
 {

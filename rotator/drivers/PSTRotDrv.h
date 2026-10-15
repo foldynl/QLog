@@ -28,6 +28,8 @@ private slots:
     void checkRotStateChange();
 
 private:
+    friend class RotatorReportingTest;
+
     void commandSleep();
     void sendCommand(const QString& cmd);
     void readPendingDatagrams();
