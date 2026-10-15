@@ -1664,6 +1664,6 @@ void AlertEvaluatorTest::confirmationResolverIsSharedAcrossRules()
 }
 
 
-QTEST_APPLESS_MAIN(AlertEvaluatorTest)
+QTEST_GUILESS_MAIN(AlertEvaluatorTest)
 
 #include "tst_alertevaluator.moc"

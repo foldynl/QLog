@@ -358,6 +358,6 @@ void BandmapGuideTest::readProfileRejectsInvalidJsonAndMissingFile()
     QVERIFY(!error.isEmpty());
 }
 
-QTEST_APPLESS_MAIN(BandmapGuideTest)
+QTEST_GUILESS_MAIN(BandmapGuideTest)
 
 #include "tst_bandmapguide.moc"
