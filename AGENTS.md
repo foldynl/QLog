@@ -38,6 +38,7 @@ For structural codebase exploration, use the installed `codebase-memory` skill.
 
 ## Working Rules
 
+- When developing on Linux, keep production code, tests, and build scripts compatible with Windows and macOS even when those platforms cannot be tested locally. Review compiler/linker differences, dependency paths, file handling, and platform APIs; passing Linux checks alone does not establish portability.
 - A request to review, diagnose, explain, or design is read-only unless the user also requests implementation.
 - Approval of a design or deferred plan does not authorize implementation in a later task without an explicit request to continue.
 - For a non-trivial implementation, state a concise plan before editing, then implement it without unnecessary ceremony.
