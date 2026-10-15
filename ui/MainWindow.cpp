@@ -1492,7 +1492,7 @@ void MainWindow::showDumpDB()
 
     if ( !ok )
     {
-        QFile::remove(tempPath);
+        tempFile.remove();
         QMessageBox::warning(this, tr("Pack Data && Settings"),
                              tr("Failed to dump the database."));
         return;
@@ -1500,7 +1500,7 @@ void MainWindow::showDumpDB()
 
     // Compress temporary file to destination (with progress dialog)
     ok = FileCompressor::gzipFileWithProgress(tempPath, filename, this, tr("Compressing database..."));
-    QFile::remove(tempPath);
+    tempFile.remove();
 
     if ( ok )
     {

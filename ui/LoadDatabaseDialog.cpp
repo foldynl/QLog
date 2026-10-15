@@ -163,23 +163,24 @@ void LoadDatabaseDialog::openImportDatabase()
 {
     FCT_IDENTIFICATION;
 
-    // Create temporary file for decompressed database
-    QTemporaryFile tempFile(LogDatabase::dbDirectory().filePath("qlog-import-XXXXXX.db"));
-    tempFile.setAutoRemove(false);  // We manage deletion ourselves
-    if ( !tempFile.open() )
+    // Destroy QTemporaryFile before decompression; close() keeps its native handle open.
     {
-        dbInfo.valid = false;
-        dbInfo.errorMessage = tr("Cannot create temporary file");
-        ui->statusLabel->setText(QString("<span style=\"color: red;\">✗ %1</span>")
-                                     .arg(dbInfo.errorMessage));
-        ui->decryptGroup->setEnabled(false);
-        ui->passwordEdit->clear();
-        encryptedPasswordsBlob.clear();
-        updateLoadButtonState();
-        return;
+        QTemporaryFile tempFile(LogDatabase::dbDirectory().filePath("qlog-import-XXXXXX.db"));
+        tempFile.setAutoRemove(false);  // We manage deletion ourselves
+        if ( !tempFile.open() )
+        {
+            dbInfo.valid = false;
+            dbInfo.errorMessage = tr("Cannot create temporary file");
+            ui->statusLabel->setText(QString("<span style=\"color: red;\">✗ %1</span>")
+                                         .arg(dbInfo.errorMessage));
+            ui->decryptGroup->setEnabled(false);
+            ui->passwordEdit->clear();
+            encryptedPasswordsBlob.clear();
+            updateLoadButtonState();
+            return;
+        }
+        tempDecompressedFile = tempFile.fileName();
     }
-    tempDecompressedFile = tempFile.fileName();
-    tempFile.close();
 
     // Decompress the .dbe file (with progress dialog)
     if ( !FileCompressor::gunzipFileWithProgress(selectedFile, tempDecompressedFile,
