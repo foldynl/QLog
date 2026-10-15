@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "data/Data.h"
 #include "logformat/LogFormat.h"
 #include "service/clublog/ClubLog.h"
@@ -19,6 +20,7 @@ DxccEntity Data::lookupDxcc(const QString &)
 QPair<QString, QString> Data::legacyMode(const QString &)
 {
     qFatal("Database lifecycle tests must not parse log formats");
+    std::abort();
 }
 
 // The database lifecycle uses backup snapshots, but never starts their ADX export.
@@ -29,6 +31,7 @@ LogFormat::LogFormat(QTextStream &stream) :
     duplicateQSOFunc(nullptr)
 {
     qFatal("Database lifecycle tests must not create log-format readers or writers");
+    std::abort();
 }
 
 LogFormat::~LogFormat() = default;
