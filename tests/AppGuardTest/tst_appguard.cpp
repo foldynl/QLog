@@ -22,6 +22,44 @@ extern "C" bool __wrap__ZN13QSharedMemory6attachENS_10AccessModeE(QSharedMemory 
 }
 #endif
 
+class GuardTestProcess : public QProcess
+{
+public:
+    ~GuardTestProcess() override
+    {
+        if ( state() != QProcess::NotRunning )
+        {
+            kill();
+            waitForFinished(5000);
+        }
+    }
+
+    bool waitForLine(QByteArray &line, int timeoutMs = 5000)
+    {
+        line.clear();
+        QElapsedTimer timer;
+        timer.start();
+        // A pipe wakeup can precede a full stdout line, including after stderr output on Windows.
+        while ( !canReadLine() )
+        {
+            const qint64 remaining = timeoutMs - timer.elapsed();
+            if ( remaining <= 0 || state() == QProcess::NotRunning )
+                return false;
+            waitForReadyRead(static_cast<int>(remaining));
+        }
+        line = readLine().trimmed();
+        return true;
+    }
+
+    QString diagnostics()
+    {
+        // QVERIFY2 may evaluate diagnostics on success; preserve unread protocol output.
+        return QString("state=%1, error=%2, stdout=%3, stderr=%4")
+                .arg(state()).arg(errorString(), QString::fromUtf8(peek(bytesAvailable())),
+                                  QString::fromUtf8(readAllStandardError()));
+    }
+};
+
 class AppGuardTest : public QObject
 {
     Q_OBJECT
@@ -33,46 +71,56 @@ private slots:
     void restartGuardRetriesConcurrentAcquisition();
 
 private:
-    bool startWaitingChild(QProcess &process, const QString &key, int timeout);
+    bool startWaitingChild(GuardTestProcess &process, const QString &key, int timeout, bool race = false);
 };
 
 void AppGuardTest::restartGuardRetriesConcurrentAcquisition()
 {
 #ifdef GUARD_CREATION_WRAPPER
     const QString key = QUuid::createUuid().toString();
-    QProcess child;
-    child.start(QCoreApplication::applicationFilePath(), {"--guard", key, "2000", "race"});
-    QVERIFY(child.waitForStarted(5000));
-    QVERIFY(child.waitForReadyRead(5000));
-    QCOMPARE(child.readLine().trimmed(), QByteArray("ready"));
-    child.write("go\n");
+    GuardTestProcess child;
+    QVERIFY(startWaitingChild(child, key, 2000, true));
     QByteArray output;
-    while ( !output.contains("creating:") || !output.endsWith("\n") )
-    {
-        QVERIFY(child.waitForReadyRead(5000));
-        output += child.readAllStandardOutput();
-    }
-    const QString nativeKey = QString::fromUtf8(output.mid(output.indexOf("creating:") + 9).trimmed());
+    QVERIFY2(child.waitForLine(output), qPrintable(child.diagnostics()));
+    QVERIFY2(output.startsWith("creating:"), output.constData());
+    const QString nativeKey = QString::fromUtf8(output.mid(9));
     QSharedMemory competitor(nativeKey);
     QVERIFY(competitor.create(sizeof(quint64)));
     child.write("continue\n");
-    QTest::qWait(100);
+    QVERIFY2(!child.waitForFinished(100) && child.state() == QProcess::Running,
+             qPrintable(child.diagnostics()));
     QVERIFY(competitor.detach());
-    QVERIFY(child.state() == QProcess::NotRunning || child.waitForFinished(5000));
+    QVERIFY2(child.state() == QProcess::NotRunning || child.waitForFinished(5000),
+             qPrintable(child.diagnostics()));
+    QCOMPARE(child.exitStatus(), QProcess::NormalExit);
     QCOMPARE(child.exitCode(), 0);
 #else
     QSKIP("Requires a Qt5 linker wrapper for a deterministic native IPC acquisition race.");
 #endif
 }
 
-bool AppGuardTest::startWaitingChild(QProcess &process, const QString &key, int timeout)
+bool AppGuardTest::startWaitingChild(GuardTestProcess &process, const QString &key, int timeout, bool race)
 {
-    process.start(QCoreApplication::applicationFilePath(), {"--guard", key, QString::number(timeout)});
-    if ( !process.waitForStarted(5000) || !process.waitForReadyRead(5000)
-         || process.readLine().trimmed() != "ready" )
+    QStringList arguments = {"--guard", key, QString::number(timeout)};
+    if ( race )
+        arguments.append("race");
+    QElapsedTimer timer;
+    timer.start();
+    process.start(QCoreApplication::applicationFilePath(), arguments);
+    QByteArray line;
+    if ( !process.waitForStarted(5000)
+         || !process.waitForLine(line, 5000 - static_cast<int>(timer.elapsed())) || line != "ready" )
+    {
+        qWarning() << "Expected child message ready, received:" << line << process.diagnostics();
         return false;
+    }
     process.write("go\n");
-    return process.waitForReadyRead(5000) && process.readLine().trimmed() == "attempting";
+    if ( !process.waitForLine(line, 5000 - static_cast<int>(timer.elapsed())) || line != "attempting" )
+    {
+        qWarning() << "Expected child message attempting, received:" << line << process.diagnostics();
+        return false;
+    }
+    return true;
 }
 
 void AppGuardTest::restartGuardWaitsForRelease()
@@ -80,12 +128,13 @@ void AppGuardTest::restartGuardWaitsForRelease()
     const QString key = QUuid::createUuid().toString();
     AppGuard guard(key);
     QVERIFY(guard.tryToRun());
-    QProcess child;
+    GuardTestProcess child;
     QVERIFY(startWaitingChild(child, key, 2000));
-    // The child has begun acquiring while the parent still owns the guard.
-    QTest::qWait(100);
+    QVERIFY2(!child.waitForFinished(100) && child.state() == QProcess::Running,
+             qPrintable(child.diagnostics()));
     guard.release();
-    QVERIFY(child.state() == QProcess::NotRunning || child.waitForFinished(5000));
+    QVERIFY2(child.state() == QProcess::NotRunning || child.waitForFinished(5000),
+             qPrintable(child.diagnostics()));
     QCOMPARE(child.exitStatus(), QProcess::NormalExit);
     QCOMPARE(child.exitCode(), 0);
 }
@@ -95,11 +144,16 @@ void AppGuardTest::restartGuardTimeout()
     const QString key = QUuid::createUuid().toString();
     AppGuard guard(key);
     QVERIFY(guard.tryToRun());
-    QProcess child;
+    GuardTestProcess child;
     QVERIFY(startWaitingChild(child, key, 200));
-    QVERIFY(child.waitForFinished(5000));
+    QVERIFY2(child.state() == QProcess::NotRunning || child.waitForFinished(5000),
+             qPrintable(child.diagnostics()));
+    QCOMPARE(child.exitStatus(), QProcess::NormalExit);
     QCOMPARE(child.exitCode(), 2);
-    const qint64 elapsed = child.readAllStandardOutput().trimmed().toLongLong();
+    const QByteArray output = child.readAllStandardOutput().trimmed();
+    bool validElapsed = false;
+    const qint64 elapsed = output.toLongLong(&validElapsed);
+    QVERIFY2(validElapsed, output.constData());
     QVERIFY(elapsed >= 200);
     QVERIFY(elapsed < 5000);
 }
@@ -109,9 +163,11 @@ void AppGuardTest::ordinaryStartupRefusesSecondInstance()
     const QString key = QUuid::createUuid().toString();
     AppGuard guard(key);
     QVERIFY(guard.tryToRun());
-    QProcess child;
+    GuardTestProcess child;
     QVERIFY(startWaitingChild(child, key, 0));
-    QVERIFY(child.waitForFinished(5000));
+    QVERIFY2(child.state() == QProcess::NotRunning || child.waitForFinished(5000),
+             qPrintable(child.diagnostics()));
+    QCOMPARE(child.exitStatus(), QProcess::NormalExit);
     QCOMPARE(child.exitCode(), 2);
     guard.release();
     QVERIFY(guard.tryToRun());
