@@ -1,26 +1,10 @@
 #include <QtTest>
 #include <QElapsedTimer>
+#include <QCryptographicHash>
 #include <QProcess>
 #include <QTextStream>
 #include <QUuid>
 #include "core/AppGuard.h"
-
-#ifdef GUARD_CREATION_WRAPPER
-int pauseOnAttach = 0;
-extern "C" bool __real__ZN13QSharedMemory6attachENS_10AccessModeE(QSharedMemory *, QSharedMemory::AccessMode);
-extern "C" bool __wrap__ZN13QSharedMemory6attachENS_10AccessModeE(QSharedMemory *memory, QSharedMemory::AccessMode mode)
-{
-    if ( pauseOnAttach > 0 && --pauseOnAttach == 0 )
-    {
-        QTextStream output(stdout);
-        output << "creating:" << memory->key() << '\n';
-        output.flush();
-        QTextStream input(stdin);
-        input.readLine();
-    }
-    return __real__ZN13QSharedMemory6attachENS_10AccessModeE(memory, mode);
-}
-#endif
 
 class GuardTestProcess : public QProcess
 {
@@ -65,45 +49,58 @@ class AppGuardTest : public QObject
     Q_OBJECT
 
 private slots:
+    void unusedGuardDoesNotWaitForSemaphore();
+    void guardCanAcquireAfterOwnerCrash();
     void restartGuardWaitsForRelease();
     void restartGuardTimeout();
     void ordinaryStartupRefusesSecondInstance();
-    void restartGuardRetriesConcurrentAcquisition();
 
 private:
-    bool startWaitingChild(GuardTestProcess &process, const QString &key, int timeout, bool race = false);
+    bool startWaitingChild(GuardTestProcess &process, const QString &key, int timeout, const QString &mode = QString());
 };
 
-void AppGuardTest::restartGuardRetriesConcurrentAcquisition()
+void AppGuardTest::unusedGuardDoesNotWaitForSemaphore()
 {
-#ifdef GUARD_CREATION_WRAPPER
     const QString key = QUuid::createUuid().toString();
+    const QString semaphoreKey = QString::fromLatin1(QCryptographicHash::hash(
+                key.toUtf8() + "_memLockKey", QCryptographicHash::Sha1).toHex());
+    QSystemSemaphore semaphore(semaphoreKey, 1);
+    QVERIFY(semaphore.acquire());
+
     GuardTestProcess child;
-    QVERIFY(startWaitingChild(child, key, 2000, true));
+    child.start(QCoreApplication::applicationFilePath(), {"--guard", key, "0", "unused"});
+    QVERIFY2(child.waitForStarted(5000), qPrintable(child.diagnostics()));
     QByteArray output;
     QVERIFY2(child.waitForLine(output), qPrintable(child.diagnostics()));
-    QVERIFY2(output.startsWith("creating:"), output.constData());
-    const QString nativeKey = QString::fromUtf8(output.mid(9));
-    QSharedMemory competitor(nativeKey);
-    QVERIFY(competitor.create(sizeof(quint64)));
-    child.write("continue\n");
-    QVERIFY2(!child.waitForFinished(100) && child.state() == QProcess::Running,
-             qPrintable(child.diagnostics()));
-    QVERIFY(competitor.detach());
+    QCOMPARE(output, QByteArray("ready"));
+    child.write("go\n");
     QVERIFY2(child.state() == QProcess::NotRunning || child.waitForFinished(5000),
              qPrintable(child.diagnostics()));
     QCOMPARE(child.exitStatus(), QProcess::NormalExit);
     QCOMPARE(child.exitCode(), 0);
-#else
-    QSKIP("Requires a Qt5 linker wrapper for a deterministic native IPC acquisition race.");
-#endif
+    QVERIFY(semaphore.release());
 }
 
-bool AppGuardTest::startWaitingChild(GuardTestProcess &process, const QString &key, int timeout, bool race)
+void AppGuardTest::guardCanAcquireAfterOwnerCrash()
+{
+    const QString key = QUuid::createUuid().toString();
+    GuardTestProcess child;
+    QVERIFY(startWaitingChild(child, key, 0, "hold"));
+    QByteArray line;
+    QVERIFY2(child.waitForLine(line), qPrintable(child.diagnostics()));
+    QCOMPARE(line, QByteArray("owned"));
+    child.kill();
+    QVERIFY(child.waitForFinished(5000));
+
+    AppGuard guard(key);
+    QVERIFY2(guard.tryToRun(), qPrintable(guard.errorString()));
+}
+
+bool AppGuardTest::startWaitingChild(GuardTestProcess &process, const QString &key, int timeout, const QString &mode)
 {
     QStringList arguments = {"--guard", key, QString::number(timeout)};
-    if ( race )
-        arguments.append("race");
+    if ( !mode.isEmpty() )
+        arguments.append(mode);
     QElapsedTimer timer;
     timer.start();
     process.start(QCoreApplication::applicationFilePath(), arguments);
@@ -179,9 +176,6 @@ int main(int argc, char **argv)
     const QStringList arguments = app.arguments();
     if ( arguments.value(1) == "--guard" )
     {
-#ifdef GUARD_CREATION_WRAPPER
-        pauseOnAttach = 0;
-#endif
         AppGuard guard(arguments.value(2));
         QTextStream output(stdout);
         output << "ready\n";
@@ -189,18 +183,22 @@ int main(int argc, char **argv)
         QTextStream input(stdin);
         if ( input.readLine() != "go" )
             return 3;
+        if ( arguments.value(4) == "unused" )
+            return 0;
         output << "attempting\n";
         output.flush();
         QElapsedTimer timer;
         timer.start();
-#ifdef GUARD_CREATION_WRAPPER
-        // Skip the initial presence check, then inject a winner before the create workaround.
-        pauseOnAttach = arguments.value(4) == "race" ? 2 : 0;
-#endif
         const bool acquired = guard.tryToRun(arguments.value(3).toInt());
+        if ( acquired && arguments.value(4) == "hold" )
+        {
+            output << "owned\n";
+            output.flush();
+            input.readLine();
+        }
         output << timer.elapsed() << '\n';
         output.flush();
-        return acquired ? 0 : 2;
+        return acquired ? 0 : (guard.errorString().isEmpty() ? 2 : 4);
     }
     AppGuardTest test;
     return QTest::qExec(&test, argc, argv);

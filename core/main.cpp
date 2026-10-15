@@ -587,8 +587,9 @@ int main(int argc, char* argv[])
     AppGuard guard( "QLog" );
     if ( !guard.tryToRun(isImportPending ? 20000 : 0) )
     {
+        const QString guardError = guard.errorString();
         QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                              QMessageBox::tr("QLog is already running"));
+                              guardError.isEmpty() ? QMessageBox::tr("QLog is already running") : guardError);
         return 1;
     }
 
