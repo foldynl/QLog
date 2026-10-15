@@ -45,6 +45,7 @@ cp "$SPEC" "$TOPDIR/SPECS/qlog.spec"
 
 rpmbuild \
     --define "_topdir $TOPDIR" \
+    --define "_smp_build_ncpus ${JOBS:-$(nproc)}" \
     -ba "$TOPDIR/SPECS/qlog.spec"
 
 find "$TOPDIR/RPMS" -type f -name '*.rpm' -exec cp -v {} "$DIST/" \;

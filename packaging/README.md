@@ -4,7 +4,10 @@ The packaging builds run in temporary containers and write their results below
 `dist/`. Podman is used by default, but Docker is also supported. All
 distro-specific dependencies are installed inside the build containers.
 
-The AppImage and RPM builds use Qt 5. Ubuntu 22.04's Qt 6 WebEngine 6.2.4
+Compilation uses all CPUs reported by `nproc` inside the container. Set `JOBS`
+to override this, for example `JOBS=8 ./packaging/build-all.sh`.
+
+The AppImage, DEB, and RPM builds use Qt 5. Ubuntu 22.04's Qt 6 WebEngine 6.2.4
 predates the QTBUG-101201 fix and can abort with multi-layout XKB configurations.
 
 ## AppImage
@@ -44,8 +47,7 @@ CONTAINER_ENGINE=docker ./packaging/appimage/build-container.sh
 The wrapper always builds for the native host architecture. An x86_64 host
 creates an x86_64 AppImage and an ARM64 host creates an aarch64 AppImage. It
 does not offer emulated cross-architecture builds because AppImage tooling is
-not reliably executable through QEMU/binfmt. Set `JOBS` to limit parallel
-compilation.
+not reliably executable through QEMU/binfmt.
 
 Artifacts are written as:
 
@@ -54,8 +56,23 @@ dist/appimage/QLog-VERSION-x86_64.AppImage
 dist/appimage/QLog-VERSION-aarch64.AppImage
 ```
 
+## DEB
+
+Select an Ubuntu release in `YY.MM` format; the default is `24.04`.
+Dependencies come from `../debian/control` through `mk-build-deps`.
+The build uses a temporary source copy, checks `debian/copyright` with `cme`,
+and fails on lintian errors.
+
+```bash
+./packaging/deb/build-container.sh 24.04
+```
+
+DEBs, `.changes`, and `.buildinfo` files go to `dist/deb/ubuntu-VERSION/ARCH/`.
+The native architecture is named `amd64` on x86_64 and `arm64` on ARM64.
+
 ## RPM
 
+Select Fedora 43 or later; the default is `43`.
 RPM build dependencies are declared only as `BuildRequires` in
 `rpm/qlog.spec`. The RPM build image installs them with `dnf builddep`; the
 package build then runs as the invoking host user.
@@ -73,6 +90,18 @@ Artifacts, including the source RPM, are written below:
 ```text
 dist/rpm/fedora-VERSION/ARCH/
 ```
+
+## Local package smoke tests
+
+After building a DEB or RPM, run its wrapper again with `--smoke-test`:
+
+```bash
+./packaging/deb/build-container.sh 24.04 --smoke-test
+./packaging/rpm/build-container.sh 43 --smoke-test
+```
+
+The test installs the existing package from `dist/` in a fresh container for
+the selected release and checks `qlog --help`. It does not rebuild the package.
 
 Do not invoke the wrappers with `sudo`; both engines run the package build with
 the invoking host user's UID and GID. The wrappers deliberately reject
@@ -104,35 +133,24 @@ The Windows build is intentionally not part of `build-all.sh`.
 
 ## GitHub Actions
 
-Use native runners for both architectures. The same build command can be used
-in a matrix; only the runner and its native Docker platform change:
-
-```yaml
-strategy:
-  matrix:
-    include:
-      - arch: x86_64
-        runner: ubuntu-24.04
-        platform: linux/amd64
-      - arch: aarch64
-        runner: ubuntu-24.04-arm
-        platform: linux/arm64
-
-runs-on: ${{ matrix.runner }}
-```
-
-Do not add QEMU setup to these jobs. GitHub-hosted jobs can call the same
-wrappers with `CONTAINER_ENGINE=docker`. The architecture must come from the
-selected runner, not from an emulated container or a build-script argument.
+The [AppImage workflow](../.github/workflows/appimage.yml) builds and smoke-tests
+native x86_64 and aarch64 AppImages on `master` pushes or manual dispatch.
+DEB and RPM validation runs locally. The separate
+[compilation and unit-test workflow](../.github/workflows/c-cpp.yml) is unchanged.
 
 ## All default builds
 
-The aggregate build creates native RPMs for Fedora 43 and 44, then creates a
-native AppImage for the current host. An optional GPG secret key ID or
-fingerprint creates an ASCII-armored detached `.asc` signature for every
-generated RPM, source RPM, and AppImage. Without a key, matching signatures
-left by an earlier build are removed only for artifacts rebuilt in the current
-run:
+Edit `UBUNTU_VERSIONS` and `FEDORA_VERSIONS` in
+[build-all.conf](build-all.conf) to select the target releases. The file uses
+Bash arrays; an empty array skips that package family.
+
+The script builds and smoke-tests the configured DEBs and RPMs, then builds
+an AppImage. It stops on failure and prints `SUCCESS` after completion.
+
+An optional GPG key ID or fingerprint signs each new DEB, RPM, source RPM, and
+AppImage with a detached `.asc` signature. Signing requires a clean checkout
+at the local `vVERSION` tag matching `QLog.pro`. Without a key, builds use the
+current checkout and remove stale signatures only for rebuilt artifacts:
 
 ```bash
 ./packaging/build-all.sh
