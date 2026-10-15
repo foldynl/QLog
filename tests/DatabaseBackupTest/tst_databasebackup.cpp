@@ -378,10 +378,13 @@ void DatabaseBackupTest::newestSnapshotIsExportedFirst()
     config.enabled = true;
     config.directory = storage.filePath(migration ? "priority-copy-migration" : "priority-copy-ordinary");
     // Stop on the older invalid snapshot; the newer ADX must already be published.
-    const QtMessageHandler previousHandler = qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &, const QString &message)
+    static QtMessageHandler previousHandler = nullptr;
+    previousHandler = qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &context, const QString &message)
     {
         if ( type == QtWarningMsg && message.startsWith(QStringLiteral("Backup export failed")) )
             QThread::currentThread()->requestInterruption();
+        if ( previousHandler )
+            previousHandler(type, context, message);
     });
     runBackup(config, freshSnapshot);
     qInstallMessageHandler(previousHandler);
@@ -758,13 +761,16 @@ void DatabaseBackupTest::interruptedExternalCopyKeepsPendingDatabase()
     BackupConfig config;
     config.enabled = true;
     config.directory = storage.filePath("interrupted-copy");
-    const QtMessageHandler previousHandler = qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &, const QString &message)
+    // A directory at the destination filename forces the copy to fail.
+    QVERIFY(QDir().mkpath(QDir(config.directory).filePath(pending.left(pending.size()-3) + ".adx")));
+    static QtMessageHandler previousHandler = nullptr;
+    previousHandler = qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &context, const QString &message)
     {
         if ( type == QtWarningMsg && message.startsWith(QStringLiteral("Cannot copy additional backup")) )
             QThread::currentThread()->requestInterruption();
+        if ( previousHandler )
+            previousHandler(type, context, message);
     });
-    // A directory at the destination filename forces the copy to fail.
-    QVERIFY(QDir().mkpath(QDir(config.directory).filePath(pending.left(pending.size()-3) + ".adx")));
     runBackup(config);
     qInstallMessageHandler(previousHandler);
     QCOMPARE(snapshots(), QStringList{pending});
@@ -815,10 +821,13 @@ void DatabaseBackupTest::currentSnapshotIsProtectedAfterClockCorrection()
     config.enabled = true;
     config.directory = storage.filePath("clock-correction-copy");
     config.copies = 1;
-    const QtMessageHandler previousHandler = qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &, const QString &message)
+    static QtMessageHandler previousHandler = nullptr;
+    previousHandler = qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &context, const QString &message)
     {
         if ( type == QtWarningMsg && message.startsWith(QStringLiteral("Backup export failed")) )
             QThread::currentThread()->requestInterruption();
+        if ( previousHandler )
+            previousHandler(type, context, message);
     });
     runBackup(config, current);
     qInstallMessageHandler(previousHandler);
