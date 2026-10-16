@@ -1,6 +1,7 @@
 #include <QtTest>
 #include <QThread>
 #include <limits>
+#include <stdexcept>
 
 #include "mcpbridge/RuntimeContext.h"
 #include "mcpbridge/RuntimeProvider.h"
@@ -59,6 +60,8 @@ private slots:
     void registeredFieldsCannotChange();
     void readsAllFieldsBeforeQueuedMutation();
     void invalidValuesAreUnavailable();
+    void getterExceptionsAreUnavailable_data();
+    void getterExceptionsAreUnavailable();
     void invalidFieldDefinitionsAreRejected();
     void timeoutKeepsOtherProviderValues();
     void lateReplyCannotCompleteAnotherRequest();
@@ -1088,6 +1091,57 @@ void RuntimeContextTest::invalidValuesAreUnavailable()
     QVERIFY(values.value("unavailable").isNull());
     QCOMPARE(values.value("available").toInt(), 42);
     QVERIFY(result.value("issues").toObject().isEmpty());
+}
+
+void RuntimeContextTest::getterExceptionsAreUnavailable_data()
+{
+    QTest::addColumn<bool>("standardException");
+    QTest::newRow("standard-exception") << true;
+    QTest::newRow("other-exception") << false;
+}
+
+void RuntimeContextTest::getterExceptionsAreUnavailable()
+{
+    QFETCH(bool, standardException);
+    QObject owner;
+    bool fail = true;
+    auto provider = new RuntimeProvider(&owner);
+    provider->addNumber("broken", "Failing reading", QString(), [&]() -> QJsonValue
+    {
+        if ( fail )
+        {
+            if ( standardException )
+                throw std::runtime_error("Runtime getter failed");
+            throw 17;
+        }
+        return 7;
+    });
+    provider->addNumber("available", "Available reading", QString(), []() { return 42; });
+    RuntimeContext context;
+    QVERIFY(context.addProvider("provider", "Test source provider", provider));
+    QSignalSpy ready(&context, &RuntimeContext::contextReady);
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(".*Cannot read runtime field.*broken.*"));
+    try
+    {
+        context.collect(1);
+        QTRY_COMPARE(ready.count(), 1);
+    }
+    catch ( ... )
+    {
+        QFAIL("Runtime getter exception escaped collection");
+    }
+
+    const QJsonObject values = ready.first().at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(values.size(), 2);
+    QVERIFY(values.value("broken").isNull());
+    QCOMPARE(values.value("available").toInt(), 42);
+    fail = false;
+    context.collect(2);
+    QTRY_COMPARE(ready.count(), 2);
+    QCOMPARE(ready.at(1).at(0).toULongLong(), quint64(2));
+    const QJsonObject recovered = ready.at(1).at(1).toJsonObject().value("values").toObject();
+    QCOMPARE(recovered.value("broken").toInt(), 7);
+    QCOMPARE(recovered.value("available").toInt(), 42);
 }
 
 void RuntimeContextTest::invalidFieldDefinitionsAreRejected()

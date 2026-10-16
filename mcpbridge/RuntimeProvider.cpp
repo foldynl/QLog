@@ -112,7 +112,15 @@ void RuntimeProvider::collect(quint64 collectionId)
 
     for ( const Field &field : getters )
     {
-        QJsonValue value = field.getter();
+        QJsonValue value;
+        try
+        {
+            value = field.getter();
+        }
+        catch ( ... )
+        {
+            qCWarning(runtime) << "Cannot read runtime field" << field.name;
+        }
         if ( !value.isNull() && (value.type() != field.type
                                  || (value.isDouble()
                                      && !qIsFinite(value.toDouble()))) )
