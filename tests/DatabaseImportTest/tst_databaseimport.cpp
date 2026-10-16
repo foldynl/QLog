@@ -130,6 +130,7 @@ private slots:
     void contradictoryRecoveryFilesArePreserved();
 
 private:
+    static QPair<QString, QString> credentialIdentity(const QString &storageKey, const QString &user);
     QScopedPointer<QTemporaryDir> directory;
     QString createExport(const QString &name, const QByteArray &credentials = QByteArray());
     QByteArray readFile(const QString &path);
@@ -388,6 +389,16 @@ void DatabaseImportTest::cleanup()
     }
 }
 
+QPair<QString, QString> DatabaseImportTest::credentialIdentity(const QString &storageKey, const QString &user)
+{
+    const QString service = QCoreApplication::applicationName() + QLatin1Char(':') + storageKey;
+#ifdef Q_OS_WIN
+    return qMakePair(service, service + QLatin1Char(':') + user);
+#else
+    return qMakePair(service, user);
+#endif
+}
+
 QByteArray DatabaseImportTest::readFile(const QString &path)
 {
     QFile file(path);
@@ -441,7 +452,7 @@ void DatabaseImportTest::preparationFailurePreservesOriginal()
     QVERIFY(!source.isEmpty());
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     const QByteArray original = readFile(LogDatabase::dbFilename());
-    const QPair<QString, QString> identity("DatabaseImportTest:ImportPassphrase", "import");
+    const QPair<QString, QString> identity = credentialIdentity("ImportPassphrase", "import");
     QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
     QKeychain::Job::failedKey = identity.second;
     QVERIFY(!LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
@@ -554,7 +565,7 @@ void DatabaseImportTest::cancelledImportCleanupCanBeRetried()
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
-    QKeychain::Job::failedKey = "import";
+    QKeychain::Job::failedKey = credentialIdentity("ImportPassphrase", "import").second;
     QVERIFY(!LogDatabase::instance()->cancelPendingImport());
     QVERIFY(!QFile::exists(LogDatabase::pendingImportPath()));
     QVERIFY(LogDatabase::hasPendingImport());
@@ -584,7 +595,7 @@ void DatabaseImportTest::abortedImportReportsOriginalOpenFailure()
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
-    QKeychain::Job::failedKey = "import";
+    QKeychain::Job::failedKey = credentialIdentity("ImportPassphrase", "import").second;
     QVERIFY(!LogDatabase::instance()->cancelPendingImport());
     QKeychain::Job::failedKey.clear();
     QFile original(LogDatabase::dbFilename());
@@ -634,7 +645,7 @@ void DatabaseImportTest::publishedImportRetryPreservesNewData()
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
-    QKeychain::Job::failedKey = "second";
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "second").second;
     QVERIFY(!LogDatabase::instance()->processPendingImport());
     QVERIFY(!QFile::exists(LogDatabase::pendingImportPath()));
     QVERIFY(LogDatabase::hasPendingImport());
@@ -690,25 +701,25 @@ void DatabaseImportTest::credentialReplacementUsesOriginalAccounts()
         {"storagekey":"TestService","username":"imported","password":"imported secret"}]})");
     configuredAccount = "shared";
     configuredDxAccounts = QStringList{"old DX account"};
-    QKeychain::Job::passwords[{"DatabaseImportTest:TestService", "shared"}] = "old secret";
-    QKeychain::Job::passwords[{"DatabaseImportTest:DX", "old DX account"}] = "DX secret";
-    QKeychain::Job::passwords[{"DatabaseImportTest:Other", "unrelated"}] = "untouched";
+    QKeychain::Job::passwords[credentialIdentity("TestService", "shared")] = "old secret";
+    QKeychain::Job::passwords[credentialIdentity("DX", "old DX account")] = "DX secret";
+    QKeychain::Job::passwords[credentialIdentity("Other", "unrelated")] = "untouched";
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     configuredAccount = "imported";
     configuredDxAccounts.clear();
     QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
-    QKeychain::Job::failedKey = "old DX account";
+    QKeychain::Job::failedKey = credentialIdentity("DX", "old DX account").second;
     QVERIFY(!LogDatabase::instance()->processPendingImport());
-    QCOMPARE(QKeychain::Job::passwords.value({"DatabaseImportTest:TestService", "shared"}), QString("new secret"));
-    QCOMPARE(QKeychain::Job::passwords.value({"DatabaseImportTest:DX", "old DX account"}), QString("DX secret"));
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "shared")), QString("new secret"));
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("DX", "old DX account")), QString("DX secret"));
     QVERIFY(!LogDatabase::instance()->cancelPendingImport());
     QKeychain::Job::failedKey.clear();
     QVERIFY(LogDatabase::instance()->processPendingImport());
-    QVERIFY(!QKeychain::Job::passwords.contains({"DatabaseImportTest:DX", "old DX account"}));
-    QCOMPARE(QKeychain::Job::passwords.value({"DatabaseImportTest:TestService", "shared"}), QString("new secret"));
-    QCOMPARE(QKeychain::Job::passwords.value({"DatabaseImportTest:TestService", "imported"}), QString("imported secret"));
-    QCOMPARE(QKeychain::Job::passwords.value({"DatabaseImportTest:Other", "unrelated"}), QString("untouched"));
+    QVERIFY(!QKeychain::Job::passwords.contains(credentialIdentity("DX", "old DX account")));
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "shared")), QString("new secret"));
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "imported")), QString("imported secret"));
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("Other", "unrelated")), QString("untouched"));
 }
 
 void DatabaseImportTest::unfinishedImportCannotOverwriteRecoveryCredentials()
@@ -717,7 +728,7 @@ void DatabaseImportTest::unfinishedImportCannotOverwriteRecoveryCredentials()
         {"storagekey":"TestService","username":"failed","password":"secret"}]})");
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
-    QKeychain::Job::failedKey = "failed";
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "failed").second;
     QVERIFY(!LogDatabase::instance()->processPendingImport());
     const QByteArray payload = LogParam::getEncryptedPasswords();
     QVERIFY(!payload.isEmpty());

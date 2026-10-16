@@ -14,7 +14,7 @@ win32 {
 SOURCES += tst_databasebackup.cpp \
     DatabaseBackupTestStubs.cpp \
     ../MigrationTest/UnusedImportStubs.cpp \
-    ../AdxFormatTest/test_stubs.cpp \
+    ../AdxFormatTest/AdxFormatTestStubs.cpp \
     ../../core/DatabaseBackup.cpp \
     ../../core/LogDatabase.cpp \
     ../../core/LogParam.cpp \

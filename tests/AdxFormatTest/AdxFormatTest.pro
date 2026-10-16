@@ -9,7 +9,7 @@ INCLUDEPATH += $$PWD/../..
 
 SOURCES += \
     tst_adxformat.cpp \
-    test_stubs.cpp \
+    AdxFormatTestStubs.cpp \
     ../../core/LogLocale.cpp \
     ../../data/Accents.cpp \
     ../../logformat/AdxFormat.cpp \

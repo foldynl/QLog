@@ -18,7 +18,7 @@ win32 {
     LIBS += -lsqlite3
 }
 SOURCES += tst_databaseimport.cpp \
-    ../MigrationTest/test_stubs.cpp \
+    ../MigrationTest/MigrationTestStubs.cpp \
     ../../core/LogDatabase.cpp ../../core/PlatformParameterManager.cpp \
     ../../core/Migration.cpp ../../core/DatabaseBackup.cpp \
     ../../core/LogParam.cpp ../../core/CredentialStore.cpp ../../core/PasswordCipher.cpp \

@@ -16,7 +16,7 @@ win32 {
 
 SOURCES += \
     tst_migration.cpp \
-    test_stubs.cpp \
+    MigrationTestStubs.cpp \
     UnusedImportStubs.cpp \
     ../../core/Migration.cpp \
     ../../core/LogDatabase.cpp \
