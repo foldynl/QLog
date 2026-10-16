@@ -300,6 +300,13 @@ bool Gridsquare::bearingTo(double lat, double lon, double &bearing) const
         return false;
     }
 
+    // Avoid platform-dependent cancellation in the bearing formula for identical coordinates.
+    if ( lat == this->lat && lon == this->lon )
+    {
+        bearing = 0.0;
+        return true;
+    }
+
     const double dLon = (lon - this->lon) * DEG_TO_RAD;
     const double lat1 = this->lat * DEG_TO_RAD;
     const double lat2 = lat * DEG_TO_RAD;
