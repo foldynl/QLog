@@ -938,12 +938,21 @@ bool LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, QJsonArra
         if ( (!decoded && !decodeImportPasswords(requiresPassphrase, incoming)) || !credentials->restorePasswords(incoming) )
             return failImport(QObject::tr("The imported database was retained, but password restoration is incomplete. Restart QLog to retry."));
 
+        const auto credentialIdentity = [](const QString &storageKey, const QString &username)
+        {
+#ifdef Q_OS_WIN
+            // Windows credential targets differing only in case refer to the same stored password.
+            return qMakePair(storageKey.toCaseFolded(), username.toCaseFolded());
+#else
+            return qMakePair(storageKey, username);
+#endif
+        };
         QSet<QPair<QString, QString>> restored;
 
         for ( const QJsonValue &value : static_cast<const QJsonArray>(incoming) )
         {
             const QJsonObject entry = value.toObject();
-            restored.insert(qMakePair(entry.value("storagekey").toString(), entry.value("username").toString()));
+            restored.insert(credentialIdentity(entry.value("storagekey").toString(), entry.value("username").toString()));
         }
 
         bool deleted = true;
@@ -952,7 +961,8 @@ bool LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, QJsonArra
         {
             const QJsonObject previous = value.toObject();
             const QPair<QString, QString> identity(previous.value("storagekey").toString(), previous.value("username").toString());
-            if ( !restored.contains(identity) && !credentials->deletePassword(identity.first, identity.second) )
+            if ( !restored.contains(credentialIdentity(identity.first, identity.second))
+                 && !credentials->deletePassword(identity.first, identity.second) )
                 deleted = false;
         }
         if ( !deleted || !writeImportRecord(record, ImportPhase::CREDENTIALS_RESTORED) )

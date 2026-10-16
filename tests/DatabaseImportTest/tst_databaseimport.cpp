@@ -115,6 +115,8 @@ private slots:
     void databaseSwitchClearsSettingsCache();
     void cancelledImportIsNeverAdopted();
     void credentialReplacementUsesOriginalAccounts();
+    void credentialCaseChangesKeepImportedPassword_data();
+    void credentialCaseChangesKeepImportedPassword();
     void unfinishedImportCannotOverwriteRecoveryCredentials();
     void interruptedPublicationIsRecoverable_data();
     void interruptedPublicationIsRecoverable();
@@ -393,9 +395,9 @@ QPair<QString, QString> DatabaseImportTest::credentialIdentity(const QString &st
 {
     const QString service = QCoreApplication::applicationName() + QLatin1Char(':') + storageKey;
 #ifdef Q_OS_WIN
-    return qMakePair(service, service + QLatin1Char(':') + user);
+    return QKeychain::Job::credentialIdentity(service, service + QLatin1Char(':') + user);
 #else
-    return qMakePair(service, user);
+    return QKeychain::Job::credentialIdentity(service, user);
 #endif
 }
 
@@ -720,6 +722,37 @@ void DatabaseImportTest::credentialReplacementUsesOriginalAccounts()
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "shared")), QString("new secret"));
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "imported")), QString("imported secret"));
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("Other", "unrelated")), QString("untouched"));
+}
+
+void DatabaseImportTest::credentialCaseChangesKeepImportedPassword_data()
+{
+    QTest::addColumn<QString>("storageKey");
+    QTest::addColumn<QString>("username");
+    QTest::newRow("username-case") << QString("TestService") << QString("OK1ABC");
+    QTest::newRow("storage-key-case") << QString("testservice") << QString("ok1abc");
+}
+
+void DatabaseImportTest::credentialCaseChangesKeepImportedPassword()
+{
+    QFETCH(QString, storageKey);
+    QFETCH(QString, username);
+    const QJsonObject entry{{"storagekey", storageKey}, {"username", username}, {"password", "B"}};
+    const QString source = createExport("source.db", QJsonDocument(QJsonObject{{"credentials", QJsonArray{entry}}}).toJson());
+    QVERIFY(!source.isEmpty());
+    configuredAccount = "ok1abc";
+    configuredDxAccounts = QStringList{"obsolete"};
+    QKeychain::Job::passwords[credentialIdentity("TestService", "ok1abc")] = "A";
+    QKeychain::Job::passwords[credentialIdentity("DX", "obsolete")] = "obsolete secret";
+    QKeychain::Job::passwords[credentialIdentity("Other", "unrelated")] = "untouched";
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity(storageKey, username)), QString("B"));
+    QVERIFY(!QKeychain::Job::passwords.values().contains("A"));
+    QVERIFY(!QKeychain::Job::passwords.contains(credentialIdentity("DX", "obsolete")));
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("Other", "unrelated")), QString("untouched"));
+    QCOMPARE(QKeychain::Job::passwords.size(), 2);
+    QVERIFY(!LogDatabase::hasPendingImport());
 }
 
 void DatabaseImportTest::unfinishedImportCannotOverwriteRecoveryCredentials()

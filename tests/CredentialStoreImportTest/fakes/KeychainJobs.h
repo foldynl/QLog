@@ -23,12 +23,20 @@ public:
     QString textData() const { return text; }
     Error error() const { return result; }
     QString errorString() const { return QStringLiteral("Test backend failure"); }
+    static QPair<QString, QString> credentialIdentity(const QString &service, const QString &key)
+    {
+#ifdef Q_OS_WIN
+        return qMakePair(service.toCaseFolded(), key.toCaseFolded());
+#else
+        return qMakePair(service, key);
+#endif
+    }
     void start()
     {
         QTimer::singleShot(0, this, [this]()
         {
-            const QPair<QString, QString> identity(service, key);
-            if ( operation == failedOperation && key == failedKey )
+            const QPair<QString, QString> identity = credentialIdentity(service, key);
+            if ( operation == failedOperation && identity.second == failedKey )
                 result = OtherError;
             else if ( operation == WRITE )
                 passwords[identity] = text;

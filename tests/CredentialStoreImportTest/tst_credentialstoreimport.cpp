@@ -14,9 +14,9 @@ QPair<QString, QString> credentialIdentity(const QString &storageKey, const QStr
 {
     const QString service = "CredentialStoreImportTest:" + storageKey;
 #ifdef Q_OS_WIN
-    return qMakePair(service, service + ":" + user);
+    return QKeychain::Job::credentialIdentity(service, service + ":" + user);
 #else
-    return qMakePair(service, user);
+    return QKeychain::Job::credentialIdentity(service, user);
 #endif
 }
 
