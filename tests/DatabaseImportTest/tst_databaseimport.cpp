@@ -395,6 +395,9 @@ void DatabaseImportTest::interruptedPublicationIsRecoverable()
 
 void DatabaseImportTest::initTestCase()
 {
+#ifdef Q_OS_MACOS
+    QSKIP("Disabled on macOS due to Apple SQLite WAL read-only and schema-write restrictions.");
+#endif
     CredentialRegistry::instance().add("TestService", []()
     {
         QList<CredentialDescriptor> descriptors {
