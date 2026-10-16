@@ -28,6 +28,7 @@ TBC - 0.54.0
 - Fixed Cabrillo VHF frequency and band-only QSO export and filtering
 - Fixed Cabrillo missing LOCATION Header
 - Fixed Cabrillo ending minute filter
+- Fixed Disabled foreign keys during migration process
 - Hamlib - Improved Split Disable
 - Hamlib - Adjusted the checkChanges sequence
 - Pack and Unpack DB and Setting Cleanup and hardening
