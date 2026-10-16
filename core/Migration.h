@@ -13,7 +13,7 @@ public:
     DBSchemaMigration(QObject *parent = nullptr) : QObject(parent) {}
     bool run(QString *backupSnapshot = nullptr);
 
-    static constexpr int latestVersion = 43;
+    static constexpr int latestVersion = 44;
 
 private:
     bool setForeignKeysEnabled(bool enabled);

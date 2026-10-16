@@ -77,10 +77,21 @@ bool DBSchemaMigration::run(QString *backupSnapshot)
         progress.setValue(currentVersion);
     }
 
-    if ( result && !refreshUploadStatusTrigger() )
+    if ( result )
     {
-        qCritical() << "Cannot refresh Upload Status Trigger";
-        result = false;
+        QSqlDatabase db = QSqlDatabase::database();
+        if ( !db.transaction() )
+        {
+            qCCritical(runtime) << "Cannot start upload status trigger refresh transaction:" << db.lastError();
+            result = false;
+        }
+        else if ( !refreshUploadStatusTrigger() || !db.commit() )
+        {
+            qCCritical(runtime) << "Cannot refresh Upload Status Trigger:" << db.lastError();
+            if ( !db.rollback() )
+                qCCritical(runtime) << "Cannot roll back upload status trigger refresh:" << db.lastError();
+            result = false;
+        }
     }
 
     // Restore enforcement even after a failed migration and rollback.
@@ -272,6 +283,9 @@ bool DBSchemaMigration::functionMigration(int version)
         break;
     case 35:
         ret = removeSettings2DB();
+        break;
+    case 44:
+        ret = refreshUploadStatusTrigger();
         break;
     default:
         ret = true;
