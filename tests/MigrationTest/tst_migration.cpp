@@ -17,7 +17,7 @@ class MigrationSqlTest_FriendAccessor
 {
 public:
     static int latestVersion() { return DBSchemaMigration::latestVersion; }
-    static bool createTriggers(DBSchemaMigration &migration) { return migration.createTriggers(); }
+    static bool migrate(DBSchemaMigration &migration, int version) { return migration.migrate(version); }
     static bool runSqlFile(DBSchemaMigration &migration, const QString &path) { return migration.runSqlFile(path); }
     static bool setForeignKeysEnabled(DBSchemaMigration &migration, bool enabled) { return migration.setForeignKeysEnabled(enabled); }
 };
@@ -267,14 +267,9 @@ void MigrationSqlTest::createDatabase(int version)
     QVERIFY(query.exec(QStringLiteral("CREATE TABLE schema_versions (version INTEGER PRIMARY KEY, updated TEXT NOT NULL)")));
     QVERIFY(query.exec(QStringLiteral("INSERT INTO schema_versions VALUES (0, datetime('now'))")));
     query.finish();
+    DBSchemaMigration migration;
     for ( int targetVersion = 1; targetVersion <= version; ++targetVersion )
-        QVERIFY2(executeSqlFile(targetVersion), qPrintable(QString::number(targetVersion)));
-
-    if ( version >= 17 )
-    {
-        DBSchemaMigration migration;
-        QVERIFY(MigrationSqlTest_FriendAccessor::createTriggers(migration));
-    }
+        QVERIFY2(MigrationSqlTest_FriendAccessor::migrate(migration, targetVersion), qPrintable(QString::number(targetVersion)));
 }
 
 void MigrationSqlTest::upgradesLegacyDatabase_data()
@@ -365,28 +360,31 @@ void MigrationSqlTest::upgradesLegacyDatabase()
 
 void MigrationSqlTest::rejectsForeignKeyViolation()
 {
-    createDatabase(42);
+    const int version = DBSchemaMigration::latestVersion - 1;
+    createDatabase(version);
     if ( QTest::currentTestFailed() )
         return;
     {
         QSqlQuery query;
-        QVERIFY(query.exec(QStringLiteral("INSERT INTO contacts(id, callsign, hrdlog_qso_upload_status) VALUES (1, 'OK1TEST', 'R')")));
-        QVERIFY(query.exec(QStringLiteral("INSERT INTO contacts_qsl_cards(contactid, name) VALUES (999, 'preserve')")));
+        QVERIFY(query.exec(QStringLiteral("INSERT INTO contacts(id, callsign) VALUES (1, 'OK1TEST')")));
+        // Known legacy orphans are repaired; an unrelated violation must still prevent the upgrade.
+        QVERIFY(query.exec(QStringLiteral("CREATE TABLE test_references(contactid INTEGER REFERENCES contacts(id))")));
+        QVERIFY(query.exec(QStringLiteral("INSERT INTO test_references VALUES (999)")));
         QVERIFY(query.exec(QStringLiteral("PRAGMA foreign_keys=ON")));
     }
     DBSchemaMigration migration;
     QVERIFY(!migration.run());
-    QCOMPARE(currentVersion(), 42);
+    QCOMPARE(currentVersion(), version);
     QSqlQuery query;
     QVERIFY(query.exec(QStringLiteral("PRAGMA foreign_keys")));
     QVERIFY(query.next());
     QCOMPARE(query.value(0).toInt(), 1);
-    QVERIFY(query.exec(QStringLiteral("SELECT hrdlog_qso_upload_status FROM contacts WHERE id=1")));
+    QVERIFY(query.exec(QStringLiteral("SELECT callsign FROM contacts WHERE id=1")));
     QVERIFY(query.next());
-    QCOMPARE(query.value(0).toString(), QStringLiteral("R"));
-    QVERIFY(query.exec(QStringLiteral("SELECT name FROM contacts_qsl_cards WHERE contactid=999")));
+    QCOMPARE(query.value(0).toString(), QStringLiteral("OK1TEST"));
+    QVERIFY(query.exec(QStringLiteral("SELECT contactid FROM test_references")));
     QVERIFY(query.next());
-    QCOMPARE(query.value(0).toString(), QStringLiteral("preserve"));
+    QCOMPARE(query.value(0).toInt(), 999);
 }
 
 void MigrationSqlTest::migrationFailureRestoresForeignKeys()

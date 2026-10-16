@@ -16,6 +16,7 @@
 #include <QApplication>
 #include <QProcess>
 #include <QSaveFile>
+#include <QSettings>
 #include <QScopedValueRollback>
 #include "../CredentialStoreImportTest/fakes/KeychainJobs.h"
 #ifdef Q_OS_UNIX
@@ -39,9 +40,9 @@ QStringList configuredDxAccounts;
 class MigrationSqlTest_FriendAccessor
 {
 public:
-    static bool runSqlFile(DBSchemaMigration &migration, const QString &path)
+    static bool migrate(DBSchemaMigration &migration, int version)
     {
-        return migration.runSqlFile(path);
+        return migration.migrate(version);
     }
 };
 
@@ -166,7 +167,8 @@ private slots:
 private:
     static QPair<QString, QString> credentialIdentity(const QString &storageKey, const QString &user);
     QScopedPointer<QTemporaryDir> directory;
-    QString createExport(const QString &name, const QByteArray &credentials = QByteArray());
+    QString createExport(const QString &name, const QByteArray &credentials = QByteArray(),
+                         int version = DBSchemaMigration::latestVersion);
     void createDatabase(const QString &filename, int version);
     QByteArray readFile(const QString &path);
     bool runFixture(const QStringList &arguments, int exitCode);
@@ -250,21 +252,24 @@ void DatabaseImportTest::createDatabase(const QString &filename, int version)
     QSqlQuery query;
     QVERIFY(query.exec("PRAGMA foreign_keys = OFF"));
     DBSchemaMigration migration;
-    for ( int step = 1; step <= version; ++step )
-    {
-        const QString path = QString(":/res/sql/migration_%1.sql").arg(step, 3, 10, QChar('0'));
-        QVERIFY2(MigrationSqlTest_FriendAccessor::runSqlFile(migration, path), qPrintable(path));
-        QVERIFY(query.prepare("INSERT INTO schema_versions VALUES (:version, datetime('now'))"));
-        query.bindValue(":version", step);
-        QVERIFY(query.exec());
-    }
+    if ( version == DBSchemaMigration::latestVersion )
+        QVERIFY(migration.run());
+    else
+        for ( int step = 1; step <= version; ++step )
+            QVERIFY2(MigrationSqlTest_FriendAccessor::migrate(migration, step), qPrintable(QString::number(step)));
+    QVERIFY(query.exec("PRAGMA foreign_keys = ON"));
+    // These files model standalone archives. WAL scenarios enable WAL through openDatabase().
+    QVERIFY(query.exec("PRAGMA journal_mode = DELETE"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("delete"));
 }
 
 void DatabaseImportTest::migratedArchivePreservesData_data()
 {
     QTest::addColumn<int>("version");
-    QTest::newRow("current") << 43;
-    QTest::newRow("previous") << 42;
+    QTest::newRow("current") << int(DBSchemaMigration::latestVersion);
+    QTest::newRow("previous") << DBSchemaMigration::latestVersion - 1;
+    QTest::newRow("legacy42") << 42;
 }
 
 void DatabaseImportTest::migratedArchivePreservesData()
@@ -298,7 +303,7 @@ void DatabaseImportTest::migratedArchivePreservesData()
     QCOMPARE(query.value(0).toString(), QString("/selected/port"));
     QVERIFY(query.exec("SELECT MAX(version) FROM schema_versions"));
     QVERIFY(query.next());
-    QCOMPARE(query.value(0).toInt(), 43);
+    QCOMPARE(query.value(0).toInt(), DBSchemaMigration::latestVersion);
     const QStringList snapshots = LogDatabase::dbDirectory().entryList({"qlog_backup_*.db"}, QDir::Files);
     QCOMPARE(snapshots.size(), 1);
     QCOMPARE(snapshots.first().endsWith(".migration.db"), version < DBSchemaMigration::latestVersion);
@@ -414,6 +419,9 @@ void DatabaseImportTest::init()
 #endif
     directory.reset(new QTemporaryDir(directoryTemplate));
     QVERIFY(directory->isValid());
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, directory->path());
+    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, directory->path());
 #ifdef Q_OS_LINUX
     qputenv("XDG_DATA_HOME", directory->path().toUtf8());
     qputenv("XDG_CONFIG_HOME", directory->path().toUtf8());
@@ -455,25 +463,19 @@ QByteArray DatabaseImportTest::readFile(const QString &path)
     return file.readAll();
 }
 
-QString DatabaseImportTest::createExport(const QString &name, const QByteArray &credentials)
+QString DatabaseImportTest::createExport(const QString &name, const QByteArray &credentials, int version)
 {
     const QString path = directory->filePath(name);
+    createDatabase(path, version);
+    if ( QTest::currentTestFailed() )
+        return {};
     {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "fixture");
-        db.setDatabaseName(path);
-        if ( !db.open() )
-            return {};
-        QSqlQuery query(db);
+        QSqlQuery query;
         const QStringList statements {
-            "CREATE TABLE schema_versions (version INTEGER)",
-            "INSERT INTO schema_versions VALUES (43)",
-            "CREATE TABLE log_param (name TEXT PRIMARY KEY, value TEXT)",
-            "INSERT INTO log_param VALUES ('sourceplatform', 'Linux')",
-            "INSERT INTO log_param VALUES ('logid', 'old-id')",
-            "INSERT INTO log_param VALUES ('last_backup', '2099-01-01')",
-            "CREATE TABLE contacts (id INTEGER PRIMARY KEY, callsign TEXT)",
-            "INSERT INTO contacts VALUES (1, 'OK1TEST')",
-            "CREATE TABLE rig_profiles (profile_name TEXT PRIMARY KEY, port_pathname TEXT)"
+            "INSERT OR REPLACE INTO log_param (name, value) VALUES ('sourceplatform', 'Linux')",
+            "INSERT OR REPLACE INTO log_param (name, value) VALUES ('logid', 'old-id')",
+            "INSERT OR REPLACE INTO log_param (name, value) VALUES ('last_backup', '2099-01-01')",
+            "INSERT INTO contacts (id, callsign) VALUES (1, 'OK1TEST')"
         };
         for ( const QString &statement : statements )
             if ( !query.exec(statement) )
@@ -482,15 +484,14 @@ QString DatabaseImportTest::createExport(const QString &name, const QByteArray &
         {
             QByteArray encrypted;
             if ( !PasswordCipher::encrypt("passphrase", credentials, encrypted)
-                 || !query.prepare("INSERT INTO log_param VALUES ('security/encryptedpasswords', :value)") )
+                 || !query.prepare("INSERT INTO log_param (name, value) VALUES ('security/encryptedpasswords', :value)") )
                 return {};
             query.bindValue(":value", encrypted.toBase64());
             if ( !query.exec() )
                 return {};
         }
-        db.close();
     }
-    QSqlDatabase::removeDatabase("fixture");
+    cleanup();
     return path;
 }
 
@@ -525,7 +526,7 @@ void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal_data()
 void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal()
 {
     QFETCH(QString, failure);
-    const QString source = createExport("source.db");
+    const QString source = createExport("source.db", {}, failure == "migration" ? 42 : DBSchemaMigration::latestVersion);
     QVERIFY(!source.isEmpty());
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     const QByteArray original = readFile(LogDatabase::dbFilename());
@@ -543,23 +544,26 @@ void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal()
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "inject");
         db.setDatabaseName(LogDatabase::pendingImportPath());
+        db.setConnectOptions("QSQLITE_ENABLE_REGEXP");
         QVERIFY(db.open());
         QSqlQuery query(db);
         if ( failure == "validation" )
-            QVERIFY(query.exec("UPDATE schema_versions SET version = 99"));
+            QVERIFY(query.exec(QString("INSERT INTO schema_versions VALUES (%1, datetime('now'))")
+                               .arg(DBSchemaMigration::latestVersion + 1)));
         if ( failure == "migration" )
-            QVERIFY(query.exec("UPDATE schema_versions SET version = 42"));
+            QVERIFY(query.exec("CREATE TRIGGER fail_migration BEFORE INSERT ON schema_versions "
+                               "BEGIN SELECT RAISE(ABORT, 'test migration failure'); END"));
         if ( failure == "settings-write" )
             QVERIFY(query.exec("CREATE TRIGGER reject_setting BEFORE INSERT ON log_param "
                                "WHEN NEW.name = 'services/lotw/callbook/tqsl' BEGIN SELECT RAISE(FAIL, 'test'); END"));
         if ( failure == "index-integrity" )
         {
-            QVERIFY(query.exec("CREATE INDEX contacts_callsign_idx ON contacts(callsign)"));
-            QVERIFY(query.exec("SELECT rootpage FROM sqlite_master WHERE name = 'contacts_callsign_idx'"));
+            QVERIFY(query.exec("CREATE INDEX import_test_callsign_idx ON contacts(callsign)"));
+            QVERIFY(query.exec("SELECT rootpage FROM sqlite_master WHERE name = 'import_test_callsign_idx'"));
             QVERIFY(query.next());
             const int rootPage = query.value(0).toInt();
             QVERIFY(query.exec("PRAGMA writable_schema = ON"));
-            QVERIFY(query.exec("DELETE FROM sqlite_master WHERE name = 'contacts_callsign_idx'"));
+            QVERIFY(query.exec("DELETE FROM sqlite_master WHERE name = 'import_test_callsign_idx'"));
             query.finish();
             db.close();
             QVERIFY(db.open());
@@ -567,8 +571,8 @@ void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal()
             QVERIFY(query.exec("UPDATE contacts SET callsign = 'CHANGED' WHERE id = 1"));
             QVERIFY(query.exec("PRAGMA writable_schema = ON"));
             QVERIFY(query.prepare("INSERT INTO sqlite_master (type, name, tbl_name, rootpage, sql) "
-                                  "VALUES ('index', 'contacts_callsign_idx', 'contacts', :rootpage, "
-                                  "'CREATE INDEX contacts_callsign_idx ON contacts(callsign)')"));
+                                  "VALUES ('index', 'import_test_callsign_idx', 'contacts', :rootpage, "
+                                  "'CREATE INDEX import_test_callsign_idx ON contacts(callsign)')"));
             query.bindValue(":rootpage", rootPage);
             QVERIFY(query.exec());
         }
@@ -814,7 +818,7 @@ void DatabaseImportTest::publishedImportRetryPreservesNewData()
     QVERIFY(!LogParam::getEncryptedPasswords().isEmpty());
     {
         QSqlQuery query;
-        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+        QVERIFY(query.exec("INSERT INTO contacts (id, callsign) VALUES (2, 'NEW-QSO')"));
     }
     QVERIFY(!LogDatabase::instance()->canCancelPendingImport());
     QVERIFY(!LogDatabase::instance()->cancelPendingImport());
@@ -850,7 +854,7 @@ void DatabaseImportTest::deferredImportDoesNotOverwriteManualPassword()
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "first")), QString("manual"));
     QVERIFY(LogDatabase::hasPendingImport());
     QSqlQuery query;
-    QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+    QVERIFY(query.exec("INSERT INTO contacts (id, callsign) VALUES (2, 'NEW-QSO')"));
 }
 
 void DatabaseImportTest::deferredImportChecksSchema_data()
@@ -867,58 +871,36 @@ void DatabaseImportTest::deferredImportChecksSchema()
 {
     QFETCH(QString, schema);
     QFETCH(QString, phase);
-    // Schemas 42 and 43 have the same tables; migration 43 changes stored data.
-    QCOMPARE(DBSchemaMigration::latestVersion, 43);
-    const QString source = directory->filePath("real-schema.db");
-    createDatabase(source, 42);
-    if ( QTest::currentTestFailed() )
-        return;
-    {
-        QSqlQuery query;
-        QVERIFY(query.exec("INSERT INTO contacts (callsign) VALUES ('OK1REAL')"));
-    }
-    QVERIFY(LogParam::setSourcePlatform("Linux"));
-    QVERIFY(LogParam::setLastBackupDate(QDate::currentDate()));
-    QByteArray encrypted;
-    QVERIFY(PasswordCipher::encrypt("passphrase", R"({"credentials":[
-        {"storagekey":"TestService","username":"first","password":"imported"}]})", encrypted));
-    QVERIFY(LogParam::setEncryptedPasswords(encrypted));
-    cleanup();
+    // Model recovery files published by an older QLog, before running the current migrations.
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})", 42);
+    QVERIFY(!source.isEmpty());
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
-    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
-    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
-    QString initialSnapshot;
-    QCOMPARE(LogDatabase::instance()->initialize(&initialSnapshot), LogDatabase::ImportResult::NEEDS_ATTENTION);
-    QVERIFY(initialSnapshot.endsWith(".migration.db"));
-    QCOMPARE(LogDatabase::dbDirectory().entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{initialSnapshot});
-    const QString logId = LogParam::getLogID();
+    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    const QJsonObject record = QJsonDocument::fromJson(readFile(progressPath)).object();
+    const QString logId = record.value("targetLogId").toString();
+    QVERIFY(LogDatabase::instance()->openDatabase(LogDatabase::pendingImportPath()));
+    QVERIFY(LogParam::setLogID(logId));
     {
-        // Reproduce a published import left by the preceding application version.
         QSqlQuery query;
-        QVERIFY(query.exec("DELETE FROM schema_versions WHERE version = 43"));
         QVERIFY(query.exec("PRAGMA foreign_keys = OFF"));
         QVERIFY2(query.exec("INSERT INTO contacts (callsign, hrdlog_qso_upload_status) VALUES ('NEW-QSO', 'R')"), qPrintable(query.lastError().text()));
         QVERIFY(query.exec("PRAGMA foreign_keys = ON"));
         if ( schema == "future" )
-            QVERIFY(query.exec("INSERT INTO schema_versions VALUES (44, datetime('now'))"));
+            QVERIFY(query.exec(QString("INSERT INTO schema_versions VALUES (%1, datetime('now'))")
+                               .arg(DBSchemaMigration::latestVersion + 1)));
         else if ( schema == "failed-migration" )
-            QVERIFY(query.exec("CREATE TRIGGER fail_migration BEFORE UPDATE ON contacts BEGIN SELECT RAISE(ABORT, 'test migration failure'); END"));
+            QVERIFY(query.exec("CREATE TRIGGER fail_migration BEFORE INSERT ON schema_versions "
+                               "BEGIN SELECT RAISE(ABORT, 'test migration failure'); END"));
     }
     const QByteArray payload = LogParam::getEncryptedPasswords();
-    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
-    if ( phase != "PUBLISHED" )
-    {
-        QJsonObject record = QJsonDocument::fromJson(readFile(progressPath)).object();
-        record["phase"] = phase;
-        QSaveFile file(progressPath);
-        QVERIFY(file.open(QIODevice::WriteOnly));
-        const QByteArray data = QJsonDocument(record).toJson();
-        QCOMPARE(file.write(data), qint64(data.size()));
-        QVERIFY(file.commit());
-    }
-    const QByteArray progress = readFile(progressPath);
+    cleanup();
     const QString originalPath = LogDatabase::dbDirectory().filePath("qlog.db.preimport");
+    QVERIFY(QFile::rename(LogDatabase::dbFilename(), originalPath));
+    QVERIFY(QFile::rename(LogDatabase::pendingImportPath(), LogDatabase::dbFilename()));
+    setImportPhase(phase);
+    const QByteArray progress = readFile(progressPath);
     const QByteArray original = readFile(originalPath);
     QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
     const auto passwords = QKeychain::Job::passwords;
@@ -939,7 +921,9 @@ void DatabaseImportTest::deferredImportChecksSchema()
             QSqlQuery query("SELECT hrdlog_qso_upload_status FROM contacts WHERE callsign = 'NEW-QSO'");
             QVERIFY(query.next());
             QCOMPARE(query.value(0).toString(), QString("R"));
-            QVERIFY(query.exec(schema == "future" ? "DELETE FROM schema_versions WHERE version = 44" : "DROP TRIGGER fail_migration"));
+            QVERIFY(query.exec(schema == "future"
+                               ? QString("DELETE FROM schema_versions WHERE version = %1").arg(DBSchemaMigration::latestVersion + 1)
+                               : QString("DROP TRIGGER fail_migration")));
         }
         cleanup();
         if ( phase == "PUBLISHED" )
@@ -991,7 +975,7 @@ void DatabaseImportTest::deferredImportPreparesRoutineBackup()
     QVERIFY(LogParam::setLastBackupDate(QDate::currentDate().addDays(-8)));
     {
         QSqlQuery query;
-        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+        QVERIFY(query.exec("INSERT INTO contacts (id, callsign) VALUES (2, 'NEW-QSO')"));
     }
     cleanup();
     snapshot.clear();
@@ -1025,45 +1009,51 @@ void DatabaseImportTest::deferredImportPreparesRoutineBackup()
 void DatabaseImportTest::readyImportChecksSchema_data()
 {
     QTest::addColumn<QString>("boundary");
-    QTest::addColumn<int>("version");
+    QTest::addColumn<bool>("future");
     for ( const QString &boundary : {QString("READY"), QString("DATABASE_PUBLISHED")} )
     {
-        QTest::newRow(qPrintable(boundary + "-future")) << boundary << 44;
-        QTest::newRow(qPrintable(boundary + "-failed-migration")) << boundary << 42;
+        QTest::newRow(qPrintable(boundary + "-future")) << boundary << true;
+        QTest::newRow(qPrintable(boundary + "-failed-migration")) << boundary << false;
     }
 }
 
 void DatabaseImportTest::readyImportChecksSchema()
 {
-#ifdef IMPORT_INTERRUPTION_WRAPPERS
     QFETCH(QString, boundary);
-    QFETCH(int, version);
-    const QString source = createExport("source.db");
+    QFETCH(bool, future);
+    const QString source = createExport("source.db", {}, 42);
     QVERIFY(!source.isEmpty());
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     const QByteArray original = readFile(LogDatabase::dbFilename());
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, {}));
-    QVERIFY(runFixture({"--recover", boundary}, 91));
     const bool published = boundary == "DATABASE_PUBLISHED";
-    QVERIFY(LogDatabase::instance()->openDatabase(published ? LogDatabase::dbFilename() : LogDatabase::pendingImportPath()));
+    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    const QJsonObject record = QJsonDocument::fromJson(readFile(progressPath)).object();
+    QVERIFY(LogDatabase::instance()->openDatabase(LogDatabase::pendingImportPath()));
+    QVERIFY(LogParam::setLogID(record.value("targetLogId").toString()));
     {
-        // The minimal fixture intentionally cannot complete migration 43.
+        // These files were prepared by an older QLog; keep their actual historical schema.
         QSqlQuery query;
-        QVERIFY(query.prepare("UPDATE schema_versions SET version = :version"));
-        query.bindValue(":version", version);
-        QVERIFY(query.exec());
+        if ( future )
+            QVERIFY(query.exec(QString("INSERT INTO schema_versions VALUES (%1, datetime('now'))")
+                               .arg(DBSchemaMigration::latestVersion + 1)));
+        else
+            QVERIFY(query.exec("CREATE TRIGGER fail_migration BEFORE INSERT ON schema_versions "
+                               "BEGIN SELECT RAISE(ABORT, 'test migration failure'); END"));
     }
     cleanup();
-    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    setImportPhase("READY");
+    if ( published )
+    {
+        QVERIFY(QFile::rename(LogDatabase::dbFilename(), LogDatabase::dbDirectory().filePath("qlog.db.preimport")));
+        QVERIFY(QFile::rename(LogDatabase::pendingImportPath(), LogDatabase::dbFilename()));
+    }
     const QByteArray progress = readFile(progressPath);
     QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
     QCOMPARE(readFile(progressPath), progress);
     QCOMPARE(QFile::exists(LogDatabase::pendingImportPath()), !published);
     const QString originalPath = published ? LogDatabase::dbDirectory().filePath("qlog.db.preimport") : LogDatabase::dbFilename();
     QCOMPARE(readFile(originalPath), original);
-#else
-    QSKIP("Requires interruption after the actual READY publication boundaries.");
-#endif
 }
 
 void DatabaseImportTest::finishWithoutPasswords_data()
@@ -1102,7 +1092,7 @@ void DatabaseImportTest::finishWithoutPasswords()
     const QString logId = LogParam::getLogID();
     {
         QSqlQuery query;
-        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+        QVERIFY(query.exec("INSERT INTO contacts (id, callsign) VALUES (2, 'NEW-QSO')"));
     }
     QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
     const auto passwords = QKeychain::Job::passwords;
@@ -1340,7 +1330,7 @@ void DatabaseImportTest::passwordActionsReuseInitializedConnection()
         QSqlQuery query;
         QVERIFY(query.exec("CREATE TEMP TABLE connection_marker (value TEXT)"));
         QVERIFY(query.exec("INSERT INTO connection_marker VALUES ('same connection')"));
-        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+        QVERIFY(query.exec("INSERT INTO contacts (id, callsign) VALUES (2, 'NEW-QSO')"));
     }
     for ( int attempt = 0; attempt < 3; ++attempt )
     {
@@ -1407,7 +1397,7 @@ void DatabaseImportTest::backupPreparationFailureControlsStartup()
 {
 #ifdef IMPORT_INTERRUPTION_WRAPPERS
     QFETCH(bool, migrationRequired);
-    const int version = migrationRequired ? 42 : DBSchemaMigration::latestVersion;
+    const int version = DBSchemaMigration::latestVersion - (migrationRequired ? 1 : 0);
     const QString source = directory->filePath("real-schema.db");
     createDatabase(source, version);
     if ( QTest::currentTestFailed() )
@@ -1484,7 +1474,7 @@ void DatabaseImportTest::cancelledImportIsNeverAdopted()
     QCOMPARE(LogParam::getLogID(), QString("original-id"));
     {
         QSqlQuery query;
-        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'AFTER-CANCEL')"));
+        QVERIFY(query.exec("INSERT INTO contacts (id, callsign) VALUES (2, 'AFTER-CANCEL')"));
     }
     QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
     QCOMPARE(LogParam::getLogID(), QString("original-id"));
@@ -1594,16 +1584,16 @@ void DatabaseImportTest::inspectionRequiresExportSchema_data()
     QTest::addColumn<bool>("valid");
     const QStringList schema {
         "CREATE TABLE schema_versions (version INTEGER)",
-        "INSERT INTO schema_versions VALUES (43)",
+        QString("INSERT INTO schema_versions VALUES (%1)").arg(DBSchemaMigration::latestVersion),
         "CREATE TABLE log_param (name TEXT PRIMARY KEY, value TEXT)",
         "INSERT INTO log_param VALUES ('sourceplatform', 'Linux')",
         "CREATE TABLE contacts (id INTEGER PRIMARY KEY, callsign TEXT)"
     };
     QTest::newRow("current-export") << schema << true;
     QStringList modified = schema;
-    modified[1] = "INSERT INTO schema_versions VALUES (42)";
+    modified[1] = QString("INSERT INTO schema_versions VALUES (%1)").arg(DBSchemaMigration::latestVersion - 1);
     QTest::newRow("older-export") << modified << true;
-    modified[1] = "INSERT INTO schema_versions VALUES (44)";
+    modified[1] = QString("INSERT INTO schema_versions VALUES (%1)").arg(DBSchemaMigration::latestVersion + 1);
     QTest::newRow("too-new") << modified << false;
     modified[1] = "INSERT INTO schema_versions VALUES ('invalid')";
     QTest::newRow("invalid-version") << modified << false;
@@ -1749,7 +1739,7 @@ void DatabaseImportTest::preparationWriteFailurePreservesOriginal()
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     const QByteArray original = readFile(LogDatabase::dbFilename());
     const QList<PlatformParameter> largeSelection {
-        {"services/lotw/callbook/tqsl", {}, {}, QString(1024 * 1024, 'x'), false}
+        {"services/lotw/callbook/tqsl", {}, {}, QString(int(QFileInfo(source).size()) + 1024, 'x'), false}
     };
     struct rlimit originalLimit;
     QVERIFY(getrlimit(RLIMIT_FSIZE, &originalLimit) == 0);
