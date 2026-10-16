@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QResource>
 #include <QDebug>
 #include <QTime>
@@ -602,42 +603,62 @@ int main(int argc, char* argv[])
     createDataDirectory();
     QString backupSnapshot;
 
-    // Process pending database import if exists
-    if ( LogDatabase::hasPendingImport() )
+    splash.showMessage(LogDatabase::hasPendingImport() ? QObject::tr("Importing Database")
+                                                       : QObject::tr("Opening Database"), Qt::AlignBottom|Qt::AlignCenter);
+    QCoreApplication::processEvents();
+
+    LogDatabase::ImportResult result = LogDatabase::instance()->initialize(&backupSnapshot);
+    while ( result != LogDatabase::ImportResult::COMPLETE )
     {
-        splash.showMessage(QObject::tr("Importing Database"), Qt::AlignBottom|Qt::AlignCenter);
-        QCoreApplication::processEvents();
-
-        if ( !LogDatabase::instance()->processPendingImport(&backupSnapshot) )
+        if ( result == LogDatabase::ImportResult::FAILED )
         {
-            QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                                  LogDatabase::instance()->pendingImportError());
-            return 1;
+            if ( !LogDatabase::instance()->canCancelPendingImport() )
+            {
+                QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
+                                      LogDatabase::instance()->pendingImportError());
+                return 1;
+            }
+            QMessageBox message(QMessageBox::Warning, QObject::tr("Unpack Data & Settings"),
+                                LogDatabase::instance()->pendingImportError(), QMessageBox::NoButton);
+            message.setInformativeText(QObject::tr("The import has not been completed. You can retry it, or cancel it and start QLog without importing the prepared database."));
+            QPushButton *retryButton = message.addButton(QObject::tr("Retry"), QMessageBox::ActionRole);
+            QPushButton *cancelButton = message.addButton(QObject::tr("Cancel Import and Start QLog"), QMessageBox::DestructiveRole);
+            QPushButton *exitButton = message.addButton(QObject::tr("Exit QLog"), QMessageBox::RejectRole);
+            message.setDefaultButton(retryButton);
+            message.setEscapeButton(exitButton);
+            message.exec();
+            if ( message.clickedButton() == exitButton || !message.clickedButton() )
+                return 0;
+            if ( message.clickedButton() == cancelButton && !LogDatabase::instance()->cancelPendingImport() )
+            {
+                QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
+                                      LogDatabase::instance()->pendingImportError());
+                return 1;
+            }
+            result = LogDatabase::instance()->initialize(&backupSnapshot);
+            continue;
         }
-    }
-    else
-    {
-        splash.showMessage(QObject::tr("Opening Database"), Qt::AlignBottom|Qt::AlignCenter);
 
-        QCoreApplication::processEvents();
-
-        if ( ! LogDatabase::instance()->openDatabase() )
-        {
-            QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                                  QMessageBox::tr("Could not connect to database."));
-            return 1;
-        }
-
-        splash.showMessage(QObject::tr("Migrating Database"), Qt::AlignBottom|Qt::AlignCenter);
-
-        QCoreApplication::processEvents();
-
-        if ( ! LogDatabase::instance()->schemaVersionUpgrade(&backupSnapshot) )
-        {
-            QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                                  QMessageBox::tr("Database migration failed."));
-            return 1;
-        }
+        QMessageBox message(QMessageBox::Warning, QObject::tr("Unpack Data & Settings"),
+                            LogDatabase::instance()->pendingImportError(), QMessageBox::NoButton);
+        message.setInformativeText(QObject::tr("You can continue logging and decide again at the next startup. "
+                                               "Packing or unpacking data and settings remains unavailable until recovery is finished or stopped.\n\n"
+                                               "Retrying recovery may overwrite passwords changed manually. Stopping recovery keeps the current passwords; "
+                                               "missing passwords must be entered manually, and old passwords may remain stored."));
+        message.addButton(QObject::tr("Retry"), QMessageBox::ActionRole);
+        QPushButton *continueButton = message.addButton(QObject::tr("Continue Logging"), QMessageBox::AcceptRole);
+        QPushButton *finishButton = message.addButton(QObject::tr("Stop Password Recovery"), QMessageBox::DestructiveRole);
+        QPushButton *exitButton = message.addButton(QObject::tr("Exit QLog"), QMessageBox::RejectRole);
+        message.setDefaultButton(continueButton);
+        message.setEscapeButton(exitButton);
+        message.exec();
+        if ( message.clickedButton() == continueButton )
+            break;
+        if ( message.clickedButton() == exitButton || !message.clickedButton() )
+            return 0;
+        const LogDatabase::ImportAction action = message.clickedButton() == finishButton ? LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS
+                                                                                       : LogDatabase::ImportAction::RETRY_PASSWORDS;
+        result = LogDatabase::instance()->recoverImportPasswords(action);
     }
 
     LOVDownloader lovDownloader;

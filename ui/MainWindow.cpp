@@ -1418,6 +1418,14 @@ void MainWindow::showDumpDB()
 {
     FCT_IDENTIFICATION;
 
+    if ( LogDatabase::hasPendingImport() )
+    {
+        QMessageBox::warning(this, tr("Pack Data & Settings"),
+                             tr("Data and settings cannot be packed because an import is unfinished.\n\n"
+                                "Restart QLog and complete password recovery or choose \"Stop Password Recovery\"."));
+        return;
+    }
+
     ExportPasswordDialog passDialog(this);
     if ( passDialog.exec() != QDialog::Accepted )
         return;
@@ -1427,7 +1435,7 @@ void MainWindow::showDumpDB()
 
     if ( !CredentialStore::instance()->exportPasswords(password) )
     {
-        QMessageBox::warning(this, tr("Pack Data && Settings"),
+        QMessageBox::warning(this, tr("Pack Data & Settings"),
                              tr("Failed to encrypt credentials."));
         return;
     }
@@ -1435,7 +1443,7 @@ void MainWindow::showDumpDB()
     const QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     QString filename = QFileDialog::getSaveFileName(this,
-                                                    tr("Pack Data && Settings"),
+                                                    tr("Pack Data & Settings"),
                                                     documentsPath,
                                                     tr("Database files (*.dbe);;All files (*)"));
 
@@ -1451,7 +1459,7 @@ void MainWindow::showDumpDB()
     {
         filename.append(".dbe");
         if ( QFile::exists(filename)
-             && QMessageBox::question(this, tr("Pack Data && Settings"),
+             && QMessageBox::question(this, tr("Pack Data & Settings"),
                                       tr("The file %1 already exists. Replace it?").arg(filename),
                                       QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes )
         {
@@ -1466,7 +1474,7 @@ void MainWindow::showDumpDB()
     {
         LogParam::removeEncryptedPasswords();
         LogParam::removeSourcePlatform();
-        QMessageBox::warning(this, tr("Pack Data && Settings"),
+        QMessageBox::warning(this, tr("Pack Data & Settings"),
                              tr("Choose a different file. The export destination points to the open database."));
         return;
     }
@@ -1477,7 +1485,7 @@ void MainWindow::showDumpDB()
     {
         LogParam::removeEncryptedPasswords();
         LogParam::removeSourcePlatform();
-        QMessageBox::warning(this, tr("Pack Data && Settings"),
+        QMessageBox::warning(this, tr("Pack Data & Settings"),
                              tr("Failed to create temporary file."));
         return;
     }
@@ -1493,7 +1501,7 @@ void MainWindow::showDumpDB()
     if ( !ok )
     {
         tempFile.remove();
-        QMessageBox::warning(this, tr("Pack Data && Settings"),
+        QMessageBox::warning(this, tr("Pack Data & Settings"),
                              tr("Failed to dump the database."));
         return;
     }
@@ -1506,18 +1514,18 @@ void MainWindow::showDumpDB()
     {
         if ( deletePasswords && !CredentialStore::instance()->deleteAllPasswords() )
         {
-            QMessageBox::warning(this, tr("Pack Data && Settings"),
+            QMessageBox::warning(this, tr("Pack Data & Settings"),
                                  tr("Database successfully dumped to\n%1\n"
                                     "Some credentials could not be removed.").arg(filename));
             return;
         }
 
-        QMessageBox::information(this, tr("Pack Data && Settings"),
+        QMessageBox::information(this, tr("Pack Data & Settings"),
                                  tr("Database successfully dumped to\n%1").arg(filename));
     }
     else
     {
-        QMessageBox::warning(this, tr("Pack Data && Settings"),
+        QMessageBox::warning(this, tr("Pack Data & Settings"),
                              tr("Failed to compress the database."));
     }
 }
@@ -1525,6 +1533,14 @@ void MainWindow::showDumpDB()
 void MainWindow::showLoadDB()
 {
     FCT_IDENTIFICATION;
+
+    if ( LogDatabase::hasPendingImport() )
+    {
+        QMessageBox::warning(this, tr("Unpack Data & Settings"),
+                             tr("Data and settings cannot be unpacked because an import is unfinished.\n\n"
+                                "Restart QLog and complete password recovery or choose \"Stop Password Recovery\"."));
+        return;
+    }
 
     LoadDatabaseDialog loadDialog(this);
     if ( loadDialog.exec() != QDialog::Accepted )
@@ -1570,7 +1586,7 @@ void MainWindow::showLoadDB()
     if ( !prepared )
     {
         QFile::remove(decompressedFile);
-        QMessageBox::warning(this, tr("Unpack Data && Settings"), LogDatabase::instance()->pendingImportError());
+        QMessageBox::warning(this, tr("Unpack Data & Settings"), LogDatabase::instance()->pendingImportError());
         return;
     }
     QFile::remove(decompressedFile);
@@ -1598,7 +1614,7 @@ void MainWindow::restartApplication()
     if ( !QProcess::startDetached(QCoreApplication::applicationFilePath(), args) )
     {
         const bool cancelled = LogDatabase::instance()->cancelPendingImport();
-        QMessageBox::warning(this, tr("Unpack Data && Settings"),
+        QMessageBox::warning(this, tr("Unpack Data & Settings"),
                              cancelled ? tr("QLog could not be restarted. The prepared import was cancelled.")
                                        : tr("QLog could not be restarted.\n%1").arg(LogDatabase::instance()->pendingImportError()));
         return;

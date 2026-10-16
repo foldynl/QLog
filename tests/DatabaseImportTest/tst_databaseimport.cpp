@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QTemporaryDir>
 #include <QStandardPaths>
 #include <QJsonDocument>
@@ -11,9 +12,11 @@
 #include "core/PasswordCipher.h"
 #include "core/CredentialStore.h"
 #include "core/Migration.h"
+#include "core/DatabaseBackup.h"
 #include <QApplication>
 #include <QProcess>
 #include <QSaveFile>
+#include <QScopedValueRollback>
 #include "../CredentialStoreImportTest/fakes/KeychainJobs.h"
 #ifdef Q_OS_UNIX
 #include <sys/resource.h>
@@ -73,9 +76,13 @@ extern "C" bool __wrap__ZN5QFile6renameERK7QStringS2_(const QString &source, con
 {
     if ( interruptionBoundary == "FAIL_PUBLICATION" && source == LogDatabase::pendingImportPath() )
         return false;
+    if ( interruptionBoundary == "FAIL_BACKUP_PUBLICATION" && source.endsWith(".db.tmp") && target.endsWith(".db") )
+        return false;
     const bool result = __real__ZN5QFile6renameERK7QStringS2_(source, target);
     if ( result && ((interruptionBoundary == "ORIGINAL_MOVED" && source == LogDatabase::dbFilename())
-                   || (interruptionBoundary == "DATABASE_PUBLISHED" && source == LogDatabase::pendingImportPath())) )
+                   || (interruptionBoundary == "DATABASE_PUBLISHED" && source == LogDatabase::pendingImportPath())
+                   || (interruptionBoundary == "CANCEL_CANDIDATE_MOVED" && target == LogDatabase::pendingImportPath())
+                   || (interruptionBoundary == "CANCEL_ORIGINAL_RESTORED" && source == LogDatabase::dbDirectory().filePath("qlog.db.preimport"))) )
         _exit(91);
     return result;
 }
@@ -112,7 +119,28 @@ private slots:
     void candidateFailureDoesNotReplaceOriginal();
     void candidateFailureDoesNotReplaceOriginal_data();
     void publishedImportRetryPreservesNewData();
+    void deferredImportDoesNotOverwriteManualPassword();
+    void deferredImportChecksSchema_data();
+    void deferredImportChecksSchema();
+    void deferredImportPreparesRoutineBackup();
+    void readyImportChecksSchema_data();
+    void readyImportChecksSchema();
+    void finishWithoutPasswords_data();
+    void finishWithoutPasswords();
+    void skippedImportCleanupCanBeRetried();
+    void interruptedPasswordAbandonmentIsRecoverable();
+    void finishWithoutPasswordsRejectsMismatchedDatabase();
+    void stoppingRecoveryPreservesDataOnWriteFailure();
     void databaseSwitchClearsSettingsCache();
+    void schemaCheckDoesNotPrepareRoutineBackup_data();
+    void schemaCheckDoesNotPrepareRoutineBackup();
+    void startupWithoutImportInitializesDatabase();
+    void firstStartupKeepsFirstQsoBackupDue();
+    void passwordActionsReuseInitializedConnection();
+    void passwordRecoveryRequiresOpenActiveDatabase_data();
+    void passwordRecoveryRequiresOpenActiveDatabase();
+    void backupPreparationFailureControlsStartup_data();
+    void backupPreparationFailureControlsStartup();
     void cancelledImportIsNeverAdopted();
     void credentialReplacementUsesOriginalAccounts();
     void credentialCaseChangesKeepImportedPassword_data();
@@ -122,6 +150,10 @@ private slots:
     void interruptedPublicationIsRecoverable();
     void missingPassphrasePreservesRecovery();
     void cancelledImportCleanupCanBeRetried();
+    void unpublishedImportCanBeCancelled_data();
+    void unpublishedImportCanBeCancelled();
+    void interruptedCancellationIsRecoverable_data();
+    void interruptedCancellationIsRecoverable();
     void cancellationPreservesFilesWhenOriginalIsMissing();
     void abortedImportReportsOriginalOpenFailure();
     void cancellationRecordFailurePreventsAdoption();
@@ -135,8 +167,10 @@ private:
     static QPair<QString, QString> credentialIdentity(const QString &storageKey, const QString &user);
     QScopedPointer<QTemporaryDir> directory;
     QString createExport(const QString &name, const QByteArray &credentials = QByteArray());
+    void createDatabase(const QString &filename, int version);
     QByteArray readFile(const QString &path);
     bool runFixture(const QStringList &arguments, int exitCode);
+    void setImportPhase(const QString &phase);
 };
 
 void DatabaseImportTest::publicationFailureRestoresOriginal()
@@ -156,7 +190,7 @@ void DatabaseImportTest::publicationFailureRestoresOriginal()
         QCOMPARE(query.value(0).toString(), QString("WAL-QSO"));
     }
     cleanup();
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
     QVERIFY(!LogDatabase::hasPendingImport());
 #else
     QSKIP("Requires a linker wrapper for a deterministic publication failure.");
@@ -174,7 +208,7 @@ void DatabaseImportTest::contradictoryRecoveryFilesArePreserved()
     const QString backup = LogDatabase::dbDirectory().filePath("qlog.db.preimport");
     QVERIFY(QFile::copy(source, backup));
     const QByteArray candidate = readFile(LogDatabase::pendingImportPath());
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
     QCOMPARE(readFile(LogDatabase::dbFilename()), original);
     QCOMPARE(readFile(backup), original);
     QCOMPARE(readFile(LogDatabase::pendingImportPath()), candidate);
@@ -210,6 +244,22 @@ void DatabaseImportTest::colocatedPreparationAvoidsDatabaseCopy()
 #endif
 }
 
+void DatabaseImportTest::createDatabase(const QString &filename, int version)
+{
+    QVERIFY(LogDatabase::instance()->openDatabase(filename));
+    QSqlQuery query;
+    QVERIFY(query.exec("PRAGMA foreign_keys = OFF"));
+    DBSchemaMigration migration;
+    for ( int step = 1; step <= version; ++step )
+    {
+        const QString path = QString(":/res/sql/migration_%1.sql").arg(step, 3, 10, QChar('0'));
+        QVERIFY2(MigrationSqlTest_FriendAccessor::runSqlFile(migration, path), qPrintable(path));
+        QVERIFY(query.prepare("INSERT INTO schema_versions VALUES (:version, datetime('now'))"));
+        query.bindValue(":version", step);
+        QVERIFY(query.exec());
+    }
+}
+
 void DatabaseImportTest::migratedArchivePreservesData_data()
 {
     QTest::addColumn<int>("version");
@@ -221,19 +271,11 @@ void DatabaseImportTest::migratedArchivePreservesData()
 {
     QFETCH(int, version);
     const QString source = directory->filePath("real-schema.db");
-    QVERIFY(LogDatabase::instance()->openDatabase(source));
+    createDatabase(source, version);
+    if ( QTest::currentTestFailed() )
+        return;
     {
         QSqlQuery query;
-        QVERIFY(query.exec("PRAGMA foreign_keys = OFF"));
-        DBSchemaMigration migration;
-        for ( int step = 1; step <= version; ++step )
-        {
-            const QString path = QString(":/res/sql/migration_%1.sql").arg(step, 3, 10, QChar('0'));
-            QVERIFY2(MigrationSqlTest_FriendAccessor::runSqlFile(migration, path), qPrintable(path));
-            QVERIFY(query.prepare("INSERT INTO schema_versions VALUES (:version, datetime('now'))"));
-            query.bindValue(":version", step);
-            QVERIFY(query.exec());
-        }
         QVERIFY(query.exec("INSERT INTO contacts (callsign) VALUES ('OK1REAL')"));
         QVERIFY(query.exec("INSERT INTO rig_profiles (profile_name, model, port_pathname) VALUES ('Test rig', 1, 'old port')"));
     }
@@ -246,7 +288,7 @@ void DatabaseImportTest::migratedArchivePreservesData()
         {"rig_profiles", "Test rig", "port_pathname", {}, {}, "/selected/port", false}
     };
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, parameters, profiles, {}));
-    QVERIFY2(LogDatabase::instance()->processPendingImport(), qPrintable(LogDatabase::instance()->pendingImportError()));
+    QVERIFY2(LogDatabase::instance()->initialize() == LogDatabase::ImportResult::COMPLETE, qPrintable(LogDatabase::instance()->pendingImportError()));
     QCOMPARE(LogParam::getLoTWTQSLPath(QString()), QString("/selected/tqsl"));
     QSqlQuery query("SELECT callsign FROM contacts");
     QVERIFY(query.next());
@@ -257,6 +299,9 @@ void DatabaseImportTest::migratedArchivePreservesData()
     QVERIFY(query.exec("SELECT MAX(version) FROM schema_versions"));
     QVERIFY(query.next());
     QCOMPARE(query.value(0).toInt(), 43);
+    const QStringList snapshots = LogDatabase::dbDirectory().entryList({"qlog_backup_*.db"}, QDir::Files);
+    QCOMPARE(snapshots.size(), 1);
+    QCOMPARE(snapshots.first().endsWith(".migration.db"), version < DBSchemaMigration::latestVersion);
     QVERIFY(!LogDatabase::hasPendingImport());
 }
 
@@ -312,7 +357,7 @@ void DatabaseImportTest::interruptedPublicationIsRecoverable()
     }
     if ( boundary == "CANDIDATE_STAGED" )
     {
-        QVERIFY(!LogDatabase::instance()->processPendingImport());
+        QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
         QVERIFY(QFile::exists(LogDatabase::pendingImportPath()));
         QCOMPARE(QFile::exists(LogDatabase::dbFilename()), hadOriginal);
         return;
@@ -326,7 +371,7 @@ void DatabaseImportTest::interruptedPublicationIsRecoverable()
         QCOMPARE(query.value(0).toString(), QString("WAL-QSO"));
     }
     cleanup();
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
     QVERIFY(!LogDatabase::hasPendingImport());
     QVERIFY(!QFile::exists(backup));
     QSqlQuery query("SELECT callsign FROM contacts WHERE id = 1");
@@ -371,6 +416,7 @@ void DatabaseImportTest::init()
     QVERIFY(directory->isValid());
 #ifdef Q_OS_LINUX
     qputenv("XDG_DATA_HOME", directory->path().toUtf8());
+    qputenv("XDG_CONFIG_HOME", directory->path().toUtf8());
 #else
     QCoreApplication::setOrganizationName(QFileInfo(directory->path()).fileName());
     QCOMPARE(QFileInfo(LogDatabase::dbDirectory().absolutePath()).dir().absolutePath(), directory->path());
@@ -539,7 +585,7 @@ void DatabaseImportTest::candidateFailureDoesNotReplaceOriginal()
         db.close();
     }
     QSqlDatabase::removeDatabase("inject");
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
     QCOMPARE(readFile(LogDatabase::dbFilename()), original);
     QVERIFY(LogDatabase::hasPendingImport());
     if ( failure != "validation" && failure != "integrity" && failure != "index-integrity" )
@@ -553,12 +599,12 @@ void DatabaseImportTest::missingPassphrasePreservesRecovery()
     const QByteArray original = readFile(LogDatabase::dbFilename());
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     QKeychain::Job::passwords.clear();
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
     QCOMPARE(readFile(LogDatabase::dbFilename()), original);
     QVERIFY(!LogParam::getEncryptedPasswords().isEmpty());
     QVERIFY(LogDatabase::hasPendingImport());
     QVERIFY(CredentialStore::instance()->saveImportPassphrase("passphrase"));
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
 }
 
 void DatabaseImportTest::cancelledImportCleanupCanBeRetried()
@@ -566,15 +612,127 @@ void DatabaseImportTest::cancelledImportCleanupCanBeRetried()
     const QString source = createExport("source.db", R"({"credentials":[]})");
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    // Resume a cancellation left by a version that required keychain cleanup to succeed.
+    setImportPhase("ABORTED");
+    QVERIFY(QFile::remove(LogDatabase::pendingImportPath()));
     QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
     QKeychain::Job::failedKey = credentialIdentity("ImportPassphrase", "import").second;
-    QVERIFY(!LogDatabase::instance()->cancelPendingImport());
-    QVERIFY(!QFile::exists(LogDatabase::pendingImportPath()));
-    QVERIFY(LogDatabase::hasPendingImport());
-    QKeychain::Job::failedKey.clear();
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
     QCOMPARE(LogParam::getLogID(), QString("old-id"));
     QVERIFY(!LogDatabase::hasPendingImport());
+}
+
+void DatabaseImportTest::interruptedCancellationIsRecoverable_data()
+{
+    QTest::addColumn<QString>("boundary");
+    QTest::newRow("intent-saved") << QString("ABORTED");
+    QTest::newRow("candidate-moved") << QString("CANCEL_CANDIDATE_MOVED");
+    QTest::newRow("original-restored") << QString("CANCEL_ORIGINAL_RESTORED");
+}
+
+void DatabaseImportTest::interruptedCancellationIsRecoverable()
+{
+#ifdef IMPORT_INTERRUPTION_WRAPPERS
+    QFETCH(QString, boundary);
+    const QString source = createExport("source.db");
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(runFixture({"--make-wal", LogDatabase::dbFilename()}, 91));
+    QVERIFY(QFileInfo(LogDatabase::dbFilename() + "-wal").size() > 0);
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, {}));
+    QVERIFY(runFixture({"--recover", "DATABASE_PUBLISHED"}, 91));
+    QVERIFY(runFixture({"--cancel", boundary}, 91));
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
+    QVERIFY(!LogDatabase::hasPendingImport());
+    QCOMPARE(LogParam::getLogID(), QString("old-id"));
+    QSqlQuery query("SELECT callsign FROM contacts WHERE id = 9");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("WAL-QSO"));
+#else
+    QSKIP("Requires linker wrappers to interrupt real cancellation operations.");
+#endif
+}
+
+void DatabaseImportTest::setImportPhase(const QString &phase)
+{
+    const QString path = LogDatabase::pendingImportPath() + ".params";
+    QJsonObject record = QJsonDocument::fromJson(readFile(path)).object();
+    QVERIFY(!record.isEmpty());
+    record.insert("phase", phase);
+    QSaveFile file(path);
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    const QByteArray bytes = QJsonDocument(record).toJson();
+    QCOMPARE(file.write(bytes), qint64(bytes.size()));
+    QVERIFY(file.commit());
+}
+
+void DatabaseImportTest::unpublishedImportCanBeCancelled_data()
+{
+    QTest::addColumn<QString>("boundary");
+    QTest::addColumn<bool>("hadOriginal");
+    for ( const QString &boundary : {QString("PREPARED"), QString("READY"),
+                                    QString("ORIGINAL_MOVED"), QString("DATABASE_PUBLISHED")} )
+    {
+        QTest::newRow(qPrintable(boundary)) << boundary << true;
+        if ( boundary != "ORIGINAL_MOVED" )
+            QTest::newRow(qPrintable(boundary + "-first-install")) << boundary << false;
+    }
+}
+
+void DatabaseImportTest::unpublishedImportCanBeCancelled()
+{
+    QFETCH(QString, boundary);
+    QFETCH(bool, hadOriginal);
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"incoming"}]})");
+    const QByteArray archive = readFile(source);
+    if ( hadOriginal )
+    {
+        const QString original = createExport("original.db");
+        QVERIFY(QFile::copy(original, LogDatabase::dbFilename()));
+        QVERIFY(LogDatabase::instance()->openDatabase());
+        QVERIFY(LogParam::setLogID("original-id"));
+        {
+            QSqlQuery query;
+            QVERIFY(query.exec("UPDATE contacts SET callsign = 'OLD-QSO'"));
+        }
+        cleanup();
+    }
+    QKeychain::Job::passwords[credentialIdentity("TestService", "old")] = "original-secret";
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    if ( boundary != "PREPARED" )
+    {
+        const QJsonObject record = QJsonDocument::fromJson(readFile(LogDatabase::pendingImportPath() + ".params")).object();
+        QVERIFY(LogDatabase::instance()->openDatabase(LogDatabase::pendingImportPath()));
+        QVERIFY(LogParam::setLogID(record.value("targetLogId").toString()));
+        cleanup();
+        setImportPhase("READY");
+        if ( hadOriginal && boundary != "READY" )
+            QVERIFY(QFile::rename(LogDatabase::dbFilename(), LogDatabase::dbDirectory().filePath("qlog.db.preimport")));
+        if ( boundary == "DATABASE_PUBLISHED" )
+            QVERIFY(QFile::rename(LogDatabase::pendingImportPath(), LogDatabase::dbFilename()));
+    }
+    QKeychain::Job::failedOperation = QKeychain::Job::READ;
+    QKeychain::Job::failedKey = credentialIdentity("ImportPassphrase", "import").second;
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
+    const QString error = LogDatabase::instance()->pendingImportError();
+    QVERIFY(LogDatabase::instance()->canCancelPendingImport());
+    QCOMPARE(LogDatabase::instance()->pendingImportError(), error);
+    QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
+    QVERIFY2(LogDatabase::instance()->cancelPendingImport(), qPrintable(LogDatabase::instance()->pendingImportError()));
+    QVERIFY(!LogDatabase::hasPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
+    QCOMPARE(readFile(source), archive);
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "old")), QString("original-secret"));
+    QVERIFY(!QKeychain::Job::passwords.contains(credentialIdentity("TestService", "first")));
+    QSqlQuery query("SELECT callsign FROM contacts");
+    if ( hadOriginal )
+    {
+        QCOMPARE(LogParam::getLogID(), QString("original-id"));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QString("OLD-QSO"));
+    }
+    else
+        QVERIFY(!query.next());
 }
 
 void DatabaseImportTest::cancellationPreservesFilesWhenOriginalIsMissing()
@@ -596,15 +754,13 @@ void DatabaseImportTest::abortedImportReportsOriginalOpenFailure()
     const QString source = createExport("source.db", R"({"credentials":[]})");
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
-    QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
-    QKeychain::Job::failedKey = credentialIdentity("ImportPassphrase", "import").second;
-    QVERIFY(!LogDatabase::instance()->cancelPendingImport());
-    QKeychain::Job::failedKey.clear();
+    setImportPhase("ABORTED");
+    QVERIFY(QFile::remove(LogDatabase::pendingImportPath()));
     QFile original(LogDatabase::dbFilename());
     QVERIFY(original.open(QIODevice::WriteOnly | QIODevice::Truncate));
     QCOMPARE(original.write("invalid database"), qint64(16));
     original.close();
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
     QVERIFY(!LogDatabase::instance()->pendingImportError().isEmpty());
 }
 
@@ -630,7 +786,7 @@ void DatabaseImportTest::cancellationRecordFailurePreventsAdoption()
     QVERIFY(restored == 0);
     QVERIFY(!result);
     QVERIFY(!QFile::exists(LogDatabase::pendingImportPath()));
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
     QCOMPARE(readFile(LogDatabase::dbFilename()), original);
 #else
     QSKIP("Requires the Unix file-size limit to force a real record write failure.");
@@ -648,7 +804,7 @@ void DatabaseImportTest::publishedImportRetryPreservesNewData()
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
     QKeychain::Job::failedKey = credentialIdentity("TestService", "second").second;
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
     QVERIFY(!QFile::exists(LogDatabase::pendingImportPath()));
     QVERIFY(LogDatabase::hasPendingImport());
     QVERIFY(QFile::exists(LogDatabase::dbDirectory().filePath("qlog.db.preimport")));
@@ -660,9 +816,12 @@ void DatabaseImportTest::publishedImportRetryPreservesNewData()
         QSqlQuery query;
         QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
     }
+    QVERIFY(!LogDatabase::instance()->canCancelPendingImport());
+    QVERIFY(!LogDatabase::instance()->cancelPendingImport());
     cleanup();
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
     QKeychain::Job::failedKey.clear();
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::RETRY_PASSWORDS), LogDatabase::ImportResult::COMPLETE);
     QCOMPARE(LogParam::getLogID(), logId);
     QSqlQuery query("SELECT callsign FROM contacts WHERE id = 2");
     QVERIFY(query.next());
@@ -671,6 +830,632 @@ void DatabaseImportTest::publishedImportRetryPreservesNewData()
     QVERIFY(LogParam::getEncryptedPasswords().isEmpty());
     QVERIFY(!QFile::exists(LogDatabase::dbDirectory().filePath("qlog.db.preimport")));
     QVERIFY(CredentialStore::instance()->getImportPassphrase().isEmpty());
+}
+
+void DatabaseImportTest::deferredImportDoesNotOverwriteManualPassword()
+{
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"},
+        {"storagekey":"TestService","username":"second","password":"secret"}]})");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "second").second;
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
+    cleanup();
+    QKeychain::Job::failedKey.clear();
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "first")), QString("manual"));
+    QVERIFY(LogDatabase::hasPendingImport());
+    QSqlQuery query;
+    QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+}
+
+void DatabaseImportTest::deferredImportChecksSchema_data()
+{
+    QTest::addColumn<QString>("schema");
+    QTest::addColumn<QString>("phase");
+    for ( const QString &schema : {QString("upgrade"), QString("future"), QString("failed-migration")} )
+        QTest::newRow(qPrintable(schema)) << schema << QString("PUBLISHED");
+    for ( const QString &phase : {QString("CREDENTIALS_RESTORED"), QString("CREDENTIALS_SKIPPED")} )
+        QTest::newRow(qPrintable("future-" + phase)) << QString("future") << phase;
+}
+
+void DatabaseImportTest::deferredImportChecksSchema()
+{
+    QFETCH(QString, schema);
+    QFETCH(QString, phase);
+    // Schemas 42 and 43 have the same tables; migration 43 changes stored data.
+    QCOMPARE(DBSchemaMigration::latestVersion, 43);
+    const QString source = directory->filePath("real-schema.db");
+    createDatabase(source, 42);
+    if ( QTest::currentTestFailed() )
+        return;
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("INSERT INTO contacts (callsign) VALUES ('OK1REAL')"));
+    }
+    QVERIFY(LogParam::setSourcePlatform("Linux"));
+    QVERIFY(LogParam::setLastBackupDate(QDate::currentDate()));
+    QByteArray encrypted;
+    QVERIFY(PasswordCipher::encrypt("passphrase", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})", encrypted));
+    QVERIFY(LogParam::setEncryptedPasswords(encrypted));
+    cleanup();
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
+    QString initialSnapshot;
+    QCOMPARE(LogDatabase::instance()->initialize(&initialSnapshot), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QVERIFY(initialSnapshot.endsWith(".migration.db"));
+    QCOMPARE(LogDatabase::dbDirectory().entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{initialSnapshot});
+    const QString logId = LogParam::getLogID();
+    {
+        // Reproduce a published import left by the preceding application version.
+        QSqlQuery query;
+        QVERIFY(query.exec("DELETE FROM schema_versions WHERE version = 43"));
+        QVERIFY(query.exec("PRAGMA foreign_keys = OFF"));
+        QVERIFY2(query.exec("INSERT INTO contacts (callsign, hrdlog_qso_upload_status) VALUES ('NEW-QSO', 'R')"), qPrintable(query.lastError().text()));
+        QVERIFY(query.exec("PRAGMA foreign_keys = ON"));
+        if ( schema == "future" )
+            QVERIFY(query.exec("INSERT INTO schema_versions VALUES (44, datetime('now'))"));
+        else if ( schema == "failed-migration" )
+            QVERIFY(query.exec("CREATE TRIGGER fail_migration BEFORE UPDATE ON contacts BEGIN SELECT RAISE(ABORT, 'test migration failure'); END"));
+    }
+    const QByteArray payload = LogParam::getEncryptedPasswords();
+    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    if ( phase != "PUBLISHED" )
+    {
+        QJsonObject record = QJsonDocument::fromJson(readFile(progressPath)).object();
+        record["phase"] = phase;
+        QSaveFile file(progressPath);
+        QVERIFY(file.open(QIODevice::WriteOnly));
+        const QByteArray data = QJsonDocument(record).toJson();
+        QCOMPARE(file.write(data), qint64(data.size()));
+        QVERIFY(file.commit());
+    }
+    const QByteArray progress = readFile(progressPath);
+    const QString originalPath = LogDatabase::dbDirectory().filePath("qlog.db.preimport");
+    const QByteArray original = readFile(originalPath);
+    QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
+    const auto passwords = QKeychain::Job::passwords;
+    cleanup();
+    QKeychain::Job::failedKey.clear();
+    QString snapshot;
+    const auto result = LogDatabase::instance()->initialize(&snapshot);
+    if ( schema != "upgrade" )
+    {
+        QCOMPARE(result, LogDatabase::ImportResult::FAILED);
+        QVERIFY(!LogDatabase::instance()->pendingImportError().isEmpty());
+        QCOMPARE(readFile(progressPath), progress);
+        QCOMPARE(readFile(originalPath), original);
+        QCOMPARE(LogParam::getEncryptedPasswords(), payload);
+        QVERIFY(QKeychain::Job::passwords == passwords);
+        QVERIFY(LogDatabase::hasPendingImport());
+        {
+            QSqlQuery query("SELECT hrdlog_qso_upload_status FROM contacts WHERE callsign = 'NEW-QSO'");
+            QVERIFY(query.next());
+            QCOMPARE(query.value(0).toString(), QString("R"));
+            QVERIFY(query.exec(schema == "future" ? "DELETE FROM schema_versions WHERE version = 44" : "DROP TRIGGER fail_migration"));
+        }
+        cleanup();
+        if ( phase == "PUBLISHED" )
+        {
+            QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::NEEDS_ATTENTION);
+            QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::RETRY_PASSWORDS),
+                     LogDatabase::ImportResult::COMPLETE);
+        }
+        else
+            QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::COMPLETE);
+    }
+    else
+    {
+        QCOMPARE(result, LogDatabase::ImportResult::NEEDS_ATTENTION);
+        QCOMPARE(LogParam::getEncryptedPasswords(), payload);
+        QCOMPARE(readFile(progressPath), progress);
+        QCOMPARE(readFile(originalPath), original);
+        QVERIFY(QKeychain::Job::passwords == passwords);
+        QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::RETRY_PASSWORDS),
+                 LogDatabase::ImportResult::COMPLETE);
+    }
+    QCOMPARE(LogParam::getLogID(), logId);
+    QSqlQuery query("SELECT MAX(version) FROM schema_versions");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), DBSchemaMigration::latestVersion);
+    QVERIFY(query.exec("SELECT hrdlog_qso_upload_status FROM contacts WHERE callsign = 'NEW-QSO'"));
+    QVERIFY(query.next());
+    QVERIFY(query.value(0).isNull());
+    QVERIFY(snapshot.endsWith(".migration.db"));
+    QVERIFY(QFile::exists(LogDatabase::dbDirectory().filePath(snapshot)));
+}
+
+void DatabaseImportTest::deferredImportPreparesRoutineBackup()
+{
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
+    QString snapshot;
+    QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    const QDir backups = LogDatabase::dbDirectory();
+    QVERIFY(!snapshot.isEmpty());
+    QCOMPARE(backups.entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{snapshot});
+    // Completed ADX conversion normally retires the internal database copies.
+    QVERIFY(QFile::remove(backups.filePath(snapshot)));
+    QVERIFY(LogParam::setLastBackupDate(QDate::currentDate().addDays(-8)));
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+    }
+    cleanup();
+    snapshot.clear();
+    QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QVERIFY(!snapshot.isEmpty());
+    QCOMPARE(backups.entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{snapshot});
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "ImportBackupCheck");
+        db.setDatabaseName(backups.filePath(snapshot));
+        QVERIFY(db.open());
+        QSqlQuery query(db);
+        QVERIFY(query.exec("SELECT callsign FROM contacts WHERE id = 2"));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QString("NEW-QSO"));
+    }
+    QSqlDatabase::removeDatabase("ImportBackupCheck");
+    const QString prioritySnapshot = snapshot;
+    for ( int attempt = 0; attempt < 2; ++attempt )
+    {
+        QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::RETRY_PASSWORDS),
+                 LogDatabase::ImportResult::NEEDS_ATTENTION);
+        QCOMPARE(snapshot, prioritySnapshot);
+        QCOMPARE(backups.entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{prioritySnapshot});
+    }
+    QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS),
+             LogDatabase::ImportResult::COMPLETE);
+    QCOMPARE(snapshot, prioritySnapshot);
+    QCOMPARE(backups.entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{prioritySnapshot});
+}
+
+void DatabaseImportTest::readyImportChecksSchema_data()
+{
+    QTest::addColumn<QString>("boundary");
+    QTest::addColumn<int>("version");
+    for ( const QString &boundary : {QString("READY"), QString("DATABASE_PUBLISHED")} )
+    {
+        QTest::newRow(qPrintable(boundary + "-future")) << boundary << 44;
+        QTest::newRow(qPrintable(boundary + "-failed-migration")) << boundary << 42;
+    }
+}
+
+void DatabaseImportTest::readyImportChecksSchema()
+{
+#ifdef IMPORT_INTERRUPTION_WRAPPERS
+    QFETCH(QString, boundary);
+    QFETCH(int, version);
+    const QString source = createExport("source.db");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    const QByteArray original = readFile(LogDatabase::dbFilename());
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, {}));
+    QVERIFY(runFixture({"--recover", boundary}, 91));
+    const bool published = boundary == "DATABASE_PUBLISHED";
+    QVERIFY(LogDatabase::instance()->openDatabase(published ? LogDatabase::dbFilename() : LogDatabase::pendingImportPath()));
+    {
+        // The minimal fixture intentionally cannot complete migration 43.
+        QSqlQuery query;
+        QVERIFY(query.prepare("UPDATE schema_versions SET version = :version"));
+        query.bindValue(":version", version);
+        QVERIFY(query.exec());
+    }
+    cleanup();
+    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    const QByteArray progress = readFile(progressPath);
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
+    QCOMPARE(readFile(progressPath), progress);
+    QCOMPARE(QFile::exists(LogDatabase::pendingImportPath()), !published);
+    const QString originalPath = published ? LogDatabase::dbDirectory().filePath("qlog.db.preimport") : LogDatabase::dbFilename();
+    QCOMPARE(readFile(originalPath), original);
+#else
+    QSKIP("Requires interruption after the actual READY publication boundaries.");
+#endif
+}
+
+void DatabaseImportTest::finishWithoutPasswords_data()
+{
+    QTest::addColumn<QString>("failure");
+    QTest::newRow("restore") << QString("restore");
+    QTest::newRow("read-passphrase") << QString("read-passphrase");
+    QTest::newRow("old-password-deletion") << QString("old-password-deletion");
+    QTest::newRow("passphrase-deletion") << QString("passphrase-deletion");
+}
+
+void DatabaseImportTest::finishWithoutPasswords()
+{
+    QFETCH(QString, failure);
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"},
+        {"storagekey":"TestService","username":"second","password":"secret"}]})");
+    QVERIFY(!source.isEmpty());
+    const QByteArray archive = readFile(source);
+    configuredAccount = "old";
+    QKeychain::Job::passwords[credentialIdentity("TestService", "old")] = "old secret";
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    const bool failRestore = failure == "restore" || failure == "read-passphrase";
+    QKeychain::Job::failedOperation = failRestore ? QKeychain::Job::WRITE : QKeychain::Job::DELETE;
+    QKeychain::Job::failedKey = failure == "passphrase-deletion" ? credentialIdentity("ImportPassphrase", "import").second
+                              : credentialIdentity("TestService", failRestore ? "second" : "old").second;
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    if ( failure == "read-passphrase" )
+    {
+        QKeychain::Job::failedOperation = QKeychain::Job::READ;
+        QKeychain::Job::failedKey = credentialIdentity("ImportPassphrase", "import").second;
+        QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::RETRY_PASSWORDS),
+                 LogDatabase::ImportResult::NEEDS_ATTENTION);
+    }
+    const QString logId = LogParam::getLogID();
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+    }
+    QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
+    const auto passwords = QKeychain::Job::passwords;
+    // A permanently inaccessible passphrase must not prevent the explicit abandonment.
+    QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
+    QKeychain::Job::failedKey = credentialIdentity("ImportPassphrase", "import").second;
+    QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS),
+             LogDatabase::ImportResult::COMPLETE);
+    QVERIFY(QKeychain::Job::passwords == passwords);
+    QVERIFY(LogParam::getEncryptedPasswords().isEmpty());
+    QVERIFY(LogParam::getSourcePlatform().isEmpty());
+    QVERIFY(!LogDatabase::hasPendingImport());
+    QCOMPARE(LogParam::getLogID(), logId);
+    QCOMPARE(readFile(source), archive);
+    cleanup();
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
+    QVERIFY(LogDatabase::instance()->openDatabase());
+    {
+        QSqlQuery query("SELECT callsign FROM contacts WHERE id = 2");
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QString("NEW-QSO"));
+    }
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedKey.clear();
+    QVERIFY(LogDatabase::instance()->cancelPendingImport());
+}
+
+void DatabaseImportTest::skippedImportCleanupCanBeRetried()
+{
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
+    const QString sidecar = LogDatabase::dbDirectory().filePath("qlog.db.preimport-wal");
+    {
+        QFile file(sidecar);
+        QVERIFY(file.open(QIODevice::WriteOnly));
+    }
+    QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS),
+             LogDatabase::ImportResult::NEEDS_ATTENTION);
+    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    QCOMPARE(QJsonDocument::fromJson(readFile(progressPath)).object().value("phase").toString(), QString("CREDENTIALS_SKIPPED"));
+    QVERIFY(LogParam::getEncryptedPasswords().isEmpty());
+    cleanup();
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "first")), QString("manual"));
+    QVERIFY(QFile::remove(sidecar));
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
+    QVERIFY(!LogDatabase::hasPendingImport());
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "first")), QString("manual"));
+}
+
+void DatabaseImportTest::interruptedPasswordAbandonmentIsRecoverable()
+{
+#ifdef IMPORT_INTERRUPTION_WRAPPERS
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
+    cleanup();
+    QVERIFY(runFixture({"--finish-password-recovery", "CREDENTIALS_SKIPPED"}, 91));
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
+    QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "first")), QString("manual"));
+    QVERIFY(!LogDatabase::hasPendingImport());
+#else
+    QSKIP("Requires a linker wrapper to interrupt a durable import decision.");
+#endif
+}
+
+void DatabaseImportTest::finishWithoutPasswordsRejectsMismatchedDatabase()
+{
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"secret"}]})");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    const QByteArray passwords = LogParam::getEncryptedPasswords();
+    QVERIFY(LogParam::setLogID("different-database"));
+    QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS),
+             LogDatabase::ImportResult::FAILED);
+    QVERIFY(LogDatabase::hasPendingImport());
+    const QJsonObject record = QJsonDocument::fromJson(readFile(LogDatabase::pendingImportPath() + ".params")).object();
+    QCOMPARE(record.value("phase").toString(), QString("PUBLISHED"));
+    QVERIFY(LogDatabase::instance()->openDatabase());
+    QCOMPARE(LogParam::getEncryptedPasswords(), passwords);
+}
+
+void DatabaseImportTest::stoppingRecoveryPreservesDataOnWriteFailure()
+{
+#ifdef Q_OS_UNIX
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QKeychain::Job::passwords[credentialIdentity("TestService", "first")] = "manual";
+    const QByteArray payload = LogParam::getEncryptedPasswords();
+    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    QJsonObject record = QJsonDocument::fromJson(readFile(progressPath)).object();
+    record["parameters"] = QJsonArray{QJsonObject{{"key", "unused"}, {"newValue", QString(256 * 1024, 'x')}}};
+    {
+        QSaveFile file(progressPath);
+        QVERIFY(file.open(QIODevice::WriteOnly));
+        const QByteArray data = QJsonDocument(record).toJson();
+        QCOMPARE(file.write(data), qint64(data.size()));
+        QVERIFY(file.commit());
+    }
+    const QByteArray progress = readFile(progressPath);
+    const auto passwords = QKeychain::Job::passwords;
+    struct rlimit originalLimit;
+    QVERIFY(getrlimit(RLIMIT_FSIZE, &originalLimit) == 0);
+    struct rlimit restrictedLimit = originalLimit;
+    restrictedLimit.rlim_cur = 64 * 1024;
+    const auto previousSignal = signal(SIGXFSZ, SIG_IGN);
+    const int restricted = setrlimit(RLIMIT_FSIZE, &restrictedLimit);
+    LogDatabase::ImportResult result = LogDatabase::ImportResult::FAILED;
+    if ( restricted == 0 )
+        result = LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS);
+    const int restored = setrlimit(RLIMIT_FSIZE, &originalLimit);
+    signal(SIGXFSZ, previousSignal);
+    QVERIFY(restricted == 0);
+    QVERIFY(restored == 0);
+    QCOMPARE(result, LogDatabase::ImportResult::NEEDS_ATTENTION);
+    QCOMPARE(readFile(progressPath), progress);
+    QCOMPARE(LogParam::getEncryptedPasswords(), payload);
+    QVERIFY(QKeychain::Job::passwords == passwords);
+    QVERIFY(LogDatabase::hasPendingImport());
+    QKeychain::Job::failedKey.clear();
+    QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::RETRY_PASSWORDS),
+             LogDatabase::ImportResult::COMPLETE);
+#else
+    QSKIP("Requires the Unix file-size limit to force a real record write failure.");
+#endif
+}
+
+void DatabaseImportTest::schemaCheckDoesNotPrepareRoutineBackup_data()
+{
+    QTest::addColumn<bool>("existingSnapshot");
+    QTest::newRow("no-snapshot") << false;
+    QTest::newRow("migration-snapshot") << true;
+}
+
+void DatabaseImportTest::schemaCheckDoesNotPrepareRoutineBackup()
+{
+    QFETCH(bool, existingSnapshot);
+    const QString source = createExport("source.db");
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->openDatabase());
+    QVERIFY(LogParam::setLastBackupDate(QDate::currentDate().addDays(-8)));
+    QString snapshot;
+    if ( existingSnapshot )
+        QVERIFY(DatabaseBackup::prepare(true, &snapshot));
+    const QString previousSnapshot = snapshot;
+    const QDir backups = LogDatabase::dbDirectory();
+    const QStringList previousFiles = backups.entryList({"qlog_backup_*.db"}, QDir::Files);
+    QVERIFY(LogDatabase::instance()->schemaVersionUpgrade(&snapshot));
+    QCOMPARE(snapshot, previousSnapshot);
+    QCOMPARE(backups.entryList({"qlog_backup_*.db"}, QDir::Files), previousFiles);
+}
+
+void DatabaseImportTest::startupWithoutImportInitializesDatabase()
+{
+    const QString source = createExport("source.db");
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(!LogDatabase::hasPendingImport());
+    QString snapshot;
+    QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::COMPLETE);
+    QVERIFY(QSqlDatabase::database(QSqlDatabase::defaultConnection, false).isOpen());
+    QVERIFY(!snapshot.isEmpty());
+    QSqlQuery query("SELECT callsign FROM contacts WHERE id = 1");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("OK1TEST"));
+    QCOMPARE(LogParam::getLogID(), QString("old-id"));
+    QCOMPARE(LogDatabase::dbDirectory().entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{snapshot});
+}
+
+void DatabaseImportTest::firstStartupKeepsFirstQsoBackupDue()
+{
+    QVERIFY(!QFile::exists(LogDatabase::dbFilename()));
+    QString snapshot;
+    QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::COMPLETE);
+    QVERIFY(snapshot.isEmpty());
+    QVERIFY(LogDatabase::dbDirectory().entryList({"qlog_backup_*"}, QDir::Files).isEmpty());
+    QVERIFY(!LogParam::getLastBackupDate().isValid());
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("INSERT INTO contacts (callsign) VALUES ('OK1FIRST')"));
+    }
+    cleanup();
+    QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::COMPLETE);
+    QVERIFY(!snapshot.isEmpty());
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "FirstQsoBackupCheck");
+        db.setDatabaseName(LogDatabase::dbDirectory().filePath(snapshot));
+        QVERIFY(db.open());
+        QSqlQuery query("SELECT callsign FROM contacts", db);
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QString("OK1FIRST"));
+        db.close();
+    }
+    QSqlDatabase::removeDatabase("FirstQsoBackupCheck");
+}
+
+void DatabaseImportTest::passwordActionsReuseInitializedConnection()
+{
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})");
+    QVERIFY(!source.isEmpty());
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
+    QKeychain::Job::failedKey = credentialIdentity("TestService", "first").second;
+    QString snapshot;
+    QCOMPARE(LogDatabase::instance()->initialize(&snapshot), LogDatabase::ImportResult::NEEDS_ATTENTION);
+    const QDir backups = LogDatabase::dbDirectory();
+    const QStringList snapshots = backups.entryList({"qlog_backup_*.db"}, QDir::Files);
+    QCOMPARE(snapshots, QStringList{snapshot});
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("CREATE TEMP TABLE connection_marker (value TEXT)"));
+        QVERIFY(query.exec("INSERT INTO connection_marker VALUES ('same connection')"));
+        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'NEW-QSO')"));
+    }
+    for ( int attempt = 0; attempt < 3; ++attempt )
+    {
+        const auto action = attempt == 2 ? LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS
+                                        : LogDatabase::ImportAction::RETRY_PASSWORDS;
+        QCOMPARE(LogDatabase::instance()->recoverImportPasswords(action),
+                 attempt == 2 ? LogDatabase::ImportResult::COMPLETE : LogDatabase::ImportResult::NEEDS_ATTENTION);
+        QSqlQuery query("SELECT value FROM connection_marker");
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QString("same connection"));
+        QVERIFY(query.exec("SELECT callsign FROM contacts WHERE id = 2"));
+        QVERIFY(query.next());
+        QCOMPARE(query.value(0).toString(), QString("NEW-QSO"));
+        QCOMPARE(backups.entryList({"qlog_backup_*.db"}, QDir::Files), snapshots);
+    }
+    QVERIFY(!LogDatabase::hasPendingImport());
+}
+
+void DatabaseImportTest::passwordRecoveryRequiresOpenActiveDatabase_data()
+{
+    QTest::addColumn<bool>("otherDatabase");
+    QTest::newRow("closed") << false;
+    QTest::newRow("different-database") << true;
+}
+
+void DatabaseImportTest::passwordRecoveryRequiresOpenActiveDatabase()
+{
+    QFETCH(bool, otherDatabase);
+    const QString source = createExport("source.db", R"({"credentials":[
+        {"storagekey":"TestService","username":"first","password":"imported"}]})");
+    QVERIFY(!source.isEmpty());
+    // A first installation makes unintended creation of the active DB observable.
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
+    const QByteArray progress = readFile(LogDatabase::pendingImportPath() + ".params");
+    const QByteArray candidate = readFile(LogDatabase::pendingImportPath());
+    const auto passwords = QKeychain::Job::passwords;
+    if ( otherDatabase )
+        QVERIFY(LogDatabase::instance()->openDatabase(source));
+    for ( const auto action : {LogDatabase::ImportAction::RETRY_PASSWORDS, LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS} )
+    {
+        QCOMPARE(LogDatabase::instance()->recoverImportPasswords(action), LogDatabase::ImportResult::FAILED);
+        QVERIFY(!QFile::exists(LogDatabase::dbFilename()));
+        QCOMPARE(readFile(LogDatabase::pendingImportPath() + ".params"), progress);
+        QCOMPARE(readFile(LogDatabase::pendingImportPath()), candidate);
+        QVERIFY(QKeychain::Job::passwords == passwords);
+        if ( otherDatabase )
+        {
+            QVERIFY(QSqlDatabase::database(QSqlDatabase::defaultConnection, false).isOpen());
+            QCOMPARE(QSqlDatabase::database(QSqlDatabase::defaultConnection, false).databaseName(), source);
+        }
+        else
+            QVERIFY(!QSqlDatabase::contains());
+    }
+}
+
+void DatabaseImportTest::backupPreparationFailureControlsStartup_data()
+{
+    QTest::addColumn<bool>("migrationRequired");
+    QTest::newRow("mandatory-migration-backup") << true;
+    QTest::newRow("routine-backup") << false;
+}
+
+void DatabaseImportTest::backupPreparationFailureControlsStartup()
+{
+#ifdef IMPORT_INTERRUPTION_WRAPPERS
+    QFETCH(bool, migrationRequired);
+    const int version = migrationRequired ? 42 : DBSchemaMigration::latestVersion;
+    const QString source = directory->filePath("real-schema.db");
+    createDatabase(source, version);
+    if ( QTest::currentTestFailed() )
+        return;
+    QVERIFY(LogParam::setSourcePlatform("Linux"));
+    QVERIFY(LogParam::setLogID("old-id"));
+    // A recent routine backup must not suppress the mandatory migration copy.
+    QVERIFY(LogParam::setLastBackupDate(QDate::currentDate().addDays(migrationRequired ? 0 : -8)));
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("INSERT INTO contacts (callsign) VALUES ('OK1REAL')"));
+    }
+    QString previousSnapshot;
+    QVERIFY(DatabaseBackup::prepare(true, &previousSnapshot));
+    const QString previousPath = LogDatabase::dbDirectory().filePath(previousSnapshot);
+    const QByteArray previous = readFile(previousPath);
+    cleanup();
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    const QByteArray original = readFile(LogDatabase::dbFilename());
+    QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, {}));
+    const QString progressPath = LogDatabase::pendingImportPath() + ".params";
+    const QByteArray progress = readFile(progressPath);
+    LogDatabase::ImportResult result;
+    {
+        QScopedValueRollback<QString> failure(interruptionBoundary, "FAIL_BACKUP_PUBLICATION");
+        result = LogDatabase::instance()->initialize();
+    }
+    QCOMPARE(result, migrationRequired ? LogDatabase::ImportResult::FAILED : LogDatabase::ImportResult::COMPLETE);
+    QCOMPARE(readFile(previousPath), previous);
+    QVERIFY(!LogParam::getBackupError().isEmpty());
+    QSqlQuery query("SELECT MAX(version) FROM schema_versions");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), version);
+    QVERIFY(query.exec("SELECT callsign FROM contacts"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("OK1REAL"));
+    if ( migrationRequired )
+    {
+        QCOMPARE(readFile(LogDatabase::dbFilename()), original);
+        QCOMPARE(readFile(progressPath), progress);
+        QVERIFY(QFile::exists(LogDatabase::pendingImportPath()));
+    }
+    else
+        QVERIFY(!LogDatabase::hasPendingImport());
+    QCOMPARE(LogDatabase::dbDirectory().entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{previousSnapshot});
+#else
+    QSKIP("Requires the existing linker wrapper to fail backup publication deterministically.");
+#endif
 }
 
 void DatabaseImportTest::databaseSwitchClearsSettingsCache()
@@ -688,12 +1473,27 @@ void DatabaseImportTest::cancelledImportIsNeverAdopted()
 {
     const QString source = createExport("source.db");
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    QVERIFY(LogDatabase::instance()->openDatabase());
+    QVERIFY(LogParam::setLogID("original-id"));
     const QByteArray original = readFile(LogDatabase::dbFilename());
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, {}));
     QVERIFY(LogDatabase::instance()->cancelPendingImport());
     QVERIFY(!LogDatabase::hasPendingImport());
-    QVERIFY(LogDatabase::instance()->processPendingImport());
     QCOMPARE(readFile(LogDatabase::dbFilename()), original);
+    QVERIFY(QSqlDatabase::database(QSqlDatabase::defaultConnection, false).isOpen());
+    QCOMPARE(LogParam::getLogID(), QString("original-id"));
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("INSERT INTO contacts VALUES (2, 'AFTER-CANCEL')"));
+    }
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
+    QCOMPARE(LogParam::getLogID(), QString("original-id"));
+    QSqlQuery query("SELECT callsign FROM contacts WHERE id = 1");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("OK1TEST"));
+    QVERIFY(query.exec("SELECT callsign FROM contacts WHERE id = 2"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("AFTER-CANCEL"));
 }
 
 void DatabaseImportTest::credentialReplacementUsesOriginalAccounts()
@@ -712,12 +1512,12 @@ void DatabaseImportTest::credentialReplacementUsesOriginalAccounts()
     configuredDxAccounts.clear();
     QKeychain::Job::failedOperation = QKeychain::Job::DELETE;
     QKeychain::Job::failedKey = credentialIdentity("DX", "old DX account").second;
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "shared")), QString("new secret"));
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("DX", "old DX account")), QString("DX secret"));
     QVERIFY(!LogDatabase::instance()->cancelPendingImport());
     QKeychain::Job::failedKey.clear();
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::RETRY_PASSWORDS), LogDatabase::ImportResult::COMPLETE);
     QVERIFY(!QKeychain::Job::passwords.contains(credentialIdentity("DX", "old DX account")));
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "shared")), QString("new secret"));
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity("TestService", "imported")), QString("imported secret"));
@@ -746,7 +1546,7 @@ void DatabaseImportTest::credentialCaseChangesKeepImportedPassword()
     QKeychain::Job::passwords[credentialIdentity("Other", "unrelated")] = "untouched";
     QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
     QCOMPARE(QKeychain::Job::passwords.value(credentialIdentity(storageKey, username)), QString("B"));
     QVERIFY(!QKeychain::Job::passwords.values().contains("A"));
     QVERIFY(!QKeychain::Job::passwords.contains(credentialIdentity("DX", "obsolete")));
@@ -762,7 +1562,7 @@ void DatabaseImportTest::unfinishedImportCannotOverwriteRecoveryCredentials()
     QVERIFY(LogDatabase::instance()->preparePendingImport(source, {}, {}, "passphrase"));
     QKeychain::Job::failedOperation = QKeychain::Job::WRITE;
     QKeychain::Job::failedKey = credentialIdentity("TestService", "failed").second;
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::NEEDS_ATTENTION);
     const QByteArray payload = LogParam::getEncryptedPasswords();
     QVERIFY(!payload.isEmpty());
     QVERIFY(!CredentialStore::instance()->exportPasswords("different passphrase"));
@@ -780,7 +1580,7 @@ void DatabaseImportTest::orphanCandidatePreservesOriginal()
     QCOMPARE(pending.write("invalid candidate"), qint64(17));
     pending.close();
 
-    QVERIFY(!LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
     QVERIFY(original.open(QIODevice::ReadOnly));
     QCOMPARE(original.readAll(), QByteArray("original database"));
     QVERIFY(QFile::exists(LogDatabase::pendingImportPath()));
@@ -935,7 +1735,7 @@ void DatabaseImportTest::importProgressRecordCompatibility()
     QCOMPARE(progress.write(data), qint64(data.size()));
     progress.close();
 
-    QVERIFY(LogDatabase::instance()->processPendingImport());
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::COMPLETE);
     QVERIFY(!LogDatabase::hasPendingImport());
     QSqlQuery query("SELECT callsign FROM contacts WHERE id = 1");
     QVERIFY(query.next());
@@ -991,12 +1791,22 @@ int main(int argc, char **argv)
             return 3;
         _exit(91);
     }
-    if ( arguments.value(1) == "--prepare" || arguments.value(1) == "--recover" )
+    if ( arguments.value(1) == "--prepare" || arguments.value(1) == "--recover" || arguments.value(1) == "--cancel"
+         || arguments.value(1) == "--finish-password-recovery" )
     {
         interruptionBoundary = arguments.last();
-        const bool result = arguments.value(1) == "--prepare"
-            ? LogDatabase::instance()->preparePendingImport(arguments.value(2), {}, {}, {})
-            : LogDatabase::instance()->processPendingImport();
+        bool result;
+        if ( arguments.value(1) == "--prepare" )
+            result = LogDatabase::instance()->preparePendingImport(arguments.value(2), {}, {}, {});
+        else if ( arguments.value(1) == "--cancel" )
+            result = LogDatabase::instance()->cancelPendingImport();
+        else
+        {
+            LogDatabase::ImportResult initialized = LogDatabase::instance()->initialize();
+            if ( arguments.value(1) == "--finish-password-recovery" && initialized == LogDatabase::ImportResult::NEEDS_ATTENTION )
+                initialized = LogDatabase::instance()->recoverImportPasswords(LogDatabase::ImportAction::FINISH_WITHOUT_PASSWORDS);
+            result = initialized == LogDatabase::ImportResult::COMPLETE;
+        }
         return result ? 0 : 1;
     }
 #endif

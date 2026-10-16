@@ -48,15 +48,29 @@ public:
     // Check if there is a pending import to process
     static bool hasPendingImport();
 
-    // Process pending import (called at startup)
-    // Returns true if import was successful or no import was pending
-    bool processPendingImport(QString *backupSnapshot = nullptr);
+    enum class ImportResult
+    {
+        COMPLETE,
+        NEEDS_ATTENTION,
+        FAILED
+    };
+    enum class ImportAction
+    {
+        RETRY_PASSWORDS,
+        FINISH_WITHOUT_PASSWORDS
+    };
+
+    // COMPLETE and NEEDS_ATTENTION leave the active database initialized for logging.
+    ImportResult initialize(QString *backupSnapshot = nullptr);
+    // Requires successful initialization; only retries credentials and import cleanup.
+    ImportResult recoverImportPasswords(ImportAction action);
     // Consumes a colocated temporary DB on success; other sources use atomic copying.
     bool preparePendingImport(const QString &sourceFile,
                               const QList<PlatformParameter> &parameters,
                               const QList<ProfileParameter> &profileParameters,
                               const QString &passphrase);
     bool cancelPendingImport();
+    bool canCancelPendingImport() const;
     QString pendingImportError() const;
 
     bool atomicCopy(const QString &filename);
@@ -80,7 +94,8 @@ private:
         READY,
         PUBLISHED,
         CREDENTIALS_RESTORED,
-        ABORTED
+        ABORTED,
+        CREDENTIALS_SKIPPED
     };
     static const QStringList IMPORT_PHASE_NAMES;
 
@@ -88,13 +103,16 @@ private:
     QString importError;
     bool failImport(const QString &message);
     bool prepareImportDatabase(QJsonObject &record, QJsonArray &incoming, QString *backupSnapshot);
-    bool publishImportDatabase(QJsonObject &record, QJsonArray &incoming, bool decoded);
-    bool finishImport(QJsonObject &record, ImportPhase phase, QJsonArray &incoming, bool decoded);
+    bool publishImportDatabase(QJsonObject &record, QJsonArray &incoming, bool preparedThisStartup, QString *backupSnapshot);
+    bool validatePublishedImport(const QJsonObject &record, ImportPhase phase);
+    ImportResult finishImport(QJsonObject &record, ImportPhase phase, ImportAction action,
+                              const QJsonArray *incoming = nullptr);
     static bool decodeImportPasswords(bool requiresPassphrase, QJsonArray &incoming);
     static bool readImportRecord(QJsonObject &record, ImportPhase &phase);
     static bool writeImportRecord(QJsonObject &record, ImportPhase phase);
     static bool checkpointDatabase(QSqlDatabase database);
     static bool readLogId(const QString &filename, QString &logId);
+    static bool canCancelImport(const QJsonObject &record, ImportPhase phase, bool &currentIsImport);
 };
 
 #endif // QLOG_CORE_LOGDATABASE_H

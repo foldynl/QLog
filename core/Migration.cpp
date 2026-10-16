@@ -32,17 +32,16 @@ bool DBSchemaMigration::run(QString *backupSnapshot)
         return false;
     }
 
-    const bool needsMigration = currentVersion < latestVersion;
-    // A migration needs its snapshot; a routine backup failure must not block normal use.
-    if ( !DatabaseBackup::prepare(needsMigration, backupSnapshot) && needsMigration )
-        return false;
-
     if (currentVersion == latestVersion) {
         qCDebug(runtime) << "Database schema already up to date";
         // temporarily added to create a trigger without calling db migration
         //refreshUploadStatusTrigger();
         return true;
     }
+
+    // A schema upgrade always requires its own snapshot, regardless of recent backups.
+    if ( !DatabaseBackup::prepare(true, backupSnapshot) )
+        return false;
 
     qCDebug(runtime) << "Starting database migration";
 

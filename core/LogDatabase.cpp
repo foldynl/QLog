@@ -17,6 +17,7 @@
 #include "LogDatabase.h"
 #include "core/debug.h"
 #include "core/Migration.h"
+#include "core/DatabaseBackup.h"
 #include "core/LogParam.h"
 #include "core/CredentialStore.h"
 #include "core/PlatformParameterManager.h"
@@ -38,7 +39,7 @@ const QString LogDatabase::SQLITE_SHM_SUFFIX = "-shm";
 
 const QStringList LogDatabase::IMPORT_PHASE_NAMES =
 {
-    "PREPARED", "READY", "PUBLISHED", "CREDENTIALS_RESTORED", "ABORTED"
+    "PREPARED", "READY", "PUBLISHED", "CREDENTIALS_RESTORED", "ABORTED", "CREDENTIALS_SKIPPED"
 };
 
 QDir LogDatabase::dbDirectory()
@@ -661,6 +662,43 @@ bool LogDatabase::readLogId(const QString &filename, QString &logId)
     return result;
 }
 
+bool LogDatabase::canCancelImport(const QJsonObject &record, ImportPhase phase, bool &currentIsImport)
+{
+    FCT_IDENTIFICATION;
+    currentIsImport = false;
+    if ( phase != ImportPhase::PREPARED && phase != ImportPhase::READY && phase != ImportPhase::ABORTED )
+        return false;
+
+    const QString targetId = record.value("targetLogId").toString();
+    const bool hadOriginal = record.value("hadOriginal").toBool();
+    const QString original = dbDirectory().filePath(IMPORT_BACKUP_FILENAME);
+    const bool currentExists = QFile::exists(dbFilename());
+    const bool originalExists = QFile::exists(original);
+    QString currentId;
+    QString originalId;
+    if ( (currentExists && !readLogId(dbFilename(), currentId))
+         || (originalExists && (!readLogId(original, originalId) || originalId == targetId)) )
+        return false;
+
+    currentIsImport = currentExists && currentId == targetId;
+    if ( (currentIsImport && QFile::exists(pendingImportPath()))
+         || (phase == ImportPhase::PREPARED && (currentIsImport || originalExists)) )
+        return false;
+
+    if ( hadOriginal )
+        return originalExists ? !currentExists || currentIsImport : currentExists && !currentIsImport;
+    return !originalExists && (!currentExists || currentIsImport);
+}
+
+bool LogDatabase::canCancelPendingImport() const
+{
+    FCT_IDENTIFICATION;
+    QJsonObject record;
+    ImportPhase phase = ImportPhase::INVALID;
+    bool currentIsImport = false;
+    return readImportRecord(record, phase) && canCancelImport(record, phase, currentIsImport);
+}
+
 bool LogDatabase::cancelPendingImport()
 {
     FCT_IDENTIFICATION;
@@ -670,14 +708,26 @@ bool LogDatabase::cancelPendingImport()
     if ( !hasPendingImport() )
         return true;
 
-    if ( !readImportRecord(record, phase)
-         || (phase != ImportPhase::PREPARED && phase != ImportPhase::ABORTED)
-         || QFile::exists(dbFilename()) != record.value("hadOriginal").toBool()
-         || QFile::exists(dbDirectory().filePath(IMPORT_BACKUP_FILENAME)) )
+    bool currentIsImport = false;
+    if ( !readImportRecord(record, phase) || !canCancelImport(record, phase, currentIsImport) )
         return failImport(QObject::tr("This import cannot be cancelled safely. Its recovery files were preserved."));
+
+    // A failed preparation may still hold the candidate open; Windows cannot delete it then.
+    // Preserve the original connection when cancellation follows a failed restart from the GUI.
+    if ( QSqlDatabase::contains() )
+    {
+        QSqlDatabase db = QSqlDatabase::database(QSqlDatabase::defaultConnection, false);
+        if ( db.databaseName() == pendingImportPath() )
+        {
+            db.close();
+            LogParam::clearCache();
+        }
+    }
 
     if ( !writeImportRecord(record, ImportPhase::ABORTED) )
     {
+        if ( phase != ImportPhase::PREPARED )
+            return failImport(QObject::tr("Cancellation could not be recorded. All recovery files were preserved; retry cancellation before restarting."));
         // Removing the unpublished candidate also prevents adoption if progress cannot be saved.
         if ( QFile::exists(pendingImportPath()) && !QFile::remove(pendingImportPath()) )
             return failImport(QObject::tr("Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting."));
@@ -685,60 +735,133 @@ bool LogDatabase::cancelPendingImport()
         return failImport(QObject::tr("The import candidate was removed, but cancellation could not be recorded. The current database was preserved."));
     }
 
+    // READY may have been interrupted between renames. It has never allowed logging or password writes.
+    // Keep ABORTED until the original is back in place so interruption can retry the same cleanup.
+    if ( currentIsImport )
+    {
+        if ( !openDatabase() || !checkpointDatabase(QSqlDatabase::database())
+             || !QFile::rename(dbFilename(), pendingImportPath()) )
+            return failImport(QObject::tr("The cancelled import could not be moved aside. All recovery files were preserved."));
+    }
+    const QString original = dbDirectory().filePath(IMPORT_BACKUP_FILENAME);
+    if ( QFile::exists(original) )
+    {
+        if ( !openDatabase(original) || !checkpointDatabase(QSqlDatabase::database())
+             || !QFile::rename(original, dbFilename()) )
+            return failImport(QObject::tr("The original database could not be restored. Retry cancellation to finish restoring it."));
+    }
+
     for ( const QString &suffix : {SQLITE_WAL_SUFFIX, SQLITE_SHM_SUFFIX, QString()} )
         if ( QFile::exists(pendingImportPath() + suffix) && !QFile::remove(pendingImportPath() + suffix) )
             return failImport(QObject::tr("The import was cancelled, but its temporary files could not be removed."));
 
     if ( record.value("requiresPassphrase").toBool() && !CredentialStore::instance()->deleteImportPassphrase() )
-        return failImport(QObject::tr("The import was cancelled, but its passphrase could not be removed."));
+        qCWarning(runtime) << "Cancelled import passphrase could not be removed; the next import will replace it";
 
     if ( !QFile::remove(dbDirectory().filePath(IMPORT_RECORD_FILENAME)) )
         return failImport(QObject::tr("The import was cancelled, but its progress file could not be removed."));
     return true;
 }
 
-bool LogDatabase::processPendingImport(QString *backupSnapshot)
+LogDatabase::ImportResult LogDatabase::initialize(QString *backupSnapshot)
 {
     FCT_IDENTIFICATION;
     importError.clear();
+    QString unusedSnapshot;
+    QString &snapshot = backupSnapshot ? *backupSnapshot : unusedSnapshot;
+    snapshot.clear();
+    QJsonObject record;
+    ImportPhase phase = ImportPhase::INVALID;
+    QJsonArray incoming;
+    bool newlyPublished = false;
+    if ( hasPendingImport() )
+    {
+        if ( !readImportRecord(record, phase) )
+        {
+            failImport(QObject::tr("The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.")
+                       .arg(dbDirectory().path()));
+            return ImportResult::FAILED;
+        }
+        if ( phase == ImportPhase::ABORTED )
+        {
+            if ( !cancelPendingImport() )
+                return ImportResult::FAILED;
+            phase = ImportPhase::INVALID;
+        }
+        else
+        {
+            if ( phase == ImportPhase::PREPARED || phase == ImportPhase::READY )
+            {
+                const bool preparedThisStartup = phase == ImportPhase::PREPARED;
+                if ( preparedThisStartup && !prepareImportDatabase(record, incoming, &snapshot) )
+                    return ImportResult::FAILED;
+                if ( !publishImportDatabase(record, incoming, preparedThisStartup, &snapshot) )
+                    return ImportResult::FAILED;
+                phase = ImportPhase::PUBLISHED;
+                newlyPublished = true;
+            }
+
+            if ( !validatePublishedImport(record, phase) )
+                return ImportResult::FAILED;
+        }
+    }
+
+    // Every startup must validate the active schema, including deferred password recovery.
+    if ( !openDatabase() )
+    {
+        failImport(QObject::tr("The database could not be opened. Logging cannot continue. Any import recovery files were preserved."));
+        return ImportResult::FAILED;
+    }
+    const bool hadContacts = QSqlDatabase::database().tables().contains(QStringLiteral("contacts"));
+    if ( !schemaVersionUpgrade(&snapshot) )
+    {
+        failImport(QObject::tr("The database could not be opened or migrated. Logging cannot continue. Any import recovery files were preserved."));
+        return ImportResult::FAILED;
+    }
+
+    // Routine failures are reported by DatabaseBackup and do not block logging.
+    // Preserve first-startup behavior: an empty newly created schema must not postpone the first QSO backup.
+    if ( hadContacts && snapshot.isEmpty() )
+        DatabaseBackup::prepare(false, &snapshot);
+
+    if ( phase == ImportPhase::INVALID )
+        return ImportResult::COMPLETE;
+
+    if ( !newlyPublished && phase == ImportPhase::PUBLISHED
+         && (record.value("requiresPassphrase").toBool() || !record.value("previousCredentials").toArray().isEmpty()) )
+    {
+        failImport(QObject::tr("Password recovery is unfinished. You can retry it or continue logging."));
+        return ImportResult::NEEDS_ATTENTION;
+    }
+
+    return finishImport(record, phase, ImportAction::RETRY_PASSWORDS, newlyPublished ? &incoming : nullptr);
+}
+
+LogDatabase::ImportResult LogDatabase::recoverImportPasswords(ImportAction action)
+{
+    FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << static_cast<int>(action);
+    importError.clear();
+    const QSqlDatabase db = QSqlDatabase::contains()
+                            ? QSqlDatabase::database(QSqlDatabase::defaultConnection, false) : QSqlDatabase();
+    if ( !db.isOpen() || db.databaseName() != dbFilename() )
+    {
+        failImport(QObject::tr("Password recovery requires the active database to be initialized first."));
+        return ImportResult::FAILED;
+    }
     if ( !hasPendingImport() )
-        return true;
+        return ImportResult::COMPLETE;
 
     QJsonObject record;
     ImportPhase phase = ImportPhase::INVALID;
     if ( !readImportRecord(record, phase) )
-        return failImport(QObject::tr("The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.")
-                          .arg(dbDirectory().path()));
-    if ( phase == ImportPhase::ABORTED )
     {
-        if ( !cancelPendingImport() )
-            return false;
-
-        if ( !openDatabase() || !schemaVersionUpgrade(backupSnapshot) )
-            return failImport(QObject::tr("The import was cancelled, but the current database could not be opened or migrated."));
-
-        return true;
+        failImport(QObject::tr("The imported database does not match its recovery files. All files were preserved."));
+        return ImportResult::FAILED;
     }
-
-    QJsonArray incoming;
-    bool decoded = false;
-    if ( phase == ImportPhase::PREPARED )
-    {
-        if ( !prepareImportDatabase(record, incoming, backupSnapshot) )
-            return false;
-        phase = ImportPhase::READY;
-        decoded = true;
-    }
-
-    if ( phase == ImportPhase::READY )
-    {
-        if ( !publishImportDatabase(record, incoming, decoded) )
-            return false;
-        phase = ImportPhase::PUBLISHED;
-        decoded = true;
-    }
-
-    return finishImport(record, phase, incoming, decoded);
+    if ( !validatePublishedImport(record, phase) )
+        return ImportResult::FAILED;
+    return finishImport(record, phase, action);
 }
 
 bool LogDatabase::decodeImportPasswords(bool requiresPassphrase, QJsonArray &incoming)
@@ -833,7 +956,7 @@ bool LogDatabase::prepareImportDatabase(QJsonObject &record, QJsonArray &incomin
     return true;
 }
 
-bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incoming, bool decoded)
+bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incoming, bool preparedThisStartup, QString *backupSnapshot)
 {
     FCT_IDENTIFICATION;
 
@@ -844,12 +967,12 @@ bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incomin
     const bool requiresPassphrase = record.value("requiresPassphrase").toBool();
 
     QString currentId;
-    QString candidateId = decoded ? targetId : QString();
+    QString candidateId = preparedThisStartup ? targetId : QString();
     const bool candidateExists = QFile::exists(pending);
     const bool currentExists = QFile::exists(dbFilename());
     const bool originalExists = QFile::exists(original);
     bool filesMatch = (!currentExists || readLogId(dbFilename(), currentId))
-                       && (!candidateExists || decoded || readLogId(pending, candidateId));
+                       && (!candidateExists || preparedThisStartup || readLogId(pending, candidateId));
 
     if ( candidateExists )
     {
@@ -864,9 +987,11 @@ bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incomin
     if ( !filesMatch )
         return failImport(QObject::tr("The interrupted import has inconsistent recovery files. All files were preserved for recovery."));
 
-    if ( !decoded )
+    if ( !preparedThisStartup )
     {
-        if ( !openDatabase(candidateExists ? pending : dbFilename()) || !decodeImportPasswords(requiresPassphrase, incoming) )
+        if ( !openDatabase(candidateExists ? pending : dbFilename()) || !schemaVersionUpgrade(backupSnapshot) )
+            return failImport(QObject::tr("The prepared database could not be opened or migrated. Its recovery files were preserved."));
+        if ( !decodeImportPasswords(requiresPassphrase, incoming) )
             return failImport(QObject::tr("The import passwords could not be restored. All recovery files were preserved."));
         if ( !checkpointDatabase(QSqlDatabase::database()) )
             return failImport(QObject::tr("Failed to finish database writes before import."));
@@ -908,7 +1033,7 @@ bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incomin
     return true;
 }
 
-bool LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, QJsonArray &incoming, bool decoded)
+bool LogDatabase::validatePublishedImport(const QJsonObject &record, ImportPhase phase)
 {
     FCT_IDENTIFICATION;
 
@@ -916,27 +1041,57 @@ bool LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, QJsonArra
     const QString original = dbDirectory().filePath(IMPORT_BACKUP_FILENAME);
     const QString targetId = record.value("targetLogId").toString();
     const bool hadOriginal = record.value("hadOriginal").toBool();
-    const bool requiresPassphrase = record.value("requiresPassphrase").toBool();
-    CredentialStore *credentials = CredentialStore::instance();
-
     QString publishedId;
-    const bool originalMatches = hadOriginal ? phase == ImportPhase::CREDENTIALS_RESTORED || QFile::exists(original)
+    const bool originalMatches = hadOriginal ? phase == ImportPhase::CREDENTIALS_RESTORED
+                                              || phase == ImportPhase::CREDENTIALS_SKIPPED || QFile::exists(original)
                                              : !QFile::exists(original);
 
-    if ( QFile::exists(pending)
+    if ( (phase != ImportPhase::PUBLISHED && phase != ImportPhase::CREDENTIALS_RESTORED
+          && phase != ImportPhase::CREDENTIALS_SKIPPED)
+         || QFile::exists(pending)
          || !QFile::exists(dbFilename())
          || !readLogId(dbFilename(), publishedId)
          || publishedId != targetId
          || !originalMatches )
         return failImport(QObject::tr("The imported database does not match its recovery files. All files were preserved."));
 
-    if ( !openDatabase() )
-        return failImport(QObject::tr("The imported database could not be opened. Its recovery files were preserved."));
+    return true;
+}
+
+LogDatabase::ImportResult LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, ImportAction action,
+                                                   const QJsonArray *incoming)
+{
+    FCT_IDENTIFICATION;
+
+    const QString original = dbDirectory().filePath(IMPORT_BACKUP_FILENAME);
+    const bool requiresPassphrase = record.value("requiresPassphrase").toBool();
+    CredentialStore *credentials = CredentialStore::instance();
+
+    const auto deferImport = [this](const QString &message)
+    {
+        failImport(message);
+        return ImportResult::NEEDS_ATTENTION;
+    };
+
+    if ( action == ImportAction::FINISH_WITHOUT_PASSWORDS && phase != ImportPhase::CREDENTIALS_SKIPPED )
+    {
+        // Persist the decision before removing recovery data so a restart cannot restore passwords again.
+        if ( !writeImportRecord(record, ImportPhase::CREDENTIALS_SKIPPED) )
+            return deferImport(QObject::tr("The decision to stop password recovery could not be saved. Recovery data was preserved."));
+        phase = ImportPhase::CREDENTIALS_SKIPPED;
+    }
 
     if ( phase == ImportPhase::PUBLISHED )
     {
-        if ( (!decoded && !decodeImportPasswords(requiresPassphrase, incoming)) || !credentials->restorePasswords(incoming) )
-            return failImport(QObject::tr("The imported database was retained, but password restoration is incomplete. Restart QLog to retry."));
+        QJsonArray decoded;
+        if ( !incoming )
+        {
+            if ( !decodeImportPasswords(requiresPassphrase, decoded) )
+                return deferImport(QObject::tr("The database was imported, but some passwords could not be restored."));
+            incoming = &decoded;
+        }
+        if ( !credentials->restorePasswords(*incoming) )
+            return deferImport(QObject::tr("The database was imported, but some passwords could not be restored."));
 
         const auto credentialIdentity = [](const QString &storageKey, const QString &username)
         {
@@ -949,7 +1104,7 @@ bool LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, QJsonArra
         };
         QSet<QPair<QString, QString>> restored;
 
-        for ( const QJsonValue &value : static_cast<const QJsonArray>(incoming) )
+        for ( const QJsonValue &value : *incoming )
         {
             const QJsonObject entry = value.toObject();
             restored.insert(credentialIdentity(entry.value("storagekey").toString(), entry.value("username").toString()));
@@ -966,13 +1121,16 @@ bool LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, QJsonArra
                 deleted = false;
         }
         if ( !deleted || !writeImportRecord(record, ImportPhase::CREDENTIALS_RESTORED) )
-            return failImport(QObject::tr("The imported database was retained, but password replacement is incomplete. Restart QLog to retry."));
+            return deferImport(QObject::tr("The database was imported, but password replacement could not be completed."));
     }
 
     {
         QSqlDatabase db = QSqlDatabase::database();
         if ( !db.transaction() )
-            return failImport(QObject::tr("The import is complete, but cleanup could not be started. Restart to retry."));
+        {
+            failImport(QObject::tr("The import is complete, but cleanup could not be started. Restart to retry."));
+            return ImportResult::FAILED;
+        }
 
         if ( !LogParam::removeEncryptedPasswords() || !LogParam::removeSourcePlatform() || !db.commit() )
         {
@@ -982,15 +1140,18 @@ bool LogDatabase::finishImport(QJsonObject &record, ImportPhase phase, QJsonArra
 
             LogParam::clearCache();
 
-            return failImport(QObject::tr("The import is complete, but cleanup failed. Restart to retry."));
+            failImport(QObject::tr("The import is complete, but cleanup failed. Restart to retry."));
+            return ImportResult::FAILED;
         }
     }
-    if ( (requiresPassphrase && !credentials->deleteImportPassphrase())
-         || QFile::exists(original + SQLITE_WAL_SUFFIX)
+    if ( requiresPassphrase && !credentials->deleteImportPassphrase() && phase != ImportPhase::CREDENTIALS_SKIPPED )
+        return deferImport(QObject::tr("The import is complete, but its saved passphrase could not be removed."));
+
+    if ( QFile::exists(original + SQLITE_WAL_SUFFIX)
          || QFile::exists(original + SQLITE_SHM_SUFFIX)
          || (QFile::exists(original) && !QFile::remove(original))
          || !QFile::remove(dbDirectory().filePath(IMPORT_RECORD_FILENAME)) )
-        return failImport(QObject::tr("The import is complete, but its recovery files could not be removed. Restart to retry."));
+        return deferImport(QObject::tr("The import is complete, but its recovery files could not be removed."));
 
-    return true;
+    return ImportResult::COMPLETE;
 }
