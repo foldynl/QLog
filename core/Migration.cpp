@@ -1087,7 +1087,7 @@ bool DBSchemaMigration::refreshUploadStatusTrigger()
     {
         const QString &columnName = query.value(0).toString();
         afterUpdateClause << QString("\"" + columnName + "\"");
-        whenClause << QString("old.\"%1\" != new.\"%2\"").arg(columnName, columnName);
+        whenClause << QString("old.\"%1\" IS NOT new.\"%2\"").arg(columnName, columnName);
     }
 
     QSqlQuery stmt;
@@ -1102,7 +1102,7 @@ bool DBSchemaMigration::refreshUploadStatusTrigger()
     {
         QStringList result;
         for (const QString &col : columns)
-            result << QString("old.\"%1\" != new.\"%2\"").arg(col, col);
+            result << QString("old.\"%1\" IS NOT new.\"%2\"").arg(col, col);
         return result.join(" OR ");
     };
 
