@@ -412,8 +412,11 @@ void CredentialStoreTest::importPassphrase_saveGetDelete()
 
 int main(int argc, char **argv)
 {
+    // The macOS keychain backend requires native event dispatching.
+#ifndef Q_OS_MACOS
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM"))
         qputenv("QT_QPA_PLATFORM", "offscreen");
+#endif
 
     QApplication app(argc, argv);
     CredentialStoreTest tc;
