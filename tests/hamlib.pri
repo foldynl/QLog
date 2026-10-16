@@ -23,3 +23,7 @@ DEFINES += HAMLIBVERSION_PATCH=$$HAMLIBVERSION_PATCH
 
 unix: LIBS += -L/usr/local/lib -lhamlib
 win32: LIBS += -lws2_32 -llibhamlib-4
+macx: {
+    INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
+    LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto
+}

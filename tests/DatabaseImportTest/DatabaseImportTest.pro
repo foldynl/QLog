@@ -42,3 +42,7 @@ else: LIBS += -lcrypto
 !isEmpty(ZLIBLIBPATH): LIBS += -L$$ZLIBLIBPATH
 unix: LIBS += -lz
 win32: LIBS += -lzlib
+macx: {
+    INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
+    LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto
+}

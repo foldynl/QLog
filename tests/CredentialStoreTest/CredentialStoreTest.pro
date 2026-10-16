@@ -39,9 +39,15 @@ equals(QT_MAJOR_VERSION, 5): LIBS += -lqt5keychain
 !isEmpty(OPENSSLLIBPATH) {
     LIBS += -L$$OPENSSLLIBPATH
 }
+INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
 
 win32 {
     LIBS += -llibcrypto
 } else {
     LIBS += -lcrypto
+}
+
+macx: {
+    INCLUDEPATH += /usr/local/include /opt/homebrew/include /opt/local/include
+    LIBS += -L/usr/local/lib -L/opt/homebrew/lib -lhamlib -lsqlite3 -lz -L/opt/local/lib -lssl -lcrypto
 }
