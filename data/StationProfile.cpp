@@ -260,6 +260,8 @@ QString StationProfile::toHTMLString() const
 
 QString StationProfile::getContactInnerJoin() const
 {
+    FCT_IDENTIFICATION;
+
     QStringList ret({"contacts.station_callsign = station_profiles.callsign",
                      "contacts.my_gridsquare = station_profiles.locator"});
 
@@ -288,7 +290,7 @@ QString StationProfile::getContactInnerJoin() const
     // skipping Country - depends on dxcc
     addIfNoEmpty(county, "my_cnty", "county");
     addIfNoEmpty(operatorCallsign, "operator", "operator_callsign");
-    addIfNoEmpty(darcDOK, "my_darc_dok", "darc_doc");
+    addIfNoEmpty(darcDOK, "my_darc_dok", "darc_dok");
 
     return "(" + ret.join(" AND ") + ")";
 }
