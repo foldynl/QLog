@@ -268,8 +268,8 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">QDoubleSpinBox { background: transparent; border: none; padding: 0px; }
-      QAbstractSpinBox::lineEdit { background: transparent; border: none; padding: 0px; margin: 0px; }</string>
+        <string notr="true">QDoubleSpinBox { background: transparent; border: none; padding: 0px; color: palette(window-text); }
+      QDoubleSpinBox QLineEdit { background: transparent; border: none; padding: 0px; margin: 0px; color: palette(window-text); }</string>
        </property>
        <property name="frame">
         <bool>false</bool>
@@ -321,7 +321,7 @@
        </property>
        <property name="styleSheet">
         <string notr="true">QDoubleSpinBox { background: transparent; border: none; padding: 0px; color: #ef6c00; }
-QAbstractSpinBox::lineEdit { background: transparent; border: none; padding: 0px; margin: 0px; color: #ef6c00; }</string>
+QDoubleSpinBox QLineEdit { background: transparent; border: none; padding: 0px; margin: 0px; color: #ef6c00; }</string>
        </property>
        <property name="frame">
         <bool>false</bool>
