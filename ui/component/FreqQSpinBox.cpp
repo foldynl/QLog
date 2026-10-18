@@ -63,6 +63,14 @@ void FreqQSpinBox::setDebounceIntervalMs(int ms)
     debounceMs = qMax(0, ms);
 }
 
+void FreqQSpinBox::cancelPendingValueChange()
+{
+    FCT_IDENTIFICATION;
+
+    debounceTimer.stop();
+    hasPending = false;
+}
+
 void FreqQSpinBox::enableBandSelection()
 {
     FCT_IDENTIFICATION;

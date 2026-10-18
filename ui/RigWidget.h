@@ -2,6 +2,7 @@
 #define QLOG_UI_RIGWIDGET_H
 
 #include <QWidget>
+#include <QTimer>
 #include "rig/Rig.h"
 #include "service/hrdlog/HRDLog.h"
 
@@ -70,6 +71,7 @@ private:
     QString lastSeenMode;
     bool rigOnline;
     bool splitEnabled;
+    QTimer frequencyEditTimer;
 
     Ui::RigWidget *ui;
     HRDLogUploader *hrdlog;

@@ -19,6 +19,7 @@ public:
     void setMousePositionStepEnabled(bool enabled);
     void setDebounceEnabled(bool enabled);
     void setDebounceIntervalMs(int ms);
+    void cancelPendingValueChange();
     void enableBandSelection();
     void setBandSelectionEnabled(bool enabled);
     bool setBand(const QString &bandName);
