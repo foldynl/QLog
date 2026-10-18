@@ -494,6 +494,18 @@ int main(int argc, char* argv[])
     }
 
     QApplication app(argc, argv);
+
+    // During Rig Widget testing on XCB, the first wheel detent after tuning on
+    // the radio or in New Contact sometimes had no effect. The next detent arrived
+    // as a single QWheelEvent with angleDelta().y() == 240 and applied two steps.
+    // The same workflow was reported to work reliably with QT_XCB_NO_XI2=1,
+    // implicating the XInput2 path. XCB compression can discard scroll-bearing
+    // XI_Motion events, leaving their delta to accumulate until the next scroll.
+    // Disable compression while keeping XInput2 enabled, preserving smooth
+    // scrolling and native touch/tablet input.
+    if ( QGuiApplication::platformName() == QLatin1String("xcb") )
+        QCoreApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents, false);
+
     app.setApplicationVersion(VERSION);
 
     QCommandLineParser parser;
