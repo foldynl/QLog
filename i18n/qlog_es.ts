@@ -2749,12 +2749,12 @@
 <context>
     <name>DBSchemaMigration</name>
     <message>
-        <location filename="../core/Migration.cpp" line="49"/>
+        <location filename="../core/Migration.cpp" line="48"/>
         <source>Migrating the database...</source>
         <translation type="unfinished">Migrando la base de datos...</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="50"/>
+        <location filename="../core/Migration.cpp" line="49"/>
         <source>Database Migration</source>
         <translation>Migrando Base de Datos</translation>
     </message>
@@ -5095,39 +5095,39 @@
 <context>
     <name>DatabaseBackup</name>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="123"/>
+        <location filename="../core/DatabaseBackup.cpp" line="124"/>
         <source>Could not create the backup. Your previous backups have been kept.</source>
         <translation type="unfinished">No se pudo crear la copia de seguridad. Se han conservado las copias de seguridad anteriores.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="160"/>
+        <location filename="../core/DatabaseBackup.cpp" line="161"/>
         <source>Could not remove older pending backup files. The new database copy has been kept.</source>
         <translation type="unfinished">No se pudieron eliminar los archivos antiguos de copias de seguridad pendientes. Se ha conservado la nueva copia de la base de datos.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="192"/>
-        <location filename="../core/DatabaseBackup.cpp" line="256"/>
+        <location filename="../core/DatabaseBackup.cpp" line="193"/>
+        <location filename="../core/DatabaseBackup.cpp" line="257"/>
         <source>Could not remove unused backup files.</source>
         <translation type="unfinished">No se pudieron eliminar los archivos de copia de seguridad que ya no se usan.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="320"/>
-        <location filename="../core/DatabaseBackup.cpp" line="347"/>
+        <location filename="../core/DatabaseBackup.cpp" line="321"/>
+        <location filename="../core/DatabaseBackup.cpp" line="348"/>
         <source>Could not save the additional backup. Check the backup folder. The internal backup has been kept.</source>
         <translation type="unfinished">No se pudo guardar la copia de seguridad adicional. Revise la carpeta de copias de seguridad. Se ha conservado la copia de seguridad interna.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="423"/>
+        <location filename="../core/DatabaseBackup.cpp" line="428"/>
         <source>Could not export the backup to ADX. The database copy and previous backups have been kept.</source>
         <translation type="unfinished">No se pudo exportar la copia de seguridad a ADX. Se han conservado la copia de la base de datos y las copias de seguridad anteriores.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="514"/>
+        <location filename="../core/DatabaseBackup.cpp" line="519"/>
         <source>The backup was saved, but an older backup could not be removed.</source>
         <translation type="unfinished">Se guardó la copia de seguridad, pero no se pudo eliminar una copia anterior.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="564"/>
+        <location filename="../core/DatabaseBackup.cpp" line="569"/>
         <source>The backup was saved, but its date could not be recorded.</source>
         <translation type="unfinished">Se guardó la copia de seguridad, pero no se pudo registrar su fecha.</translation>
     </message>
@@ -6263,199 +6263,199 @@ Ejemplo: %3</translation>
 <context>
     <name>DxWidget</name>
     <message>
-        <location filename="../ui/DxWidget.ui" line="83"/>
+        <location filename="../ui/DxWidget.ui" line="84"/>
         <source>Insert a &lt;b&gt;hostname:port&lt;/b&gt; of DXC Server.</source>
         <translation>Inserte &lt;b&gt;nombre de host:puerto&lt;/b&gt; del servidor del  Cluster DX.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="89"/>
+        <location filename="../ui/DxWidget.ui" line="90"/>
         <source>Show DX Cluster Servers</source>
         <translation type="unfinished">Mostrar servidores del Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="107"/>
+        <location filename="../ui/DxWidget.ui" line="108"/>
         <location filename="../ui/DxWidget.cpp" line="852"/>
         <source>Connect</source>
         <translation>Conectar</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="123"/>
+        <location filename="../ui/DxWidget.ui" line="124"/>
         <source>Filtered</source>
         <translation>Filtrado</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="153"/>
+        <location filename="../ui/DxWidget.ui" line="154"/>
         <source>Spots</source>
         <translation>Anuncios</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="158"/>
+        <location filename="../ui/DxWidget.ui" line="159"/>
         <source>WCY</source>
         <translation>WCY</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="163"/>
+        <location filename="../ui/DxWidget.ui" line="164"/>
         <source>WWV</source>
         <translation>WWV</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="168"/>
+        <location filename="../ui/DxWidget.ui" line="169"/>
         <source>To All</source>
         <translation>A Todo</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="173"/>
+        <location filename="../ui/DxWidget.ui" line="174"/>
         <source>Console</source>
         <translation>Consola</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="178"/>
+        <location filename="../ui/DxWidget.ui" line="179"/>
         <source>15-min Trend</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="273"/>
+        <location filename="../ui/DxWidget.ui" line="274"/>
         <source>Full-text search</source>
         <translation>Búsqueda de texto completo</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="276"/>
+        <location filename="../ui/DxWidget.ui" line="277"/>
         <source>Search</source>
         <translation>Búsqueda</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="286"/>
+        <location filename="../ui/DxWidget.ui" line="287"/>
         <source>Close Search</source>
         <translation>Cerrar búsqueda</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="588"/>
+        <location filename="../ui/DxWidget.ui" line="589"/>
         <source>Send DX Cluster Command</source>
         <translation>Enviar comando de Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="629"/>
+        <location filename="../ui/DxWidget.ui" line="630"/>
         <source>Filter...</source>
         <translation>Filtrar...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="632"/>
+        <location filename="../ui/DxWidget.ui" line="633"/>
         <source>Filter DXC</source>
         <translation>Filtrar Cluster DX</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="637"/>
+        <location filename="../ui/DxWidget.ui" line="638"/>
         <location filename="../ui/DxWidget.cpp" line="1651"/>
         <source>Spot QSO</source>
         <translation type="unfinished">Anunciar QSO</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="640"/>
+        <location filename="../ui/DxWidget.ui" line="641"/>
         <source>Prepare a spot for New QSO when its callsign is filled in; otherwise use the last saved QSO.</source>
         <translation type="unfinished">Preparar un spot con los datos de Nuevo QSO si se ha introducido el indicativo; en caso contrario, usar el último QSO guardado.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="645"/>
+        <location filename="../ui/DxWidget.ui" line="646"/>
         <source>Comment Template</source>
         <translation type="unfinished">Plantilla de comentario</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="654"/>
+        <location filename="../ui/DxWidget.ui" line="655"/>
         <source>Command Warning</source>
         <translation type="unfinished">Advertencia sobre el comando</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="659"/>
+        <location filename="../ui/DxWidget.ui" line="660"/>
         <source>Show HF Stats</source>
         <translation>Mostrar Estadísticas de HF</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="664"/>
+        <location filename="../ui/DxWidget.ui" line="665"/>
         <source>Show VHF Stats</source>
         <translation>Mostrar Estadísticas de VHF</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="669"/>
+        <location filename="../ui/DxWidget.ui" line="670"/>
         <source>Show WCY</source>
         <translation>Mostrar WCY</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="674"/>
+        <location filename="../ui/DxWidget.ui" line="675"/>
         <source>Show WWV</source>
         <translation>Mostrar WWV</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="679"/>
+        <location filename="../ui/DxWidget.ui" line="680"/>
         <source>Column Visibility...</source>
         <translation>Visibilidad de Columnas...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="682"/>
+        <location filename="../ui/DxWidget.ui" line="683"/>
         <source>Which columns should be displayed</source>
         <translation>Qué columnas deben mostrarse</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="690"/>
+        <location filename="../ui/DxWidget.ui" line="691"/>
         <source>Connect on startup</source>
         <translation>Conectar al inicio</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="693"/>
+        <location filename="../ui/DxWidget.ui" line="694"/>
         <source>Automatic connection after start</source>
         <translation>Conectar automáticamente después de iniciar</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="698"/>
+        <location filename="../ui/DxWidget.ui" line="699"/>
         <source>Delete Server</source>
         <translation>Borrar Servidor</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="701"/>
+        <location filename="../ui/DxWidget.ui" line="702"/>
         <source>DXC - Delete Server</source>
         <translation>Cluster DX - Eliminar Servidor</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="706"/>
+        <location filename="../ui/DxWidget.ui" line="707"/>
         <source>Clear Password</source>
         <translation>Borrar Contraseña</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="714"/>
+        <location filename="../ui/DxWidget.ui" line="715"/>
         <source>Keep Spots</source>
         <translation>Mantener Anuncios</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="717"/>
+        <location filename="../ui/DxWidget.ui" line="718"/>
         <source>Spots are not cleared when connecting to a new DX Cluster.</source>
         <translation>Los anuncios no se borran al conectarse a un nuevo clúster DX.</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="722"/>
+        <location filename="../ui/DxWidget.ui" line="723"/>
         <source>Clear</source>
         <translation>Borrar</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="725"/>
+        <location filename="../ui/DxWidget.ui" line="726"/>
         <source>Clear all data</source>
         <translation>Borrar todos los datos</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="730"/>
+        <location filename="../ui/DxWidget.ui" line="731"/>
         <source>Search...</source>
         <translation>Búsqueda...</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="733"/>
+        <location filename="../ui/DxWidget.ui" line="734"/>
         <source>DXC - Search</source>
         <translation>DXC - Búsqueda</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="751"/>
+        <location filename="../ui/DxWidget.ui" line="752"/>
         <source>Server Password</source>
         <translation type="unfinished">Contraseña del servidor</translation>
     </message>
     <message>
-        <location filename="../ui/DxWidget.ui" line="754"/>
+        <location filename="../ui/DxWidget.ui" line="755"/>
         <source>A password was used for this connection.</source>
         <translation type="unfinished">Se ha usado una contraseña para esta conexión.</translation>
     </message>
@@ -7095,18 +7095,18 @@ Esta contraseña será necesaria más adelante para restaurarlas.</translation>
 <context>
     <name>FreqQSpinBox</name>
     <message>
-        <location filename="../ui/component/FreqQSpinBox.cpp" line="66"/>
-        <location filename="../ui/component/FreqQSpinBox.cpp" line="67"/>
+        <location filename="../ui/component/FreqQSpinBox.cpp" line="95"/>
+        <location filename="../ui/component/FreqQSpinBox.cpp" line="96"/>
         <source>Select Band or Frequency</source>
         <translation>Seleccione banda o frecuencia</translation>
     </message>
     <message>
-        <location filename="../ui/component/FreqQSpinBox.cpp" line="337"/>
+        <location filename="../ui/component/FreqQSpinBox.cpp" line="438"/>
         <source>MHz</source>
         <translation>MHz</translation>
     </message>
     <message>
-        <location filename="../ui/component/FreqQSpinBox.cpp" line="448"/>
+        <location filename="../ui/component/FreqQSpinBox.cpp" line="549"/>
         <source>Frequency is outside a known band</source>
         <translation>La frecuencia está fuera de las bandas conocidas</translation>
     </message>
@@ -7992,43 +7992,43 @@ Esta contraseña será necesaria más adelante para restaurarlas.</translation>
         <translation>Exportación de base de datos QLog (*.dbe);;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="172"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="173"/>
         <source>Cannot create temporary file</source>
         <translation>No se puede crear el archivo temporal</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="186"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="187"/>
         <source>Decompressing database...</source>
         <translation>Descomprimiendo base de datos…</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="189"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="190"/>
         <source>Cannot decompress database file</source>
         <translation>No se puede descomprimir el archivo de la base de datos</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="224"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="225"/>
         <source>Cannot open database</source>
         <translation>No se puede abrir la base de datos</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="247"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="248"/>
         <source>Valid database</source>
         <translation>Base de datos válida</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="252"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="253"/>
         <source>Different platform</source>
         <translation>Plataforma diferente</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="261"/>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="303"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="262"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="304"/>
         <source>Password required to import credentials</source>
         <translation>Se requiere contraseña para importar credenciales</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="266"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="267"/>
         <source>No encrypted credentials in database</source>
         <translation>No hay credenciales cifradas en la base de datos</translation>
     </message>
@@ -9885,7 +9885,7 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="127"/>
-        <location filename="../ui/MainWindow.cpp" line="2057"/>
+        <location filename="../ui/MainWindow.cpp" line="2079"/>
         <source>Contest</source>
         <translation>Concurso</translation>
     </message>
@@ -9916,22 +9916,11 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="375"/>
-        <location filename="../ui/MainWindow.cpp" line="1424"/>
-        <location filename="../ui/MainWindow.cpp" line="1432"/>
-        <location filename="../ui/MainWindow.cpp" line="1448"/>
-        <location filename="../ui/MainWindow.cpp" line="1463"/>
-        <location filename="../ui/MainWindow.cpp" line="1474"/>
-        <location filename="../ui/MainWindow.cpp" line="1490"/>
-        <location filename="../ui/MainWindow.cpp" line="1503"/>
-        <location filename="../ui/MainWindow.cpp" line="1509"/>
-        <location filename="../ui/MainWindow.cpp" line="1514"/>
         <source>Pack Data &amp;&amp; Settings</source>
         <translation>Empaquetar datos y configuración</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="383"/>
-        <location filename="../ui/MainWindow.cpp" line="1567"/>
-        <location filename="../ui/MainWindow.cpp" line="1595"/>
         <source>Unpack Data &amp;&amp; Settings</source>
         <translation>Desempaquetar datos y configuración</translation>
     </message>
@@ -10196,134 +10185,157 @@ Submode: %2</source>
         <translation>Op: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1009"/>
+        <location filename="../ui/MainWindow.cpp" line="1015"/>
         <source>A New Version</source>
         <translation>Una nueva versión</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1010"/>
+        <location filename="../ui/MainWindow.cpp" line="1016"/>
         <source>A new version %1 is available.</source>
         <translation>Una nueva versión %1 está disponible.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1014"/>
+        <location filename="../ui/MainWindow.cpp" line="1020"/>
         <source>Remind Me Later</source>
         <translation>Recordármelo más tarde</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1015"/>
+        <location filename="../ui/MainWindow.cpp" line="1021"/>
         <source>Download</source>
         <translation>Descargar</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1273"/>
-        <location filename="../ui/MainWindow.cpp" line="1321"/>
+        <location filename="../ui/MainWindow.cpp" line="1279"/>
+        <location filename="../ui/MainWindow.cpp" line="1327"/>
         <source>QLog Warning</source>
         <translation>Alerta de QLog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1274"/>
+        <location filename="../ui/MainWindow.cpp" line="1280"/>
         <source>LoTW is not configured properly.&lt;p&gt;Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW no está configurado correctamente.&lt;p&gt;Use el diálogo &lt;b&gt;Configuración&lt;/b&gt; para configurarlo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1295"/>
-        <location filename="../ui/MainWindow.cpp" line="1373"/>
+        <location filename="../ui/MainWindow.cpp" line="1301"/>
+        <location filename="../ui/MainWindow.cpp" line="1379"/>
         <source>QLog Error</source>
         <translation>Error de QLog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1296"/>
+        <location filename="../ui/MainWindow.cpp" line="1302"/>
         <source>Cannot load local DXCC entities from the logbook: </source>
         <translation>No se pueden cargar las entidades DXCC locales desde el libro de guardia: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1310"/>
+        <location filename="../ui/MainWindow.cpp" line="1316"/>
         <source>Unknown DXCC Entity</source>
         <translation>Entidad DXCC desconocida</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1322"/>
+        <location filename="../ui/MainWindow.cpp" line="1328"/>
         <source>Cannot determine a local DXCC entity from logbook contacts.</source>
         <translation>No se puede determinar una entidad DXCC local a partir de los contactos del libro de guardia.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1328"/>
+        <location filename="../ui/MainWindow.cpp" line="1334"/>
         <source>LoTW DXCC Credits</source>
         <translation>Créditos DXCC de LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1329"/>
+        <location filename="../ui/MainWindow.cpp" line="1335"/>
         <source>Select the local DXCC entity for which LoTW DXCC credits will be downloaded:</source>
         <translation>Seleccione la entidad DXCC local para la que se descargarán los créditos DXCC de LoTW:</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1340"/>
+        <location filename="../ui/MainWindow.cpp" line="1346"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1341"/>
+        <location filename="../ui/MainWindow.cpp" line="1347"/>
         <source>LoTW DXCC Credit Download</source>
         <translation>Descarga de créditos DXCC de LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1345"/>
+        <location filename="../ui/MainWindow.cpp" line="1351"/>
         <source>Downloading LoTW DXCC credits</source>
         <translation>Descargando créditos DXCC de LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1353"/>
+        <location filename="../ui/MainWindow.cpp" line="1359"/>
         <source>Processing LoTW DXCC credits</source>
         <translation>Procesando créditos DXCC de LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1365"/>
+        <location filename="../ui/MainWindow.cpp" line="1371"/>
         <source>LoTW DXCC Credit Import Summary</source>
         <translation>Resumen de importación de créditos DXCC de LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1373"/>
+        <location filename="../ui/MainWindow.cpp" line="1379"/>
         <source>LoTW DXCC credit import failed: </source>
         <translation>Error al importar créditos DXCC de LoTW: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1425"/>
+        <location filename="../ui/MainWindow.cpp" line="1423"/>
+        <location filename="../ui/MainWindow.cpp" line="1438"/>
+        <location filename="../ui/MainWindow.cpp" line="1446"/>
+        <location filename="../ui/MainWindow.cpp" line="1462"/>
+        <location filename="../ui/MainWindow.cpp" line="1477"/>
+        <location filename="../ui/MainWindow.cpp" line="1488"/>
+        <location filename="../ui/MainWindow.cpp" line="1504"/>
+        <location filename="../ui/MainWindow.cpp" line="1517"/>
+        <location filename="../ui/MainWindow.cpp" line="1523"/>
+        <location filename="../ui/MainWindow.cpp" line="1528"/>
+        <source>Pack Data &amp; Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <source>Data and settings cannot be packed because an import is unfinished.
+
+Restart QLog and complete password recovery or choose &quot;Stop Password Recovery&quot;.</source>
+        <translation type="unfinished">No se pueden empaquetar los datos y la configuración porque hay una importación sin finalizar.
+
+Reinicie QLog y complete la recuperación de contraseñas o elija "Detener la recuperación de contraseñas".</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1439"/>
         <source>Failed to encrypt credentials.</source>
         <translation>No se pudo cifrar las credenciales.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1434"/>
+        <location filename="../ui/MainWindow.cpp" line="1448"/>
         <source>Database files (*.dbe);;All files (*)</source>
         <translation>Archivos de base de datos (*.dbe);;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1449"/>
+        <location filename="../ui/MainWindow.cpp" line="1463"/>
         <source>The file %1 already exists. Replace it?</source>
         <translation type="unfinished">El archivo %1 ya existe. ¿Desea sustituirlo?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1464"/>
+        <location filename="../ui/MainWindow.cpp" line="1478"/>
         <source>Choose a different file. The export destination points to the open database.</source>
         <translation type="unfinished">Elija otro archivo. El destino de la exportación apunta a la base de datos abierta.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1475"/>
+        <location filename="../ui/MainWindow.cpp" line="1489"/>
         <source>Failed to create temporary file.</source>
         <translation>No se pudo crear el archivo temporal.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1491"/>
+        <location filename="../ui/MainWindow.cpp" line="1505"/>
         <source>Failed to dump the database.</source>
         <translation>No se pudo volcar la base de datos.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1496"/>
+        <location filename="../ui/MainWindow.cpp" line="1510"/>
         <source>Compressing database...</source>
         <translation>Comprimiendo base de datos…</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1504"/>
+        <location filename="../ui/MainWindow.cpp" line="1518"/>
         <source>Database successfully dumped to
 %1
 Some credentials could not be removed.</source>
@@ -10332,61 +10344,77 @@ Some credentials could not be removed.</source>
 No se pudieron eliminar algunas credenciales.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1510"/>
+        <location filename="../ui/MainWindow.cpp" line="1524"/>
         <source>Database successfully dumped to
 %1</source>
         <translation>Base de datos exportada con éxito a
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1515"/>
+        <location filename="../ui/MainWindow.cpp" line="1529"/>
         <source>Failed to compress the database.</source>
         <translation>No se pudo comprimir la base de datos.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1596"/>
+        <location filename="../ui/MainWindow.cpp" line="1539"/>
+        <location filename="../ui/MainWindow.cpp" line="1589"/>
+        <location filename="../ui/MainWindow.cpp" line="1617"/>
+        <source>Unpack Data &amp; Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1540"/>
+        <source>Data and settings cannot be unpacked because an import is unfinished.
+
+Restart QLog and complete password recovery or choose &quot;Stop Password Recovery&quot;.</source>
+        <translation type="unfinished">No se pueden desempaquetar los datos y la configuración porque hay una importación sin finalizar.
+
+Reinicie QLog y complete la recuperación de contraseñas o elija "Detener la recuperación de contraseñas".</translation>
+    </message>
+    <message>
+        <location filename="../ui/MainWindow.cpp" line="1618"/>
         <source>QLog could not be restarted. The prepared import was cancelled.</source>
         <translation type="unfinished">No se pudo reiniciar QLog. Se canceló la importación preparada.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1597"/>
+        <location filename="../ui/MainWindow.cpp" line="1619"/>
         <source>QLog could not be restarted.
 %1</source>
         <translation type="unfinished">No se pudo reiniciar QLog.
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1745"/>
+        <location filename="../ui/MainWindow.cpp" line="1767"/>
         <source>Classic</source>
         <translation>Clásico</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1982"/>
+        <location filename="../ui/MainWindow.cpp" line="2004"/>
         <source>Accept any received exchange. %1 is updated only when the received exchange is valid for this field.</source>
         <translation>Aceptar cualquier exchange recibido. %1 solo se actualiza si el exchange recibido es válido para este campo.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2004"/>
+        <location filename="../ui/MainWindow.cpp" line="2026"/>
         <source>Standard Linking</source>
         <translation>Vinculación estándar</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2020"/>
+        <location filename="../ui/MainWindow.cpp" line="2042"/>
         <source>Flexible Linking</source>
         <translation>Vinculación flexible</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2058"/>
+        <location filename="../ui/MainWindow.cpp" line="2080"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>¿Desea eliminar el filtro Concurso %1?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2089"/>
+        <location filename="../ui/MainWindow.cpp" line="2111"/>
         <source>Contest: </source>
         <translation>Concurso: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2370"/>
+        <location filename="../ui/MainWindow.cpp" line="2392"/>
         <source>Backup could not be completed. Check Settings → Backup.
 
 %1</source>
@@ -10395,17 +10423,17 @@ No se pudieron eliminar algunas credenciales.</translation>
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2492"/>
+        <location filename="../ui/MainWindow.cpp" line="2514"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Basado en Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Iconos por &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Imágenes satelitales por &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;Detección de zonas por &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;Base de datos de zonas horarias por &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2523"/>
+        <location filename="../ui/MainWindow.cpp" line="2545"/>
         <source>About</source>
         <translation>Acerca de</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2574"/>
+        <location filename="../ui/MainWindow.cpp" line="2596"/>
         <source>N/A</source>
         <translation>S/D</translation>
     </message>
@@ -10934,30 +10962,30 @@ No se pudieron eliminar algunas credenciales.</translation>
 <context>
     <name>OmnirigRigDrv</name>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="48"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="47"/>
         <source>Rig 1</source>
         <translation>Equipo 1</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="49"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="48"/>
         <source>Rig 2</source>
         <translation>Equipo 2</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="131"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="223"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="230"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="270"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="130"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="222"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="229"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="269"/>
         <source>Initialization Error</source>
         <translation>Error al Inicializar</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1079"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1078"/>
         <source>Rig status changed</source>
         <translation>El estado del equipo ha cambiado</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1080"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1079"/>
         <source>Rig is not connected</source>
         <translation>El equipo no está conectado</translation>
     </message>
@@ -10965,40 +10993,40 @@ No se pudieron eliminar algunas credenciales.</translation>
 <context>
     <name>OmnirigV2RigDrv</name>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="47"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="46"/>
         <source>Rig 1</source>
         <translation>Equipo 1</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="48"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="47"/>
         <source>Rig 2</source>
         <translation>Equipo 2</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="49"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="48"/>
         <source>Rig 3</source>
         <translation>Equipo 3</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="50"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="49"/>
         <source>Rig 4</source>
         <translation>Equipo 4</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="134"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="226"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="233"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="275"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="133"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="225"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="232"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="274"/>
         <source>Initialization Error</source>
         <translation>Error al Inicializar</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="978"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="977"/>
         <source>Rig status changed</source>
         <translation>El estado del equipo ha cambiado</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="979"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="978"/>
         <source>Rig is not connected</source>
         <translation>El equipo no está conectado</translation>
     </message>
@@ -11150,7 +11178,7 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../core/main.cpp" line="499"/>
+        <location filename="../core/main.cpp" line="512"/>
         <source>QLog Help</source>
         <translation>Ayuda de QLog</translation>
     </message>
@@ -11232,10 +11260,9 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         <translation>Error de red. No se puede descargar la lista de clubes para</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="590"/>
-        <location filename="../core/main.cpp" line="612"/>
-        <location filename="../core/main.cpp" line="625"/>
-        <location filename="../core/main.cpp" line="636"/>
+        <location filename="../core/main.cpp" line="604"/>
+        <location filename="../core/main.cpp" line="629"/>
+        <location filename="../core/main.cpp" line="646"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="327"/>
         <location filename="../ui/ExportDialog.cpp" line="204"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
@@ -11247,19 +11274,9 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         <translation>Error de QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="591"/>
+        <location filename="../core/main.cpp" line="605"/>
         <source>QLog is already running</source>
         <translation>QLog ya se está ejecutando</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="626"/>
-        <source>Could not connect to database.</source>
-        <translation>No se pudo conectar a la base de datos.</translation>
-    </message>
-    <message>
-        <location filename="../core/main.cpp" line="637"/>
-        <source>Database migration failed.</source>
-        <translation>Error en la migración de la base de datos.</translation>
     </message>
     <message>
         <location filename="../ui/ActivityEditor.cpp" line="105"/>
@@ -11540,77 +11557,77 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         <translation>Error Interno</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="374"/>
+        <location filename="../core/main.cpp" line="375"/>
         <source>DXCC Entities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="375"/>
+        <location filename="../core/main.cpp" line="376"/>
         <source>ClubLog DXCC</source>
         <translation type="unfinished">ClubLog DXCC</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="376"/>
+        <location filename="../core/main.cpp" line="377"/>
         <source>Sats Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="377"/>
+        <location filename="../core/main.cpp" line="378"/>
         <source>SOTA Summits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="378"/>
+        <location filename="../core/main.cpp" line="379"/>
         <source>WWFF Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="379"/>
+        <location filename="../core/main.cpp" line="380"/>
         <source>IOTA Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="380"/>
+        <location filename="../core/main.cpp" line="381"/>
         <source>POTA Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="381"/>
+        <location filename="../core/main.cpp" line="382"/>
         <source>Membership Directory Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="382"/>
+        <location filename="../core/main.cpp" line="383"/>
         <source>List of Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="404"/>
+        <location filename="../core/main.cpp" line="405"/>
         <source>Updating %1</source>
         <translation type="unfinished">Actualizando %1</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="429"/>
+        <location filename="../core/main.cpp" line="430"/>
         <source>Updating External Resources</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="430"/>
+        <location filename="../core/main.cpp" line="431"/>
         <source>Updating %1…</source>
         <translation type="unfinished">Actualizando %1…</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="467"/>
+        <location filename="../core/main.cpp" line="468"/>
         <source>QLog Warning</source>
         <translation type="unfinished">Alerta de QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="468"/>
+        <location filename="../core/main.cpp" line="469"/>
         <source>Could not update these reference lists: %1. Existing data have been kept.</source>
         <translation type="unfinished">No se pudieron actualizar estas listas de referencia: %1. Se han conservado los datos existentes.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="607"/>
+        <location filename="../core/main.cpp" line="618"/>
         <source>Importing Database</source>
         <translation>Importando base de datos</translation>
     </message>
@@ -11620,22 +11637,64 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         <translation>Abriendo Base de Datos</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="630"/>
-        <source>Migrating Database</source>
-        <translation>Migrando Base de Datos</translation>
+        <location filename="../core/main.cpp" line="633"/>
+        <location filename="../core/main.cpp" line="654"/>
+        <source>Unpack Data &amp; Settings</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="645"/>
+        <location filename="../core/main.cpp" line="635"/>
+        <source>The import has not been completed. You can retry it, or cancel it and start QLog without importing the prepared database.</source>
+        <translation type="unfinished">La importación no se ha completado. Puede volver a intentarlo o cancelarla e iniciar QLog sin importar la base de datos preparada.</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="636"/>
+        <location filename="../core/main.cpp" line="660"/>
+        <source>Retry</source>
+        <translation type="unfinished">Reintentar</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="637"/>
+        <source>Cancel Import and Start QLog</source>
+        <translation type="unfinished">Cancelar la importación e iniciar QLog</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="638"/>
+        <location filename="../core/main.cpp" line="663"/>
+        <source>Exit QLog</source>
+        <translation type="unfinished">Salir de QLog</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="656"/>
+        <source>You can continue logging and decide again at the next startup. Packing or unpacking data and settings remains unavailable until recovery is finished or stopped.
+
+Retrying recovery may overwrite passwords changed manually. Stopping recovery keeps the current passwords; missing passwords must be entered manually, and old passwords may remain stored.</source>
+        <translation type="unfinished">Puede seguir registrando contactos y volver a decidir en el próximo inicio. No podrá empaquetar ni desempaquetar los datos y la configuración hasta que la recuperación finalice o se detenga.
+
+Al reintentar la recuperación, podrían sobrescribirse las contraseñas modificadas manualmente. Si se detiene la recuperación, se conservan las contraseñas actuales; tendrá que introducir manualmente las que falten y podrían quedar almacenadas contraseñas antiguas.</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="661"/>
+        <source>Continue Logging</source>
+        <translation type="unfinished">Seguir registrando contactos</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="662"/>
+        <source>Stop Password Recovery</source>
+        <translation type="unfinished">Detener la recuperación de contraseñas</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="679"/>
         <source>QLog Error</source>
         <translation type="unfinished">Error de QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="645"/>
+        <location filename="../core/main.cpp" line="679"/>
         <source>Could not complete reference-list initialization.</source>
         <translation type="unfinished">No se pudo completar la inicialización de las listas de referencia.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="650"/>
+        <location filename="../core/main.cpp" line="684"/>
         <source>Starting Application</source>
         <translation>Iniciando Aplicación</translation>
     </message>
@@ -11764,207 +11823,244 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         </translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="345"/>
-        <location filename="../core/LogDatabase.cpp" line="354"/>
-        <location filename="../core/LogDatabase.cpp" line="370"/>
-        <location filename="../core/LogDatabase.cpp" line="389"/>
+        <location filename="../core/LogDatabase.cpp" line="346"/>
+        <location filename="../core/LogDatabase.cpp" line="355"/>
+        <location filename="../core/LogDatabase.cpp" line="371"/>
+        <location filename="../core/LogDatabase.cpp" line="390"/>
         <source>Not a valid QLog database</source>
         <translation>No es una base de datos QLog válida</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="362"/>
+        <location filename="../core/LogDatabase.cpp" line="363"/>
         <source>Database version too new (requires newer QLog version)</source>
         <translation>La versión de la base de datos es demasiado nueva (requiere una versión más reciente de QLog)</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="380"/>
+        <location filename="../core/LogDatabase.cpp" line="381"/>
         <source>Database is not QLog Export file</source>
         <translation>La base de datos no es un archivo de exportación de QLog</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="512"/>
+        <location filename="../core/LogDatabase.cpp" line="513"/>
         <source>An unfinished import already exists in %1. Preserve these files and finish or explicitly cancel that import first.</source>
         <translation type="unfinished">Ya hay una importación sin finalizar en %1. Conserve estos archivos y finalice o cancele explícitamente esa importación antes de continuar.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="521"/>
+        <location filename="../core/LogDatabase.cpp" line="522"/>
         <source>The active database cannot be used as an import candidate.</source>
         <translation type="unfinished">La base de datos activa no se puede usar como candidata para la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="524"/>
+        <location filename="../core/LogDatabase.cpp" line="525"/>
         <source>The import passphrase is required.</source>
         <translation type="unfinished">Se requiere la frase de contraseña de la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="528"/>
+        <location filename="../core/LogDatabase.cpp" line="529"/>
         <source>The source database has unfinished writes and cannot be imported.</source>
         <translation type="unfinished">La base de datos de origen tiene operaciones de escritura pendientes y no se puede importar.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="568"/>
+        <location filename="../core/LogDatabase.cpp" line="569"/>
         <source>The temporary database files could not be released for import.</source>
         <translation type="unfinished">No se pudieron liberar los archivos temporales de la base de datos para la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="571"/>
+        <location filename="../core/LogDatabase.cpp" line="572"/>
         <source>Failed to prepare the database for import.</source>
         <translation type="unfinished">No se pudo preparar la base de datos para la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="574"/>
+        <location filename="../core/LogDatabase.cpp" line="575"/>
         <source>Failed to save the import passphrase.</source>
         <translation type="unfinished">No se pudo guardar la frase de contraseña de la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="608"/>
+        <location filename="../core/LogDatabase.cpp" line="609"/>
         <source>Failed to prepare the database for import. The current database was preserved.</source>
         <translation type="unfinished">No se pudo preparar la base de datos para la importación. Se conservó la base de datos actual.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="677"/>
+        <location filename="../core/LogDatabase.cpp" line="713"/>
         <source>This import cannot be cancelled safely. Its recovery files were preserved.</source>
         <translation type="unfinished">Esta importación no se puede cancelar de forma segura. Se conservaron sus archivos de recuperación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="683"/>
+        <location filename="../core/LogDatabase.cpp" line="730"/>
+        <source>Cancellation could not be recorded. All recovery files were preserved; retry cancellation before restarting.</source>
+        <translation type="unfinished">No se pudo registrar la cancelación. Se conservaron todos los archivos de recuperación; vuelva a intentar la cancelación antes de reiniciar.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="733"/>
         <source>Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting.</source>
         <translation type="unfinished">La cancelación falló. La importación preparada sigue existiendo y podría ejecutarse en el próximo inicio. Conserve sus archivos y resuelva la cancelación antes de reiniciar.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="685"/>
+        <location filename="../core/LogDatabase.cpp" line="735"/>
         <source>The import candidate was removed, but cancellation could not be recorded. The current database was preserved.</source>
         <translation type="unfinished">Se eliminó la base de datos que se iba a importar, pero no se pudo registrar la cancelación. Se conservó la base de datos actual.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="690"/>
+        <location filename="../core/LogDatabase.cpp" line="744"/>
+        <source>The cancelled import could not be moved aside. All recovery files were preserved.</source>
+        <translation type="unfinished">No se pudo trasladar la importación cancelada a otra ubicación. Se conservaron todos los archivos de recuperación.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="751"/>
+        <source>The original database could not be restored. Retry cancellation to finish restoring it.</source>
+        <translation type="unfinished">No se pudo restaurar la base de datos original. Vuelva a intentar la cancelación para terminar de restaurarla.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="756"/>
         <source>The import was cancelled, but its temporary files could not be removed.</source>
         <translation type="unfinished">Se canceló la importación, pero no se pudieron eliminar sus archivos temporales.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="693"/>
-        <source>The import was cancelled, but its passphrase could not be removed.</source>
-        <translation type="unfinished">Se canceló la importación, pero no se pudo eliminar su frase de contraseña.</translation>
+        <location filename="../core/LogDatabase.cpp" line="812"/>
+        <source>The database could not be opened. Logging cannot continue. Any import recovery files were preserved.</source>
+        <translation type="unfinished">No se pudo abrir la base de datos. No se pueden seguir registrando contactos. Se conservaron los archivos de recuperación de la importación, si los había.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="696"/>
+        <location filename="../core/LogDatabase.cpp" line="818"/>
+        <source>The database could not be opened or migrated. Logging cannot continue. Any import recovery files were preserved.</source>
+        <translation type="unfinished">No se pudo abrir o migrar la base de datos. No se pueden seguir registrando contactos. Se conservaron los archivos de recuperación de la importación, si los había.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="833"/>
+        <source>Password recovery is unfinished. You can retry it or continue logging.</source>
+        <translation type="unfinished">La recuperación de contraseñas no ha finalizado. Puede volver a intentarlo o seguir registrando contactos.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="849"/>
+        <source>Password recovery requires the active database to be initialized first.</source>
+        <translation type="unfinished">Para recuperar las contraseñas, primero hay que inicializar la base de datos activa.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1080"/>
+        <source>The decision to stop password recovery could not be saved. Recovery data was preserved.</source>
+        <translation type="unfinished">No se pudo guardar la decisión de detener la recuperación de contraseñas. Se conservaron los datos de recuperación.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1090"/>
+        <location filename="../core/LogDatabase.cpp" line="1094"/>
+        <source>The database was imported, but some passwords could not be restored.</source>
+        <translation type="unfinished">Se importó la base de datos, pero no se pudieron restaurar algunas contraseñas.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1124"/>
+        <source>The database was imported, but password replacement could not be completed.</source>
+        <translation type="unfinished">Se importó la base de datos, pero no se pudo completar la sustitución de contraseñas.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1148"/>
+        <source>The import is complete, but its saved passphrase could not be removed.</source>
+        <translation type="unfinished">La importación ha finalizado, pero no se pudo eliminar su frase de contraseña guardada.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1154"/>
+        <source>The import is complete, but its recovery files could not be removed.</source>
+        <translation type="unfinished">La importación ha finalizado, pero no se pudieron eliminar sus archivos de recuperación.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="762"/>
         <source>The import was cancelled, but its progress file could not be removed.</source>
         <translation type="unfinished">Se canceló la importación, pero no se pudo eliminar su archivo de progreso.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="710"/>
+        <location filename="../core/LogDatabase.cpp" line="781"/>
         <source>The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.</source>
         <translation type="unfinished">Faltan datos de preparación de la importación sin finalizar o no son válidos. Conserve los archivos de %1 y vuelva a preparar explícitamente la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="718"/>
-        <source>The import was cancelled, but the current database could not be opened or migrated.</source>
-        <translation type="unfinished">Se canceló la importación, pero falló la apertura o la migración de la base de datos actual.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="770"/>
+        <location filename="../core/LogDatabase.cpp" line="893"/>
         <source>The prepared import does not match its recovery files. The original database was preserved.</source>
         <translation type="unfinished">La importación preparada no coincide con sus archivos de recuperación. Se conservó la base de datos original.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="773"/>
+        <location filename="../core/LogDatabase.cpp" line="896"/>
         <source>The imported database could not be opened or migrated. The original database was preserved.</source>
         <translation type="unfinished">Falló la apertura o la migración de la base de datos importada. Se conservó la base de datos original.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="795"/>
+        <location filename="../core/LogDatabase.cpp" line="918"/>
         <source>Failed to start the import settings transaction.</source>
         <translation type="unfinished">No se pudo iniciar la transacción para importar la configuración.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="807"/>
+        <location filename="../core/LogDatabase.cpp" line="930"/>
         <source>Import settings could not be applied. The original database was preserved.</source>
         <translation type="unfinished">No se pudo aplicar la configuración importada. Se conservó la base de datos original.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="824"/>
+        <location filename="../core/LogDatabase.cpp" line="947"/>
         <source>The imported database failed its integrity check. The original database was preserved.</source>
         <translation type="unfinished">La base de datos importada no superó la comprobación de integridad. Se conservó la base de datos original.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="829"/>
+        <location filename="../core/LogDatabase.cpp" line="952"/>
         <source>The import passphrase is unavailable or the passwords could not be decrypted. All recovery files were preserved.</source>
         <translation type="unfinished">La frase de contraseña de la importación no está disponible o no se pudieron descifrar las contraseñas. Se conservaron todos los archivos de recuperación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="832"/>
+        <location filename="../core/LogDatabase.cpp" line="955"/>
         <source>Failed to finalize the prepared database. The original database was preserved.</source>
         <translation type="unfinished">No se pudo finalizar la base de datos preparada. Se conservó la base de datos original.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="865"/>
+        <location filename="../core/LogDatabase.cpp" line="988"/>
         <source>The interrupted import has inconsistent recovery files. All files were preserved for recovery.</source>
         <translation type="unfinished">Los archivos de recuperación de la importación interrumpida son incoherentes. Se conservaron todos los archivos para la recuperación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="870"/>
+        <location filename="../core/LogDatabase.cpp" line="993"/>
+        <source>The prepared database could not be opened or migrated. Its recovery files were preserved.</source>
+        <translation type="unfinished">No se pudo abrir o migrar la base de datos preparada. Se conservaron sus archivos de recuperación.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="995"/>
         <source>The import passwords could not be restored. All recovery files were preserved.</source>
         <translation type="unfinished">No se pudieron restaurar las contraseñas de la importación. Se conservaron todos los archivos de recuperación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="872"/>
+        <location filename="../core/LogDatabase.cpp" line="997"/>
         <source>Failed to finish database writes before import.</source>
         <translation type="unfinished">No se pudieron completar las operaciones de escritura en la base de datos antes de la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="878"/>
+        <location filename="../core/LogDatabase.cpp" line="1003"/>
         <source>Failed to discard prepared reference lists before import.</source>
         <translation type="unfinished">No se pudieron descartar las listas de referencia preparadas antes de la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="894"/>
+        <location filename="../core/LogDatabase.cpp" line="1019"/>
         <source>The original database could not be preserved. Import was stopped.</source>
         <translation type="unfinished">No se pudo conservar la base de datos original. Se detuvo la importación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="901"/>
+        <location filename="../core/LogDatabase.cpp" line="1026"/>
         <source>The prepared database could not be installed. All recovery files were preserved.</source>
         <translation type="unfinished">No se pudo instalar la base de datos preparada. Se conservaron todos los archivos de recuperación.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="906"/>
+        <location filename="../core/LogDatabase.cpp" line="1031"/>
         <source>The imported database was installed, but its progress could not be saved. Restart to retry.</source>
         <translation type="unfinished">Se instaló la base de datos importada, pero no se pudo guardar el progreso de la importación. Reinicie para volver a intentarlo.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="931"/>
+        <location filename="../core/LogDatabase.cpp" line="859"/>
+        <location filename="../core/LogDatabase.cpp" line="1056"/>
         <source>The imported database does not match its recovery files. All files were preserved.</source>
         <translation type="unfinished">La base de datos importada no coincide con sus archivos de recuperación. Se conservaron todos los archivos.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="934"/>
-        <source>The imported database could not be opened. Its recovery files were preserved.</source>
-        <translation type="unfinished">No se pudo abrir la base de datos importada. Se conservaron sus archivos de recuperación.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="939"/>
-        <source>The imported database was retained, but password restoration is incomplete. Restart QLog to retry.</source>
-        <translation type="unfinished">Se mantuvo la base de datos importada, pero la restauración de contraseñas está incompleta. Reinicie QLog para volver a intentarlo.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="959"/>
-        <source>The imported database was retained, but password replacement is incomplete. Restart QLog to retry.</source>
-        <translation type="unfinished">Se mantuvo la base de datos importada, pero la sustitución de contraseñas está incompleta. Reinicie QLog para volver a intentarlo.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="965"/>
+        <location filename="../core/LogDatabase.cpp" line="1131"/>
         <source>The import is complete, but cleanup could not be started. Restart to retry.</source>
         <translation type="unfinished">La importación ha finalizado, pero no se pudo iniciar la limpieza. Reinicie para volver a intentarlo.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="975"/>
+        <location filename="../core/LogDatabase.cpp" line="1143"/>
         <source>The import is complete, but cleanup failed. Restart to retry.</source>
         <translation type="unfinished">La importación ha finalizado, pero la limpieza falló. Reinicie para volver a intentarlo.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="983"/>
-        <source>The import is complete, but its recovery files could not be removed. Restart to retry.</source>
-        <translation type="unfinished">La importación ha finalizado, pero no se pudieron eliminar sus archivos de recuperación. Reinicie para volver a intentarlo.</translation>
     </message>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="21"/>
@@ -12094,6 +12190,34 @@ Puede dejar los campos vacíos y configurarlos más tarde en Configuración.</tr
         <location filename="../service/lotw/Lotw.cpp" line="43"/>
         <source>LoTW returned a non-ADIF response</source>
         <translation>LoTW devolvió una respuesta no ADIF</translation>
+    </message>
+    <message>
+        <location filename="../core/AppGuard.cpp" line="75"/>
+        <location filename="../core/AppGuard.cpp" line="129"/>
+        <source>Cannot acquire the QLog instance semaphore: %1</source>
+        <translation type="unfinished">No se puede adquirir el semáforo de la instancia de QLog: %1</translation>
+    </message>
+    <message>
+        <location filename="../core/AppGuard.cpp" line="84"/>
+        <location filename="../core/AppGuard.cpp" line="136"/>
+        <source>Cannot detach QLog instance shared memory: %1</source>
+        <translation type="unfinished">No se puede desvincular la memoria compartida de la instancia de QLog: %1</translation>
+    </message>
+    <message>
+        <location filename="../core/AppGuard.cpp" line="89"/>
+        <source>Cannot attach QLog instance shared memory: %1</source>
+        <translation type="unfinished">No se puede vincular la memoria compartida de la instancia de QLog: %1</translation>
+    </message>
+    <message>
+        <location filename="../core/AppGuard.cpp" line="96"/>
+        <source>Cannot create QLog instance shared memory: %1</source>
+        <translation type="unfinished">No se puede crear la memoria compartida de la instancia de QLog: %1</translation>
+    </message>
+    <message>
+        <location filename="../core/AppGuard.cpp" line="101"/>
+        <location filename="../core/AppGuard.cpp" line="140"/>
+        <source>Cannot release the QLog instance semaphore: %1</source>
+        <translation type="unfinished">No se puede liberar el semáforo de la instancia de QLog: %1</translation>
     </message>
 </context>
 <context>
@@ -13968,37 +14092,37 @@ Esta semana y Este mes abarcan el período hasta hoy inclusive.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/RigWidget.cpp" line="161"/>
+        <location filename="../ui/RigWidget.cpp" line="177"/>
         <source>PWR: %1W</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/RigWidget.cpp" line="532"/>
+        <location filename="../ui/RigWidget.cpp" line="555"/>
         <source>OUT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RigWidget.cpp" line="533"/>
+        <location filename="../ui/RigWidget.cpp" line="556"/>
         <source>Outside Bandmap Guide range</source>
         <translation>Fuera del rango de la guía de Bandmap</translation>
     </message>
     <message>
-        <location filename="../ui/RigWidget.cpp" line="560"/>
+        <location filename="../ui/RigWidget.cpp" line="583"/>
         <source>SOS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RigWidget.cpp" line="561"/>
+        <location filename="../ui/RigWidget.cpp" line="584"/>
         <source>Emergency frequency: %1 MHz</source>
         <translation>Frecuencia de emergencia: %1 MHz</translation>
     </message>
     <message>
-        <location filename="../ui/RigWidget.cpp" line="580"/>
+        <location filename="../ui/RigWidget.cpp" line="603"/>
         <source>IBP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/RigWidget.cpp" line="581"/>
+        <location filename="../ui/RigWidget.cpp" line="604"/>
         <source>International Beacon Project: %1 MHz</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16746,7 +16870,7 @@ Instale TQSL o especifique la ruta manualmente.</translation>
 <context>
     <name>SuggestionEdit</name>
     <message>
-        <location filename="../ui/component/SuggestionEdit.cpp" line="23"/>
+        <location filename="../ui/component/SuggestionEdit.cpp" line="35"/>
         <source>Show Suggestions</source>
         <translation type="unfinished">Mostrar sugerencias</translation>
     </message>
@@ -17372,47 +17496,47 @@ Instale TQSL o especifique la ruta manualmente.</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="../core/main.cpp" line="518"/>
+        <location filename="../core/main.cpp" line="531"/>
         <source>Run with the specific namespace.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="519"/>
+        <location filename="../core/main.cpp" line="532"/>
         <source>namespace</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="521"/>
+        <location filename="../core/main.cpp" line="534"/>
         <source>Translation file - absolute or relative path and QM file name.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="522"/>
+        <location filename="../core/main.cpp" line="535"/>
         <source>path/QM-filename</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="524"/>
+        <location filename="../core/main.cpp" line="537"/>
         <source>Set language. &lt;code&gt; example: &apos;en&apos; or &apos;en_US&apos;. Ignore environment setting.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="525"/>
+        <location filename="../core/main.cpp" line="538"/>
         <source>code</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="527"/>
+        <location filename="../core/main.cpp" line="540"/>
         <source>Writes debug messages to the debug file</source>
         <translation>Escribe mensajes de depuración en el archivo de depuración</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="529"/>
+        <location filename="../core/main.cpp" line="542"/>
         <source>Process pending database import (internal use)</source>
         <translation>Procesar importación pendiente de la base de datos (uso interno)</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="531"/>
+        <location filename="../core/main.cpp" line="544"/>
         <source>Force update of all value lists (DXCC, SATs, etc.)</source>
         <translation>Forzar actualización de todas las listas de valores (DXCC, SATs, etc.)</translation>
     </message>
