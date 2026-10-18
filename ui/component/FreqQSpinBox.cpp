@@ -266,6 +266,12 @@ void FreqQSpinBox::wheelEvent(QWheelEvent *event)
 
     if ( event->modifiers() & Qt::ControlModifier )
     {
+        if ( event->angleDelta().y() == 0 )
+        {
+            event->ignore();
+            return;
+        }
+
         const int direction = event->angleDelta().y() > 0 ? 1 : -1;
         if ( bandIndex >= 0 )
             stepBand(direction);
