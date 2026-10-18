@@ -12,6 +12,7 @@ TBC - 0.54.0
 - [NEW] - DXC - Added Editable DX Comment Template (issue #1168)
 - [NEW] - MCP Bridge - Added read-only bridge between QLog-MCP and QLog
 - [NEW] - MCP Bridge - Added Rig, Rotator, Antenna, Station and Activity information
+- [CHANGED] - Rig Widget - The mouse wheel adjusts the frequency digit under the pointer
 - [CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting
 - [CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"
 - [CHANGED] - DXC - Send Last QSO dynamically switches to Spot QSO

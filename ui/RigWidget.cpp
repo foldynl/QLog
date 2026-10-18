@@ -29,6 +29,7 @@ RigWidget::RigWidget(QWidget *parent) :
             this, [this]() { updateFrequencyInfoLabels(lastSeenFreq); });
 
     ui->freqLabel->setSelectionModeEnabled(false);
+    ui->freqLabel->setMousePositionStepEnabled(true);
     ui->freqLabel->setDebounceEnabled(true);
     ui->freqLabel->setDebounceIntervalMs(250);
     ui->freqLabel->setLocale(QLocale::c());

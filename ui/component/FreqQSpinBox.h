@@ -16,6 +16,7 @@ public:
     FreqQSpinBox(QWidget *parent = nullptr);
     virtual ~FreqQSpinBox() {};
     void setSelectionModeEnabled(bool enabled);
+    void setMousePositionStepEnabled(bool enabled);
     void setDebounceEnabled(bool enabled);
     void setDebounceIntervalMs(int ms);
     void enableBandSelection();
@@ -49,6 +50,7 @@ private slots:
     void bandMenuTriggered(QAction *action);
 
 private:
+    double frequencyStepAt(const QPoint &position) const;
     void increaseByBand();
     void decreaseByBand();
     void stepBand(int steps);
@@ -62,6 +64,7 @@ private:
 
     QList<Band> enabledBands;
     bool selectionModeEnabled;
+    bool mousePositionStepEnabled = false;
     bool bandSelectionEnabled = true;
     QTimer debounceTimer;
     int    debounceMs = 150;
