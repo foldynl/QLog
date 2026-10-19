@@ -305,7 +305,7 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
                             "WHERE callsign=upper(:callsign) "
                             "AND upper(mode)=upper(:mode) "
                             "AND upper(band)=upper(:band) "
-                            "AND COALESCE(sat_name, '') = COALESCE(:sat_name, '') "
+                            "AND upper(COALESCE(sat_name, '')) = upper(COALESCE(:sat_name, '')) "
                             "AND ABS(JULIANDAY(start_time)-JULIANDAY(datetime(:startdate)))*24*60<30") )
     {
         qWarning() << "cannot prepare Dup statement";

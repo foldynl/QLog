@@ -371,18 +371,18 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             log.id = QString(id);
             log.dx_call = QString(dx_call).trimmed().toUpper();
             log.dx_grid = QString(dx_grid).toUpper();
-            log.mode = QString(mode);
+            log.mode = QString(mode).trimmed();
             log.rprt_sent = QString(rprt_sent);
             log.rprt_rcvd = QString(rprt_rcvd);
             log.tx_pwr = QString(tx_pwr);
             log.comments = QString(comments);
             log.name = QString(name);
-            log.op_call = QString(op_call).toUpper();
-            log.my_call = QString(my_call).toUpper();
+            log.op_call = QString(op_call).trimmed().toUpper();
+            log.my_call = QString(my_call).trimmed().toUpper();
             log.my_grid = QString(my_grid).toUpper();
             log.exch_sent = QString(exch_sent);
             log.exch_rcvd = QString(exch_rcvd);
-            log.prop_mode = QString(prop_mode);
+            log.prop_mode = QString(prop_mode).trimmed().toUpper();
 
             rememberClientEndpoint(log.id, datagram);
 

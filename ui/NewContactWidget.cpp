@@ -2348,6 +2348,12 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
 
     if ( savedCallsign.isEmpty() ) return;
 
+    if ( !record.value("start_time").toDateTime().isValid() )
+    {
+        qCWarning(runtime) << "Skipping external QSO with invalid start time:" << savedCallsign;
+        return;
+    }
+
     // Workaround - Issue #722 Repeated log recording - check dupe before insert
     // start_time, callsign, freq or band, mode
     // This workaround is primarily due to JTDX. In general, with WSJTX, QLog receives

@@ -86,6 +86,10 @@ private slots:
     void importNextMapsAdiFieldsAndStoresUnknownFields();
     void importNextNormalizesCallsign_data();
     void importNextNormalizesCallsign();
+    void importNextNormalizesStructuredFields_data();
+    void importNextNormalizesStructuredFields();
+    void importNextValidatesTimestamps_data();
+    void importNextValidatesTimestamps();
     void importNextNormalizesConstrainedEnumFields();
     void importNextStoresZeroLengthFields();
     void importNextAcceptsLeadingZeroLengthSpecifier();
@@ -518,6 +522,240 @@ void AdiFormatTest::importNextNormalizesCallsign()
 
     QVERIFY(format.importNext(record));
     QCOMPARE(record.value(QStringLiteral("callsign")).toString(), expectedCallsign);
+}
+
+void AdiFormatTest::importNextNormalizesStructuredFields_data()
+{
+    QTest::addColumn<QByteArray>("adifField");
+    QTest::addColumn<QString>("column");
+    QTest::addColumn<QByteArray>("value");
+    QTest::addColumn<QString>("expected");
+
+    QTest::newRow("band") << QByteArray("BAND") << QStringLiteral("band")
+                         << QByteArray(" 40M\t") << QStringLiteral("40m");
+    QTest::newRow("mode") << QByteArray("MODE") << QStringLiteral("mode")
+                         << QByteArray(" ft8\t") << QStringLiteral("FT8");
+    QTest::newRow("submode") << QByteArray("SUBMODE") << QStringLiteral("submode")
+                            << QByteArray(" ft4\t") << QStringLiteral("FT4");
+    QTest::newRow("satellite") << QByteArray("SAT_NAME") << QStringLiteral("sat_name")
+                              << QByteArray(" Ao-73\t") << QStringLiteral("Ao-73");
+    QTest::newRow("empty-satellite") << QByteArray("SAT_NAME") << QStringLiteral("sat_name")
+                                    << QByteArray(" \t") << QString();
+    QTest::newRow("station") << QByteArray("STATION_CALLSIGN") << QStringLiteral("station_callsign")
+                            << QByteArray(" ok1aa/p\t") << QStringLiteral("OK1AA/P");
+    QTest::newRow("operator") << QByteArray("OPERATOR") << QStringLiteral("operator")
+                             << QByteArray(" ok1aa\t") << QStringLiteral("OK1AA");
+    QTest::newRow("propagation") << QByteArray("PROP_MODE") << QStringLiteral("prop_mode")
+                                << QByteArray(" sat\t") << QStringLiteral("SAT");
+    QTest::newRow("receive-band") << QByteArray("BAND_RX") << QStringLiteral("band_rx")
+        << QByteArray(" 2M\t") << QStringLiteral("2m");
+    QTest::newRow("continent") << QByteArray("CONT") << QStringLiteral("cont")
+        << QByteArray(" eu\t") << QStringLiteral("EU");
+    QTest::newRow("prefix") << QByteArray("PFX") << QStringLiteral("pfx")
+        << QByteArray(" ok\t") << QStringLiteral("OK");
+    QTest::newRow("arrl-section") << QByteArray("ARRL_SECT") << QStringLiteral("arrl_sect")
+        << QByteArray(" EMA\t") << QStringLiteral("EMA");
+    QTest::newRow("own-arrl-section") << QByteArray("MY_ARRL_SECT") << QStringLiteral("my_arrl_sect")
+        << QByteArray(" EMA\t") << QStringLiteral("EMA");
+    QTest::newRow("state") << QByteArray("STATE") << QStringLiteral("state")
+        << QByteArray(" CA\t") << QStringLiteral("CA");
+    QTest::newRow("own-state") << QByteArray("MY_STATE") << QStringLiteral("my_state")
+        << QByteArray(" CA\t") << QStringLiteral("CA");
+    QTest::newRow("county") << QByteArray("CNTY") << QStringLiteral("cnty")
+        << QByteArray(" CA,San Francisco\t") << QStringLiteral("CA,San Francisco");
+    QTest::newRow("own-county") << QByteArray("MY_CNTY") << QStringLiteral("my_cnty")
+        << QByteArray(" CA,San Francisco\t") << QStringLiteral("CA,San Francisco");
+    QTest::newRow("dok") << QByteArray("DARC_DOK") << QStringLiteral("darc_dok")
+        << QByteArray(" a01\t") << QStringLiteral("A01");
+    QTest::newRow("own-dok") << QByteArray("MY_DARC_DOK") << QStringLiteral("my_darc_dok")
+        << QByteArray(" a01\t") << QStringLiteral("A01");
+    QTest::newRow("region") << QByteArray("REGION") << QStringLiteral("region")
+        << QByteArray(" ET\t") << QStringLiteral("ET");
+    QTest::newRow("province") << QByteArray("VE_PROV") << QStringLiteral("ve_prov")
+        << QByteArray(" ON\t") << QStringLiteral("ON");
+    QTest::newRow("contest-id") << QByteArray("CONTEST_ID") << QStringLiteral("contest_id")
+        << QByteArray(" CQ-WW-CW\t") << QStringLiteral("CQ-WW-CW");
+    QTest::newRow("class") << QByteArray("CLASS") << QStringLiteral("class")
+        << QByteArray(" 1A\t") << QStringLiteral("1A");
+    QTest::newRow("precedence") << QByteArray("PRECEDENCE") << QStringLiteral("precedence")
+        << QByteArray(" A\t") << QStringLiteral("A");
+    QTest::newRow("satellite-mode") << QByteArray("SAT_MODE") << QStringLiteral("sat_mode")
+        << QByteArray(" U/V\t") << QStringLiteral("U/V");
+    QTest::newRow("owner") << QByteArray("OWNER_CALLSIGN") << QStringLiteral("owner_callsign")
+        << QByteArray(" ok1aa/p\t") << QStringLiteral("OK1AA/P");
+    QTest::newRow("contacted-operator") << QByteArray("CONTACTED_OP") << QStringLiteral("contacted_op")
+        << QByteArray(" ok1aa\t") << QStringLiteral("OK1AA");
+    QTest::newRow("guest-operator") << QByteArray("GUEST_OP") << QStringLiteral("guest_op")
+        << QByteArray(" ok1aa\t") << QStringLiteral("OK1AA");
+    QTest::newRow("eqsl-owner") << QByteArray("EQ_CALL") << QStringLiteral("eq_call")
+        << QByteArray(" ok1aa\t") << QStringLiteral("OK1AA");
+    QTest::newRow("iota") << QByteArray("IOTA") << QStringLiteral("iota")
+        << QByteArray(" eu-005\t") << QStringLiteral("EU-005");
+    QTest::newRow("own-iota") << QByteArray("MY_IOTA") << QStringLiteral("my_iota")
+        << QByteArray(" eu-005\t") << QStringLiteral("EU-005");
+    QTest::newRow("iota-island") << QByteArray("IOTA_ISLAND_ID") << QStringLiteral("iota_island_id")
+        << QByteArray(" 00001234\t") << QStringLiteral("00001234");
+    QTest::newRow("own-iota-island") << QByteArray("MY_IOTA_ISLAND_ID") << QStringLiteral("my_iota_island_id")
+        << QByteArray(" 00001234\t") << QStringLiteral("00001234");
+    QTest::newRow("sota") << QByteArray("SOTA_REF") << QStringLiteral("sota_ref")
+        << QByteArray(" ok/jc-001\t") << QStringLiteral("OK/JC-001");
+    QTest::newRow("own-sota") << QByteArray("MY_SOTA_REF") << QStringLiteral("my_sota_ref")
+        << QByteArray(" ok/jc-001\t") << QStringLiteral("OK/JC-001");
+    QTest::newRow("wwff") << QByteArray("WWFF_REF") << QStringLiteral("wwff_ref")
+        << QByteArray(" okff-0001\t") << QStringLiteral("OKFF-0001");
+    QTest::newRow("own-wwff") << QByteArray("MY_WWFF_REF") << QStringLiteral("my_wwff_ref")
+        << QByteArray(" okff-0001\t") << QStringLiteral("OKFF-0001");
+    QTest::newRow("empty-grid") << QByteArray("GRIDSQUARE") << QStringLiteral("gridsquare")
+        << QByteArray(" \t") << QStringLiteral("");
+    QTest::newRow("grid-extension") << QByteArray("GRIDSQUARE_EXT") << QStringLiteral("gridsquare_ext")
+        << QByteArray(" bb\t") << QStringLiteral("BB");
+    QTest::newRow("own-grid") << QByteArray("MY_GRIDSQUARE") << QStringLiteral("my_gridsquare")
+        << QByteArray(" jo70aa\t") << QStringLiteral("JO70AA");
+    QTest::newRow("own-grid-extension") << QByteArray("MY_GRIDSQUARE_EXT") << QStringLiteral("my_gridsquare_ext")
+        << QByteArray(" bb\t") << QStringLiteral("BB");
+    QTest::newRow("pota-list") << QByteArray("POTA_REF") << QStringLiteral("pota_ref")
+        << QByteArray(" k-4562@us-ca , k-0002\t") << QStringLiteral(" K-4562@US-CA , K-0002\t");
+    QTest::newRow("own-pota-list") << QByteArray("MY_POTA_REF") << QStringLiteral("my_pota_ref")
+        << QByteArray(" k-0001 , k-0002\t") << QStringLiteral(" K-0001 , K-0002\t");
+    QTest::newRow("vucc-list") << QByteArray("VUCC_GRIDS") << QStringLiteral("vucc_grids")
+        << QByteArray(" jo70aa , jo71aa\t") << QStringLiteral(" JO70AA , JO71AA\t");
+    QTest::newRow("own-vucc-list") << QByteArray("MY_VUCC_GRIDS") << QStringLiteral("my_vucc_grids")
+        << QByteArray(" jo70 , jo71\t") << QStringLiteral(" JO70 , JO71\t");
+    QTest::newRow("county-list") << QByteArray("USACA_COUNTIES") << QStringLiteral("usaca_counties")
+        << QByteArray(" CA,San Francisco : CA,San Mateo\t") << QStringLiteral(" CA,San Francisco : CA,San Mateo\t");
+    QTest::newRow("own-county-list") << QByteArray("MY_USACA_COUNTIES") << QStringLiteral("my_usaca_counties")
+        << QByteArray(" CA,San Francisco : CA,San Mateo\t") << QStringLiteral(" CA,San Francisco : CA,San Mateo\t");
+    QTest::newRow("alternative-counties") << QByteArray("CNTY_ALT") << QStringLiteral("cnty_alt")
+        << QByteArray(" NZ_Regions:Hawkes Bay/Wairoa ; NZ_Islands:North Island\t") << QStringLiteral(" NZ_Regions:Hawkes Bay/Wairoa ; NZ_Islands:North Island\t");
+    QTest::newRow("own-alternative-counties") << QByteArray("MY_CNTY_ALT") << QStringLiteral("my_cnty_alt")
+        << QByteArray(" NZ_Regions:Hawkes Bay/Wairoa ; NZ_Islands:North Island\t") << QStringLiteral(" NZ_Regions:Hawkes Bay/Wairoa ; NZ_Islands:North Island\t");
+    QTest::newRow("list-order-and-empty-items") << QByteArray("POTA_REF") << QStringLiteral("pota_ref")
+        << QByteArray(" k-0002 , , k-0001 , k-0002 , ") << QStringLiteral(" K-0002 , , K-0001 , K-0002 , ");
+    QTest::newRow("blank-list") << QByteArray("VUCC_GRIDS") << QStringLiteral("vucc_grids")
+        << QByteArray(" \t") << QStringLiteral(" \t");
+    QTest::newRow("qsl-received") << QByteArray("QSL_RCVD") << QStringLiteral("qsl_rcvd")
+        << QByteArray(" y\t") << QStringLiteral("Y");
+    QTest::newRow("qsl-sent") << QByteArray("QSL_SENT") << QStringLiteral("qsl_sent")
+        << QByteArray(" q\t") << QStringLiteral("Q");
+    QTest::newRow("legacy-verified") << QByteArray("QSL_RCVD") << QStringLiteral("qsl_rcvd")
+        << QByteArray(" v\t") << QStringLiteral("Y");
+    QTest::newRow("lotw-received") << QByteArray("LOTW_QSL_RCVD") << QStringLiteral("lotw_qsl_rcvd")
+        << QByteArray(" y\t") << QStringLiteral("Y");
+    QTest::newRow("eqsl-received") << QByteArray("EQSL_QSL_RCVD") << QStringLiteral("eqsl_qsl_rcvd")
+        << QByteArray(" y\t") << QStringLiteral("Y");
+    QTest::newRow("dcl-sent") << QByteArray("DCL_QSL_SENT") << QStringLiteral("dcl_qsl_sent")
+        << QByteArray(" y\t") << QStringLiteral("Y");
+    QTest::newRow("upload-status") << QByteArray("HRDLOG_QSO_UPLOAD_STATUS") << QStringLiteral("hrdlog_qso_upload_status")
+        << QByteArray(" m\t") << QStringLiteral("M");
+    QTest::newRow("download-status") << QByteArray("QRZCOM_QSO_DOWNLOAD_STATUS") << QStringLiteral("qrzcom_qso_download_status")
+        << QByteArray(" i\t") << QStringLiteral("I");
+    QTest::newRow("eqsl-ag") << QByteArray("EQSL_AG") << QStringLiteral("eqsl_ag")
+        << QByteArray(" y\t") << QStringLiteral("Y");
+    QTest::newRow("morse-key") << QByteArray("MORSE_KEY_TYPE") << QStringLiteral("morse_key_type")
+        << QByteArray(" sk\t") << QStringLiteral("SK");
+    QTest::newRow("own-morse-key") << QByteArray("MY_MORSE_KEY_TYPE") << QStringLiteral("my_morse_key_type")
+        << QByteArray(" bug\t") << QStringLiteral("BUG");
+    QTest::newRow("blank-qsl") << QByteArray("QSL_RCVD") << QStringLiteral("qsl_rcvd")
+        << QByteArray(" \t") << QStringLiteral("N");
+    QTest::newRow("blank-upload") << QByteArray("HRDLOG_QSO_UPLOAD_STATUS") << QStringLiteral("hrdlog_qso_upload_status")
+        << QByteArray(" \t") << QStringLiteral("");
+    QTest::newRow("blank-download") << QByteArray("QRZCOM_QSO_DOWNLOAD_STATUS") << QStringLiteral("qrzcom_qso_download_status")
+        << QByteArray(" \t") << QStringLiteral("");
+    QTest::newRow("blank-eqsl-ag") << QByteArray("EQSL_AG") << QStringLiteral("eqsl_ag")
+        << QByteArray(" \t") << QStringLiteral("");
+    QTest::newRow("invalid-qsl") << QByteArray("QSL_SENT") << QStringLiteral("qsl_sent")
+        << QByteArray(" unknown\t") << QStringLiteral("N");
+    QTest::newRow("legacy-first-character-status") << QByteArray("QSL_SENT") << QStringLiteral("qsl_sent")
+        << QByteArray(" ignored\t") << QStringLiteral("I");
+}
+
+void AdiFormatTest::importNextNormalizesStructuredFields()
+{
+    QFETCH(QByteArray, adifField);
+    QFETCH(QString, column);
+    QFETCH(QByteArray, value);
+    QFETCH(QString, expected);
+
+    QByteArray input = tag(adifField, value) + tag("COMMENT", " Keep  spacing ")
+                       + tag("APP_QLOG_RAW", " \r\n raw\t ")
+                       + tag("CUSTOM", " custom ") + "<EOR>";
+    QBuffer buffer(&input);
+    QVERIFY(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream stream(&buffer);
+    TestAdiFormat format(stream);
+
+    QSqlRecord record;
+    appendField(record, column, QString());
+    appendField(record, QStringLiteral("comment"), QString());
+    appendField(record, QStringLiteral("fields"), QString());
+
+    QVERIFY(format.importNext(record));
+    QCOMPARE(record.value(column).toString(), expected);
+    QCOMPARE(record.value(QStringLiteral("comment")).toString(), QStringLiteral(" Keep  spacing "));
+
+    const QJsonObject fields = QJsonDocument::fromJson(record.value("fields").toByteArray()).object();
+    QCOMPARE(fields.value("app_qlog_raw").toString(), QStringLiteral(" \r\n raw\t "));
+    QCOMPARE(fields.value("custom").toString(), QStringLiteral(" custom "));
+}
+
+void AdiFormatTest::importNextValidatesTimestamps_data()
+{
+    QTest::addColumn<QByteArray>("date");
+    QTest::addColumn<QByteArray>("timeOn");
+    QTest::addColumn<QByteArray>("timeOff");
+    QTest::addColumn<QDateTime>("expectedStart");
+    QTest::addColumn<QDateTime>("expectedEnd");
+
+    const QDateTime start(QDate(2026, 10, 17), QTime(14, 3), QTimeZone::utc());
+    const QDateTime end(QDate(2026, 10, 17), QTime(14, 4), QTimeZone::utc());
+    const QDateTime midnight(QDate(2026, 10, 17), QTime(0, 0), QTimeZone::utc());
+
+    QTest::newRow("padded") << QByteArray(" 20261017\t") << QByteArray(" 1403\t")
+                           << QByteArray(" 140400\t") << start << end;
+    QTest::newRow("midnight") << QByteArray("20261017") << QByteArray("0000")
+                             << QByteArray() << midnight << midnight;
+    QTest::newRow("missing-on") << QByteArray("20261017") << QByteArray()
+                               << QByteArray("1404") << end << end;
+    QTest::newRow("blank-on") << QByteArray("20261017") << QByteArray(" \t")
+                             << QByteArray("1404") << end << end;
+    QTest::newRow("missing-off") << QByteArray("20261017") << QByteArray("1403")
+                                << QByteArray() << start << start;
+    QTest::newRow("missing-times") << QByteArray("20261017") << QByteArray()
+                                  << QByteArray() << QDateTime() << QDateTime();
+    QTest::newRow("invalid-on") << QByteArray("20261017") << QByteArray("25:00")
+                               << QByteArray("1404") << end << end;
+    QTest::newRow("invalid-on-midnight-off") << QByteArray("20261017") << QByteArray("256000")
+                                            << QByteArray("000000") << midnight << midnight;
+    QTest::newRow("invalid-off") << QByteArray("20261017") << QByteArray("1403")
+                                << QByteArray("2460") << start << QDateTime();
+    QTest::newRow("invalid-times") << QByteArray("20261017") << QByteArray("256000")
+                                  << QByteArray("2460") << QDateTime() << QDateTime();
+    QTest::newRow("invalid-date") << QByteArray("20261340") << QByteArray("1403")
+                                 << QByteArray("1404") << QDateTime() << QDateTime();
+}
+
+void AdiFormatTest::importNextValidatesTimestamps()
+{
+    QFETCH(QByteArray, date);
+    QFETCH(QByteArray, timeOn);
+    QFETCH(QByteArray, timeOff);
+    QFETCH(QDateTime, expectedStart);
+    QFETCH(QDateTime, expectedEnd);
+
+    QByteArray input = tag("QSO_DATE", date) + tag("TIME_ON", timeOn)
+                       + tag("TIME_OFF", timeOff) + "<EOR>";
+    QBuffer buffer(&input);
+    QVERIFY(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream stream(&buffer);
+    TestAdiFormat format(stream);
+
+    QSqlRecord record;
+    appendField(record, QStringLiteral("start_time"), QDateTime());
+    appendField(record, QStringLiteral("end_time"), QDateTime());
+
+    QVERIFY(format.importNext(record));
+    QCOMPARE(record.value(QStringLiteral("start_time")).toDateTime(), expectedStart);
+    QCOMPARE(record.value(QStringLiteral("end_time")).toDateTime(), expectedEnd);
 }
 
 void AdiFormatTest::importNextNormalizesConstrainedEnumFields()

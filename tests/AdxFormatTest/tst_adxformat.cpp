@@ -229,17 +229,32 @@ void AdxFormatTest::importNextMapsAdxFieldsAndStoresUnknownFields()
 {
     QByteArray input = xmlRecord(
         "<CALL> ok1aa </CALL>"
-        "<BAND>20M</BAND>"
-        "<CONT>eu</CONT>"
+        "<BAND> 20M </BAND>"
+        "<MODE> mfsk </MODE>"
+        "<SUBMODE> ft4 </SUBMODE>"
+        "<SAT_NAME> ISS </SAT_NAME>"
+        "<PROP_MODE> sat </PROP_MODE>"
+        "<STATION_CALLSIGN> ok1aa/p </STATION_CALLSIGN>"
+        "<OPERATOR> ok1aa </OPERATOR>"
+        "<CONT> eu </CONT>"
+        "<OWNER_CALLSIGN> ok1aa </OWNER_CALLSIGN>"
+        "<MY_GRIDSQUARE> jo70aa </MY_GRIDSQUARE>"
+        "<IOTA> eu-005 </IOTA>"
+        "<POTA_REF> k-4562@us-ca , k-0002 </POTA_REF>"
+        "<VUCC_GRIDS> jo70 , jo71 </VUCC_GRIDS>"
+        "<USACA_COUNTIES> CA,San Francisco : CA,San Mateo </USACA_COUNTIES>"
+        "<CNTY_ALT> NZ_Regions:Hawkes Bay/Wairoa ; NZ_Islands:North Island </CNTY_ALT>"
         "<GRIDSQUARE>jo70aa12bb</GRIDSQUARE>"
-        "<QSO_DATE>20260528</QSO_DATE>"
-        "<TIME_ON>123456</TIME_ON>"
-        "<TIME_OFF>123500</TIME_OFF>"
-        "<QSL_RCVD>y</QSL_RCVD>"
-        "<QSL_SENT>q</QSL_SENT>"
+        "<QSO_DATE> 20260528 </QSO_DATE>"
+        "<TIME_ON> 123456 </TIME_ON>"
+        "<TIME_OFF> 123500 </TIME_OFF>"
+        "<QSL_RCVD> y </QSL_RCVD>"
+        "<QSL_SENT> q </QSL_SENT>"
+        "<EQSL_AG> y </EQSL_AG>"
+        "<MORSE_KEY_TYPE> bug </MORSE_KEY_TYPE>"
         "<ANT_PATH>s</ANT_PATH>"
-        "<APP PROGRAMID=\"QLOG\" FIELDNAME=\"TEST\" TYPE=\"M\">abc</APP>"
-        "<UNKNOWN_FIELD>xyz</UNKNOWN_FIELD>");
+        "<APP PROGRAMID=\"QLOG\" FIELDNAME=\"TEST\" TYPE=\"M\"> abc </APP>"
+        "<UNKNOWN_FIELD> xyz </UNKNOWN_FIELD>");
 
     QBuffer buffer(&input);
     QVERIFY(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
@@ -250,13 +265,28 @@ void AdxFormatTest::importNextMapsAdxFieldsAndStoresUnknownFields()
     QSqlRecord record;
     appendField(record, QStringLiteral("callsign"), QString());
     appendField(record, QStringLiteral("band"), QString());
+    appendField(record, QStringLiteral("mode"), QString());
+    appendField(record, QStringLiteral("submode"), QString());
+    appendField(record, QStringLiteral("sat_name"), QString());
+    appendField(record, QStringLiteral("prop_mode"), QString());
+    appendField(record, QStringLiteral("station_callsign"), QString());
+    appendField(record, QStringLiteral("operator"), QString());
     appendField(record, QStringLiteral("cont"), QString());
+    appendField(record, QStringLiteral("owner_callsign"), QString());
+    appendField(record, QStringLiteral("my_gridsquare"), QString());
+    appendField(record, QStringLiteral("iota"), QString());
+    appendField(record, QStringLiteral("pota_ref"), QString());
+    appendField(record, QStringLiteral("vucc_grids"), QString());
+    appendField(record, QStringLiteral("usaca_counties"), QString());
+    appendField(record, QStringLiteral("cnty_alt"), QString());
     appendField(record, QStringLiteral("gridsquare"), QString());
     appendField(record, QStringLiteral("gridsquare_ext"), QString());
     appendField(record, QStringLiteral("start_time"), QDateTime());
     appendField(record, QStringLiteral("end_time"), QDateTime());
     appendField(record, QStringLiteral("qsl_rcvd"), QString());
     appendField(record, QStringLiteral("qsl_sent"), QString());
+    appendField(record, QStringLiteral("eqsl_ag"), QString());
+    appendField(record, QStringLiteral("morse_key_type"), QString());
     appendField(record, QStringLiteral("ant_path"), QString());
     appendField(record, QStringLiteral("fields"), QString());
 
@@ -265,11 +295,26 @@ void AdxFormatTest::importNextMapsAdxFieldsAndStoresUnknownFields()
 
     QCOMPARE(record.value(QStringLiteral("callsign")).toString(), QStringLiteral("OK1AA"));
     QCOMPARE(record.value(QStringLiteral("band")).toString(), QStringLiteral("20m"));
+    QCOMPARE(record.value(QStringLiteral("mode")).toString(), QStringLiteral("MFSK"));
+    QCOMPARE(record.value(QStringLiteral("submode")).toString(), QStringLiteral("FT4"));
+    QCOMPARE(record.value(QStringLiteral("sat_name")).toString(), QStringLiteral("ISS"));
+    QCOMPARE(record.value(QStringLiteral("prop_mode")).toString(), QStringLiteral("SAT"));
+    QCOMPARE(record.value(QStringLiteral("station_callsign")).toString(), QStringLiteral("OK1AA/P"));
+    QCOMPARE(record.value(QStringLiteral("operator")).toString(), QStringLiteral("OK1AA"));
     QCOMPARE(record.value(QStringLiteral("cont")).toString(), QStringLiteral("EU"));
+    QCOMPARE(record.value(QStringLiteral("owner_callsign")).toString(), QStringLiteral("OK1AA"));
+    QCOMPARE(record.value(QStringLiteral("my_gridsquare")).toString(), QStringLiteral("JO70AA"));
+    QCOMPARE(record.value(QStringLiteral("iota")).toString(), QStringLiteral("EU-005"));
+    QCOMPARE(record.value(QStringLiteral("pota_ref")).toString(), QStringLiteral(" K-4562@US-CA , K-0002 "));
+    QCOMPARE(record.value(QStringLiteral("vucc_grids")).toString(), QStringLiteral(" JO70 , JO71 "));
+    QCOMPARE(record.value(QStringLiteral("usaca_counties")).toString(), QStringLiteral(" CA,San Francisco : CA,San Mateo "));
+    QCOMPARE(record.value(QStringLiteral("cnty_alt")).toString(), QStringLiteral(" NZ_Regions:Hawkes Bay/Wairoa ; NZ_Islands:North Island "));
     QCOMPARE(record.value(QStringLiteral("gridsquare")).toString(), QStringLiteral("JO70AA12"));
     QCOMPARE(record.value(QStringLiteral("gridsquare_ext")).toString(), QStringLiteral("BB"));
     QCOMPARE(record.value(QStringLiteral("qsl_rcvd")).toString(), QStringLiteral("Y"));
     QCOMPARE(record.value(QStringLiteral("qsl_sent")).toString(), QStringLiteral("Q"));
+    QCOMPARE(record.value(QStringLiteral("eqsl_ag")).toString(), QStringLiteral("Y"));
+    QCOMPARE(record.value(QStringLiteral("morse_key_type")).toString(), QStringLiteral("BUG"));
     QCOMPARE(record.value(QStringLiteral("ant_path")).toString(), QStringLiteral("S"));
     QCOMPARE(record.value(QStringLiteral("start_time")).toDateTime(),
              QDateTime(QDate(2026, 5, 28), QTime(12, 34, 56), QTimeZone::utc()));
@@ -278,9 +323,9 @@ void AdxFormatTest::importNextMapsAdxFieldsAndStoresUnknownFields()
 
     const QJsonObject fields = QJsonDocument::fromJson(record.value(QStringLiteral("fields")).toByteArray()).object();
     const QJsonObject appField = fields.value(QStringLiteral("app_qlog_test")).toObject();
-    QCOMPARE(appField.value(QStringLiteral("value")).toString(), QStringLiteral("abc"));
+    QCOMPARE(appField.value(QStringLiteral("value")).toString(), QStringLiteral(" abc "));
     QCOMPARE(appField.value(QStringLiteral("type")).toString(), QStringLiteral("M"));
-    QCOMPARE(fields.value(QStringLiteral("unknown_field")).toString(), QStringLiteral("xyz"));
+    QCOMPARE(fields.value(QStringLiteral("unknown_field")).toString(), QStringLiteral(" xyz "));
 }
 
 void AdxFormatTest::importNextStoresZeroLengthApplicationFields()

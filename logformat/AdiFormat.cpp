@@ -49,9 +49,6 @@ void AdiFormat::normalizeGridFields(QSqlRecord &record)
     FCT_IDENTIFICATION;
 
     QString gridsquare = record.value("gridsquare").toString().trimmed().toUpper();
-    if ( gridsquare.isEmpty() )
-        return;
-
     if ( gridsquare.length() > GRID_BASE_LENGTH )
     {
         record.setValue("gridsquare_ext", gridsquare.mid(GRID_BASE_LENGTH));
@@ -364,14 +361,14 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("cqz", contact.take("cqz"));
     record.setValue("ituz", contact.take("ituz"));
     record.setValue("freq", contact.take("freq"));
-    record.setValue("band", contact.take("band").toString().toLower());
-    record.setValue("cont", contact.take("cont").toString().toUpper());
+    record.setValue("band", contact.take("band").toString().trimmed().toLower());
+    record.setValue("cont", contact.take("cont").toString().trimmed().toUpper());
     record.setValue("dxcc", contact.take("dxcc"));
-    record.setValue("pfx", contact.take("pfx").toString().toUpper());
-    record.setValue("state", contact.take("state"));
-    record.setValue("cnty", contact.take("cnty"));
+    record.setValue("pfx", contact.take("pfx").toString().trimmed().toUpper());
+    record.setValue("state", contact.take("state").toString().trimmed());
+    record.setValue("cnty", contact.take("cnty").toString().trimmed());
     record.setValue("cnty_alt", contact.take("cnty_alt"));
-    record.setValue("iota", contact.take("iota").toString().toUpper());
+    record.setValue("iota", contact.take("iota").toString().trimmed().toUpper());
     record.setValue("qsl_rcvd", parseQslRcvd(contact.take("qsl_rcvd").toString()));
     record.setValue("qsl_rdate", parseDate(contact.take("qslrdate").toString()));  //TODO: DIFF MAPPING
     record.setValue("qsl_sent", parseQslSent(contact.take("qsl_sent").toString()));
@@ -389,30 +386,30 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("ant_az", contact.take("ant_az"));
     record.setValue("ant_el", contact.take("ant_el"));
     record.setValue("ant_path", parseEnumValue("ANT_PATH", contact.take("ant_path").toString(), antPathValues));
-    record.setValue("arrl_sect", contact.take("arrl_sect"));
+    record.setValue("arrl_sect", contact.take("arrl_sect").toString().trimmed());
     record.setValue("award_submitted",contact.take("award_submitted"));
     record.setValue("award_granted",contact.take("award_granted"));
-    record.setValue("band_rx",contact.take("band_rx").toString().toLower());
+    record.setValue("band_rx",contact.take("band_rx").toString().trimmed().toLower());
     record.setValue("check",contact.take("check"));
-    record.setValue("class",contact.take("class"));
+    record.setValue("class",contact.take("class").toString().trimmed());
     record.setValue("clublog_qso_upload_date",parseDate(contact.take("clublog_qso_upload_date").toString()));
     record.setValue("clublog_qso_upload_status",parseUploadStatus(contact.take("clublog_qso_upload_status").toString()));
-    record.setValue("contacted_op",contact.take("contacted_op"));
+    record.setValue("contacted_op",contact.take("contacted_op").toString().trimmed().toUpper());
     record.setValue("comment",contact.take("comment"));
     record.setValue("comment_intl",contact.take("comment_intl"));
-    record.setValue("contest_id",contact.take("contest_id"));
+    record.setValue("contest_id",contact.take("contest_id").toString().trimmed());
     record.setValue("country",contact.take("country"));
     record.setValue("country_intl",contact.take("country_intl"));
     record.setValue("credit_submitted",contact.take("credit_submitted"));
     record.setValue("credit_granted",contact.take("credit_granted"));
-    record.setValue("darc_dok",contact.take("darc_dok").toString().toUpper());
+    record.setValue("darc_dok",contact.take("darc_dok").toString().trimmed().toUpper());
     record.setValue("dcl_qslrdate",parseDate(contact.take("dcl_qslrdate").toString()));
     record.setValue("dcl_qslsdate",parseDate(contact.take("dcl_qslsdate").toString()));
     record.setValue("dcl_qsl_rcvd",parseQslRcvd(contact.take("dcl_qsl_rcvd").toString()));
     record.setValue("dcl_qsl_sent",parseQslSent(contact.take("dcl_qsl_sent").toString()));
     record.setValue("distance",contact.take("distance"));
     record.setValue("email",contact.take("email"));
-    record.setValue("eq_call",contact.take("eq_call"));
+    record.setValue("eq_call",contact.take("eq_call").toString().trimmed().toUpper());
     record.setValue("eqsl_ag",parseEqslAg(contact.take("eqsl_ag").toString()));
     record.setValue("eqsl_qslrdate",parseDate(contact.take("eqsl_qslrdate").toString()));
     record.setValue("eqsl_qslsdate",parseDate(contact.take("eqsl_qslsdate").toString()));
@@ -422,15 +419,15 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("fists_cc",contact.take("fists_cc"));
     record.setValue("force_init",parseEnumValue("FORCE_INIT", contact.take("force_init").toString(), booleanValues));
     record.setValue("freq_rx",contact.take("freq_rx"));
-    record.setValue("gridsquare_ext",contact.take("gridsquare_ext"));
-    record.setValue("guest_op",contact.take("guest_op"));
+    record.setValue("gridsquare_ext",contact.take("gridsquare_ext").toString().trimmed().toUpper());
+    record.setValue("guest_op",contact.take("guest_op").toString().trimmed().toUpper());
     record.setValue("hamlogeu_qso_upload_date",parseDate(contact.take("hamlogeu_qso_upload_date").toString()));
     record.setValue("hamlogeu_qso_upload_status",parseUploadStatus(contact.take("hamlogeu_qso_upload_status").toString()));
     record.setValue("hamqth_qso_upload_date",parseDate(contact.take("hamqth_qso_upload_date").toString()));
     record.setValue("hamqth_qso_upload_status",parseUploadStatus(contact.take("hamqth_qso_upload_status").toString()));
     record.setValue("hrdlog_qso_upload_date",parseDate(contact.take("hrdlog_qso_upload_date").toString()));
     record.setValue("hrdlog_qso_upload_status",parseUploadStatus(contact.take("hrdlog_qso_upload_status").toString()));
-    record.setValue("iota_island_id",contact.take("iota_island_id").toString().toUpper());
+    record.setValue("iota_island_id",contact.take("iota_island_id").toString().trimmed().toUpper());
     record.setValue("k_index",contact.take("k_index"));
     record.setValue("lat",contact.take("lat"));
     record.setValue("lon",contact.take("lon"));
@@ -441,21 +438,21 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("my_antenna",contact.take("my_antenna"));
     record.setValue("my_antenna_intl",contact.take("my_antenna_intl"));
     record.setValue("my_altitude",contact.take("my_altitude"));
-    record.setValue("my_arrl_sect",contact.take("my_arrl_sect"));
+    record.setValue("my_arrl_sect",contact.take("my_arrl_sect").toString().trimmed());
     record.setValue("my_city",contact.take("my_city"));
     record.setValue("my_city_intl",contact.take("my_city_intl"));
     record.setValue("my_country",contact.take("my_country"));
     record.setValue("my_country_intl",contact.take("my_country_intl"));
-    record.setValue("my_cnty",contact.take("my_cnty"));
+    record.setValue("my_cnty",contact.take("my_cnty").toString().trimmed());
     record.setValue("my_cnty_alt",contact.take("my_cnty_alt"));
     record.setValue("my_cq_zone",contact.take("my_cq_zone"));
-    record.setValue("my_darc_dok",contact.take("my_darc_dok").toString().toUpper());
+    record.setValue("my_darc_dok",contact.take("my_darc_dok").toString().trimmed().toUpper());
     record.setValue("my_dxcc",contact.take("my_dxcc"));
     record.setValue("my_fists",contact.take("my_fists"));
-    record.setValue("my_gridsquare",contact.take("my_gridsquare").toString().toUpper());
-    record.setValue("my_gridsquare_ext",contact.take("my_gridsquare_ext").toString().toUpper());
-    record.setValue("my_iota",contact.take("my_iota").toString().toUpper());
-    record.setValue("my_iota_island_id",contact.take("my_iota_island_id").toString().toUpper());
+    record.setValue("my_gridsquare",contact.take("my_gridsquare").toString().trimmed().toUpper());
+    record.setValue("my_gridsquare_ext",contact.take("my_gridsquare_ext").toString().trimmed().toUpper());
+    record.setValue("my_iota",contact.take("my_iota").toString().trimmed().toUpper());
+    record.setValue("my_iota_island_id",contact.take("my_iota_island_id").toString().trimmed().toUpper());
     record.setValue("my_itu_zone",contact.take("my_itu_zone"));
     record.setValue("my_lat",contact.take("my_lat"));
     record.setValue("my_lon",contact.take("my_lon"));
@@ -472,24 +469,24 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("my_sig_intl",contact.take("my_sig_intl"));
     record.setValue("my_sig_info",contact.take("my_sig_info"));
     record.setValue("my_sig_info_intl",contact.take("my_sig_info_intl"));
-    record.setValue("my_sota_ref",contact.take("my_sota_ref").toString().toUpper());
-    record.setValue("my_state",contact.take("my_state"));
+    record.setValue("my_sota_ref",contact.take("my_sota_ref").toString().trimmed().toUpper());
+    record.setValue("my_state",contact.take("my_state").toString().trimmed());
     record.setValue("my_street",contact.take("my_street"));
     record.setValue("my_street_intl",contact.take("my_street_intl"));
     record.setValue("my_usaca_counties",contact.take("my_usaca_counties"));
     record.setValue("my_vucc_grids",contact.take("my_vucc_grids").toString().toUpper());
-    record.setValue("my_wwff_ref",contact.take("my_wwff_ref").toString().toUpper());
+    record.setValue("my_wwff_ref",contact.take("my_wwff_ref").toString().trimmed().toUpper());
     record.setValue("name",contact.take("name"));
     record.setValue("name_intl",contact.take("name_intl"));
     record.setValue("notes",contact.take("notes"));
     record.setValue("notes_intl",contact.take("notes_intl"));
     record.setValue("nr_bursts",contact.take("nr_bursts"));
     record.setValue("nr_pings",contact.take("nr_pings"));
-    record.setValue("operator",contact.take("operator"));
-    record.setValue("owner_callsign",contact.take("owner_callsign"));
+    record.setValue("operator",contact.take("operator").toString().trimmed().toUpper());
+    record.setValue("owner_callsign",contact.take("owner_callsign").toString().trimmed().toUpper());
     record.setValue("pota_ref",contact.take("pota_ref").toString().toUpper());
-    record.setValue("precedence",contact.take("precedence"));
-    record.setValue("prop_mode",contact.take("prop_mode"));
+    record.setValue("precedence",contact.take("precedence").toString().trimmed());
+    record.setValue("prop_mode",contact.take("prop_mode").toString().trimmed().toUpper());
     record.setValue("public_key",contact.take("public_key"));
     record.setValue("qrzcom_qso_download_date",parseDate(contact.take("qrzcom_qso_download_date").toString()));
     record.setValue("qrzcom_qso_download_status",parseDownloadStatus(contact.take("qrzcom_qso_download_status").toString()));
@@ -505,12 +502,12 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("qslmsg_rcvd",contact.take("qslmsg_rcvd"));
     record.setValue("qth",contact.take("qth"));
     record.setValue("qth_intl",contact.take("qth_intl"));
-    record.setValue("region",contact.take("region"));
+    record.setValue("region",contact.take("region").toString().trimmed());
     record.setValue("rig",contact.take("rig"));
     record.setValue("rig_intl",contact.take("rig_intl"));
     record.setValue("rx_pwr",contact.take("rx_pwr"));
-    record.setValue("sat_mode",contact.take("sat_mode"));
-    record.setValue("sat_name",contact.take("sat_name"));
+    record.setValue("sat_mode",contact.take("sat_mode").toString().trimmed());
+    record.setValue("sat_name",contact.take("sat_name").toString().trimmed());
     record.setValue("sfi",contact.take("sfi"));
     record.setValue("sig",contact.take("sig"));
     record.setValue("sig_intl",contact.take("sig_intl"));
@@ -518,23 +515,23 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     record.setValue("sig_info_intl",contact.take("sig_info_intl"));
     record.setValue("silent_key",parseEnumValue("SILENT_KEY", contact.take("silent_key").toString(), booleanValues));
     record.setValue("skcc",contact.take("skcc"));
-    record.setValue("sota_ref",contact.take("sota_ref").toString().toUpper());
+    record.setValue("sota_ref",contact.take("sota_ref").toString().trimmed().toUpper());
     record.setValue("srx",contact.take("srx"));
     record.setValue("srx_string",contact.take("srx_string"));
-    record.setValue("station_callsign",contact.take("station_callsign").toString().toUpper());
+    record.setValue("station_callsign",contact.take("station_callsign").toString().trimmed().toUpper());
     record.setValue("stx",contact.take("stx"));
     record.setValue("stx_string",contact.take("stx_string"));
     record.setValue("swl",parseEnumValue("SWL", contact.take("swl").toString(), booleanValues));
     record.setValue("ten_ten",contact.take("ten_ten"));
     record.setValue("uksmg",contact.take("uksmg"));
     record.setValue("usaca_counties",contact.take("usaca_counties"));
-    record.setValue("ve_prov",contact.take("ve_prov"));
+    record.setValue("ve_prov",contact.take("ve_prov").toString().trimmed());
     record.setValue("vucc_grids",contact.take("vucc_grids").toString().toUpper());
     record.setValue("web",contact.take("web"));
-    record.setValue("wwff_ref",contact.take("wwff_ref").toString().toUpper());
+    record.setValue("wwff_ref",contact.take("wwff_ref").toString().trimmed().toUpper());
 
-    QString mode = contact.take("mode").toString().toUpper();
-    QString submode = contact.take("submode").toString().toUpper();
+    QString mode = contact.take("mode").toString().trimmed().toUpper();
+    QString submode = contact.take("submode").toString().trimmed().toUpper();
 
     const QPair<QString, QString>& legacy = Data::instance()->legacyMode(mode);
 
@@ -555,21 +552,24 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
         date_off = date_on;
     }
 
-    QTime time_on = parseTime(contact.take("time_on").toString());
-    QTime time_off = parseTime(contact.take("time_off").toString());
+    const QString timeOnString = contact.take("time_on").toString();
+    const QString timeOffString = contact.take("time_off").toString();
+    QTime time_on = parseTime(timeOnString);
+    QTime time_off = parseTime(timeOffString);
 
-    if ( time_on.isValid() && time_off.isNull() )
+    if ( time_on.isValid() && timeOffString.trimmed().isEmpty() )
     {
         time_off = time_on;
     }
 
-    if ( time_off.isValid() && time_on.isNull() )
+    if ( time_off.isValid() && !time_on.isValid() )
     {
         time_on = time_off;
     }
 
-    QDateTime start_time(date_on, time_on, QTimeZone::utc());
-    QDateTime end_time(date_off, time_off, QTimeZone::utc());
+    // QDateTime replaces a null QTime with midnight; preserve invalid timestamps.
+    const QDateTime start_time = time_on.isValid() ? QDateTime(date_on, time_on, QTimeZone::utc()) : QDateTime();
+    const QDateTime end_time = time_off.isValid() ? QDateTime(date_off, time_off, QTimeZone::utc()) : QDateTime();
 
     if ( end_time < start_time )
     {
@@ -867,12 +867,12 @@ QDate AdiFormat::parseDate(const QString &date)
 
     qCDebug(function_parameters)<<date;
 
-    if (date.length() == 8) {
-        return QDate::fromString(date, "yyyyMMdd");
-    }
-    else {
+    const QString normalizedDate = date.trimmed();
+
+    if ( normalizedDate.length() != 8 )
         return QDate();
-    }
+
+    return QDate::fromString(normalizedDate, "yyyyMMdd");
 }
 
 QTime AdiFormat::parseTime(const QString &time)
@@ -881,12 +881,15 @@ QTime AdiFormat::parseTime(const QString &time)
 
     qCDebug(function_parameters)<<time;
 
-    switch (time.length()) {
+    const QString normalizedTime = time.trimmed();
+
+    switch ( normalizedTime.length() )
+    {
     case 4:
-        return QTime::fromString(time, "hhmm");
+        return QTime::fromString(normalizedTime, "hhmm");
 
     case 6:
-        return QTime::fromString(time, "hhmmss");
+        return QTime::fromString(normalizedTime, "hhmmss");
 
     default:
         return QTime();
@@ -894,14 +897,17 @@ QTime AdiFormat::parseTime(const QString &time)
 }
 
 
-QString AdiFormat::parseQslRcvd(const QString &value) {
+QString AdiFormat::parseQslRcvd(const QString &value)
+{
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters)<<value;
 
-    if (!value.isEmpty())
+    const QString normalizedValue = value.trimmed().toUpper();
+
+    if ( !normalizedValue.isEmpty() )
     {
-        switch (value.toUpper().at(0).toLatin1())
+        switch ( normalizedValue.at(0).toLatin1() )
         {
         case 'Y': return "Y";
         case 'N': return "N";
@@ -914,14 +920,17 @@ QString AdiFormat::parseQslRcvd(const QString &value) {
     return "N";
 }
 
-QString AdiFormat::parseQslSent(const QString &value) {
+QString AdiFormat::parseQslSent(const QString &value)
+{
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters)<<value;
 
-    if (!value.isEmpty())
+    const QString normalizedValue = value.trimmed().toUpper();
+
+    if ( !normalizedValue.isEmpty() )
     {
-        switch (value.toUpper().at(0).toLatin1())
+        switch ( normalizedValue.at(0).toLatin1() )
         {
         case 'Y': return "Y";
         case 'N': return "N";
@@ -961,9 +970,11 @@ QString AdiFormat::parseUploadStatus(const QString &value)
 
     qCDebug(function_parameters)<<value;
 
-    if (!value.isEmpty())
+    const QString normalizedValue = value.trimmed().toUpper();
+
+    if ( !normalizedValue.isEmpty() )
     {
-        switch (value.toUpper().at(0).toLatin1())
+        switch ( normalizedValue.at(0).toLatin1() )
         {
         case 'Y': return "Y";
         case 'N': return "N";
@@ -978,10 +989,12 @@ QString AdiFormat::parseDownloadStatus(const QString &value)
 {
     FCT_IDENTIFICATION;
 
-    if ( value.isEmpty() )
+    const QString normalizedValue = value.trimmed().toUpper();
+
+    if ( normalizedValue.isEmpty() )
         return QString();
 
-    char firstChar = value.toUpper().at(0).toLatin1();
+    char firstChar = normalizedValue.at(0).toLatin1();
 
     return ( firstChar == 'Y' || firstChar == 'N' || firstChar == 'I' ) ? QString(firstChar)
                                                                         : QString();
@@ -992,7 +1005,7 @@ QString AdiFormat::parseMorseKeyType(const QString &value)
     FCT_IDENTIFICATION;
 
     static QList<QString> allowedValues({"SK", "SS", "BUG", "FAB", "SP", "DP", "CPU"});
-    const QString &inValue = value.toUpper();
+    const QString inValue = value.trimmed().toUpper();
 
     return (allowedValues.contains(inValue)) ? inValue : QString();
 }
@@ -1001,9 +1014,11 @@ QString AdiFormat::parseEqslAg(const QString &value)
 {
     FCT_IDENTIFICATION;
 
-    if ( value.isEmpty() ) return QString();
+    const QString normalizedValue = value.trimmed().toUpper();
 
-    char firstChar = value.toUpper().at(0).toLatin1();
+    if ( normalizedValue.isEmpty() ) return QString();
+
+    char firstChar = normalizedValue.at(0).toLatin1();
 
     return ( firstChar == 'Y' || firstChar == 'N' || firstChar == 'U' ) ? QString(firstChar)
                                                                         : QString();
