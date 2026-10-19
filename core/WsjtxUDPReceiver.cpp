@@ -369,7 +369,7 @@ void WsjtxUDPReceiver::readPendingDatagrams()
             stream >> my_call >> my_grid >> exch_sent >> exch_rcvd >> prop_mode;
 
             log.id = QString(id);
-            log.dx_call = QString(dx_call).toUpper();
+            log.dx_call = QString(dx_call).trimmed().toUpper();
             log.dx_grid = QString(dx_grid).toUpper();
             log.mode = QString(mode);
             log.rprt_sent = QString(rprt_sent);
