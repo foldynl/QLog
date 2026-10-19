@@ -84,6 +84,8 @@ private slots:
     void writeSqlRecordExportsRawFieldsFiltersInvalidNames();
     void exportContactNormalizesGridAndTerminatesRecord();
     void importNextMapsAdiFieldsAndStoresUnknownFields();
+    void importNextNormalizesCallsign_data();
+    void importNextNormalizesCallsign();
     void importNextNormalizesConstrainedEnumFields();
     void importNextStoresZeroLengthFields();
     void importNextAcceptsLeadingZeroLengthSpecifier();
@@ -484,6 +486,38 @@ void AdiFormatTest::importNextMapsAdiFieldsAndStoresUnknownFields()
     const QJsonObject fields = QJsonDocument::fromJson(record.value(QStringLiteral("fields")).toByteArray()).object();
     QCOMPARE(fields.value(QStringLiteral("app_qlog_test")).toString(), QStringLiteral("abc"));
     QCOMPARE(fields.value(QStringLiteral("unknown_field")).toString(), QStringLiteral("xyz"));
+}
+
+void AdiFormatTest::importNextNormalizesCallsign_data()
+{
+    QTest::addColumn<QByteArray>("call");
+    QTest::addColumn<QString>("expectedCallsign");
+
+    QTest::newRow("lowercase") << QByteArray("ub8a") << QStringLiteral("UB8A");
+    QTest::newRow("trailing-space") << QByteArray("UB8A ") << QStringLiteral("UB8A");
+    QTest::newRow("leading-space") << QByteArray(" UB8A") << QStringLiteral("UB8A");
+    QTest::newRow("tabs-and-line-breaks") << QByteArray("\tub8a\r\n") << QStringLiteral("UB8A");
+    QTest::newRow("portable") << QByteArray(" f/ok1aa/p ") << QStringLiteral("F/OK1AA/P");
+    QTest::newRow("whitespace-only") << QByteArray(" \t\r\n") << QString();
+    QTest::newRow("empty") << QByteArray("") << QString();
+}
+
+void AdiFormatTest::importNextNormalizesCallsign()
+{
+    QFETCH(QByteArray, call);
+    QFETCH(QString, expectedCallsign);
+
+    QByteArray input = tag("CALL", call) + "<EOR>";
+    QBuffer buffer(&input);
+    QVERIFY(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream stream(&buffer);
+    TestAdiFormat format(stream);
+
+    QSqlRecord record;
+    appendField(record, QStringLiteral("callsign"), QString());
+
+    QVERIFY(format.importNext(record));
+    QCOMPARE(record.value(QStringLiteral("callsign")).toString(), expectedCallsign);
 }
 
 void AdiFormatTest::importNextNormalizesConstrainedEnumFields()

@@ -357,7 +357,7 @@ void AdiFormat::contactFields2SQLRecord(QMap<QString, QVariant> &contact, QSqlRe
     static const QStringList qslViaValues({"B", "D", "E", "M"});
     static const QStringList qsoCompleteValues({"Y", "N", "NIL", "?"});
 
-    record.setValue("callsign", contact.take("call").toString().toUpper());
+    record.setValue("callsign", contact.take("call").toString().trimmed().toUpper());
     record.setValue("rst_rcvd", contact.take("rst_rcvd"));
     record.setValue("rst_sent", contact.take("rst_sent"));
     record.setValue("gridsquare", contact.take("gridsquare").toString().toUpper());

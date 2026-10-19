@@ -228,7 +228,7 @@ void AdxFormatTest::exportContactNormalizesGridAndTerminatesRecord()
 void AdxFormatTest::importNextMapsAdxFieldsAndStoresUnknownFields()
 {
     QByteArray input = xmlRecord(
-        "<CALL>ok1aa</CALL>"
+        "<CALL> ok1aa </CALL>"
         "<BAND>20M</BAND>"
         "<CONT>eu</CONT>"
         "<GRIDSQUARE>jo70aa12bb</GRIDSQUARE>"
