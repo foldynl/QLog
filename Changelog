@@ -32,6 +32,7 @@ TBC - 0.54.0
 - Fixed Cabrillo missing LOCATION Header
 - Fixed Cabrillo ending minute filter
 - Fixed Disabled foreign keys during migration process
+- Fixed Normalization ADIF fields before matching and import (issue #1208)
 - Hamlib - Improved Split Disable
 - Hamlib - Adjusted the checkChanges sequence
 - Pack and Unpack DB and Setting Cleanup and hardening
