@@ -1,3 +1,45 @@
+qlog (0.54.0-1) UNRELEASED; urgency=low
+  * [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
+  * [NEW] - Awards - Added WAJA, Polish PGA
+  * [NEW] - Awards - Remember dialog filter selection
+  * [NEW] - Settings - Rig - Added Winkeyer multi-output support (issue #1034)
+  * [NEW] - Settings - Backup - Added new option for alternative folder (issue #678)
+  * [NEW] - Alerts - Added OS Native Notifications
+  * [NEW] - ADIF 3.1.8 - Added new mode JTTY
+  * [NEW] - ADIF 3.1.8 - Added new Contest IDs
+  * [NEW] - WSJTX - Added support for multiple WSJT-X instances (issue #1184)
+  * [NEW] - DXC - Added Command History and Help (issue #1168)
+  * [NEW] - DXC - Added Editable DX Comment Template (issue #1168)
+  * [NEW] - MCP Bridge - Added read-only bridge between QLog-MCP and QLog
+  * [NEW] - MCP Bridge - Added Rig, Rotator, Antenna, Station and Activity information
+  * [CHANGED] - Rig Widget - The mouse wheel adjusts the frequency digit under the pointer
+  * [CHANGED] - Rig Widget - Changed tunning step from 1kHz to 10Hz
+  * [CHANGED] - New Contact - Changed tunning step from 1kHz to 10Hz
+  * [CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting
+  * [CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"
+  * [CHANGED] - DXC - Send Last QSO dynamically switches to Spot QSO
+  * [CHANGED] - Autobackup - Backup is performed in the background using a copy of DB.
+  * [CHANGED] - List of Values - Prepare updates in the background and apply them at startup (issue #949)
+  * Fixed QSO Filter does not accept filtering by Country in selected language (issue #731)
+  * Fixed Limit Grid input field to 8 characters (issue #1028)
+  * Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)
+  * Fixed link to Awards Japanese Cities
+  * Fixed AppImage not possible to run on older distros
+  * Fixed missing ADIF Modes - ARDOP, JT44, OPERA, PAC
+  * Fixed Removed incorrect JTMSK mode entry (issue #1190)
+  * Fixed TCI rig profile saved without Host Name gets stuck (issue #1197)
+  * Fixed Cabrillo VHF frequency and band-only QSO export and filtering
+  * Fixed Cabrillo missing LOCATION Header
+  * Fixed Cabrillo ending minute filter
+  * Fixed Disabled foreign keys during migration process
+  * Fixed Normalization ADIF fields before matching and import (issue #1208)
+  * Fixed Rig control frequency disappear (issue #1204 - QT issue workaround)
+  * Hamlib - Improved Split Disable
+  * Hamlib - Adjusted the checkChanges sequence
+  * Pack and Unpack DB and Setting Cleanup and hardening
+
+ -- foldynl <foldyna@gmail.com>  Tue, 20 Oct 2026 08:41:36 +0200
+
 qlog (0.53.0-1) UNRELEASED; urgency=low
   * [NEW] - Online Map - Added Maps localization (issue #873)
   * [NEW] - QSO Filter - Added Clone Profile button (PR #1151 issue #1144 @aa5sh)

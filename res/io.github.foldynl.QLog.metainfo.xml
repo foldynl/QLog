@@ -51,6 +51,50 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.54.0" date="2026-10-20">
+      <description>
+        <ul>
+          <li>[NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)</li>
+          <li>[NEW] - Awards - Added WAJA, Polish PGA</li>
+          <li>[NEW] - Awards - Remember dialog filter selection</li>
+          <li>[NEW] - Settings - Rig - Added Winkeyer multi-output support (issue #1034)</li>
+          <li>[NEW] - Settings - Backup - Added new option for alternative folder (issue #678)</li>
+          <li>[NEW] - Alerts - Added OS Native Notifications</li>
+          <li>[NEW] - ADIF 3.1.8 - Added new mode JTTY</li>
+          <li>[NEW] - ADIF 3.1.8 - Added new Contest IDs</li>
+          <li>[NEW] - WSJTX - Added support for multiple WSJT-X instances (issue #1184)</li>
+          <li>[NEW] - DXC - Added Command History and Help (issue #1168)</li>
+          <li>[NEW] - DXC - Added Editable DX Comment Template (issue #1168)</li>
+          <li>[NEW] - MCP Bridge - Added read-only bridge between QLog-MCP and QLog</li>
+          <li>[NEW] - MCP Bridge - Added Rig, Rotator, Antenna, Station and Activity information</li>
+          <li>[CHANGED] - Rig Widget - The mouse wheel adjusts the frequency digit under the pointer</li>
+          <li>[CHANGED] - Rig Widget - Changed tunning step from 1kHz to 10Hz</li>
+          <li>[CHANGED] - New Contact - Changed tunning step from 1kHz to 10Hz</li>
+          <li>[CHANGED] - Alerts - Alerts Rule: Reworked DXCC Status setting</li>
+          <li>[CHANGED] - WSJTX - Replaced "Last Activity" with "Activity Bars"</li>
+          <li>[CHANGED] - DXC - Send Last QSO dynamically switches to Spot QSO</li>
+          <li>[CHANGED] - Autobackup - Backup is performed in the background using a copy of DB.</li>
+          <li>[CHANGED] - List of Values - Prepare updates in the background and apply them at startup (issue #949)</li>
+          <li>Fixed QSO Filter does not accept filtering by Country in selected language (issue #731)</li>
+          <li>Fixed Limit Grid input field to 8 characters (issue #1028)</li>
+          <li>Fixed CI DEB artifact path assumes the repository is named QLog (issue #1182)</li>
+          <li>Fixed link to Awards Japanese Cities</li>
+          <li>Fixed AppImage not possible to run on older distros</li>
+          <li>Fixed missing ADIF Modes - ARDOP, JT44, OPERA, PAC</li>
+          <li>Fixed Removed incorrect JTMSK mode entry (issue #1190)</li>
+          <li>Fixed TCI rig profile saved without Host Name gets stuck (issue #1197)</li>
+          <li>Fixed Cabrillo VHF frequency and band-only QSO export and filtering</li>
+          <li>Fixed Cabrillo missing LOCATION Header</li>
+          <li>Fixed Cabrillo ending minute filter</li>
+          <li>Fixed Disabled foreign keys during migration process</li>
+          <li>Fixed Normalization ADIF fields before matching and import (issue #1208)</li>
+          <li>Fixed Rig control frequency disappear (issue #1204 - QT issue workaround)</li>
+          <li>Hamlib - Improved Split Disable</li>
+          <li>Hamlib - Adjusted the checkChanges sequence</li>
+          <li>Pack and Unpack DB and Setting Cleanup and hardening</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.53.0" date="2026-09-18">
       <description>
         <ul>
