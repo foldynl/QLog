@@ -78,7 +78,7 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
                                          "contacts_autovalue.wavelog_qso_upload_date",
                                          ui->wavelogCheckbox,
                                          ui->wavelogNumberLabel,
-                                        !CloudlogBase::getLogbookAPIKey().isEmpty()));
+                                         CloudlogBase::isLogbookAPIKeyConfigured()));
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Upload"));
 
@@ -117,8 +117,37 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
     connect(ui->lotwLocationCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &UploadQSODialog::updateLotwLocationWarning);
 
+    CloudlogUploader *wavelogUploader = qobject_cast<CloudlogUploader*>(onlineServices.value(WAVELOGID).getUploader());
+
+    if ( wavelogUploader )
+    {
+        connect(wavelogUploader, &CloudlogUploader::stationIDsUpdated, this, [wavelogUploader, this]()
+        {
+            availableWavelogStationIDs = wavelogUploader->getAvailableStationIDs();
+
+            // a callsign with its own account and no remembered Station ID - preselect the active station
+            if ( wavelogStationIDFromAccount && !availableWavelogStationIDs.isEmpty() )
+            {
+                uint stationID = availableWavelogStationIDs.firstKey();
+
+                for ( const CloudlogUploader::StationProfile &profile : static_cast<const QMap<uint, CloudlogUploader::StationProfile>>(availableWavelogStationIDs) )
+                {
+                    if ( profile.station_active )
+                    {
+                        stationID = profile.station_id;
+                        break;
+                    }
+                }
+
+                wavelogStationIDFromAccount = false;
+                ui->wavelogStationIDSpin->setValue(stationID);
+            }
+
+            updateWavelogStationLabel();
+        });
+    }
+
     loadDialogState();
-    getWavelogStationID();
     ui->myCallsignCombo->blockSignals(false);
     ui->myGridCombo->blockSignals(false);
     executeQueryEnabled = true;
@@ -237,7 +266,7 @@ void UploadQSODialog::saveDialogState()
     LogParam::setUploadeqslQSLMessage(ui->eqslQSLMessage->isChecked());
     LogParam::setUploadeqslQTHProfile(ui->eqslQTHProfileEdit->text());
     LogParam::setUploadQSOFilterType(ui->myCallsignCheckbox->isChecked() ? 0 : 1);
-    LogParam::setCloudlogStationID(ui->wavelogStationIDSpin->value());
+    saveWavelogStationID(getUploadCallsign());
     LogParam::setUploadLoTWLocation(ui->lotwLocationCombo->currentData().toString());
 }
 
@@ -457,22 +486,75 @@ void UploadQSODialog::updateQSONumbers()
         it->updateQSONumberLabel();
 }
 
-void UploadQSODialog::getWavelogStationID()
+QString UploadQSODialog::getUploadCallsign() const
 {
     FCT_IDENTIFICATION;
 
+    if ( ui->myCallsignCheckbox->isChecked() )
+        return ui->myCallsignCombo->currentText().toUpper().trimmed();
+
+    // Station Profile mode
+    return StationProfilesManager::instance()->getProfile(ui->myStationProfileCombo->currentText()).callsign.toUpper().trimmed();
+}
+
+void UploadQSODialog::updateWavelogStationIDs()
+{
+    FCT_IDENTIFICATION;
+
+    // Wavelog Station IDs belong to the account of the API key and the key can be
+    // callsign-specific - reload them and the remembered Station ID when the callsign changes
+    const QString callsign = getUploadCallsign();
+
+    if ( !wavelogStationIDsCallsign.isNull() && callsign == wavelogStationIDsCallsign )
+        return;
+
     CloudlogUploader *ptr = qobject_cast<CloudlogUploader*>(onlineServices.value(WAVELOGID).getUploader());
 
-    if ( ptr )
-    {
-        connect(ptr, &CloudlogUploader::stationIDsUpdated, this, [ptr, this]()
-        {
-            availableWavelogStationIDs = ptr->getAvailableStationIDs();
-            updateWavelogStationLabel();
-        });
+    if ( !ptr )
+        return;
 
-        ptr->sendStationInfoReq();
+    // remember the Station ID chosen for the previously selected callsign
+    if ( !wavelogStationIDsCallsign.isNull() )
+        saveWavelogStationID(wavelogStationIDsCallsign);
+
+    wavelogStationIDsCallsign = callsign;
+
+    if ( !CloudlogBase::resolveAPIKeyCallsign(callsign).isEmpty() )
+    {
+        // own Wavelog account - the global Station ID belongs to another account
+        const uint stationID = LogParam::getCloudlogStationID(callsign, 0);
+        wavelogStationIDFromAccount = ( stationID == 0 );
+        if ( !wavelogStationIDFromAccount )
+            ui->wavelogStationIDSpin->setValue(stationID);
     }
+    else
+    {
+        wavelogStationIDFromAccount = false;
+        ui->wavelogStationIDSpin->setValue(LogParam::getCloudlogStationID(callsign));
+    }
+
+    availableWavelogStationIDs.clear();
+    updateWavelogStationLabel();
+    ptr->sendStationInfoReq(callsign);
+}
+
+void UploadQSODialog::saveWavelogStationID(const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    // nothing was chosen yet for a callsign with its own account
+    if ( wavelogStationIDFromAccount )
+        return;
+
+    const uint stationID = ui->wavelogStationIDSpin->value();
+
+    LogParam::setCloudlogStationID(callsign, stationID);
+
+    // the global value is the fallback for callsigns that use the default API key
+    if ( CloudlogBase::resolveAPIKeyCallsign(callsign).isEmpty() )
+        LogParam::setCloudlogStationID(stationID);
 }
 
 void UploadQSODialog::executeQuery()
@@ -484,6 +566,8 @@ void UploadQSODialog::executeQuery()
         qCDebug(runtime) << "query disabled";
         return;
     }
+
+    updateWavelogStationIDs();
 
     allSelectedQSOs.clear();
     detailQSOsModel->clear();

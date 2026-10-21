@@ -25,6 +25,18 @@ public:
     static QString getLogbookAPIKey();
     static void saveLogbookAPIKey(const QString& newKey);
 
+    // Callsign-specific API keys (the same concept as QRZ.com). The key above is the default
+    // one, used for callsigns without a key of their own.
+    static QString getCallsignLogbookAPIKey(const QString &callsign);
+    static void saveCallsignLogbookAPIKey(const QString &newKey, const QString &callsign);
+    static QStringList getLogbookAPIAddlCallsigns();
+    static void setLogbookAPIAddlCallsigns(const QStringList &list);
+    // the callsign of the table whose key is used for the callsign (the callsign itself or its
+    // base callsign), empty for the default key
+    static QString resolveAPIKeyCallsign(const QString &callsign);
+    static QString resolveLogbookAPIKey(const QString &callsign);
+    static bool isLogbookAPIKeyConfigured();
+
     static QString getAPIEndpoint();
     static void setAPIEndpoint(const QString &endpoint);
 };
@@ -49,10 +61,10 @@ public:
     explicit CloudlogUploader(QObject *parent = nullptr);
     virtual ~CloudlogUploader();
     static QVariantMap generateUploadConfigMap(uint stationID);
-    void uploadAdif(const QByteArray &data, uint stationID);
+    void uploadAdif(const QByteArray &data, uint stationID, const QString &apiKey);
     virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
     const QMap<uint, StationProfile>& getAvailableStationIDs() const;
-    void sendStationInfoReq();
+    void sendStationInfoReq(const QString &callsign = QString());
 
 public slots:
     virtual void abortRequest() override;
@@ -68,6 +80,7 @@ protected:
 private:
 
     QMap<uint, StationProfile> availableStationIDs;
+    QString stationInfoCallsign;
     QNetworkReply *currentReply;
     QList<QSqlRecord> queuedContacts4Upload;
     bool cancelUpload;

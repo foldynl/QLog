@@ -8,6 +8,7 @@ SUBDIRS += CallsignTest \
            AppGuardTest \
            CredentialStoreTest \
            CredentialStoreImportTest \
+           LogParamCloudlogTest \
            DataTest \
            DatabaseBackupTest \
            DatabaseImportTest \

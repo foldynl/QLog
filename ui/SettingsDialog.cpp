@@ -2950,6 +2950,29 @@ void SettingsDialog::qrzDelCallsignAPIKey()
     ui->qrzCallsignApiKeyTableView->model()->removeRow(index.row());
 }
 
+void SettingsDialog::wavelogAddCallsignAPIKey()
+{
+    FCT_IDENTIFICATION;
+
+    QAbstractItemModel *model = ui->wavelogCallsignApiKeyTableView->model();
+
+    int newRow = model->rowCount();
+    model->insertRow(newRow);
+    QModelIndex index = model->index(newRow, 0);
+    ui->wavelogCallsignApiKeyTableView->setCurrentIndex(index);
+    ui->wavelogCallsignApiKeyTableView->edit(index);
+}
+
+void SettingsDialog::wavelogDelCallsignAPIKey()
+{
+    FCT_IDENTIFICATION;
+
+    QModelIndex index = ui->wavelogCallsignApiKeyTableView->currentIndex();
+    if ( !index.isValid() ) return;
+
+    ui->wavelogCallsignApiKeyTableView->model()->removeRow(index.row());
+}
+
 void SettingsDialog::onDeleteAllPasswords()
 {
     FCT_IDENTIFICATION;
@@ -3077,6 +3100,7 @@ void SettingsDialog::readSettings()
     /***********/
     ui->wavelogAddQSOEndpointEdit->setText(CloudlogBase::getAPIEndpoint());
     ui->wavelogApiKeyEdit->setText(CloudlogBase::getLogbookAPIKey());
+    generateWavelogAPICallsignTable();
 
     /***********************/
     /* Others - DXCC Group */
@@ -3248,6 +3272,7 @@ void SettingsDialog::writeSettings()
     /***********/
     CloudlogBase::setAPIEndpoint(ui->wavelogAddQSOEndpointEdit->text());
     CloudlogBase::saveLogbookAPIKey(ui->wavelogApiKeyEdit->text());
+    saveWavelogAPICallsignTable();
 
     /***********************/
     /* Others - DXCC Group */
@@ -3880,6 +3905,59 @@ void SettingsDialog::saveQRZAPICallsignTable()
     }
     if ( !newAddlCallsignsAPIList.isEmpty() )
         QRZBase::setLogbookAPIAddlCallsigns(newAddlCallsignsAPIList);
+}
+
+void SettingsDialog::generateWavelogAPICallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStandardItemModel* tableModel = new QStandardItemModel(ui->wavelogCallsignApiKeyTableView);
+    tableModel->setHorizontalHeaderLabels({tr("Callsign"), tr("API Key")});
+
+    const QStringList &addlCallsign = CloudlogBase::getLogbookAPIAddlCallsigns();
+
+    for ( const QString &callsign : addlCallsign )
+    {
+        QList<QStandardItem*> rowItems({new QStandardItem(callsign),
+                                        new QStandardItem(CloudlogBase::getCallsignLogbookAPIKey(callsign))});
+        tableModel->appendRow(rowItems);
+    }
+
+    ui->wavelogCallsignApiKeyTableView->setModel(tableModel);
+    ui->wavelogCallsignApiKeyTableView->resizeColumnsToContents();
+    ui->wavelogCallsignApiKeyTableView->setItemDelegateForColumn(0, new UpperCaseUniqueDelegate(this));
+    ui->wavelogCallsignApiKeyTableView->setItemDelegateForColumn(1, new PasswordDelegate(this));
+}
+
+void SettingsDialog::saveWavelogAPICallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList &addlCallsignsAPIList = CloudlogBase::getLogbookAPIAddlCallsigns();
+    for ( const QString &callsign : addlCallsignsAPIList )
+    {
+        qCDebug(runtime) << "Deleting Wavelog Callsign API" << callsign;
+        CloudlogBase::saveCallsignLogbookAPIKey({}, callsign); // an empty key deletes its old value in the secure store
+    }
+
+    // delete original list of callsigns
+    CloudlogBase::setLogbookAPIAddlCallsigns({});
+
+    QAbstractItemModel *model = ui->wavelogCallsignApiKeyTableView->model();
+    QStringList newAddlCallsignsAPIList;
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QString &newCallsign = model->data(model->index(row, 0)).toString().trimmed().toUpper();
+        if ( !newCallsign.isEmpty() )
+        {
+            qCDebug(runtime) << "Saving a new Wavelog callsign API" << newCallsign;
+            const QString &newKey = model->data(model->index(row, 1)).toString();
+            if ( !newKey.isEmpty() ) newAddlCallsignsAPIList.append(newCallsign);
+            CloudlogBase::saveCallsignLogbookAPIKey(newKey, newCallsign);
+        }
+    }
+    if ( !newAddlCallsignsAPIList.isEmpty() )
+        CloudlogBase::setLogbookAPIAddlCallsigns(newAddlCallsignsAPIList);
 }
 
 void SettingsDialog::updateCountyCompleter(int dxcc)
