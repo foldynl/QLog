@@ -4,6 +4,8 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QDomDocument>
+#include <QTimer>
+#include <QSet>
 
 #include "HRDLog.h"
 #include "core/debug.h"
@@ -11,6 +13,7 @@
 #include "rig/macros.h"
 #include "core/LogParam.h"
 #include "data/Data.h"
+#include "data/Callsign.h"
 
 MODULE_IDENTIFICATION("qlog.service.hrdlog.hrdlog");
 
@@ -97,15 +100,107 @@ void HRDLogBase::saveOnAirEnabled(bool state)
     LogParam::setHRDLogOnAir(state);
 }
 
+QStringList HRDLogBase::getAddlCallsigns()
+{
+    FCT_IDENTIFICATION;
+
+    return LogParam::getHRDLogCallsignsList();
+}
+
+void HRDLogBase::setAddlCallsigns(const QStringList &list)
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setHRDLogCallsignsList(list);
+}
+
+QString HRDLogBase::getCallsignUploadCode(const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    return getPassword(HRDLogBase::SECURE_STORAGE_KEY, callsign);
+}
+
+void HRDLogBase::saveCallsignUploadCode(const QString &newCode, const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    // the default account has the same storage - its upload code must stay
+    if ( callsign.compare(getRegisteredCallsign(), Qt::CaseInsensitive) == 0 )
+        return;
+
+    deletePassword(HRDLogBase::SECURE_STORAGE_KEY, callsign);
+
+    if ( !newCode.isEmpty() )
+        savePassword(HRDLogBase::SECURE_STORAGE_KEY, callsign, newCode);
+}
+
+QString HRDLogBase::resolveAccountCallsign(const QString &stationCallsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << stationCallsign;
+
+    const QString normalizedCallsign = stationCallsign.trimmed().toUpper();
+    const QString &defaultCallsign = getRegisteredCallsign();
+
+    // QSOs without the station callsign keep using the default account
+    if ( normalizedCallsign.isEmpty() )
+        return defaultCallsign;
+
+    const QStringList &addlCallsigns = getAddlCallsigns();
+
+    if ( addlCallsigns.contains(normalizedCallsign) )
+        return normalizedCallsign;
+
+    if ( normalizedCallsign.compare(defaultCallsign, Qt::CaseInsensitive) == 0 )
+        return defaultCallsign;
+
+    // portable and prefixed callsigns (SQ8BWA/P, SP/SQ8BWA) use the account of the base
+    // callsign unless they have an account of their own
+    const Callsign callsign(normalizedCallsign);
+
+    if ( !callsign.isValid() )
+        return QString();
+
+    if ( addlCallsigns.contains(callsign.getBase()) )
+        return callsign.getBase();
+
+    const Callsign parsedDefaultCallsign(defaultCallsign);
+
+    if ( parsedDefaultCallsign.isValid() && parsedDefaultCallsign.getBase() == callsign.getBase() )
+        return defaultCallsign;
+
+    // HRDLog takes the station callsign from the account - another account must not be used
+    return QString();
+}
+
+bool HRDLogBase::isConfigured()
+{
+    FCT_IDENTIFICATION;
+
+    return !getRegisteredCallsign().isEmpty() || !getAddlCallsigns().isEmpty();
+}
+
 void HRDLogBase::registerCredentials()
 {
     // both storage keys belong to the same logical service
     CredentialRegistry::instance().add(SECURE_STORAGE_KEY, []()
     {
-        return QList<CredentialDescriptor>
-        {
-            { SECURE_STORAGE_KEY, [](){ return getRegisteredCallsign(); } }
-        };
+        QList<CredentialDescriptor> ret;
+
+        ret.append({ SECURE_STORAGE_KEY, [](){ return getRegisteredCallsign(); } });
+
+        const QStringList &addlCallsigns = getAddlCallsigns();
+
+        for ( QString callsign : addlCallsigns ) // do not use reference - the lambda keeps a copy
+            ret.append({ SECURE_STORAGE_KEY, [callsign]() { return callsign; } });
+
+        return ret;
     });
 }
 
@@ -149,13 +244,16 @@ void HRDLogUploader::abortRequest()
 
 void HRDLogUploader::uploadAdif(const QByteArray &data,
                                 const QVariant &contactID,
+                                const QString &accountCallsign,
                                 bool update)
 {
     FCT_IDENTIFICATION;
 
+    qCDebug(function_parameters) << contactID << accountCallsign << update;
+
     QUrlQuery params;
-    params.addQueryItem("Callsign", getRegisteredCallsign().toUtf8().toPercentEncoding());
-    params.addQueryItem("Code", getUploadCode().toUtf8().toPercentEncoding());
+    params.addQueryItem("Callsign", accountCallsign.toUtf8().toPercentEncoding());
+    params.addQueryItem("Code", getCallsignUploadCode(accountCallsign).toUtf8().toPercentEncoding());
     params.addQueryItem("App", "QLog");
     params.addQueryItem("ADIFData", data.trimmed().toPercentEncoding());
 
@@ -181,6 +279,17 @@ void HRDLogUploader::uploadAdif(const QByteArray &data,
     currentReply->setProperty("messageType", "uploadQSO");
     currentReply->setProperty("ADIFData", data);
     currentReply->setProperty("contactID", contactID);
+    currentReply->setProperty("accountCallsign", accountCallsign);
+}
+
+QString HRDLogUploader::recordStationCallsign(const QSqlRecord &record)
+{
+    FCT_IDENTIFICATION;
+
+    // based on LoTW source code and ADIF spec - priority STATION_CALLSIGN, OPERATOR
+    const QString stationCallsign = record.value("station_callsign").toString();
+
+    return stationCallsign.isEmpty() ? record.value("operator").toString() : stationCallsign;
 }
 
 void HRDLogUploader::uploadContact(const QSqlRecord &record)
@@ -191,6 +300,7 @@ void HRDLogUploader::uploadContact(const QSqlRecord &record)
     cancelUpload = false;
     uploadAdif(data.trimmed(),
                record.value("id"),
+               resolveAccountCallsign(recordStationCallsign(record)),
                (record.value("hrdlog_qso_upload_status").toString() == "M"));
 }
 
@@ -207,6 +317,32 @@ void HRDLogUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariant
         return;
     }
 
+    // HRDLog takes the station callsign from the account - QSOs of a callsign without
+    // an account would be logged as QSOs of the default account callsign
+    QStringList callsignsWithoutAccount;
+    QSet<QString> checkedCallsigns; // the callsign is parsed only once
+
+    for ( const QSqlRecord &qso : qsos )
+    {
+        const QString stationCallsign = recordStationCallsign(qso).trimmed().toUpper();
+
+        if ( checkedCallsigns.contains(stationCallsign) )
+            continue;
+
+        checkedCallsigns.insert(stationCallsign);
+
+        if ( resolveAccountCallsign(stationCallsign).isEmpty() )
+            callsignsWithoutAccount << stationCallsign;
+    }
+
+    if ( !callsignsWithoutAccount.isEmpty() )
+    {
+        const QString error = tr("No HRDLog account is configured for %1").arg(callsignsWithoutAccount.join(", "));
+        // report it asynchronously like any other upload error
+        QTimer::singleShot(0, this, [this, error]() { emit uploadError(error); });
+        return;
+    }
+
     cancelUpload = false;
     queuedContacts4Upload = qsos;
 
@@ -214,16 +350,21 @@ void HRDLogUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariant
     queuedContacts4Upload.removeFirst();
 }
 
-void HRDLogUploader::sendOnAir(double freq, const QString &mode)
+void HRDLogUploader::sendOnAir(double freq, const QString &mode, const QString &stationCallsign)
 {
     FCT_IDENTIFICATION;
 
-    qCDebug(function_parameters) << freq << mode;
+    qCDebug(function_parameters) << freq << mode << stationCallsign;
+
+    // the account of the current station callsign, otherwise the default one as before
+    QString accountCallsign = resolveAccountCallsign(stationCallsign);
+    if ( accountCallsign.isEmpty() )
+        accountCallsign = getRegisteredCallsign();
 
     QUrlQuery params;
 
-    params.addQueryItem("Callsign", getRegisteredCallsign().toUtf8().toPercentEncoding());
-    params.addQueryItem("Code", getUploadCode().toUtf8().toPercentEncoding());
+    params.addQueryItem("Callsign", accountCallsign.toUtf8().toPercentEncoding());
+    params.addQueryItem("Code", getCallsignUploadCode(accountCallsign).toUtf8().toPercentEncoding());
     params.addQueryItem("App", "QLog");
     params.addQueryItem("Frequency", QString::number(MHz2Hz(freq)));
     params.addQueryItem("Mode", mode);
@@ -303,7 +444,8 @@ void HRDLogUploader::processReply(QNetworkReply *reply)
                 {
                     // Try to resend it without UPDATE Flag
                     uploadAdif(reply->property("ADIFData").toByteArray(),
-                               reply->property("contactID"));
+                               reply->property("contactID"),
+                               reply->property("accountCallsign").toString());
                 }
                 else
                 {

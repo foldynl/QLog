@@ -2757,6 +2757,85 @@ void SettingsDialog::hrdlogSettingChanged()
         ui->hrdlogOnAirCheckBox->setChecked(false);
 }
 
+void SettingsDialog::hrdlogAddCallsignCode()
+{
+    FCT_IDENTIFICATION;
+
+    QAbstractItemModel *model = ui->hrdlogCallsignCodeTableView->model();
+
+    int newRow = model->rowCount();
+    model->insertRow(newRow);
+    QModelIndex index = model->index(newRow, 0);
+    ui->hrdlogCallsignCodeTableView->setCurrentIndex(index);
+    ui->hrdlogCallsignCodeTableView->edit(index);
+}
+
+void SettingsDialog::hrdlogDelCallsignCode()
+{
+    FCT_IDENTIFICATION;
+
+    QModelIndex index = ui->hrdlogCallsignCodeTableView->currentIndex();
+    if ( !index.isValid() ) return;
+
+    ui->hrdlogCallsignCodeTableView->model()->removeRow(index.row());
+}
+
+void SettingsDialog::generateHRDLogCallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStandardItemModel* tableModel = new QStandardItemModel(ui->hrdlogCallsignCodeTableView);
+    tableModel->setHorizontalHeaderLabels({tr("Callsign"), tr("Upload Code")});
+
+    const QStringList &addlCallsigns = HRDLogBase::getAddlCallsigns();
+
+    for ( const QString &callsign : addlCallsigns )
+    {
+        QList<QStandardItem*> rowItems({new QStandardItem(callsign),
+                                        new QStandardItem(HRDLogBase::getCallsignUploadCode(callsign))});
+        tableModel->appendRow(rowItems);
+    }
+
+    ui->hrdlogCallsignCodeTableView->setModel(tableModel);
+    ui->hrdlogCallsignCodeTableView->resizeColumnsToContents();
+    ui->hrdlogCallsignCodeTableView->setItemDelegateForColumn(0, new UpperCaseUniqueDelegate(this));
+    ui->hrdlogCallsignCodeTableView->setItemDelegateForColumn(1, new PasswordDelegate(this));
+}
+
+void SettingsDialog::saveHRDLogCallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList &oldCallsigns = HRDLogBase::getAddlCallsigns();
+    for ( const QString &callsign : oldCallsigns )
+    {
+        qCDebug(runtime) << "Deleting HRDLog callsign upload code" << callsign;
+        HRDLogBase::saveCallsignUploadCode({}, callsign); // an empty code deletes its old value in the secure store
+    }
+
+    // delete original list of callsigns
+    HRDLogBase::setAddlCallsigns({});
+
+    const QString defaultCallsign = HRDLogBase::getRegisteredCallsign();
+    QAbstractItemModel *model = ui->hrdlogCallsignCodeTableView->model();
+    QStringList newCallsigns;
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QString &newCallsign = model->data(model->index(row, 0)).toString().trimmed().toUpper();
+
+        // the default account is configured above
+        if ( newCallsign.isEmpty() || newCallsign.compare(defaultCallsign, Qt::CaseInsensitive) == 0 )
+            continue;
+
+        qCDebug(runtime) << "Saving a new HRDLog callsign upload code" << newCallsign;
+        const QString &newCode = model->data(model->index(row, 1)).toString();
+        if ( !newCode.isEmpty() ) newCallsigns.append(newCallsign);
+        HRDLogBase::saveCallsignUploadCode(newCode, newCallsign);
+    }
+    if ( !newCallsigns.isEmpty() )
+        HRDLogBase::setAddlCallsigns(newCallsigns);
+}
+
 void SettingsDialog::clublogSettingChanged()
 {
     FCT_IDENTIFICATION;
@@ -3060,6 +3139,7 @@ void SettingsDialog::readSettings()
     ui->hrdlogCallsignEdit->setText(HRDLogBase::getRegisteredCallsign());
     ui->hrdlogUploadCodeEdit->setText(HRDLogBase::getUploadCode());
     ui->hrdlogOnAirCheckBox->setChecked(HRDLogBase::getOnAirEnabled());
+    generateHRDLogCallsignTable();
 
     /*****************/
     /* Startup ADI */
@@ -3231,6 +3311,7 @@ void SettingsDialog::writeSettings()
     HRDLogBase::saveUploadCode(ui->hrdlogCallsignEdit->text(),
                            ui->hrdlogUploadCodeEdit->text());
     HRDLogBase::saveOnAirEnabled(ui->hrdlogOnAirCheckBox->isChecked());
+    saveHRDLogCallsignTable();
 
     /*****************/
     /* Startup ADI */

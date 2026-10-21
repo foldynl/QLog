@@ -60,7 +60,7 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
                                          "hrdlog_qso_upload_date",
                                          ui->hrdlogCheckbox,
                                          ui->hrdlogNumberLabel,
-                                         !HRDLogBase::getRegisteredCallsign().isEmpty()));
+                                         HRDLogBase::isConfigured()));
 
     onlineServices.insert(QRZCOMID, UploadTask(QRZCOMID,
                                          tr("QRZ.com"),

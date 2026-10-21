@@ -228,6 +228,8 @@ public:
      ********/
     static QString getHRDLogLogbookReqCallsign();
     static void setHRDLogLogbookReqCallsign(const QString& callsign);
+    static QStringList getHRDLogCallsignsList();
+    static void setHRDLogCallsignsList(const QStringList &list);
     static bool getHRDLogOnAir();
     static void setHRDLogOnAir(bool state);
 
