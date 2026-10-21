@@ -242,6 +242,11 @@ public:
      ********/
     static QString getLoTWCallbookUsername();
     static void setLoTWCallbookUsername(const QString& username);
+    static QStringList getLoTWAccountsList();
+    static void setLoTWAccountsList(const QStringList &list);
+    static QStringList getLoTWAccountCallsigns(const QString &username);
+    static void setLoTWAccountCallsigns(const QString &username, const QStringList &callsigns);
+    static void removeLoTWAccountCallsigns();
     static QString getLoTWTQSLPath(const QString &defaultPath);
     static bool setLoTWTQSLPath(const QString& path);
     static bool isLoTWTQSLPathKey(const QString &key);

@@ -3955,6 +3955,93 @@
              </property>
             </widget>
            </item>
+           <item row="6" column="0">
+            <spacer name="verticalSpacer_27">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Maximum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="7" column="0" colspan="2">
+            <widget class="QGroupBox" name="groupBox_20">
+             <property name="title">
+              <string>Additional Accounts</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_24">
+              <item>
+               <widget class="QTableView" name="lotwAccountTableView">
+                <property name="toolTip">
+                 <string>Accounts used for the QSL download. Callsigns of the account separated by commas; leave empty if the account holds only the callsign equal to its username.</string>
+                </property>
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="verticalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerPixel</enum>
+                </property>
+                <property name="horizontalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerPixel</enum>
+                </property>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_384">
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="lotwAccountAddButton">
+                  <property name="text">
+                   <string>Add</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_84">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Maximum</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>60</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="lotwAccountDelButton">
+                  <property name="text">
+                   <string>Delete</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="qrzSyncQSLTab">
@@ -6960,6 +7047,38 @@
    </hints>
   </connection>
   <connection>
+   <sender>lotwAccountAddButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>lotwAddAccount()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>412</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lotwAccountDelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>lotwDelAccount()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>575</x>
+     <y>412</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>cwKeyModeSelect</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>SettingsDialog</receiver>
@@ -7221,6 +7340,8 @@
   <slot>updateDateFormatResult()</slot>
   <slot>qrzAddCallsignAPIKey()</slot>
   <slot>qrzDelCallsignAPIKey()</slot>
+  <slot>lotwAddAccount()</slot>
+  <slot>lotwDelAccount()</slot>
   <slot>cwModeChanged(int)</slot>
   <slot>rigFlowControlChanged(int)</slot>
   <slot>rigShareChanged(int)</slot>

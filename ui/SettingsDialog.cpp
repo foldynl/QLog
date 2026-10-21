@@ -2950,6 +2950,29 @@ void SettingsDialog::qrzDelCallsignAPIKey()
     ui->qrzCallsignApiKeyTableView->model()->removeRow(index.row());
 }
 
+void SettingsDialog::lotwAddAccount()
+{
+    FCT_IDENTIFICATION;
+
+    QAbstractItemModel *model = ui->lotwAccountTableView->model();
+
+    int newRow = model->rowCount();
+    model->insertRow(newRow);
+    QModelIndex index = model->index(newRow, 0);
+    ui->lotwAccountTableView->setCurrentIndex(index);
+    ui->lotwAccountTableView->edit(index);
+}
+
+void SettingsDialog::lotwDelAccount()
+{
+    FCT_IDENTIFICATION;
+
+    QModelIndex index = ui->lotwAccountTableView->currentIndex();
+    if ( !index.isValid() ) return;
+
+    ui->lotwAccountTableView->model()->removeRow(index.row());
+}
+
 void SettingsDialog::onDeleteAllPasswords()
 {
     FCT_IDENTIFICATION;
@@ -3038,6 +3061,7 @@ void SettingsDialog::readSettings()
     /********/
     ui->lotwUsernameEdit->setText(LotwBase::getUsername());
     ui->lotwPasswordEdit->setText(LotwBase::getPasswd());
+    generateLoTWAccountTable();
     ui->tqslPathEdit->setText(LotwBase::getTQSLPath());
     updateTQSLVersionLabel();
 
@@ -3208,6 +3232,7 @@ void SettingsDialog::writeSettings()
 
     LotwBase::saveUsernamePassword(ui->lotwUsernameEdit->text(),
                                ui->lotwPasswordEdit->text());
+    saveLoTWAccountTable();
     LotwBase::saveTQSLPath(ui->tqslPathEdit->text());
 
     /***********/
@@ -3880,6 +3905,78 @@ void SettingsDialog::saveQRZAPICallsignTable()
     }
     if ( !newAddlCallsignsAPIList.isEmpty() )
         QRZBase::setLogbookAPIAddlCallsigns(newAddlCallsignsAPIList);
+}
+
+void SettingsDialog::generateLoTWAccountTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStandardItemModel* tableModel = new QStandardItemModel(ui->lotwAccountTableView);
+    tableModel->setHorizontalHeaderLabels({tr("Username"), tr("Password"), tr("Callsigns")});
+
+    const QStringList &usernames = LotwBase::getAddlAccounts();
+
+    for ( const QString &username : usernames )
+    {
+        QList<QStandardItem*> rowItems({new QStandardItem(username),
+                                        new QStandardItem(LotwBase::getAccountPasswd(username)),
+                                        new QStandardItem(LotwBase::getAccountCallsigns(username).join(", "))});
+        tableModel->appendRow(rowItems);
+    }
+
+    ui->lotwAccountTableView->setModel(tableModel);
+    ui->lotwAccountTableView->resizeColumnsToContents();
+    ui->lotwAccountTableView->setItemDelegateForColumn(1, new PasswordDelegate(this));
+    ui->lotwAccountTableView->setItemDelegateForColumn(2, new UpperCaseDelegate(this));
+}
+
+void SettingsDialog::saveLoTWAccountTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList &oldUsernames = LotwBase::getAddlAccounts();
+    for ( const QString &username : oldUsernames )
+    {
+        qCDebug(runtime) << "Deleting LoTW account" << username;
+        LotwBase::saveAccountPasswd({}, username); // an empty password deletes its old value in the secure store
+    }
+
+    // delete original list of accounts and their callsigns
+    LotwBase::setAddlAccounts({});
+    LogParam::removeLoTWAccountCallsigns();
+
+    const QString defaultUsername = LotwBase::getUsername();
+    QAbstractItemModel *model = ui->lotwAccountTableView->model();
+    QStringList newUsernames;
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QString newUsername = model->data(model->index(row, 0)).toString().trimmed();
+        const QString &newPassword = model->data(model->index(row, 1)).toString();
+
+        // the default account is configured above
+        if ( newUsername.isEmpty()
+             || newPassword.isEmpty()
+             || newUsername.compare(defaultUsername, Qt::CaseInsensitive) == 0
+             || newUsernames.contains(newUsername, Qt::CaseInsensitive) )
+            continue;
+
+        QStringList callsigns;
+        const QStringList &enteredCallsigns = model->data(model->index(row, 2)).toString().split(',');
+        for ( const QString &callsign : enteredCallsigns )
+        {
+            const QString normalizedCallsign = callsign.trimmed().toUpper();
+            if ( !normalizedCallsign.isEmpty() && !callsigns.contains(normalizedCallsign) )
+                callsigns << normalizedCallsign;
+        }
+
+        qCDebug(runtime) << "Saving a new LoTW account" << newUsername << callsigns;
+        newUsernames.append(newUsername);
+        LotwBase::saveAccountPasswd(newPassword, newUsername);
+        if ( !callsigns.isEmpty() )
+            LotwBase::setAccountCallsigns(newUsername, callsigns);
+    }
+    if ( !newUsernames.isEmpty() )
+        LotwBase::setAddlAccounts(newUsernames);
 }
 
 void SettingsDialog::updateCountyCompleter(int dxcc)
