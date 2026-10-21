@@ -20,6 +20,7 @@
 #include "core/CredentialStore.h"
 #include "core/LogParam.h"
 #include "data/Data.h"
+#include "data/Callsign.h"
 
 MODULE_IDENTIFICATION("qlog.service.lotw.lotw");
 
@@ -75,6 +76,101 @@ void LotwBase::saveUsernamePassword(const QString &newUsername, const QString &n
     LogParam::setLoTWCallbookUsername(newUsername);
     savePassword(LotwBase::SECURE_STORAGE_KEY,
                  newUsername, newPassword);
+}
+
+QStringList LotwBase::getAddlAccounts()
+{
+    FCT_IDENTIFICATION;
+
+    return LogParam::getLoTWAccountsList();
+}
+
+void LotwBase::setAddlAccounts(const QStringList &usernames)
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setLoTWAccountsList(usernames);
+}
+
+QStringList LotwBase::getAccountCallsigns(const QString &username)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << username;
+
+    return LogParam::getLoTWAccountCallsigns(username);
+}
+
+void LotwBase::setAccountCallsigns(const QString &username, const QStringList &callsigns)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << username << callsigns;
+
+    LogParam::setLoTWAccountCallsigns(username, callsigns);
+}
+
+QString LotwBase::getAccountPasswd(const QString &username)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << username;
+
+    return getPassword(LotwBase::SECURE_STORAGE_KEY, username);
+}
+
+void LotwBase::saveAccountPasswd(const QString &newPassword, const QString &username)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << username;
+
+    // the default account has the same storage - its password must stay
+    if ( username.compare(getUsername(), Qt::CaseInsensitive) == 0 )
+        return;
+
+    deletePassword(LotwBase::SECURE_STORAGE_KEY, username);
+
+    if ( !newPassword.isEmpty() )
+        savePassword(LotwBase::SECURE_STORAGE_KEY, username, newPassword);
+}
+
+QString LotwBase::resolveUsername(const QString &stationCallsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << stationCallsign;
+
+    const QString normalizedCallsign = stationCallsign.trimmed().toUpper();
+
+    if ( normalizedCallsign.isEmpty() )
+        return getUsername();
+
+    // portable and prefixed callsigns (SQ8BWA/P, SP/SQ8BWA) use the account of the base
+    // callsign unless an account holds them explicitly
+    const Callsign callsign(normalizedCallsign);
+    const QString baseCallsign = callsign.isValid() ? callsign.getBase() : QString();
+    QString baseCallsignUsername;
+
+    const QStringList &usernames = getAddlAccounts();
+
+    for ( const QString &username : usernames )
+    {
+        QStringList accountCallsigns = getAccountCallsigns(username);
+
+        if ( accountCallsigns.isEmpty() )
+            accountCallsigns << username.trimmed().toUpper();
+
+        if ( accountCallsigns.contains(normalizedCallsign) )
+            return username;
+
+        if ( baseCallsignUsername.isEmpty()
+             && !baseCallsign.isEmpty()
+             && accountCallsigns.contains(baseCallsign) )
+            baseCallsignUsername = username;
+    }
+
+    return baseCallsignUsername.isEmpty() ? getUsername() : baseCallsignUsername;
 }
 
 const QString LotwBase::getTQSLPath(const QString &defaultPath)
@@ -199,10 +295,16 @@ void LotwBase::registerCredentials()
     // both storage keys belong to the same logical service
     CredentialRegistry::instance().add(SECURE_STORAGE_KEY, []()
     {
-        return QList<CredentialDescriptor>
-        {
-            { SECURE_STORAGE_KEY, [](){ return getUsername(); } }
-        };
+        QList<CredentialDescriptor> ret;
+
+        ret.append({ SECURE_STORAGE_KEY, [](){ return getUsername(); } });
+
+        const QStringList &usernames = getAddlAccounts();
+
+        for ( QString username : usernames ) // do not use reference - the lambda keeps a copy
+            ret.append({ SECURE_STORAGE_KEY, [username]() { return username; } });
+
+        return ret;
     });
 }
 
@@ -594,7 +696,17 @@ void LotwQSLDownloader::processReply(QNetworkReply *reply)
      * otherwise, it is a long ADIF and it is not necessary to verify login status */
     if ( size < 10000 && data.contains("Username/password incorrect") )
     {
-        fail(tr("Incorrect login or password"));
+        // with more accounts, the message says which one; a wrong password of one account
+        // must not stop the other callsigns
+        const bool moreAccounts = !getAddlAccounts().isEmpty();
+        const QString error = moreAccounts
+                ? tr("Incorrect login or password of the account %1").arg(resolveUsername(currentStationCallsign))
+                : tr("Incorrect login or password");
+
+        if ( continueOnCallsignError && moreAccounts )
+            skip(error);
+        else
+            fail(error);
         return;
     }
 
@@ -731,8 +843,9 @@ void LotwQSLDownloader::get(const QList<QPair<QString, QString>> &params)
 {
     FCT_IDENTIFICATION;
 
-    const QString &username = getUsername();
-    const QString &password = getPasswd();
+    // the account of the requested station callsign
+    const QString username = resolveUsername(currentStationCallsign);
+    const QString password = getAccountPasswd(username);
 
     QUrlQuery query;
     query.setQueryItems(params);
