@@ -210,6 +210,11 @@ public:
     static void setClublogLogbookReqEmail(const QString& email);
     static bool getClublogUploadImmediatelyEnabled();
     static void setClublogUploadImmediatelyEnabled(bool state);
+    static QStringList getClublogAccountsList();
+    static void setClublogAccountsList(const QStringList &list);
+    static QStringList getClublogAccountCallsigns(const QString &email);
+    static void setClublogAccountCallsigns(const QString &email, const QStringList &callsigns);
+    static void removeClublogAccountCallsigns();
 
     /*********
      * eQSL

@@ -2767,6 +2767,101 @@ void SettingsDialog::clublogSettingChanged()
         ui->clublogUploadImmediatelyCheckbox->setChecked(false);
 }
 
+void SettingsDialog::clublogAddAccount()
+{
+    FCT_IDENTIFICATION;
+
+    QAbstractItemModel *model = ui->clublogAccountTableView->model();
+
+    int newRow = model->rowCount();
+    model->insertRow(newRow);
+    QModelIndex index = model->index(newRow, 0);
+    ui->clublogAccountTableView->setCurrentIndex(index);
+    ui->clublogAccountTableView->edit(index);
+}
+
+void SettingsDialog::clublogDelAccount()
+{
+    FCT_IDENTIFICATION;
+
+    QModelIndex index = ui->clublogAccountTableView->currentIndex();
+    if ( !index.isValid() ) return;
+
+    ui->clublogAccountTableView->model()->removeRow(index.row());
+}
+
+void SettingsDialog::generateClublogAccountTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStandardItemModel* tableModel = new QStandardItemModel(ui->clublogAccountTableView);
+    tableModel->setHorizontalHeaderLabels({tr("E-Mail"), tr("Password"), tr("Callsigns")});
+
+    const QStringList &emails = ClubLogBase::getAddlAccounts();
+
+    for ( const QString &email : emails )
+    {
+        QList<QStandardItem*> rowItems({new QStandardItem(email),
+                                        new QStandardItem(ClubLogBase::getAccountPasswd(email)),
+                                        new QStandardItem(ClubLogBase::getAccountCallsigns(email).join(", "))});
+        tableModel->appendRow(rowItems);
+    }
+
+    ui->clublogAccountTableView->setModel(tableModel);
+    ui->clublogAccountTableView->resizeColumnsToContents();
+    ui->clublogAccountTableView->setItemDelegateForColumn(1, new PasswordDelegate(this));
+    ui->clublogAccountTableView->setItemDelegateForColumn(2, new UpperCaseDelegate(this));
+}
+
+void SettingsDialog::saveClublogAccountTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList &oldEmails = ClubLogBase::getAddlAccounts();
+    for ( const QString &email : oldEmails )
+    {
+        qCDebug(runtime) << "Deleting Clublog account" << email;
+        ClubLogBase::saveAccountPasswd({}, email); // an empty password deletes its old value in the secure store
+    }
+
+    // delete original list of accounts and their callsigns
+    ClubLogBase::setAddlAccounts({});
+    LogParam::removeClublogAccountCallsigns();
+
+    const QString defaultEmail = ClubLogBase::getEmail();
+    QAbstractItemModel *model = ui->clublogAccountTableView->model();
+    QStringList newEmails;
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QString newEmail = model->data(model->index(row, 0)).toString().trimmed();
+        const QString &newPassword = model->data(model->index(row, 1)).toString();
+
+        QStringList callsigns;
+        const QStringList &enteredCallsigns = model->data(model->index(row, 2)).toString().split(',');
+        for ( const QString &callsign : enteredCallsigns )
+        {
+            const QString normalizedCallsign = callsign.trimmed().toUpper();
+            if ( !normalizedCallsign.isEmpty() && !callsigns.contains(normalizedCallsign) )
+                callsigns << normalizedCallsign;
+        }
+
+        // the default account is configured above; an account without callsigns is never used
+        if ( newEmail.isEmpty()
+             || newPassword.isEmpty()
+             || callsigns.isEmpty()
+             || newEmail.compare(defaultEmail, Qt::CaseInsensitive) == 0
+             || newEmails.contains(newEmail, Qt::CaseInsensitive) )
+            continue;
+
+        qCDebug(runtime) << "Saving a new Clublog account" << newEmail << callsigns;
+        newEmails.append(newEmail);
+        ClubLogBase::saveAccountPasswd(newPassword, newEmail);
+        ClubLogBase::setAccountCallsigns(newEmail, callsigns);
+    }
+    if ( !newEmails.isEmpty() )
+        ClubLogBase::setAddlAccounts(newEmails);
+}
+
 void SettingsDialog::updateDateFormatResult()
 {
     FCT_IDENTIFICATION;
@@ -3047,6 +3142,7 @@ void SettingsDialog::readSettings()
     ui->clublogEmailEdit->setText(ClubLogBase::getEmail());
     ui->clublogPasswordEdit->setText(ClubLogBase::getPasswd());
     ui->clublogUploadImmediatelyCheckbox->setChecked(ClubLogBase::isUploadImmediatelyEnabled());
+    generateClublogAccountTable();
 
     /********/
     /* eQSL */
@@ -3217,6 +3313,7 @@ void SettingsDialog::writeSettings()
                                   ui->clublogPasswordEdit->text());
 
     ClubLogBase::saveUploadImmediatelyConfig(ui->clublogUploadImmediatelyCheckbox->isChecked());
+    saveClublogAccountTable();
 
     /********/
     /* eQSL */

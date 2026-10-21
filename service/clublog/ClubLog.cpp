@@ -12,6 +12,7 @@
 #include "core/CredentialStore.h"
 #include "core/LogParam.h"
 #include "data/Data.h"
+#include "data/Callsign.h"
 
 MODULE_IDENTIFICATION("qlog.service.clublog.clublog");
 
@@ -88,15 +89,113 @@ void ClubLogBase::saveUploadImmediatelyConfig(bool value)
     LogParam::setClublogUploadImmediatelyEnabled(value);
 }
 
+QStringList ClubLogBase::getAddlAccounts()
+{
+    FCT_IDENTIFICATION;
+
+    return LogParam::getClublogAccountsList();
+}
+
+void ClubLogBase::setAddlAccounts(const QStringList &emails)
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setClublogAccountsList(emails);
+}
+
+QStringList ClubLogBase::getAccountCallsigns(const QString &email)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << email;
+
+    return LogParam::getClublogAccountCallsigns(email);
+}
+
+void ClubLogBase::setAccountCallsigns(const QString &email, const QStringList &callsigns)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << email << callsigns;
+
+    LogParam::setClublogAccountCallsigns(email, callsigns);
+}
+
+QString ClubLogBase::getAccountPasswd(const QString &email)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << email;
+
+    return getPassword(ClubLogBase::SECURE_STORAGE_KEY, email);
+}
+
+void ClubLogBase::saveAccountPasswd(const QString &newPassword, const QString &email)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << email;
+
+    // the default account has the same storage - its password must stay
+    if ( email.compare(getEmail(), Qt::CaseInsensitive) == 0 )
+        return;
+
+    deletePassword(ClubLogBase::SECURE_STORAGE_KEY, email);
+
+    if ( !newPassword.isEmpty() )
+        savePassword(ClubLogBase::SECURE_STORAGE_KEY, email, newPassword);
+}
+
+QString ClubLogBase::resolveEmail(const QString &stationCallsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << stationCallsign;
+
+    const QString normalizedCallsign = stationCallsign.trimmed().toUpper();
+
+    if ( normalizedCallsign.isEmpty() )
+        return getEmail();
+
+    // portable and prefixed callsigns (SQ8BWA/P, SP/SQ8BWA) use the account of the base
+    // callsign unless an account lists them explicitly
+    const Callsign callsign(normalizedCallsign);
+    const QString baseCallsign = callsign.isValid() ? callsign.getBase() : QString();
+    QString baseCallsignEmail;
+
+    const QStringList &emails = getAddlAccounts();
+
+    for ( const QString &email : emails )
+    {
+        const QStringList &accountCallsigns = getAccountCallsigns(email);
+
+        if ( accountCallsigns.contains(normalizedCallsign) )
+            return email;
+
+        if ( baseCallsignEmail.isEmpty()
+             && !baseCallsign.isEmpty()
+             && accountCallsigns.contains(baseCallsign) )
+            baseCallsignEmail = email;
+    }
+
+    return baseCallsignEmail.isEmpty() ? getEmail() : baseCallsignEmail;
+}
+
 void ClubLogBase::registerCredentials()
 {
     // both storage keys belong to the same logical service
     CredentialRegistry::instance().add(SECURE_STORAGE_KEY, []()
     {
-        return QList<CredentialDescriptor>
-        {
-            { SECURE_STORAGE_KEY, [](){ return getEmail(); } }
-        };
+        QList<CredentialDescriptor> ret;
+
+        ret.append({ SECURE_STORAGE_KEY, [](){ return getEmail(); } });
+
+        const QStringList &emails = getAddlAccounts();
+
+        for ( QString email : emails ) // do not use reference - the lambda keeps a copy
+            ret.append({ SECURE_STORAGE_KEY, [email]() { return email; } });
+
+        return ret;
     });
 }
 
@@ -145,8 +244,9 @@ void ClubLogUploader::sendRealtimeRequest(const OnlineUploadCommand command,
         return;
     }
 
-    const QString &email = getEmail();
-    const QString &password = getPasswd();
+    // the account holding the log of the callsign
+    const QString email = resolveEmail(uploadCallsign);
+    const QString password = getAccountPasswd(email);
 
     if ( email.isEmpty() || uploadCallsign.isEmpty() || password.isEmpty() )
         return;
@@ -226,8 +326,9 @@ void ClubLogUploader::uploadAdif(const QByteArray& data,
 
     qCDebug(function_parameters) << data;
 
-    const QString &email = getEmail();
-    const QString &password = getPasswd();
+    // the account holding the log of the callsign
+    const QString email = resolveEmail(uploadCallsign);
+    const QString password = getAccountPasswd(email);
 
     if ( email.isEmpty() || uploadCallsign.isEmpty() || password.isEmpty() )
         return;
