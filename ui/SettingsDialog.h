@@ -140,6 +140,8 @@ public slots:
 
     void qrzAddCallsignAPIKey();
     void qrzDelCallsignAPIKey();
+    void wavelogAddCallsignAPIKey();
+    void wavelogDelCallsignAPIKey();
 
     void onDeleteAllPasswords();
     void onDeleteAllQSOs();
@@ -212,6 +214,8 @@ private:
                                        const std::function<void(const QString &)> &removeProfile);
     void generateQRZAPICallsignTable();
     void saveQRZAPICallsignTable();
+    void generateWavelogAPICallsignTable();
+    void saveWavelogAPICallsignTable();
     void updateCountyCompleter(int dxcc);
     void setupAdifRecoveryTab();
     void loadAdifRecoveryTable();

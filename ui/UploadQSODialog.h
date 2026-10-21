@@ -136,6 +136,8 @@ private:
     QStandardItemModel *detailQSOsModel;
     UploadTask currentTask;
     QMap<uint, CloudlogUploader::StationProfile> availableWavelogStationIDs;
+    QString wavelogStationIDsCallsign;
+    bool wavelogStationIDFromAccount = false;
     QList<TQSLStationLocation> tqslLocations;
     bool executeQueryEnabled;
     void updateLotwLocationWarning();
@@ -145,7 +147,9 @@ private:
     void processNextUploader();
     void uploadFinished();
     void updateQSONumbers();
-    void getWavelogStationID();
+    QString getUploadCallsign() const;
+    void updateWavelogStationIDs();
+    void saveWavelogStationID(const QString &callsign);
 
     const uint WAVELOG_MAX_STATIONID = 99999;
 };
