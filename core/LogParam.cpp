@@ -824,6 +824,39 @@ void LogParam::setClublogUploadImmediatelyEnabled(bool state)
     setParam("services/clublog/logbook/uploadimmediately", state);
 }
 
+QStringList LogParam::getClublogAccountsList()
+{
+    return getParamStringList("services/clublog/logbook/accounts");
+}
+
+void LogParam::setClublogAccountsList(const QStringList &list)
+{
+    setParam("services/clublog/logbook/accounts", list);
+}
+
+static QString clublogAccountCallsignsKey(const QString &email)
+{
+    const QByteArray normalizedEmail = email.trimmed().toLower().toUtf8();
+
+    return QStringLiteral("services/clublog/logbook/accountcallsigns/%1")
+            .arg(QString::fromLatin1(normalizedEmail.toHex()));
+}
+
+QStringList LogParam::getClublogAccountCallsigns(const QString &email)
+{
+    return getParamStringList(clublogAccountCallsignsKey(email));
+}
+
+void LogParam::setClublogAccountCallsigns(const QString &email, const QStringList &callsigns)
+{
+    setParam(clublogAccountCallsignsKey(email), callsigns);
+}
+
+void LogParam::removeClublogAccountCallsigns()
+{
+    removeParamGroup("services/clublog/logbook/accountcallsigns/");
+}
+
 QString LogParam::getEQSLLogbookUsername()
 {
     return getParam("services/eqsl/logbook/username").toString().trimmed();

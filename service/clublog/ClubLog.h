@@ -29,6 +29,16 @@ public:
     static const QString getPasswd();
     static void saveUsernamePassword(const QString &, const QString &);
     static void saveUploadImmediatelyConfig(bool value);
+
+    // Additional accounts - a Club Log account holds the logs of its callsigns. The account
+    // above is the default one, used for callsigns of no additional account.
+    static QStringList getAddlAccounts();
+    static void setAddlAccounts(const QStringList &emails);
+    static QStringList getAccountCallsigns(const QString &email);
+    static void setAccountCallsigns(const QString &email, const QStringList &callsigns);
+    static QString getAccountPasswd(const QString &email);
+    static void saveAccountPasswd(const QString &newPassword, const QString &email);
+    static QString resolveEmail(const QString &stationCallsign);
     static const QString getCTYUrl()  {return QString("https://cdn.clublog.org/cty.php?api=%1").arg(API_KEY);};
 };
 

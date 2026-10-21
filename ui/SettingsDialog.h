@@ -131,6 +131,8 @@ public slots:
     void adjustWSJTXMulticastAddrTextColor();
     void hrdlogSettingChanged();
     void clublogSettingChanged();
+    void clublogAddAccount();
+    void clublogDelAccount();
     void updateDateFormatResult();
     void rigFlowControlChanged(int);
     void showRigctldAdvanced();
@@ -210,6 +212,8 @@ private:
     static void updateOffsetSpinBox(QCheckBox *checkbox, QDoubleSpinBox *spinBox);
     static void deleteSelectedProfiles(QAbstractItemView *view,
                                        const std::function<void(const QString &)> &removeProfile);
+    void generateClublogAccountTable();
+    void saveClublogAccountTable();
     void generateQRZAPICallsignTable();
     void saveQRZAPICallsignTable();
     void updateCountyCompleter(int dxcc);
