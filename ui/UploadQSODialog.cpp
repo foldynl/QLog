@@ -42,7 +42,7 @@ UploadQSODialog::UploadQSODialog(QWidget *parent) :
                                        "eqsl_qslsdate",
                                        ui->eqslCheckbox,
                                        ui->eqslNumberLabel,
-                                       !EQSLBase::getUsername().isEmpty()));
+                                       EQSLBase::isConfigured()));
 
     onlineServices.insert(CLUBLOGID, UploadTask(CLUBLOGID,
                                           tr("Clublog"),

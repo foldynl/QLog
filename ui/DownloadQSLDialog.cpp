@@ -50,6 +50,20 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
     else
         ui->lotwMyCallsignCombo->setCurrentIndex(qMax(profileIndex, 0));
 
+    // eQSL accounts - the default one and callsign-specific ones; the selection is
+    // shown only when there is more than one account. The item data is the username,
+    // an empty one means all accounts (the default).
+    const QStringList &eqslAccounts = EQSLBase::getAccountUsernames();
+    if ( eqslAccounts.size() > 1 )
+        ui->eqslAccountCombo->addItem(tr("All Accounts"), QString());
+    for ( const QString &account : eqslAccounts )
+        ui->eqslAccountCombo->addItem(account, account);
+    ui->eqslAccountLabel->setVisible(eqslAccounts.size() > 1);
+    ui->eqslAccountCombo->setVisible(eqslAccounts.size() > 1);
+
+    const int eqslAccountIndex = ui->eqslAccountCombo->findData(LogParam::getDownloadQSLeQSLLastAccount());
+    ui->eqslAccountCombo->setCurrentIndex(qMax(eqslAccountIndex, 0));
+
     loadDialogState();
 
     connect(ui->lotwMyCallsignCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -60,6 +74,8 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
             this, [this] { loadEqslDate(); });
     connect(ui->eqslQTHProfileEdit, &QLineEdit::textEdited,
             this, [this] { loadEqslDate(); });
+    connect(ui->eqslAccountCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, [this] { loadEqslDate(); });
 
     // Enable options based on the configuration
     if ( LotwBase::getUsername().isEmpty() )
@@ -69,7 +85,7 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
         ui->lotwGroupBox->setToolTip(tr("LoTW is not configured properly.<p> Please, use <b>Settings</b> dialog to configure it.</p>"));
     }
 
-    if ( EQSLBase::getUsername().isEmpty() )
+    if ( !EQSLBase::isConfigured() )
     {
         ui->eqslGroupBox->setChecked(false);
         ui->eqslGroupBox->setEnabled(false);
@@ -145,11 +161,38 @@ void DownloadQSLDialog::loadEqslDate()
 {
     FCT_IDENTIFICATION;
 
-    ui->eqslDateEdit->setDate(
-                LogParam::getDownloadQSLeQSLLastDate(
-                    EQSLBase::getUsername(),
-                    ui->eqslQTHProfileEdit->text(),
-                    ui->eqslDateTypeCombo->currentIndex() == 0));
+    const bool qslSince = ui->eqslDateTypeCombo->currentIndex() == 0;
+    const QString qthProfile = ui->eqslQTHProfileEdit->text();
+    const QStringList usernames = selectedEqslUsernames();
+    QDate lastDate(1900, 1, 1);
+
+    if ( !usernames.isEmpty() )
+    {
+        lastDate = LogParam::getDownloadQSLeQSLLastDate(usernames.first(), qthProfile, qslSince);
+
+        for ( int i = 1; i < usernames.size(); i++ )
+            lastDate = qMin(lastDate,
+                            LogParam::getDownloadQSLeQSLLastDate(usernames.at(i), qthProfile, qslSince));
+    }
+
+    ui->eqslDateEdit->setDate(lastDate);
+}
+
+QStringList DownloadQSLDialog::selectedEqslUsernames() const
+{
+    FCT_IDENTIFICATION;
+
+    const QString username = ui->eqslAccountCombo->currentData().toString();
+
+    if ( !username.isEmpty() )
+        return {username};
+
+    QStringList usernames;
+
+    for ( int i = 1; i < ui->eqslAccountCombo->count(); i++ )
+        usernames.append(ui->eqslAccountCombo->itemData(i).toString());
+
+    return usernames;
 }
 
 void DownloadQSLDialog::saveDialogState()
@@ -172,6 +215,7 @@ void DownloadQSLDialog::saveDialogState()
     LogParam::setDownloadQSLServiceState("eqsl", ui->eqslGroupBox->isChecked());
     LogParam::setDownloadQSLServiceLastQSOQSL("eqsl", ui->eqslDateTypeCombo->currentIndex() == 0);
     LogParam::setDownloadQSLeQSLLastProfile(ui->eqslQTHProfileEdit->text());
+    LogParam::setDownloadQSLeQSLLastAccount(ui->eqslAccountCombo->currentData().toString());
 }
 
 QStringList DownloadQSLDialog::selectedLotwCallsigns() const
@@ -255,26 +299,33 @@ void DownloadQSLDialog::downloadQSLs()
     downloadQueue.clear();
 
     if ( ui->eqslGroupBox->isChecked() )
-        downloadQueue.enqueue([=]()
-        {
-            EQSLQSLDownloader* eqsl = new EQSLQSLDownloader(this);
-            const bool qslSinceActive = ui->eqslDateTypeCombo->currentIndex() == 0;
-            const QString username = EQSLBase::getUsername();
-            const QString qthProfile = ui->eqslQTHProfileEdit->text();
-            const QDate downloadStartedDate = QDateTime::currentDateTimeUtc().date();
-            prepareDownload(eqsl, "eQSL",
-                            [username, qthProfile, qslSinceActive, downloadStartedDate]
+    {
+        // with more accounts, every account is downloaded separately and has its own statistics
+        const QStringList usernames = selectedEqslUsernames();
+        const bool showAccount = ui->eqslAccountCombo->count() > 1;
+
+        for ( const QString &username : usernames )
+            downloadQueue.enqueue([=]()
             {
-                LogParam::setDownloadQSLeQSLLastDate(
-                            username,
-                            qthProfile,
-                            qslSinceActive,
-                            downloadStartedDate);
+                EQSLQSLDownloader* eqsl = new EQSLQSLDownloader(this);
+                const bool qslSinceActive = ui->eqslDateTypeCombo->currentIndex() == 0;
+                const QString qthProfile = ui->eqslQTHProfileEdit->text();
+                const QDate downloadStartedDate = QDateTime::currentDateTimeUtc().date();
+                prepareDownload(eqsl, showAccount ? QString("eQSL (%1)").arg(username) : QString("eQSL"),
+                                [username, qthProfile, qslSinceActive, downloadStartedDate]
+                {
+                    LogParam::setDownloadQSLeQSLLastDate(
+                                username,
+                                qthProfile,
+                                qslSinceActive,
+                                downloadStartedDate);
+                });
+                LogParam::setDownloadQSLeQSLLastProfile(qthProfile);
+                LogParam::setDownloadQSLServiceLastQSOQSL("eqsl", qslSinceActive);
+                eqsl->setAccountUsername(username);
+                eqsl->receiveQSL(ui->eqslDateEdit->date(), !qslSinceActive, qthProfile);
             });
-            LogParam::setDownloadQSLeQSLLastProfile(qthProfile);
-            LogParam::setDownloadQSLServiceLastQSOQSL("eqsl", qslSinceActive);
-            eqsl->receiveQSL(ui->eqslDateEdit->date(), !qslSinceActive, qthProfile);
-        });
+    }
 
     if ( ui->lotwGroupBox->isChecked() )
         downloadQueue.enqueue([=]()

@@ -7,6 +7,10 @@
 #include <QSqlRecord>
 #include <QDir>
 #include <QTemporaryDir>
+#include <QHash>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QTimer>
 
 #include "Eqsl.h"
 #include "core/debug.h"
@@ -14,6 +18,7 @@
 #include "logformat/AdiFormat.h"
 #include "core/LogParam.h"
 #include "data/Data.h"
+#include "data/Callsign.h"
 
 MODULE_IDENTIFICATION("qlog.service.eqsl.eqsl");
 
@@ -72,15 +77,120 @@ void EQSLBase::saveUsernamePassword(const QString &newUsername, const QString &n
                  newUsername, newPassword);
 }
 
+QStringList EQSLBase::getAddlCallsigns()
+{
+    FCT_IDENTIFICATION;
+
+    return LogParam::getEQSLCallsignsList();
+}
+
+void EQSLBase::setAddlCallsigns(const QStringList &list)
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setEQSLCallsignsList(list);
+}
+
+QString EQSLBase::getCallsignPasswd(const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    return getPassword(EQSLBase::SECURE_STORAGE_KEY, callsign);
+}
+
+void EQSLBase::saveCallsignPasswd(const QString &newPassword, const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    // the default account can have the same username - its password must stay
+    if ( callsign.compare(getUsername(), Qt::CaseInsensitive) == 0 )
+        return;
+
+    deletePassword(EQSLBase::SECURE_STORAGE_KEY, callsign);
+
+    if ( !newPassword.isEmpty() )
+        savePassword(EQSLBase::SECURE_STORAGE_KEY, callsign, newPassword);
+}
+
+QString EQSLBase::resolveUsername(const QString &stationCallsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << stationCallsign;
+
+    const QString normalizedCallsign = stationCallsign.trimmed().toUpper();
+
+    if ( normalizedCallsign.isEmpty() )
+        return getUsername();
+
+    const QStringList &addlCallsigns = getAddlCallsigns();
+
+    if ( addlCallsigns.contains(normalizedCallsign) )
+        return normalizedCallsign;
+
+    // portable and prefixed callsigns (SQ8BWA/P, SP/SQ8BWA) use the account of the base
+    // callsign unless they have an account of their own
+    const Callsign callsign(normalizedCallsign);
+
+    if ( callsign.isValid() && addlCallsigns.contains(callsign.getBase()) )
+        return callsign.getBase();
+
+    return getUsername();
+}
+
+QString EQSLBase::getPasswdForUsername(const QString &username)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << username;
+
+    return getPassword(EQSLBase::SECURE_STORAGE_KEY, username);
+}
+
+QStringList EQSLBase::getAccountUsernames()
+{
+    FCT_IDENTIFICATION;
+
+    QStringList ret;
+
+    if ( !getUsername().isEmpty() )
+        ret << getUsername();
+
+    const QStringList &addlCallsigns = getAddlCallsigns();
+
+    for ( const QString &callsign : addlCallsigns )
+        if ( !ret.contains(callsign, Qt::CaseInsensitive) )
+            ret << callsign;
+
+    return ret;
+}
+
+bool EQSLBase::isConfigured()
+{
+    FCT_IDENTIFICATION;
+
+    return !getUsername().isEmpty() || !getAddlCallsigns().isEmpty();
+}
+
 void EQSLBase::registerCredentials()
 {
     // both storage keys belong to the same logical service
     CredentialRegistry::instance().add(SECURE_STORAGE_KEY, []()
     {
-        return QList<CredentialDescriptor>
-        {
-            { SECURE_STORAGE_KEY, [](){ return getUsername(); } }
-        };
+        QList<CredentialDescriptor> ret;
+
+        ret.append({ SECURE_STORAGE_KEY, [](){ return getUsername(); } });
+
+        const QStringList &addlCallsigns = getAddlCallsigns();
+
+        for ( QString callsign : addlCallsigns ) // do not use reference - the lambda keeps a copy
+            ret.append({ SECURE_STORAGE_KEY, [callsign]() { return callsign; } });
+
+        return ret;
     });
 }
 
@@ -104,12 +214,13 @@ EQSLUploader::~EQSLUploader()
     }
 }
 
-void EQSLUploader::uploadAdif(const QByteArray &data)
+void EQSLUploader::uploadAdif(const QByteArray &data, const QString &username)
 {
     FCT_IDENTIFICATION;
 
-    const QString &username = getUsername();
-    const QString &password = getPassword(EQSLUploader::SECURE_STORAGE_KEY, username);
+    qCDebug(function_parameters) << username;
+
+    const QString &password = getPasswdForUsername(username);
 
     /* http://www.eqsl.cc/qslcard/ImportADIF.txt */
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType, this);
@@ -182,12 +293,108 @@ void EQSLUploader::uploadQSOList(const QList<QSqlRecord> &qsos, const QVariantMa
         applTags->insert("app_eqsl_qth_nickname", qthProfile);
     }
 
-    QByteArray data = generateADIF(qsos, applTags);
+    // eQSL takes the station callsign from the account, therefore QSOs are uploaded
+    // separately for every account (callsign-specific accounts, the default account)
+    QStringList usernames;
+    QStringList callsignsWithoutAccount;
+    QHash<QString, QList<QSqlRecord>> qsosPerAccount;
+    QHash<QString, QString> usernamePerCallsign; // the callsign is parsed only once; empty = no account
+
+    for ( const QSqlRecord &qso : qsos )
+    {
+        // based on LoTW source code and ADIF spec - priority STATION_CALLSIGN, OPERATOR
+        QString stationCallsign = qso.value("station_callsign").toString();
+        if ( stationCallsign.isEmpty() )
+            stationCallsign = qso.value("operator").toString();
+
+        auto usernameIt = usernamePerCallsign.constFind(stationCallsign);
+        if ( usernameIt == usernamePerCallsign.constEnd() )
+        {
+            QString username = resolveUsername(stationCallsign);
+
+            if ( username.compare(getUsername(), Qt::CaseInsensitive) == 0
+                 && !isDefaultAccountCallsign(stationCallsign) )
+            {
+                callsignsWithoutAccount << stationCallsign.trimmed().toUpper();
+                username.clear();
+            }
+
+            usernameIt = usernamePerCallsign.insert(stationCallsign, username);
+        }
+        const QString &username = usernameIt.value();
+
+        if ( username.isEmpty() )
+            continue;
+
+        if ( !qsosPerAccount.contains(username) )
+            usernames << username;
+
+        qsosPerAccount[username].append(qso);
+    }
+
+    queuedUploads.clear();
+
+    // eQSL would take these QSOs as QSOs of the default account callsign
+    if ( !callsignsWithoutAccount.isEmpty() )
+    {
+        if ( applTags )
+            delete applTags;
+
+        const QString error = tr("No eQSL account is configured for %1").arg(callsignsWithoutAccount.join(", "));
+        // report it asynchronously like any other upload error
+        QTimer::singleShot(0, this, [this, error]() { emit uploadError(error); });
+        return;
+    }
+
+    for ( const QString &username : static_cast<const QStringList&>(usernames) )
+        queuedUploads.append({username, generateADIF(qsosPerAccount.value(username), applTags)});
 
     if ( applTags )
         delete applTags;
 
-    uploadAdif(data);
+    uploadNextAccount();
+}
+
+bool EQSLUploader::isDefaultAccountCallsign(const QString &stationCallsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << stationCallsign;
+
+    const QString &defaultUsername = getUsername();
+
+    if ( defaultUsername.isEmpty() )
+        return false;
+
+    // QSOs without the station callsign keep using the default account
+    if ( stationCallsign.trimmed().isEmpty()
+         || stationCallsign.trimmed().compare(defaultUsername, Qt::CaseInsensitive) == 0 )
+        return true;
+
+    // portable and prefixed variants of the default account callsign
+    const Callsign callsign(stationCallsign.trimmed());
+    const Callsign defaultCallsign(defaultUsername);
+
+    return callsign.isValid()
+           && defaultCallsign.isValid()
+           && callsign.getBase() == defaultCallsign.getBase();
+}
+
+void EQSLUploader::uploadNextAccount()
+{
+    FCT_IDENTIFICATION;
+
+    if ( queuedUploads.isEmpty() )
+    {
+        emit uploadFinished();
+        return;
+    }
+
+    const QPair<QString, QByteArray> next = queuedUploads.takeFirst();
+
+    qCDebug(runtime) << "Uploading to eQSL account" << next.first;
+
+    uploadAdif(next.second, next.first);
 }
 
 void EQSLUploader::processReply(QNetworkReply* reply)
@@ -206,6 +413,8 @@ void EQSLUploader::processReply(QNetworkReply* reply)
         qCDebug(runtime) << "eQSL error URL " << reply->request().url().toString();
         qCDebug(runtime) << "eQSL error" << reply->errorString();
         qCDebug(runtime) << "HTTP Status Code" << replyStatusCode;
+
+        queuedUploads.clear();
 
         if ( reply->error() != QNetworkReply::OperationCanceledError )
         {
@@ -237,26 +446,26 @@ void EQSLUploader::processReply(QNetworkReply* reply)
         QRegularExpressionMatch matchCaution = rCaution.match(replyString);
         QString msg;
 
-        if ( matchOK.hasMatch() )
+        if ( matchOK.hasMatch() || matchWarning.hasMatch() )
         {
-            emit uploadFinished();
+            // continue with the next account; uploadFinished is emitted after the last one
+            uploadNextAccount();
         }
         else if (matchError.hasMatch() )
         {
+            queuedUploads.clear();
             msg = matchError.captured(1);
             emit uploadError(msg);
         }
-        else if (matchWarning.hasMatch() )
-        {
-            emit uploadFinished();
-        }
         else if (matchCaution.hasMatch() )
         {
+            queuedUploads.clear();
             msg = matchCaution.captured(1);
             emit uploadError(msg);
         }
         else
         {
+            queuedUploads.clear();
             qCInfo(runtime) << "Unknown Reply ";
             qCInfo(runtime) << replyString;
             emit uploadError(tr("Unknown Reply from eQSL"));
@@ -270,6 +479,8 @@ void EQSLUploader::abortRequest()
 {
     FCT_IDENTIFICATION;
 
+    queuedUploads.clear();
+
     if ( currentReply )
     {
         currentReply->abort();
@@ -281,9 +492,19 @@ EQSLQSLDownloader::EQSLQSLDownloader(QObject *parent) :
     GenericQSLDownloader(parent),
     EQSLBase(),
     currentReply(nullptr),
-    qslStorage(new QSLStorage(this))
+    qslStorage(new QSLStorage(this)),
+    accountUsername(getUsername())
 {
     FCT_IDENTIFICATION;
+}
+
+void EQSLQSLDownloader::setAccountUsername(const QString &username)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << username;
+
+    accountUsername = username;
 }
 
 EQSLQSLDownloader::~EQSLQSLDownloader()
@@ -344,8 +565,13 @@ void EQSLQSLDownloader::getQSLImage(const QSqlRecord &qso)
     /* QSL image is not in Cache */
     qCDebug(runtime) << "QSL is not in Cache";
 
-    const QString &username = getUsername();
-    const QString &password = getPasswd();
+    // the card belongs to the account of the QSO station callsign
+    QString stationCallsign = qso.value("station_callsign").toString();
+    if ( stationCallsign.isEmpty() )
+        stationCallsign = qso.value("operator").toString();
+
+    const QString &username = resolveUsername(stationCallsign);
+    const QString &password = getPasswdForUsername(username);
     const QDateTime &time_start = qso.value("start_time").toDateTime().toTimeZone(QTimeZone::utc());
 
     QUrlQuery query;
@@ -563,6 +789,10 @@ void EQSLQSLDownloader::processReply(QNetworkReply *reply)
             emit receiveQSLFailed(error);
         });
 
+        // eQSL confirmations belong to the callsign of the account - they must not match
+        // QSOs of callsigns that are uploaded with another account
+        adi.setQSLImportExcludedStationCallsigns(otherAccountsStationCallsigns());
+
         adi.runQSLImport(adi.EQSL);
 
         tempFile.close();
@@ -607,8 +837,8 @@ void EQSLQSLDownloader::get(const QList<QPair<QString, QString>> &params)
 {
     FCT_IDENTIFICATION;
 
-    const QString &username = getUsername();
-    const QString &password = getPasswd();
+    const QString &username = accountUsername;
+    const QString &password = getPasswdForUsername(username);
 
     QUrlQuery query;
     query.setQueryItems(params);
@@ -680,6 +910,33 @@ QString EQSLQSLDownloader::QSLImageFilename(const QSqlRecord &qso)
                                                    qso.value("id").toString(),
                                                    qso.value("callsign").toString().replace(QRegularExpression(QString::fromUtf8("[-`~!@#$%^&*()_—+=|:;<>«»,.?/{}\'\"]")),"_"));
     qCDebug(runtime) << "EQSL Image Filename: " << ret;
+    return ret;
+}
+
+QStringList EQSLQSLDownloader::otherAccountsStationCallsigns() const
+{
+    FCT_IDENTIFICATION;
+
+    QStringList ret;
+    QSqlQuery query;
+
+    // the same expression as the station callsign filter of the QSL import
+    if ( !query.exec("SELECT DISTINCT UPPER(COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator), '')) "
+                     "FROM contacts") )
+    {
+        qCWarning(runtime) << "Cannot get station callsigns" << query.lastError();
+        return ret;
+    }
+
+    while ( query.next() )
+    {
+        const QString callsign = query.value(0).toString();
+
+        if ( resolveUsername(callsign).compare(accountUsername, Qt::CaseInsensitive) != 0 )
+            ret << callsign;
+    }
+
+    qCDebug(runtime) << "Excluded station callsigns:" << ret;
     return ret;
 }
 
