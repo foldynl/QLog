@@ -764,6 +764,16 @@ void LogParam::setDownloadQSLeQSLLastProfile(const QString &profile)
     setParam("downloadqsl/eqsl/lastqthprofile", profile);
 }
 
+QString LogParam::getDownloadQSLeQSLLastAccount()
+{
+    return getParam("downloadqsl/eqsl/lastaccount").toString();
+}
+
+void LogParam::setDownloadQSLeQSLLastAccount(const QString &username)
+{
+    setParam("downloadqsl/eqsl/lastaccount", username);
+}
+
 QString LogParam::getQRZCOMCallbookUsername()
 {
     return getParam("services/qrzcom/callbook/username").toString().trimmed();
@@ -832,6 +842,16 @@ QString LogParam::getEQSLLogbookUsername()
 void LogParam::setEQSLLogbookUsername(const QString &username)
 {
     setParam("services/eqsl/logbook/username", username);
+}
+
+QStringList LogParam::getEQSLCallsignsList()
+{
+    return getParamStringList("services/eqsl/logbook/callsigns");
+}
+
+void LogParam::setEQSLCallsignsList(const QStringList &list)
+{
+    setParam("services/eqsl/logbook/callsigns", list);
 }
 
 QString LogParam::getHamQTHCallbookUsername()

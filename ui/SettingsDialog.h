@@ -138,6 +138,8 @@ public slots:
     void editBandmapGuide();
     void bandmapGuideChanged(int);
 
+    void eqslAddCallsignAccount();
+    void eqslDelCallsignAccount();
     void qrzAddCallsignAPIKey();
     void qrzDelCallsignAPIKey();
 
@@ -210,6 +212,8 @@ private:
     static void updateOffsetSpinBox(QCheckBox *checkbox, QDoubleSpinBox *spinBox);
     static void deleteSelectedProfiles(QAbstractItemView *view,
                                        const std::function<void(const QString &)> &removeProfile);
+    void generateEQSLCallsignTable();
+    void saveEQSLCallsignTable();
     void generateQRZAPICallsignTable();
     void saveQRZAPICallsignTable();
     void updateCountyCompleter(int dxcc);

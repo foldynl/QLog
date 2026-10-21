@@ -186,6 +186,8 @@ public:
                                            const QDate &date);
     static QString getDownloadQSLeQSLLastProfile();
     static void setDownloadQSLeQSLLastProfile(const QString &profile);
+    static QString getDownloadQSLeQSLLastAccount();
+    static void setDownloadQSLeQSLLastAccount(const QString &username);
 
     /*********
      * QRZ
@@ -216,6 +218,8 @@ public:
      ********/
     static QString getEQSLLogbookUsername();
     static void setEQSLLogbookUsername(const QString& username);
+    static QStringList getEQSLCallsignsList();
+    static void setEQSLCallsignsList(const QStringList &list);
 
     /*********
      * HamQTH

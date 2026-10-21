@@ -29,6 +29,7 @@ private:
     void loadEqslDate();
     void saveDialogState();
     QStringList selectedLotwCallsigns() const;
+    QStringList selectedEqslUsernames() const;
 
     Ui::DownloadQSLDialog *ui;
     LogLocale locale;
