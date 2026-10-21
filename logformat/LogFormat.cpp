@@ -1171,6 +1171,15 @@ void LogFormat::runDXCCCreditImport()
     emit QSLMergeFinished(stats);
 }
 
+void LogFormat::setQSLImportExcludedStationCallsigns(const QStringList &callsigns)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsigns;
+
+    qslImportExcludedCallsigns = callsigns;
+}
+
 void LogFormat::runQSLImport(QSLFrom fromService)
 {
     FCT_IDENTIFICATION;
@@ -1304,6 +1313,17 @@ void LogFormat::runQSLImport(QSLFrom fromService)
                 " AND upper(COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator))) "
                 "= upper('%1')"
             ).arg(escapedStationCallsign);
+        }
+        else if ( fromService == EQSL && !qslImportExcludedCallsigns.isEmpty() )
+        {
+            // eQSL confirmations do not contain the station callsign - it is given by the account.
+            // The empty string stands for QSOs without station callsign and operator.
+            QStringList escapedCallsigns;
+            for ( QString callsign : qslImportExcludedCallsigns )
+                escapedCallsigns << "'" + callsign.trimmed().toUpper().replace('\'', QStringLiteral("''")) + "'";
+
+            baseFilter += QString(" AND upper(COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator), '')) "
+                                  "NOT IN (%1)").arg(escapedCallsigns.join(", "));
         }
 
         // First attempt: exact mode match (used for eQSL; also the fast path for LoTW)

@@ -26,6 +26,17 @@ public:
     static const QString getUsername();
     static const QString getPasswd();
     static void saveUsernamePassword(const QString&, const QString&);
+
+    // Callsign-specific accounts - the eQSL username is the callsign. The account above is
+    // the default one, used for callsigns without an account of their own.
+    static QStringList getAddlCallsigns();
+    static void setAddlCallsigns(const QStringList &list);
+    static QString getCallsignPasswd(const QString &callsign);
+    static void saveCallsignPasswd(const QString &newPassword, const QString &callsign);
+    static QString resolveUsername(const QString &stationCallsign);
+    static QString getPasswdForUsername(const QString &username);
+    static QStringList getAccountUsernames();
+    static bool isConfigured();
 };
 
 class EQSLUploader : public GenericQSOUploader, private EQSLBase
@@ -43,7 +54,7 @@ public:
     explicit EQSLUploader(QObject *parent = nullptr);
     virtual ~EQSLUploader();
 
-    void uploadAdif(const QByteArray&);
+    void uploadAdif(const QByteArray&, const QString &username);
     virtual void uploadQSOList(const QList<QSqlRecord>& qsos, const QVariantMap &addlParams) override;
 
 public slots:
@@ -57,6 +68,10 @@ private:
     QNetworkReply *currentReply;
     bool commentAsQSLMSG;
     bool disableqslmsg;
+    // ADIF data per eQSL account (username) waiting for upload
+    QList<QPair<QString, QByteArray>> queuedUploads;
+    void uploadNextAccount();
+    static bool isDefaultAccountCallsign(const QString &stationCallsign);
     virtual void processReply(QNetworkReply*) override;
 };
 
@@ -70,6 +85,8 @@ public:
 
     virtual void receiveQSL(const QDate &, bool, const QString &) override;
     void getQSLImage(const QSqlRecord&);
+    // eQSL account (username) used by receiveQSL; the default account if not set
+    void setAccountUsername(const QString &username);
 
 signals:
     void QSLImageFound(QString);
@@ -81,6 +98,7 @@ public slots:
 private:
     QNetworkReply *currentReply;
     QSLStorage *qslStorage;
+    QString accountUsername;
     const QString DOWNLOAD_1ST_PAGE = "https://www.eQSL.cc/qslcard/DownloadInBox.cfm";
     const QString DOWNLOAD_2ND_PAGE = "https://www.eQSL.cc/downloadedfiles/";
     const QString QSL_IMAGE_FILENAME_PAGE = "https://www.eQSL.cc/qslcard/GeteQSL.cfm";
@@ -91,6 +109,7 @@ private:
     void downloadADIF(const QString &);
     void downloadImage(const QString &, const QString &, const qulonglong);
     QString QSLImageFilename(const QSqlRecord &);
+    QStringList otherAccountsStationCallsigns() const;
     bool isQSLImageInCache(const QSqlRecord &, QString &);
 };
 

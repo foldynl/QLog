@@ -2927,6 +2927,29 @@ void SettingsDialog::refreshBandmapGuideCombo()
     }
 }
 
+void SettingsDialog::eqslAddCallsignAccount()
+{
+    FCT_IDENTIFICATION;
+
+    QAbstractItemModel *model = ui->eqslCallsignAccountTableView->model();
+
+    int newRow = model->rowCount();
+    model->insertRow(newRow);
+    QModelIndex index = model->index(newRow, 0);
+    ui->eqslCallsignAccountTableView->setCurrentIndex(index);
+    ui->eqslCallsignAccountTableView->edit(index);
+}
+
+void SettingsDialog::eqslDelCallsignAccount()
+{
+    FCT_IDENTIFICATION;
+
+    QModelIndex index = ui->eqslCallsignAccountTableView->currentIndex();
+    if ( !index.isValid() ) return;
+
+    ui->eqslCallsignAccountTableView->model()->removeRow(index.row());
+}
+
 void SettingsDialog::qrzAddCallsignAPIKey()
 {
     FCT_IDENTIFICATION;
@@ -3053,6 +3076,7 @@ void SettingsDialog::readSettings()
     /********/
     ui->eqslUsernameEdit->setText(EQSLBase::getUsername());
     ui->eqslPasswordEdit->setText(EQSLBase::getPasswd());
+    generateEQSLCallsignTable();
 
     /**********/
     /* HRDLog */
@@ -3224,6 +3248,7 @@ void SettingsDialog::writeSettings()
 
     EQSLBase::saveUsernamePassword(ui->eqslUsernameEdit->text(),
                                ui->eqslPasswordEdit->text());
+    saveEQSLCallsignTable();
 
     /**********/
     /* HRDLog */
@@ -3827,6 +3852,62 @@ void SettingsDialog::generateMembershipCheckboxes()
 
     if ( memberListCheckBoxes.isEmpty() )
         ui->clubListGrig->addWidget(new QLabel(tr("Required internet connection during application start")));
+}
+
+void SettingsDialog::generateEQSLCallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    QStandardItemModel* tableModel = new QStandardItemModel(ui->eqslCallsignAccountTableView);
+    tableModel->setHorizontalHeaderLabels({tr("Callsign"), tr("Password")});
+
+    const QStringList &addlCallsigns = EQSLBase::getAddlCallsigns();
+
+    for ( const QString &callsign : addlCallsigns )
+    {
+        QList<QStandardItem*> rowItems({new QStandardItem(callsign),
+                                        new QStandardItem(EQSLBase::getCallsignPasswd(callsign))});
+        tableModel->appendRow(rowItems);
+    }
+
+    ui->eqslCallsignAccountTableView->setModel(tableModel);
+    ui->eqslCallsignAccountTableView->resizeColumnsToContents();
+    ui->eqslCallsignAccountTableView->setItemDelegateForColumn(0, new UpperCaseUniqueDelegate(this));
+    ui->eqslCallsignAccountTableView->setItemDelegateForColumn(1, new PasswordDelegate(this));
+}
+
+void SettingsDialog::saveEQSLCallsignTable()
+{
+    FCT_IDENTIFICATION;
+
+    const QStringList &oldCallsigns = EQSLBase::getAddlCallsigns();
+    for ( const QString &callsign : oldCallsigns )
+    {
+        qCDebug(runtime) << "Deleting eQSL Callsign account" << callsign;
+        EQSLBase::saveCallsignPasswd({}, callsign); // an empty password deletes its old value in the secure store
+    }
+
+    // delete original list of callsigns
+    EQSLBase::setAddlCallsigns({});
+
+    const QString defaultUsername = EQSLBase::getUsername();
+    QAbstractItemModel *model = ui->eqslCallsignAccountTableView->model();
+    QStringList newCallsigns;
+    for ( int row = 0; row < model->rowCount(); ++row )
+    {
+        const QString &newCallsign = model->data(model->index(row, 0)).toString().trimmed().toUpper();
+
+        // the default account is configured above
+        if ( newCallsign.isEmpty() || newCallsign.compare(defaultUsername, Qt::CaseInsensitive) == 0 )
+            continue;
+
+        qCDebug(runtime) << "Saving a new eQSL callsign account" << newCallsign;
+        const QString &newPassword = model->data(model->index(row, 1)).toString();
+        if ( !newPassword.isEmpty() ) newCallsigns.append(newCallsign);
+        EQSLBase::saveCallsignPasswd(newPassword, newCallsign);
+    }
+    if ( !newCallsigns.isEmpty() )
+        EQSLBase::setAddlCallsigns(newCallsigns);
 }
 
 void SettingsDialog::generateQRZAPICallsignTable()
