@@ -684,7 +684,9 @@ QString LogParam::getDownloadQSLLoTWLastCall()
 
 void LogParam::setDownloadQSLLoTWLastCall(const QString &call)
 {
-    setParam("downloadqsl/lotw/lastmycallsign", call);
+    // an empty callsign means All Log Callsigns; a null QString would be stored as NULL,
+    // which getParam() reads as a missing value
+    setParam("downloadqsl/lotw/lastmycallsign", call.isNull() ? QString("") : call);
 }
 
 static QString downloadQSLeQSLLastDateKey(const QString &username,
