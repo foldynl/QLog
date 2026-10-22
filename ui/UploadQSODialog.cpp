@@ -369,6 +369,7 @@ void UploadQSODialog::processNextUploader()
     connect(uploader, &GenericQSOUploader::uploadError, this, [this, dialog](const QString &msg)
     {
         qWarning() <<  currentTask.getServiceName() << "Upload Error: " << msg;
+        failedServiceNames << currentTask.getServiceName();
         dialog->done(QDialog::Accepted);
         QMessageBox::warning(this, tr("QLog Warning - %1").arg(currentTask.getServiceName()),
                              tr("Cannot upload the QSO(s): ") + msg);
@@ -438,6 +439,8 @@ void UploadQSODialog::startUploadQueue()
          return;
     }
 
+    uploadTaskCount = uploadTaskQueue.size();
+    failedServiceNames.clear();
     processNextUploader();
 }
 
@@ -445,7 +448,12 @@ void UploadQSODialog::uploadFinished()
 {
     FCT_IDENTIFICATION;
 
-    QMessageBox::information(this, tr("QLog Information"), tr("QSO(s) were uploaded to the selected services"));
+    // every failed service has already reported its error
+    if ( failedServiceNames.isEmpty() )
+        QMessageBox::information(this, tr("QLog Information"), tr("QSO(s) were uploaded to the selected services"));
+    else if ( failedServiceNames.size() < uploadTaskCount )
+        QMessageBox::information(this, tr("QLog Information"),
+                                 tr("QSO(s) were uploaded to the selected services except %1").arg(failedServiceNames.join(", ")));
     accept();
 }
 
