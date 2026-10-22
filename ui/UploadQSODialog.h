@@ -133,6 +133,8 @@ private:
     Ui::UploadQSODialog *ui;
     LogLocale locale;
     QList<UploadTask> uploadTaskQueue;
+    int uploadTaskCount = 0;
+    QStringList failedServiceNames;
     QStandardItemModel *detailQSOsModel;
     UploadTask currentTask;
     QMap<uint, CloudlogUploader::StationProfile> availableWavelogStationIDs;
