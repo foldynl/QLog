@@ -952,7 +952,7 @@ bool LOVDatabase::parseClubLogCTY(QSqlDatabase &database, QTextStream &data)
                 {
                     QString call, cont, start, end;
                     int adif = 0, cqz = 0;
-                    double lon = 0.0, lat = 0.0;
+                    QVariant lon, lat;
                     bool validAdif = false;
 
                     while ( !xml.atEnd() && !isInterruptionRequested() && !(xml.isEndElement() && (xml.name() == QStringLiteral("prefix")

@@ -84,6 +84,7 @@ private slots:
     void olderPackageDoesNotReplaceNewerImportedData();
     void emptyClublogExceptionsAreAccepted();
     void zeroAdifClublogExceptionsAreAccepted();
+    void clublogPreservesOptionalGeography();
     void compressedSourceIsAccepted();
     void completeQuotedCSV_data();
     void completeQuotedCSV();
@@ -935,6 +936,30 @@ void LOVDatabaseTest::zeroAdifClublogExceptionsAreAccepted()
     prepare(LOVDownloader::CLUBLOGCTY, data);
     QCOMPARE(apply(LOVDownloader::CLUBLOGCTY), LOVDatabase::ApplyResult::APPLIED);
     QCOMPARE(scalar("SELECT dxcc FROM dxcc_prefixes_clublog WHERE prefix='OK2XYZ'").toInt(), 0);
+}
+
+void LOVDatabaseTest::clublogPreservesOptionalGeography()
+{
+    QByteArray data = payload(LOVDownloader::CLUBLOGCTY);
+    data.replace("</prefixes>", "<prefix><call>OK0</call><adif>503</adif><cont>AF</cont><lat>0</lat><long>0</long></prefix></prefixes>");
+    prepare(LOVDownloader::CLUBLOGCTY, data);
+    QCOMPARE(apply(LOVDownloader::CLUBLOGCTY), LOVDatabase::ApplyResult::APPLIED);
+    for (const QString &call : {QString("OK"), QString("OK2XYZ")})
+    {
+        QSqlQuery query;
+        QVERIFY(query.prepare("SELECT cont,lat,lon FROM dxcc_prefixes_clublog WHERE prefix=?"));
+        query.addBindValue(call);
+        QVERIFY(query.exec());
+        QVERIFY(query.next());
+        QVERIFY(query.isNull(0));
+        QVERIFY(query.isNull(1));
+        QVERIFY(query.isNull(2));
+    }
+    QCOMPARE(scalar("SELECT cont FROM dxcc_prefixes_clublog WHERE prefix='OK0'").toString(), QString("AF"));
+    QVERIFY(!scalar("SELECT lat FROM dxcc_prefixes_clublog WHERE prefix='OK0'").isNull());
+    QVERIFY(!scalar("SELECT lon FROM dxcc_prefixes_clublog WHERE prefix='OK0'").isNull());
+    QCOMPARE(scalar("SELECT lat FROM dxcc_prefixes_clublog WHERE prefix='OK0'").toDouble(), 0.0);
+    QCOMPARE(scalar("SELECT lon FROM dxcc_prefixes_clublog WHERE prefix='OK0'").toDouble(), 0.0);
 }
 
 void LOVDatabaseTest::compressedSourceIsAccepted()
