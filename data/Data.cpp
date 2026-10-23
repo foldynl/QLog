@@ -284,6 +284,7 @@ Data::Data(QObject *parent) :
                 "           ELSE e.ituz END AS ituz, "
                 "      e.lat, "
                 "      e.lon, "
+                "      0 AS tz, "
                 "      p.exact "
                 " FROM dxcc_prefixes_clublog p"
                 "   INNER JOIN dxcc_entities_clublog e ON (p.dxcc = e.id) "
