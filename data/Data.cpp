@@ -1523,7 +1523,7 @@ DxccEntity Data::lookupDxccAD1C(const QString &callsign)
             {
                 bool isNumber = false;
                 (void)suffix.toInt(&isNumber);
-                if ( isNumber )
+                if ( isNumber && parsedCallsign.getHostPrefix().isEmpty() )
                 {
                     lookupPrefix = parsedCallsign.getBasePrefix() + suffix; // use the call prefix and the number from the suffix to find the dxcc
                 }
@@ -1726,7 +1726,7 @@ DxccEntity Data::lookupDxccClublog(const QString &callsign, const QDateTime &dat
         {
             bool isNumber = false;
             (void)suffix.toInt(&isNumber);
-            if ( isNumber )
+            if ( isNumber && parsedCallsign.getHostPrefix().isEmpty() )
             {
                 lookupPrefix = parsedCallsign.getBasePrefix() + suffix; // use the call prefix and the number from the suffix to find the dxcc
             }
