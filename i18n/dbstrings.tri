@@ -22,6 +22,7 @@ QT_TRANSLATE_NOOP("DBStrings", "Aruba");
 QT_TRANSLATE_NOOP("DBStrings", "Ascension Island");
 QT_TRANSLATE_NOOP("DBStrings", "Asiatic Russia");
 QT_TRANSLATE_NOOP("DBStrings", "Asiatic Turkey");
+QT_TRANSLATE_NOOP("DBStrings", "Turkey");
 QT_TRANSLATE_NOOP("DBStrings", "Austral Islands");
 QT_TRANSLATE_NOOP("DBStrings", "Australia");
 QT_TRANSLATE_NOOP("DBStrings", "Austria");

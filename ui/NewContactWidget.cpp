@@ -766,7 +766,7 @@ void NewContactWidget::setCallbookFields(const CallbookResponseData& data)
         {
             qCDebug(runtime) << "Received different DXCC Info" << data.dxcc
                              << dxccEntity.dxcc;
-            setDxccInfo(Data::instance()->lookupDxccID(callbookDXCC));
+            setDxccInfo(Data::instance()->lookupDxccID(callbookDXCC, callsign));
         }
     }
 
@@ -2426,7 +2426,7 @@ void NewContactWidget::saveExternalContact(QSqlRecord record)
     // if DXCC field is present then it must be used as DXCC Entity
     int recordDXCCId = record.value("dxcc").toInt(); // 0 = NAN or not present
                                                      // otherwise = DXCC ID
-    const DxccEntity &dxcc = ( recordDXCCId ) ? Data::instance()->lookupDxccID(recordDXCCId)
+    const DxccEntity &dxcc = ( recordDXCCId ) ? Data::instance()->lookupDxccID(recordDXCCId, savedCallsign)
                                               : Data::instance()->lookupDxcc(savedCallsign);
 
     if ( dxcc.dxcc != 0 )

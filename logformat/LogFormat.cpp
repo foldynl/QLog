@@ -534,7 +534,7 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         if ( recordDXCCId != 0 )
         {
             // get additional DXCC info
-            entity = Data::instance()->lookupDxccIDAD1C(recordDXCCId);
+            entity = Data::instance()->lookupDxccID(recordDXCCId, call.toString());
 
             // if DXCC is not present on AD1C list, try Clublog, no CQZ and ITUZ info here
             if ( entity.dxcc == 0 )
@@ -666,7 +666,7 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
             }
             else
             {
-                const DxccEntity &myEntity = ( recordMyDXCCId != 0 ) ? Data::instance()->lookupDxccID(recordMyDXCCId)
+                const DxccEntity &myEntity = ( recordMyDXCCId != 0 ) ? Data::instance()->lookupDxccID(recordMyDXCCId, myCallString)
                                                                      : Data::instance()->lookupDxcc(myCallString);
 
                 if ( myEntity.dxcc == 0 )  // My DXCC not found

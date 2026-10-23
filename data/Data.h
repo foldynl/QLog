@@ -191,7 +191,7 @@ public:
     QString propagationModeTextToID(const QString &propagationText) const { return propagationModes.key(propagationText);}
     QString propagationModeIDToText(const QString &propagationID) const { return propagationModes.value(propagationID);}
     DxccEntity lookupDxcc(const QString &callsign);
-    DxccEntity lookupDxccID(const int dxccID);
+    DxccEntity lookupDxccID(const int dxccID, const QString &callsign = QString());
     DxccEntity lookupDxccAD1C(const QString &callsign);
     DxccEntity lookupDxccIDAD1C(const int dxccID);
     DxccEntity lookupDxccClublog(const QString &callsign, const QDateTime &date = QDateTime::currentDateTimeUtc());
@@ -254,6 +254,7 @@ private:
     QMap<QString, QString> potaRefID;
     bool showDxccFlags;
     ZoneDetect * zd;
+    QCache<QString, DxccEntity> dxccLookupCache {1000};
     QSqlQuery queryDXCC;
     QSqlQuery queryDXCCIDAD1C;
     QSqlQuery queryDXCCIDClublog;

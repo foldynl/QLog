@@ -6,6 +6,7 @@
 #include <QTemporaryDir>
 #include <QStandardPaths>
 #include <QNetworkReply>
+#include <QNetworkProxy>
 #include <cstring>
 #include "core/LOVDatabase.h"
 #include "core/LogParam.h"
@@ -49,6 +50,17 @@ class LOVDatabaseTest : public QObject
 private slots:
     void responseHandling_data();
     void responseHandling();
+    void failedCtyUpdatePreservesExistingData_data();
+    void failedCtyUpdatePreservesExistingData();
+    void ctyUpdatesFollowNormalInterval_data();
+    void ctyUpdatesFollowNormalInterval();
+    void ctyRetainsExactAndPrefixRules();
+    void ctyImportsGeographicOverrides();
+    void ctyUsesCanonicalNames();
+    void undatedCtyDoesNotReplaceExistingData_data();
+    void undatedCtyDoesNotReplaceExistingData();
+    void ctyBootstrapPrefersRawCache();
+    void incompatibleCtyPackageIsRejected();
     void init();
     void cleanup();
     void preparesCompleteSource_data();
@@ -101,6 +113,221 @@ QVariant LOVDatabaseTest::scalar(const QString &sql)
     if (!query.exec(sql) || !query.next())
         qFatal("%s", qPrintable(query.lastError().text() + sql));
     return query.value(0);
+}
+
+void LOVDatabaseTest::ctyRetainsExactAndPrefixRules()
+{
+    prepare(LOVDownloader::CTY,
+            "OK,Czech Republic,503,EU,15,28,49.5,-15.5,-1,OK RC4I[30] =RC4I[29] =RA9G(17)[30] RA9G(17)[30] OK[29];\n"
+            "OM,Slovak Republic,504,EU,15,28,48.7,-19.7,-1,OM OK;\n");
+    QCOMPARE(apply(LOVDownloader::CTY), LOVDatabase::ApplyResult::APPLIED);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_prefixes_ad1c WHERE prefix='RC4I'").toInt(), 2);
+    QCOMPARE(scalar("SELECT ituz FROM dxcc_prefixes_ad1c WHERE prefix='RC4I' AND exact=1").toInt(), 29);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_prefixes_ad1c WHERE prefix='RA9G'").toInt(), 2);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_prefixes_ad1c WHERE prefix='OK'").toInt(), 1);
+    QCOMPARE(scalar("SELECT dxcc FROM dxcc_prefixes_ad1c WHERE prefix='OK'").toInt(), 503);
+    QCOMPARE(scalar("SELECT ituz FROM dxcc_prefixes_ad1c WHERE prefix='OK'").toInt(), 28);
+}
+
+void LOVDatabaseTest::ctyImportsGeographicOverrides()
+{
+    prepare(LOVDownloader::CTY,
+            "*TA1,European Turkey,390,EU,20,39,41.02,-28.97,-2,TA1 =TC23TC;\n"
+            "TA,Asiatic Turkey,390,AS,20,39,39.18,-35.65,-2,TA TB TC;\n"
+            "*IG9,African Italy,248,AF,33,37,35.67,-12.67,-1,IG9 IH9;\n"
+            "I,Italy,248,EU,15,28,41.9,-12.5,-1,I;\n");
+    QCOMPARE(apply(LOVDownloader::CTY), LOVDatabase::ApplyResult::APPLIED);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_entities_ad1c").toInt(), 2);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_prefixes_ad1c WHERE prefix='TA1'").toInt(), 1);
+    QCOMPARE(scalar("SELECT dxcc FROM dxcc_prefixes_ad1c WHERE prefix='TA1'").toInt(), 390);
+    QCOMPARE(scalar("SELECT cont FROM dxcc_prefixes_ad1c WHERE prefix='TA1'").toString(), QString("EU"));
+    QCOMPARE(scalar("SELECT lat FROM dxcc_prefixes_ad1c WHERE prefix='TA1'").toDouble(), 41.02);
+    QCOMPARE(scalar("SELECT lon FROM dxcc_prefixes_ad1c WHERE prefix='TA1'").toDouble(), 28.97);
+    QCOMPARE(scalar("SELECT exact FROM dxcc_prefixes_ad1c WHERE prefix='TC23TC'").toInt(), 1);
+    QCOMPARE(scalar("SELECT dxcc FROM dxcc_prefixes_ad1c WHERE prefix='IH9'").toInt(), 248);
+    QCOMPARE(scalar("SELECT cont FROM dxcc_prefixes_ad1c WHERE prefix='IH9'").toString(), QString("AF"));
+    QCOMPARE(scalar("SELECT cqz FROM dxcc_prefixes_ad1c WHERE prefix='IH9'").toInt(), 33);
+    QCOMPARE(scalar("SELECT ituz FROM dxcc_prefixes_ad1c WHERE prefix='IH9'").toInt(), 37);
+}
+
+void LOVDatabaseTest::ctyUsesCanonicalNames()
+{
+    prepare(LOVDownloader::CTY,
+            "TA,Asiatic Turkey,390,AS,20,39,39.18,-35.65,-2,TA;\n"
+            "D4,Cabo Verde,409,AF,35,46,16,24,1,D4;\n"
+            "XX,Unknown source entity,999,EU,1,1,0,0,0,XX;\n");
+    QCOMPARE(apply(LOVDownloader::CTY), LOVDatabase::ApplyResult::APPLIED);
+    QCOMPARE(scalar("SELECT name FROM dxcc_entities_ad1c WHERE id=390").toString(), QString("Turkey"));
+    QCOMPARE(scalar("SELECT name FROM dxcc_entities_ad1c WHERE id=409").toString(), QString("Cape Verde"));
+    QCOMPARE(scalar("SELECT name FROM dxcc_entities_ad1c WHERE id=999").toString(), QString("Unknown source entity"));
+}
+
+void LOVDatabaseTest::failedCtyUpdatePreservesExistingData_data()
+{
+    QTest::addColumn<QByteArray>("body");
+    QTest::addColumn<int>("status");
+    QTest::addColumn<int>("networkError");
+    QTest::addColumn<bool>("canceled");
+    QTest::newRow("html") << QByteArray("<html>verification required</html>") << 200 << int(QNetworkReply::NoError) << false;
+    QTest::newRow("http-error") << QByteArray("not found") << 404 << int(QNetworkReply::ContentNotFoundError) << false;
+    QTest::newRow("parse-error") << (payload(LOVDownloader::CTY) + "bad\n") << 200 << int(QNetworkReply::NoError) << false;
+    QTest::newRow("canceled") << QByteArray() << 0 << int(QNetworkReply::OperationCanceledError) << true;
+}
+
+void LOVDatabaseTest::failedCtyUpdatePreservesExistingData()
+{
+#ifndef Q_OS_LINUX
+    QSKIP("This integration case isolates QStandardPaths using XDG_DATA_HOME on Linux.");
+#else
+    QFETCH(QByteArray, body);
+    QFETCH(int, status);
+    QFETCH(int, networkError);
+    QFETCH(bool, canceled);
+    prepare(LOVDownloader::CTY);
+    QCOMPARE(apply(LOVDownloader::CTY), LOVDatabase::ApplyResult::APPLIED);
+    const auto source = LOVDownloader::sourceDefinition(LOVDownloader::CTY);
+    const QDir cache(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+    QVERIFY(cache.mkpath("."));
+    LOVDownloader downloader;
+    QSignalSpy finished(&downloader, &LOVDownloader::finished);
+    if (canceled)
+        downloader.abortRequest();
+    QNetworkReply *reply = new FixtureReply(body, status, static_cast<QNetworkReply::NetworkError>(networkError), &downloader);
+    reply->setProperty("sourceType", int(source.type));
+    QVERIFY(QMetaObject::invokeMethod(&downloader, "processReply", Qt::DirectConnection, Q_ARG(QNetworkReply *, reply)));
+    if (finished.isEmpty())
+        QVERIFY(finished.wait(10000));
+    QCOMPARE(finished.count(), 1);
+    QVERIFY(!finished.first().first().toBool());
+    QVERIFY(!QFile::exists(cache.filePath(source.packageStem + ".ready.db")));
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_entities_ad1c").toInt(), 1);
+    QCOMPARE(LogParam::getLOVaParam(source.lastTimeConfigName), QDate(2026, 1, 2));
+#endif
+}
+
+void LOVDatabaseTest::ctyUpdatesFollowNormalInterval_data()
+{
+    QTest::addColumn<int>("ageDays");
+    QTest::newRow("fresh") << 0;
+    QTest::newRow("six-days") << 6;
+    QTest::newRow("seven-days") << 7;
+}
+
+void LOVDatabaseTest::ctyUpdatesFollowNormalInterval()
+{
+#ifndef Q_OS_LINUX
+    QSKIP("This integration case isolates QStandardPaths using XDG_DATA_HOME on Linux.");
+#else
+    QFETCH(int, ageDays);
+    // Legacy tables remain usable even though their prefix geography is missing.
+    execute("INSERT INTO dxcc_entities_ad1c(id,name,prefix,cont,cqz,ituz) VALUES(503,'Czech Republic','OK','EU',15,28)");
+    execute("INSERT INTO dxcc_prefixes_ad1c(prefix,exact,dxcc,cqz,ituz) VALUES('OK',0,503,0,0)");
+    const auto source = LOVDownloader::sourceDefinition(LOVDownloader::CTY);
+    const QDate date = QDate::currentDate().addDays(-ageDays);
+    QVERIFY(LogParam::setLOVParam(source.lastTimeConfigName, date));
+    const QDir cache(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+    QVERIFY(cache.mkpath("."));
+    QFile file(cache.filePath(source.fileName));
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    const QByteArray raw = payload(source.type);
+    QCOMPARE(file.write(raw), qint64(raw.size()));
+    file.close();
+
+    LOVDownloader downloader;
+    QNetworkAccessManager *manager = downloader.findChild<QNetworkAccessManager *>();
+    // A closed loopback proxy makes the scheduled download fail without external traffic.
+    manager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, QStringLiteral("127.0.0.1"), 0));
+    QSignalSpy networkFinished(manager, &QNetworkAccessManager::finished);
+    QSignalSpy skipped(&downloader, &LOVDownloader::noUpdate);
+    QSignalSpy finished(&downloader, &LOVDownloader::finished);
+    downloader.update(source.type);
+
+    if ( ageDays < source.ageTime )
+    {
+        QCOMPARE(skipped.count(), 1);
+        QCOMPARE(finished.count(), 0);
+        QCOMPARE(networkFinished.count(), 0);
+        QVERIFY(downloader.findChildren<LOVDatabase *>().isEmpty());
+    }
+    else
+    {
+        if (finished.isEmpty())
+            QVERIFY(finished.wait(10000));
+        QCOMPARE(skipped.count(), 0);
+        QCOMPARE(networkFinished.count(), 1);
+        QVERIFY(!finished.first().first().toBool());
+    }
+    QVERIFY(!QFile::exists(cache.filePath(source.packageStem + ".ready.db")));
+    QVERIFY(scalar("SELECT cont FROM dxcc_prefixes_ad1c").isNull());
+    QCOMPARE(LogParam::getLOVaParam(source.lastTimeConfigName), date);
+#endif
+}
+
+void LOVDatabaseTest::undatedCtyDoesNotReplaceExistingData_data()
+{
+    QTest::addColumn<QString>("inputFile");
+    QTest::newRow("bundled") << QString(":/res/data/cty.csv");
+    QTest::newRow("raw-cache") << QString();
+}
+
+void LOVDatabaseTest::undatedCtyDoesNotReplaceExistingData()
+{
+    QFETCH(QString, inputFile);
+    prepare(LOVDownloader::CTY);
+    QCOMPARE(apply(LOVDownloader::CTY), LOVDatabase::ApplyResult::APPLIED);
+    auto config = job(LOVDownloader::CTY);
+    config.inputFile = inputFile;
+    config.downloadDate = QDate();
+    LOVDatabase worker(config);
+    worker.start();
+    QVERIFY(worker.wait(10000));
+    QVERIFY(worker.succeeded());
+    QCOMPARE(apply(LOVDownloader::CTY), LOVDatabase::ApplyResult::NO_PACKAGE);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_entities_ad1c").toInt(), 1);
+    QCOMPARE(LogParam::getLOVaParam(config.source.lastTimeConfigName), QDate(2026, 1, 2));
+    QVERIFY(!QFile::exists(ready(LOVDownloader::CTY)));
+}
+
+void LOVDatabaseTest::incompatibleCtyPackageIsRejected()
+{
+    prepare(LOVDownloader::CTY);
+    {
+        QSqlDatabase package = QSqlDatabase::addDatabase("QSQLITE", "incompatible_package");
+        package.setDatabaseName(ready(LOVDownloader::CTY));
+        QVERIFY(package.open());
+        QSqlQuery query(package);
+        QVERIFY(query.exec("UPDATE lov_metadata SET format_version=999"));
+        package.close();
+    }
+    QSqlDatabase::removeDatabase("incompatible_package");
+    QCOMPARE(apply(LOVDownloader::CTY), LOVDatabase::ApplyResult::INVALID);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_entities_ad1c").toInt(), 0);
+}
+
+void LOVDatabaseTest::ctyBootstrapPrefersRawCache()
+{
+#ifndef Q_OS_LINUX
+    QSKIP("This integration case isolates QStandardPaths using XDG_DATA_HOME on Linux.");
+#else
+    const auto source = LOVDownloader::sourceDefinition(LOVDownloader::CTY);
+    const QDir cache(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+    QVERIFY(cache.mkpath("."));
+    QFile file(cache.filePath(source.fileName));
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    const QByteArray raw = payload(source.type);
+    QCOMPARE(file.write(raw), qint64(raw.size()));
+    file.close();
+    LOVDownloader downloader;
+    QSignalSpy finished(&downloader, &LOVDownloader::finished);
+    QNetworkReply *reply = new FixtureReply("failed", 404, QNetworkReply::ContentNotFoundError, &downloader);
+    reply->setProperty("sourceType", int(source.type));
+    QVERIFY(QMetaObject::invokeMethod(&downloader, "processReply", Qt::DirectConnection, Q_ARG(QNetworkReply *, reply)));
+    QVERIFY(finished.wait(10000));
+    QVERIFY(finished.first().first().toBool());
+    QCOMPARE(LOVDatabase::applyReady(source, cache.path()), LOVDatabase::ApplyResult::APPLIED);
+    QCOMPARE(scalar("SELECT COUNT(*) FROM dxcc_entities_ad1c").toInt(), 1);
+    QVERIFY(!LogParam::getLOVaParam(source.lastTimeConfigName).isValid());
+#endif
 }
 
 void LOVDatabaseTest::responseHandling_data()
@@ -317,6 +544,8 @@ void LOVDatabaseTest::failedParseDoesNotPublish_data()
     compressed.chop(8);
     QTest::newRow("truncated-gzip") << int(LOVDownloader::POTADIRECTORY) << compressed;
     QTest::newRow("bad-cty-row") << int(LOVDownloader::CTY) << (payload(LOVDownloader::CTY) + "bad\n");
+    QTest::newRow("cty-missing-parent") << int(LOVDownloader::CTY)
+                                      << (payload(LOVDownloader::CTY) + "*TA1,European Turkey,390,EU,20,39,41,-29,-2,TA1;\n");
     QTest::newRow("bad-sat-row") << int(LOVDownloader::SATLIST) << (payload(LOVDownloader::SATLIST) + "bad\n");
     QTest::newRow("bad-membership-row") << int(LOVDownloader::MEMBERSHIPCONTENTLIST) << (payload(LOVDownloader::MEMBERSHIPCONTENTLIST) + "bad\n");
 }

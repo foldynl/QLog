@@ -328,7 +328,7 @@
     {"id":384,"name":"Syria","cqz":20,"ituz":39,"flag":"SY"},
     {"id":386,"name":"Taiwan","cqz":24,"ituz":44,"flag":"TW","_comment":"Decision: TW. Basis: ADIF defines DXCC entity 386 as Taiwan, and TW is an established standardized regional flag identifier; its use is not a statement of sovereignty. Sources: https://www.adif.org/317/ADIF_317.htm#DXCC_Entity_Code_Enumeration; https://unicode.org/emoji/charts/full-emoji-list.html#1f1f9_1f1fc"},
     {"id":387,"name":"Thailand","cqz":26,"ituz":49,"flag":"TH"},
-    {"id":390,"name":"Asiatic Turkey","cqz":20,"ituz":39,"flag":"TR"},
+    {"id":390,"name":"Turkey","cqz":20,"ituz":39,"flag":"TR"},
     {"id":391,"name":"United Arab Emirates","cqz":21,"ituz":39,"flag":"AE"},
     {"id":400,"name":"Algeria","cqz":33,"ituz":37,"flag":"DZ"},
     {"id":401,"name":"Angola","cqz":36,"ituz":52,"flag":"AO"},

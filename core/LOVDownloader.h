@@ -75,7 +75,7 @@ public:
 
     static const QList<SourceType> sources();
     static SourceDefinition sourceDefinition(SourceType type);
-    bool isSourceAvailable(SourceType type) const;
+    static bool isSourceAvailable(SourceType type);
     void startUpdates();
     void stopUpdates();
 
@@ -85,7 +85,7 @@ private:
                      const QString &inputFile, const QDate &date, bool cachePayload = false);
     void complete(bool success);
     void nextUpdate();
-    void loadBundledCTY(const SourceDefinition &source);
+    void recoverCTY(const SourceDefinition &source, bool tryCache = true);
     static QString directory();
     QNetworkAccessManager *nam;
     QNetworkReply *currentReply = nullptr;

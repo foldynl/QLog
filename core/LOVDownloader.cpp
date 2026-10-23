@@ -108,7 +108,7 @@ QString LOVDownloader::directory()
     return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 }
 
-bool LOVDownloader::isSourceAvailable(SourceType type) const
+bool LOVDownloader::isSourceAvailable(SourceType type)
 {
     FCT_IDENTIFICATION;
 
@@ -229,7 +229,7 @@ void LOVDownloader::startWorker(const SourceDefinition &source, const QByteArray
         worker = nullptr;
 
         if ( !success && source.type == CTY && inputFile != QStringLiteral(":/res/data/cty.csv") && !canceled && !stopping )
-            loadBundledCTY(source);
+            recoverCTY(source, inputFile.isEmpty());
         else if ( !success && source.type != CTY && !inputFile.isEmpty() && !canceled && !stopping )
             download(source);
         else
@@ -238,13 +238,26 @@ void LOVDownloader::startWorker(const SourceDefinition &source, const QByteArray
     worker->start();
 }
 
-void LOVDownloader::loadBundledCTY(const SourceDefinition &source)
+void LOVDownloader::recoverCTY(const SourceDefinition &source, bool tryCache)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << tryCache;
 
-    if ( !stopping )
+    if ( stopping )
+        return;
+
+    if ( isSourceAvailable(CTY) )
     {
-        canceled = false;
+        complete(false);
+        return;
+    }
+
+    canceled = false;
+    const QString cached = QDir(directory()).filePath(source.fileName);
+    if ( tryCache && QFile::exists(cached) )
+        startWorker(source, QByteArray(), cached, LogParam::getLOVaParam(source.lastTimeConfigName));
+    else
+    {
         qCWarning(runtime) << "Using bundled CTY data";
         startWorker(source, QByteArray(), QStringLiteral(":/res/data/cty.csv"), QDate());
     }
@@ -270,7 +283,7 @@ void LOVDownloader::processReply(QNetworkReply *reply)
     if ( downloaded && !invalidCTY && !canceled )
         startWorker(source, payload, QString(), QDateTime::currentDateTimeUtc().date(), true);
     else if ( source.type == CTY )
-        loadBundledCTY(source);
+        recoverCTY(source);
     else
     {
         qCWarning(runtime) << "Reference-list download failed" << source.type << status;
