@@ -35,6 +35,7 @@ private slots:
     void upgradesLegacyDatabase();
     void rejectsForeignKeyViolation();
     void migrationFailureRestoresForeignKeys();
+    void cppMigrationFailureReportsSqlCause();
     void sqlFunctionsRejectActiveReplacement();
     void foreignKeyModeRejectsActiveTransaction();
     void missingMigrationSqlFails();
@@ -374,6 +375,7 @@ void MigrationSqlTest::rejectsForeignKeyViolation()
     }
     DBSchemaMigration migration;
     QVERIFY(!migration.run());
+    QVERIFY2(migration.errorString().contains("test_references"), qPrintable(migration.errorString()));
     QCOMPARE(currentVersion(), version);
     QSqlQuery query;
     QVERIFY(query.exec(QStringLiteral("PRAGMA foreign_keys")));
@@ -398,7 +400,10 @@ void MigrationSqlTest::migrationFailureRestoresForeignKeys()
         QVERIFY(query.exec(QStringLiteral("PRAGMA foreign_keys=ON")));
     }
     DBSchemaMigration migration;
+    const QString filename = QSqlDatabase::database().databaseName();
     QVERIFY(!migration.run());
+    QVERIFY2(migration.errorString().contains("dx_alert_goal"), qPrintable(migration.errorString()));
+    QVERIFY2(migration.errorString().contains(filename), qPrintable(migration.errorString()));
     QCOMPARE(currentVersion(), 41);
     QSqlQuery query;
     QVERIFY(query.exec(QStringLiteral("PRAGMA foreign_keys")));
@@ -407,6 +412,27 @@ void MigrationSqlTest::migrationFailureRestoresForeignKeys()
     QVERIFY(query.exec(QStringLiteral("SELECT COUNT(*) FROM pragma_table_info('rig_profiles') WHERE name='cwkey_output'")));
     QVERIFY(query.next());
     QCOMPARE(query.value(0).toInt(), 0);
+}
+
+void MigrationSqlTest::cppMigrationFailureReportsSqlCause()
+{
+    createDatabase(16);
+    if ( QTest::currentTestFailed() )
+        return;
+    {
+        QSqlQuery query;
+        QVERIFY(query.exec("CREATE TRIGGER update_callsign_contacts_autovalue AFTER UPDATE ON contacts BEGIN SELECT 1; END"));
+        QVERIFY(query.exec("PRAGMA foreign_keys=ON"));
+    }
+    const QString filename = QSqlDatabase::database().databaseName();
+    DBSchemaMigration migration;
+    QVERIFY(!migration.run());
+    QVERIFY2(migration.errorString().contains("update_callsign_contacts_autovalue"), qPrintable(migration.errorString()));
+    QVERIFY2(migration.errorString().contains(filename), qPrintable(migration.errorString()));
+    QCOMPARE(currentVersion(), 16);
+    QSqlQuery query("PRAGMA foreign_keys");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), 1);
 }
 
 void MigrationSqlTest::sqlFunctionsRejectActiveReplacement()
@@ -443,6 +469,7 @@ void MigrationSqlTest::missingMigrationSqlFails()
         return;
     DBSchemaMigration migration;
     QVERIFY(!MigrationSqlTest_FriendAccessor::runSqlFile(migration, QStringLiteral(":/res/sql/missing_migration.sql")));
+    QVERIFY2(migration.errorString().contains("missing_migration.sql"), qPrintable(migration.errorString()));
     QCOMPARE(currentVersion(), 42);
 }
 

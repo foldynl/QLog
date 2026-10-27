@@ -28,13 +28,13 @@ public:
 
     // Decompress gzip file (streaming)
     static bool gunzipFile(const QString &sourceFile, const QString &destFile,
-                           const ProgressCallback &progress = nullptr);
+                           const ProgressCallback &progress = nullptr, QString *error = nullptr);
 
     // File compression/decompression with progress dialog
     static bool gzipFileWithProgress(const QString &sourceFile, const QString &destFile,
                                      QWidget *parent, const QString &title, QString *error = nullptr);
     static bool gunzipFileWithProgress(const QString &sourceFile, const QString &destFile,
-                                       QWidget *parent, const QString &title);
+                                       QWidget *parent, const QString &title, QString *error = nullptr);
 };
 
 #endif // QLOG_CORE_FILECOMPRESSOR_H

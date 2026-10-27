@@ -73,7 +73,7 @@ public:
     bool canCancelPendingImport() const;
     QString pendingImportError() const;
 
-    bool atomicCopy(const QString &filename);
+    bool atomicCopy(const QString &filename, QString *error = nullptr);
     bool openDatabase(const QString &filename = dbFilename());
     bool schemaVersionUpgrade(QString *backupSnapshot = nullptr);
     bool createSQLFunctions();
@@ -108,10 +108,10 @@ private:
     ImportResult finishImport(QJsonObject &record, ImportPhase phase, ImportAction action,
                               const QJsonArray *incoming = nullptr);
     static bool decodeImportPasswords(bool requiresPassphrase, QJsonArray &incoming);
-    static bool readImportRecord(QJsonObject &record, ImportPhase &phase);
-    static bool writeImportRecord(QJsonObject &record, ImportPhase phase);
-    static bool checkpointDatabase(QSqlDatabase database);
-    static bool readLogId(const QString &filename, QString &logId);
+    static bool readImportRecord(QJsonObject &record, ImportPhase &phase, QString *reason = nullptr);
+    bool writeImportRecord(QJsonObject &record, ImportPhase phase);
+    bool checkpointDatabase(QSqlDatabase database);
+    static bool readLogId(const QString &filename, QString &logId, QString *reason = nullptr);
     static bool canCancelImport(const QJsonObject &record, ImportPhase phase, bool &currentIsImport);
 };
 

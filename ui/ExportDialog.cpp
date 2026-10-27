@@ -211,7 +211,7 @@ void ExportDialog::runExport()
     if ( filename.isEmpty() )
     {
         QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
-                             QMessageBox::tr("Filename is empty"));
+                             tr("Choose a logbook export file before exporting."));
         return;
     }
 
@@ -224,7 +224,7 @@ void ExportDialog::runExport()
         const QMessageBox::StandardButton answer = QMessageBox::question(
             this,
             windowTitle(),
-            tr("The selected file already exists. Overwrite it?"),
+            tr("The logbook export file %1 already exists. Overwrite it?").arg(filename),
             QMessageBox::Yes | QMessageBox::No,
             QMessageBox::No);
 
@@ -241,8 +241,9 @@ void ExportDialog::runExport()
 
     if ( !file->open(QFile::WriteOnly | QFile::Text) )
     {
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                             QMessageBox::tr("Cannot write to the file"));
+        QLogFileDialog::showError(this, tr("Export Logbook"),
+                             tr("Cannot create the %1 logbook export file %2:\n%3")
+                                 .arg(ui->typeSelect->currentText(), filename, file->errorString()));
         return;
     }
 
@@ -253,6 +254,9 @@ void ExportDialog::runExport()
     if ( !format )
     {
         qCritical() << "unknown log format";
+        QLogFileDialog::showError(this, tr("Export Logbook"),
+                               tr("Cannot save the logbook export %1. The selected format %2 is unavailable.")
+                                   .arg(filename, ui->typeSelect->currentText()));
         return;
     }
 
@@ -337,14 +341,15 @@ void ExportDialog::runExport()
     out.flush();
     QString error = potaFormat ? potaFormat->exportErrorString() : QString();
     if ( error.isEmpty() && (out.status() != QTextStream::Ok || !file->flush()) )
-        error = tr("Cannot write %1:\n%2").arg(filename, file->errorString());
+        error = tr("Cannot finish writing the %1 logbook export %2:\n%3")
+                    .arg(ui->typeSelect->currentText(), filename, file->errorString());
     if ( error.isEmpty() && isPota && !potaFile.commit() )
-        error = tr("Cannot write %1:\n%2").arg(filename, potaFile.errorString());
+        error = tr("Cannot save the completed main POTA export as %1:\n%2").arg(filename, potaFile.errorString());
 
     if ( !error.isEmpty() )
     {
         delete format;
-        QMessageBox::critical(this, tr("Export Failed"),
+        QLogFileDialog::showError(this, tr("Export Logbook"),
                                isPota ? tr("%1\n\nSome files may already have been saved.").arg(error) : error);
         return;
     }

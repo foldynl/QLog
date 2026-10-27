@@ -1,5 +1,6 @@
 #include <QtTest>
 #include <QFile>
+#include <QSaveFile>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QTemporaryDir>
@@ -78,6 +79,8 @@ private slots:
     void pendingRetentionProtectsMigrationSnapshots();
     void failedExportPreservesSnapshotAndOlderBackups();
     void externalCopyFailureKeepsInternalBackupAndRetries();
+    void externalFileFailureReportsDestinationAndReason();
+    void snapshotReadFailureReportsSourceAndReason();
     void externalRetentionDoesNotTouchOtherFiles();
     void externalAliasCannotPruneInternalBackups();
     void interruptedExportIsRetried();
@@ -463,6 +466,11 @@ void DatabaseBackupTest::failedExportPreservesSnapshotAndOlderBackups()
     QVERIFY(!LogParam::getLastBackupDate().isValid());
     QVERIFY(!LogParam::getBackupError().isEmpty());
 
+    QSaveFile blocked(LogDatabase::dbDirectory().filePath(target));
+    QVERIFY(!blocked.open(QIODevice::WriteOnly));
+    QVERIFY2(LogParam::getBackupError().contains(blocked.fileName()), qPrintable(LogParam::getBackupError()));
+    QVERIFY2(LogParam::getBackupError().contains(blocked.errorString()), qPrintable(LogParam::getBackupError()));
+
     QVERIFY(LogDatabase::dbDirectory().rmdir(target));
     runBackup();
     QVERIFY(snapshots().isEmpty());
@@ -485,12 +493,58 @@ void DatabaseBackupTest::externalCopyFailureKeepsInternalBackupAndRetries()
     runBackup(config);
     QCOMPARE(exports().size(), 1);
     QCOMPARE(snapshots().size(), 1);
+    QVERIFY2(LogParam::getBackupError().contains(config.directory), qPrintable(LogParam::getBackupError()));
     QVERIFY(blocked.remove());
     runBackup(config);
     QVERIFY(snapshots().isEmpty());
     const QString name = exports().first();
     QCOMPARE(readFile(QDir(config.directory).filePath(name)),
              readFile(LogDatabase::dbDirectory().filePath(name)));
+}
+
+void DatabaseBackupTest::externalFileFailureReportsDestinationAndReason()
+{
+    createLog();
+    QVERIFY(DatabaseBackup::prepare());
+    runBackup();
+    const QString name = exports().first();
+    BackupConfig config;
+    config.enabled = true;
+    config.directory = storage.filePath("blocked-output");
+    const QString destination = QDir(config.directory).filePath(name);
+    QVERIFY(QDir().mkpath(destination));
+
+    runBackup(config);
+
+    QSaveFile blocked(destination);
+    QVERIFY(!blocked.open(QIODevice::WriteOnly));
+    const QString error = LogParam::getBackupError();
+    QVERIFY2(error.contains(destination), qPrintable(error));
+    QVERIFY2(error.contains(blocked.errorString()), qPrintable(error));
+    QVERIFY(QFileInfo::exists(LogDatabase::dbDirectory().filePath(name)));
+}
+
+void DatabaseBackupTest::snapshotReadFailureReportsSourceAndReason()
+{
+    createLog();
+    QVERIFY(DatabaseBackup::prepare());
+    const QString snapshot = LogDatabase::dbDirectory().filePath(snapshots().first());
+    {
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", "damaged-backup");
+        database.setDatabaseName(snapshot);
+        QVERIFY(database.open());
+        QSqlQuery query(database);
+        QVERIFY(query.exec("DROP TABLE contacts"));
+    }
+    QSqlDatabase::removeDatabase("damaged-backup");
+
+    runBackup();
+
+    const QString error = LogParam::getBackupError();
+    QVERIFY2(error.contains(snapshot), qPrintable(error));
+    QVERIFY2(error.contains("contacts"), qPrintable(error));
+    QVERIFY(QFileInfo::exists(snapshot));
+    QVERIFY(exports().isEmpty());
 }
 
 void DatabaseBackupTest::externalRetentionDoesNotTouchOtherFiles()
@@ -583,6 +637,7 @@ void DatabaseBackupTest::invalidXmlKeepsTheDatabaseCopy()
     QVERIFY(exports().isEmpty());
     QCOMPARE(snapshots().size(), 1);
     QVERIFY(!LogParam::getLastBackupDate().isValid());
+    QVERIFY2(LogParam::getBackupError().contains("characters"), qPrintable(LogParam::getBackupError()));
 }
 
 void DatabaseBackupTest::unrelatedDatabaseCopiesAreIgnored()

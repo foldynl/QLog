@@ -880,9 +880,13 @@ void SettingsDialog::save()
          && (!previousBackupConfig.enabled || backupConfig.directory != previousBackupConfig.directory) )
     {
         QTemporaryFile probe(QDir(backupConfig.directory).filePath(QStringLiteral(".qlog-backup-XXXXXX")));
-        if ( backupConfig.directory.isEmpty() || !QDir().mkpath(backupConfig.directory) || !probe.open() )
+        if ( !backupConfig.directory.isEmpty() )
+            QDir().mkpath(backupConfig.directory);
+        if ( backupConfig.directory.isEmpty() || !probe.open() )
         {
-            ui->backupErrorLabel->setText(tr("Cannot write to the backup folder. Choose another folder."));
+            ui->backupErrorLabel->setText(backupConfig.directory.isEmpty()
+                                             ? tr("Choose a folder for the additional backup.")
+                                             : tr("Cannot write to backup folder %1:\n%2").arg(backupConfig.directory, probe.errorString()));
             ui->backupErrorLabel->show();
             ui->tabWidget->setCurrentWidget(ui->backupsTab);
             return;

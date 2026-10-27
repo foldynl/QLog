@@ -104,7 +104,7 @@ AdiFormat *PotaAdiFormat::getActivatorParkFormatter(const QSqlRecord &record)
     parkFormatter->file = new QSaveFile(filePath);
     if ( !parkFormatter->file->open(QFile::WriteOnly | QFile::Text) )
     {
-        exportError = tr("Cannot write %1:\n%2").arg(filePath, parkFormatter->file->errorString());
+        exportError = tr("Cannot create the POTA park export file %1:\n%2").arg(filePath, parkFormatter->file->errorString());
         qCWarning(runtime) << exportError;
         delete parkFormatter;
         return nullptr;
@@ -170,7 +170,7 @@ void PotaAdiFormat::exportEnd()
         parkFormat->stream->flush();
         if ( parkFormat->stream->status() != QTextStream::Ok || !parkFormat->file->flush() )
         {
-            exportError = tr("Cannot write %1:\n%2").arg(parkFormat->file->fileName(), parkFormat->file->errorString());
+            exportError = tr("Cannot finish writing the POTA park export %1:\n%2").arg(parkFormat->file->fileName(), parkFormat->file->errorString());
             qCWarning(runtime) << exportError;
             return;
         }
@@ -180,7 +180,7 @@ void PotaAdiFormat::exportEnd()
     {
         if ( !it.value()->file->commit() )
         {
-            exportError = tr("Cannot write %1:\n%2").arg(it.value()->file->fileName(), it.value()->file->errorString());
+            exportError = tr("Cannot save the completed POTA park export as %1:\n%2").arg(it.value()->file->fileName(), it.value()->file->errorString());
             qCWarning(runtime) << exportError;
             return;
         }

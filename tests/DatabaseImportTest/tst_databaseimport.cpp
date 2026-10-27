@@ -1,4 +1,6 @@
 #include <QtTest>
+#include <cerrno>
+#include <cstring>
 #include <QFile>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -88,10 +90,38 @@ extern "C" bool __wrap__ZN5QFile6renameERK7QStringS2_(const QString &source, con
     return result;
 }
 
+extern "C" bool __real__ZN5QFile6renameERK7QString(QFile *file, const QString &target);
+extern "C" bool __wrap__ZN5QFile6renameERK7QString(QFile *file, const QString &target)
+{
+    const QString source = file->fileName();
+    if ( interruptionBoundary == "FAIL_PUBLICATION" && source == LogDatabase::pendingImportPath() )
+        return false;
+    if ( interruptionBoundary == "FAIL_BACKUP_PUBLICATION" && source.endsWith(".db.tmp") && target.endsWith(".db") )
+        return false;
+    const bool result = __real__ZN5QFile6renameERK7QString(file, target);
+    if ( result && ((interruptionBoundary == "ORIGINAL_MOVED" && source == LogDatabase::dbFilename())
+                   || (interruptionBoundary == "DATABASE_PUBLISHED" && source == LogDatabase::pendingImportPath())
+                   || (interruptionBoundary == "CANCEL_CANDIDATE_MOVED" && target == LogDatabase::pendingImportPath())
+                   || (interruptionBoundary == "CANCEL_ORIGINAL_RESTORED" && source == LogDatabase::dbDirectory().filePath("qlog.db.preimport"))) )
+        _exit(91);
+    return result;
+}
+
 extern "C" bool __real__ZN5QFile6removeERK7QString(const QString &filename);
 extern "C" bool __wrap__ZN5QFile6removeERK7QString(const QString &filename)
 {
     const bool result = __real__ZN5QFile6removeERK7QString(filename);
+    if ( result && interruptionBoundary == "ORIGINAL_REMOVED"
+         && filename == LogDatabase::dbDirectory().filePath("qlog.db.preimport") )
+        _exit(91);
+    return result;
+}
+
+extern "C" bool __real__ZN5QFile6removeEv(QFile *file);
+extern "C" bool __wrap__ZN5QFile6removeEv(QFile *file)
+{
+    const QString filename = file->fileName();
+    const bool result = __real__ZN5QFile6removeEv(file);
     if ( result && interruptionBoundary == "ORIGINAL_REMOVED"
          && filename == LogDatabase::dbDirectory().filePath("qlog.db.preimport") )
         _exit(91);
@@ -109,6 +139,8 @@ private slots:
     void cleanup();
     void inspectionRequiresExportSchema_data();
     void inspectionRequiresExportSchema();
+    void inspectionFailureIdentifiesOperation_data();
+    void inspectionFailureIdentifiesOperation();
     void inspectionDoesNotCreateMissingFile();
     void emptyAndSamePlatformImportsReplaceMetadata_data();
     void emptyAndSamePlatformImportsReplaceMetadata();
@@ -136,6 +168,9 @@ private slots:
     void schemaCheckDoesNotPrepareRoutineBackup_data();
     void schemaCheckDoesNotPrepareRoutineBackup();
     void startupWithoutImportInitializesDatabase();
+    void startupReportsNewerDatabaseFormat();
+    void startupReportsDatabaseVersionReadFailure();
+    void startupReportsMigrationSqlFailure();
     void firstStartupKeepsFirstQsoBackupDue();
     void passwordActionsReuseInitializedConnection();
     void passwordRecoveryRequiresOpenActiveDatabase_data();
@@ -163,6 +198,7 @@ private slots:
     void colocatedPreparationAvoidsDatabaseCopy();
     void publicationFailureRestoresOriginal();
     void contradictoryRecoveryFilesArePreserved();
+    void preparationWriteFailureReportsPathAndReason();
 
 private:
     static QPair<QString, QString> credentialIdentity(const QString &storageKey, const QString &user);
@@ -174,6 +210,73 @@ private:
     bool runFixture(const QStringList &arguments, int exitCode);
     void setImportPhase(const QString &phase);
 };
+
+void DatabaseImportTest::preparationWriteFailureReportsPathAndReason()
+{
+#ifdef Q_OS_UNIX
+    const QString source = createExport("source.db");
+    const QByteArray original = readFile(source);
+    const QString colocated = LogDatabase::dbDirectory().filePath("qlog-import-source.db");
+    QVERIFY(QFile::copy(source, colocated));
+    const QString progress = LogDatabase::pendingImportPath() + ".params";
+    struct rlimit originalLimit;
+    QVERIFY(getrlimit(RLIMIT_FSIZE, &originalLimit) == 0);
+    struct rlimit restrictedLimit = originalLimit;
+    restrictedLimit.rlim_cur = 0;
+    const auto previousSignal = signal(SIGXFSZ, SIG_IGN);
+    const int restricted = setrlimit(RLIMIT_FSIZE, &restrictedLimit);
+    bool result = true;
+    if ( restricted == 0 )
+        result = LogDatabase::instance()->preparePendingImport(colocated, {}, {}, {});
+    const int restored = setrlimit(RLIMIT_FSIZE, &originalLimit);
+    signal(SIGXFSZ, previousSignal);
+    QVERIFY(restricted == 0);
+    QVERIFY(restored == 0);
+    QVERIFY(!result);
+    const QString error = LogDatabase::instance()->pendingImportError();
+    QVERIFY2(error.contains(progress), qPrintable(error));
+    QVERIFY2(error.contains(QString::fromLocal8Bit(std::strerror(EFBIG))), qPrintable(error));
+    QCOMPARE(readFile(source), original);
+    QCOMPARE(readFile(colocated), original);
+    QVERIFY(!QFileInfo::exists(LogDatabase::pendingImportPath()));
+#else
+    QSKIP("Requires the Unix file-size limit to fail the import progress write.");
+#endif
+}
+
+void DatabaseImportTest::inspectionFailureIdentifiesOperation_data()
+{
+    QTest::addColumn<QString>("change");
+    QTest::addColumn<QString>("operation");
+    QTest::newRow("version-read") << QString("DROP TABLE schema_versions") << QString("read the database format version");
+    QTest::newRow("version-missing") << QString("DELETE FROM schema_versions") << QString("format version is missing");
+    QTest::newRow("version-invalid") << QString("INSERT INTO schema_versions (version, updated) VALUES (0, '2026-01-01')") << QString("format version is invalid");
+    QTest::newRow("contacts-read") << QString("DROP TABLE contacts") << QString("inspect contacts");
+    QTest::newRow("platform-read") << QString("DROP TABLE log_param") << QString("read the export platform");
+    QTest::newRow("platform-missing") << QString("DELETE FROM log_param WHERE name='sourceplatform'") << QString("export platform is missing");
+}
+
+void DatabaseImportTest::inspectionFailureIdentifiesOperation()
+{
+    QFETCH(QString, change);
+    QFETCH(QString, operation);
+    const QString source = createExport("source.db");
+    {
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", "inspection-error");
+        database.setDatabaseName(source);
+        QVERIFY(database.open());
+        QSqlQuery query(database);
+        if ( operation == "format version is invalid" )
+            QVERIFY(query.exec("DELETE FROM schema_versions"));
+        QVERIFY2(query.exec(change), qPrintable(query.lastError().text()));
+    }
+    QSqlDatabase::removeDatabase("inspection-error");
+
+    const DatabaseInfo info = LogDatabase::inspectDatabase(source);
+    QVERIFY(!info.valid);
+    QVERIFY2(info.errorMessage.contains(source), qPrintable(info.errorMessage));
+    QVERIFY2(info.errorMessage.contains(operation), qPrintable(info.errorMessage));
+}
 
 void DatabaseImportTest::publicationFailureRestoresOriginal()
 {
@@ -1286,6 +1389,81 @@ void DatabaseImportTest::startupWithoutImportInitializesDatabase()
     QCOMPARE(query.value(0).toString(), QString("OK1TEST"));
     QCOMPARE(LogParam::getLogID(), QString("old-id"));
     QCOMPARE(LogDatabase::dbDirectory().entryList({"qlog_backup_*.db"}, QDir::Files), QStringList{snapshot});
+}
+
+void DatabaseImportTest::startupReportsNewerDatabaseFormat()
+{
+    const QString source = createExport("source.db");
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    {
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", "newer-database");
+        database.setDatabaseName(LogDatabase::dbFilename());
+        QVERIFY(database.open());
+        QSqlQuery query(database);
+        QVERIFY(query.prepare("INSERT INTO schema_versions (version, updated) VALUES (?, datetime('now'))"));
+        query.addBindValue(DBSchemaMigration::latestVersion + 1);
+        QVERIFY(query.exec());
+    }
+    QSqlDatabase::removeDatabase("newer-database");
+
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
+
+    const QString error = LogDatabase::instance()->pendingImportError();
+    QVERIFY2(error.contains(LogDatabase::dbFilename()), qPrintable(error));
+    QVERIFY2(error.contains(QString("format version %1").arg(DBSchemaMigration::latestVersion + 1)), qPrintable(error));
+    QVERIFY2(error.contains(QString("supports up to %1").arg(DBSchemaMigration::latestVersion)), qPrintable(error));
+    QVERIFY2(error.contains("newer QLog"), qPrintable(error));
+    QSqlQuery query("SELECT MAX(version) FROM schema_versions");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), DBSchemaMigration::latestVersion + 1);
+}
+
+void DatabaseImportTest::startupReportsDatabaseVersionReadFailure()
+{
+    const QString source = createExport("source.db");
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    {
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", "unreadable-version");
+        database.setDatabaseName(LogDatabase::dbFilename());
+        QVERIFY(database.open());
+        QSqlQuery query(database);
+        QVERIFY(query.exec("DROP TABLE schema_versions"));
+    }
+    QSqlDatabase::removeDatabase("unreadable-version");
+
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
+
+    const QString error = LogDatabase::instance()->pendingImportError();
+    QVERIFY2(error.contains(LogDatabase::dbFilename()), qPrintable(error));
+    QVERIFY2(error.contains("read the database format version"), qPrintable(error));
+    QVERIFY2(error.contains("schema_versions"), qPrintable(error));
+    QSqlQuery query("SELECT callsign FROM contacts WHERE id=1");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), QString("OK1TEST"));
+}
+
+void DatabaseImportTest::startupReportsMigrationSqlFailure()
+{
+    const QString source = createExport("source.db", {}, DBSchemaMigration::latestVersion - 1);
+    QVERIFY(QFile::copy(source, LogDatabase::dbFilename()));
+    {
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", "failed-version-write");
+        database.setDatabaseName(LogDatabase::dbFilename());
+        QVERIFY(database.open());
+        QSqlQuery query(database);
+        QVERIFY(query.exec("CREATE TRIGGER reject_migration BEFORE INSERT ON schema_versions "
+                           "BEGIN SELECT RAISE(ABORT, 'migration diagnostic sentinel'); END"));
+    }
+    QSqlDatabase::removeDatabase("failed-version-write");
+
+    QCOMPARE(LogDatabase::instance()->initialize(), LogDatabase::ImportResult::FAILED);
+
+    const QString error = LogDatabase::instance()->pendingImportError();
+    QVERIFY2(error.contains(LogDatabase::dbFilename()), qPrintable(error));
+    QVERIFY2(error.contains("migration diagnostic sentinel"), qPrintable(error));
+    QSqlQuery query("SELECT MAX(version) FROM schema_versions");
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toInt(), DBSchemaMigration::latestVersion - 1);
 }
 
 void DatabaseImportTest::firstStartupKeepsFirstQsoBackupDue()

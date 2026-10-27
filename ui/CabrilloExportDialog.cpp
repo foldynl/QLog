@@ -518,7 +518,8 @@ void CabrilloExportDialog::accept()
     if ( !query.prepare(sql) )
     {
         qCWarning(runtime) << "Failed to prepare export query:" << query.lastError().text();
-        QMessageBox::critical(this, tr("QLog Error"), tr("Failed to prepare export query."));
+        QLogFileDialog::showError(this, tr("Export Cabrillo"),
+                              tr("Cannot prepare contact selection for the Cabrillo export %1:\n%2").arg(ui->fileEdit->text(), query.lastError().text()));
         return;
     }
     bindWhereClause(query);
@@ -526,13 +527,21 @@ void CabrilloExportDialog::accept()
     if ( !query.exec() )
     {
         qCWarning(runtime) << "Failed to execute export query:" << query.lastError().text();
-        QMessageBox::critical(this, tr("QLog Error"), tr("Failed to query QSOs for export."));
+        QLogFileDialog::showError(this, tr("Export Cabrillo"),
+                              tr("Cannot read contacts for the Cabrillo export %1:\n%2").arg(ui->fileEdit->text(), query.lastError().text()));
         return;
     }
 
     QList<QSqlRecord> records;
     while ( query.next() )
         records.append(query.record());
+    if ( query.lastError().isValid() )
+    {
+        QLogFileDialog::showError(this, tr("Export Cabrillo"),
+                              tr("Cannot finish reading contacts for the Cabrillo export %1:\n%2")
+                                  .arg(ui->fileEdit->text(), query.lastError().text()));
+        return;
+    }
 
     bool hasFrequencyColumn = false;
     const QList<CabrilloFormat::ColumnDef> columns =
@@ -573,8 +582,8 @@ void CabrilloExportDialog::accept()
     QSaveFile file(ui->fileEdit->text());
     if ( !file.open(QIODevice::WriteOnly | QIODevice::Text) )
     {
-        QMessageBox::critical(this, tr("QLog Error"),
-                              tr("Cannot open file %1 for writing.").arg(ui->fileEdit->text()));
+        QLogFileDialog::showError(this, tr("Export Cabrillo"),
+                              tr("Cannot create the Cabrillo export file %1:\n%2").arg(ui->fileEdit->text(), file.errorString()));
         return;
     }
 
@@ -601,8 +610,8 @@ void CabrilloExportDialog::accept()
     if ( stream.status() != QTextStream::Ok || !file.flush() || !file.commit() )
     {
         qCWarning(runtime) << "Failed to write Cabrillo export:" << file.fileName() << file.errorString();
-        QMessageBox::critical(this, tr("QLog Error"),
-                              tr("Failed to write Cabrillo file %1.").arg(ui->fileEdit->text()));
+        QLogFileDialog::showError(this, tr("Export Cabrillo"),
+                              tr("Cannot finish saving the Cabrillo export %1:\n%2").arg(ui->fileEdit->text(), file.errorString()));
         return;
     }
 

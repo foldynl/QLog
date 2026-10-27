@@ -103,7 +103,7 @@ public:
     QList<QSLGalleryItem> getGalleryItemsByMode(const QString &mode) const;
     QList<QSLGalleryItem> getGalleryItemsByContinent(const QString &continent) const;
 
-    QByteArray getQSLData(qulonglong contactId, int source, const QString &name) const;
+    QByteArray getQSLData(qulonglong contactId, int source, const QString &name, QString *error = nullptr) const;
 
     bool setFavorite(qulonglong contactId, QSLObject::SourceType source, const QString &name, bool favorite);
     bool isFavorite(qulonglong contactId, QSLObject::SourceType source, const QString &name) const;

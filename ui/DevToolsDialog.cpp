@@ -235,8 +235,8 @@ void DevToolsDialog::saveQuery()
     QFile file(filename);
     if ( !file.open(QIODevice::WriteOnly | QIODevice::Text) )
     {
-        QMessageBox::warning(this, tr("Save Error"),
-            tr("Cannot save file:\n%1").arg(file.errorString()));
+        QLogFileDialog::showError(this, tr("Save SQL Query"),
+            tr("Cannot create the saved SQL query file %1:\n%2").arg(filename, file.errorString()));
         return;
     }
 
@@ -245,7 +245,7 @@ void DevToolsDialog::saveQuery()
     out.flush();
     if ( out.status() != QTextStream::Ok || !file.flush() )
     {
-        QMessageBox::warning(this, tr("Save Error"), tr("Cannot save file:\n%1").arg(file.errorString()));
+        QLogFileDialog::showError(this, tr("Save SQL Query"), tr("Cannot finish writing the saved SQL query %1:\n%2").arg(filename, file.errorString()));
         return;
     }
     settings.setValue("devtools/lastDir", QFileInfo(filename).absolutePath());
@@ -353,9 +353,8 @@ void DevToolsDialog::exportModel( const QString &title,
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        QMessageBox::warning(this, tr("Export Error"),
-                             tr("Cannot open file for writing:\n%1")
-                             .arg(file.errorString()));
+        QLogFileDialog::showError(this, tr("Export Query Results"),
+                             tr("Cannot create the %1 query results file %2:\n%3").arg(title, filename, file.errorString()));
         return;
     }
 
@@ -393,7 +392,8 @@ void DevToolsDialog::exportModel( const QString &title,
     out.flush();
     if ( out.status() != QTextStream::Ok || !file.flush() )
     {
-        QMessageBox::warning(this, tr("Export Error"), tr("Cannot save file:\n%1").arg(file.errorString()));
+        QLogFileDialog::showError(this, tr("Export Query Results"),
+                              tr("Cannot finish writing the %1 query results to %2:\n%3").arg(title, filename, file.errorString()));
         return;
     }
 
@@ -600,7 +600,7 @@ void DevToolsDialog::saveDebugLog()
 
     if ( QFileInfo(logFilename) == QFileInfo(destFilename) )
     {
-        QMessageBox::warning(this, tr("Save Debug Log"), tr("Choose a different file from the active debug log."));
+        QLogFileDialog::showError(this, tr("Save Debug Log"), tr("The selected destination %1 is the active debug log. Choose another file.").arg(destFilename));
         return;
     }
 
@@ -608,9 +608,9 @@ void DevToolsDialog::saveDebugLog()
     QSaveFile destination(destFilename);
     QString error;
     if ( !source.open(QIODevice::ReadOnly) )
-        error = source.errorString();
+        error = tr("Cannot open the active debug log %1:\n%2").arg(logFilename, source.errorString());
     else if ( !destination.open(QIODevice::WriteOnly) )
-        error = destination.errorString();
+        error = tr("Cannot create the debug log copy %1:\n%2").arg(destFilename, destination.errorString());
     else
     {
         // The active log may keep growing while it is copied.
@@ -626,7 +626,9 @@ void DevToolsDialog::saveDebugLog()
             const QByteArray block = source.read(qMin<qint64>(remaining, 64 * 1024));
             if ( block.isEmpty() )
             {
-                error = source.error() == QFileDevice::NoError ? tr("The source log changed while copying.") : source.errorString();
+                error = source.error() == QFileDevice::NoError
+                            ? tr("The active debug log %1 changed while being copied to %2.").arg(logFilename, destFilename)
+                            : tr("Cannot read the active debug log %1 while saving a copy:\n%2").arg(logFilename, source.errorString());
                 break;
             }
 #ifdef QLOG_FLATPAK
@@ -635,7 +637,7 @@ void DevToolsDialog::saveDebugLog()
 #endif
             if ( destination.write(block) != block.size() )
             {
-                error = destination.errorString();
+                error = tr("Cannot write the debug log copy to %1:\n%2").arg(destFilename, destination.errorString());
                 break;
             }
             remaining -= block.size();
@@ -644,11 +646,11 @@ void DevToolsDialog::saveDebugLog()
         containsLog = containsLog && existing.error() == QFileDevice::NoError;
         // A portal alias of the active log can grow after the size snapshot.
         if ( error.isEmpty() && containsLog && existing.size() != sourceSize )
-            error = tr("The selected file already contains the current log. Choose another file.");
+            error = tr("The selected debug log copy %1 already contains the active log %2. Choose another file.").arg(destFilename, logFilename);
         existing.close();
 #endif
         if ( error.isEmpty() && !containsLog && (!destination.flush() || !destination.commit()) )
-            error = destination.errorString();
+            error = tr("Cannot finish saving the debug log copy %1:\n%2").arg(destFilename, destination.errorString());
     }
 
     if ( error.isEmpty() )
@@ -659,8 +661,8 @@ void DevToolsDialog::saveDebugLog()
     }
     else
     {
-        QMessageBox::warning(this, tr("Save Debug Log"),
-            tr("Cannot save %1:\n%2").arg(destFilename, error));
+        QLogFileDialog::showError(this, tr("Save Debug Log"),
+            error);
     }
 }
 

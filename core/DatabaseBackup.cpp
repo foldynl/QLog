@@ -114,14 +114,22 @@ bool DatabaseBackup::prepare(bool force, QString *snapshotName)
     // An interrupted copy must never be mistaken for a complete snapshot.
     const QString temporaryName = filename + QStringLiteral(".tmp");
 
-    if ( !LogDatabase::instance()->atomicCopy(temporaryName)
-         || !QFile::rename(directory.filePath(temporaryName), directory.filePath(filename)) )
+    QString reason;
+    bool copied = LogDatabase::instance()->atomicCopy(temporaryName, &reason);
+    if ( copied )
+    {
+        QFile temporary(directory.filePath(temporaryName));
+        copied = temporary.rename(directory.filePath(filename));
+        if ( !copied )
+            reason = tr("Cannot save backup copy %1:\n%2").arg(directory.filePath(filename), temporary.errorString());
+    }
+    if ( !copied )
     {
         qCWarning(runtime) << "Cannot prepare backup snapshot" << filename;
 
         QFile::remove(directory.filePath(temporaryName));
 
-        if ( !LogParam::setBackupError(tr("Could not create the backup. Your previous backups have been kept.")) )
+        if ( !LogParam::setBackupError(tr("%1\nYour previous backups have been kept.").arg(reason)) )
             qCWarning(runtime) << "Cannot save backup status";
 
         return false;
@@ -147,18 +155,28 @@ bool DatabaseBackup::prepare(bool force, QString *snapshotName)
 
         const QString snapshot = directory.filePath(name);
         // Keep a non-empty WAL together with its snapshot for recovery.
-        if ( QFileInfo(snapshot + QStringLiteral("-wal")).size() > 0 || !QFile::remove(snapshot) )
+        QFile file(snapshot);
+        if ( QFileInfo(snapshot + QStringLiteral("-wal")).size() > 0 )
+        {
+            if ( reason.isEmpty() )
+                reason = tr("Cannot remove the older pending backup %1 because it still has unfinished database writes.").arg(snapshot);
+            cleaned = false;
+            continue;
+        }
+        if ( !file.remove() )
         {
             qCWarning(runtime) << "Cannot retire pending backup snapshot" << snapshot;
+            if ( reason.isEmpty() )
+                reason = tr("Cannot remove the older pending database backup %1:\n%2").arg(snapshot, file.errorString());
             cleaned = false;
             continue;
         }
 
-        if ( !removeSnapshotSidecars(snapshot) )
+        if ( !removeSnapshotSidecars(snapshot, &reason) )
             cleaned = false;
     }
 
-    if ( !cleaned && !LogParam::setBackupError(tr("Could not remove older pending backup files. The new database copy has been kept.")) )
+    if ( !cleaned && !LogParam::setBackupError(tr("%1\nThe new database backup copy has been kept.").arg(reason)) )
         qCWarning(runtime) << "Cannot save backup status";
 
     return true;
@@ -175,8 +193,13 @@ void DatabaseBackup::run()
         if ( isInterruptionRequested() )
             return;
 
-        if ( !QFile::remove(directory.filePath(name)) )
+        QFile file(directory.filePath(name));
+        if ( !file.remove() )
+        {
             qCWarning(runtime) << "Cannot remove interrupted database copy" << name;
+            if ( error.isEmpty() )
+                error = tr("Cannot remove the interrupted backup copy %1:\n%2").arg(file.fileName(), file.errorString());
+        }
     }
 
     // Clean leftovers from earlier starts before a long export can be interrupted again.
@@ -189,8 +212,9 @@ void DatabaseBackup::run()
             if ( isInterruptionRequested() )
                 return;
 
-            if ( !removeSnapshotSidecars(directory.filePath(name.left(name.size() - 4))) && error.isEmpty() )
-                error = tr("Could not remove unused backup files.");
+            QString cleanupError;
+            if ( !removeSnapshotSidecars(directory.filePath(name.left(name.size() - 4)), &cleanupError) && error.isEmpty() )
+                error = tr("Cannot clean up files from an earlier backup:\n%1").arg(cleanupError);
         }
     }
 
@@ -249,12 +273,23 @@ void DatabaseBackup::run()
             return;
 
         // Preserve the full pre-migration database until another successful startup.
-        const bool cleaned = migration && !ready ? QFile::rename(snapshot, snapshot + QStringLiteral(".ready"))
-                                                 : QFile::remove(snapshot);
+        QFile file(snapshot);
+        const bool cleaned = migration && !ready ? file.rename(snapshot + QStringLiteral(".ready")) : file.remove();
         if ( !cleaned )
+        {
             qCWarning(runtime) << "Cannot retire backup snapshot" << snapshot;
-        else if ( !removeSnapshotSidecars(snapshot) && error.isEmpty() )
-            error = tr("Could not remove unused backup files.");
+            if ( error.isEmpty() )
+                error = migration && !ready
+                            ? tr("Cannot rename the completed migration backup from %1 to %2:\n%3")
+                                  .arg(snapshot, snapshot + QStringLiteral(".ready"), file.errorString())
+                            : tr("Cannot remove the database copy after ADX backup %1:\n%2").arg(snapshot, file.errorString());
+        }
+        else
+        {
+            QString cleanupError;
+            if ( !removeSnapshotSidecars(snapshot, &cleanupError) && error.isEmpty() )
+                error = tr("The ADX backup was saved, but its temporary files could not be removed:\n%1").arg(cleanupError);
+        }
     }
 
     if ( config.enabled && !isInterruptionRequested() )
@@ -270,7 +305,7 @@ void DatabaseBackup::run()
         pruneBackups(directory.absolutePath(), MAX_INTERNAL_COPIES);
 }
 
-bool DatabaseBackup::removeSnapshotSidecars(const QString &snapshot)
+bool DatabaseBackup::removeSnapshotSidecars(const QString &snapshot, QString *reason)
 {
     FCT_IDENTIFICATION;
     qCDebug(function_parameters) << snapshot;
@@ -283,9 +318,12 @@ bool DatabaseBackup::removeSnapshotSidecars(const QString &snapshot)
     for ( const QString &suffix : {QStringLiteral("-wal"), QStringLiteral("-shm")} )
     {
         const QString path = snapshot + suffix;
-        if ( QFileInfo::exists(path) && !QFile::remove(path) )
+        QFile file(path);
+        if ( file.exists() && !file.remove() )
         {
             qCWarning(runtime) << "Cannot remove unused backup file" << path;
+            if ( reason && reason->isEmpty() )
+                *reason = tr("Cannot remove a temporary database backup file %1:\n%2").arg(path, file.errorString());
             cleaned = false;
         }
     }
@@ -313,14 +351,15 @@ bool DatabaseBackup::copyAdditionalBackups(const QDir &directory, const QStringL
     if ( files.isEmpty() )
         return true;
 
-    if ( config.directory.isEmpty() || !QDir().mkpath(config.directory) )
+    if ( config.directory.isEmpty() )
     {
-        qCWarning(runtime) << "Cannot access additional backup folder" << config.directory;
-
         if ( error.isEmpty() )
-            error = tr("Could not save the additional backup. Check the backup folder. The internal backup has been kept.");
+            error = tr("No folder was selected for the additional backup. The internal backup has been kept.");
         return false;
     }
+    // The file open below provides the actual error if creating the folder fails.
+    if ( !QDir().mkpath(config.directory) )
+        qCWarning(runtime) << "Cannot create additional backup folder" << config.directory;
 
     const QDir destinationDirectory(config.directory);
     // A symlink to the internal folder must not apply external retention there.
@@ -338,14 +377,15 @@ bool DatabaseBackup::copyAdditionalBackups(const QDir &directory, const QStringL
         const QString source = directory.filePath(files.at(index));
         const QString destination = destinationDirectory.filePath(files.at(index));
 
-        if ( copyBackup(source, destination) )
+        QString copyError;
+        if ( copyBackup(source, destination, copyError) )
             saved = true;
         else if ( !isInterruptionRequested() )
         {
-            qCWarning(runtime) << "Cannot copy additional backup to" << destination;
+            qCWarning(runtime) << "Cannot copy additional backup to" << destination << copyError;
             succeeded = false;
             if ( error.isEmpty() )
-                error = tr("Could not save the additional backup. Check the backup folder. The internal backup has been kept.");
+                error = tr("%1\nThe internal backup has been kept.").arg(copyError);
         }
     }
 
@@ -361,6 +401,7 @@ bool DatabaseBackup::exportSnapshot(const QString &snapshot, const QString &outp
     qCDebug(function_parameters) << snapshot << output;
 
     bool exported = false;
+    QString reason;
     const QString connectionName = QStringLiteral("BackupExport");
     {
         QSqlDatabase database = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), connectionName);
@@ -406,12 +447,24 @@ bool DatabaseBackup::exportSnapshot(const QString &snapshot, const QString &outp
                 format.exportEnd();
                 stream.flush();
 
-                if ( !isInterruptionRequested() && !xmlError && !query.lastError().isValid()
-                     && stream.status() == QTextStream::Ok )
-                    exported = file.commit();
-                else
-                    file.cancelWriting();
+                if ( !isInterruptionRequested() )
+                {
+                    if ( query.lastError().isValid() )
+                        reason = tr("Cannot read contacts while writing the ADX backup from %1:\n%2").arg(snapshot, query.lastError().text());
+                    else if ( file.error() != QFileDevice::NoError || stream.status() != QTextStream::Ok )
+                        reason = tr("Cannot write the internal ADX backup %1:\n%2").arg(output, file.errorString());
+                    else if ( xmlError )
+                        reason = tr("Cannot export the internal ADX backup %1. Some logbook text contains characters that ADX cannot store.").arg(output);
+                    else if ( !file.flush() || !file.commit() )
+                        reason = tr("Cannot finish saving the internal ADX backup %1:\n%2").arg(output, file.errorString());
+                    else
+                        exported = true;
+                }
             }
+            else if ( query.lastError().isValid() )
+                reason = tr("Cannot start reading contacts for the ADX backup from %1:\n%2").arg(snapshot, query.lastError().text());
+            else
+                reason = tr("Cannot create the internal ADX backup file %1:\n%2").arg(output, file.errorString());
 
             if ( !exported && !isInterruptionRequested() )
                 qCWarning(runtime) << "Backup export failed" << query.lastError() << file.errorString()
@@ -420,25 +473,32 @@ bool DatabaseBackup::exportSnapshot(const QString &snapshot, const QString &outp
                 sqlite3_progress_handler(sqlite, 0, nullptr, nullptr);
         }
         else
+        {
             qCWarning(runtime) << "Cannot open backup snapshot" << database.lastError();
+            reason = tr("Cannot open the database copy for ADX backup %1:\n%2").arg(snapshot, database.lastError().text());
+        }
     }
     QSqlDatabase::removeDatabase(connectionName);
 
     if ( !exported && !isInterruptionRequested() && error.isEmpty() )
-        error = tr("Could not export the backup to ADX. The database copy and previous backups have been kept.");
+        error = tr("%1\nThe database copy and previous backups have been kept.").arg(reason);
 
     return exported;
 }
 
-bool DatabaseBackup::copyBackup(const QString &source, const QString &destination)
+bool DatabaseBackup::copyBackup(const QString &source, const QString &destination, QString &copyError)
 {
     FCT_IDENTIFICATION;
     qCDebug(function_parameters) << source << destination;
 
     QFile input(source);
+    copyError.clear();
 
     if ( !input.open(QIODevice::ReadOnly) )
+    {
+        copyError = tr("Cannot open the internal backup %1 for copying:\n%2").arg(source, input.errorString());
         return false;
+    }
 
     {
         QFile existing(destination);
@@ -452,7 +512,10 @@ bool DatabaseBackup::copyBackup(const QString &source, const QString &destinatio
 
                 const QByteArray block = input.read(64 * 1024);
                 if ( block.isEmpty() )
+                {
+                    copyError = tr("Cannot read the internal backup %1 while comparing copies:\n%2").arg(source, input.errorString());
                     return false;
+                }
 
                 if ( block != existing.read(block.size()) )
                 {
@@ -465,13 +528,19 @@ bool DatabaseBackup::copyBackup(const QString &source, const QString &destinatio
                 return !isInterruptionRequested();
 
             if ( !input.seek(0) )
+            {
+                copyError = tr("Cannot restart reading the internal backup %1:\n%2").arg(source, input.errorString());
                 return false;
+            }
         }
     }
 
     QSaveFile output(destination);
     if ( !output.open(QIODevice::WriteOnly) )
+    {
+        copyError = tr("Cannot create additional backup %1:\n%2").arg(destination, output.errorString());
         return false;
+    }
 
     QByteArray buffer;
     buffer.resize(64 * 1024);
@@ -483,13 +552,31 @@ bool DatabaseBackup::copyBackup(const QString &source, const QString &destinatio
 
         const qint64 size = input.read(buffer.data(), buffer.size());
 
-        if ( size <= 0 || output.write(buffer.constData(), size) != size )
+        if ( size <= 0 )
+        {
+            copyError = tr("Cannot read the internal backup %1 while copying:\n%2").arg(source, input.errorString());
             return false;
+        }
+        if ( output.write(buffer.constData(), size) != size )
+        {
+            copyError = tr("Cannot write additional backup %1:\n%2").arg(destination, output.errorString());
+            return false;
+        }
     }
 
-    return !isInterruptionRequested()
-            && input.error() == QFileDevice::NoError
-            && output.commit();
+    if ( isInterruptionRequested() )
+        return false;
+    if ( input.error() != QFileDevice::NoError )
+    {
+        copyError = tr("Cannot complete reading the internal backup %1:\n%2").arg(source, input.errorString());
+        return false;
+    }
+    if ( !output.flush() || !output.commit() )
+    {
+        copyError = tr("Cannot finish saving the additional backup %1:\n%2").arg(destination, output.errorString());
+        return false;
+    }
+    return true;
 }
 
 void DatabaseBackup::pruneBackups(const QString &path, int copies)
@@ -512,11 +599,12 @@ void DatabaseBackup::pruneBackups(const QString &path, int copies)
         if ( isInterruptionRequested() )
             return;
 
-        if ( !QFile::remove(directory.filePath(name)) )
+        QFile file(directory.filePath(name));
+        if ( !file.remove() )
         {
             qCWarning(runtime) << "Cannot remove old backup" << name;
             if ( error.isEmpty() )
-                error = tr("The backup was saved, but an older backup could not be removed.");
+                error = tr("The backup was saved, but an older backup could not be removed: %1\n%2").arg(file.fileName(), file.errorString());
         }
         else
             --remaining;

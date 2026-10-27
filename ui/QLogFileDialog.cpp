@@ -6,6 +6,18 @@
 
 MODULE_IDENTIFICATION("qlog.ui.qlogfiledialog");
 
+void QLogFileDialog::showError(QWidget *parent, const QString &title, const QString &message,
+                               const QString &details, QMessageBox::Icon icon)
+{
+    FCT_IDENTIFICATION;
+
+    QMessageBox dialog(icon, title, message, QMessageBox::Ok, parent);
+    dialog.setTextFormat(Qt::PlainText);
+    if ( !details.isEmpty() )
+        dialog.setDetailedText(details);
+    dialog.exec();
+}
+
 QString QLogFileDialog::getSaveFileName(QWidget *parent, const QString &caption,
                                        const QString &initialPath, const QString &filter,
                                        const QString &suffix, bool forceSuffix)

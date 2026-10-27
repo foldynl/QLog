@@ -2,6 +2,7 @@
 #define QLOG_CORE_MIGRATION_H
 
 #include <QObject>
+#include <QString>
 
 class QSqlQuery;
 
@@ -12,10 +13,12 @@ class DBSchemaMigration : public QObject
 public:
     DBSchemaMigration(QObject *parent = nullptr) : QObject(parent) {}
     bool run(QString *backupSnapshot = nullptr);
+    QString errorString() const { return error; }
 
     static constexpr int latestVersion = 44;
 
 private:
+    bool failMigration(const QString &message);
     bool setForeignKeysEnabled(bool enabled);
     bool functionMigration(int version);
     bool migrate(int toVersion);
@@ -36,6 +39,7 @@ private:
     bool setSelectedProfile(const QString &tablename, const QString &profileName);
     QString fixIntlField(const QSqlQuery &query, const QString &columName, const QString &columnNameIntl);
     bool refreshUploadStatusTrigger();
+    QString error;
 
     friend class MigrationSqlTest_FriendAccessor;
 };

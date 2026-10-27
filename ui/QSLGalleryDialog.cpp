@@ -10,6 +10,7 @@
 #include <QStyledItemDelegate>
 #include <QMenu>
 #include <QFileDialog>
+#include "ui/QLogFileDialog.h"
 
 #include "QSLGalleryDialog.h"
 #include "ui_QSLGalleryDialog.h"
@@ -690,6 +691,7 @@ void QSLGalleryDialog::exportFiltered()
 
     int saved = 0;
     int visible = 0;
+    QString firstError;
 
     for ( int i = 0; i < count; ++i )
     {
@@ -703,27 +705,41 @@ void QSLGalleryDialog::exportFiltered()
         const qulonglong contactId = item->data(ContactIdRole).toULongLong();
         const int source = item->data(SourceRole).toInt();
         const QString name = item->data(NameRole).toString();
-        const QByteArray data = qslStorage.getQSLData(contactId, source, name);
+        QString readError;
+        const QByteArray data = qslStorage.getQSLData(contactId, source, name, &readError);
 
         if ( data.isEmpty() )
         {
             qCDebug(runtime) << "No QSL data for" << contactId << source << name;
+            if ( firstError.isEmpty() )
+                firstError = readError;
             continue;
         }
 
         const QString filePath = QDir(dir).filePath(name);
         QFile file(filePath);
 
+        QString saveError;
         if ( !file.open(QIODevice::WriteOnly) )
+            saveError = tr("Cannot create the exported QSL gallery image %1:\n%2").arg(filePath, file.errorString());
+        else if ( file.write(data) != data.size() )
+            saveError = tr("Cannot write the exported QSL gallery image %1:\n%2").arg(filePath, file.errorString());
+        else if ( !file.flush() )
+            saveError = tr("Cannot finish writing the exported QSL gallery image %1:\n%2").arg(filePath, file.errorString());
+        if ( !saveError.isEmpty() )
         {
-            qCDebug(runtime) << "Cannot write file" << filePath;
+            qCWarning(runtime) << "Cannot save QSL image" << filePath << file.errorString();
+            if ( firstError.isEmpty() )
+                firstError = saveError;
             continue;
         }
 
-        file.write(data);
         ++saved;
     }
 
     ui->statusLabel->setText(tr("Exported %1 of %2 cards").arg(saved).arg(visible));
     qCDebug(runtime) << "Exported" << saved << "of" << visible << "QSL cards to" << dir;
+    if ( !firstError.isEmpty() )
+        QLogFileDialog::showError(this, tr("Export QSL Cards"),
+                              tr("Exported %1 of %2 cards.\n\n%3").arg(saved).arg(visible).arg(firstError));
 }

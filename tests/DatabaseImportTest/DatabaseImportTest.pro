@@ -7,8 +7,10 @@ INCLUDEPATH += $$PWD/../CredentialStoreImportTest/fakes $$PWD/../..
 unix:!macx {
     DEFINES += IMPORT_INTERRUPTION_WRAPPERS
     QMAKE_LFLAGS += -Wl,--wrap=_ZN5QFile6renameERK7QStringS2_ \
+                   -Wl,--wrap=_ZN5QFile6renameERK7QString \
                    -Wl,--wrap=_ZN9QSaveFile6commitEv \
-                   -Wl,--wrap=_ZN5QFile6removeERK7QString
+                   -Wl,--wrap=_ZN5QFile6removeERK7QString \
+                   -Wl,--wrap=_ZN5QFile6removeEv
 }
 win32 {
     INCLUDEPATH += $$[QT_INSTALL_PREFIX]/../Src/qtbase/src/3rdparty/sqlite

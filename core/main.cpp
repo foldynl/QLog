@@ -24,6 +24,7 @@
 #include "AppGuard.h"
 #include "3rdparty/bertoldvdb/zonedetect/library/zonedetect.h"
 #include "ui/SplashScreen.h"
+#include "ui/QLogFileDialog.h"
 #include "core/MembershipQE.h"
 #include "service/kstchat/KSTChat.h"
 #include "data/Data.h"
@@ -626,12 +627,13 @@ int main(int argc, char* argv[])
         {
             if ( !LogDatabase::instance()->canCancelPendingImport() )
             {
-                QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                                      LogDatabase::instance()->pendingImportError());
+                QLogFileDialog::showError(nullptr, QObject::tr("Open Logbook"),
+                                           LogDatabase::instance()->pendingImportError(), QString(), QMessageBox::Critical);
                 return 1;
             }
             QMessageBox message(QMessageBox::Warning, QObject::tr("Unpack Data & Settings"),
                                 LogDatabase::instance()->pendingImportError(), QMessageBox::NoButton);
+            message.setTextFormat(Qt::PlainText);
             message.setInformativeText(QObject::tr("The import has not been completed. You can retry it, or cancel it and start QLog without importing the prepared database."));
             QPushButton *retryButton = message.addButton(QObject::tr("Retry"), QMessageBox::ActionRole);
             QPushButton *cancelButton = message.addButton(QObject::tr("Cancel Import and Start QLog"), QMessageBox::DestructiveRole);
@@ -643,8 +645,8 @@ int main(int argc, char* argv[])
                 return 0;
             if ( message.clickedButton() == cancelButton && !LogDatabase::instance()->cancelPendingImport() )
             {
-                QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
-                                      LogDatabase::instance()->pendingImportError());
+                QLogFileDialog::showError(nullptr, QObject::tr("Cancel Unpacking"),
+                                           LogDatabase::instance()->pendingImportError(), QString(), QMessageBox::Critical);
                 return 1;
             }
             result = LogDatabase::instance()->initialize(&backupSnapshot);
@@ -653,6 +655,7 @@ int main(int argc, char* argv[])
 
         QMessageBox message(QMessageBox::Warning, QObject::tr("Unpack Data & Settings"),
                             LogDatabase::instance()->pendingImportError(), QMessageBox::NoButton);
+        message.setTextFormat(Qt::PlainText);
         message.setInformativeText(QObject::tr("You can continue logging and decide again at the next startup. "
                                                "Packing or unpacking data and settings remains unavailable until recovery is finished or stopped.\n\n"
                                                "Retrying recovery may overwrite passwords changed manually. Stopping recovery keeps the current passwords; "

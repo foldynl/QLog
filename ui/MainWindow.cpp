@@ -1481,8 +1481,8 @@ void MainWindow::showDumpDB()
     {
         LogParam::removeEncryptedPasswords();
         LogParam::removeSourcePlatform();
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Choose a different file. The export destination points to the open database."));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"),
+                                   tr("Cannot pack into %1 because it is the open logbook database. Choose another file.").arg(filename));
         return;
     }
 
@@ -1492,15 +1492,17 @@ void MainWindow::showDumpDB()
     {
         LogParam::removeEncryptedPasswords();
         LogParam::removeSourcePlatform();
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Failed to create temporary file."));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"),
+                                   tr("Cannot create a temporary database file for packing in %1:\n%2")
+                                 .arg(QDir::tempPath(), tempFile.errorString()));
         return;
     }
     QString tempPath = tempFile.fileName();
     tempFile.close();
 
     // Copy database to temporary file
-    bool ok = LogDatabase::instance()->atomicCopy(tempPath);
+    QString error;
+    bool ok = LogDatabase::instance()->atomicCopy(tempPath, &error);
 
     LogParam::removeEncryptedPasswords();
     LogParam::removeSourcePlatform();
@@ -1508,13 +1510,11 @@ void MainWindow::showDumpDB()
     if ( !ok )
     {
         tempFile.remove();
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Failed to dump the database."));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"), error);
         return;
     }
 
     // Compress temporary file to destination (with progress dialog)
-    QString error;
     ok = FileCompressor::gzipFileWithProgress(tempPath, filename, this, tr("Compressing database..."), &error);
     tempFile.remove();
 
@@ -1533,8 +1533,7 @@ void MainWindow::showDumpDB()
     }
     else
     {
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Cannot save %1:\n%2").arg(filename, error));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"), error);
     }
 }
 
@@ -1594,7 +1593,7 @@ void MainWindow::showLoadDB()
     if ( !prepared )
     {
         QFile::remove(decompressedFile);
-        QMessageBox::warning(this, tr("Unpack Data & Settings"), LogDatabase::instance()->pendingImportError());
+        QLogFileDialog::showError(this, tr("Unpack Data & Settings"), LogDatabase::instance()->pendingImportError());
         return;
     }
     QFile::remove(decompressedFile);

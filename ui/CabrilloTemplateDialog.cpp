@@ -1,5 +1,6 @@
 #include "CabrilloTemplateDialog.h"
 #include "ui_CabrilloTemplateDialog.h"
+#include "ui/QLogFileDialog.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -16,6 +17,9 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QStandardPaths>
+#include <QTemporaryDir>
+#include <QSaveFile>
+#include <QFile>
 
 #include "core/debug.h"
 #include "data/Data.h"
@@ -530,7 +534,7 @@ void CabrilloTemplateDialog::exportTemplate()
     QString error;
 
     if ( !writeTemplateToFile(tmpl, filePath, &error) )
-        QMessageBox::critical(this, tr("Export Failed"), error);
+        QLogFileDialog::showError(this, tr("Export Cabrillo Template"), error);
 }
 
 void CabrilloTemplateDialog::moveColumn(int direction)
@@ -610,7 +614,26 @@ bool CabrilloTemplateDialog::writeTemplateToFile(const TemplateData &tmpl,
 {
     FCT_IDENTIFICATION;
 
-    QSettings s(filePath, QSettings::IniFormat);
+    if ( error )
+        error->clear();
+
+    QSaveFile output(filePath);
+    if ( !output.open(QIODevice::WriteOnly) )
+    {
+        if ( error )
+            *error = tr("Cannot create the Cabrillo template file %1:\n%2").arg(filePath, output.errorString());
+        return false;
+    }
+
+    // QSettings has no errorString(); keep INI serialization and check the final file ourselves.
+    QTemporaryDir temporary;
+    if ( !temporary.isValid() )
+    {
+        if ( error )
+            *error = tr("Cannot create a temporary folder for Cabrillo template %1:\n%2").arg(filePath, temporary.errorString());
+        return false;
+    }
+    QSettings s(temporary.filePath("template.qct"), QSettings::IniFormat);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     s.setIniCodec("UTF-8");
 #endif
@@ -639,7 +662,30 @@ bool CabrilloTemplateDialog::writeTemplateToFile(const TemplateData &tmpl,
 
     if ( s.status() != QSettings::NoError )
     {
-        if ( error ) *error = tr("Failed to write file: %1").arg(filePath);
+        if ( error )
+            *error = tr("Cannot write the prepared Cabrillo template %1 in %2. Check free disk space and folder permissions.")
+                         .arg(filePath, temporary.path());
+        return false;
+    }
+
+    QFile input(s.fileName());
+    if ( !input.open(QIODevice::ReadOnly) )
+    {
+        if ( error )
+            *error = tr("Cannot open the prepared Cabrillo template %1:\n%2").arg(input.fileName(), input.errorString());
+        return false;
+    }
+    const QByteArray data = input.readAll();
+    if ( input.error() != QFileDevice::NoError )
+    {
+        if ( error )
+            *error = tr("Cannot read the prepared Cabrillo template data from %1:\n%2").arg(input.fileName(), input.errorString());
+        return false;
+    }
+    if ( output.write(data) != data.size() || !output.flush() || !output.commit() )
+    {
+        if ( error )
+            *error = tr("Cannot finish saving the Cabrillo template %1:\n%2").arg(filePath, output.errorString());
         return false;
     }
 
