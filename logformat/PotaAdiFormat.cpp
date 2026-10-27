@@ -25,7 +25,7 @@ void PotaAdiFormat::exportContact(const QSqlRecord &sourceRecord, QMap<QString, 
 {
     FCT_IDENTIFICATION;
 
-    if ( exportDir.isEmpty() || !isValidPotaRecord(sourceRecord) )
+    if ( !exportError.isEmpty() || exportDir.isEmpty() || !isValidPotaRecord(sourceRecord) )
         return;
 
     QSqlRecord inputRecord(sourceRecord);
@@ -41,6 +41,9 @@ void PotaAdiFormat::exportContact(const QSqlRecord &sourceRecord, QMap<QString, 
 
     for ( const QSqlRecord &record : static_cast<const QList<QSqlRecord>&>(expandedRecords) )
     {
+        if ( !exportError.isEmpty() )
+            return;
+
         const QString &mySig = record.value("my_sig").toString().toLower();
 
         // export Activator Log
@@ -75,32 +78,40 @@ AdiFormat *PotaAdiFormat::getActivatorParkFormatter(const QSqlRecord &record)
         return parkFormatters[parkFileName]->formatter;
     }
 
-    ParkFormatter *parkFormatter = new ParkFormatter();
+    const QString filePath = QDir(exportDir).filePath(parkFileName);
+    const QFileInfo parkInfo(filePath);
+    const QFileDevice *mainFile = qobject_cast<QFileDevice *>(stream.device());
+    if ( mainFile )
+    {
+        const QFileInfo mainInfo(mainFile->fileName());
+        const QString mainPath = mainInfo.canonicalFilePath();
+        const QString parkPath = parkInfo.canonicalFilePath();
+        // Reserve park names, including case-only variants on other platforms.
+        if ( mainInfo.absoluteFilePath().compare(parkInfo.absoluteFilePath(), Qt::CaseInsensitive) == 0
+             || (!mainPath.isEmpty() && mainPath.compare(parkPath, Qt::CaseInsensitive) == 0) )
+        {
+            exportError = tr("Choose a different main export file. %1 is also used for a POTA park.").arg(filePath);
+            return nullptr;
+        }
+    }
+    if ( parkInfo.exists() && (!overwriteConfirmation || !overwriteConfirmation(filePath)) )
+    {
+        exportError = tr("Export cancelled. The file %1 was not replaced.").arg(filePath);
+        return nullptr;
+    }
 
-    parkFormatter->file = new QFile(exportDir + QDir::separator() + parkFileName);
+    ParkFormatter *parkFormatter = new ParkFormatter();
+    parkFormatter->file = new QSaveFile(filePath);
     if ( !parkFormatter->file->open(QFile::WriteOnly | QFile::Text) )
     {
-        qCWarning(runtime) << "Could not open POTA park file for writing "
-                           << exportDir + QDir::separator() + parkFileName;
+        exportError = tr("Cannot write %1:\n%2").arg(filePath, parkFormatter->file->errorString());
+        qCWarning(runtime) << exportError;
         delete parkFormatter;
         return nullptr;
     }
 
     parkFormatter->stream = new QTextStream(parkFormatter->file);
-    if ( !parkFormatter->stream )
-    {
-        qCWarning(runtime) << "Cannot allocate QTextStream";
-        delete parkFormatter;
-        return nullptr;
-    }
-
     parkFormatter->formatter = new AdiFormat(*parkFormatter->stream);
-    if ( !parkFormatter->formatter )
-    {
-        qCWarning(runtime) << "Cannot allocate AdifFormatter";
-        delete parkFormatter;
-        return nullptr;
-    }
 
     parkFormatters[parkFileName] = parkFormatter;
     parkFormatter->formatter->exportStart();
@@ -148,10 +159,46 @@ void PotaAdiFormat::exportEnd()
 {
     FCT_IDENTIFICATION;
 
-    const QList<ParkFormatter*> &formatters = parkFormatters.values();
+    if ( !exportError.isEmpty() )
+        return;
 
-    for ( ParkFormatter *parkFormat :  formatters)
+    // Check every stream before publishing any park file.
+    for ( auto it = parkFormatters.cbegin(); it != parkFormatters.cend(); ++it )
+    {
+        ParkFormatter *parkFormat = it.value();
         parkFormat->formatter->exportEnd();
+        parkFormat->stream->flush();
+        if ( parkFormat->stream->status() != QTextStream::Ok || !parkFormat->file->flush() )
+        {
+            exportError = tr("Cannot write %1:\n%2").arg(parkFormat->file->fileName(), parkFormat->file->errorString());
+            qCWarning(runtime) << exportError;
+            return;
+        }
+    }
+
+    for ( auto it = parkFormatters.cbegin(); it != parkFormatters.cend(); ++it )
+    {
+        if ( !it.value()->file->commit() )
+        {
+            exportError = tr("Cannot write %1:\n%2").arg(it.value()->file->fileName(), it.value()->file->errorString());
+            qCWarning(runtime) << exportError;
+            return;
+        }
+    }
+}
+
+void PotaAdiFormat::setOverwriteConfirmation(const std::function<bool(const QString &)> &confirm)
+{
+    FCT_IDENTIFICATION;
+
+    overwriteConfirmation = confirm;
+}
+
+QString PotaAdiFormat::exportErrorString() const
+{
+    FCT_IDENTIFICATION;
+
+    return exportError;
 }
 
 void PotaAdiFormat::moveFieldValue(QSqlRecord &record,

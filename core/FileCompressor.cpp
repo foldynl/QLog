@@ -84,16 +84,21 @@ QByteArray FileCompressor::gunzip(const QByteArray &in)
 }
 
 bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile,
-                              const ProgressCallback &progress)
+                              const ProgressCallback &progress, QString *error)
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << sourceFile << "->" << destFile;
 
+    if ( error )
+        error->clear();
+
     QFile source(sourceFile);
     if ( !source.open(QIODevice::ReadOnly) )
     {
-        qCWarning(runtime) << "Cannot open source file:" << sourceFile;
+        qCWarning(runtime) << "Cannot open source file:" << sourceFile << source.errorString();
+        if ( error )
+            *error = source.errorString();
         return false;
     }
 
@@ -101,7 +106,9 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
     dest.setDirectWriteFallback(false);
     if ( !dest.open(QIODevice::WriteOnly) )
     {
-        qCWarning(runtime) << "Cannot create dest file:" << destFile;
+        qCWarning(runtime) << "Cannot create dest file:" << destFile << dest.errorString();
+        if ( error )
+            *error = dest.errorString();
         return false;
     }
 
@@ -115,6 +122,8 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
                       16 + MAX_WBITS, 8, Z_DEFAULT_STRATEGY) != Z_OK )
     {
         qCWarning(runtime) << "deflateInit2 failed";
+        if ( error )
+            *error = tr("Cannot initialize compression.");
         return false;
     }
 
@@ -130,6 +139,8 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
         if ( bytesRead < 0 )
         {
             qCWarning(runtime) << "Read error";
+            if ( error )
+                *error = source.errorString();
             success = false;
             break;
         }
@@ -148,6 +159,8 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
             if ( ret == Z_STREAM_ERROR )
             {
                 qCWarning(runtime) << "deflate error";
+                if ( error )
+                    *error = tr("Compression failed.");
                 success = false;
                 break;
             }
@@ -156,6 +169,8 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
             if ( dest.write(outBuffer, have) != have )
             {
                 qCWarning(runtime) << "Write error";
+                if ( error )
+                    *error = dest.errorString();
                 success = false;
                 break;
             }
@@ -166,6 +181,8 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
         if ( progress && !progress(bytesProcessed, totalSize) )
         {
             qCDebug(runtime) << "Compression cancelled by user";
+            if ( error )
+                *error = tr("Compression cancelled.");
             success = false;
             break;
         }
@@ -177,12 +194,18 @@ bool FileCompressor::gzipFile(const QString &sourceFile, const QString &destFile
     deflateEnd(&strm);
 
     if ( !success || ret != Z_STREAM_END )
+    {
+        if ( error && error->isEmpty() )
+            *error = tr("Compression failed.");
         return false;
+    }
 
     // Some Qt5 builds do not propagate buffered write failures from commit().
     if ( !dest.flush() || !dest.commit() )
     {
         qCWarning(runtime) << "Cannot commit compressed file:" << destFile << dest.errorString();
+        if ( error )
+            *error = dest.errorString();
         return false;
     }
 
@@ -298,7 +321,7 @@ bool FileCompressor::gunzipFile(const QString &sourceFile, const QString &destFi
 }
 
 bool FileCompressor::gzipFileWithProgress(const QString &sourceFile, const QString &destFile,
-                                          QWidget *parent, const QString &title)
+                                          QWidget *parent, const QString &title, QString *error)
 {
     FCT_IDENTIFICATION;
 
@@ -316,7 +339,7 @@ bool FileCompressor::gzipFileWithProgress(const QString &sourceFile, const QStri
         return !progressDialog.wasCanceled();
     };
 
-    bool result = gzipFile(sourceFile, destFile, progressCallback);
+    bool result = gzipFile(sourceFile, destFile, progressCallback, error);
 
     progressDialog.setValue(100);
 

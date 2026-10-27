@@ -40,6 +40,9 @@ private:
     Ui::CabrilloExportDialog *ui;
     QTimer *countDebounceTimer;
     QList<Band> bandFilterBands;
+#ifdef QLOG_FLATPAK
+    QString confirmedExportPath;
+#endif
 };
 
 #endif // QLOG_UI_CABRILLOEXPORTDIALOG_H

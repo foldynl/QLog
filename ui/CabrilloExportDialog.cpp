@@ -6,6 +6,7 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <QFileDialog>
+#include "ui/QLogFileDialog.h"
 #include <QSaveFile>
 #include <QDir>
 #include <QProgressDialog>
@@ -118,6 +119,13 @@ void CabrilloExportDialog::browseFile()
     const QString &lastPath = ( ui->fileEdit->text().isEmpty() ) ? settings.value("export/last_path", QDir::homePath()).toString()
                                                                  : ui->fileEdit->text();
 
+#ifdef QLOG_FLATPAK
+    const QString filename = QLogFileDialog::getSaveFileName(this, windowTitle(), lastPath,
+                                                             tr("Cabrillo Files (*.log);;CBR Files (*.cbr);;All Files (*)"), "cbr");
+    if ( filename.isEmpty() )
+        return;
+    confirmedExportPath = filename;
+#else
     QFileDialog dialog(this, windowTitle(), lastPath, tr("Cabrillo Files (*.log);;CBR Files (*.cbr);;All Files (*)"));
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setDefaultSuffix("cbr");
@@ -126,6 +134,7 @@ void CabrilloExportDialog::browseFile()
         return;
 
     const QString filename = dialog.selectedFiles().constFirst();
+#endif
 
     if ( !filename.isEmpty() )
     {
@@ -458,6 +467,15 @@ void CabrilloExportDialog::accept()
 {
     FCT_IDENTIFICATION;
 
+#ifdef QLOG_FLATPAK
+    if ( !ui->fileEdit->text().isEmpty() && ui->fileEdit->text() != confirmedExportPath )
+    {
+        browseFile();
+        if ( ui->fileEdit->text() != confirmedExportPath )
+            return;
+    }
+#endif
+
     if ( ui->templateCombo->currentIndex() < 0 )
     {
         QMessageBox::warning(this, tr("QLog Warning"),
@@ -580,7 +598,7 @@ void CabrilloExportDialog::accept()
     stream.flush();
     progress.close();
 
-    if ( stream.status() != QTextStream::Ok || !file.commit() )
+    if ( stream.status() != QTextStream::Ok || !file.flush() || !file.commit() )
     {
         qCWarning(runtime) << "Failed to write Cabrillo export:" << file.fileName() << file.errorString();
         QMessageBox::critical(this, tr("QLog Error"),

@@ -1,8 +1,10 @@
 #include "ui/ExportDialog.h"
 #include <QDebug>
 #include <QFileDialog>
+#include "ui/QLogFileDialog.h"
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QSaveFile>
 #include <QSqlError>
 #include "ui_ExportDialog.h"
 #include <logformat/PotaAdiFormat.h>
@@ -79,6 +81,25 @@ void ExportDialog::browse()
                                                                 : ui->fileEdit->text();
     const QString format = ui->typeSelect->currentText();
 
+#ifdef QLOG_FLATPAK
+    QString filename;
+    if ( format == "POTA" )
+    {
+        const QString directory = QFileDialog::getExistingDirectory(this, tr("Export POTA Files"),
+                                                                     ui->fileEdit->text().isEmpty() ? lastPath : QFileInfo(lastPath).absolutePath());
+        if ( directory.isEmpty() )
+            return;
+
+        const QString basename = QFileInfo(ui->fileEdit->text()).fileName();
+        filename = QDir(directory).filePath(basename.isEmpty() ? QStringLiteral("pota.adi") : basename);
+    }
+    else
+        filename = QLogFileDialog::getSaveFileName(this, windowTitle(), lastPath,
+                                                   exportFileFilter(format), exportFileSuffix(format));
+    if ( filename.isEmpty() )
+        return;
+    confirmedExportPath = filename;
+#else
     QFileDialog dialog(this, windowTitle(), lastPath, exportFileFilter(format));
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
@@ -91,6 +112,7 @@ void ExportDialog::browse()
         return;
 
     const QString filename = dialog.selectedFiles().constFirst();
+#endif
     settings.setValue("export/last_path", QFileInfo(filename).path());
     ui->fileEdit->setText(filename);
 }
@@ -175,6 +197,15 @@ void ExportDialog::runExport()
 {
     FCT_IDENTIFICATION;
 
+#ifdef QLOG_FLATPAK
+    if ( !ui->fileEdit->text().isEmpty() && ui->fileEdit->text() != confirmedExportPath )
+    {
+        browse();
+        if ( ui->fileEdit->text() != confirmedExportPath )
+            return;
+    }
+#endif
+
     const QString filename = ui->fileEdit->text();
 
     if ( filename.isEmpty() )
@@ -184,7 +215,11 @@ void ExportDialog::runExport()
         return;
     }
 
-    if ( QFileInfo::exists(filename) )
+    if ( QFileInfo::exists(filename)
+#ifdef QLOG_FLATPAK
+         && ui->typeSelect->currentText() == "POTA"
+#endif
+         )
     {
         const QMessageBox::StandardButton answer = QMessageBox::question(
             this,
@@ -197,16 +232,21 @@ void ExportDialog::runExport()
             return;
     }
 
-    QFile file(filename);
+    const bool isPota = ui->typeSelect->currentText() == "POTA";
+    QFile ordinaryFile(filename);
+    QSaveFile potaFile(filename);
+    QFileDevice *file = &ordinaryFile;
+    if ( isPota )
+        file = &potaFile;
 
-    if ( ! file.open(QFile::WriteOnly | QFile::Text) )
+    if ( !file->open(QFile::WriteOnly | QFile::Text) )
     {
         QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
                              QMessageBox::tr("Cannot write to the file"));
         return;
     }
 
-    QTextStream out(&file);
+    QTextStream out(file);
 
     LogFormat *format = LogFormat::open(ui->typeSelect->currentText(), out);
 
@@ -221,7 +261,13 @@ void ExportDialog::runExport()
     if ( potaFormat )
     {
         potaFormat->setPotaOnly(true);
-        potaFormat->setExportDirectory(QFileInfo(file).canonicalPath());
+        potaFormat->setExportDirectory(QFileInfo(filename).absolutePath());
+        potaFormat->setOverwriteConfirmation([this](const QString &path)
+        {
+            return QMessageBox::question(this, windowTitle(),
+                                          tr("The file %1 already exists. Replace it?").arg(path),
+                                          QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes;
+        });
     }
 
     if ( ui->dateRangeCheckBox->isChecked() )
@@ -284,25 +330,33 @@ void ExportDialog::runExport()
     else
     {
         count = format->runExport();
-
-        if ( count > 0
-             && ui->exportTypeCombo->currentData() == "qsl"
-             && ui->markAsSentCheckbox->isChecked() )
-        {
-            if ( ! markQSOAsSent(format) )
-            {
-                QMessageBox::warning(this,
-                                    tr("QLog Error"),
-                                    tr("Cannot mark exported QSOs as Sent"));
-            }
-        }
     }
 
     progressDialog.close();
 
+    out.flush();
+    QString error = potaFormat ? potaFormat->exportErrorString() : QString();
+    if ( error.isEmpty() && (out.status() != QTextStream::Ok || !file->flush()) )
+        error = tr("Cannot write %1:\n%2").arg(filename, file->errorString());
+    if ( error.isEmpty() && isPota && !potaFile.commit() )
+        error = tr("Cannot write %1:\n%2").arg(filename, potaFile.errorString());
+
+    if ( !error.isEmpty() )
+    {
+        delete format;
+        QMessageBox::critical(this, tr("Export Failed"),
+                               isPota ? tr("%1\n\nSome files may already have been saved.").arg(error) : error);
+        return;
+    }
+
+    if ( count > 0 && qsos4export.isEmpty()
+         && ui->exportTypeCombo->currentData() == "qsl" && ui->markAsSentCheckbox->isChecked()
+         && !markQSOAsSent(format) )
+        QMessageBox::warning(this, tr("QLog Error"), tr("Cannot mark exported QSOs as Sent"));
+
     delete format;
 
-    if ( potaFormat && qsos4export.size() > 0 ) // TODO: correctly calculate
+    if ( isPota && qsos4export.size() > 0 ) // TODO: correctly calculate
                                                 // the exported QSOs in case of POTA formatter and direct export dialog
         QMessageBox::information(nullptr, QMessageBox::tr("QLog Information"),
                                  QMessageBox::tr("Exported."));
@@ -493,6 +547,10 @@ void ExportDialog::fillQSLSendViaCombo()
 void ExportDialog::exportFormatChanged(const QString &format)
 {
     FCT_IDENTIFICATION;
+
+#ifdef QLOG_FLATPAK
+    confirmedExportPath.clear();
+#endif
 
     if ( format == "POTA" )
     {

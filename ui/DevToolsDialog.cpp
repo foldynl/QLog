@@ -10,6 +10,8 @@
 #include <QElapsedTimer>
 #include <QFile>
 #include <QFileDialog>
+#include "ui/QLogFileDialog.h"
+#include <QSaveFile>
 #include <QFileInfo>
 #include <QFontDatabase>
 #include <QHeaderView>
@@ -215,9 +217,14 @@ void DevToolsDialog::saveQuery()
     QSettings settings;
     const QString lastDir = settings.value("devtools/lastDir", QDir::homePath()).toString();
 
+#ifdef QLOG_FLATPAK
+    QString filename = QLogFileDialog::getSaveFileName(this, tr("Save SQL Query"), lastDir,
+                                                       tr("SQL Files (*.sql);;All Files (*)"), "sql", true);
+#else
     QString filename = QFileDialog::getSaveFileName(
         this, tr("Save SQL Query"), lastDir,
         tr("SQL Files (*.sql);;All Files (*)"));
+#endif
 
     if ( filename.isEmpty() )
         return;
@@ -235,6 +242,12 @@ void DevToolsDialog::saveQuery()
 
     QTextStream out(&file);
     out << ui->sqlEditor->toPlainText();
+    out.flush();
+    if ( out.status() != QTextStream::Ok || !file.flush() )
+    {
+        QMessageBox::warning(this, tr("Save Error"), tr("Cannot save file:\n%1").arg(file.errorString()));
+        return;
+    }
     settings.setValue("devtools/lastDir", QFileInfo(filename).absolutePath());
     ui->statusLabel->setText(tr("Query saved to %1").arg(QFileInfo(filename).fileName()));
 }
@@ -295,10 +308,16 @@ static bool openFileForWrite(QWidget *parent,
                              const QString &defaultSuffix,
                              QString &outPath)
 {
+    FCT_IDENTIFICATION;
+
     QSettings settings;
     const QString lastDir = settings.value("devtools/lastDir", QDir::homePath()).toString();
 
+#ifdef QLOG_FLATPAK
+    QString path = QLogFileDialog::getSaveFileName(parent, caption, lastDir, filter, defaultSuffix, true);
+#else
     QString path = QFileDialog::getSaveFileName(parent, caption, lastDir, filter);
+#endif
 
     if ( path.isEmpty() )
         return false;
@@ -369,6 +388,13 @@ void DevToolsDialog::exportModel( const QString &title,
         {
             return queryModel->data(queryModel->index(r, c)).toString();
         });
+    }
+
+    out.flush();
+    if ( out.status() != QTextStream::Ok || !file.flush() )
+    {
+        QMessageBox::warning(this, tr("Export Error"), tr("Cannot save file:\n%1").arg(file.errorString()));
+        return;
     }
 
     ui->statusLabel->setText(tr("Exported %1 row(s) to %2").arg(rows)
@@ -555,10 +581,16 @@ void DevToolsDialog::saveDebugLog()
     QSettings settings;
     const QString lastDir = settings.value("devtools/lastDir", QDir::homePath()).toString();
 
+#ifdef QLOG_FLATPAK
+    QString destFilename = QLogFileDialog::getSaveFileName(this, tr("Save Debug Log"),
+                                                          lastDir + "/" + QFileInfo(logFilename).fileName(),
+                                                          tr("Log Files (*.log);;All Files (*)"), "log", true);
+#else
     QString destFilename = QFileDialog::getSaveFileName(
         this, tr("Save Debug Log"),
         lastDir + "/" + QFileInfo(logFilename).fileName(),
         tr("Log Files (*.log);;All Files (*)"));
+#endif
 
     if ( destFilename.isEmpty() )
         return;
@@ -566,10 +598,60 @@ void DevToolsDialog::saveDebugLog()
     if ( !destFilename.endsWith(".log", Qt::CaseInsensitive) )
         destFilename += ".log";
 
-    if ( QFile::exists(destFilename) )
-        QFile::remove(destFilename);
+    if ( QFileInfo(logFilename) == QFileInfo(destFilename) )
+    {
+        QMessageBox::warning(this, tr("Save Debug Log"), tr("Choose a different file from the active debug log."));
+        return;
+    }
 
-    if ( QFile::copy(logFilename, destFilename) )
+    QFile source(logFilename);
+    QSaveFile destination(destFilename);
+    QString error;
+    if ( !source.open(QIODevice::ReadOnly) )
+        error = source.errorString();
+    else if ( !destination.open(QIODevice::WriteOnly) )
+        error = destination.errorString();
+    else
+    {
+        // The active log may keep growing while it is copied.
+        const qint64 sourceSize = source.size();
+        qint64 remaining = sourceSize;
+        bool containsLog = false;
+#ifdef QLOG_FLATPAK
+        QFile existing(destFilename);
+        containsLog = existing.open(QIODevice::ReadOnly) && existing.size() >= sourceSize;
+#endif
+        while ( remaining > 0 )
+        {
+            const QByteArray block = source.read(qMin<qint64>(remaining, 64 * 1024));
+            if ( block.isEmpty() )
+            {
+                error = source.error() == QFileDevice::NoError ? tr("The source log changed while copying.") : source.errorString();
+                break;
+            }
+#ifdef QLOG_FLATPAK
+            if ( containsLog && existing.read(block.size()) != block )
+                containsLog = false;
+#endif
+            if ( destination.write(block) != block.size() )
+            {
+                error = destination.errorString();
+                break;
+            }
+            remaining -= block.size();
+        }
+#ifdef QLOG_FLATPAK
+        containsLog = containsLog && existing.error() == QFileDevice::NoError;
+        // A portal alias of the active log can grow after the size snapshot.
+        if ( error.isEmpty() && containsLog && existing.size() != sourceSize )
+            error = tr("The selected file already contains the current log. Choose another file.");
+        existing.close();
+#endif
+        if ( error.isEmpty() && !containsLog && (!destination.flush() || !destination.commit()) )
+            error = destination.errorString();
+    }
+
+    if ( error.isEmpty() )
     {
         settings.setValue("devtools/lastDir", QFileInfo(destFilename).absolutePath());
         ui->statusLabel->setText(
@@ -578,7 +660,7 @@ void DevToolsDialog::saveDebugLog()
     else
     {
         QMessageBox::warning(this, tr("Save Debug Log"),
-            tr("Failed to copy the debug log file."));
+            tr("Cannot save %1:\n%2").arg(destFilename, error));
     }
 }
 

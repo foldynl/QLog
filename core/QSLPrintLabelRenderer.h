@@ -13,6 +13,8 @@
 class QPainter;
 class QPrinter;
 class QPaintDevice;
+class QPagedPaintDevice;
+class QIODevice;
 
 struct LabelTemplate
 {
@@ -109,7 +111,8 @@ public:
     int labelCount() const;
     QImage renderPage(int pageIndex, int dpi = 150);
     QImage renderDirectCard(int labelIndex, int dpi = 300);
-    void printAll(QPrinter *printer);
+    bool printAll(QPrinter *printer);
+    bool writePdf(QIODevice *device);
 
     static QList<LabelTemplate> predefinedTemplates();
 
@@ -130,6 +133,7 @@ private:
     void drawLabel(QPainter *painter, const QRectF &labelRect,
                    const QSLLabelData &label);
     void drawPage(QPainter *painter, int pageIndex);
+    bool renderPages(QPagedPaintDevice *device);
     void drawLabelSheetPage(QPainter *painter, int pageIndex);
     void drawDirectCardPage(QPainter *painter, int pageIndex);
     void drawDirectCard(QPainter *painter, const QSLLabelData &label);

@@ -37,6 +37,7 @@ private slots:
     void gzipFile_failurePreservesDestination();
     void gzipFile_successPublishesCompleteArchive();
     void gzipFile_commitFailureReturnsFalse();
+    void gzipFile_reportsErrors();
     void fileWriteFailurePreservesDestination_data();
     void fileWriteFailurePreservesDestination();
     void gunzipFile_requiresStreamEnd_data();
@@ -375,6 +376,33 @@ void FileCompressorTest::gzipFile_commitFailureReturnsFalse()
     QVERIFY(destinationBlocked);
     QVERIFY(!result);
     QVERIFY(QFileInfo(destinationPath).isDir());
+}
+
+void FileCompressorTest::gzipFile_reportsErrors()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source");
+    const QString destinationPath = directory.filePath("backup.dbe");
+    QString error;
+    QVERIFY(!FileCompressor::gzipFile(sourcePath, destinationPath, nullptr, &error));
+    QVERIFY(!error.isEmpty());
+
+    QFile source(sourcePath);
+    QVERIFY(source.open(QIODevice::WriteOnly));
+    QCOMPARE(source.write("new data"), qint64(8));
+    source.close();
+    QVERIFY(!FileCompressor::gzipFile(sourcePath, directory.path(), nullptr, &error));
+    QVERIFY(!error.isEmpty());
+
+    QVERIFY(FileCompressor::gzipFile(sourcePath, destinationPath, nullptr, &error));
+    QVERIFY(error.isEmpty());
+    QVERIFY(!FileCompressor::gzipFile(sourcePath, destinationPath,
+                                      [](qint64, qint64) { return false; }, &error));
+    QVERIFY(!error.isEmpty());
+    QFile destination(destinationPath);
+    QVERIFY(destination.open(QIODevice::ReadOnly));
+    QCOMPARE(FileCompressor::gunzip(destination.readAll()), QByteArray("new data"));
 }
 
 void FileCompressorTest::gunzipFile_requiresStreamEnd_data()

@@ -13,6 +13,7 @@
 #include <QPixmap>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QSaveFile>
 #include <QIODevice>
 #include <QSettings>
 #include <QSignalBlocker>
@@ -1210,7 +1211,11 @@ void QSLPrintLabelDialog::print()
     if ( printDialog.exec() == QDialog::Accepted )
     {
         updateRendererOptions();
-        renderer.printAll(&printer);
+        if ( !renderer.printAll(&printer) )
+        {
+            QMessageBox::warning(this, tr("Print Failed"), tr("Cannot print QSLs. QSOs were not marked as sent."));
+            return;
+        }
         askAndMarkQslSent();
     }
 }
@@ -1231,12 +1236,28 @@ void QSLPrintLabelDialog::exportPdf()
 
     settings.setValue("qsllabel/last_pdf_path", QFileInfo(filename).path());
 
+    updateRendererOptions();
+#ifdef QLOG_FLATPAK
+    QSaveFile file(filename);
+    if ( !file.open(QIODevice::WriteOnly) || !renderer.writePdf(&file)
+         || file.error() != QFileDevice::NoError || !file.flush() || !file.commit() )
+    {
+        qCWarning(runtime) << "Cannot save QSL PDF" << filename << file.errorString();
+        QMessageBox::warning(this, tr("Export Failed"),
+                              tr("Cannot save %1:\n%2\n\nQSOs were not marked as sent.").arg(filename, file.errorString()));
+        return;
+    }
+#else
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(filename);
 
-    updateRendererOptions();
-    renderer.printAll(&printer);
+    if ( !renderer.printAll(&printer) )
+    {
+        QMessageBox::warning(this, tr("Export Failed"), tr("Cannot export QSLs. QSOs were not marked as sent."));
+        return;
+    }
+#endif
     askAndMarkQslSent();
 }
 

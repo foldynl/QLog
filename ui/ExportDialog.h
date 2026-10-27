@@ -79,6 +79,9 @@ private:
     };
     LogbookModel logbookmodel;
     const QList<QSqlRecord> qsos4export;
+#ifdef QLOG_FLATPAK
+    QString confirmedExportPath;
+#endif
 
     void fillQSLSendViaCombo();
     void fillExportTypeCombo();

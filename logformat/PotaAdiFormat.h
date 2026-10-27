@@ -1,6 +1,8 @@
 #ifndef QLOG_LOGFORMAT_POTALOGFORMAT_H
 #define QLOG_LOGFORMAT_POTALOGFORMAT_H
 #include "AdiFormat.h"
+#include <QSaveFile>
+#include <functional>
 
 /*
  * A specialized case of ADI export, where each activated park gets T'd into its
@@ -19,16 +21,20 @@ public:
     virtual bool importNext(QSqlRecord &) override { return false; }
 
     void setExportDirectory(const QString &dir);
+    void setOverwriteConfirmation(const std::function<bool(const QString &)> &confirm);
+    QString exportErrorString() const;
     ~PotaAdiFormat();
 
 private:
     QString exportDir;
     QDateTime currentDate;
+    QString exportError;
+    std::function<bool(const QString &)> overwriteConfirmation;
 
     struct ParkFormatter
     {
         AdiFormat *formatter = nullptr;
-        QFile *file = nullptr;
+        QSaveFile *file = nullptr;
         QTextStream *stream = nullptr;
 
         ~ParkFormatter()

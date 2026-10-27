@@ -65,6 +65,7 @@
 #include "ui/QSLPrintLabelDialog.h"
 #include "ui/AdifRecoveryManager.h"
 #include <QFileDialog>
+#include "ui/QLogFileDialog.h"
 #include <QProcess>
 #include <QThread>
 #include <QTemporaryFile>
@@ -1442,10 +1443,16 @@ void MainWindow::showDumpDB()
 
     const QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
+#ifdef QLOG_FLATPAK
+    QString filename = QLogFileDialog::getSaveFileName(this, tr("Pack Data & Settings"),
+                                                       QDir(documentsPath).filePath("qlog.dbe"),
+                                                       tr("Database files (*.dbe);;All files (*)"), "dbe", true);
+#else
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Pack Data & Settings"),
                                                     documentsPath,
                                                     tr("Database files (*.dbe);;All files (*)"));
+#endif
 
     if ( filename.isEmpty() )
     {
@@ -1507,7 +1514,8 @@ void MainWindow::showDumpDB()
     }
 
     // Compress temporary file to destination (with progress dialog)
-    ok = FileCompressor::gzipFileWithProgress(tempPath, filename, this, tr("Compressing database..."));
+    QString error;
+    ok = FileCompressor::gzipFileWithProgress(tempPath, filename, this, tr("Compressing database..."), &error);
     tempFile.remove();
 
     if ( ok )
@@ -1526,7 +1534,7 @@ void MainWindow::showDumpDB()
     else
     {
         QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Failed to compress the database."));
+                             tr("Cannot save %1:\n%2").arg(filename, error));
     }
 }
 
