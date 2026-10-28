@@ -4,6 +4,7 @@
 #include <QMutex>
 #include <QTimer>
 #include <QMap>
+#include <QSettings>
 
 #include "GenericRigDrv.h"
 #include "rig/RigCaps.h"
@@ -64,6 +65,7 @@ private:
     void checkChanges(int, bool force = false);
     bool checkFreqChange(int, bool);
     bool checkModeChange(int, bool);
+    void rememberCwMode(int mode);
     void checkPTTChange(int, bool);
     void checkVFOChange(int, bool);
     void checkRITChange(int, bool);
@@ -81,6 +83,10 @@ private:
     unsigned int currFreq;
     unsigned int currTxFreq;
     QString currModeID;
+    QString rigType;
+    int lastCwMode;
+    int pendingCwMode;
+    QSettings cwSettings;
     QString currVFO;
     unsigned int currRIT;
     unsigned int currXIT;
