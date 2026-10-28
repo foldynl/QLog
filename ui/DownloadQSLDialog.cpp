@@ -22,7 +22,7 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
 
     ui->setupUi(this);
 
-    ui->lotwMyCallsignCombo->setModel(new SqlListModel(
+    SqlListModel *callsignModel = new SqlListModel(
                                           "SELECT DISTINCT "
                                           "UPPER(COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator))) "
                                           "FROM contacts "
@@ -30,7 +30,10 @@ DownloadQSLDialog::DownloadQSLDialog(QWidget *parent)
                                           "OR NULLIF(TRIM(operator), '') IS NOT NULL "
                                           "ORDER BY 1",
                                           tr("All Log Callsigns"),
-                                          ui->lotwMyCallsignCombo));
+                                          ui->lotwMyCallsignCombo);
+    while ( callsignModel->canFetchMore(QModelIndex()) )
+        callsignModel->fetchMore(QModelIndex());
+    ui->lotwMyCallsignCombo->setModel(callsignModel);
     ui->lotwDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->eqslDateEdit->setDisplayFormat(locale.formatDateShortWithYYYY());
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Download"));

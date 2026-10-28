@@ -1177,6 +1177,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
 
     auto reportFormatter = [&](const QDateTime &qsoTime,
                                const QString &callsign,
+                               const QString &band,
                                const QString &mode,
                                QStringList addInfo = QStringList(),
                                const QString &stationCallsign = QString())
@@ -1184,11 +1185,16 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
         if ( !stationCallsign.isEmpty() )
             addInfo.prepend(tr("Station Callsign:") + " " + stationCallsign);
 
-        return QString("%0; %1; %2%3 %4").arg(qsoTime.isValid() ? qsoTime.toString(locale.formatDateShortWithYYYY()) : "-",
-                                            callsign,
-                                            mode,
-                                            (addInfo.size() > 0 ) ? ";" : "",
-                                            addInfo.join(", "));
+        const QString time = qsoTime.isValid()
+                ? qsoTime.toTimeZone(QTimeZone::utc()).toString(locale.formatDateShortWithYYYY()
+                                                               + " HH:mm:ss 'UTC'")
+                : "-";
+        return QString("%1; %2; %3; %4%5 %6").arg(time,
+                                                callsign,
+                                                band,
+                                                mode,
+                                                (addInfo.size() > 0 ) ? ";" : "",
+                                                addInfo.join(", "));
     };
 
     auto dxccStateDetails = [&](const QSqlRecord &record,
@@ -1281,6 +1287,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
             stats.errorQSLs.append(
                         reportFormatter(start_time.toDateTime(),
                                         call.toString(),
+                                        band.toString(),
                                         mode.toString(),
                                         QStringList(),
                                         fromService == LOTW ? stationCallsign : QString()));
@@ -1378,6 +1385,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
             stats.unmatchedQSLs.append(
                         reportFormatter(start_time.toDateTime(),
                                         call.toString(),
+                                        band.toString(),
                                         mode.toString(),
                                         {unmatchedReason},
                                         fromService == LOTW ? stationCallsign : QString()));
@@ -1551,6 +1559,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
                         stats.newQSLs.append(
                                     reportFormatter(start_time.toDateTime(),
                                                     call.toString(),
+                                                    band.toString(),
                                                     mode.toString(),
                                                     dxccStateDetails(originalRecord,
                                                                      band.toString(),
@@ -1561,6 +1570,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
                         stats.updatedQSOs.append(
                                     reportFormatter(start_time.toDateTime(),
                                                     call.toString(),
+                                                    band.toString(),
                                                     mode.toString(),
                                                     updatedFields,
                                                     stationCallsign));
@@ -1662,6 +1672,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
             {
                 stats.newQSLs.append(reportFormatter(start_time.toDateTime(),
                                                      call.toString(),
+                                                     band.toString(),
                                                      mode.toString(),
                                                      dxccStateDetails(originalRecord,
                                                                       band.toString(),
@@ -1672,6 +1683,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
                 stats.updatedQSOs.append(
                             reportFormatter(start_time.toDateTime(),
                                             call.toString(),
+                                            band.toString(),
                                             mode.toString(),
                                             {QStringLiteral("EQSL_AG: ") + eqslAg}));
             }
