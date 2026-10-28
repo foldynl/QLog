@@ -2,7 +2,10 @@ TBC - 0.54.1
 - Fixed OmnirigDrv - CW and CWR follow the rig's own normal CW (issue #347 PR #1196 @SebaBecks)
 - Fixed QSLPrint - Ensure QSL PDF exports use a PDF extension
 - Improved file error context and unify error dialogs
-- Fix Flatpak file access and safe export handling
+- Fixed Flatpak file access and safe export handling
+- Fixed CTY DXCC matching and geographic overrides (issue #1221)
+- Fixed Club Log DXCC exact-match column alignment
+- DXCC - Preserve host prefixes when resolving numeric callsign suffixes
 
 2026/10/20 - 0.54.0
 - [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
