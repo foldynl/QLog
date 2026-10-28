@@ -1229,10 +1229,12 @@ void QSLPrintLabelDialog::exportPdf()
     QSettings settings;
     const QString lastPath = settings.value("qsllabel/last_pdf_path", QDir::homePath()).toString();
 
-    QString filename = QFileDialog::getSaveFileName(this,
-                                                     tr("Export PDF"),
-                                                     lastPath,
-                                                     tr("PDF Files (*.pdf)"));
+    const QString filename = QLogFileDialog::getSaveFileName(this,
+                                                             tr("Export PDF"),
+                                                             lastPath,
+                                                             tr("PDF Files (*.pdf)"),
+                                                             "pdf", true);
+
     if ( filename.isEmpty() )
         return;
 
