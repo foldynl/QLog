@@ -76,6 +76,7 @@ OmnirigRigDrv::OmnirigRigDrv(const RigProfile &profile,
       currFreq(0),
       currTxFreq(0),
       lastCwMode(0),
+      pendingCwMode(0),
       currRIT(0),
       currXIT(0),
       currPTT(false),
@@ -461,7 +462,18 @@ void OmnirigRigDrv::setRawMode(const QString &rawMode)
         if ( !(m & writableParams) ) return;
 
         qCDebug(runtime) << "Setting Mode";
-        rig->put_Mode(m);
+        const HRESULT hr = rig->put_Mode(m);
+        if ( FAILED(hr) )
+        {
+            qCWarning(runtime) << "Cannot set OmniRig mode, hr =" << QString::number(hr, 16);
+            return;
+        }
+
+        pendingCwMode = (m == OmnirigV1::PM_CW_U || m == OmnirigV1::PM_CW_L) ? m : 0;
+
+        // Without mode reports, a successful explicit choice is the only way to learn CW.
+        if ( !(readableParams & (OmnirigV1::PM_CW_U | OmnirigV1::PM_CW_L)) )
+            rememberCwMode(m);
 
 #if 0 // SPLIT MODE
         // sync Split VFO mode
@@ -500,6 +512,9 @@ void OmnirigRigDrv::setMode(const QString &mode, const QString &submode, bool di
     {
         if ( !rigProfile.getModeInfo || !rig ) return;
 
+        const int supportedCwModes = writableParams & (OmnirigV1::PM_CW_U | OmnirigV1::PM_CW_L);
+        if ( !supportedCwModes ) return;
+
         OmnirigV1::RigParamX currentMode = OmnirigV1::PM_UNKNOWN;
         const HRESULT hr = rig->get_Mode(&currentMode);
         if ( FAILED(hr) )
@@ -508,16 +523,19 @@ void OmnirigRigDrv::setMode(const QString &mode, const QString &submode, bool di
             return;
         }
 
-        if ( currentMode == OmnirigV1::PM_CW_U || currentMode == OmnirigV1::PM_CW_L )
+        // Preserve a queued CW choice until a fresh report supersedes it.
+        int cwMode = pendingCwMode ? pendingCwMode : lastCwMode;
+        if ( !pendingCwMode && (currentMode & readableParams)
+             && (currentMode == OmnirigV1::PM_CW_U || currentMode == OmnirigV1::PM_CW_L) )
         {
             rememberCwMode(currentMode);
-            return;
+            cwMode = currentMode;
         }
 
-        // CW_U is the first-use default, not a claim about the rig's normal CW.
-        const int cwMode = (lastCwMode & writableParams) ? lastCwMode
-                         : (writableParams & OmnirigV1::PM_CW_U) ? OmnirigV1::PM_CW_U
-                         : OmnirigV1::PM_CW_L;
+        if ( !(cwMode & supportedCwModes) )
+            cwMode = (supportedCwModes & OmnirigV1::PM_CW_U) ? OmnirigV1::PM_CW_U : OmnirigV1::PM_CW_L;
+
+        // OmniRig reports can lag queued writes; always send the latest request.
         setRawMode(modeMap.value(cwMode));
         return;
     }
@@ -626,6 +644,7 @@ void OmnirigRigDrv::__rigTypeChange(int rigID)
                      << "W-params" << QString::number(writableParams, 16);
 
     lastCwMode = 0;
+    pendingCwMode = 0;
     BSTR type = nullptr;
     const HRESULT hr = rig->get_RigType(&type);
     rigType = bstrToQString(type);
@@ -895,6 +914,7 @@ bool OmnirigRigDrv::checkModeChange(int params, bool force)
         {
             if ( inParams & it.key() )
             {
+                pendingCwMode = 0;
                 rememberCwMode(it.key());
                 qCDebug(runtime) << "Rig Mode: "<< it.value();
                 qCDebug(runtime) << "Object Mode: "<< currModeID;

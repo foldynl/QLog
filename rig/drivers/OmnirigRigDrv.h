@@ -85,6 +85,7 @@ private:
     QString currModeID;
     QString rigType;
     int lastCwMode;
+    int pendingCwMode;
     QSettings cwSettings;
     QString currVFO;
     unsigned int currRIT;
