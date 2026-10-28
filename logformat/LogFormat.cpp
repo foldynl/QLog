@@ -1273,14 +1273,16 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
         const QVariant &mode = QSLRecord.value("mode");
         const QVariant &start_time = QSLRecord.value("start_time");
         const QVariant &satName = QSLRecord.value("sat_name");
-        const QString stationCallsign = QSLRecord.value("station_callsign").toString().trimmed();
+        const QString stationCallsign = ( fromService == EQSL
+                                        ? filterMyCallsign
+                                        : QSLRecord.value("station_callsign").toString() ).trimmed();
 
         /* checking matching fields if they are not empty */
         if ( !start_time.toDateTime().isValid()
              || call.toString().isEmpty()
              || band.toString().isEmpty()
              || mode.toString().isEmpty()
-             || ( fromService == LOTW && stationCallsign.isEmpty() ) )
+             || ( ( fromService == LOTW || fromService == EQSL ) && stationCallsign.isEmpty() ) )
         {
             qWarning() << "QSL import does not contain all required matching fields";
             qCDebug(runtime) << QSLRecord;
@@ -1308,7 +1310,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
               startTimeStr,
               QString::number(fromService == EQSL ? 3600 : 1800));
 
-        if ( fromService == LOTW )
+        if ( fromService == LOTW || fromService == EQSL )
         {
             QString escapedStationCallsign = stationCallsign;
             escapedStationCallsign.replace('\'', QStringLiteral("''"));

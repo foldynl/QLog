@@ -562,6 +562,7 @@ void EQSLQSLDownloader::processReply(QNetworkReply *reply)
         /* see above why QLog uses a temp file */
         QTextStream stream(&tempFile);
         AdiFormat adi(stream);
+        adi.setFilterMyCallsign(downloadCallsign);
 
         connect(&adi, &AdiFormat::importPosition, this, [this, size](qint64 position)
         {
@@ -628,6 +629,9 @@ void EQSLQSLDownloader::get(const QList<QPair<QString, QString>> &params)
 
     const QString &username = getUsername();
     const QString &password = getPasswd();
+
+    // Keep the request's station identity through the ADIF download.
+    downloadCallsign = username.trimmed().toUpper();
 
     QUrlQuery query;
     query.setQueryItems(params);
