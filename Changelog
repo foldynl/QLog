@@ -6,6 +6,8 @@ TBC - 0.54.1
 - Fixed CTY DXCC matching and geographic overrides (issue #1221)
 - Fixed Club Log DXCC exact-match column alignment
 - DXCC - Preserve host prefixes when resolving numeric callsign suffixes
+- Fixed eQSL profile callsign matching
+- Fixed eQSL submode matching
 
 2026/10/20 - 0.54.0
 - [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
