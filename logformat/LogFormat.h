@@ -57,7 +57,7 @@ public:
                             unsigned long *warnings,
                             unsigned long *errors,
                             QSet<uint> *importedEntities = nullptr);
-    void runQSLImport(QSLFrom fromService);
+    void runQSLImport(QSLFrom fromService, const bool *canceled = nullptr);
     void runDXCCCreditImport();
     long runExport();
     long runExport(const QList<QSqlRecord>&);

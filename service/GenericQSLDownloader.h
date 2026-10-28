@@ -17,7 +17,7 @@ signals:
     void receiveQSLProgress(qulonglong value);
     void receiveQSLStarted();
     void receiveQSLComplete(QSLMergeStat);
-    void receiveQSLFailed(QString);
+    void receiveQSLFailed(QString error, QSLMergeStat stats = QSLMergeStat());
 
 public slots:
     virtual void abortDownload() = 0;

@@ -1171,7 +1171,7 @@ void LogFormat::runDXCCCreditImport()
     emit QSLMergeFinished(stats);
 }
 
-void LogFormat::runQSLImport(QSLFrom fromService)
+void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
 {
     FCT_IDENTIFICATION;
 
@@ -1245,6 +1245,12 @@ void LogFormat::runQSLImport(QSLFrom fromService)
 
     while ( true )
     {
+        if ( canceled && *canceled )
+        {
+            failImport(tr("QSL import canceled"));
+            return;
+        }
+
         QSLRecord.clearValues();
 
         if ( !this->importNext(QSLRecord) ) break;
@@ -1669,6 +1675,12 @@ void LogFormat::runQSLImport(QSLFrom fromService)
     }
 
     emit importPosition(stream.pos());
+
+    if ( canceled && *canceled )
+    {
+        failImport(tr("QSL import canceled"));
+        return;
+    }
 
     if ( !database.commit() )
     {

@@ -552,7 +552,7 @@ void LotwQSLDownloader::processReply(QNetworkReply *reply)
     auto fail = [this, reply](const QString &message)
     {
         stationCallsignQueue.clear();
-        emit receiveQSLFailed(message);
+        emit receiveQSLFailed(message, downloadStat);
         reply->deleteLater();
     };
 
@@ -570,7 +570,10 @@ void LotwQSLDownloader::processReply(QNetworkReply *reply)
         qCDebug(runtime) << "HTTP Status Code" << replyStatusCode;
 
         if ( reply->error() == QNetworkReply::OperationCanceledError )
+        {
             reply->deleteLater();
+            emit receiveQSLFailed(tr("QSL download canceled"), downloadStat);
+        }
         else if ( replyStatusCode == 0
                   || replyStatusCode >= 500
                   || (replyStatusCode >= 200 && replyStatusCode < 300) )
@@ -661,10 +664,10 @@ void LotwQSLDownloader::processReply(QNetworkReply *reply)
     connect(&adi, &AdiFormat::QSLMergeFailed, this, [this](const QString &error)
     {
         stationCallsignQueue.clear();
-        emit receiveQSLFailed(error);
+        emit receiveQSLFailed(error, downloadStat);
     });
 
-    adi.runQSLImport(adi.LOTW);
+    adi.runQSLImport(adi.LOTW, &aborted);
 
     tempFile.close();
 
@@ -687,7 +690,7 @@ void LotwQSLDownloader::skipCallsign(const QString &error)
     if ( !continueOnCallsignError )
     {
         stationCallsignQueue.clear();
-        emit receiveQSLFailed(error);
+        emit receiveQSLFailed(error, downloadStat);
         return;
     }
 
@@ -721,7 +724,9 @@ bool LotwQSLDownloader::scheduleRetry(QNetworkReply *reply, const QString &reaso
 
     QTimer::singleShot(retryCount * 1000, this, [this]
     {
-        if ( !aborted && !currentReply )
+        if ( aborted )
+            emit receiveQSLFailed(tr("QSL download canceled"), downloadStat);
+        else if ( !currentReply )
             get(requestParams);
     });
     return true;
@@ -754,6 +759,7 @@ LotwQSLDownloader::~LotwQSLDownloader()
 {
     FCT_IDENTIFICATION;
 
+    disconnect(getNetworkAccessManager(), nullptr, this, nullptr);
     if ( currentReply )
     {
         currentReply->abort();

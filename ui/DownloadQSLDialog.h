@@ -37,6 +37,7 @@ private:
 
 private slots:
     void downloadQSLs();
+    void reject() override;
 
 };
 

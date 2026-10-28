@@ -1,5 +1,6 @@
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QPointer>
 #include "DownloadQSLDialog.h"
 #include "qpushbutton.h"
 #include "ui_DownloadQSLDialog.h"
@@ -94,6 +95,7 @@ void DownloadQSLDialog::startNextDownload()
     }
     else
     {
+        ui->buttonBox->setEnabled(true);
         QSLImportStatDialog statDialog(downloadStat);
         downloadStat.clear();
         if ( statDialog.exec() == QDialog::Rejected )
@@ -195,7 +197,7 @@ void DownloadQSLDialog::prepareDownload(GenericQSLDownloader *service,
 {
     FCT_IDENTIFICATION;
 
-    QProgressDialog* progressDialog = new QProgressDialog("", tr("Cancel"), 0, 0, this);
+    QPointer<QProgressDialog> progressDialog = new QProgressDialog("", tr("Cancel"), 0, 0, this);
     progressDialog->setWindowTitle(tr("QSL Download Progress"));
     progressDialog->setWindowModality(Qt::WindowModal);
     progressDialog->setRange(0, 0);
@@ -203,10 +205,12 @@ void DownloadQSLDialog::prepareDownload(GenericQSLDownloader *service,
     progressDialog->show();
     progressDialog->setLabelText(tr("Downloading from %1").arg(serviceName));
 
-    connect(service, &GenericQSLDownloader::receiveQSLProgress, progressDialog, &QProgressDialog::setValue);
+    connect(service, &GenericQSLDownloader::receiveQSLProgress, progressDialog.data(), &QProgressDialog::setValue);
 
     connect(service, &GenericQSLDownloader::receiveQSLStarted, this, [progressDialog, serviceName]
     {
+        if ( !progressDialog )
+            return;
         progressDialog->setLabelText(tr("Processing %1 QSLs").arg(serviceName));
         progressDialog->setRange(0, 100);
     });
@@ -220,29 +224,35 @@ void DownloadQSLDialog::prepareDownload(GenericQSLDownloader *service,
 
         downloadSucceeded();
 
-        progressDialog->done(QDialog::Accepted);
+        if ( progressDialog )
+            progressDialog->done(QDialog::Accepted);
         downloadStat[serviceName] = stats;
 
         service->deleteLater();
         startNextDownload();
     });
 
-    connect(service, &GenericQSLDownloader::receiveQSLFailed, this, [this, service, progressDialog, serviceName](const QString &error)
+    connect(service, &GenericQSLDownloader::receiveQSLFailed, this, [this, service, progressDialog, serviceName](const QString &error, QSLMergeStat stats)
     {
-        progressDialog->done(QDialog::Accepted);
-        QMessageBox::critical(this, tr("QLog Error"), tr("%1 update failed: ").arg(serviceName) + error);
+        const bool canceled = !progressDialog || progressDialog->wasCanceled();
+        if ( progressDialog )
+            progressDialog->done(QDialog::Accepted);
+        if ( !canceled )
+        {
+            stats.errorQSLs.append(error);
+            QMessageBox::critical(this, tr("QLog Error"), tr("%1 update failed: ").arg(serviceName) + error);
+        }
+        downloadStat[serviceName] = stats;
         service->deleteLater();
         startNextDownload();
     });
 
-    connect(progressDialog, &QProgressDialog::canceled, this, [this, service]()
+    connect(progressDialog.data(), &QProgressDialog::canceled, this, [this, service]()
     {
         qCDebug(runtime)<< "Operation canceled";
 
-        disconnect(service, nullptr, this, nullptr);
-        service->abortDownload();
-        service->deleteLater();
         downloadQueue.clear();
+        service->abortDownload();
     });
 }
 
@@ -305,5 +315,14 @@ void DownloadQSLDialog::downloadQSLs()
     }
 
     // Download Execution
+    ui->buttonBox->setEnabled(false);
     startNextDownload();
+}
+
+void DownloadQSLDialog::reject()
+{
+    FCT_IDENTIFICATION;
+
+    if ( ui->buttonBox->isEnabled() )
+        QDialog::reject();
 }

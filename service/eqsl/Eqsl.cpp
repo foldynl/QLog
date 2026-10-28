@@ -290,6 +290,7 @@ EQSLQSLDownloader::~EQSLQSLDownloader()
 {
     FCT_IDENTIFICATION;
 
+    disconnect(getNetworkAccessManager(), nullptr, this, nullptr);
     if ( currentReply )
     {
         currentReply->abort();
@@ -304,6 +305,7 @@ void EQSLQSLDownloader::receiveQSL(const QDate &start_date, bool qso_since, cons
 
     qCDebug(function_parameters) << start_date << qso_since << qthNick;
 
+    aborted = false;
     QList<QPair<QString, QString>> params;
 
     if ( !qthNick.isEmpty() )
@@ -381,6 +383,7 @@ void EQSLQSLDownloader::abortDownload()
 {
     FCT_IDENTIFICATION;
 
+    aborted = true;
     if ( currentReply )
     {
         currentReply->abort();
@@ -409,8 +412,10 @@ void EQSLQSLDownloader::processReply(QNetworkReply *reply)
         {
             emit receiveQSLFailed(reply->errorString());
             emit QSLImageError(reply->errorString());
-            reply->deleteLater();
         }
+        else
+            emit receiveQSLFailed(tr("QSL download canceled"));
+        reply->deleteLater();
         return;
     }
 
@@ -563,7 +568,7 @@ void EQSLQSLDownloader::processReply(QNetworkReply *reply)
             emit receiveQSLFailed(error);
         });
 
-        adi.runQSLImport(adi.EQSL);
+        adi.runQSLImport(adi.EQSL, &aborted);
 
         tempFile.close();
     }
