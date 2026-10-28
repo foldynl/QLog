@@ -355,7 +355,8 @@ LOVDatabase::ApplyResult LOVDatabase::applyReady(const LOVDownloader::SourceDefi
     if ( validatePackage(database, source, downloadDate, columnLists) )
     {
         const QDate lastDate = LogParam::getLOVaParam(source.lastTimeConfigName);
-        if ( downloadDate.isValid() && lastDate <= QDate::currentDate() && lastDate > downloadDate )
+        if ( (source.type == LOVDownloader::CTY && !downloadDate.isValid() && LOVDownloader::isSourceAvailable(source.type))
+             || (downloadDate.isValid() && lastDate <= QDate::currentDate() && lastDate > downloadDate) )
             result = ApplyResult::NO_PACKAGE;
         else
         {
@@ -647,12 +648,44 @@ catch ( const std::exception &exception )
     return false;
 }
 
+bool LOVDatabase::readDxccStaticInfo(QMap<int, QVariantMap> &staticInfo)
+{
+    FCT_IDENTIFICATION;
+
+    // Keep this loader independent of Data: imports run in a worker thread,
+    // and constructing Data also initializes unrelated resources and SQL queries.
+    QFile file(QStringLiteral(":/res/data/dxcc.json"));
+    if ( !file.open(QIODevice::ReadOnly) )
+    {
+        qCWarning(runtime) << file.errorString();
+        return false;
+    }
+
+    const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
+    if ( !document.isArray() )
+        return false;
+
+    const QJsonArray array = document.array();
+    for ( const QJsonValue &value : array )
+    {
+        const QVariantMap row = value.toObject().toVariantMap();
+        staticInfo.insert(row.value("id").toInt(), row);
+    }
+    return !staticInfo.isEmpty();
+}
+
 bool LOVDatabase::parseCTY(QSqlDatabase &database, QTextStream &data)
 {
     FCT_IDENTIFICATION;
 
     static const QRegularExpression separator("[\\s;]");
     static const QRegularExpression prefixFormat("^(=?)([A-Z0-9/]+)(?:\\((\\d+)\\))?(?:\\[(\\d+)\\])?$");
+
+    // Keep entity names consistent with Club Log and QLog's translation keys.
+    // CTY labels may differ (e.g. Cabo Verde vs Cape Verde); unknown IDs keep the CTY name.
+    QMap<int, QVariantMap> staticInfo;
+    if ( !readDxccStaticInfo(staticInfo) )
+        return false;
 
     QSqlQuery entity(database), prefix(database);
     if ( !entity.prepare("INSERT INTO dxcc_entities_ad1c(id,name,prefix,cont,cqz,ituz,lat,lon,tz) "
@@ -662,13 +695,14 @@ bool LOVDatabase::parseCTY(QSqlDatabase &database, QTextStream &data)
         return false;
     }
 
-    if ( !prefix.prepare("INSERT INTO dxcc_prefixes_ad1c(prefix,exact,dxcc,cqz,ituz) "
-                         "VALUES(:prefix,:exact,:dxcc,:cqz,:ituz)") )
+    if ( !prefix.prepare("INSERT INTO dxcc_prefixes_ad1c(prefix,exact,dxcc,cqz,ituz,cont,lat,lon) "
+                         "VALUES(:prefix,:exact,:dxcc,:cqz,:ituz,:cont,:lat,:lon)") )
     {
         qCWarning(runtime) << prefix.lastError();
         return false;
     }
 
+    QSet<QPair<QString, bool>> seen;
     int count = 0;
     while ( !data.atEnd() && !isInterruptionRequested() )
     {
@@ -680,35 +714,44 @@ bool LOVDatabase::parseCTY(QSqlDatabase &database, QTextStream &data)
         if ( fields.size() != 10 )
             return false;
 
-        if ( fields.at(0).startsWith('*') )
-            continue;
-
         bool validId = false;
         const int dxccId = fields.at(2).toInt(&validId);
         if ( !validId || dxccId <= 0 || fields.at(0).isEmpty() || fields.at(1).isEmpty() )
             return false;
 
-        entity.bindValue(":id", dxccId);
-        entity.bindValue(":prefix", fields.at(0));
-        entity.bindValue(":name", fields.at(1));
-        entity.bindValue(":cont", fields.at(3));
-        entity.bindValue(":cqz", fields.at(4));
-        entity.bindValue(":ituz", fields.at(5));
-        entity.bindValue(":lat", fields.at(6).toFloat());
-        entity.bindValue(":lon", -fields.at(7).toFloat());
-        entity.bindValue(":tz", fields.at(8).toFloat());
+        const int cqz = fields.at(4).toInt();
+        const int ituz = fields.at(5).toInt();
+        const double lat = fields.at(6).toDouble();
+        const double lon = -fields.at(7).toDouble();
 
-        if ( !entity.exec() )
+        // CQ/WAE rows supply geography, but share the ordinary row's DXCC identity.
+        if ( !fields.at(0).startsWith('*') )
         {
-            qCWarning(runtime) << entity.lastError();
-            return false;
+            entity.bindValue(":id", dxccId);
+            entity.bindValue(":prefix", fields.at(0));
+            entity.bindValue(":name", staticInfo.value(dxccId).value("name", fields.at(1)));
+            entity.bindValue(":cont", fields.at(3));
+            entity.bindValue(":cqz", cqz);
+            entity.bindValue(":ituz", ituz);
+            entity.bindValue(":lat", lat);
+            entity.bindValue(":lon", lon);
+            entity.bindValue(":tz", fields.at(8).toFloat());
+
+            if ( !entity.exec() )
+            {
+                qCWarning(runtime) << entity.lastError();
+                return false;
+            }
         }
+        prefix.bindValue(":dxcc", dxccId);
+        prefix.bindValue(":cont", fields.at(3));
+        prefix.bindValue(":lat", lat);
+        prefix.bindValue(":lon", lon);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
         const QStringList prefixes = fields.at(9).split(separator, Qt::SkipEmptyParts);
 #else
         const QStringList prefixes = fields.at(9).split(separator, QString::SkipEmptyParts);
 #endif
-        QStringList seen;
         for ( const QString &token : prefixes )
         {
             if ( isInterruptionRequested() )
@@ -720,16 +763,17 @@ bool LOVDatabase::parseCTY(QSqlDatabase &database, QTextStream &data)
                 return false;
 
             const QString value = match.captured(2);
-            // CTY may repeat a prefix within the same entity.
-            if ( seen.contains(value) )
+            const bool exact = !match.captured(1).isEmpty();
+            const QPair<QString, bool> key(value, exact);
+            // CTY resolves duplicate rules in file order; exact and prefix rules differ.
+            if ( seen.contains(key) )
                 continue;
 
-            seen << value;
+            seen.insert(key);
             prefix.bindValue(":prefix", value);
-            prefix.bindValue(":exact", !match.captured(1).isEmpty());
-            prefix.bindValue(":dxcc", dxccId);
-            prefix.bindValue(":cqz", match.captured(3).toInt());
-            prefix.bindValue(":ituz", match.captured(4).toInt());
+            prefix.bindValue(":exact", exact);
+            prefix.bindValue(":cqz", match.captured(3).isEmpty() ? cqz : match.captured(3).toInt());
+            prefix.bindValue(":ituz", match.captured(4).isEmpty() ? ituz : match.captured(4).toInt());
 
             if ( !prefix.exec() )
             {
@@ -741,28 +785,23 @@ bool LOVDatabase::parseCTY(QSqlDatabase &database, QTextStream &data)
         if ( ++count % 20 == 0 )
             emit progress(data.pos());
     }
-    return count > 0 && !isInterruptionRequested();
+    QSqlQuery orphan(database);
+    if ( !orphan.exec("SELECT 1 FROM dxcc_prefixes_ad1c p LEFT JOIN dxcc_entities_ad1c e ON p.dxcc=e.id "
+                     "WHERE e.id IS NULL LIMIT 1") )
+    {
+        qCWarning(runtime) << orphan.lastError();
+        return false;
+    }
+    return count > 0 && !isInterruptionRequested() && !orphan.next();
 }
 
 bool LOVDatabase::parseClubLogCTY(QSqlDatabase &database, QTextStream &data)
 {
     FCT_IDENTIFICATION;
 
-    QFile staticFile(QStringLiteral(":/res/data/dxcc.json"));
-    if ( !staticFile.open(QIODevice::ReadOnly) )
-        return false;
-
     QMap<int, QVariantMap> staticInfo;
-    const QJsonDocument staticDocument = QJsonDocument::fromJson(staticFile.readAll());
-    if ( !staticDocument.isArray() )
+    if ( !readDxccStaticInfo(staticInfo) )
         return false;
-
-    const QJsonArray array = staticDocument.array();
-    for ( const QJsonValue &value : array )
-    {
-        const QVariantMap row = value.toObject().toVariantMap();
-        staticInfo.insert(row.value("id").toInt(), row);
-    }
 
     QXmlStreamReader xml(data.readAll());
     QSqlQuery insEntity(database), insPrefix(database), insZone(database);
@@ -913,7 +952,7 @@ bool LOVDatabase::parseClubLogCTY(QSqlDatabase &database, QTextStream &data)
                 {
                     QString call, cont, start, end;
                     int adif = 0, cqz = 0;
-                    double lon = 0.0, lat = 0.0;
+                    QVariant lon, lat;
                     bool validAdif = false;
 
                     while ( !xml.atEnd() && !isInterruptionRequested() && !(xml.isEndElement() && (xml.name() == QStringLiteral("prefix")

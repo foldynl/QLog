@@ -250,7 +250,7 @@ Data::Data(QObject *parent) :
                 "    dxcc_entities_ad1c.id, "
                 "    dxcc_entities_ad1c.name, "
                 "    dxcc_entities_ad1c.prefix, "
-                "    dxcc_entities_ad1c.cont, "
+                "    COALESCE(dxcc_prefixes_ad1c.cont, dxcc_entities_ad1c.cont), "
                 "    CASE "
                 "        WHEN (dxcc_prefixes_ad1c.cqz != 0) "
                 "        THEN dxcc_prefixes_ad1c.cqz "
@@ -261,8 +261,8 @@ Data::Data(QObject *parent) :
                 "        THEN dxcc_prefixes_ad1c.ituz "
                 "        ELSE dxcc_entities_ad1c.ituz "
                 "    END AS ituz , "
-                "    dxcc_entities_ad1c.lat, "
-                "    dxcc_entities_ad1c.lon, "
+                "    COALESCE(dxcc_prefixes_ad1c.lat, dxcc_entities_ad1c.lat), "
+                "    COALESCE(dxcc_prefixes_ad1c.lon, dxcc_entities_ad1c.lon), "
                 "    dxcc_entities_ad1c.tz, "
                 "    dxcc_prefixes_ad1c.exact "
                 "FROM dxcc_prefixes_ad1c "
@@ -276,14 +276,15 @@ Data::Data(QObject *parent) :
                 "SELECT e.id, "
                 "      e.name, "
                 "      e.prefix, "
-                "      e.cont, "
+                "      COALESCE(p.cont, e.cont), "
                 "      COALESCE(z.cqz, "
                 "               CASE  WHEN (p.cqz != 0) THEN p.cqz ELSE e.cqz END) AS cqz, "
                 "      CASE WHEN z.cqz IS NOT NULL THEN NULL "
                 "           WHEN (p.ituz != 0) THEN p.ituz "
                 "           ELSE e.ituz END AS ituz, "
-                "      e.lat, "
-                "      e.lon, "
+                "      COALESCE(p.lat, e.lat), "
+                "      COALESCE(p.lon, e.lon), "
+                "      0 AS tz, "
                 "      p.exact "
                 " FROM dxcc_prefixes_clublog p"
                 "   INNER JOIN dxcc_entities_clublog e ON (p.dxcc = e.id) "
@@ -1473,15 +1474,14 @@ DxccEntity Data::lookupDxcc(const QString &callsign)
 DxccEntity Data::lookupDxccAD1C(const QString &callsign)
 {
     FCT_IDENTIFICATION;
-    static QCache<QString, DxccEntity> localCache(1000);
-
     qCDebug(function_parameters) << callsign;
 
-    if ( callsign.isEmpty())
+    const QString normalizedCallsign = callsign.trimmed().toUpper();
+    if ( normalizedCallsign.isEmpty() )
         return  DxccEntity();
 
     DxccEntity dxccRet;
-    DxccEntity *dxccCached = localCache.object(callsign);
+    DxccEntity *dxccCached = dxccLookupCache.object(normalizedCallsign);
 
     if ( dxccCached )
     {
@@ -1495,17 +1495,35 @@ DxccEntity Data::lookupDxccAD1C(const QString &callsign)
             return DxccEntity();
         }
 
-        QString lookupPrefix = callsign; // use the callsign with optional prefix as default to find the dxcc
-        const Callsign parsedCallsign(callsign); // use Callsign to split the callsign into its parts
+        bool queryFailed = false;
+        const auto findPrefix = [this, &queryFailed](const QString &prefix, bool exact)
+        {
+            queryDXCC.bindValue(":prefix", prefix);
+            queryDXCC.bindValue(":exact", exact);
 
-        if ( parsedCallsign.isValid() )
+            if ( !queryDXCC.exec() )
+            {
+                qCWarning(runtime) << "Cannot execute DXCC lookup" << queryDXCC.lastError();
+                queryFailed = true;
+                return false;
+            }
+
+            return queryDXCC.next();
+        };
+
+        // Explicit callsign exceptions take precedence over portable-call heuristics.
+        bool found = findPrefix(normalizedCallsign, true);
+        QString lookupPrefix = normalizedCallsign;
+        const Callsign parsedCallsign(normalizedCallsign);
+
+        if ( !found && !queryFailed && parsedCallsign.isValid() )
         {
             QString suffix = parsedCallsign.getSuffix();
             if ( suffix.length() == 1 ) // some countries add single numbers as suffix to designate a call area, e.g. /4
             {
                 bool isNumber = false;
                 (void)suffix.toInt(&isNumber);
-                if ( isNumber )
+                if ( isNumber && parsedCallsign.getHostPrefix().isEmpty() )
                 {
                     lookupPrefix = parsedCallsign.getBasePrefix() + suffix; // use the call prefix and the number from the suffix to find the dxcc
                 }
@@ -1517,29 +1535,9 @@ DxccEntity Data::lookupDxccAD1C(const QString &callsign)
             }
         }
 
-        bool queryFailed = false;
-        const auto findPrefix = [this, &queryFailed](const QString &prefix, bool exact)
-        {
-            queryDXCC.bindValue(":prefix", prefix);
-            queryDXCC.bindValue(":exact", exact);
-
-            if ( !queryDXCC.exec() )
-            {
-                qWarning() << "Cannot execute Select statement" << queryDXCC.lastError() << queryDXCC.lastQuery();
-                queryFailed = true;
-                return false;
-            }
-
-            return queryDXCC.next();
-        };
-
-        bool found = findPrefix(lookupPrefix, true);
-
         // Probe longest to shortest so the (prefix, exact) index can be used.
-        // Uppercase preserves the case-insensitive behavior of the previous LIKE expression.
-        const QString partialLookupPrefix = lookupPrefix.toUpper();
-        for ( int length = partialLookupPrefix.size(); !found && !queryFailed && length > 0; --length )
-            found = findPrefix(partialLookupPrefix.left(length), false);
+        for ( int length = lookupPrefix.size(); !found && !queryFailed && length > 0; --length )
+            found = findPrefix(lookupPrefix.left(length), false);
 
         if ( queryFailed )
             return DxccEntity();
@@ -1576,7 +1574,7 @@ DxccEntity Data::lookupDxccAD1C(const QString &callsign)
             if ( dxccCached )
             {
                 *dxccCached = dxccRet;
-                localCache.insert(callsign, dxccCached);
+                dxccLookupCache.insert(normalizedCallsign, dxccCached);
             }
         }
         else
@@ -1681,9 +1679,17 @@ DxccEntity Data::lookupDxccIDClublog(const int dxccID)
     return dxccRet;
 }
 
-DxccEntity Data::lookupDxccID(const int dxccID)
+DxccEntity Data::lookupDxccID(const int dxccID, const QString &callsign)
 {
     FCT_IDENTIFICATION;
+    qCDebug(function_parameters) << dxccID << callsign;
+
+    if ( !callsign.isEmpty() )
+    {
+        const DxccEntity station = lookupDxccAD1C(callsign);
+        if ( station.dxcc == dxccID )
+            return station;
+    }
 
     // LF: The AD1C method seems more accurate for current data regarding ITU and CQZ.
     // The Clublog method is good for determining historical data and CQZ, but unfortunately,
@@ -1720,7 +1726,7 @@ DxccEntity Data::lookupDxccClublog(const QString &callsign, const QDateTime &dat
         {
             bool isNumber = false;
             (void)suffix.toInt(&isNumber);
-            if ( isNumber )
+            if ( isNumber && parsedCallsign.getHostPrefix().isEmpty() )
             {
                 lookupPrefix = parsedCallsign.getBasePrefix() + suffix; // use the call prefix and the number from the suffix to find the dxcc
             }

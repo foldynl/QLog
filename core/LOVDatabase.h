@@ -3,6 +3,8 @@
 
 #include <QThread>
 #include <QSqlDatabase>
+#include <QMap>
+#include <QVariant>
 #include "LOVDownloader.h"
 
 namespace csv
@@ -52,6 +54,7 @@ protected:
     void run() override;
 
 private:
+    static bool readDxccStaticInfo(QMap<int, QVariantMap> &staticInfo);
     bool buildPackage(QSqlDatabase &database, const QByteArray &data);
     bool parseData(QSqlDatabase &database, QTextStream &data);
     bool parseCTY(QSqlDatabase &database, QTextStream &data);
