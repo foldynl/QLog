@@ -37,10 +37,13 @@ private slots:
     void gzipFile_failurePreservesDestination();
     void gzipFile_successPublishesCompleteArchive();
     void gzipFile_commitFailureReturnsFalse();
+    void gzipFile_reportsErrors();
     void fileWriteFailurePreservesDestination_data();
     void fileWriteFailurePreservesDestination();
     void gunzipFile_requiresStreamEnd_data();
     void gunzipFile_requiresStreamEnd();
+    void gunzipFile_reportsErrors_data();
+    void gunzipFile_reportsErrors();
 
     // Benchmarks
     void gzip_benchmark_compression();
@@ -377,6 +380,33 @@ void FileCompressorTest::gzipFile_commitFailureReturnsFalse()
     QVERIFY(QFileInfo(destinationPath).isDir());
 }
 
+void FileCompressorTest::gzipFile_reportsErrors()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source");
+    const QString destinationPath = directory.filePath("backup.dbe");
+    QString error;
+    QVERIFY(!FileCompressor::gzipFile(sourcePath, destinationPath, nullptr, &error));
+    QVERIFY(!error.isEmpty());
+
+    QFile source(sourcePath);
+    QVERIFY(source.open(QIODevice::WriteOnly));
+    QCOMPARE(source.write("new data"), qint64(8));
+    source.close();
+    QVERIFY(!FileCompressor::gzipFile(sourcePath, directory.path(), nullptr, &error));
+    QVERIFY(!error.isEmpty());
+
+    QVERIFY(FileCompressor::gzipFile(sourcePath, destinationPath, nullptr, &error));
+    QVERIFY(error.isEmpty());
+    QVERIFY(!FileCompressor::gzipFile(sourcePath, destinationPath,
+                                      [](qint64, qint64) { return false; }, &error));
+    QVERIFY(!error.isEmpty());
+    QFile destination(destinationPath);
+    QVERIFY(destination.open(QIODevice::ReadOnly));
+    QCOMPARE(FileCompressor::gunzip(destination.readAll()), QByteArray("new data"));
+}
+
 void FileCompressorTest::gunzipFile_requiresStreamEnd_data()
 {
     QTest::addColumn<QByteArray>("archive");
@@ -461,6 +491,65 @@ void FileCompressorTest::gunzipFile_requiresStreamEnd()
     QVERIFY(destination.open(QIODevice::ReadOnly));
     QCOMPARE(destination.readAll(), valid ? QByteArray("complete replacement data")
                                         : QByteArray("previous output"));
+}
+
+void FileCompressorTest::gunzipFile_reportsErrors_data()
+{
+    QTest::addColumn<QString>("failure");
+    QTest::newRow("missing-source") << QString("missing-source");
+    QTest::newRow("invalid-archive") << QString("invalid-archive");
+    QTest::newRow("truncated-archive") << QString("truncated-archive");
+    QTest::newRow("blocked-output") << QString("blocked-output");
+    QTest::newRow("cancelled") << QString("cancelled");
+    QTest::newRow("commit-failure") << QString("commit-failure");
+}
+
+void FileCompressorTest::gunzipFile_reportsErrors()
+{
+    QFETCH(QString, failure);
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString sourcePath = directory.filePath("source.dbe");
+    const QString destinationPath = directory.filePath("database.db");
+    if ( failure != "missing-source" )
+    {
+        QByteArray archive = FileCompressor::gzip("packed data");
+        if ( failure == "invalid-archive" )
+            archive = "not a packed file";
+        else if ( failure == "truncated-archive" )
+            archive.chop(4);
+        QFile source(sourcePath);
+        QVERIFY(source.open(QIODevice::WriteOnly));
+        QCOMPARE(source.write(archive), qint64(archive.size()));
+    }
+    if ( failure == "blocked-output" )
+        QVERIFY(QDir().mkdir(destinationPath));
+
+    bool blockedCommit = false;
+    QString error("stale error");
+    QVERIFY(!FileCompressor::gunzipFile(sourcePath, destinationPath,
+        [&](qint64, qint64)
+        {
+            if ( failure == "commit-failure" )
+                blockedCommit = QDir().mkdir(destinationPath);
+            return failure != "cancelled";
+        }, &error));
+    QVERIFY(!error.isEmpty());
+    QVERIFY(error != "stale error");
+    const bool outputFailure = failure == "blocked-output" || failure == "commit-failure";
+    QVERIFY2(error.contains(outputFailure ? destinationPath : sourcePath), qPrintable(error));
+    if ( failure == "commit-failure" )
+        QVERIFY(blockedCommit);
+
+    QFile validSource(sourcePath);
+    QVERIFY(validSource.open(QIODevice::WriteOnly));
+    const QByteArray archive = FileCompressor::gzip("packed data");
+    QCOMPARE(validSource.write(archive), qint64(archive.size()));
+    validSource.close();
+    if ( outputFailure )
+        QVERIFY(QDir().rmdir(destinationPath));
+    QVERIFY(FileCompressor::gunzipFile(sourcePath, destinationPath, nullptr, &error));
+    QVERIFY(error.isEmpty());
 }
 
 // ============================================================================

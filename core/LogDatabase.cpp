@@ -158,15 +158,20 @@ bool LogDatabase::createSQLFunctions()
     return true;
 }
 
-bool LogDatabase::atomicCopy(const QString &filename)
+bool LogDatabase::atomicCopy(const QString &filename, QString *error)
 {
     FCT_IDENTIFICATION;
+    if ( error )
+        error->clear();
 
     QSqlDatabase db = QSqlDatabase::database();
 
     if ( !db.isOpen() )
     {
         qWarning() << "Database is not opened";
+        if ( error )
+            *error = QObject::tr("Cannot copy the logbook database %1 because it is not open.")
+                         .arg(db.databaseName().isEmpty() ? dbFilename() : db.databaseName());
         return false;
     }
 
@@ -174,6 +179,8 @@ bool LogDatabase::atomicCopy(const QString &filename)
     if ( filename.isEmpty() )
     {
         qWarning() << "Invalid filename:" << filename;
+        if ( error )
+            *error = QObject::tr("No file name was provided for the database copy.");
         return false;
     }
 
@@ -181,6 +188,9 @@ bool LogDatabase::atomicCopy(const QString &filename)
     if ( !v.isValid() || qstrcmp(v.typeName(), "sqlite3*") != 0)
     {
         qWarning() << "Cannot get Database Driver Handler";
+        if ( error )
+            *error = QObject::tr("Cannot access the logbook database %1 for copying. The database driver does not support this operation.")
+                         .arg(db.databaseName());
         return false;
     }
 
@@ -196,6 +206,9 @@ bool LogDatabase::atomicCopy(const QString &filename)
                         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr) != SQLITE_OK)
     {
         qWarning() << "Cannot open a new database file:" << sqlite3_errmsg(dstHandle);
+        if ( error )
+            *error = QObject::tr("Cannot open the destination for a database copy %1:\n%2")
+                         .arg(newDBFilename, QString::fromUtf8(sqlite3_errmsg(dstHandle)));
         goto cleanup;
     }
 
@@ -203,6 +216,9 @@ bool LogDatabase::atomicCopy(const QString &filename)
     if ( !backup )
     {
         qWarning() << "Cannot Init a backup" << sqlite3_errmsg(dstHandle);
+        if ( error )
+            *error = QObject::tr("Cannot start copying the logbook database to %1:\n%2")
+                         .arg(newDBFilename, QString::fromUtf8(sqlite3_errmsg(dstHandle)));
         goto cleanup;
     }
 
@@ -235,6 +251,9 @@ bool LogDatabase::atomicCopy(const QString &filename)
         else
         {
             qWarning() << "Backup Error" << sqlite3_errmsg(dstHandle);
+            if ( error )
+                *error = QObject::tr("Cannot copy the logbook data to %1:\n%2")
+                             .arg(newDBFilename, QString::fromUtf8(sqlite3_errmsg(dstHandle)));
             break;
         }
     }
@@ -244,6 +263,9 @@ bool LogDatabase::atomicCopy(const QString &filename)
     if ( sqlite3_backup_finish(backup) != SQLITE_OK )
     {
         qWarning() << "Cannot finalize the database copy" << sqlite3_errmsg(dstHandle);
+        if ( error && error->isEmpty() )
+            *error = QObject::tr("Cannot finish the logbook database copy %1:\n%2")
+                         .arg(newDBFilename, QString::fromUtf8(sqlite3_errmsg(dstHandle)));
         ok = false;
     }
     backup = nullptr;
@@ -282,20 +304,20 @@ bool LogDatabase::openDatabase(const QString &filename)
     if ( !db.open() )
     {
         qCritical() << db.lastError();
-        return false;
+        return failImport(QObject::tr("Cannot open the logbook database %1:\n%2").arg(filename, db.lastError().text()));
     }
 
     QSqlQuery query;
     if ( !query.exec("PRAGMA foreign_keys = ON") )
     {
         qCritical() << "Cannot set PRAGMA foreign_keys";
-        return false;
+        return failImport(QObject::tr("Cannot enable logbook data checks in %1:\n%2").arg(filename, query.lastError().text()));
     }
 
     if ( !query.exec("PRAGMA journal_mode = WAL") )
     {
         qCritical() << "Cannot set PRAGMA journal_mode";
-        return false;
+        return failImport(QObject::tr("Cannot enable safe database writes in %1:\n%2").arg(filename, query.lastError().text()));
     }
 
     while ( query.next() )
@@ -304,7 +326,9 @@ bool LogDatabase::openDatabase(const QString &filename)
         qCDebug(runtime) << "Pragma result:" << pragma;
     }
 
-    return createSQLFunctions();
+    if ( !createSQLFunctions() )
+        return failImport(QObject::tr("Cannot initialize the logbook database functions in %1.").arg(filename));
+    return true;
 }
 
 bool LogDatabase::schemaVersionUpgrade(QString *backupSnapshot)
@@ -312,7 +336,9 @@ bool LogDatabase::schemaVersionUpgrade(QString *backupSnapshot)
     FCT_IDENTIFICATION;
 
     DBSchemaMigration m;
-    return m.run(backupSnapshot);
+    if ( !m.run(backupSnapshot) )
+        return failImport(m.errorString());
+    return true;
 }
 
 DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
@@ -332,7 +358,7 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
 
         if ( !db.open() )
         {
-            info.errorMessage = db.lastError().text();
+            info.errorMessage = QObject::tr("Cannot open the database for unpacking inspection %1:\n%2").arg(filename, db.lastError().text());
             qCWarning(runtime) << "Cannot open database for inspection:" << info.errorMessage;
             break;
         }
@@ -343,7 +369,9 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
              || !query.first() )
         {
             qCWarning(runtime) << "Cannot read database schema version:" << query.lastError();
-            info.errorMessage = QObject::tr("Not a valid QLog database");
+            info.errorMessage = query.lastError().isValid()
+                                    ? QObject::tr("Cannot read the database format version from %1:\n%2").arg(filename, query.lastError().text())
+                                    : QObject::tr("The database format version is missing from %1.").arg(filename);
             db.close();
             break;
         }
@@ -352,7 +380,7 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
         info.schemaVersion = query.value(0).toInt(&validVersion);
         if ( !validVersion || info.schemaVersion <= 0 )
         {
-            info.errorMessage = QObject::tr("Not a valid QLog database");
+            info.errorMessage = QObject::tr("The database format version is invalid in %1.").arg(filename);
             db.close();
             break;
         }
@@ -360,7 +388,8 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
         // Check if schema version is too new
         if ( info.schemaVersion > DBSchemaMigration::latestVersion )
         {
-            info.errorMessage = QObject::tr("Database version too new (requires newer QLog version)");
+            info.errorMessage = QObject::tr("Cannot unpack database %1: its format version is %2, but this QLog supports up to %3. Use a newer QLog version to unpack it.")
+                                    .arg(filename, QString::number(info.schemaVersion), QString::number(DBSchemaMigration::latestVersion));
             db.close();
             break;
         }
@@ -368,7 +397,7 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
         if ( !query.exec("SELECT id, callsign FROM contacts LIMIT 0") )
         {
             qCWarning(runtime) << "Cannot inspect contacts:" << query.lastError();
-            info.errorMessage = QObject::tr("Not a valid QLog database");
+            info.errorMessage = QObject::tr("Cannot inspect contacts in the unpacked database %1:\n%2").arg(filename, query.lastError().text());
             db.close();
             break;
         }
@@ -378,7 +407,9 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
              || !query.first() || query.value(0).toString().isEmpty() )
         {
             qCWarning(runtime) << "Cannot read export platform:" << query.lastError();
-            info.errorMessage = QObject::tr("Database is not QLog Export file");
+            info.errorMessage = query.lastError().isValid()
+                                    ? QObject::tr("Cannot read the export platform from %1:\n%2").arg(filename, query.lastError().text())
+                                    : QObject::tr("The export platform is missing from %1. Choose a file created by Pack Data & Settings.").arg(filename);
             db.close();
             break;
         }
@@ -387,7 +418,7 @@ DatabaseInfo LogDatabase::inspectDatabase(const QString &filename)
         if ( !query.exec("SELECT value FROM log_param WHERE name = 'security/encryptedpasswords'") )
         {
             qCWarning(runtime) << "Cannot read export credentials metadata:" << query.lastError();
-            info.errorMessage = QObject::tr("Not a valid QLog database");
+            info.errorMessage = QObject::tr("Cannot inspect saved passwords in the unpacked database %1:\n%2").arg(filename, query.lastError().text());
             db.close();
             break;
         }
@@ -433,19 +464,35 @@ bool LogDatabase::failImport(const QString &message)
     return false;
 }
 
-bool LogDatabase::readImportRecord(QJsonObject &record, ImportPhase &phase)
+bool LogDatabase::readImportRecord(QJsonObject &record, ImportPhase &phase, QString *reason)
 {
     FCT_IDENTIFICATION;
 
     QFile file(dbDirectory().filePath(IMPORT_RECORD_FILENAME));
+    if ( reason )
+        *reason = QObject::tr("The unpacking progress file %1 contains incomplete or invalid recovery data.").arg(file.fileName());
     if ( !file.open(QIODevice::ReadOnly) )
+    {
+        if ( reason )
+            *reason = QObject::tr("Cannot open the unpacking progress file %1:\n%2").arg(file.fileName(), file.errorString());
         return false;
+    }
 
     QJsonParseError error;
     const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &error);
 
-    if ( file.error() != QFile::NoError || error.error != QJsonParseError::NoError || !document.isObject() )
+    if ( file.error() != QFile::NoError )
+    {
+        if ( reason )
+            *reason = QObject::tr("Cannot read the unpacking progress file %1:\n%2").arg(file.fileName(), file.errorString());
         return false;
+    }
+    if ( error.error != QJsonParseError::NoError || !document.isObject() )
+    {
+        if ( reason && error.error != QJsonParseError::NoError )
+            *reason = QObject::tr("Cannot understand the unpacking progress file %1:\n%2").arg(file.fileName(), error.errorString());
+        return false;
+    }
 
     record = document.object();
     phase = static_cast<ImportPhase>(IMPORT_PHASE_NAMES.indexOf(record.value("phase").toString()));
@@ -476,9 +523,12 @@ bool LogDatabase::readImportRecord(QJsonObject &record, ImportPhase &phase)
         }
         return true;
     };
-    return validEntries(record.value("parameters").toArray(), {"key", "newValue"})
-        && validEntries(record.value("profilePorts").toArray(), {"tableName", "columnName", "profileName", "newValue"})
-        && validEntries(record.value("previousCredentials").toArray(), {"storagekey", "username"});
+    const bool valid = validEntries(record.value("parameters").toArray(), {"key", "newValue"})
+                       && validEntries(record.value("profilePorts").toArray(), {"tableName", "columnName", "profileName", "newValue"})
+                       && validEntries(record.value("previousCredentials").toArray(), {"storagekey", "username"});
+    if ( valid && reason )
+        reason->clear();
+    return valid;
 }
 
 bool LogDatabase::writeImportRecord(QJsonObject &record, ImportPhase phase)
@@ -492,8 +542,8 @@ bool LogDatabase::writeImportRecord(QJsonObject &record, ImportPhase phase)
 
     if ( !file.open(QIODevice::WriteOnly) || file.write(data) != data.size() || !file.flush() || !file.commit() )
     {
-        qCWarning(runtime) << "Cannot save import progress:" << file.errorString();
-        return false;
+        const QString message = QObject::tr("Cannot save import progress %1:\n%2").arg(file.fileName(), file.errorString());
+        return failImport(message);
     }
 
     return true;
@@ -565,19 +615,32 @@ bool LogDatabase::preparePendingImport(const QString &sourceFile,
 
     if ( colocated )
         for ( const QString &suffix : {SQLITE_WAL_SUFFIX, SQLITE_SHM_SUFFIX} )
-            if ( QFile::exists(sourceFile + suffix) && !QFile::remove(sourceFile + suffix) )
-                return failImport(QObject::tr("The temporary database files could not be released for import."));
+        {
+            QFile sidecar(sourceFile + suffix);
+            if ( sidecar.exists() && !sidecar.remove() )
+                return failImport(QObject::tr("Cannot remove temporary import file %1:\n%2").arg(sidecar.fileName(), sidecar.errorString()));
+        }
 
-    if ( !colocated && (!source.open(QIODevice::ReadOnly) || !candidate.open(QIODevice::WriteOnly)) )
-        return failImport(QObject::tr("Failed to prepare the database for import."));
+    if ( !colocated )
+    {
+        if ( !source.open(QIODevice::ReadOnly) )
+            return failImport(QObject::tr("Cannot open the unpacked database for import preparation %1:\n%2").arg(sourceFile, source.errorString()));
+        if ( !candidate.open(QIODevice::WriteOnly) )
+            return failImport(QObject::tr("Cannot prepare imported database %1:\n%2").arg(candidate.fileName(), candidate.errorString()));
+    }
 
     if ( info.hasEncryptedPasswords && !CredentialStore::instance()->saveImportPassphrase(passphrase) )
         return failImport(QObject::tr("Failed to save the import passphrase."));
 
     // The import dialog decompresses beside the DB, so the usual preparation is a rename.
     bool staged = false;
+    QString preparationError;
     if ( colocated )
-        staged = QFile::rename(sourceFile, pendingImportPath());
+    {
+        staged = source.rename(pendingImportPath());
+        if ( !staged )
+            preparationError = QObject::tr("Cannot move unpacked database to %1:\n%2").arg(pendingImportPath(), source.errorString());
+    }
     else
     {
         bool copied = true;
@@ -591,10 +654,16 @@ bool LogDatabase::preparePendingImport(const QString &sourceFile,
             }
         }
         staged = copied && source.error() == QFile::NoError && candidate.flush() && candidate.commit();
+        if ( !staged )
+            preparationError = source.error() != QFileDevice::NoError
+                                   ? QObject::tr("Cannot read unpacked database %1:\n%2").arg(sourceFile, source.errorString())
+                                   : QObject::tr("Cannot save imported database %1:\n%2").arg(candidate.fileName(), candidate.errorString());
     }
 
     if ( !staged || !writeImportRecord(record, ImportPhase::PREPARED) )
     {
+        if ( staged )
+            preparationError = importError;
         if ( staged && colocated )
         {
             if ( !QFile::rename(pendingImportPath(), sourceFile) )
@@ -606,7 +675,7 @@ bool LogDatabase::preparePendingImport(const QString &sourceFile,
         if ( info.hasEncryptedPasswords && !CredentialStore::instance()->deleteImportPassphrase() )
             qCWarning(runtime) << "Cannot remove unused import passphrase";
 
-        return failImport(QObject::tr("Failed to prepare the database for import. The current database was preserved."));
+        return failImport(QObject::tr("%1\nThe current database was preserved.").arg(preparationError));
     }
     return true;
 }
@@ -621,24 +690,31 @@ bool LogDatabase::checkpointDatabase(QSqlDatabase database)
         if ( !query.exec("PRAGMA wal_checkpoint(TRUNCATE)") || !query.next() || query.value(0).toInt() != 0 )
         {
             qCWarning(runtime) << "Cannot checkpoint database:" << filename << query.lastError();
-            return false;
+            const QString reason = query.lastError().isValid() ? query.lastError().text() : QObject::tr("The database is still in use.");
+            return failImport(QObject::tr("Cannot finish pending database writes in %1:\n%2").arg(filename, reason));
         }
     }
     database.close();
     for ( const QString &suffix : {SQLITE_WAL_SUFFIX, SQLITE_SHM_SUFFIX} )
-        if ( QFile::exists(filename + suffix) && !QFile::remove(filename + suffix) )
+    {
+        QFile file(filename + suffix);
+        if ( file.exists() && !file.remove() )
         {
             qCWarning(runtime) << "Cannot remove checkpointed database sidecar:" << filename + suffix;
-            return false;
+            return failImport(QObject::tr("Cannot remove the temporary file after finishing database writes %1:\n%2")
+                                  .arg(file.fileName(), file.errorString()));
         }
+    }
 
     return true;
 }
 
-bool LogDatabase::readLogId(const QString &filename, QString &logId)
+bool LogDatabase::readLogId(const QString &filename, QString &logId, QString *reason)
 {
     FCT_IDENTIFICATION;
     logId.clear();
+    if ( reason )
+        reason->clear();
     bool result = false;
     const QString name = "ImportIdentity";
     {
@@ -651,11 +727,21 @@ bool LogDatabase::readLogId(const QString &filename, QString &logId)
             result = query.exec("SELECT value FROM log_param WHERE name = 'logid'");
             if ( result && query.next() )
                 logId = query.value(0).toString();
+            if ( query.lastError().isValid() )
+                result = false;
             if ( !result )
+            {
                 qCWarning(runtime) << "Cannot identify import database:" << query.lastError();
+                if ( reason )
+                    *reason = QObject::tr("Cannot read the logbook identity from %1:\n%2").arg(filename, query.lastError().text());
+            }
         }
         else
+        {
             qCWarning(runtime) << "Cannot open import database:" << db.lastError();
+            if ( reason )
+                *reason = QObject::tr("Cannot open the database to check its logbook identity %1:\n%2").arg(filename, db.lastError().text());
+        }
         db.close();
     }
     QSqlDatabase::removeDatabase(name);
@@ -709,8 +795,12 @@ bool LogDatabase::cancelPendingImport()
         return true;
 
     bool currentIsImport = false;
-    if ( !readImportRecord(record, phase) || !canCancelImport(record, phase, currentIsImport) )
-        return failImport(QObject::tr("This import cannot be cancelled safely. Its recovery files were preserved."));
+    QString reason;
+    if ( !readImportRecord(record, phase, &reason) )
+        return failImport(QObject::tr("Cannot read the data needed to cancel unpacking:\n%1").arg(reason));
+    if ( !canCancelImport(record, phase, currentIsImport) )
+        return failImport(QObject::tr("The import files in %1 are inconsistent, so unpacking cannot be cancelled safely. Its recovery files were preserved.")
+                              .arg(dbDirectory().absolutePath()));
 
     // A failed preparation may still hold the candidate open; Windows cannot delete it then.
     // Preserve the original connection when cancellation follows a failed restart from the GUI.
@@ -726,40 +816,53 @@ bool LogDatabase::cancelPendingImport()
 
     if ( !writeImportRecord(record, ImportPhase::ABORTED) )
     {
+        const QString recordError = importError;
         if ( phase != ImportPhase::PREPARED )
-            return failImport(QObject::tr("Cancellation could not be recorded. All recovery files were preserved; retry cancellation before restarting."));
+            return failImport(QObject::tr("Cannot record the cancellation of unpacking:\n%1\nRetry cancellation before restarting.").arg(recordError));
         // Removing the unpublished candidate also prevents adoption if progress cannot be saved.
-        if ( QFile::exists(pendingImportPath()) && !QFile::remove(pendingImportPath()) )
-            return failImport(QObject::tr("Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting."));
+        QFile candidate(pendingImportPath());
+        if ( candidate.exists() && !candidate.remove() )
+            return failImport(QObject::tr("Cannot remove the prepared database while cancelling unpacking %1:\n%2\nThe import may still run at the next startup.")
+                                  .arg(candidate.fileName(), candidate.errorString()));
 
-        return failImport(QObject::tr("The import candidate was removed, but cancellation could not be recorded. The current database was preserved."));
+        return failImport(QObject::tr("The prepared import was removed, but its cancellation could not be recorded:\n%1\nThe current database was preserved.").arg(recordError));
     }
 
     // READY may have been interrupted between renames. It has never allowed logging or password writes.
     // Keep ABORTED until the original is back in place so interruption can retry the same cleanup.
     if ( currentIsImport )
     {
-        if ( !openDatabase() || !checkpointDatabase(QSqlDatabase::database())
-             || !QFile::rename(dbFilename(), pendingImportPath()) )
-            return failImport(QObject::tr("The cancelled import could not be moved aside. All recovery files were preserved."));
+        if ( !openDatabase() || !checkpointDatabase(QSqlDatabase::database()) )
+            return false;
+        QFile current(dbFilename());
+        if ( !current.rename(pendingImportPath()) )
+            return failImport(QObject::tr("Cannot move the cancelled import from %1 to %2:\n%3\nAll recovery files were preserved.")
+                                  .arg(dbFilename(), pendingImportPath(), current.errorString()));
     }
     const QString original = dbDirectory().filePath(IMPORT_BACKUP_FILENAME);
     if ( QFile::exists(original) )
     {
-        if ( !openDatabase(original) || !checkpointDatabase(QSqlDatabase::database())
-             || !QFile::rename(original, dbFilename()) )
-            return failImport(QObject::tr("The original database could not be restored. Retry cancellation to finish restoring it."));
+        if ( !openDatabase(original) || !checkpointDatabase(QSqlDatabase::database()) )
+            return false;
+        QFile originalFile(original);
+        if ( !originalFile.rename(dbFilename()) )
+            return failImport(QObject::tr("Cannot restore the original database from %1 to %2 after cancelling unpacking:\n%3")
+                                  .arg(original, dbFilename(), originalFile.errorString()));
     }
 
     for ( const QString &suffix : {SQLITE_WAL_SUFFIX, SQLITE_SHM_SUFFIX, QString()} )
-        if ( QFile::exists(pendingImportPath() + suffix) && !QFile::remove(pendingImportPath() + suffix) )
-            return failImport(QObject::tr("The import was cancelled, but its temporary files could not be removed."));
+    {
+        QFile file(pendingImportPath() + suffix);
+        if ( file.exists() && !file.remove() )
+            return failImport(QObject::tr("Cannot remove a temporary file after cancelling unpacking %1:\n%2").arg(file.fileName(), file.errorString()));
+    }
 
     if ( record.value("requiresPassphrase").toBool() && !CredentialStore::instance()->deleteImportPassphrase() )
         qCWarning(runtime) << "Cancelled import passphrase could not be removed; the next import will replace it";
 
-    if ( !QFile::remove(dbDirectory().filePath(IMPORT_RECORD_FILENAME)) )
-        return failImport(QObject::tr("The import was cancelled, but its progress file could not be removed."));
+    QFile progress(dbDirectory().filePath(IMPORT_RECORD_FILENAME));
+    if ( !progress.remove() )
+        return failImport(QObject::tr("Cannot remove the cancelled unpacking progress file %1:\n%2").arg(progress.fileName(), progress.errorString()));
     return true;
 }
 
@@ -776,10 +879,9 @@ LogDatabase::ImportResult LogDatabase::initialize(QString *backupSnapshot)
     bool newlyPublished = false;
     if ( hasPendingImport() )
     {
-        if ( !readImportRecord(record, phase) )
+        if ( !readImportRecord(record, phase, &importError) )
         {
-            failImport(QObject::tr("The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.")
-                       .arg(dbDirectory().path()));
+            failImport(QObject::tr("Cannot resume unpacking:\n%1\nPreserve these files and prepare the import again.").arg(importError));
             return ImportResult::FAILED;
         }
         if ( phase == ImportPhase::ABORTED )
@@ -809,13 +911,11 @@ LogDatabase::ImportResult LogDatabase::initialize(QString *backupSnapshot)
     // Every startup must validate the active schema, including deferred password recovery.
     if ( !openDatabase() )
     {
-        failImport(QObject::tr("The database could not be opened. Logging cannot continue. Any import recovery files were preserved."));
         return ImportResult::FAILED;
     }
     const bool hadContacts = QSqlDatabase::database().tables().contains(QStringLiteral("contacts"));
     if ( !schemaVersionUpgrade(&snapshot) )
     {
-        failImport(QObject::tr("The database could not be opened or migrated. Logging cannot continue. Any import recovery files were preserved."));
         return ImportResult::FAILED;
     }
 
@@ -854,9 +954,9 @@ LogDatabase::ImportResult LogDatabase::recoverImportPasswords(ImportAction actio
 
     QJsonObject record;
     ImportPhase phase = ImportPhase::INVALID;
-    if ( !readImportRecord(record, phase) )
+    if ( !readImportRecord(record, phase, &importError) )
     {
-        failImport(QObject::tr("The imported database does not match its recovery files. All files were preserved."));
+        failImport(QObject::tr("Cannot resume unpacked password recovery:\n%1\nAll recovery files were preserved.").arg(importError));
         return ImportResult::FAILED;
     }
     if ( !validatePublishedImport(record, phase) )
@@ -886,14 +986,18 @@ bool LogDatabase::prepareImportDatabase(QJsonObject &record, QJsonArray &incomin
     const bool requiresPassphrase = record.value("requiresPassphrase").toBool();
 
     const DatabaseInfo info = inspectDatabase(pending);
-    if ( !info.valid
-         || info.hasEncryptedPasswords != requiresPassphrase
+    if ( !info.valid )
+        return failImport(QObject::tr("Cannot validate the prepared import:\n%1\nThe original database was preserved.").arg(info.errorMessage));
+    if ( info.hasEncryptedPasswords != requiresPassphrase
          || QFile::exists(original)
          || QFile::exists(dbFilename()) != hadOriginal )
-        return failImport(QObject::tr("The prepared import does not match its recovery files. The original database was preserved."));
+        return failImport(QObject::tr("The prepared import database %1 does not match its recovery data in %2. The original database was preserved.")
+                              .arg(pending, dbDirectory().filePath(IMPORT_RECORD_FILENAME)));
 
-    if ( !openDatabase(pending) || !schemaVersionUpgrade(backupSnapshot) )
-        return failImport(QObject::tr("The imported database could not be opened or migrated. The original database was preserved."));
+    if ( !openDatabase(pending) )
+        return false;
+    if ( !schemaVersionUpgrade(backupSnapshot) )
+        return failImport(QObject::tr("%1\nThe original database was preserved while preparing the import.").arg(importError));
 
     QList<PlatformParameter> params;
     const QJsonArray paramJsonArray = record.value("parameters").toArray();
@@ -951,8 +1055,10 @@ bool LogDatabase::prepareImportDatabase(QJsonObject &record, QJsonArray &incomin
     if ( !decodeImportPasswords(requiresPassphrase, incoming) )
         return failImport(QObject::tr("The import passphrase is unavailable or the passwords could not be decrypted. All recovery files were preserved."));
 
-    if ( !checkpointDatabase(QSqlDatabase::database()) || !writeImportRecord(record, ImportPhase::READY) )
-        return failImport(QObject::tr("Failed to finalize the prepared database. The original database was preserved."));
+    if ( !checkpointDatabase(QSqlDatabase::database()) )
+        return false;
+    if ( !writeImportRecord(record, ImportPhase::READY) )
+        return failImport(QObject::tr("Cannot record that the unpacked database is ready:\n%1\nThe original database was preserved.").arg(importError));
     return true;
 }
 
@@ -968,11 +1074,14 @@ bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incomin
 
     QString currentId;
     QString candidateId = preparedThisStartup ? targetId : QString();
+    QString readError;
     const bool candidateExists = QFile::exists(pending);
     const bool currentExists = QFile::exists(dbFilename());
     const bool originalExists = QFile::exists(original);
-    bool filesMatch = (!currentExists || readLogId(dbFilename(), currentId))
-                       && (!candidateExists || preparedThisStartup || readLogId(pending, candidateId));
+    bool filesMatch = (!currentExists || readLogId(dbFilename(), currentId, &readError))
+                       && (!candidateExists || preparedThisStartup || readLogId(pending, candidateId, &readError));
+    if ( !filesMatch )
+        return failImport(QObject::tr("Cannot verify the files before replacing the logbook database:\n%1").arg(readError));
 
     if ( candidateExists )
     {
@@ -985,16 +1094,20 @@ bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incomin
         filesMatch = filesMatch && currentExists && currentId == targetId && originalExists == hadOriginal;
 
     if ( !filesMatch )
-        return failImport(QObject::tr("The interrupted import has inconsistent recovery files. All files were preserved for recovery."));
+        return failImport(QObject::tr("Cannot resume database replacement in %1 because its files do not match the unpacking progress file %2. All recovery files were preserved.")
+                              .arg(dbDirectory().absolutePath(), dbDirectory().filePath(IMPORT_RECORD_FILENAME)));
 
     if ( !preparedThisStartup )
     {
-        if ( !openDatabase(candidateExists ? pending : dbFilename()) || !schemaVersionUpgrade(backupSnapshot) )
-            return failImport(QObject::tr("The prepared database could not be opened or migrated. Its recovery files were preserved."));
+        const QString filename = candidateExists ? pending : dbFilename();
+        if ( !openDatabase(filename) )
+            return false;
+        if ( !schemaVersionUpgrade(backupSnapshot) )
+            return failImport(QObject::tr("%1\nThe resumed import recovery files were preserved.").arg(importError));
         if ( !decodeImportPasswords(requiresPassphrase, incoming) )
             return failImport(QObject::tr("The import passwords could not be restored. All recovery files were preserved."));
         if ( !checkpointDatabase(QSqlDatabase::database()) )
-            return failImport(QObject::tr("Failed to finish database writes before import."));
+            return false;
     }
 
     if ( candidateExists )
@@ -1009,26 +1122,36 @@ bool LogDatabase::publishImportDatabase(QJsonObject &record, QJsonArray &incomin
             {
                 QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", name);
                 db.setDatabaseName(dbFilename());
-                checkpointed = db.open() && checkpointDatabase(db);
+                if ( !db.open() )
+                    failImport(QObject::tr("Cannot open the original logbook database before import %1:\n%2").arg(dbFilename(), db.lastError().text()));
+                else
+                    checkpointed = checkpointDatabase(db);
                 if ( !checkpointed )
                     qCWarning(runtime) << "Cannot finish original database writes:" << db.lastError();
                 db.close();
             }
             QSqlDatabase::removeDatabase(name);
-            if ( !checkpointed || !QFile::rename(dbFilename(), original) )
-                return failImport(QObject::tr("The original database could not be preserved. Import was stopped."));
+            if ( !checkpointed )
+                return false;
+            QFile current(dbFilename());
+            if ( !current.rename(original) )
+                return failImport(QObject::tr("Cannot preserve the original logbook database by moving %1 to %2:\n%3\nImport was stopped.")
+                                      .arg(dbFilename(), original, current.errorString()));
         }
 
-        if ( !QFile::rename(pending, dbFilename()) )
+        QFile candidate(pending);
+        if ( !candidate.rename(dbFilename()) )
         {
+            const QString reason = candidate.errorString();
             if ( hadOriginal && !QFile::rename(original, dbFilename()) )
                 qCWarning(runtime) << "Cannot restore original database name";
-            return failImport(QObject::tr("The prepared database could not be installed. All recovery files were preserved."));
+            return failImport(QObject::tr("Cannot install the unpacked database by moving %1 to %2:\n%3\nAll recovery files were preserved.")
+                                  .arg(pending, dbFilename(), reason));
         }
     }
 
     if ( !writeImportRecord(record, ImportPhase::PUBLISHED) )
-        return failImport(QObject::tr("The imported database was installed, but its progress could not be saved. Restart to retry."));
+        return failImport(QObject::tr("The unpacked database is installed, but this step could not be recorded:\n%1\nRestart to retry.").arg(importError));
 
     return true;
 }
@@ -1042,6 +1165,7 @@ bool LogDatabase::validatePublishedImport(const QJsonObject &record, ImportPhase
     const QString targetId = record.value("targetLogId").toString();
     const bool hadOriginal = record.value("hadOriginal").toBool();
     QString publishedId;
+    QString readError;
     const bool originalMatches = hadOriginal ? phase == ImportPhase::CREDENTIALS_RESTORED
                                               || phase == ImportPhase::CREDENTIALS_SKIPPED || QFile::exists(original)
                                              : !QFile::exists(original);
@@ -1050,10 +1174,13 @@ bool LogDatabase::validatePublishedImport(const QJsonObject &record, ImportPhase
           && phase != ImportPhase::CREDENTIALS_SKIPPED)
          || QFile::exists(pending)
          || !QFile::exists(dbFilename())
-         || !readLogId(dbFilename(), publishedId)
+         || !readLogId(dbFilename(), publishedId, &readError)
          || publishedId != targetId
          || !originalMatches )
-        return failImport(QObject::tr("The imported database does not match its recovery files. All files were preserved."));
+        return failImport(readError.isEmpty()
+                              ? QObject::tr("The active unpacked database %1 does not match its recovery record %2. All files were preserved.")
+                                    .arg(dbFilename(), dbDirectory().filePath(IMPORT_RECORD_FILENAME))
+                              : QObject::tr("Cannot verify the active unpacked database:\n%1").arg(readError));
 
     return true;
 }
@@ -1077,7 +1204,7 @@ LogDatabase::ImportResult LogDatabase::finishImport(QJsonObject &record, ImportP
     {
         // Persist the decision before removing recovery data so a restart cannot restore passwords again.
         if ( !writeImportRecord(record, ImportPhase::CREDENTIALS_SKIPPED) )
-            return deferImport(QObject::tr("The decision to stop password recovery could not be saved. Recovery data was preserved."));
+            return deferImport(QObject::tr("Cannot record the decision to stop unpacked password recovery:\n%1\nRecovery data was preserved.").arg(importError));
         phase = ImportPhase::CREDENTIALS_SKIPPED;
     }
 
@@ -1087,11 +1214,11 @@ LogDatabase::ImportResult LogDatabase::finishImport(QJsonObject &record, ImportP
         if ( !incoming )
         {
             if ( !decodeImportPasswords(requiresPassphrase, decoded) )
-                return deferImport(QObject::tr("The database was imported, but some passwords could not be restored."));
+                return deferImport(QObject::tr("The database was imported, but its saved passwords could not be decrypted."));
             incoming = &decoded;
         }
         if ( !credentials->restorePasswords(*incoming) )
-            return deferImport(QObject::tr("The database was imported, but some passwords could not be restored."));
+            return deferImport(QObject::tr("The database was imported, but its passwords could not be saved securely on this computer."));
 
         const auto credentialIdentity = [](const QString &storageKey, const QString &username)
         {
@@ -1120,19 +1247,29 @@ LogDatabase::ImportResult LogDatabase::finishImport(QJsonObject &record, ImportP
                  && !credentials->deletePassword(identity.first, identity.second) )
                 deleted = false;
         }
-        if ( !deleted || !writeImportRecord(record, ImportPhase::CREDENTIALS_RESTORED) )
-            return deferImport(QObject::tr("The database was imported, but password replacement could not be completed."));
+        if ( !deleted )
+            return deferImport(QObject::tr("The database was imported, but the previous saved passwords could not be removed."));
+        if ( !writeImportRecord(record, ImportPhase::CREDENTIALS_RESTORED) )
+            return deferImport(QObject::tr("Cannot record completion of unpacked password recovery:\n%1").arg(importError));
     }
 
     {
         QSqlDatabase db = QSqlDatabase::database();
         if ( !db.transaction() )
         {
-            failImport(QObject::tr("The import is complete, but cleanup could not be started. Restart to retry."));
+            failImport(QObject::tr("Cannot start cleaning up unpacked database settings in %1:\n%2\nRestart to retry.")
+                           .arg(dbFilename(), db.lastError().text()));
             return ImportResult::FAILED;
         }
 
-        if ( !LogParam::removeEncryptedPasswords() || !LogParam::removeSourcePlatform() || !db.commit() )
+        QString cleanupError;
+        if ( !LogParam::removeEncryptedPasswords() )
+            cleanupError = QObject::tr("Cannot remove the imported password data from the logbook database %1.").arg(dbFilename());
+        else if ( !LogParam::removeSourcePlatform() )
+            cleanupError = QObject::tr("Cannot remove the import platform marker from the logbook database %1.").arg(dbFilename());
+        else if ( !db.commit() )
+            cleanupError = QObject::tr("Cannot save the completed import cleanup in %1:\n%2").arg(dbFilename(), db.lastError().text());
+        if ( !cleanupError.isEmpty() )
         {
             qCWarning(runtime) << "Cannot remove import metadata:" << db.lastError();
             if ( !db.rollback() )
@@ -1140,18 +1277,23 @@ LogDatabase::ImportResult LogDatabase::finishImport(QJsonObject &record, ImportP
 
             LogParam::clearCache();
 
-            failImport(QObject::tr("The import is complete, but cleanup failed. Restart to retry."));
+            failImport(QObject::tr("%1\nThe import is complete. Restart to retry cleanup.").arg(cleanupError));
             return ImportResult::FAILED;
         }
     }
     if ( requiresPassphrase && !credentials->deleteImportPassphrase() && phase != ImportPhase::CREDENTIALS_SKIPPED )
         return deferImport(QObject::tr("The import is complete, but its saved passphrase could not be removed."));
 
-    if ( QFile::exists(original + SQLITE_WAL_SUFFIX)
-         || QFile::exists(original + SQLITE_SHM_SUFFIX)
-         || (QFile::exists(original) && !QFile::remove(original))
-         || !QFile::remove(dbDirectory().filePath(IMPORT_RECORD_FILENAME)) )
-        return deferImport(QObject::tr("The import is complete, but its recovery files could not be removed."));
+    for ( const QString &suffix : {SQLITE_WAL_SUFFIX, SQLITE_SHM_SUFFIX} )
+        if ( QFile::exists(original + suffix) )
+            return deferImport(QObject::tr("Import cleanup is waiting because the original database still has a temporary file %1.").arg(original + suffix));
+
+    QFile originalFile(original);
+    if ( originalFile.exists() && !originalFile.remove() )
+        return deferImport(QObject::tr("Cannot remove the original database after successful unpacking %1:\n%2").arg(original, originalFile.errorString()));
+    QFile progress(dbDirectory().filePath(IMPORT_RECORD_FILENAME));
+    if ( !progress.remove() )
+        return deferImport(QObject::tr("Cannot remove the completed unpacking progress file %1:\n%2").arg(progress.fileName(), progress.errorString()));
 
     return ImportResult::COMPLETE;
 }

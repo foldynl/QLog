@@ -13,11 +13,13 @@ SOURCES += \
     ../../core/LogLocale.cpp \
     ../../data/Accents.cpp \
     ../../service/GenericQSOUploader.cpp \
-    ../../logformat/AdiFormat.cpp
+    ../../logformat/AdiFormat.cpp \
+    ../../logformat/PotaAdiFormat.cpp
 
 HEADERS += \
     ../../core/LogLocale.h \
     ../../data/Data.h \
     ../../logformat/AdiFormat.h \
+    ../../logformat/PotaAdiFormat.h \
     ../../logformat/LogFormat.h \
     ../../service/GenericQSOUploader.h

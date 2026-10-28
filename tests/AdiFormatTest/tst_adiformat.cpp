@@ -4,8 +4,11 @@
 #include <QJsonObject>
 #include <QSqlField>
 #include <QSqlRecord>
+#include <QTemporaryDir>
+#include <QFile>
 
 #include "logformat/AdiFormat.h"
+#include "logformat/PotaAdiFormat.h"
 #include "service/GenericQSOUploader.h"
 #include "service/lotw/Lotw.h"
 
@@ -70,6 +73,10 @@ class AdiFormatTest : public QObject
 
 private slots:
     void initTestCase();
+    void potaExportPublishesParkFiles();
+    void potaExportReportsOpenFailure();
+    void potaExportRejectsMainFileCollision_data();
+    void potaExportRejectsMainFileCollision();
     void constructorDisablesDeviceTextMode();
     void parserSkipsHeaderAndReadsTypedFields();
     void parserSkipsMixedCaseHeaderTerminator();
@@ -150,6 +157,121 @@ QByteArray AdiFormatTest::writeField(const QString &name,
     stream.flush();
 
     return output;
+}
+
+void AdiFormatTest::potaExportPublishesParkFiles()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    QString hunterOutput;
+    QTextStream stream(&hunterOutput);
+    PotaAdiFormat format(stream);
+    format.setExportDirectory(directory.path());
+    QSqlRecord record;
+    appendField(record, "station_callsign", "OK1ABC");
+    appendField(record, "callsign", "K1ABC");
+    appendField(record, "my_sig", "POTA");
+    appendField(record, "my_sig_info", "CZ-0001,CZ-0002");
+    appendField(record, "sig", "");
+    appendField(record, "sig_info", "");
+    format.exportStart();
+    format.exportContact(record);
+    QVERIFY(QDir(directory.path()).entryList({"*.adif"}, QDir::Files).isEmpty());
+    record.setValue("my_sig", "");
+    record.setValue("my_sig_info", "");
+    record.setValue("sig", "POTA");
+    record.setValue("sig_info", "CZ-0003");
+    format.exportContact(record);
+    format.exportEnd();
+    stream.flush();
+    QVERIFY(format.exportErrorString().isEmpty());
+    const QStringList files = QDir(directory.path()).entryList({"*.adif"}, QDir::Files);
+    QCOMPARE(files.size(), 2);
+    for ( const QString &name : files )
+    {
+        QFile file(directory.filePath(name));
+        QVERIFY(file.open(QIODevice::ReadOnly));
+        QVERIFY(file.readAll().contains("K1ABC"));
+    }
+    QVERIFY(hunterOutput.contains("CZ-0003"));
+}
+
+void AdiFormatTest::potaExportReportsOpenFailure()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    QString output;
+    QTextStream stream(&output);
+    PotaAdiFormat format(stream);
+    format.setExportDirectory(directory.filePath("missing"));
+    QSqlRecord record;
+    appendField(record, "station_callsign", "OK1ABC");
+    appendField(record, "my_sig", "POTA");
+    appendField(record, "my_sig_info", "CZ-0001");
+    format.exportContact(record);
+    format.exportEnd();
+    QVERIFY(!format.exportErrorString().isEmpty());
+    QVERIFY(!QFileInfo::exists(directory.filePath("missing")));
+}
+
+void AdiFormatTest::potaExportRejectsMainFileCollision_data()
+{
+    QTest::addColumn<bool>("existingTarget");
+    QTest::newRow("new-target") << false;
+    QTest::newRow("existing-target") << true;
+}
+
+void AdiFormatTest::potaExportRejectsMainFileCollision()
+{
+    QFETCH(bool, existingTarget);
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    QSaveFile mainFile;
+    QString seedOutput;
+    QTextStream stream(&seedOutput);
+    PotaAdiFormat format(stream);
+    format.setExportDirectory(directory.path());
+    QSqlRecord record;
+    appendField(record, "station_callsign", "OK1ABC");
+    appendField(record, "callsign", "K1ABC");
+    appendField(record, "my_sig", "POTA");
+    appendField(record, "my_sig_info", "CZ-0001");
+    format.exportStart();
+    format.exportContact(record);
+    format.exportEnd();
+    QVERIFY(format.exportErrorString().isEmpty());
+    const QStringList files = QDir(directory.path()).entryList({"*.adif"}, QDir::Files);
+    QCOMPARE(files.size(), 1);
+
+    // Derive the next park's name from real output without depending on the clock.
+    QString name = files.constFirst();
+    name.replace("@CZ-0001-", "@CZ-0002-");
+    QVERIFY(name != files.constFirst());
+    const QString target = directory.filePath(name);
+    const QByteArray previous("previous park export");
+    if ( existingTarget )
+    {
+        QFile existing(target);
+        QVERIFY(existing.open(QIODevice::WriteOnly));
+        QCOMPARE(existing.write(previous), qint64(previous.size()));
+    }
+    mainFile.setFileName(target);
+    QVERIFY(mainFile.open(QIODevice::WriteOnly));
+    stream.setDevice(&mainFile);
+    format.setOverwriteConfirmation([](const QString &) { return true; });
+    record.setValue("my_sig_info", "CZ-0002");
+    format.exportContact(record);
+    QVERIFY(!format.exportErrorString().isEmpty());
+    format.exportEnd();
+
+    if ( existingTarget )
+    {
+        QFile existing(target);
+        QVERIFY(existing.open(QIODevice::ReadOnly));
+        QCOMPARE(existing.readAll(), previous);
+    }
+    else
+        QVERIFY(!QFileInfo::exists(target));
 }
 
 void AdiFormatTest::appendField(QSqlRecord &record,

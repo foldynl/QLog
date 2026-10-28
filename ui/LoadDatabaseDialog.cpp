@@ -170,9 +170,10 @@ void LoadDatabaseDialog::openImportDatabase()
         if ( !tempFile.open() )
         {
             dbInfo.valid = false;
-            dbInfo.errorMessage = tr("Cannot create temporary file");
+            dbInfo.errorMessage = tr("Cannot prepare unpacking in %1:\n%2")
+                                      .arg(LogDatabase::dbDirectory().absolutePath(), tempFile.errorString());
             ui->statusLabel->setText(QString("<span style=\"color: red;\">✗ %1</span>")
-                                         .arg(dbInfo.errorMessage));
+                                         .arg(dbInfo.errorMessage.toHtmlEscaped().replace('\n', "<br>")));
             ui->decryptGroup->setEnabled(false);
             ui->passwordEdit->clear();
             encryptedPasswordsBlob.clear();
@@ -183,13 +184,14 @@ void LoadDatabaseDialog::openImportDatabase()
     }
 
     // Decompress the .dbe file (with progress dialog)
+    QString error;
     if ( !FileCompressor::gunzipFileWithProgress(selectedFile, tempDecompressedFile,
-                                                  this, tr("Decompressing database...")) )
+                                                  this, tr("Decompressing database..."), &error) )
     {
         dbInfo.valid = false;
-        dbInfo.errorMessage = tr("Cannot decompress database file");
+        dbInfo.errorMessage = error;
         ui->statusLabel->setText(QString("<span style=\"color: red;\">✗ %1</span>")
-                                     .arg(dbInfo.errorMessage));
+                                     .arg(dbInfo.errorMessage.toHtmlEscaped().replace('\n', "<br>")));
         ui->decryptGroup->setEnabled(false);
         ui->passwordEdit->clear();
         encryptedPasswordsBlob.clear();
@@ -204,8 +206,9 @@ void LoadDatabaseDialog::openImportDatabase()
 
     if ( !dbInfo.valid )
     {
+        dbInfo.errorMessage = tr("Cannot unpack %1:\n%2").arg(selectedFile, dbInfo.errorMessage);
         ui->statusLabel->setText(QString("<span style=\"color: red;\">✗ %1</span>")
-                                     .arg(dbInfo.errorMessage));
+                                     .arg(dbInfo.errorMessage.toHtmlEscaped().replace('\n', "<br>")));
         ui->decryptGroup->setEnabled(false);
         ui->passwordEdit->clear();
         encryptedPasswordsBlob.clear();
@@ -220,11 +223,12 @@ void LoadDatabaseDialog::openImportDatabase()
 
         if ( !importDb.open() )
         {
-            qWarning() << "Cannot open import database:" << importDb.lastError().text();
+            qCWarning(runtime) << "Cannot open import database:" << importDb.lastError().text();
             dbInfo.valid = false;
-            dbInfo.errorMessage = tr("Cannot open database");
+            dbInfo.errorMessage = tr("Cannot open unpacked database %1:\n%2")
+                                      .arg(tempDecompressedFile, importDb.lastError().text());
             ui->statusLabel->setText(QString("<span style=\"color: red;\">✗ %1</span>")
-                                         .arg(dbInfo.errorMessage));
+                                         .arg(dbInfo.errorMessage.toHtmlEscaped().replace('\n', "<br>")));
             ui->decryptGroup->setEnabled(false);
             encryptedPasswordsBlob.clear();
             updateLoadButtonState();
@@ -233,15 +237,29 @@ void LoadDatabaseDialog::openImportDatabase()
 
         // Read encrypted passwords blob
         QSqlQuery query(importDb);
-        if ( query.exec("SELECT value FROM log_param WHERE name = 'security/encryptedpasswords'") )
+        if ( !query.exec("SELECT value FROM log_param WHERE name = 'security/encryptedpasswords'") )
         {
-            if ( query.first() && !query.value(0).toString().isEmpty() )
-                encryptedPasswordsBlob = QByteArray::fromBase64(query.value(0).toByteArray());
+            dbInfo.valid = false;
+            dbInfo.errorMessage = tr("Cannot load the saved passwords from unpacked database %1:\n%2")
+                                      .arg(tempDecompressedFile, query.lastError().text());
         }
+        else if ( query.first() && !query.value(0).toString().isEmpty() )
+            encryptedPasswordsBlob = QByteArray::fromBase64(query.value(0).toByteArray());
 
         importDb.close();
     }
     QSqlDatabase::removeDatabase(importConnectionName);
+
+    if ( !dbInfo.valid )
+    {
+        ui->statusLabel->setText(QString("<span style=\"color: red;\">✗ %1</span>")
+                                     .arg(dbInfo.errorMessage.toHtmlEscaped().replace('\n', "<br>")));
+        ui->decryptGroup->setEnabled(false);
+        ui->passwordEdit->clear();
+        encryptedPasswordsBlob.clear();
+        updateLoadButtonState();
+        return;
+    }
 
     // Build status message
     QString status = QString("<span style=\"color: green;\">✓ %1</span>")

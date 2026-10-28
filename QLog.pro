@@ -232,6 +232,7 @@ SOURCES += \
         ui/CabrilloExportDialog.cpp \
         ui/CabrilloTemplateDialog.cpp \
         ui/ExportDialog.cpp \
+        ui/QLogFileDialog.cpp \
         ui/ExportPasswordDialog.cpp \
         ui/LoadDatabaseDialog.cpp \
         ui/PlatformSettingsDialog.cpp \
@@ -476,6 +477,7 @@ HEADERS += \
         ui/CabrilloExportDialog.h \
         ui/CabrilloTemplateDialog.h \
         ui/ExportDialog.h \
+        ui/QLogFileDialog.h \
         ui/ExportPasswordDialog.h \
         ui/LoadDatabaseDialog.h \
         ui/PlatformSettingsDialog.h \

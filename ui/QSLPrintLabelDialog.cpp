@@ -1,5 +1,6 @@
 #include "ui/QSLPrintLabelDialog.h"
 #include "ui_QSLPrintLabelDialog.h"
+#include "ui/QLogFileDialog.h"
 
 #include <utility>
 
@@ -13,6 +14,8 @@
 #include <QPixmap>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QSaveFile>
+#include <QImageWriter>
 #include <QIODevice>
 #include <QSettings>
 #include <QSignalBlocker>
@@ -1210,7 +1213,11 @@ void QSLPrintLabelDialog::print()
     if ( printDialog.exec() == QDialog::Accepted )
     {
         updateRendererOptions();
-        renderer.printAll(&printer);
+        if ( !renderer.printAll(&printer) )
+        {
+            QMessageBox::warning(this, tr("Print Failed"), tr("Cannot print QSLs. QSOs were not marked as sent."));
+            return;
+        }
         askAndMarkQslSent();
     }
 }
@@ -1222,21 +1229,49 @@ void QSLPrintLabelDialog::exportPdf()
     QSettings settings;
     const QString lastPath = settings.value("qsllabel/last_pdf_path", QDir::homePath()).toString();
 
-    QString filename = QFileDialog::getSaveFileName(this,
-                                                     tr("Export PDF"),
-                                                     lastPath,
-                                                     tr("PDF Files (*.pdf)"));
+    const QString filename = QLogFileDialog::getSaveFileName(this,
+                                                             tr("Export PDF"),
+                                                             lastPath,
+                                                             tr("PDF Files (*.pdf)"),
+                                                             "pdf", true);
+
     if ( filename.isEmpty() )
         return;
 
     settings.setValue("qsllabel/last_pdf_path", QFileInfo(filename).path());
 
+    updateRendererOptions();
+#ifdef QLOG_FLATPAK
+    QSaveFile file(filename);
+    QString error;
+    if ( !file.open(QIODevice::WriteOnly) )
+        error = tr("Cannot create the QSL PDF export %1:\n%2").arg(filename, file.errorString());
+    else if ( !renderer.writePdf(&file) || file.error() != QFileDevice::NoError )
+        error = tr("Cannot render the QSL PDF export %1:\n%2")
+                    .arg(filename, file.error() == QFileDevice::NoError ? tr("The QSL pages could not be rendered.") : file.errorString());
+    else if ( !file.flush() )
+        error = tr("Cannot finish writing the QSL PDF export %1:\n%2").arg(filename, file.errorString());
+    else if ( !file.commit() )
+        error = tr("Cannot save the completed QSL PDF export as %1:\n%2").arg(filename, file.errorString());
+    if ( !error.isEmpty() )
+    {
+        qCWarning(runtime) << "QSL PDF export failed" << error;
+        QLogFileDialog::showError(this, tr("Export QSL PDF"),
+                              tr("%1\n\nQSOs were not marked as sent.").arg(error));
+        return;
+    }
+#else
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(filename);
 
-    updateRendererOptions();
-    renderer.printAll(&printer);
+    if ( !renderer.printAll(&printer) )
+    {
+        QLogFileDialog::showError(this, tr("Export QSL PDF"),
+                              tr("Cannot complete the QSL PDF output %1. QSOs were not marked as sent.").arg(filename));
+        return;
+    }
+#endif
     askAndMarkQslSent();
 }
 
@@ -1292,24 +1327,37 @@ void QSLPrintLabelDialog::exportCardImages()
     {
         const QImage cardImage = renderer.renderDirectCard(i);
         const QString fileName = fileNames.at(i);
+        const QString filePath = dir.filePath(fileName);
 
         if ( cardImage.isNull() )
         {
-            failedFiles.append(fileName);
+            failedFiles.append(tr("Cannot render the QSL card image %1.").arg(filePath));
             continue;
         }
 
-        const QString filePath = dir.filePath(fileName);
-
-        if ( cardImage.save(filePath, "JPG", 95) )
+        QFile file(filePath);
+        if ( !file.open(QIODevice::WriteOnly) )
         {
-            ++saved;
+            failedFiles.append(tr("Cannot create the rendered QSL card image file %1:\n%2").arg(filePath, file.errorString()));
+            qCWarning(runtime) << "Cannot open QSL card image" << filePath << file.errorString();
+            continue;
         }
-        else
+        QImageWriter writer(&file, "JPG");
+        writer.setQuality(95);
+        if ( !writer.write(cardImage) )
         {
-            failedFiles.append(fileName);
-            qCWarning(runtime) << "Cannot save QSL card image" << filePath;
+            const QString reason = file.error() != QFileDevice::NoError ? file.errorString() : writer.errorString();
+            failedFiles.append(tr("Cannot write the rendered QSL card image as JPEG %1:\n%2").arg(filePath, reason));
+            qCWarning(runtime) << "Cannot save QSL card image" << filePath << reason;
+            continue;
         }
+        if ( !file.flush() )
+        {
+            failedFiles.append(tr("Cannot finish writing the rendered QSL card image %1:\n%2").arg(filePath, file.errorString()));
+            qCWarning(runtime) << "Cannot flush QSL card image" << filePath << file.errorString();
+            continue;
+        }
+        ++saved;
     }
 
     const QString dialogTitle = tr("Export QSL Card Images");
@@ -1323,16 +1371,10 @@ void QSLPrintLabelDialog::exportCardImages()
         return;
     }
 
-    QMessageBox messageBox(QMessageBox::Warning,
-                           dialogTitle,
-                           tr("Exported %1 of %2 QSL card images.")
-                               .arg(saved)
-                               .arg(labelsData.size()),
-                           QMessageBox::Ok,
-                           this);
-    messageBox.setInformativeText(tr("QSOs were not marked as sent."));
-    messageBox.setDetailedText(failedFiles.join('\n'));
-    messageBox.exec();
+    QLogFileDialog::showError(this, dialogTitle,
+                               tr("Exported %1 of %2 QSL card images.\n\n%3\n\nQSOs were not marked as sent.")
+                                   .arg(saved).arg(labelsData.size()).arg(failedFiles.constFirst()),
+                               failedFiles.join('\n'));
 }
 
 void QSLPrintLabelDialog::askAndMarkQslSent()

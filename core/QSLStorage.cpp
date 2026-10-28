@@ -388,11 +388,13 @@ QList<QSLGalleryItem> QSLStorage::getGalleryItemsByContinent(const QString &cont
     return ret;
 }
 
-QByteArray QSLStorage::getQSLData(qulonglong contactId, int source, const QString &name) const
+QByteArray QSLStorage::getQSLData(qulonglong contactId, int source, const QString &name, QString *error) const
 {
     FCT_IDENTIFICATION;
 
     qCDebug(function_parameters) << contactId << source << name;
+    if ( error )
+        error->clear();
 
     QSqlQuery query;
 
@@ -400,7 +402,9 @@ QByteArray QSLStorage::getQSLData(qulonglong contactId, int source, const QStrin
                         "WHERE contactid = :contactid AND source = :source AND name = :name "
                         "LIMIT 1") )
     {
-        qCDebug(runtime) << "Cannot prepare SQL Statement" << query.lastError();
+        qCWarning(runtime) << "Cannot prepare QSL read" << query.lastError();
+        if ( error )
+            *error = tr("Cannot look up the QSL gallery image %1:\n%2").arg(name, query.lastError().text());
         return QByteArray();
     }
 
@@ -408,11 +412,17 @@ QByteArray QSLStorage::getQSLData(qulonglong contactId, int source, const QStrin
     query.bindValue(":source", source);
     query.bindValue(":name", name);
 
+    QByteArray data;
     if ( query.exec() && query.next() )
-        return QByteArray::fromBase64(query.value(0).toByteArray());
+        data = QByteArray::fromBase64(query.value(0).toByteArray());
 
-    qCDebug(runtime) << "QSL data not found" << query.lastError();
-    return QByteArray();
+    if ( data.isEmpty() && error )
+        *error = query.lastError().isValid() ? tr("Cannot load the QSL gallery image data for %1:\n%2").arg(name, query.lastError().text())
+                                           : tr("Cannot export %1. The QSL image is missing or empty.").arg(name);
+
+    if ( data.isEmpty() )
+        qCDebug(runtime) << "QSL data not found" << query.lastError();
+    return data;
 }
 
 QList<QSLGalleryItem> QSLStorage::getGalleryItemsFavorite() const

@@ -30,9 +30,9 @@ protected:
 private:
     static constexpr uint MAX_INTERNAL_COPIES = 10;
     bool exportSnapshot(const QString &snapshot, const QString &output);
-    bool copyBackup(const QString &source, const QString &destination);
+    bool copyBackup(const QString &source, const QString &destination, QString &copyError);
     bool copyAdditionalBackups(const QDir &directory, const QStringList &requestedFiles);
-    static bool removeSnapshotSidecars(const QString &snapshot);
+    static bool removeSnapshotSidecars(const QString &snapshot, QString *reason = nullptr);
     void pruneBackups(const QString &path, int copies);
     void complete();
     static QStringList backupFiles(const QDir &directory, const QString &suffix);

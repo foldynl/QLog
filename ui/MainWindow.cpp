@@ -65,6 +65,7 @@
 #include "ui/QSLPrintLabelDialog.h"
 #include "ui/AdifRecoveryManager.h"
 #include <QFileDialog>
+#include "ui/QLogFileDialog.h"
 #include <QProcess>
 #include <QThread>
 #include <QTemporaryFile>
@@ -1442,10 +1443,16 @@ void MainWindow::showDumpDB()
 
     const QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
+#ifdef QLOG_FLATPAK
+    QString filename = QLogFileDialog::getSaveFileName(this, tr("Pack Data & Settings"),
+                                                       QDir(documentsPath).filePath("qlog.dbe"),
+                                                       tr("Database files (*.dbe);;All files (*)"), "dbe", true);
+#else
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Pack Data & Settings"),
                                                     documentsPath,
                                                     tr("Database files (*.dbe);;All files (*)"));
+#endif
 
     if ( filename.isEmpty() )
     {
@@ -1474,8 +1481,8 @@ void MainWindow::showDumpDB()
     {
         LogParam::removeEncryptedPasswords();
         LogParam::removeSourcePlatform();
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Choose a different file. The export destination points to the open database."));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"),
+                                   tr("Cannot pack into %1 because it is the open logbook database. Choose another file.").arg(filename));
         return;
     }
 
@@ -1485,15 +1492,17 @@ void MainWindow::showDumpDB()
     {
         LogParam::removeEncryptedPasswords();
         LogParam::removeSourcePlatform();
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Failed to create temporary file."));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"),
+                                   tr("Cannot create a temporary database file for packing in %1:\n%2")
+                                 .arg(QDir::tempPath(), tempFile.errorString()));
         return;
     }
     QString tempPath = tempFile.fileName();
     tempFile.close();
 
     // Copy database to temporary file
-    bool ok = LogDatabase::instance()->atomicCopy(tempPath);
+    QString error;
+    bool ok = LogDatabase::instance()->atomicCopy(tempPath, &error);
 
     LogParam::removeEncryptedPasswords();
     LogParam::removeSourcePlatform();
@@ -1501,13 +1510,12 @@ void MainWindow::showDumpDB()
     if ( !ok )
     {
         tempFile.remove();
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Failed to dump the database."));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"), error);
         return;
     }
 
     // Compress temporary file to destination (with progress dialog)
-    ok = FileCompressor::gzipFileWithProgress(tempPath, filename, this, tr("Compressing database..."));
+    ok = FileCompressor::gzipFileWithProgress(tempPath, filename, this, tr("Compressing database..."), &error);
     tempFile.remove();
 
     if ( ok )
@@ -1525,8 +1533,7 @@ void MainWindow::showDumpDB()
     }
     else
     {
-        QMessageBox::warning(this, tr("Pack Data & Settings"),
-                             tr("Failed to compress the database."));
+        QLogFileDialog::showError(this, tr("Pack Data & Settings"), error);
     }
 }
 
@@ -1586,7 +1593,7 @@ void MainWindow::showLoadDB()
     if ( !prepared )
     {
         QFile::remove(decompressedFile);
-        QMessageBox::warning(this, tr("Unpack Data & Settings"), LogDatabase::instance()->pendingImportError());
+        QLogFileDialog::showError(this, tr("Unpack Data & Settings"), LogDatabase::instance()->pendingImportError());
         return;
     }
     QFile::remove(decompressedFile);

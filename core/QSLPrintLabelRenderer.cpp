@@ -1,5 +1,7 @@
 #include <QPainter>
 #include <QPrinter>
+#include <QPdfWriter>
+#include <QIODevice>
 #include <QFontDatabase>
 #include <QFontMetricsF>
 #include <QPageSize>
@@ -788,25 +790,43 @@ QImage QSLPrintLabelRenderer::renderDirectCard(int labelIndex, int dpi)
     return image;
 }
 
-void QSLPrintLabelRenderer::printAll(QPrinter *printer)
+bool QSLPrintLabelRenderer::printAll(QPrinter *printer)
 {
     FCT_IDENTIFICATION;
 
     if ( !printer )
     {
         qCWarning(runtime) << "Null printer";
-        return;
+        return false;
     }
+
+    printer->setResolution(PRINTER_RESOLUTION);
+    return renderPages(printer);
+}
+
+bool QSLPrintLabelRenderer::writePdf(QIODevice *device)
+{
+    FCT_IDENTIFICATION;
+
+    if ( !device || !device->isWritable() )
+        return false;
+
+    QPdfWriter writer(device);
+    writer.setResolution(PRINTER_RESOLUTION);
+    return renderPages(&writer);
+}
+
+bool QSLPrintLabelRenderer::renderPages(QPagedPaintDevice *device)
+{
+    FCT_IDENTIFICATION;
 
     const int pages = pageCount();
 
     if ( pages <= 0 )
     {
         qCWarning(runtime) << "No pages to print";
-        return;
+        return false;
     }
-
-    printer->setResolution(PRINTER_RESOLUTION);
 
     const QPageSize pageSize(outputPageSize);
     QPageLayout::Orientation orientation = labelTemplate.orientation;
@@ -818,25 +838,29 @@ void QSLPrintLabelRenderer::printAll(QPrinter *printer)
                              orientation,
                              QMarginsF(0, 0, 0, 0),
                              QPageLayout::Millimeter);
-    printer->setPageLayout(layout);
+    // Printers may adjust the requested margins to their printable area.
+    device->setPageLayout(layout);
 
-    QPainter painter(printer);
+    QPainter painter(device);
 
     if ( !painter.isActive() )
     {
         qCWarning(runtime) << "Cannot begin painting on printer";
-        return;
+        return false;
     }
 
     for ( int i = 0; i < pages; ++i )
     {
-        if ( i > 0 )
-            printer->newPage();
+        if ( i > 0 && !device->newPage() )
+        {
+            qCWarning(runtime) << "Cannot create output page";
+            return false;
+        }
 
         drawPage(&painter, i);
     }
 
-    painter.end();
+    return painter.end();
 }
 
 QList<LabelTemplate> QSLPrintLabelRenderer::predefinedTemplates()

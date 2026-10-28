@@ -3,6 +3,7 @@
 #include <QtSql>
 #include <QDebug>
 #include <QUuid>
+#include <sqlite3.h>
 #include "core/Migration.h"
 #include "debug.h"
 #include "data/Data.h"
@@ -16,6 +17,17 @@
 
 MODULE_IDENTIFICATION("qlog.core.migration");
 
+bool DBSchemaMigration::failMigration(const QString &message)
+{
+    FCT_IDENTIFICATION;
+
+    // Restoring database settings after failure must not hide the original cause.
+    if ( error.isEmpty() )
+        error = message;
+    qCWarning(runtime) << message;
+    return false;
+}
+
 /**
  * Migrate the database to the latest schema version.
  * Returns true on success.
@@ -24,13 +36,16 @@ bool DBSchemaMigration::run(QString *backupSnapshot)
 {
     FCT_IDENTIFICATION;
 
+    error.clear();
+    const QString filename = QSqlDatabase::database().databaseName();
     int currentVersion = getVersion();
+    if ( !error.isEmpty() )
+        return false;
 
     if ( currentVersion > latestVersion )
-    {
-        qCritical() << "Database from the future" << currentVersion;
-        return false;
-    }
+        return failMigration(tr("The database %1 uses format version %2, but this QLog supports up to %3. Use a newer QLog version to open it.")
+                                 .arg(filename, QString::number(currentVersion), QString::number(latestVersion)));
+
 
     if (currentVersion == latestVersion) {
         qCDebug(runtime) << "Database schema already up to date";
@@ -41,7 +56,7 @@ bool DBSchemaMigration::run(QString *backupSnapshot)
 
     // A schema upgrade always requires its own snapshot, regardless of recent backups.
     if ( !DatabaseBackup::prepare(true, backupSnapshot) )
-        return false;
+        return failMigration(tr("Cannot create a safety copy before updating the database %1:\n%2").arg(filename, LogParam::getBackupError()));
 
     qCDebug(runtime) << "Starting database migration";
 
@@ -66,14 +81,16 @@ bool DBSchemaMigration::run(QString *backupSnapshot)
 
         if ( !QSqlDatabase::database().open() )
         {
-            qCritical() << QSqlDatabase::database().lastError();
-            result = false;
+            result = failMigration(tr("Cannot reopen the database after update %1 in %2:\n%3")
+                                       .arg(QString::number(currentVersion), filename, QSqlDatabase::database().lastError().text()));
             break;
         }
 
         // Connection-local settings and SQL functions are lost on close/open.
-        result = setForeignKeysEnabled(false)
-                 && LogDatabase::instance()->createSQLFunctions();
+        result = setForeignKeysEnabled(false);
+        if ( result && !LogDatabase::instance()->createSQLFunctions() )
+            result = failMigration(tr("Cannot initialize logbook functions after database update %1 in %2.")
+                                       .arg(QString::number(currentVersion), filename));
         progress.setValue(currentVersion);
     }
 
@@ -82,15 +99,15 @@ bool DBSchemaMigration::run(QString *backupSnapshot)
         QSqlDatabase db = QSqlDatabase::database();
         if ( !db.transaction() )
         {
-            qCCritical(runtime) << "Cannot start upload status trigger refresh transaction:" << db.lastError();
-            result = false;
+            result = failMigration(tr("Cannot start refreshing logbook upload rules in %1:\n%2").arg(filename, db.lastError().text()));
         }
-        else if ( !refreshUploadStatusTrigger() || !db.commit() )
+        else
         {
-            qCCritical(runtime) << "Cannot refresh Upload Status Trigger:" << db.lastError();
-            if ( !db.rollback() )
+            result = refreshUploadStatusTrigger();
+            if ( result && !db.commit() )
+                result = failMigration(tr("Cannot save the refreshed logbook upload rules in %1:\n%2").arg(filename, db.lastError().text()));
+            if ( !result && !db.rollback() )
                 qCCritical(runtime) << "Cannot roll back upload status trigger refresh:" << db.lastError();
-            result = false;
         }
     }
 
@@ -112,10 +129,8 @@ bool DBSchemaMigration::setForeignKeysEnabled(bool enabled)
 
     const QSqlDatabase db = QSqlDatabase::database(QSqlDatabase::defaultConnection, false);
     if ( !db.isOpen() )
-    {
-        qCWarning(runtime) << "Cannot set foreign-key enforcement on a closed database:" << db.lastError();
-        return false;
-    }
+        return failMigration(tr("Cannot change database data checks in %1 because the database is closed.").arg(db.databaseName()));
+
 
     QSqlQuery query(db);
     if ( !query.exec(enabled ? "PRAGMA foreign_keys = ON" : "PRAGMA foreign_keys = OFF")
@@ -123,8 +138,9 @@ bool DBSchemaMigration::setForeignKeysEnabled(bool enabled)
          || !query.next()
          || query.value(0).toInt() != int(enabled) )
     {
-        qCWarning(runtime) << "Cannot set foreign-key enforcement:" << enabled << query.lastError();
-        return false;
+        const QString reason = query.lastError().isValid() ? query.lastError().text() : tr("The database did not accept the requested setting.");
+        return failMigration(enabled ? tr("Cannot enable database data checks in %1:\n%2").arg(db.databaseName(), reason)
+                                     : tr("Cannot disable database data checks for updating %1:\n%2").arg(db.databaseName(), reason));
     }
 
     return true;
@@ -137,10 +153,30 @@ int DBSchemaMigration::getVersion()
 {
     FCT_IDENTIFICATION;
 
-    QSqlQuery query("SELECT version FROM schema_versions "
-                    "ORDER BY version DESC LIMIT 1");
-
-    int i = query.first() ? query.value(0).toInt() : 0;
+    const QSqlDatabase database = QSqlDatabase::database();
+    QSqlQuery query(database);
+    if ( !query.exec("SELECT version FROM schema_versions ORDER BY version DESC LIMIT 1") )
+    {
+        // A new empty logbook has no version table until its first migration.
+        if ( query.lastError().nativeErrorCode() == QString::number(SQLITE_ERROR) && database.tables().isEmpty() )
+            return 0;
+        failMigration(tr("Cannot read the database format version before updating %1:\n%2").arg(database.databaseName(), query.lastError().text()));
+        return -1;
+    }
+    if ( !query.first() )
+    {
+        failMigration(query.lastError().isValid()
+                          ? tr("Cannot load the stored database format version from %1:\n%2").arg(database.databaseName(), query.lastError().text())
+                          : tr("No database format version is recorded for updating %1.").arg(database.databaseName()));
+        return -1;
+    }
+    bool valid = false;
+    const int i = query.value(0).toInt(&valid);
+    if ( !valid || i < 0 )
+    {
+        failMigration(tr("The stored database format version is invalid in %1.").arg(database.databaseName()));
+        return -1;
+    }
     qCDebug(runtime) << i;
     return i;
 }
@@ -159,14 +195,15 @@ bool DBSchemaMigration::setVersion(int version)
     if ( ! query.prepare("INSERT INTO schema_versions (version, updated) "
                   "VALUES (:version, datetime('now'))") )
     {
-        qWarning() << "Cannot prepare Insert statement";
+        return failMigration(tr("Cannot prepare recording database format version %1 in %2:\n%3")
+                                 .arg(QString::number(version), QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     query.bindValue(":version", version);
 
     if (!query.exec()) {
-        qWarning() << "setting schema version failed" << query.lastError();
-        return false;
+        return failMigration(tr("Cannot record database format version %1 in %2:\n%3")
+                                 .arg(QString::number(version), QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
     else {
         return true;
@@ -184,10 +221,9 @@ bool DBSchemaMigration::migrate(int toVersion)
     qCDebug(runtime) << "migrate to" << toVersion;
 
     QSqlDatabase db = QSqlDatabase::database();
-    if (!db.transaction()) {
-        qCritical() << "transaction failed";
-        return false;
-    }
+    if ( !db.transaction() )
+        return failMigration(tr("Cannot start database update %1 in %2:\n%3")
+                                 .arg(QString::number(toVersion), db.databaseName(), db.lastError().text()));
 
     QString migration_file = QString(":/res/sql/migration_%1.sql").arg(toVersion, 3, 10, QChar('0'));
     bool result = runSqlFile(migration_file);
@@ -199,18 +235,27 @@ bool DBSchemaMigration::migrate(int toVersion)
         QSqlQuery query;
         result = query.exec("PRAGMA foreign_key_check") && !query.next() && !query.lastError().isValid();
         if ( !result )
-            qCWarning(runtime) << "Foreign-key check failed after migration:" << query.lastError() << query.record();
+        {
+            const QString reason = query.lastError().isValid()
+                                       ? query.lastError().text()
+                                       : tr("Some records refer to missing data in table %1 (row %2).")
+                                             .arg(query.value(0).toString(), query.value(1).toString());
+            failMigration(tr("The data consistency check failed after database update %1 in %2:\n%3")
+                              .arg(QString::number(toVersion), db.databaseName(), reason));
+        }
     }
 
-    if (result && setVersion(toVersion) && db.commit()) {
+    if ( result )
+        result = setVersion(toVersion);
+    if ( result && !db.commit() )
+        result = failMigration(tr("Cannot save database update %1 in %2:\n%3")
+                                   .arg(QString::number(toVersion), db.databaseName(), db.lastError().text()));
+    if ( result )
         return true;
-    }
-    else {
-        if (!db.rollback()) {
-            qCritical() << "rollback failed";
-        }
-        return false;
-    }
+
+    if ( !db.rollback() )
+        qCCritical(runtime) << "Cannot roll back database update" << toVersion << db.lastError();
+    return false;
 }
 
 bool DBSchemaMigration::runSqlFile(QString filename)
@@ -221,12 +266,15 @@ bool DBSchemaMigration::runSqlFile(QString filename)
 
     QFile sqlFile(filename);
     if ( !sqlFile.open(QIODevice::ReadOnly | QIODevice::Text) )
-    {
-        qCWarning(runtime) << "Cannot open migration SQL file:" << filename << sqlFile.errorString();
-        return false;
-    }
+        return failMigration(tr("Cannot open the database update file %1 for %2:\n%3")
+                                 .arg(filename, QSqlDatabase::database().databaseName(), sqlFile.errorString()));
 
-    const QStringList &sqlQueries = QTextStream(&sqlFile).readAll().split('\n').join(" ").split(';');
+
+    QTextStream stream(&sqlFile);
+    const QStringList &sqlQueries = stream.readAll().split('\n').join(" ").split(';');
+    if ( sqlFile.error() != QFileDevice::NoError || stream.status() != QTextStream::Ok )
+        return failMigration(tr("Cannot read the database update file %1 for %2:\n%3")
+                                 .arg(filename, QSqlDatabase::database().databaseName(), sqlFile.errorString()));
     qCDebug(runtime) << sqlQueries;
 
     for (const QString &sqlQuery : sqlQueries)
@@ -238,8 +286,8 @@ bool DBSchemaMigration::runSqlFile(QString filename)
         QSqlQuery query;
         if (!query.exec(sqlQuery))
         {
-            qCWarning(runtime) << "Migration SQL failed:" << query.lastError();
-            return false;
+            return failMigration(tr("Cannot apply database update %1 to %2:\n%3")
+                                     .arg(filename, QSqlDatabase::database().databaseName(), query.lastError().text()));
         }
         query.finish();
     }
@@ -329,14 +377,14 @@ bool DBSchemaMigration::fixIntlFields()
                          "           sig_info, sig_info_intl "
                          " FROM contacts" ) )
     {
-        qWarning()<< " Cannot prepare a migration script - fixIntlField 1";
-        return false;
+        return failMigration(tr("Cannot prepare logbook text conversion in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     if( !query.exec() )
     {
-        qWarning()<< "Cannot exec a migration script - fixIntlFields 1";
-        return false;
+        return failMigration(tr("Cannot read text fields for the database update in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     if ( !update.prepare("UPDATE contacts SET name    = :name,"
@@ -351,8 +399,8 @@ bool DBSchemaMigration::fixIntlFields()
                          "                    sig_info = :sig_info "
                          "WHERE id = :id") )
     {
-        qWarning()<< " Cannot prepare a migration script - fixIntlField 2";
-        return false;
+        return failMigration(tr("Cannot prepare converted logbook text for saving in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), update.lastError().text()));
     }
 
     while( query.next() )
@@ -371,10 +419,14 @@ bool DBSchemaMigration::fixIntlFields()
 
         if ( !update.exec())
         {
-            qWarning() << "Cannot exec a migration script - fixIntlFields 2";
-            return false;
+            return failMigration(tr("Cannot save converted text for contact %1 in database %2:\n%3")
+                                     .arg(query.value("id").toString(), QSqlDatabase::database().databaseName(), update.lastError().text()));
         }
     }
+
+    if ( query.lastError().isValid() )
+        return failMigration(tr("Cannot finish reading logbook text while updating %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
 
     return true;
 }
@@ -383,7 +435,9 @@ bool DBSchemaMigration::insertUUID()
 {
     FCT_IDENTIFICATION;
 
-    return LogParam::setLogID(QUuid::createUuid().toString());
+    if ( !LogParam::setLogID(QUuid::createUuid().toString()) )
+        return failMigration(tr("Cannot save the logbook identifier in %1 while updating its format.").arg(QSqlDatabase::database().databaseName()));
+    return true;
 }
 
 bool DBSchemaMigration::fillMyDXCC()
@@ -395,14 +449,14 @@ bool DBSchemaMigration::fillMyDXCC()
 
     if ( !query.prepare( "SELECT DISTINCT station_callsign FROM contacts" ) )
     {
-        qWarning()<< " Cannot prepare a migration script - fillMyDXCC 1" << query.lastError();
-        return false;
+        return failMigration(tr("Cannot prepare reading station callsigns for updating %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     if( !query.exec() )
     {
-        qWarning()<< "Cannot exec a migration script - fillMyDXCC 1" << query.lastError();
-        return false;
+        return failMigration(tr("Cannot read station callsigns while updating database %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     if ( !update.prepare("UPDATE contacts "
@@ -413,8 +467,8 @@ bool DBSchemaMigration::fillMyDXCC()
                          "    my_country_intl = CASE WHEN my_country_intl IS NULL THEN :my_country_intl ELSE my_country_intl END "
                          "WHERE station_callsign = :station_callsign") )
     {
-        qWarning()<< " Cannot prepare a migration script - fillMyDXCC 2" << update.lastError();
-        return false;
+        return failMigration(tr("Cannot prepare converted station geography in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), update.lastError().text()));
     }
 
     // it is a hack because the migration is running before migration (start/stop database).
@@ -438,11 +492,15 @@ bool DBSchemaMigration::fillMyDXCC()
 
             if ( !update.exec())
             {
-                qWarning() << "Cannot exec a migration script - fillMyDXCC 2" << update.lastError();
-                return false;
+                return failMigration(tr("Cannot save converted station geography for %1 in %2:\n%3")
+                                         .arg(myCallsign, QSqlDatabase::database().databaseName(), update.lastError().text()));
             }
         }
     }
+
+    if ( query.lastError().isValid() )
+        return failMigration(tr("Cannot finish reading station callsigns while updating %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
 
     return true;
 }
@@ -471,8 +529,8 @@ bool DBSchemaMigration::createTriggers()
                               "                   WHERE word != '' AND word REGEXP '^([A-Z][0-9]|[A-Z]{1,2}|[0-9][A-Z])([0-9]|[0-9]+)([A-Z]+)$' LIMIT 1));"
                               "END;")))
     {
-        qWarning() << "Cannot create trigger update_callsign_contacts_autovalue " << query.lastError().text();
-        return false;
+        return failMigration(tr("Cannot create the callsign update rule in database %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     if ( ! query.exec(QString("CREATE TRIGGER insert_contacts_autovalue "
@@ -489,8 +547,8 @@ bool DBSchemaMigration::createTriggers()
                               "                   WHERE word != '' and word REGEXP '^([A-Z][0-9]|[A-Z]{1,2}|[0-9][A-Z])([0-9]|[0-9]+)([A-Z]+)$' LIMIT 1)); "
                               "END;")))
     {
-        qWarning() << "Cannot create trigger update_callsign_contacts_autovalue " << query.lastError().text();
-        return false;
+        return failMigration(tr("Cannot create the rule for new contact callsigns in database %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     return true;
@@ -515,8 +573,8 @@ bool DBSchemaMigration::importQSLCards2DB()
     if ( !insert.prepare("INSERT INTO contacts_qsl_cards (contactid, source, name, data) "
                          " VALUES (:contactid, 0, :name, :data)" ) )
     {
-        qWarning()<< " Cannot prepare a migration script - importQSLCards2DB 2" << insert.lastError();
-        return false;
+        return failMigration(tr("Cannot prepare QSL image conversion for database %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), insert.lastError().text()));
     }
 
     for ( auto &file : file_list )
@@ -564,23 +622,22 @@ bool DBSchemaMigration::fillCQITUZStationProfiles()
     QSqlQuery update;
 
     if ( !query.prepare( "SELECT DISTINCT callsign FROM station_profiles" ) )
-    {
-        qWarning()<< " Cannot prepare a migration script - fillCQITUZStationProfiles 1" << query.lastError();
-        return false;
-    }
+        return failMigration(tr("Cannot prepare reading station profiles while updating %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
+
 
     if( !query.exec() )
     {
-        qWarning()<< "Cannot exec a migration script - fillCQITUZStationProfiles 1" << query.lastError();
-        return false;
+        return failMigration(tr("Cannot read station profiles while updating %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
     }
 
     if ( !update.prepare("UPDATE station_profiles "
                          "SET ituz = :ituz, cqz = :cqz, dxcc = :dxcc, country = :country "
                          "WHERE upper(callsign) = :callsign") )
     {
-        qWarning()<< " Cannot prepare a migration script - fillCQITUZStationProfiles 2" << update.lastError();
-        return false;
+        return failMigration(tr("Cannot prepare converted station zone data in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), update.lastError().text()));
     }
 
     // it is a hack because the migration is running before migration (start/stop database).
@@ -603,11 +660,15 @@ bool DBSchemaMigration::fillCQITUZStationProfiles()
 
             if ( !update.exec())
             {
-                qWarning() << "Cannot exec a migration script - fillCQITUZStationProfiles 2" << update.lastError();
-                return false;
+                return failMigration(tr("Cannot save converted station zone data in %1:\n%2")
+                                         .arg(QSqlDatabase::database().databaseName(), update.lastError().text()));
             }
         }
     }
+
+    if ( query.lastError().isValid() )
+        return failMigration(tr("Cannot finish reading station profiles while updating %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
 
     return true;
 }
@@ -1075,10 +1136,9 @@ bool DBSchemaMigration::refreshUploadStatusTrigger()
                     "                     'hamqth_qso_upload_status')");
 
     if ( !query.exec() )
-    {
-        qWarning() << "Cannot get Contacts columns";
-        return false;
-    }
+        return failMigration(tr("Cannot inspect contact fields for updated upload rules in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
+
 
     QStringList whenClause;
     QStringList afterUpdateClause;
@@ -1089,14 +1149,16 @@ bool DBSchemaMigration::refreshUploadStatusTrigger()
         afterUpdateClause << QString("\"" + columnName + "\"");
         whenClause << QString("old.\"%1\" IS NOT new.\"%2\"").arg(columnName, columnName);
     }
+    if ( query.lastError().isValid() )
+        return failMigration(tr("Cannot finish reading contact fields for database upload rules in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), query.lastError().text()));
 
     QSqlQuery stmt;
 
     if ( !stmt.exec("DROP TRIGGER IF EXISTS update_contacts_upload_status") )
-    {
-        qWarning() << "Cannot drop all Update Contacts Upload Trigger";
-        return false;
-    }
+        return failMigration(tr("Cannot remove the previous logbook upload rules in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), stmt.lastError().text()));
+
 
     auto generateListSpecificConditions = [](const QStringList &columns)
     {
@@ -1126,8 +1188,9 @@ bool DBSchemaMigration::refreshUploadStatusTrigger()
                                        generateListSpecificConditions(HRDLogUploader::uploadedFields),
                                        generateListSpecificConditions(ClubLogUploader::uploadedFields))) )
     {
-        qWarning().noquote() << "Cannot create Update Contacts Upload Trigger" << stmt.lastQuery();
-        return false;
+        qCDebug(runtime) << stmt.lastQuery();
+        return failMigration(tr("Cannot create the updated logbook upload rules in %1:\n%2")
+                                 .arg(QSqlDatabase::database().databaseName(), stmt.lastError().text()));
     }
     return true;
 }
