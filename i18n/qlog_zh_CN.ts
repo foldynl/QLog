@@ -253,7 +253,7 @@
 <context>
     <name>AdiFormat</name>
     <message>
-        <location filename="../logformat/AdiFormat.cpp" line="950"/>
+        <location filename="../logformat/AdiFormat.cpp" line="959"/>
         <source>Invalid value &quot;%1&quot; for ADIF field %2; value ignored</source>
         <translation>ADIF 字段 %2 的值“%1”无效；已忽略该值</translation>
     </message>
@@ -1972,106 +1972,123 @@
         <translation>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="41"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="42"/>
         <source>&amp;Export</source>
         <translation>导出(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="121"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="124"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="129"/>
         <source>Cabrillo Files (*.log);;CBR Files (*.cbr);;All Files (*)</source>
         <translation>Cabrillo 文件 (*.log);;CBR 文件 (*.cbr);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="276"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="296"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="285"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="305"/>
         <source>QSO(s): %1</source>
         <translation>QSO(s): %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="289"/>
         <location filename="../ui/CabrilloExportDialog.cpp" line="298"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="307"/>
         <source>QSOs: ?</source>
         <translation>QSOs: ?</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="463"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="470"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="477"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="485"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="548"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="481"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="488"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="495"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="575"/>
         <source>QLog Warning</source>
         <translation>QLog 警告</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="464"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="482"/>
         <source>Please select a contest template.</source>
         <translation>请选择一个比赛模板。</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="471"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="489"/>
         <source>Please select an output file.</source>
         <translation>请选择输出文件。</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="478"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="496"/>
         <source>No callsign available. Check your filters.</source>
         <translation>没有可用的呼号。请检查您的过滤器。</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="486"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="504"/>
         <source>Off-Time must contain one UTC interval in the format yyyy-mm-dd hhmm yyyy-mm-dd hhmm. Use valid dates and times, with the end at or after the start.</source>
         <translation type="unfinished">Off-Time 必须包含一个 UTC 时间段，格式为 yyyy-mm-dd hhmm yyyy-mm-dd hhmm。请使用有效的日期和时间，结束时间不得早于开始时间。</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="511"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="558"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="521"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="530"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="540"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="585"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="613"/>
+        <source>Export Cabrillo</source>
+        <translation type="unfinished">导出 Cabrillo</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="522"/>
+        <source>Cannot prepare contact selection for the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">无法为 Cabrillo 导出 %1 准备通联记录筛选：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="531"/>
+        <source>Cannot read contacts for the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">无法读取 Cabrillo 导出 %1 所需的通联记录：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="541"/>
+        <source>Cannot finish reading contacts for the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">无法完成 Cabrillo 导出 %1 所需的通联记录读取：
+%2</translation>
+    </message>
+    <message>
         <location filename="../ui/CabrilloExportDialog.cpp" line="586"/>
-        <source>QLog Error</source>
-        <translation>QLog 错误</translation>
+        <source>Cannot create the Cabrillo export file %1:
+%2</source>
+        <translation type="unfinished">无法创建 Cabrillo 导出文件 %1：
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
-        <source>Failed to prepare export query.</source>
-        <translation>准备导出查询失败。</translation>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="614"/>
+        <source>Cannot finish saving the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">无法完成 Cabrillo 导出 %1 的保存：
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="511"/>
-        <source>Failed to query QSOs for export.</source>
-        <translation>查询 QSO 以进行导出失败。</translation>
-    </message>
-    <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="549"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="576"/>
         <source>Cabrillo does not define a frequency designator for band-only QSO(s) on: %1. Enter an exact frequency or exclude these QSOs from the export.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="559"/>
-        <source>Cannot open file %1 for writing.</source>
-        <translation>无法打开文件 %1 进行写入。</translation>
-    </message>
-    <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="569"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="596"/>
         <source>Exporting Cabrillo...</source>
         <translation>正在导出 Cabrillo...</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="570"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="597"/>
         <source>Cabrillo Export Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="587"/>
-        <source>Failed to write Cabrillo file %1.</source>
-        <translation type="unfinished">写入 Cabrillo 文件 %1 失败。</translation>
-    </message>
-    <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="591"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="618"/>
         <source>QLog Information</source>
         <translation>QLog 信息</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/CabrilloExportDialog.cpp" line="592"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="619"/>
         <source>Exported %n QSO(s) to Cabrillo file.</source>
         <translation>
             <numerusform>已将 %n 条 QSO 导出到 Cabrillo 文件。</numerusform>
@@ -2464,88 +2481,123 @@
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="346"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="350"/>
         <source>New Template</source>
         <translation>新建模板</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="380"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="384"/>
         <source>Copy - %1</source>
         <translation>复制 - %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="402"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="406"/>
         <source>Delete Template</source>
         <translation>删除模板</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="403"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="407"/>
         <source>Delete template &apos;%1&apos;?</source>
         <translation>确定要删除模板 &apos;%1&apos; 吗？</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="470"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="474"/>
         <source>Import Template</source>
         <translation>导入模板</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="472"/>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="525"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="476"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="529"/>
         <source>QLog Cabrillo Template (*.qct)</source>
         <translation>QLog Cabrillo 模板 (*.qct)</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="482"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="486"/>
         <source>Import Failed</source>
         <translation>导入失败</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="522"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="526"/>
         <source>Export Template</source>
         <translation>导出模板</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="533"/>
-        <source>Export Failed</source>
-        <translation>导出失败</translation>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="537"/>
+        <source>Export Cabrillo Template</source>
+        <translation type="unfinished">导出 Cabrillo 模板</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="642"/>
-        <source>Failed to write file: %1</source>
-        <translation>写入文件失败: %1</translation>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="624"/>
+        <source>Cannot create the Cabrillo template file %1:
+%2</source>
+        <translation type="unfinished">无法创建 Cabrillo 模板文件 %1：
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="658"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="633"/>
+        <source>Cannot create a temporary folder for Cabrillo template %1:
+%2</source>
+        <translation type="unfinished">无法为 Cabrillo 模板 %1 创建临时文件夹：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="666"/>
+        <source>Cannot write the prepared Cabrillo template %1 in %2. Check free disk space and folder permissions.</source>
+        <translation type="unfinished">无法将准备好的 Cabrillo 模板 %1 写入 %2。请检查磁盘可用空间和文件夹权限。</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="675"/>
+        <source>Cannot open the prepared Cabrillo template %1:
+%2</source>
+        <translation type="unfinished">无法打开准备好的 Cabrillo 模板 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="682"/>
+        <source>Cannot read the prepared Cabrillo template data from %1:
+%2</source>
+        <translation type="unfinished">无法从 %1 读取准备好的 Cabrillo 模板数据：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="688"/>
+        <source>Cannot finish saving the Cabrillo template %1:
+%2</source>
+        <translation type="unfinished">无法完成 Cabrillo 模板 %1 的保存：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="704"/>
         <source>File not found: %1</source>
         <translation>文件未找到: %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="669"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="715"/>
         <source>Cannot open file: %1</source>
         <translation>无法打开文件: %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="681"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="727"/>
         <source>Invalid template file: missing name</source>
         <translation>无效的模板文件: 缺少名称</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="718"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="764"/>
         <source>QLog Error</source>
         <translation>QLog 错误</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="718"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="764"/>
         <source>Cannot start database transaction.</source>
         <translation>无法启动数据库事务。</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="770"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="816"/>
         <source>QLog Warning</source>
         <translation>QLog 告警</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="771"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="817"/>
         <source>Cannot save template &apos;%1&apos;: %2</source>
         <translation>无法保存模板 &apos;%1&apos;: %2</translation>
     </message>
@@ -2727,14 +2779,320 @@
 <context>
     <name>DBSchemaMigration</name>
     <message>
-        <location filename="../core/Migration.cpp" line="48"/>
+        <location filename="../core/Migration.cpp" line="46"/>
+        <source>The database %1 uses format version %2, but this QLog supports up to %3. Use a newer QLog version to open it.</source>
+        <translation type="unfinished">数据库 %1 使用的格式版本为 %2，但此版本的 QLog 最高支持 %3。请使用更新版本的 QLog 打开。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="59"/>
+        <source>Cannot create a safety copy before updating the database %1:
+%2</source>
+        <translation type="unfinished">更新数据库 %1 前，无法创建安全备份：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="63"/>
         <source>Migrating the database...</source>
         <translation type="unfinished">正在迁移数据库...</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="49"/>
+        <location filename="../core/Migration.cpp" line="64"/>
         <source>Database Migration</source>
         <translation>迁移数据库</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="84"/>
+        <source>Cannot reopen the database after update %1 in %2:
+%3</source>
+        <translation type="unfinished">执行更新 %1 后，无法重新打开数据库 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="92"/>
+        <source>Cannot initialize logbook functions after database update %1 in %2.</source>
+        <translation type="unfinished">对数据库 %2 执行更新 %1 后，无法初始化通联日志功能。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="102"/>
+        <source>Cannot start refreshing logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">无法开始刷新 %1 中的通联日志上传规则：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="108"/>
+        <source>Cannot save the refreshed logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">无法将刷新后的通联日志上传规则保存到 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="132"/>
+        <source>Cannot change database data checks in %1 because the database is closed.</source>
+        <translation type="unfinished">无法更改 %1 中的数据库数据检查设置，因为数据库已关闭。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="141"/>
+        <source>The database did not accept the requested setting.</source>
+        <translation type="unfinished">数据库未接受所请求的设置。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="142"/>
+        <source>Cannot enable database data checks in %1:
+%2</source>
+        <translation type="unfinished">无法启用 %1 中的数据库数据检查：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="143"/>
+        <source>Cannot disable database data checks for updating %1:
+%2</source>
+        <translation type="unfinished">无法为更新 %1 禁用数据库数据检查：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="163"/>
+        <source>Cannot read the database format version before updating %1:
+%2</source>
+        <translation type="unfinished">更新 %1 前，无法读取数据库格式版本：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="169"/>
+        <source>Cannot load the stored database format version from %1:
+%2</source>
+        <translation type="unfinished">无法从 %1 加载已存储的数据库格式版本：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="170"/>
+        <source>No database format version is recorded for updating %1.</source>
+        <translation type="unfinished">更新 %1 时未找到数据库格式版本记录。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="177"/>
+        <source>The stored database format version is invalid in %1.</source>
+        <translation type="unfinished">%1 中存储的数据库格式版本无效。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="198"/>
+        <source>Cannot prepare recording database format version %1 in %2:
+%3</source>
+        <translation type="unfinished">无法准备将数据库格式版本 %1 记录到 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="205"/>
+        <source>Cannot record database format version %1 in %2:
+%3</source>
+        <translation type="unfinished">无法在 %2 中记录数据库格式版本 %1：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="225"/>
+        <source>Cannot start database update %1 in %2:
+%3</source>
+        <translation type="unfinished">无法在 %2 中开始执行数据库更新 %1：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="241"/>
+        <source>Some records refer to missing data in table %1 (row %2).</source>
+        <translation type="unfinished">部分记录引用了表 %1 中不存在的数据 (第 %2 行)。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="243"/>
+        <source>The data consistency check failed after database update %1 in %2:
+%3</source>
+        <translation type="unfinished">在 %2 中执行数据库更新 %1 后，数据一致性检查失败：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="251"/>
+        <source>Cannot save database update %1 in %2:
+%3</source>
+        <translation type="unfinished">无法在 %2 中保存数据库更新 %1：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="269"/>
+        <source>Cannot open the database update file %1 for %2:
+%3</source>
+        <translation type="unfinished">无法打开用于更新 %2 的数据库更新文件 %1：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="276"/>
+        <source>Cannot read the database update file %1 for %2:
+%3</source>
+        <translation type="unfinished">无法读取用于更新 %2 的数据库更新文件 %1：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="289"/>
+        <source>Cannot apply database update %1 to %2:
+%3</source>
+        <translation type="unfinished">无法将数据库更新 %1 应用到 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="380"/>
+        <source>Cannot prepare logbook text conversion in %1:
+%2</source>
+        <translation type="unfinished">无法准备转换 %1 中的通联日志文本：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="386"/>
+        <source>Cannot read text fields for the database update in %1:
+%2</source>
+        <translation type="unfinished">无法读取 %1 中用于数据库更新的文本字段：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="402"/>
+        <source>Cannot prepare converted logbook text for saving in %1:
+%2</source>
+        <translation type="unfinished">无法准备将转换后的通联日志文本保存到 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="422"/>
+        <source>Cannot save converted text for contact %1 in database %2:
+%3</source>
+        <translation type="unfinished">无法在数据库 %2 中保存通联记录 %1 转换后的文本：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="428"/>
+        <source>Cannot finish reading logbook text while updating %1:
+%2</source>
+        <translation type="unfinished">更新 %1 时，无法完成通联日志文本的读取：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="439"/>
+        <source>Cannot save the logbook identifier in %1 while updating its format.</source>
+        <translation type="unfinished">更新 %1 的格式时，无法保存其中的通联日志标识符。</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="452"/>
+        <source>Cannot prepare reading station callsigns for updating %1:
+%2</source>
+        <translation type="unfinished">无法准备读取更新 %1 所需的电台呼号：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="458"/>
+        <source>Cannot read station callsigns while updating database %1:
+%2</source>
+        <translation type="unfinished">更新数据库 %1 时，无法读取电台呼号：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="470"/>
+        <source>Cannot prepare converted station geography in %1:
+%2</source>
+        <translation type="unfinished">无法准备 %1 中转换后的电台地理信息：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="495"/>
+        <source>Cannot save converted station geography for %1 in %2:
+%3</source>
+        <translation type="unfinished">无法在 %2 中保存 %1 转换后的电台地理信息：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="502"/>
+        <source>Cannot finish reading station callsigns while updating %1:
+%2</source>
+        <translation type="unfinished">更新 %1 时，无法完成电台呼号的读取：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="532"/>
+        <source>Cannot create the callsign update rule in database %1:
+%2</source>
+        <translation type="unfinished">无法在数据库 %1 中创建呼号更新规则：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="550"/>
+        <source>Cannot create the rule for new contact callsigns in database %1:
+%2</source>
+        <translation type="unfinished">无法在数据库 %1 中创建新通联记录的呼号规则：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="576"/>
+        <source>Cannot prepare QSL image conversion for database %1:
+%2</source>
+        <translation type="unfinished">无法准备转换数据库 %1 中的 QSL 图像：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="625"/>
+        <source>Cannot prepare reading station profiles while updating %1:
+%2</source>
+        <translation type="unfinished">更新 %1 时，无法准备读取电台配置：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="631"/>
+        <source>Cannot read station profiles while updating %1:
+%2</source>
+        <translation type="unfinished">更新 %1 时，无法读取电台配置：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="639"/>
+        <source>Cannot prepare converted station zone data in %1:
+%2</source>
+        <translation type="unfinished">无法准备 %1 中转换后的电台分区数据：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="663"/>
+        <source>Cannot save converted station zone data in %1:
+%2</source>
+        <translation type="unfinished">无法在 %1 中保存转换后的电台分区数据：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="670"/>
+        <source>Cannot finish reading station profiles while updating %1:
+%2</source>
+        <translation type="unfinished">更新 %1 时，无法完成电台配置的读取：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1139"/>
+        <source>Cannot inspect contact fields for updated upload rules in %1:
+%2</source>
+        <translation type="unfinished">无法检查 %1 中用于更新上传规则的通联记录字段：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1153"/>
+        <source>Cannot finish reading contact fields for database upload rules in %1:
+%2</source>
+        <translation type="unfinished">无法完成 %1 中用于数据库上传规则的通联记录字段读取：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1159"/>
+        <source>Cannot remove the previous logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">无法移除 %1 中原有的通联日志上传规则：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1192"/>
+        <source>Cannot create the updated logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">无法在 %1 中创建更新后的通联日志上传规则：
+%2</translation>
     </message>
 </context>
 <context>
@@ -2861,1596 +3219,1601 @@
     </message>
     <message>
         <location filename="dbstrings.tri" line="25"/>
+        <source>Turkey</source>
+        <translation type="unfinished">土耳其</translation>
+    </message>
+    <message>
+        <location filename="dbstrings.tri" line="26"/>
         <source>Austral Islands</source>
         <translation>南岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="26"/>
+        <location filename="dbstrings.tri" line="27"/>
         <source>Australia</source>
         <translation>澳大利亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="27"/>
+        <location filename="dbstrings.tri" line="28"/>
         <source>Austria</source>
         <translation>奥地利</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="28"/>
+        <location filename="dbstrings.tri" line="29"/>
         <source>Aves Island</source>
         <translation>阿韦斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="29"/>
+        <location filename="dbstrings.tri" line="30"/>
         <source>Azerbaijan</source>
         <translation>阿塞拜疆</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="30"/>
+        <location filename="dbstrings.tri" line="31"/>
         <source>Azores</source>
         <translation>亚速尔群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="31"/>
+        <location filename="dbstrings.tri" line="32"/>
         <source>Bahamas</source>
         <translation>巴哈马群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="32"/>
+        <location filename="dbstrings.tri" line="33"/>
         <source>Bahrain</source>
         <translation>巴林</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="33"/>
+        <location filename="dbstrings.tri" line="34"/>
         <source>Baker &amp; Howland Islands</source>
         <translation>豪兰和贝克群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="34"/>
+        <location filename="dbstrings.tri" line="35"/>
         <source>Balearic Islands</source>
         <translation>巴利阿里群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="35"/>
+        <location filename="dbstrings.tri" line="36"/>
         <source>Banaba Island</source>
         <translation>巴纳巴岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="36"/>
+        <location filename="dbstrings.tri" line="37"/>
         <source>Bangladesh</source>
         <translation>孟加拉</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="37"/>
+        <location filename="dbstrings.tri" line="38"/>
         <source>Barbados</source>
         <translation>巴巴多斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="38"/>
+        <location filename="dbstrings.tri" line="39"/>
         <source>Belarus</source>
         <translation>白俄罗斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="39"/>
+        <location filename="dbstrings.tri" line="40"/>
         <source>Belgium</source>
         <translation>比利时</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="40"/>
+        <location filename="dbstrings.tri" line="41"/>
         <source>Belize</source>
         <translation>伯利兹</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="41"/>
+        <location filename="dbstrings.tri" line="42"/>
         <source>Benin</source>
         <translation>贝宁</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="42"/>
+        <location filename="dbstrings.tri" line="43"/>
         <source>Bermuda</source>
         <translation>百慕大群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="43"/>
+        <location filename="dbstrings.tri" line="44"/>
         <source>Bhutan</source>
         <translation>不丹</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="44"/>
+        <location filename="dbstrings.tri" line="45"/>
         <source>Bolivia</source>
         <translation>玻利维亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="45"/>
+        <location filename="dbstrings.tri" line="46"/>
         <source>Bonaire</source>
         <translation>博奈尔岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="46"/>
+        <location filename="dbstrings.tri" line="47"/>
         <source>Bosnia-Herzegovina</source>
         <translation>波斯尼亚和黑塞哥维那</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="47"/>
+        <location filename="dbstrings.tri" line="48"/>
         <source>Botswana</source>
         <translation>博茨瓦纳</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="48"/>
+        <location filename="dbstrings.tri" line="49"/>
         <source>Bouvet</source>
         <translation>布韦特</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="49"/>
+        <location filename="dbstrings.tri" line="50"/>
         <source>Brazil</source>
         <translation>巴西</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="50"/>
+        <location filename="dbstrings.tri" line="51"/>
         <source>British Virgin Islands</source>
         <translation>英属维京群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="51"/>
+        <location filename="dbstrings.tri" line="52"/>
         <source>Brunei Darussalam</source>
         <translation>文莱达鲁萨兰国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="52"/>
+        <location filename="dbstrings.tri" line="53"/>
         <source>Bulgaria</source>
         <translation>保加利亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="53"/>
+        <location filename="dbstrings.tri" line="54"/>
         <source>Burkina Faso</source>
         <translation>布基纳法索</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="54"/>
+        <location filename="dbstrings.tri" line="55"/>
         <source>Burundi</source>
         <translation>布隆迪</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="55"/>
+        <location filename="dbstrings.tri" line="56"/>
         <source>Cambodia</source>
         <translation>柬埔寨</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="56"/>
+        <location filename="dbstrings.tri" line="57"/>
         <source>Cameroon</source>
         <translation>喀麦隆</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="57"/>
+        <location filename="dbstrings.tri" line="58"/>
         <source>Canada</source>
         <translation>加拿大</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="58"/>
+        <location filename="dbstrings.tri" line="59"/>
         <source>Canary Islands</source>
         <translation>加纳利群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="59"/>
+        <location filename="dbstrings.tri" line="60"/>
         <source>Cape Verde</source>
         <translation>佛得角</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="60"/>
+        <location filename="dbstrings.tri" line="61"/>
         <source>Cayman Islands</source>
         <translation>开曼群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="61"/>
+        <location filename="dbstrings.tri" line="62"/>
         <source>Central African Republic</source>
         <translation>中非共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="62"/>
+        <location filename="dbstrings.tri" line="63"/>
         <source>Central Kiribati</source>
         <translation>中基里巴斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="63"/>
+        <location filename="dbstrings.tri" line="64"/>
         <source>Ceuta &amp; Melilla</source>
         <translation>休达 - 梅利利亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="64"/>
+        <location filename="dbstrings.tri" line="65"/>
         <source>Chad</source>
         <translation>乍得</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="65"/>
+        <location filename="dbstrings.tri" line="66"/>
         <source>Chagos Islands</source>
         <translation>查戈斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="66"/>
+        <location filename="dbstrings.tri" line="67"/>
         <source>Chatham Islands</source>
         <translation>查塔姆群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="67"/>
+        <location filename="dbstrings.tri" line="68"/>
         <source>Chesterfield Islands</source>
         <translation>切斯特菲尔德群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="68"/>
+        <location filename="dbstrings.tri" line="69"/>
         <source>Chile</source>
         <translation>智利</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="69"/>
+        <location filename="dbstrings.tri" line="70"/>
         <source>China</source>
         <translation>中国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="70"/>
+        <location filename="dbstrings.tri" line="71"/>
         <source>Christmas Island</source>
         <translation>圣诞岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="71"/>
+        <location filename="dbstrings.tri" line="72"/>
         <source>Clipperton Island</source>
         <translation>克利珀顿岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="72"/>
+        <location filename="dbstrings.tri" line="73"/>
         <source>Cocos (Keeling) Islands</source>
         <translation>科科斯 (基林) 群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="73"/>
+        <location filename="dbstrings.tri" line="74"/>
         <source>Cocos Island</source>
         <translation>科科斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="74"/>
+        <location filename="dbstrings.tri" line="75"/>
         <source>Colombia</source>
         <translation>哥伦比亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="75"/>
+        <location filename="dbstrings.tri" line="76"/>
         <source>Comoros</source>
         <translation>科摩罗</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="76"/>
+        <location filename="dbstrings.tri" line="77"/>
         <source>Conway Reef</source>
         <translation>康韦礁</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="77"/>
+        <location filename="dbstrings.tri" line="78"/>
         <source>Corsica</source>
         <translation>科西嘉岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="78"/>
+        <location filename="dbstrings.tri" line="79"/>
         <source>Costa Rica</source>
         <translation>哥斯达黎加</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="79"/>
+        <location filename="dbstrings.tri" line="80"/>
         <source>Cote d&apos;Ivoire</source>
         <translation>科特迪瓦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="80"/>
+        <location filename="dbstrings.tri" line="81"/>
         <source>Crete</source>
         <translation>克里特岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="81"/>
+        <location filename="dbstrings.tri" line="82"/>
         <source>Croatia</source>
         <translation>克罗地亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="82"/>
+        <location filename="dbstrings.tri" line="83"/>
         <source>Crozet Island</source>
         <translation>克罗泽岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="83"/>
+        <location filename="dbstrings.tri" line="84"/>
         <source>Cuba</source>
         <translation>古巴</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="84"/>
+        <location filename="dbstrings.tri" line="85"/>
         <source>Curacao</source>
         <translation>库拉索岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="85"/>
+        <location filename="dbstrings.tri" line="86"/>
         <source>Cyprus</source>
         <translation>塞浦路斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="86"/>
+        <location filename="dbstrings.tri" line="87"/>
         <source>Czech Republic</source>
         <translation>捷克共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="87"/>
+        <location filename="dbstrings.tri" line="88"/>
         <source>DPR of Korea</source>
         <translation>朝鲜</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="88"/>
+        <location filename="dbstrings.tri" line="89"/>
         <source>Dem. Rep. of the Congo</source>
         <translation>刚果民主共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="89"/>
+        <location filename="dbstrings.tri" line="90"/>
         <source>Denmark</source>
         <translation>丹麦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="90"/>
+        <location filename="dbstrings.tri" line="91"/>
         <source>Desecheo Island</source>
         <translation>德塞切奥岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="91"/>
+        <location filename="dbstrings.tri" line="92"/>
         <source>Djibouti</source>
         <translation>吉布提</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="92"/>
+        <location filename="dbstrings.tri" line="93"/>
         <source>Dodecanese</source>
         <translation>多德卡尼斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="93"/>
+        <location filename="dbstrings.tri" line="94"/>
         <source>Dominica</source>
         <translation>多米尼克</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="94"/>
+        <location filename="dbstrings.tri" line="95"/>
         <source>Dominican Republic</source>
         <translation>多米尼加共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="95"/>
+        <location filename="dbstrings.tri" line="96"/>
         <source>Ducie Island</source>
         <translation>迪西岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="96"/>
+        <location filename="dbstrings.tri" line="97"/>
         <source>East Malaysia</source>
         <translation>东马来西亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="97"/>
+        <location filename="dbstrings.tri" line="98"/>
         <source>Easter Island</source>
         <translation>复活节岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="98"/>
+        <location filename="dbstrings.tri" line="99"/>
         <source>Eastern Kiribati</source>
         <translation>东基里巴斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="99"/>
+        <location filename="dbstrings.tri" line="100"/>
         <source>Ecuador</source>
         <translation>厄瓜多尔</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="100"/>
+        <location filename="dbstrings.tri" line="101"/>
         <source>Egypt</source>
         <translation>埃及</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="101"/>
+        <location filename="dbstrings.tri" line="102"/>
         <source>El Salvador</source>
         <translation>萨尔瓦多</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="102"/>
+        <location filename="dbstrings.tri" line="103"/>
         <source>England</source>
         <translation>英格兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="103"/>
+        <location filename="dbstrings.tri" line="104"/>
         <source>Equatorial Guinea</source>
         <translation>赤道几内亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="104"/>
+        <location filename="dbstrings.tri" line="105"/>
         <source>Eritrea</source>
         <translation>厄立特里亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="105"/>
+        <location filename="dbstrings.tri" line="106"/>
         <source>Estonia</source>
         <translation>爱沙尼亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="106"/>
+        <location filename="dbstrings.tri" line="107"/>
         <source>Ethiopia</source>
         <translation>埃塞俄比亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="107"/>
+        <location filename="dbstrings.tri" line="108"/>
         <source>European Russia</source>
         <translation>欧洲俄罗斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="108"/>
+        <location filename="dbstrings.tri" line="109"/>
         <source>Falkland Islands</source>
         <translation>福克兰群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="109"/>
+        <location filename="dbstrings.tri" line="110"/>
         <source>Faroe Islands</source>
         <translation>法罗群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="110"/>
+        <location filename="dbstrings.tri" line="111"/>
         <source>Fed. Rep. of Germany</source>
         <translation>德国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="111"/>
+        <location filename="dbstrings.tri" line="112"/>
         <source>Fernando de Noronha</source>
         <translation>费尔南多·迪诺罗尼亚群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="112"/>
+        <location filename="dbstrings.tri" line="113"/>
         <source>Fiji</source>
         <translation>斐济</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="113"/>
+        <location filename="dbstrings.tri" line="114"/>
         <source>Finland</source>
         <translation>芬兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="114"/>
+        <location filename="dbstrings.tri" line="115"/>
         <source>France</source>
         <translation>法国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="115"/>
+        <location filename="dbstrings.tri" line="116"/>
         <source>Franz Josef Land</source>
         <translation>法兰士约瑟夫地群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="116"/>
+        <location filename="dbstrings.tri" line="117"/>
         <source>French Guiana</source>
         <translation>法属圭亚那</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="117"/>
+        <location filename="dbstrings.tri" line="118"/>
         <source>French Polynesia</source>
         <translation>法属波利尼西亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="118"/>
+        <location filename="dbstrings.tri" line="119"/>
         <source>Gabon</source>
         <translation>加蓬</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="119"/>
+        <location filename="dbstrings.tri" line="120"/>
         <source>Galapagos Islands</source>
         <translation>加拉帕戈斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="120"/>
+        <location filename="dbstrings.tri" line="121"/>
         <source>Georgia</source>
         <translation>格鲁吉亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="121"/>
+        <location filename="dbstrings.tri" line="122"/>
         <source>Ghana</source>
         <translation>加纳</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="122"/>
+        <location filename="dbstrings.tri" line="123"/>
         <source>Gibraltar</source>
         <translation>直布罗陀</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="123"/>
+        <location filename="dbstrings.tri" line="124"/>
         <source>Glorioso Islands</source>
         <translation>格洛里厄斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="124"/>
+        <location filename="dbstrings.tri" line="125"/>
         <source>Greece</source>
         <translation>希腊</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="125"/>
+        <location filename="dbstrings.tri" line="126"/>
         <source>Greenland</source>
         <translation>格陵兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="126"/>
+        <location filename="dbstrings.tri" line="127"/>
         <source>Grenada</source>
         <translation>格林纳达</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="127"/>
+        <location filename="dbstrings.tri" line="128"/>
         <source>Guadeloupe</source>
         <translation>瓜德罗普岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="128"/>
+        <location filename="dbstrings.tri" line="129"/>
         <source>Guam</source>
         <translation>关岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="129"/>
+        <location filename="dbstrings.tri" line="130"/>
         <source>Guantanamo Bay</source>
         <translation>关塔那摩湾</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="130"/>
+        <location filename="dbstrings.tri" line="131"/>
         <source>Guatemala</source>
         <translation>危地马拉</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="131"/>
+        <location filename="dbstrings.tri" line="132"/>
         <source>Guernsey</source>
         <translation>根西岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="132"/>
+        <location filename="dbstrings.tri" line="133"/>
         <source>Guinea</source>
         <translation>几内亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="133"/>
+        <location filename="dbstrings.tri" line="134"/>
         <source>Guinea-Bissau</source>
         <translation>几内亚比绍</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="134"/>
+        <location filename="dbstrings.tri" line="135"/>
         <source>Guyana</source>
         <translation>圭亚那</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="135"/>
+        <location filename="dbstrings.tri" line="136"/>
         <source>Haiti</source>
         <translation>海地</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="136"/>
+        <location filename="dbstrings.tri" line="137"/>
         <source>Hawaii</source>
         <translation>夏威夷</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="137"/>
+        <location filename="dbstrings.tri" line="138"/>
         <source>Heard Island</source>
         <translation>赫德岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="138"/>
+        <location filename="dbstrings.tri" line="139"/>
         <source>Honduras</source>
         <translation>洪都拉斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="139"/>
+        <location filename="dbstrings.tri" line="140"/>
         <source>Hong Kong</source>
         <translation>中国香港</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="140"/>
+        <location filename="dbstrings.tri" line="141"/>
         <source>Hungary</source>
         <translation>匈牙利</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="141"/>
+        <location filename="dbstrings.tri" line="142"/>
         <source>ITU HQ</source>
         <translation>ITU HQ</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="142"/>
+        <location filename="dbstrings.tri" line="143"/>
         <source>Iceland</source>
         <translation>冰岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="143"/>
+        <location filename="dbstrings.tri" line="144"/>
         <source>India</source>
         <translation>印度</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="144"/>
+        <location filename="dbstrings.tri" line="145"/>
         <source>Indonesia</source>
         <translation>印度尼西亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="145"/>
+        <location filename="dbstrings.tri" line="146"/>
         <source>Iran</source>
         <translation>伊朗</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="146"/>
+        <location filename="dbstrings.tri" line="147"/>
         <source>Iraq</source>
         <translation>伊拉克</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="147"/>
+        <location filename="dbstrings.tri" line="148"/>
         <source>Ireland</source>
         <translation>爱尔兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="148"/>
+        <location filename="dbstrings.tri" line="149"/>
         <source>Isle of Man</source>
         <translation>马恩岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="149"/>
+        <location filename="dbstrings.tri" line="150"/>
         <source>Israel</source>
         <translation>以色列</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="150"/>
+        <location filename="dbstrings.tri" line="151"/>
         <source>Italy</source>
         <translation>意大利</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="151"/>
+        <location filename="dbstrings.tri" line="152"/>
         <source>Jamaica</source>
         <translation>牙买加</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="152"/>
+        <location filename="dbstrings.tri" line="153"/>
         <source>Jan Mayen</source>
         <translation>扬马延岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="153"/>
+        <location filename="dbstrings.tri" line="154"/>
         <source>Japan</source>
         <translation>日本</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="154"/>
+        <location filename="dbstrings.tri" line="155"/>
         <source>Jersey</source>
         <translation>泽西岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="155"/>
+        <location filename="dbstrings.tri" line="156"/>
         <source>Johnston Island</source>
         <translation>约翰斯顿岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="156"/>
+        <location filename="dbstrings.tri" line="157"/>
         <source>Jordan</source>
         <translation>约旦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="157"/>
+        <location filename="dbstrings.tri" line="158"/>
         <source>Juan Fernandez Islands</source>
         <translation>胡安费尔南德斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="158"/>
+        <location filename="dbstrings.tri" line="159"/>
         <source>Juan de Nova &amp; Europa</source>
         <translation>新胡安 - 欧罗巴岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="159"/>
+        <location filename="dbstrings.tri" line="160"/>
         <source>Kaliningrad</source>
         <translation>加里宁格勒</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="160"/>
+        <location filename="dbstrings.tri" line="161"/>
         <source>Kazakhstan</source>
         <translation>哈萨克斯坦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="161"/>
+        <location filename="dbstrings.tri" line="162"/>
         <source>Kenya</source>
         <translation>肯尼亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="162"/>
+        <location filename="dbstrings.tri" line="163"/>
         <source>Kerguelen Islands</source>
         <translation>凯尔盖朗群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="163"/>
+        <location filename="dbstrings.tri" line="164"/>
         <source>Kermadec Islands</source>
         <translation>克马德克群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="164"/>
+        <location filename="dbstrings.tri" line="165"/>
         <source>Kingdom of Eswatini</source>
         <translation>斯威士兰王国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="165"/>
+        <location filename="dbstrings.tri" line="166"/>
         <source>Kure Island</source>
         <translation>库雷环礁</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="166"/>
+        <location filename="dbstrings.tri" line="167"/>
         <source>Kuwait</source>
         <translation>科威特</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="167"/>
+        <location filename="dbstrings.tri" line="168"/>
         <source>Kyrgyzstan</source>
         <translation>吉尔吉斯斯坦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="168"/>
+        <location filename="dbstrings.tri" line="169"/>
         <source>Lakshadweep Islands</source>
         <translation>拉克沙群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="169"/>
+        <location filename="dbstrings.tri" line="170"/>
         <source>Laos</source>
         <translation>老挝</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="170"/>
+        <location filename="dbstrings.tri" line="171"/>
         <source>Latvia</source>
         <translation>拉脱维亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="171"/>
+        <location filename="dbstrings.tri" line="172"/>
         <source>Lebanon</source>
         <translation>黎巴嫩</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="172"/>
+        <location filename="dbstrings.tri" line="173"/>
         <source>Lesotho</source>
         <translation>莱索托</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="173"/>
+        <location filename="dbstrings.tri" line="174"/>
         <source>Liberia</source>
         <translation>利比里亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="174"/>
+        <location filename="dbstrings.tri" line="175"/>
         <source>Libya</source>
         <translation>利比亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="175"/>
+        <location filename="dbstrings.tri" line="176"/>
         <source>Liechtenstein</source>
         <translation>列支敦士登</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="176"/>
+        <location filename="dbstrings.tri" line="177"/>
         <source>Lithuania</source>
         <translation>立陶宛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="177"/>
+        <location filename="dbstrings.tri" line="178"/>
         <source>Lord Howe Island</source>
         <translation>豪勋爵岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="178"/>
+        <location filename="dbstrings.tri" line="179"/>
         <source>Luxembourg</source>
         <translation>卢森堡</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="179"/>
+        <location filename="dbstrings.tri" line="180"/>
         <source>Macao</source>
         <translation>中国澳门</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="180"/>
+        <location filename="dbstrings.tri" line="181"/>
         <source>Macquarie Island</source>
         <translation>麦夸里岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="181"/>
+        <location filename="dbstrings.tri" line="182"/>
         <source>Madagascar</source>
         <translation>马达加斯加</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="182"/>
+        <location filename="dbstrings.tri" line="183"/>
         <source>Madeira Islands</source>
         <translation>马德拉群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="183"/>
+        <location filename="dbstrings.tri" line="184"/>
         <source>Malawi</source>
         <translation>马拉维</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="184"/>
+        <location filename="dbstrings.tri" line="185"/>
         <source>Maldives</source>
         <translation>马尔代夫</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="185"/>
+        <location filename="dbstrings.tri" line="186"/>
         <source>Mali</source>
         <translation>马里</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="186"/>
+        <location filename="dbstrings.tri" line="187"/>
         <source>Malpelo Island</source>
         <translation>马尔佩洛岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="187"/>
+        <location filename="dbstrings.tri" line="188"/>
         <source>Malta</source>
         <translation>马耳他</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="188"/>
+        <location filename="dbstrings.tri" line="189"/>
         <source>Mariana Islands</source>
         <translation>马里亚纳群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="189"/>
+        <location filename="dbstrings.tri" line="190"/>
         <source>Market Reef</source>
         <translation>马凯特礁</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="190"/>
+        <location filename="dbstrings.tri" line="191"/>
         <source>Marquesas Islands</source>
         <translation>马克萨斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="191"/>
+        <location filename="dbstrings.tri" line="192"/>
         <source>Marshall Islands</source>
         <translation>马绍尔群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="192"/>
+        <location filename="dbstrings.tri" line="193"/>
         <source>Martinique</source>
         <translation>马提尼克</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="193"/>
+        <location filename="dbstrings.tri" line="194"/>
         <source>Mauritania</source>
         <translation>毛里塔尼亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="194"/>
+        <location filename="dbstrings.tri" line="195"/>
         <source>Mauritius</source>
         <translation>毛里求斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="195"/>
+        <location filename="dbstrings.tri" line="196"/>
         <source>Mayotte</source>
         <translation>马约特岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="196"/>
+        <location filename="dbstrings.tri" line="197"/>
         <source>Mellish Reef</source>
         <translation>梅利什礁</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="197"/>
+        <location filename="dbstrings.tri" line="198"/>
         <source>Mexico</source>
         <translation>墨西哥</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="198"/>
+        <location filename="dbstrings.tri" line="199"/>
         <source>Micronesia</source>
         <translation>密克罗尼西亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="199"/>
+        <location filename="dbstrings.tri" line="200"/>
         <source>Midway Island</source>
         <translation>中途岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="200"/>
+        <location filename="dbstrings.tri" line="201"/>
         <source>Minami Torishima</source>
         <translation>南鸟岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="201"/>
+        <location filename="dbstrings.tri" line="202"/>
         <source>Moldova</source>
         <translation>摩尔多瓦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="202"/>
+        <location filename="dbstrings.tri" line="203"/>
         <source>Monaco</source>
         <translation>摩纳哥</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="203"/>
+        <location filename="dbstrings.tri" line="204"/>
         <source>Mongolia</source>
         <translation>蒙古</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="204"/>
+        <location filename="dbstrings.tri" line="205"/>
         <source>Montenegro</source>
         <translation>黑山共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="205"/>
+        <location filename="dbstrings.tri" line="206"/>
         <source>Montserrat</source>
         <translation>蒙特塞拉特岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="206"/>
+        <location filename="dbstrings.tri" line="207"/>
         <source>Morocco</source>
         <translation>摩洛哥</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="207"/>
+        <location filename="dbstrings.tri" line="208"/>
         <source>Mount Athos</source>
         <translation>阿索斯山</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="208"/>
+        <location filename="dbstrings.tri" line="209"/>
         <source>Mozambique</source>
         <translation>莫桑比克</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="209"/>
+        <location filename="dbstrings.tri" line="210"/>
         <source>Myanmar</source>
         <translation>缅甸</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="210"/>
+        <location filename="dbstrings.tri" line="211"/>
         <source>N.Z. Subantarctic Is.</source>
         <translation>新西兰亚南极群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="211"/>
+        <location filename="dbstrings.tri" line="212"/>
         <source>Namibia</source>
         <translation>纳米比亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="212"/>
+        <location filename="dbstrings.tri" line="213"/>
         <source>Nauru</source>
         <translation>瑙鲁</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="213"/>
+        <location filename="dbstrings.tri" line="214"/>
         <source>Navassa Island</source>
         <translation>纳弗沙岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="214"/>
+        <location filename="dbstrings.tri" line="215"/>
         <source>Nepal</source>
         <translation>尼泊尔</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="215"/>
+        <location filename="dbstrings.tri" line="216"/>
         <source>Netherlands</source>
         <translation>荷兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="216"/>
+        <location filename="dbstrings.tri" line="217"/>
         <source>New Caledonia</source>
         <translation>新喀里多尼亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="217"/>
+        <location filename="dbstrings.tri" line="218"/>
         <source>New Zealand</source>
         <translation>新西兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="218"/>
+        <location filename="dbstrings.tri" line="219"/>
         <source>Nicaragua</source>
         <translation>尼加拉瓜</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="219"/>
+        <location filename="dbstrings.tri" line="220"/>
         <source>Niger</source>
         <translation>尼日尔</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="220"/>
+        <location filename="dbstrings.tri" line="221"/>
         <source>Nigeria</source>
         <translation>尼日利亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="221"/>
+        <location filename="dbstrings.tri" line="222"/>
         <source>Niue</source>
         <translation>纽埃岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="222"/>
+        <location filename="dbstrings.tri" line="223"/>
         <source>Norfolk Island</source>
         <translation>诺福克岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="223"/>
+        <location filename="dbstrings.tri" line="224"/>
         <source>North Cook Islands</source>
         <translation>北库克群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="224"/>
+        <location filename="dbstrings.tri" line="225"/>
         <source>North Macedonia</source>
         <translation>北马其顿</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="225"/>
+        <location filename="dbstrings.tri" line="226"/>
         <source>Northern Ireland</source>
         <translation>北爱尔兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="226"/>
+        <location filename="dbstrings.tri" line="227"/>
         <source>Norway</source>
         <translation>挪威</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="227"/>
+        <location filename="dbstrings.tri" line="228"/>
         <source>Ogasawara</source>
         <translation>小笠原群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="228"/>
+        <location filename="dbstrings.tri" line="229"/>
         <source>Oman</source>
         <translation>阿曼</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="229"/>
+        <location filename="dbstrings.tri" line="230"/>
         <source>Pakistan</source>
         <translation>巴基斯坦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="230"/>
+        <location filename="dbstrings.tri" line="231"/>
         <source>Palau</source>
         <translation>帕劳</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="231"/>
+        <location filename="dbstrings.tri" line="232"/>
         <source>Palestine</source>
         <translation>巴勒斯坦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="232"/>
+        <location filename="dbstrings.tri" line="233"/>
         <source>Palmyra &amp; Jarvis Islands</source>
         <translation>巴尔米拉 - 贾维斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="233"/>
+        <location filename="dbstrings.tri" line="234"/>
         <source>Panama</source>
         <translation>巴拿马</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="234"/>
+        <location filename="dbstrings.tri" line="235"/>
         <source>Papua New Guinea</source>
         <translation>巴布亚新几內亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="235"/>
+        <location filename="dbstrings.tri" line="236"/>
         <source>Paraguay</source>
         <translation>巴拉圭</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="236"/>
+        <location filename="dbstrings.tri" line="237"/>
         <source>Peru</source>
         <translation>秘鲁</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="237"/>
+        <location filename="dbstrings.tri" line="238"/>
         <source>Peter 1 Island</source>
         <translation>彼得一世岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="238"/>
+        <location filename="dbstrings.tri" line="239"/>
         <source>Philippines</source>
         <translation>菲律宾</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="239"/>
+        <location filename="dbstrings.tri" line="240"/>
         <source>Pitcairn Island</source>
         <translation>皮特克恩岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="240"/>
+        <location filename="dbstrings.tri" line="241"/>
         <source>Poland</source>
         <translation>波兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="241"/>
+        <location filename="dbstrings.tri" line="242"/>
         <source>Portugal</source>
         <translation>葡萄牙</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="242"/>
+        <location filename="dbstrings.tri" line="243"/>
         <source>Pr. Edward &amp; Marion Is.</source>
         <translation>爱德华王子群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="243"/>
+        <location filename="dbstrings.tri" line="244"/>
         <source>Pratas Island</source>
         <translation>东沙群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="244"/>
+        <location filename="dbstrings.tri" line="245"/>
         <source>Puerto Rico</source>
         <translation>波多黎各</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="245"/>
+        <location filename="dbstrings.tri" line="246"/>
         <source>Qatar</source>
         <translation>卡塔尔</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="246"/>
+        <location filename="dbstrings.tri" line="247"/>
         <source>Republic of Korea</source>
         <translation>韩国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="247"/>
+        <location filename="dbstrings.tri" line="248"/>
         <source>Republic of Kosovo</source>
         <translation>科索沃共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="248"/>
+        <location filename="dbstrings.tri" line="249"/>
         <source>Republic of South Sudan</source>
         <translation>南苏丹共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="249"/>
+        <location filename="dbstrings.tri" line="250"/>
         <source>Republic of the Congo</source>
         <translation>刚果共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="250"/>
+        <location filename="dbstrings.tri" line="251"/>
         <source>Reunion Island</source>
         <translation>留尼旺岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="251"/>
+        <location filename="dbstrings.tri" line="252"/>
         <source>Revillagigedo</source>
         <translation>雷维利亚希赫多群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="252"/>
+        <location filename="dbstrings.tri" line="253"/>
         <source>Rodriguez Island</source>
         <translation>罗德里格斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="253"/>
+        <location filename="dbstrings.tri" line="254"/>
         <source>Romania</source>
         <translation>罗马尼亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="254"/>
+        <location filename="dbstrings.tri" line="255"/>
         <source>Rotuma Island</source>
         <translation>罗图马岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="255"/>
+        <location filename="dbstrings.tri" line="256"/>
         <source>Rwanda</source>
         <translation>卢旺达</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="256"/>
+        <location filename="dbstrings.tri" line="257"/>
         <source>Saba &amp; St. Eustatius</source>
         <translation>萨巴 - 圣尤斯特歇斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="257"/>
+        <location filename="dbstrings.tri" line="258"/>
         <source>Sable Island</source>
         <translation>塞布尔岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="258"/>
+        <location filename="dbstrings.tri" line="259"/>
         <source>Samoa</source>
         <translation>萨摩亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="259"/>
+        <location filename="dbstrings.tri" line="260"/>
         <source>San Andres &amp; Providencia</source>
         <translation>圣安德烈斯 - 普罗维登斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="260"/>
+        <location filename="dbstrings.tri" line="261"/>
         <source>San Felix &amp; San Ambrosio</source>
         <translation>圣费利克斯 - 圣安布罗斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="261"/>
+        <location filename="dbstrings.tri" line="262"/>
         <source>San Marino</source>
         <translation>圣马力诺</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="262"/>
+        <location filename="dbstrings.tri" line="263"/>
         <source>Sao Tome &amp; Principe</source>
         <translation>圣多美和普林西比民主共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="263"/>
+        <location filename="dbstrings.tri" line="264"/>
         <source>Sardinia</source>
         <translation>撒丁岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="264"/>
+        <location filename="dbstrings.tri" line="265"/>
         <source>Saudi Arabia</source>
         <translation>沙特阿拉伯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="265"/>
+        <location filename="dbstrings.tri" line="266"/>
         <source>Scarborough Reef</source>
         <translation>黄岩岛（民主礁）</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="266"/>
+        <location filename="dbstrings.tri" line="267"/>
         <source>Scotland</source>
         <translation>苏格兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="267"/>
+        <location filename="dbstrings.tri" line="268"/>
         <source>Senegal</source>
         <translation>塞内加尔</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="268"/>
+        <location filename="dbstrings.tri" line="269"/>
         <source>Serbia</source>
         <translation>塞尔维亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="269"/>
+        <location filename="dbstrings.tri" line="270"/>
         <source>Seychelles</source>
         <translation>塞舌尔群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="270"/>
+        <location filename="dbstrings.tri" line="271"/>
         <source>Sierra Leone</source>
         <translation>塞拉利昂</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="271"/>
+        <location filename="dbstrings.tri" line="272"/>
         <source>Singapore</source>
         <translation>新加坡</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="272"/>
+        <location filename="dbstrings.tri" line="273"/>
         <source>Sint Maarten</source>
         <translation>圣马丁岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="273"/>
+        <location filename="dbstrings.tri" line="274"/>
         <source>Slovak Republic</source>
         <translation>斯洛伐克共和国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="274"/>
+        <location filename="dbstrings.tri" line="275"/>
         <source>Slovenia</source>
         <translation>斯洛文尼亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="275"/>
+        <location filename="dbstrings.tri" line="276"/>
         <source>Solomon Islands</source>
         <translation>所罗门群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="276"/>
+        <location filename="dbstrings.tri" line="277"/>
         <source>Somalia</source>
         <translation>索马里</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="277"/>
+        <location filename="dbstrings.tri" line="278"/>
         <source>South Africa</source>
         <translation>南非</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="278"/>
+        <location filename="dbstrings.tri" line="279"/>
         <source>South Cook Islands</source>
         <translation>南库克群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="279"/>
+        <location filename="dbstrings.tri" line="280"/>
         <source>South Georgia Island</source>
         <translation>南乔治亚岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="280"/>
+        <location filename="dbstrings.tri" line="281"/>
         <source>South Orkney Islands</source>
         <translation>南奥克尼群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="281"/>
+        <location filename="dbstrings.tri" line="282"/>
         <source>South Sandwich Islands</source>
         <translation>南桑威奇群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="282"/>
+        <location filename="dbstrings.tri" line="283"/>
         <source>South Shetland Islands</source>
         <translation>南谢特兰群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="283"/>
+        <location filename="dbstrings.tri" line="284"/>
         <source>Sov Mil Order of Malta</source>
         <translation>马耳他骑士团</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="284"/>
+        <location filename="dbstrings.tri" line="285"/>
         <source>Spain</source>
         <translation>西班牙</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="285"/>
+        <location filename="dbstrings.tri" line="286"/>
         <source>Spratly Islands</source>
         <translation>南沙群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="286"/>
+        <location filename="dbstrings.tri" line="287"/>
         <source>Sri Lanka</source>
         <translation>斯里兰卡</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="287"/>
+        <location filename="dbstrings.tri" line="288"/>
         <source>St. Barthelemy</source>
         <translation>圣巴特岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="288"/>
+        <location filename="dbstrings.tri" line="289"/>
         <source>St. Helena</source>
         <translation>圣赫勒拿岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="289"/>
+        <location filename="dbstrings.tri" line="290"/>
         <source>St. Kitts &amp; Nevis</source>
         <translation>圣基茨和尼维斯联邦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="290"/>
+        <location filename="dbstrings.tri" line="291"/>
         <source>St. Lucia</source>
         <translation>圣卢西亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="291"/>
+        <location filename="dbstrings.tri" line="292"/>
         <source>St. Martin</source>
         <translation>圣马丁岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="292"/>
+        <location filename="dbstrings.tri" line="293"/>
         <source>St. Paul Island</source>
         <translation>圣保罗岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="293"/>
+        <location filename="dbstrings.tri" line="294"/>
         <source>St. Peter &amp; St. Paul</source>
         <translation>圣彼得 - 圣保罗岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="294"/>
+        <location filename="dbstrings.tri" line="295"/>
         <source>St. Pierre &amp; Miquelon</source>
         <translation>圣皮埃尔 - 密克隆群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="295"/>
+        <location filename="dbstrings.tri" line="296"/>
         <source>St. Vincent</source>
         <translation>圣文森特岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="296"/>
+        <location filename="dbstrings.tri" line="297"/>
         <source>Sudan</source>
         <translation>苏丹</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="297"/>
+        <location filename="dbstrings.tri" line="298"/>
         <source>Suriname</source>
         <translation>苏里南</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="298"/>
+        <location filename="dbstrings.tri" line="299"/>
         <source>Svalbard</source>
         <translation>斯瓦尔巴特群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="299"/>
+        <location filename="dbstrings.tri" line="300"/>
         <source>Swains Island</source>
         <translation>斯温斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="300"/>
+        <location filename="dbstrings.tri" line="301"/>
         <source>Sweden</source>
         <translation>瑞典</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="301"/>
+        <location filename="dbstrings.tri" line="302"/>
         <source>Switzerland</source>
         <translation>瑞士</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="302"/>
+        <location filename="dbstrings.tri" line="303"/>
         <source>Syria</source>
         <translation>叙利亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="303"/>
+        <location filename="dbstrings.tri" line="304"/>
         <source>Taiwan</source>
         <translation>中国台湾</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="304"/>
+        <location filename="dbstrings.tri" line="305"/>
         <source>Tajikistan</source>
         <translation>塔吉克斯坦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="305"/>
+        <location filename="dbstrings.tri" line="306"/>
         <source>Tanzania</source>
         <translation>坦桑尼亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="306"/>
+        <location filename="dbstrings.tri" line="307"/>
         <source>Temotu Province</source>
         <translation>泰莫图省</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="307"/>
+        <location filename="dbstrings.tri" line="308"/>
         <source>Thailand</source>
         <translation>泰国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="308"/>
+        <location filename="dbstrings.tri" line="309"/>
         <source>The Gambia</source>
         <translation>冈比亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="309"/>
+        <location filename="dbstrings.tri" line="310"/>
         <source>Timor - Leste</source>
         <translation>东帝汶</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="310"/>
+        <location filename="dbstrings.tri" line="311"/>
         <source>Togo</source>
         <translation>多哥</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="311"/>
+        <location filename="dbstrings.tri" line="312"/>
         <source>Tokelau Islands</source>
         <translation>托克劳群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="312"/>
+        <location filename="dbstrings.tri" line="313"/>
         <source>Tonga</source>
         <translation>汤加</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="313"/>
+        <location filename="dbstrings.tri" line="314"/>
         <source>Trindade &amp; Martim Vaz</source>
         <translation>特林达迪 - 马丁瓦斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="314"/>
+        <location filename="dbstrings.tri" line="315"/>
         <source>Trinidad &amp; Tobago</source>
         <translation>特立尼达和多巴哥</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="315"/>
+        <location filename="dbstrings.tri" line="316"/>
         <source>Tristan da Cunha &amp; Gough Islands</source>
         <translation>特里斯坦-达库尼亚群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="316"/>
+        <location filename="dbstrings.tri" line="317"/>
         <source>Tromelin Island</source>
         <translation>特罗姆兰岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="317"/>
+        <location filename="dbstrings.tri" line="318"/>
         <source>Tunisia</source>
         <translation>突尼斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="318"/>
+        <location filename="dbstrings.tri" line="319"/>
         <source>Turkmenistan</source>
         <translation>土库曼斯坦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="319"/>
+        <location filename="dbstrings.tri" line="320"/>
         <source>Turks &amp; Caicos Islands</source>
         <translation>特克斯和凯科斯群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="320"/>
+        <location filename="dbstrings.tri" line="321"/>
         <source>Tuvalu</source>
         <translation>图瓦卢</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="321"/>
+        <location filename="dbstrings.tri" line="322"/>
         <source>UK Base Areas on Cyprus</source>
         <translation>塞浦路斯英属基地区</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="322"/>
+        <location filename="dbstrings.tri" line="323"/>
         <source>US Virgin Islands</source>
         <translation>美属维京群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="323"/>
+        <location filename="dbstrings.tri" line="324"/>
         <source>Uganda</source>
         <translation>乌干达</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="324"/>
+        <location filename="dbstrings.tri" line="325"/>
         <source>Ukraine</source>
         <translation>乌克兰</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="325"/>
+        <location filename="dbstrings.tri" line="326"/>
         <source>United Arab Emirates</source>
         <translation>阿拉伯联合酋长国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="326"/>
+        <location filename="dbstrings.tri" line="327"/>
         <source>United Nations HQ</source>
         <translation>联合国 HQ</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="327"/>
+        <location filename="dbstrings.tri" line="328"/>
         <source>United States</source>
         <translation>美国</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="328"/>
+        <location filename="dbstrings.tri" line="329"/>
         <source>Uruguay</source>
         <translation>乌拉圭</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="329"/>
+        <location filename="dbstrings.tri" line="330"/>
         <source>Uzbekistan</source>
         <translation>乌兹别克斯坦</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="330"/>
+        <location filename="dbstrings.tri" line="331"/>
         <source>Vanuatu</source>
         <translation>瓦努阿图</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="331"/>
+        <location filename="dbstrings.tri" line="332"/>
         <source>Vatican City</source>
         <translation>梵蒂冈</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="332"/>
+        <location filename="dbstrings.tri" line="333"/>
         <source>Venezuela</source>
         <translation>委内瑞拉</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="333"/>
+        <location filename="dbstrings.tri" line="334"/>
         <source>Vietnam</source>
         <translation>越南</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="334"/>
+        <location filename="dbstrings.tri" line="335"/>
         <source>Wake Island</source>
         <translation>威克岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="335"/>
+        <location filename="dbstrings.tri" line="336"/>
         <source>Wales</source>
         <translation>威尔士</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="336"/>
+        <location filename="dbstrings.tri" line="337"/>
         <source>Wallis &amp; Futuna Islands</source>
         <translation>瓦利斯和富图纳群岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="337"/>
+        <location filename="dbstrings.tri" line="338"/>
         <source>West Malaysia</source>
         <translation>西马来西亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="338"/>
+        <location filename="dbstrings.tri" line="339"/>
         <source>Western Kiribati</source>
         <translation>西基里巴斯</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="339"/>
+        <location filename="dbstrings.tri" line="340"/>
         <source>Western Sahara</source>
         <translation>西撒哈拉</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="340"/>
+        <location filename="dbstrings.tri" line="341"/>
         <source>Willis Island</source>
         <translation>威利斯岛</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="341"/>
+        <location filename="dbstrings.tri" line="342"/>
         <source>Yemen</source>
         <translation>也门</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="342"/>
+        <location filename="dbstrings.tri" line="343"/>
         <source>Zambia</source>
         <translation>赞比亚</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="343"/>
+        <location filename="dbstrings.tri" line="344"/>
         <source>Zimbabwe</source>
         <translation>津巴布韦</translation>
     </message>
@@ -4750,72 +5113,72 @@
 <context>
     <name>Data</name>
     <message>
-        <location filename="../data/Data.cpp" line="907"/>
+        <location filename="../data/Data.cpp" line="908"/>
         <source>New Entity</source>
         <translation>新实体</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="909"/>
+        <location filename="../data/Data.cpp" line="910"/>
         <source>New Band</source>
         <translation>新波段</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="911"/>
+        <location filename="../data/Data.cpp" line="912"/>
         <source>New Mode</source>
         <translation>新模式</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="913"/>
+        <location filename="../data/Data.cpp" line="914"/>
         <source>New Band&amp;Mode</source>
         <translation>新波段模式(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="915"/>
+        <location filename="../data/Data.cpp" line="916"/>
         <source>New Slot</source>
         <translation>新组合</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="917"/>
+        <location filename="../data/Data.cpp" line="918"/>
         <source>Confirmed</source>
         <translation>已确认</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="919"/>
+        <location filename="../data/Data.cpp" line="920"/>
         <source>Worked</source>
         <translation>已通联</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="930"/>
+        <location filename="../data/Data.cpp" line="931"/>
         <source>New for Satellite DXCC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="932"/>
+        <location filename="../data/Data.cpp" line="933"/>
         <source>Satellite DXCC: Worked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="934"/>
+        <location filename="../data/Data.cpp" line="935"/>
         <source>Satellite DXCC: Confirmed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="993"/>
+        <location filename="../data/Data.cpp" line="994"/>
         <source>Hz</source>
         <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="1000"/>
+        <location filename="../data/Data.cpp" line="1001"/>
         <source>kHz</source>
         <translation>kHz</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="1007"/>
+        <location filename="../data/Data.cpp" line="1008"/>
         <source>GHz</source>
         <translation>GHz</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="1012"/>
+        <location filename="../data/Data.cpp" line="1013"/>
         <source>MHz</source>
         <translation>MHz</translation>
     </message>
@@ -5075,38 +5438,210 @@
     <name>DatabaseBackup</name>
     <message>
         <location filename="../core/DatabaseBackup.cpp" line="124"/>
-        <source>Could not create the backup. Your previous backups have been kept.</source>
-        <translation type="unfinished">无法创建备份。之前的备份已保留。</translation>
+        <source>Cannot save backup copy %1:
+%2</source>
+        <translation type="unfinished">无法保存备份副本 %1：
+%2</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="161"/>
-        <source>Could not remove older pending backup files. The new database copy has been kept.</source>
-        <translation type="unfinished">无法删除较早的待处理备份文件。新的数据库副本已保留。</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="132"/>
+        <source>%1
+Your previous backups have been kept.</source>
+        <translation type="unfinished">%1
+先前的备份已保留。</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="193"/>
-        <location filename="../core/DatabaseBackup.cpp" line="257"/>
-        <source>Could not remove unused backup files.</source>
-        <translation type="unfinished">无法删除不再使用的备份文件。</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="162"/>
+        <source>Cannot remove the older pending backup %1 because it still has unfinished database writes.</source>
+        <translation type="unfinished">无法删除较早的待处理备份 %1，因为其中仍有未完成的数据库写入操作。</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="321"/>
-        <location filename="../core/DatabaseBackup.cpp" line="348"/>
-        <source>Could not save the additional backup. Check the backup folder. The internal backup has been kept.</source>
-        <translation type="unfinished">无法保存额外备份。请检查备份文件夹。内部备份已保留。</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="170"/>
+        <source>Cannot remove the older pending database backup %1:
+%2</source>
+        <translation type="unfinished">无法删除较早的待处理数据库备份 %1：
+%2</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="428"/>
-        <source>Could not export the backup to ADX. The database copy and previous backups have been kept.</source>
-        <translation type="unfinished">无法将备份导出为 ADX。数据库副本及之前的备份已保留。</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="179"/>
+        <source>%1
+The new database backup copy has been kept.</source>
+        <translation type="unfinished">%1
+新的数据库备份副本已保留。</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="519"/>
-        <source>The backup was saved, but an older backup could not be removed.</source>
-        <translation type="unfinished">备份已保存，但无法删除较早的备份。</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="201"/>
+        <source>Cannot remove the interrupted backup copy %1:
+%2</source>
+        <translation type="unfinished">无法删除已中断的备份副本 %1：
+%2</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="569"/>
+        <location filename="../core/DatabaseBackup.cpp" line="217"/>
+        <source>Cannot clean up files from an earlier backup:
+%1</source>
+        <translation type="unfinished">无法清理先前备份留下的文件：
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="283"/>
+        <source>Cannot rename the completed migration backup from %1 to %2:
+%3</source>
+        <translation type="unfinished">无法将已完成的迁移备份从 %1 重命名为 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="285"/>
+        <source>Cannot remove the database copy after ADX backup %1:
+%2</source>
+        <translation type="unfinished">ADX 备份 %1 完成后，无法删除数据库副本：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="291"/>
+        <source>The ADX backup was saved, but its temporary files could not be removed:
+%1</source>
+        <translation type="unfinished">ADX 备份已保存，但无法删除其临时文件：
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="326"/>
+        <source>Cannot remove a temporary database backup file %1:
+%2</source>
+        <translation type="unfinished">无法删除临时数据库备份文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="357"/>
+        <source>No folder was selected for the additional backup. The internal backup has been kept.</source>
+        <translation type="unfinished">未选择额外备份的存放文件夹。内部备份已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="388"/>
+        <source>%1
+The internal backup has been kept.</source>
+        <translation type="unfinished">%1
+内部备份已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="453"/>
+        <source>Cannot read contacts while writing the ADX backup from %1:
+%2</source>
+        <translation type="unfinished">将 %1 的数据写入 ADX 备份时，无法读取通联记录：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="455"/>
+        <source>Cannot write the internal ADX backup %1:
+%2</source>
+        <translation type="unfinished">无法写入内部 ADX 备份 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="457"/>
+        <source>Cannot export the internal ADX backup %1. Some logbook text contains characters that ADX cannot store.</source>
+        <translation type="unfinished">无法导出内部 ADX 备份 %1。部分通联日志文本包含 ADX 无法存储的字符。</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="459"/>
+        <source>Cannot finish saving the internal ADX backup %1:
+%2</source>
+        <translation type="unfinished">无法完成内部 ADX 备份 %1 的保存：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="465"/>
+        <source>Cannot start reading contacts for the ADX backup from %1:
+%2</source>
+        <translation type="unfinished">无法开始从 %1 读取用于 ADX 备份的通联记录：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="467"/>
+        <source>Cannot create the internal ADX backup file %1:
+%2</source>
+        <translation type="unfinished">无法创建内部 ADX 备份文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="478"/>
+        <source>Cannot open the database copy for ADX backup %1:
+%2</source>
+        <translation type="unfinished">无法打开用于 ADX 备份 %1 的数据库副本：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="484"/>
+        <source>%1
+The database copy and previous backups have been kept.</source>
+        <translation type="unfinished">%1
+数据库副本和先前的备份已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="499"/>
+        <source>Cannot open the internal backup %1 for copying:
+%2</source>
+        <translation type="unfinished">无法打开内部备份 %1 进行复制：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="516"/>
+        <source>Cannot read the internal backup %1 while comparing copies:
+%2</source>
+        <translation type="unfinished">比较副本时，无法读取内部备份 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="532"/>
+        <source>Cannot restart reading the internal backup %1:
+%2</source>
+        <translation type="unfinished">无法重新开始读取内部备份 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="541"/>
+        <source>Cannot create additional backup %1:
+%2</source>
+        <translation type="unfinished">无法创建额外备份 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="557"/>
+        <source>Cannot read the internal backup %1 while copying:
+%2</source>
+        <translation type="unfinished">复制时，无法读取内部备份 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="562"/>
+        <source>Cannot write additional backup %1:
+%2</source>
+        <translation type="unfinished">无法写入额外备份 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="571"/>
+        <source>Cannot complete reading the internal backup %1:
+%2</source>
+        <translation type="unfinished">无法完成内部备份 %1 的读取：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="576"/>
+        <source>Cannot finish saving the additional backup %1:
+%2</source>
+        <translation type="unfinished">无法完成额外备份 %1 的保存：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="607"/>
+        <source>The backup was saved, but an older backup could not be removed: %1
+%2</source>
+        <translation type="unfinished">备份已保存，但无法删除旧备份：%1
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="657"/>
         <source>The backup was saved, but its date could not be recorded.</source>
         <translation type="unfinished">备份已保存，但无法记录其日期。</translation>
     </message>
@@ -5195,131 +5730,145 @@
         <translation>在此输入 SQL 查询... Ctrl+Return = 运行</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="82"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="382"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="84"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="408"/>
         <source>TXT</source>
         <translation>TXT</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="84"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="400"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="86"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="426"/>
         <source>CSV</source>
         <translation>CSV</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="86"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="88"/>
         <source>ADI</source>
         <translation>ADI</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="192"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="194"/>
         <source>Open SQL Query</source>
         <translation>打开 SQL 查询</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="193"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="220"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="195"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="222"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="226"/>
         <source>SQL Files (*.sql);;All Files (*)</source>
         <translation>SQL 文件 (*.sql);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="201"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="203"/>
         <source>Open Error</source>
         <translation>打开错误</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="202"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="204"/>
         <source>Cannot open file:
 %1</source>
         <translation>无法打开文件:
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="219"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="221"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="225"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="238"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="248"/>
         <source>Save SQL Query</source>
         <translation>保存 SQL 查询</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="231"/>
-        <source>Save Error</source>
-        <translation>保存错误</translation>
-    </message>
-    <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="232"/>
-        <source>Cannot save file:
-%1</source>
-        <translation>无法保存文件:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="239"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="252"/>
         <source>Query saved to %1</source>
         <translation>查询已保存到 %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="264"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="277"/>
         <source>Error: %1</source>
         <translation>错误: %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="281"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="294"/>
         <source>%1 row(s) shown (truncated at %2) in %3 ms</source>
         <translation>%1 行显示 (在 %2 处截断) 在 %3 ms 内</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="285"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="298"/>
         <source>%1 row(s) returned in %2 ms</source>
         <translation>%1 行返回在 %2 ms 内</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="325"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="413"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="344"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="439"/>
         <source>Export</source>
         <translation>导出</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="326"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="414"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="345"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="440"/>
         <source>No results to export.</source>
         <translation>没有结果可以导出。</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="337"/>
-        <source>Export Error</source>
-        <translation>导出错误</translation>
+        <location filename="../ui/DevToolsDialog.cpp" line="239"/>
+        <source>Cannot create the saved SQL query file %1:
+%2</source>
+        <translation type="unfinished">无法创建用于保存 SQL 查询的文件 %1：
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="338"/>
-        <source>Cannot open file for writing:
-%1</source>
-        <translation>无法打开文件进行写入:
-%1</translation>
+        <location filename="../ui/DevToolsDialog.cpp" line="248"/>
+        <source>Cannot finish writing the saved SQL query %1:
+%2</source>
+        <translation type="unfinished">无法完成 SQL 查询文件 %1 的写入：
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="374"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="356"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="395"/>
+        <source>Export Query Results</source>
+        <translation type="unfinished">导出查询结果</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="357"/>
+        <source>Cannot create the %1 query results file %2:
+%3</source>
+        <translation type="unfinished">无法创建 %1 查询结果文件 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="396"/>
+        <source>Cannot finish writing the %1 query results to %2:
+%3</source>
+        <translation type="unfinished">无法将 %1 查询结果完整写入 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="400"/>
         <source>Exported %1 row(s) to %2</source>
         <translation>已导出 %1 行到 %2</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="383"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="409"/>
         <source>Text Files (*.txt);;All Files (*)</source>
         <translation>文本文件 (*.txt);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="401"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="427"/>
         <source>CSV Files (*.csv);;All Files (*)</source>
         <translation>CSV 文件 (*.csv);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="432"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="452"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="473"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="485"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="458"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="478"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="499"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="511"/>
         <source>ADIF Export</source>
         <translation>ADIF 导出</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="433"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="459"/>
         <source>ADIF export requires the query to include the contacts &apos;id&apos; column.
 
 Example:
@@ -5330,66 +5879,114 @@ Example:
   SELECT id, callsign FROM contacts WHERE ...</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="453"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="479"/>
         <source>No valid contact IDs found in the result set.</source>
         <translation>在结果集中未找到有效的联系人ID。</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="474"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="500"/>
         <source>Failed to retrieve contact records:
 %1</source>
         <translation>无法检索联系人记录:
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="486"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="512"/>
         <source>No matching contacts found in the database.</source>
         <translation>在数据库中未找到匹配的联系人。</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="530"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="556"/>
         <source>Logging rules cleared (defaults)</source>
         <translation>日志规则已清除（默认）</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="537"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="563"/>
         <source>Logging rules applied</source>
         <translation>日志规则已应用</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="550"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="559"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="580"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="576"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="585"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="590"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="603"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="664"/>
         <source>Save Debug Log</source>
         <translation>保存调试日志</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="551"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="577"/>
         <source>No debug log file is currently being written</source>
         <translation>当前没有调试日志文件被写入</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="561"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="587"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="592"/>
         <source>Log Files (*.log);;All Files (*)</source>
         <translation>日志文件 (*.log);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="576"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="603"/>
+        <source>The selected destination %1 is the active debug log. Choose another file.</source>
+        <translation type="unfinished">所选目标 %1 是当前使用的调试日志。请选择其他文件。</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="611"/>
+        <source>Cannot open the active debug log %1:
+%2</source>
+        <translation type="unfinished">无法打开当前使用的调试日志 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="613"/>
+        <source>Cannot create the debug log copy %1:
+%2</source>
+        <translation type="unfinished">无法创建调试日志副本 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="630"/>
+        <source>The active debug log %1 changed while being copied to %2.</source>
+        <translation type="unfinished">当前使用的调试日志 %1 在复制到 %2 的过程中发生了变化。</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="631"/>
+        <source>Cannot read the active debug log %1 while saving a copy:
+%2</source>
+        <translation type="unfinished">保存副本时，无法读取当前使用的调试日志 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="640"/>
+        <source>Cannot write the debug log copy to %1:
+%2</source>
+        <translation type="unfinished">无法将调试日志副本写入 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="649"/>
+        <source>The selected debug log copy %1 already contains the active log %2. Choose another file.</source>
+        <translation type="unfinished">所选调试日志副本 %1 已包含当前使用的日志 %2。请选择其他文件。</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="653"/>
+        <source>Cannot finish saving the debug log copy %1:
+%2</source>
+        <translation type="unfinished">无法完成调试日志副本 %1 的保存：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="660"/>
         <source>Debug log saved to %1</source>
         <translation>调试日志已保存到 %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="581"/>
-        <source>Failed to copy the debug log file.</source>
-        <translation>无法复制调试日志文件。</translation>
-    </message>
-    <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="592"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="676"/>
         <source>File logging is disabled</source>
         <translation>文件日志记录已禁用</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="594"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="678"/>
         <source>Log file: %1</source>
         <translation>日志文件: %1</translation>
     </message>
@@ -6783,7 +7380,7 @@ Example: %3</source>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="83"/>
-        <location filename="../ui/ExportDialog.cpp" line="406"/>
+        <location filename="../ui/ExportDialog.cpp" line="465"/>
         <source>POTA</source>
         <translation>POTA</translation>
     </message>
@@ -6928,92 +7525,149 @@ Example: %3</source>
         <translation>台站配置</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="25"/>
+        <location filename="../ui/ExportDialog.cpp" line="27"/>
         <source>Export QSOs</source>
         <translation>导出 QSO</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="55"/>
+        <location filename="../ui/ExportDialog.cpp" line="57"/>
         <source>&amp;Export</source>
         <translation>导出(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="166"/>
+        <location filename="../ui/ExportDialog.cpp" line="88"/>
+        <source>Export POTA Files</source>
+        <translation type="unfinished">导出 POTA 文件</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="188"/>
         <source>Export only QSOs matching this station profile</source>
         <translation>仅导出匹配此台站配置的 QSO</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="192"/>
-        <source>The selected file already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <location filename="../ui/ExportDialog.cpp" line="214"/>
+        <source>Choose a logbook export file before exporting.</source>
+        <translation type="unfinished">请先选择通联日志导出文件，再进行导出。</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="271"/>
+        <location filename="../ui/ExportDialog.cpp" line="227"/>
+        <source>The logbook export file %1 already exists. Overwrite it?</source>
+        <translation type="unfinished">通联日志导出文件 %1 已存在。是否覆盖？</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="244"/>
+        <location filename="../ui/ExportDialog.cpp" line="257"/>
+        <location filename="../ui/ExportDialog.cpp" line="352"/>
+        <source>Export Logbook</source>
+        <translation type="unfinished">导出通联日志</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="245"/>
+        <source>Cannot create the %1 logbook export file %2:
+%3</source>
+        <translation type="unfinished">无法创建 %1 通联日志导出文件 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="258"/>
+        <source>Cannot save the logbook export %1. The selected format %2 is unavailable.</source>
+        <translation type="unfinished">无法保存通联日志导出文件 %1。所选格式 %2 不可用。</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="272"/>
+        <source>The file %1 already exists. Replace it?</source>
+        <translation type="unfinished">文件 %1 已存在。是否替换？</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="321"/>
         <source>Exporting...</source>
         <translation>正在导出...</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="271"/>
+        <location filename="../ui/ExportDialog.cpp" line="321"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="272"/>
+        <location filename="../ui/ExportDialog.cpp" line="322"/>
         <source>Export Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="295"/>
+        <location filename="../ui/ExportDialog.cpp" line="344"/>
+        <source>Cannot finish writing the %1 logbook export %2:
+%3</source>
+        <translation type="unfinished">无法完成 %1 通联日志导出文件 %2 的写入：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="347"/>
+        <source>Cannot save the completed main POTA export as %1:
+%2</source>
+        <translation type="unfinished">无法将已完成的 POTA 主导出文件保存为 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="353"/>
+        <source>%1
+
+Some files may already have been saved.</source>
+        <translation type="unfinished">%1
+
+部分文件可能已保存。</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="360"/>
         <source>QLog Error</source>
         <translation>QLog 错误</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="296"/>
+        <location filename="../ui/ExportDialog.cpp" line="360"/>
         <source>Cannot mark exported QSOs as Sent</source>
         <translation>无法标记已导出的 QSOs 为已发送</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="359"/>
+        <location filename="../ui/ExportDialog.cpp" line="418"/>
         <source>Generic</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="363"/>
+        <location filename="../ui/ExportDialog.cpp" line="422"/>
         <source>QSLs</source>
         <translation>QSL</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="404"/>
+        <location filename="../ui/ExportDialog.cpp" line="463"/>
         <source>All</source>
         <translation>全部</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="405"/>
+        <location filename="../ui/ExportDialog.cpp" line="464"/>
         <source>Minimal</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="407"/>
+        <location filename="../ui/ExportDialog.cpp" line="466"/>
         <source>QSL-specific</source>
         <translation>QSL-特定</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="408"/>
+        <location filename="../ui/ExportDialog.cpp" line="467"/>
         <source>Custom 1</source>
         <translation>自定义1</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="409"/>
+        <location filename="../ui/ExportDialog.cpp" line="468"/>
         <source>Custom 2</source>
         <translation>自定义2</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="410"/>
+        <location filename="../ui/ExportDialog.cpp" line="469"/>
         <source>Custom 3</source>
         <translation>自定义3</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="530"/>
+        <location filename="../ui/ExportDialog.cpp" line="593"/>
         <source>%1 Files (%2);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7051,6 +7705,129 @@ The password will be needed to restore them later.</source>
         <location filename="../ui/ExportPasswordDialog.ui" line="68"/>
         <source>Delete passwords from Credential Store after export</source>
         <translation>导出后从凭据存储中删除密码</translation>
+    </message>
+</context>
+<context>
+    <name>FileCompressor</name>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="101"/>
+        <source>Cannot open the source file for packing %1:
+%2</source>
+        <translation type="unfinished">无法打开待压缩的源文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="111"/>
+        <source>Cannot create the packed output file %1:
+%2</source>
+        <translation type="unfinished">无法创建压缩输出文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="126"/>
+        <source>Cannot start packing %1. The compressor could not be initialized.</source>
+        <translation type="unfinished">无法开始压缩 %1。压缩器初始化失败。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="143"/>
+        <source>Cannot read the source data while packing %1:
+%2</source>
+        <translation type="unfinished">压缩 %1 时，无法读取源数据：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="163"/>
+        <source>Cannot compress the data from %1.</source>
+        <translation type="unfinished">无法压缩 %1 中的数据。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="173"/>
+        <source>Cannot write the packed data to %1:
+%2</source>
+        <translation type="unfinished">无法将压缩数据写入 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="185"/>
+        <source>Packing %1 was cancelled.</source>
+        <translation type="unfinished">已取消对 %1 的压缩。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="199"/>
+        <source>Cannot complete packing %1. The compressed data is incomplete.</source>
+        <translation type="unfinished">无法完成 %1 的压缩。压缩数据不完整。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="208"/>
+        <source>Cannot finish saving the packed file %1:
+%2</source>
+        <translation type="unfinished">无法完成压缩文件 %1 的保存：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="230"/>
+        <source>Cannot open packed file %1:
+%2</source>
+        <translation type="unfinished">无法打开压缩文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="240"/>
+        <source>Cannot create unpacked file %1:
+%2</source>
+        <translation type="unfinished">无法创建解压后的文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="256"/>
+        <source>Cannot unpack %1. There is not enough memory to start decompression.</source>
+        <translation type="unfinished">无法解压 %1。内存不足，无法开始解压。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="257"/>
+        <source>Cannot start unpacking %1 (decompression error %2).</source>
+        <translation type="unfinished">无法开始解压 %1 (解压错误 %2)。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="274"/>
+        <source>Cannot read packed file %1:
+%2</source>
+        <translation type="unfinished">无法读取压缩文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="296"/>
+        <source>Cannot unpack %1. There is not enough memory.</source>
+        <translation type="unfinished">无法解压 %1。内存不足。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="297"/>
+        <source>Cannot unpack %1. The packed file is damaged or is not a valid QLog packed file.</source>
+        <translation type="unfinished">无法解压 %1。压缩文件已损坏，或不是有效的 QLog 压缩文件。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="307"/>
+        <source>Cannot write unpacked file %1:
+%2</source>
+        <translation type="unfinished">无法写入解压后的文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="319"/>
+        <source>Unpacking %1 was cancelled.</source>
+        <translation type="unfinished">已取消解压 %1。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="331"/>
+        <source>Cannot unpack %1. The packed file is incomplete or damaged.</source>
+        <translation type="unfinished">无法解压 %1。压缩文件不完整或已损坏。</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="339"/>
+        <source>Cannot save unpacked file %1:
+%2</source>
+        <translation type="unfinished">无法保存解压后的文件 %1：
+%2</translation>
     </message>
 </context>
 <context>
@@ -7863,17 +8640,17 @@ The password will be needed to restore them later.</source>
 <context>
     <name>LOVDatabase</name>
     <message>
-        <location filename="../core/LOVDatabase.cpp" line="390"/>
+        <location filename="../core/LOVDatabase.cpp" line="391"/>
         <source>Could not close the reference-list database.</source>
         <translation type="unfinished">无法关闭参考列表数据库。</translation>
     </message>
     <message>
-        <location filename="../core/LOVDatabase.cpp" line="397"/>
+        <location filename="../core/LOVDatabase.cpp" line="398"/>
         <source>Could not update the reference list. Existing data have been kept.</source>
         <translation type="unfinished">无法更新参考列表。已保留原有数据。</translation>
     </message>
     <message>
-        <location filename="../core/LOVDatabase.h" line="41"/>
+        <location filename="../core/LOVDatabase.h" line="43"/>
         <source>Could not prepare the reference list.</source>
         <translation type="unfinished">无法准备参考列表。</translation>
     </message>
@@ -7953,42 +8730,55 @@ The password will be needed to restore them later.</source>
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.cpp" line="173"/>
-        <source>Cannot create temporary file</source>
-        <translation>无法创建临时文件</translation>
+        <source>Cannot prepare unpacking in %1:
+%2</source>
+        <translation type="unfinished">无法在 %1 中准备解压：
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="187"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="209"/>
+        <source>Cannot unpack %1:
+%2</source>
+        <translation type="unfinished">无法解压 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="228"/>
+        <source>Cannot open unpacked database %1:
+%2</source>
+        <translation type="unfinished">无法打开解压后的数据库 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="243"/>
+        <source>Cannot load the saved passwords from unpacked database %1:
+%2</source>
+        <translation type="unfinished">无法从解压后的数据库 %1 中加载已保存的密码：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="189"/>
         <source>Decompressing database...</source>
         <translation>正在解压数据库...</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="190"/>
-        <source>Cannot decompress database file</source>
-        <translation>无法解压数据库文件</translation>
-    </message>
-    <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="225"/>
-        <source>Cannot open database</source>
-        <translation>无法打开数据库</translation>
-    </message>
-    <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="248"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="266"/>
         <source>Valid database</source>
         <translation>有效的数据库</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="253"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="271"/>
         <source>Different platform</source>
         <translation>不同平台</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="262"/>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="304"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="280"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="322"/>
         <source>Password required to import credentials</source>
         <translation>导入凭据需要密码</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="267"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="285"/>
         <source>No encrypted credentials in database</source>
         <translation>数据库中没有加密的凭据</translation>
     </message>
@@ -9844,7 +10634,7 @@ Submode: %2</source>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="127"/>
-        <location filename="../ui/MainWindow.cpp" line="2079"/>
+        <location filename="../ui/MainWindow.cpp" line="2086"/>
         <source>Contest</source>
         <translation>比赛</translation>
     </message>
@@ -10097,204 +10887,203 @@ Submode: %2</source>
         <translation>导出 Cabrillo</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="103"/>
+        <location filename="../ui/MainWindow.cpp" line="104"/>
         <source>Color Theme</source>
         <translation>颜色主题</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="126"/>
+        <location filename="../ui/MainWindow.cpp" line="127"/>
         <source>Not enabled for non-Fusion style</source>
         <translation>非融合样式不允许使用</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="201"/>
+        <location filename="../ui/MainWindow.cpp" line="202"/>
         <source>Press to tune the alert</source>
         <translation>按下调节提醒</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="344"/>
+        <location filename="../ui/MainWindow.cpp" line="345"/>
         <source>FLDigi</source>
         <translation>FLDigi</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="345"/>
+        <location filename="../ui/MainWindow.cpp" line="346"/>
         <source>FLDigi test message received.</source>
         <translation>已收到 FLDigi 测试消息。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="353"/>
+        <location filename="../ui/MainWindow.cpp" line="354"/>
         <source>Startup ADI</source>
         <translation>启动 ADI</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="544"/>
+        <location filename="../ui/MainWindow.cpp" line="545"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Clublog 立即上传出错</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="785"/>
-        <location filename="../ui/MainWindow.cpp" line="798"/>
-        <location filename="../ui/MainWindow.cpp" line="808"/>
+        <location filename="../ui/MainWindow.cpp" line="786"/>
+        <location filename="../ui/MainWindow.cpp" line="799"/>
+        <location filename="../ui/MainWindow.cpp" line="809"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation>&lt;b&gt;错误详情:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="832"/>
+        <location filename="../ui/MainWindow.cpp" line="833"/>
         <source>op: </source>
         <translation>操作员: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1015"/>
+        <location filename="../ui/MainWindow.cpp" line="1016"/>
         <source>A New Version</source>
         <translation>新版本</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1016"/>
+        <location filename="../ui/MainWindow.cpp" line="1017"/>
         <source>A new version %1 is available.</source>
         <translation>新版本 %1 可用。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1020"/>
+        <location filename="../ui/MainWindow.cpp" line="1021"/>
         <source>Remind Me Later</source>
         <translation>稍后提醒我</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1021"/>
+        <location filename="../ui/MainWindow.cpp" line="1022"/>
         <source>Download</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1279"/>
-        <location filename="../ui/MainWindow.cpp" line="1327"/>
+        <location filename="../ui/MainWindow.cpp" line="1280"/>
+        <location filename="../ui/MainWindow.cpp" line="1328"/>
         <source>QLog Warning</source>
         <translation>QLog 警告</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1280"/>
+        <location filename="../ui/MainWindow.cpp" line="1281"/>
         <source>LoTW is not configured properly.&lt;p&gt;Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW 配置不正确。&lt;p&gt;请使用 &lt;b&gt;设置&lt;/b&gt; 对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1301"/>
-        <location filename="../ui/MainWindow.cpp" line="1379"/>
+        <location filename="../ui/MainWindow.cpp" line="1302"/>
+        <location filename="../ui/MainWindow.cpp" line="1380"/>
         <source>QLog Error</source>
         <translation>QLog 错误</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1302"/>
+        <location filename="../ui/MainWindow.cpp" line="1303"/>
         <source>Cannot load local DXCC entities from the logbook: </source>
         <translation>无法从日志簿中加载本地 DXCC 实体: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1316"/>
+        <location filename="../ui/MainWindow.cpp" line="1317"/>
         <source>Unknown DXCC Entity</source>
         <translation>未知的 DXCC 实体</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1328"/>
+        <location filename="../ui/MainWindow.cpp" line="1329"/>
         <source>Cannot determine a local DXCC entity from logbook contacts.</source>
         <translation>无法从日志簿联系人中确定本地 DXCC 实体。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1334"/>
+        <location filename="../ui/MainWindow.cpp" line="1335"/>
         <source>LoTW DXCC Credits</source>
         <translation>LoTW DXCC 积分</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1335"/>
+        <location filename="../ui/MainWindow.cpp" line="1336"/>
         <source>Select the local DXCC entity for which LoTW DXCC credits will be downloaded:</source>
         <translation>选择要下载 LoTW DXCC 积分的本地 DXCC 实体:</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1346"/>
+        <location filename="../ui/MainWindow.cpp" line="1347"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1347"/>
+        <location filename="../ui/MainWindow.cpp" line="1348"/>
         <source>LoTW DXCC Credit Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1351"/>
+        <location filename="../ui/MainWindow.cpp" line="1352"/>
         <source>Downloading LoTW DXCC credits</source>
         <translation>正在下载 LoTW DXCC 积分</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1359"/>
+        <location filename="../ui/MainWindow.cpp" line="1360"/>
         <source>Processing LoTW DXCC credits</source>
         <translation>正在处理 LoTW DXCC 积分</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1371"/>
+        <location filename="../ui/MainWindow.cpp" line="1372"/>
         <source>LoTW DXCC Credit Import Summary</source>
         <translation>LoTW DXCC 积分导入摘要</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1379"/>
+        <location filename="../ui/MainWindow.cpp" line="1380"/>
         <source>LoTW DXCC credit import failed: </source>
         <translation>LoTW DXCC 积分导入失败: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1423"/>
-        <location filename="../ui/MainWindow.cpp" line="1438"/>
-        <location filename="../ui/MainWindow.cpp" line="1446"/>
-        <location filename="../ui/MainWindow.cpp" line="1462"/>
-        <location filename="../ui/MainWindow.cpp" line="1477"/>
-        <location filename="../ui/MainWindow.cpp" line="1488"/>
-        <location filename="../ui/MainWindow.cpp" line="1504"/>
-        <location filename="../ui/MainWindow.cpp" line="1517"/>
-        <location filename="../ui/MainWindow.cpp" line="1523"/>
-        <location filename="../ui/MainWindow.cpp" line="1528"/>
+        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <location filename="../ui/MainWindow.cpp" line="1439"/>
+        <location filename="../ui/MainWindow.cpp" line="1447"/>
+        <location filename="../ui/MainWindow.cpp" line="1452"/>
+        <location filename="../ui/MainWindow.cpp" line="1469"/>
+        <location filename="../ui/MainWindow.cpp" line="1484"/>
+        <location filename="../ui/MainWindow.cpp" line="1495"/>
+        <location filename="../ui/MainWindow.cpp" line="1513"/>
+        <location filename="../ui/MainWindow.cpp" line="1525"/>
+        <location filename="../ui/MainWindow.cpp" line="1531"/>
+        <location filename="../ui/MainWindow.cpp" line="1536"/>
         <source>Pack Data &amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">打包数据和设置</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <location filename="../ui/MainWindow.cpp" line="1425"/>
         <source>Data and settings cannot be packed because an import is unfinished.
 
 Restart QLog and complete password recovery or choose &quot;Stop Password Recovery&quot;.</source>
         <translation type="unfinished">导入尚未完成，无法打包数据和设置。
 
-请重启 QLog，完成密码恢复，或选择"停止密码恢复"。</translation>
+请重启 QLog，完成密码恢复，或选择&quot;停止密码恢复&quot;。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1439"/>
+        <location filename="../ui/MainWindow.cpp" line="1440"/>
         <source>Failed to encrypt credentials.</source>
         <translation>加密凭据失败。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1448"/>
+        <location filename="../ui/MainWindow.cpp" line="1449"/>
+        <location filename="../ui/MainWindow.cpp" line="1454"/>
         <source>Database files (*.dbe);;All files (*)</source>
         <translation>数据库文件 (*.dbe);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1463"/>
+        <location filename="../ui/MainWindow.cpp" line="1470"/>
         <source>The file %1 already exists. Replace it?</source>
         <translation type="unfinished">文件 %1 已存在。是否替换？</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1478"/>
-        <source>Choose a different file. The export destination points to the open database.</source>
-        <translation type="unfinished">请选择其他文件。导出目标是当前打开的数据库。</translation>
+        <location filename="../ui/MainWindow.cpp" line="1485"/>
+        <source>Cannot pack into %1 because it is the open logbook database. Choose another file.</source>
+        <translation type="unfinished">无法压缩到 %1，因为它是当前打开的通联日志数据库。请选择其他文件。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1489"/>
-        <source>Failed to create temporary file.</source>
-        <translation>创建临时文件失败。</translation>
+        <location filename="../ui/MainWindow.cpp" line="1496"/>
+        <source>Cannot create a temporary database file for packing in %1:
+%2</source>
+        <translation type="unfinished">无法在 %1 中创建用于压缩的临时数据库文件：
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1505"/>
-        <source>Failed to dump the database.</source>
-        <translation>转储数据库失败。</translation>
-    </message>
-    <message>
-        <location filename="../ui/MainWindow.cpp" line="1510"/>
+        <location filename="../ui/MainWindow.cpp" line="1518"/>
         <source>Compressing database...</source>
         <translation>正在压缩数据库...</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1518"/>
+        <location filename="../ui/MainWindow.cpp" line="1526"/>
         <source>Database successfully dumped to
 %1
 Some credentials could not be removed.</source>
@@ -10303,77 +11092,72 @@ Some credentials could not be removed.</source>
 部分凭据未能移除。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1524"/>
+        <location filename="../ui/MainWindow.cpp" line="1532"/>
         <source>Database successfully dumped to
 %1</source>
         <translation>数据库成功转储到
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1529"/>
-        <source>Failed to compress the database.</source>
-        <translation>压缩数据库失败。   </translation>
-    </message>
-    <message>
-        <location filename="../ui/MainWindow.cpp" line="1539"/>
-        <location filename="../ui/MainWindow.cpp" line="1589"/>
-        <location filename="../ui/MainWindow.cpp" line="1617"/>
+        <location filename="../ui/MainWindow.cpp" line="1546"/>
+        <location filename="../ui/MainWindow.cpp" line="1596"/>
+        <location filename="../ui/MainWindow.cpp" line="1624"/>
         <source>Unpack Data &amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">解压数据 &amp; 设置</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1540"/>
+        <location filename="../ui/MainWindow.cpp" line="1547"/>
         <source>Data and settings cannot be unpacked because an import is unfinished.
 
 Restart QLog and complete password recovery or choose &quot;Stop Password Recovery&quot;.</source>
         <translation type="unfinished">导入尚未完成，无法解包数据和设置。
 
-请重启 QLog，完成密码恢复，或选择"停止密码恢复"。</translation>
+请重启 QLog，完成密码恢复，或选择&quot;停止密码恢复&quot;。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1618"/>
+        <location filename="../ui/MainWindow.cpp" line="1625"/>
         <source>QLog could not be restarted. The prepared import was cancelled.</source>
         <translation type="unfinished">无法重启 QLog。已取消准备好的导入操作。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1619"/>
+        <location filename="../ui/MainWindow.cpp" line="1626"/>
         <source>QLog could not be restarted.
 %1</source>
         <translation type="unfinished">无法重启 QLog。
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1767"/>
+        <location filename="../ui/MainWindow.cpp" line="1774"/>
         <source>Classic</source>
         <translation>经典</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2004"/>
+        <location filename="../ui/MainWindow.cpp" line="2011"/>
         <source>Accept any received exchange. %1 is updated only when the received exchange is valid for this field.</source>
         <translation>接受任何接收到的交换信息。仅当接收到的交换信息对此字段有效时，才会更新 %1。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2026"/>
+        <location filename="../ui/MainWindow.cpp" line="2033"/>
         <source>Standard Linking</source>
         <translation>标准链接</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2042"/>
+        <location filename="../ui/MainWindow.cpp" line="2049"/>
         <source>Flexible Linking</source>
         <translation>灵活链接</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2080"/>
+        <location filename="../ui/MainWindow.cpp" line="2087"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>你要删除比赛过滤器 %1 吗？</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2111"/>
+        <location filename="../ui/MainWindow.cpp" line="2118"/>
         <source>Contest: </source>
         <translation>比赛: </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2392"/>
+        <location filename="../ui/MainWindow.cpp" line="2399"/>
         <source>Backup could not be completed. Check Settings → Backup.
 
 %1</source>
@@ -10382,17 +11166,17 @@ Restart QLog and complete password recovery or choose &quot;Stop Password Recove
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2514"/>
+        <location filename="../ui/MainWindow.cpp" line="2521"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;基于 Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;图标由 &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt; 提供&lt;br /&gt;卫星图像由 &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt; 提供&lt;br /&gt;ZoneDetect 由 &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt; 提供&lt;br /&gt;时区数据库由 &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt; 提供</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2545"/>
+        <location filename="../ui/MainWindow.cpp" line="2552"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2596"/>
+        <location filename="../ui/MainWindow.cpp" line="2603"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
@@ -10659,12 +11443,12 @@ Restart QLog and complete password recovery or choose &quot;Stop Password Recove
         <translation>天线</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4845"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4851"/>
         <source>Blank</source>
         <translation>空白</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4846"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4852"/>
         <source> W</source>
         <translation> W</translation>
     </message>
@@ -10757,87 +11541,87 @@ Restart QLog and complete password recovery or choose &quot;Stop Password Recove
         <translation>未提供</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2719"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2725"/>
         <source>LP</source>
         <translation>长路径</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2782"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2788"/>
         <source>New Entity!</source>
         <translation>新实体！</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2785"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2791"/>
         <source>New Band!</source>
         <translation>新波段！</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2788"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2794"/>
         <source>New Mode!</source>
         <translation>新模式！</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2791"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2797"/>
         <source>New Band &amp; Mode!</source>
         <translation>新波段与模式！</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2794"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2800"/>
         <source>New Slot!</source>
         <translation>新组合！</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2797"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2803"/>
         <source>Worked</source>
         <translation>已通联</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2800"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2806"/>
         <source>Confirmed</source>
         <translation>已确认</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3775"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3781"/>
         <source>GE</source>
         <translation>GE</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3785"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3791"/>
         <source>GM</source>
         <translation>GM</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3791"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3797"/>
         <source>GA</source>
         <translation>GA</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4119"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4125"/>
         <source> m</source>
         <translation> m</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4572"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4578"/>
         <source>Callbook search is active</source>
         <translation>电台黄页搜索可用</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4650"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4656"/>
         <source>Contest ID must be filled in to activate</source>
         <translation>必须填写 竞赛标识 才能激活</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4833"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4839"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
         <translation>这里要填的不是比赛名称，而是分配的竞赛标识&lt;br&gt;（例如CQ-WW-CW 代表CQ WW DX比赛(CW)） </translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4848"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4854"/>
         <source>Description of the contacted station&apos;s equipment</source>
         <translation>已通联台站的设备描述</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4567"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4573"/>
         <source>Callbook search is inactive</source>
         <translation>电台黄页搜索不可用</translation>
     </message>
@@ -10882,37 +11666,37 @@ Restart QLog and complete password recovery or choose &quot;Stop Password Recove
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2640"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2646"/>
         <source>QLog Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2641"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2647"/>
         <source>An exact RX frequency is required to add a Bandmap mark</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4774"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4780"/>
         <source>two or four adjacent Maidenhead grid locators, each four characters long, (ex. EN98,FM08,EM97,FM07)</source>
         <translation>两个或四个相邻的梅登黑德网格定位器，每个四个字符长，(例如 EN98, FM08, EM97, FM07)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4777"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4783"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>联络电台的DARC DOK (地区位置代码) (例如 A01)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4797"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4803"/>
         <source>World Wide Flora &amp; Fauna</source>
         <translation>世界动植物 (可选参数)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4801"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4807"/>
         <source>Special Activity Group</source>
         <translation>特别活动或兴趣团体名称</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4805"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4811"/>
         <source>Special Activity Group Information</source>
         <translation>特别活动或兴趣团体信息</translation>
     </message>
@@ -10930,20 +11714,20 @@ Restart QLog and complete password recovery or choose &quot;Stop Password Recove
         <translation>设备 2</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="130"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="222"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="229"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="269"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="138"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="230"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="237"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="277"/>
         <source>Initialization Error</source>
         <translation>初始化出错</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1078"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1181"/>
         <source>Rig status changed</source>
         <translation>设备状态已更改</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1079"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1182"/>
         <source>Rig is not connected</source>
         <translation>设备未连接</translation>
     </message>
@@ -10971,20 +11755,20 @@ Restart QLog and complete password recovery or choose &quot;Stop Password Recove
         <translation>设备 4</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="133"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="225"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="232"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="274"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="141"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="233"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="240"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="282"/>
         <source>Initialization Error</source>
         <translation>初始化出错</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="977"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="1080"/>
         <source>Rig status changed</source>
         <translation>设备状态已更改</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="978"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="1081"/>
         <source>Rig is not connected</source>
         <translation>设备未连接</translation>
     </message>
@@ -11126,6 +11910,40 @@ You can leave fields empty and configure them later in Settings.</source>
     </message>
 </context>
 <context>
+    <name>PotaAdiFormat</name>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="93"/>
+        <source>Choose a different main export file. %1 is also used for a POTA park.</source>
+        <translation type="unfinished">请另选主导出文件。%1 也用于导出某个 POTA 公园的数据。</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="99"/>
+        <source>Export cancelled. The file %1 was not replaced.</source>
+        <translation type="unfinished">导出已取消。文件 %1 未被替换。</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="107"/>
+        <source>Cannot create the POTA park export file %1:
+%2</source>
+        <translation type="unfinished">无法创建 POTA 公园导出文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="173"/>
+        <source>Cannot finish writing the POTA park export %1:
+%2</source>
+        <translation type="unfinished">无法完成 POTA 公园导出文件 %1 的写入：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="183"/>
+        <source>Cannot save the completed POTA park export as %1:
+%2</source>
+        <translation type="unfinished">无法将已完成的 POTA 公园导出文件保存为 %1：
+%2</translation>
+    </message>
+</context>
+<context>
     <name>ProfileImageWidget</name>
     <message>
         <location filename="../ui/ProfileImageWidget.ui" line="14"/>
@@ -11136,9 +11954,17 @@ You can leave fields empty and configure them later in Settings.</source>
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../core/main.cpp" line="512"/>
+        <location filename="../core/main.cpp" line="513"/>
         <source>QLog Help</source>
         <translation>QLog 帮助</translation>
+    </message>
+</context>
+<context>
+    <name>QLogFileDialog</name>
+    <message>
+        <location filename="../ui/QLogFileDialog.cpp" line="43"/>
+        <source>Confirm the complete file name, including .%1, in the save dialog.</source>
+        <translation type="unfinished">请在保存对话框中确认完整文件名，包括 .%1。</translation>
     </message>
 </context>
 <context>
@@ -11165,30 +11991,30 @@ You can leave fields empty and configure them later in Settings.</source>
         <location filename="../core/MembershipQE.cpp" line="211"/>
         <location filename="../core/MembershipQE.cpp" line="338"/>
         <location filename="../core/MembershipQE.cpp" line="345"/>
-        <location filename="../ui/ExportDialog.cpp" line="182"/>
+        <location filename="../ui/ExportDialog.cpp" line="213"/>
         <location filename="../ui/ImportDialog.cpp" line="343"/>
-        <location filename="../ui/MainWindow.cpp" line="783"/>
-        <location filename="../ui/MainWindow.cpp" line="796"/>
-        <location filename="../ui/MainWindow.cpp" line="806"/>
+        <location filename="../ui/MainWindow.cpp" line="784"/>
+        <location filename="../ui/MainWindow.cpp" line="797"/>
+        <location filename="../ui/MainWindow.cpp" line="807"/>
         <location filename="../ui/NewContactWidget.cpp" line="1740"/>
         <location filename="../ui/SettingsDialog.cpp" line="823"/>
         <location filename="../ui/SettingsDialog.cpp" line="848"/>
         <location filename="../ui/SettingsDialog.cpp" line="857"/>
         <location filename="../ui/SettingsDialog.cpp" line="868"/>
-        <location filename="../ui/SettingsDialog.cpp" line="982"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1361"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1723"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1796"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1841"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2026"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2041"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2050"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2072"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2547"/>
+        <location filename="../ui/SettingsDialog.cpp" line="986"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1005"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1365"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1727"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1800"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1845"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2030"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2038"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2045"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2054"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2062"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2069"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2076"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2551"/>
         <source>QLog Warning</source>
         <translation>QLog 告警</translation>
     </message>
@@ -11218,21 +12044,18 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>网络错误。无法下载俱乐部列表</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="604"/>
-        <location filename="../core/main.cpp" line="629"/>
-        <location filename="../core/main.cpp" line="646"/>
+        <location filename="../core/main.cpp" line="605"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="327"/>
-        <location filename="../ui/ExportDialog.cpp" line="204"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
         <location filename="../ui/NewContactWidget.cpp" line="2023"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="488"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1009"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1018"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1013"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1022"/>
         <source>QLog Error</source>
         <translation>QLog 出错</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="605"/>
+        <location filename="../core/main.cpp" line="606"/>
         <source>QLog is already running</source>
         <translation>已经有 QLog 实例正在运行</translation>
     </message>
@@ -11297,29 +12120,23 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>DXC 服务器连接出错</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="183"/>
         <location filename="../ui/ImportDialog.cpp" line="344"/>
         <source>Filename is empty</source>
         <translation>文件名为空</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="205"/>
-        <source>Cannot write to the file</source>
-        <translation>无法写入文件</translation>
-    </message>
-    <message>
-        <location filename="../ui/ExportDialog.cpp" line="307"/>
-        <location filename="../ui/ExportDialog.cpp" line="310"/>
+        <location filename="../ui/ExportDialog.cpp" line="366"/>
+        <location filename="../ui/ExportDialog.cpp" line="369"/>
         <source>QLog Information</source>
         <translation>QLog 信息</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="308"/>
+        <location filename="../ui/ExportDialog.cpp" line="367"/>
         <source>Exported.</source>
         <translation>已导出。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/ExportDialog.cpp" line="311"/>
+        <location filename="../ui/ExportDialog.cpp" line="370"/>
         <source>Exported %n contact(s).</source>
         <translation>
             <numerusform>已导出 %n 通联记录。</numerusform>
@@ -11337,17 +12154,17 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>过滤器名称已存在。</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="784"/>
+        <location filename="../ui/MainWindow.cpp" line="785"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;设备出错:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="797"/>
+        <location filename="../ui/MainWindow.cpp" line="798"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;旋转云台出错:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="807"/>
+        <location filename="../ui/MainWindow.cpp" line="808"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;CW 键控器出错:&lt;/b&gt; </translation>
     </message>
@@ -11363,7 +12180,7 @@ You can leave fields empty and configure them later in Settings.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="824"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2548"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2552"/>
         <source>Please, define at least one Station Locations Profile</source>
         <translation>请至少定义一个站点配置文件</translation>
     </message>
@@ -11378,77 +12195,77 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>检测到循环。原始 UDP 转发使用与 WSJT-X 接收端口相同的端口。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="983"/>
+        <location filename="../ui/SettingsDialog.cpp" line="987"/>
         <source>Rig port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>设备端口必须是一个有效的 COM 端口。&lt;br&gt;Windows 使用 COMxxx，对于unix-like OS 使用设备路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1006"/>
         <source>Rig PTT port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>电台PTT端口必须为可用的串口。&lt;br&gt;Windows是类似COMxx，类UNIX操作系统则为设备路径名</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1014"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be 0.</source>
         <translation>&lt;b&gt;TX 范围&lt;/b&gt;: 最大频率不能为 0。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1019"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1023"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be under Min Frequency.</source>
         <translation>&lt;b&gt;TX 范围&lt;/b&gt;: 最大频率不能低于最小频率。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1362"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1366"/>
         <source>Rotator port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>旋转云台端口必须是一个有效的 COM 端口。&lt;br&gt;对于Windows 使用 COMxxx，对于unix-like OS 使用设备路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1724"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1728"/>
         <source>CW Keyer port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>CW 键控器端口必须是一个有效的 COM 端口。&lt;br&gt;对于Windows 使用 COMxxx，对于unix-like OS 使用设备路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1797"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1801"/>
         <source>Cannot change the CW Keyer Model to &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;No Morse over CAT support for Rig(s) &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>无法将 CW 键控器模型改为 &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;设备 &lt;b&gt;%1&lt;/b&gt;不支持Morse over CAT</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1842"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1846"/>
         <source>Cannot delete the CW Keyer Profile&lt;br&gt;The CW Key Profile is used by Rig(s): &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>无法删除 CW 键控器配置文件&lt;br&gt;本 CW 键控器配置文件正在被设备&lt;b&gt;%1&lt;/b&gt;使用</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2031"/>
         <source>Callsign has an invalid format</source>
         <translation>呼号格式无效</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2035"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2039"/>
         <source>Operator Callsign has an invalid format</source>
         <translation>操作员呼号格式无效</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2046"/>
         <source>Gridsquare has an invalid format</source>
         <translation>网格坐标格式无效</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2055"/>
         <source>VUCC Grids have an invalid format (must be 2 or 4 Gridsquares separated by &apos;,&apos;)</source>
         <translation>VUCC 网格格式无效 (必须是 2 或 4 个被 &apos;,&apos; 分隔的网格坐标)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2059"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2063"/>
         <source>Country must not be empty</source>
         <translation>国家/地区 不能为空</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2066"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2070"/>
         <source>CQZ must not be empty</source>
         <translation>CQ 分区不能为空</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2073"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2077"/>
         <source>ITU must not be empty</source>
         <translation>ITU 不能为空</translation>
     </message>
@@ -11513,115 +12330,125 @@ You can leave fields empty and configure them later in Settings.</source>
         <translation>内部错误</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="375"/>
+        <location filename="../core/main.cpp" line="376"/>
         <source>DXCC Entities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="376"/>
+        <location filename="../core/main.cpp" line="377"/>
         <source>ClubLog DXCC</source>
         <translation type="unfinished">ClubLog DXCC</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="377"/>
+        <location filename="../core/main.cpp" line="378"/>
         <source>Sats Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="378"/>
+        <location filename="../core/main.cpp" line="379"/>
         <source>SOTA Summits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="379"/>
+        <location filename="../core/main.cpp" line="380"/>
         <source>WWFF Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="380"/>
+        <location filename="../core/main.cpp" line="381"/>
         <source>IOTA Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="381"/>
+        <location filename="../core/main.cpp" line="382"/>
         <source>POTA Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="382"/>
+        <location filename="../core/main.cpp" line="383"/>
         <source>Membership Directory Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="383"/>
+        <location filename="../core/main.cpp" line="384"/>
         <source>List of Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="405"/>
+        <location filename="../core/main.cpp" line="406"/>
         <source>Updating %1</source>
         <translation type="unfinished">正在更新 %1</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="430"/>
+        <location filename="../core/main.cpp" line="431"/>
         <source>Updating External Resources</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="431"/>
+        <location filename="../core/main.cpp" line="432"/>
         <source>Updating %1…</source>
         <translation type="unfinished">正在更新 %1…</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="468"/>
+        <location filename="../core/main.cpp" line="469"/>
         <source>QLog Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="469"/>
+        <location filename="../core/main.cpp" line="470"/>
         <source>Could not update these reference lists: %1. Existing data have been kept.</source>
         <translation type="unfinished">无法更新以下参考列表：%1。已保留原有数据。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="618"/>
+        <location filename="../core/main.cpp" line="619"/>
         <source>Importing Database</source>
         <translation>导入数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="619"/>
+        <location filename="../core/main.cpp" line="620"/>
         <source>Opening Database</source>
         <translation>打开数据库</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="633"/>
-        <location filename="../core/main.cpp" line="654"/>
-        <source>Unpack Data &amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <location filename="../core/main.cpp" line="630"/>
+        <source>Open Logbook</source>
+        <translation type="unfinished">打开通联日志</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="635"/>
+        <location filename="../core/main.cpp" line="634"/>
+        <location filename="../core/main.cpp" line="656"/>
+        <source>Unpack Data &amp; Settings</source>
+        <translation type="unfinished">解压数据 &amp; 设置</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="637"/>
         <source>The import has not been completed. You can retry it, or cancel it and start QLog without importing the prepared database.</source>
         <translation type="unfinished">导入尚未完成。您可以重试，也可以取消导入，直接启动 QLog 而不导入已准备好的数据库。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="636"/>
-        <location filename="../core/main.cpp" line="660"/>
+        <location filename="../core/main.cpp" line="638"/>
+        <location filename="../core/main.cpp" line="663"/>
         <source>Retry</source>
         <translation type="unfinished">重试</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="637"/>
+        <location filename="../core/main.cpp" line="639"/>
         <source>Cancel Import and Start QLog</source>
         <translation type="unfinished">取消导入并启动 QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="638"/>
-        <location filename="../core/main.cpp" line="663"/>
+        <location filename="../core/main.cpp" line="640"/>
+        <location filename="../core/main.cpp" line="666"/>
         <source>Exit QLog</source>
         <translation type="unfinished">退出 QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="656"/>
+        <location filename="../core/main.cpp" line="648"/>
+        <source>Cancel Unpacking</source>
+        <translation type="unfinished">取消解压</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="659"/>
         <source>You can continue logging and decide again at the next startup. Packing or unpacking data and settings remains unavailable until recovery is finished or stopped.
 
 Retrying recovery may overwrite passwords changed manually. Stopping recovery keeps the current passwords; missing passwords must be entered manually, and old passwords may remain stored.</source>
@@ -11630,27 +12457,27 @@ Retrying recovery may overwrite passwords changed manually. Stopping recovery ke
 重试恢复可能会覆盖手动更改的密码。停止恢复会保留当前密码；缺失的密码需要手动输入，旧密码也可能仍被保留。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="664"/>
         <source>Continue Logging</source>
         <translation type="unfinished">继续记录通联</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="662"/>
+        <location filename="../core/main.cpp" line="665"/>
         <source>Stop Password Recovery</source>
         <translation type="unfinished">停止密码恢复</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="679"/>
+        <location filename="../core/main.cpp" line="682"/>
         <source>QLog Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="679"/>
+        <location filename="../core/main.cpp" line="682"/>
         <source>Could not complete reference-list initialization.</source>
         <translation type="unfinished">无法完成参考列表初始化。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="684"/>
+        <location filename="../core/main.cpp" line="687"/>
         <source>Starting Application</source>
         <translation>启动应用程序</translation>
     </message>
@@ -11776,244 +12603,578 @@ Retrying recovery may overwrite passwords changed manually. Stopping recovery ke
         </translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="346"/>
-        <location filename="../core/LogDatabase.cpp" line="355"/>
-        <location filename="../core/LogDatabase.cpp" line="371"/>
-        <location filename="../core/LogDatabase.cpp" line="390"/>
-        <source>Not a valid QLog database</source>
-        <translation>不是有效的 QLog 数据库</translation>
+        <location filename="../core/LogDatabase.cpp" line="173"/>
+        <source>Cannot copy the logbook database %1 because it is not open.</source>
+        <translation type="unfinished">无法复制通联日志数据库 %1，因为它尚未打开。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="363"/>
-        <source>Database version too new (requires newer QLog version)</source>
-        <translation>数据库版本过新（需要更新的 QLog 版本）</translation>
+        <location filename="../core/LogDatabase.cpp" line="183"/>
+        <source>No file name was provided for the database copy.</source>
+        <translation type="unfinished">未提供数据库副本的文件名。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="381"/>
-        <source>Database is not QLog Export file</source>
-        <translation>数据库不是 QLog 导出文件</translation>
+        <location filename="../core/LogDatabase.cpp" line="192"/>
+        <source>Cannot access the logbook database %1 for copying. The database driver does not support this operation.</source>
+        <translation type="unfinished">无法访问通联日志数据库 %1 以进行复制。数据库驱动程序不支持此操作。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="513"/>
+        <location filename="../core/LogDatabase.cpp" line="210"/>
+        <source>Cannot open the destination for a database copy %1:
+%2</source>
+        <translation type="unfinished">无法打开数据库副本的目标文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="220"/>
+        <source>Cannot start copying the logbook database to %1:
+%2</source>
+        <translation type="unfinished">无法开始将通联日志数据库复制到 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="255"/>
+        <source>Cannot copy the logbook data to %1:
+%2</source>
+        <translation type="unfinished">无法将通联日志数据复制到 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="267"/>
+        <source>Cannot finish the logbook database copy %1:
+%2</source>
+        <translation type="unfinished">无法完成将通联日志数据库复制到 %1 的操作：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="307"/>
+        <source>Cannot open the logbook database %1:
+%2</source>
+        <translation type="unfinished">无法打开通联日志数据库 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="314"/>
+        <source>Cannot enable logbook data checks in %1:
+%2</source>
+        <translation type="unfinished">无法在 %1 中启用通联日志数据检查：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="320"/>
+        <source>Cannot enable safe database writes in %1:
+%2</source>
+        <translation type="unfinished">无法在 %1 中启用数据库安全写入：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="330"/>
+        <source>Cannot initialize the logbook database functions in %1.</source>
+        <translation type="unfinished">无法初始化 %1 中的通联日志数据库函数。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="361"/>
+        <source>Cannot open the database for unpacking inspection %1:
+%2</source>
+        <translation type="unfinished">无法打开数据库 %1 以进行解压检查：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="373"/>
+        <source>Cannot read the database format version from %1:
+%2</source>
+        <translation type="unfinished">无法从 %1 中读取数据库格式版本：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="374"/>
+        <source>The database format version is missing from %1.</source>
+        <translation type="unfinished">%1 中缺少数据库格式版本。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="383"/>
+        <source>The database format version is invalid in %1.</source>
+        <translation type="unfinished">%1 中的数据库格式版本无效。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="391"/>
+        <source>Cannot unpack database %1: its format version is %2, but this QLog supports up to %3. Use a newer QLog version to unpack it.</source>
+        <translation type="unfinished">无法解压数据库 %1：其格式版本为 %2，但此版本的 QLog 最高仅支持 %3。请使用更新版本的 QLog 解压。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="400"/>
+        <source>Cannot inspect contacts in the unpacked database %1:
+%2</source>
+        <translation type="unfinished">无法检查解压后数据库 %1 中的通联记录：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="411"/>
+        <source>Cannot read the export platform from %1:
+%2</source>
+        <translation type="unfinished">无法从 %1 中读取导出平台信息：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="412"/>
+        <source>The export platform is missing from %1. Choose a file created by Pack Data &amp; Settings.</source>
+        <translation type="unfinished">%1 中缺少导出平台信息。请选择通过“打包数据 &amp; 设置”创建的文件。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="421"/>
+        <source>Cannot inspect saved passwords in the unpacked database %1:
+%2</source>
+        <translation type="unfinished">无法检查解压后数据库 %1 中已保存的密码：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="473"/>
+        <source>The unpacking progress file %1 contains incomplete or invalid recovery data.</source>
+        <translation type="unfinished">解压进度文件 %1 中的恢复数据不完整或无效。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="477"/>
+        <source>Cannot open the unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">无法打开解压进度文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="487"/>
+        <source>Cannot read the unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">无法读取解压进度文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="493"/>
+        <source>Cannot understand the unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">无法解析解压进度文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="545"/>
+        <source>Cannot save import progress %1:
+%2</source>
+        <translation type="unfinished">无法保存导入进度 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="563"/>
         <source>An unfinished import already exists in %1. Preserve these files and finish or explicitly cancel that import first.</source>
         <translation type="unfinished">%1 中已有未完成的导入。请保留这些文件，先完成或明确取消该导入。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="522"/>
+        <location filename="../core/LogDatabase.cpp" line="572"/>
         <source>The active database cannot be used as an import candidate.</source>
         <translation type="unfinished">不能将当前使用的数据库作为待导入数据库。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="525"/>
+        <location filename="../core/LogDatabase.cpp" line="575"/>
         <source>The import passphrase is required.</source>
         <translation type="unfinished">必须提供导入口令。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="529"/>
+        <location filename="../core/LogDatabase.cpp" line="579"/>
         <source>The source database has unfinished writes and cannot be imported.</source>
         <translation type="unfinished">源数据库有尚未完成的写入，无法导入。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="569"/>
-        <source>The temporary database files could not be released for import.</source>
-        <translation type="unfinished">无法在导入前清理临时数据库文件。</translation>
+        <location filename="../core/LogDatabase.cpp" line="621"/>
+        <source>Cannot remove temporary import file %1:
+%2</source>
+        <translation type="unfinished">无法删除临时导入文件 %1：
+%2</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="572"/>
-        <source>Failed to prepare the database for import.</source>
-        <translation type="unfinished">准备数据库导入失败。</translation>
+        <location filename="../core/LogDatabase.cpp" line="627"/>
+        <source>Cannot open the unpacked database for import preparation %1:
+%2</source>
+        <translation type="unfinished">无法打开解压后的数据库 %1 以准备导入：
+%2</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="575"/>
+        <location filename="../core/LogDatabase.cpp" line="629"/>
+        <source>Cannot prepare imported database %1:
+%2</source>
+        <translation type="unfinished">无法准备待导入的数据库 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="642"/>
+        <source>Cannot move unpacked database to %1:
+%2</source>
+        <translation type="unfinished">无法将解压后的数据库移至 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="659"/>
+        <source>Cannot read unpacked database %1:
+%2</source>
+        <translation type="unfinished">无法读取解压后的数据库 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="660"/>
+        <source>Cannot save imported database %1:
+%2</source>
+        <translation type="unfinished">无法保存导入的数据库 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="678"/>
+        <source>%1
+The current database was preserved.</source>
+        <translation type="unfinished">%1
+当前数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="693"/>
+        <source>The database is still in use.</source>
+        <translation type="unfinished">数据库仍在使用中。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="694"/>
+        <source>Cannot finish pending database writes in %1:
+%2</source>
+        <translation type="unfinished">无法完成 %1 中待处理的数据库写入：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="704"/>
+        <source>Cannot remove the temporary file after finishing database writes %1:
+%2</source>
+        <translation type="unfinished">完成数据库写入后，无法删除临时文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="736"/>
+        <source>Cannot read the logbook identity from %1:
+%2</source>
+        <translation type="unfinished">无法从 %1 中读取通联日志标识：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="743"/>
+        <source>Cannot open the database to check its logbook identity %1:
+%2</source>
+        <translation type="unfinished">无法打开数据库 %1 以检查其通联日志标识：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="800"/>
+        <source>Cannot read the data needed to cancel unpacking:
+%1</source>
+        <translation type="unfinished">无法读取取消解压所需的数据：
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="802"/>
+        <source>The import files in %1 are inconsistent, so unpacking cannot be cancelled safely. Its recovery files were preserved.</source>
+        <translation type="unfinished">%1 中的导入文件不一致，无法安全取消解压。相关恢复文件已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="821"/>
+        <source>Cannot record the cancellation of unpacking:
+%1
+Retry cancellation before restarting.</source>
+        <translation type="unfinished">无法记录解压取消操作：
+%1
+请在重启前重试取消操作。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="825"/>
+        <source>Cannot remove the prepared database while cancelling unpacking %1:
+%2
+The import may still run at the next startup.</source>
+        <translation type="unfinished">取消解压时，无法删除已准备好的数据库 %1：
+%2
+下次启动时仍可能执行导入。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="828"/>
+        <source>The prepared import was removed, but its cancellation could not be recorded:
+%1
+The current database was preserved.</source>
+        <translation type="unfinished">已移除准备好的导入数据，但无法记录取消操作：
+%1
+当前数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="839"/>
+        <source>Cannot move the cancelled import from %1 to %2:
+%3
+All recovery files were preserved.</source>
+        <translation type="unfinished">无法将已取消的导入数据从 %1 移至 %2：
+%3
+所有恢复文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="849"/>
+        <source>Cannot restore the original database from %1 to %2 after cancelling unpacking:
+%3</source>
+        <translation type="unfinished">取消解压后，无法将原数据库从 %1 恢复至 %2：
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="857"/>
+        <source>Cannot remove a temporary file after cancelling unpacking %1:
+%2</source>
+        <translation type="unfinished">取消解压后，无法删除临时文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="865"/>
+        <source>Cannot remove the cancelled unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">无法删除已取消解压操作的进度文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="884"/>
+        <source>Cannot resume unpacking:
+%1
+Preserve these files and prepare the import again.</source>
+        <translation type="unfinished">无法继续解压：
+%1
+请保留这些文件，并重新准备导入。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="959"/>
+        <source>Cannot resume unpacked password recovery:
+%1
+All recovery files were preserved.</source>
+        <translation type="unfinished">无法继续从解压数据中恢复密码：
+%1
+所有恢复文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="990"/>
+        <source>Cannot validate the prepared import:
+%1
+The original database was preserved.</source>
+        <translation type="unfinished">无法验证已准备好的导入数据：
+%1
+原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="994"/>
+        <source>The prepared import database %1 does not match its recovery data in %2. The original database was preserved.</source>
+        <translation type="unfinished">已准备好的导入数据库 %1 与 %2 中的恢复数据不匹配。原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1000"/>
+        <source>%1
+The original database was preserved while preparing the import.</source>
+        <translation type="unfinished">%1
+准备导入时，原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1061"/>
+        <source>Cannot record that the unpacked database is ready:
+%1
+The original database was preserved.</source>
+        <translation type="unfinished">无法记录解压后数据库的就绪状态：
+%1
+原数据库已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1084"/>
+        <source>Cannot verify the files before replacing the logbook database:
+%1</source>
+        <translation type="unfinished">替换通联日志数据库前，无法验证文件：
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1097"/>
+        <source>Cannot resume database replacement in %1 because its files do not match the unpacking progress file %2. All recovery files were preserved.</source>
+        <translation type="unfinished">无法继续替换 %1 中的数据库，因为其中的文件与解压进度文件 %2 不匹配。所有恢复文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1106"/>
+        <source>%1
+The resumed import recovery files were preserved.</source>
+        <translation type="unfinished">%1
+已保留本次继续导入时使用的恢复文件。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1126"/>
+        <source>Cannot open the original logbook database before import %1:
+%2</source>
+        <translation type="unfinished">导入前，无法打开原通联日志数据库 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1138"/>
+        <source>Cannot preserve the original logbook database by moving %1 to %2:
+%3
+Import was stopped.</source>
+        <translation type="unfinished">无法通过将 %1 移至 %2 来保留原通联日志数据库：
+%3
+导入已停止。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1148"/>
+        <source>Cannot install the unpacked database by moving %1 to %2:
+%3
+All recovery files were preserved.</source>
+        <translation type="unfinished">无法将解压后的数据库从 %1 移至 %2 以完成替换：
+%3
+所有恢复文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1154"/>
+        <source>The unpacked database is installed, but this step could not be recorded:
+%1
+Restart to retry.</source>
+        <translation type="unfinished">解压后的数据库已就位，但无法记录此步骤：
+%1
+请重启以重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1181"/>
+        <source>The active unpacked database %1 does not match its recovery record %2. All files were preserved.</source>
+        <translation type="unfinished">当前使用的解压后数据库 %1 与其恢复记录 %2 不匹配。所有文件均已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1183"/>
+        <source>Cannot verify the active unpacked database:
+%1</source>
+        <translation type="unfinished">无法验证当前使用的解压后数据库：
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1207"/>
+        <source>Cannot record the decision to stop unpacked password recovery:
+%1
+Recovery data was preserved.</source>
+        <translation type="unfinished">无法记录停止从解压数据中恢复密码的决定：
+%1
+恢复数据已保留。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1217"/>
+        <source>The database was imported, but its saved passwords could not be decrypted.</source>
+        <translation type="unfinished">数据库已导入，但无法解密其中保存的密码。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1221"/>
+        <source>The database was imported, but its passwords could not be saved securely on this computer.</source>
+        <translation type="unfinished">数据库已导入，但无法在此计算机上安全保存其中的密码。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1251"/>
+        <source>The database was imported, but the previous saved passwords could not be removed.</source>
+        <translation type="unfinished">数据库已导入，但无法删除先前保存的密码。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1253"/>
+        <source>Cannot record completion of unpacked password recovery:
+%1</source>
+        <translation type="unfinished">无法记录从解压数据中恢复密码的完成状态：
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1260"/>
+        <source>Cannot start cleaning up unpacked database settings in %1:
+%2
+Restart to retry.</source>
+        <translation type="unfinished">无法开始清理解压后数据库 %1 中的设置：
+%2
+请重启以重试。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1267"/>
+        <source>Cannot remove the imported password data from the logbook database %1.</source>
+        <translation type="unfinished">无法从通联日志数据库 %1 中删除导入的密码数据。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1269"/>
+        <source>Cannot remove the import platform marker from the logbook database %1.</source>
+        <translation type="unfinished">无法从通联日志数据库 %1 中删除导入平台标记。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1271"/>
+        <source>Cannot save the completed import cleanup in %1:
+%2</source>
+        <translation type="unfinished">无法在 %1 中保存导入清理结果：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1280"/>
+        <source>%1
+The import is complete. Restart to retry cleanup.</source>
+        <translation type="unfinished">%1
+导入已完成。请重启以重试清理。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1289"/>
+        <source>Import cleanup is waiting because the original database still has a temporary file %1.</source>
+        <translation type="unfinished">原数据库仍有关联的临时文件 %1，导入清理操作正在等待。</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1293"/>
+        <source>Cannot remove the original database after successful unpacking %1:
+%2</source>
+        <translation type="unfinished">解压成功后，无法删除原数据库 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1296"/>
+        <source>Cannot remove the completed unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">无法删除已完成解压操作的进度文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="633"/>
         <source>Failed to save the import passphrase.</source>
         <translation type="unfinished">无法保存导入口令。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="609"/>
-        <source>Failed to prepare the database for import. The current database was preserved.</source>
-        <translation type="unfinished">准备数据库导入失败。当前数据库已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="713"/>
-        <source>This import cannot be cancelled safely. Its recovery files were preserved.</source>
-        <translation type="unfinished">无法安全取消此次导入。其恢复文件已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="730"/>
-        <source>Cancellation could not be recorded. All recovery files were preserved; retry cancellation before restarting.</source>
-        <translation type="unfinished">无法记录取消状态。所有恢复文件均已保留；请在重启前重试取消操作。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="733"/>
-        <source>Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting.</source>
-        <translation type="unfinished">取消失败。准备好的导入操作仍然存在，可能在下次启动时执行。请保留相关文件，并在重启前解决取消失败的问题。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="735"/>
-        <source>The import candidate was removed, but cancellation could not be recorded. The current database was preserved.</source>
-        <translation type="unfinished">待导入数据库已移除，但无法记录取消状态。当前数据库已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="744"/>
-        <source>The cancelled import could not be moved aside. All recovery files were preserved.</source>
-        <translation type="unfinished">导入已取消，但无法移走导入的数据库。所有恢复文件均已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="751"/>
-        <source>The original database could not be restored. Retry cancellation to finish restoring it.</source>
-        <translation type="unfinished">无法还原原数据库。请重试取消操作以完成还原。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="756"/>
-        <source>The import was cancelled, but its temporary files could not be removed.</source>
-        <translation type="unfinished">导入已取消，但无法移除其临时文件。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="812"/>
-        <source>The database could not be opened. Logging cannot continue. Any import recovery files were preserved.</source>
-        <translation type="unfinished">无法打开数据库，无法继续记录通联。导入恢复文件均已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="818"/>
-        <source>The database could not be opened or migrated. Logging cannot continue. Any import recovery files were preserved.</source>
-        <translation type="unfinished">无法打开或迁移数据库，无法继续记录通联。导入恢复文件均已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="833"/>
+        <location filename="../core/LogDatabase.cpp" line="933"/>
         <source>Password recovery is unfinished. You can retry it or continue logging.</source>
         <translation type="unfinished">密码恢复尚未完成。您可以重试，也可以继续记录通联。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="849"/>
+        <location filename="../core/LogDatabase.cpp" line="949"/>
         <source>Password recovery requires the active database to be initialized first.</source>
         <translation type="unfinished">恢复密码前，需要先初始化当前使用的数据库。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="1080"/>
-        <source>The decision to stop password recovery could not be saved. Recovery data was preserved.</source>
-        <translation type="unfinished">无法保存停止密码恢复的选择。恢复数据已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1090"/>
-        <location filename="../core/LogDatabase.cpp" line="1094"/>
-        <source>The database was imported, but some passwords could not be restored.</source>
-        <translation type="unfinished">数据库已导入，但部分密码无法恢复。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1124"/>
-        <source>The database was imported, but password replacement could not be completed.</source>
-        <translation type="unfinished">数据库已导入，但未能完成密码替换。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1148"/>
+        <location filename="../core/LogDatabase.cpp" line="1285"/>
         <source>The import is complete, but its saved passphrase could not be removed.</source>
         <translation type="unfinished">导入已完成，但无法移除为此次导入保存的口令。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="1154"/>
-        <source>The import is complete, but its recovery files could not be removed.</source>
-        <translation type="unfinished">导入已完成，但无法移除其恢复文件。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="762"/>
-        <source>The import was cancelled, but its progress file could not be removed.</source>
-        <translation type="unfinished">导入已取消，但无法移除其进度文件。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="781"/>
-        <source>The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.</source>
-        <translation type="unfinished">未完成的导入缺少准备数据，或准备数据无效。请保留 %1 中的文件，并手动重新准备导入。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="893"/>
-        <source>The prepared import does not match its recovery files. The original database was preserved.</source>
-        <translation type="unfinished">准备好的导入操作与其恢复文件不匹配。原数据库已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="896"/>
-        <source>The imported database could not be opened or migrated. The original database was preserved.</source>
-        <translation type="unfinished">无法打开或迁移导入的数据库。原数据库已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="918"/>
+        <location filename="../core/LogDatabase.cpp" line="1022"/>
         <source>Failed to start the import settings transaction.</source>
         <translation type="unfinished">无法启动用于导入设置的事务。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="930"/>
+        <location filename="../core/LogDatabase.cpp" line="1034"/>
         <source>Import settings could not be applied. The original database was preserved.</source>
         <translation type="unfinished">无法应用导入的设置。原数据库已保留。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="947"/>
+        <location filename="../core/LogDatabase.cpp" line="1051"/>
         <source>The imported database failed its integrity check. The original database was preserved.</source>
         <translation type="unfinished">导入的数据库未通过完整性检查。原数据库已保留。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="952"/>
+        <location filename="../core/LogDatabase.cpp" line="1056"/>
         <source>The import passphrase is unavailable or the passwords could not be decrypted. All recovery files were preserved.</source>
         <translation type="unfinished">导入口令不可用，或无法解密密码。所有恢复文件均已保留。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="955"/>
-        <source>Failed to finalize the prepared database. The original database was preserved.</source>
-        <translation type="unfinished">无法对准备好的数据库完成最终处理。原数据库已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="988"/>
-        <source>The interrupted import has inconsistent recovery files. All files were preserved for recovery.</source>
-        <translation type="unfinished">中断导入的恢复文件不一致。所有文件均已保留，以便恢复。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="993"/>
-        <source>The prepared database could not be opened or migrated. Its recovery files were preserved.</source>
-        <translation type="unfinished">无法打开或迁移已准备好的数据库。其恢复文件已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="995"/>
+        <location filename="../core/LogDatabase.cpp" line="1108"/>
         <source>The import passwords could not be restored. All recovery files were preserved.</source>
         <translation type="unfinished">无法恢复导入的密码。所有恢复文件均已保留。</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="997"/>
-        <source>Failed to finish database writes before import.</source>
-        <translation type="unfinished">无法在导入前完成数据库写入。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1003"/>
+        <location filename="../core/LogDatabase.cpp" line="1116"/>
         <source>Failed to discard prepared reference lists before import.</source>
         <translation type="unfinished">无法在导入前清除已准备的参考列表。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1019"/>
-        <source>The original database could not be preserved. Import was stopped.</source>
-        <translation type="unfinished">无法保留原数据库。导入已停止。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1026"/>
-        <source>The prepared database could not be installed. All recovery files were preserved.</source>
-        <translation type="unfinished">无法将准备好的数据库放置到位。所有恢复文件均已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1031"/>
-        <source>The imported database was installed, but its progress could not be saved. Restart to retry.</source>
-        <translation type="unfinished">导入的数据库已就位，但无法保存导入进度。请重启后重试。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="859"/>
-        <location filename="../core/LogDatabase.cpp" line="1056"/>
-        <source>The imported database does not match its recovery files. All files were preserved.</source>
-        <translation type="unfinished">导入的数据库与其恢复文件不匹配。所有文件均已保留。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1131"/>
-        <source>The import is complete, but cleanup could not be started. Restart to retry.</source>
-        <translation type="unfinished">导入已完成，但无法开始清理。请重启后重试。</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1143"/>
-        <source>The import is complete, but cleanup failed. Restart to retry.</source>
-        <translation type="unfinished">导入已完成，但清理失败。请重启后重试。</translation>
     </message>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="21"/>
@@ -12212,102 +13373,133 @@ Retrying recovery may overwrite passwords changed manually. Stopping recovery ke
         <translation>导出筛选结果</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="139"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="140"/>
         <source>Date (Newest)</source>
         <translation>日期（最新）</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="140"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="141"/>
         <source>Date (Oldest)</source>
         <translation>日期（最旧）</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="141"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="142"/>
         <source>Callsign (A-Z)</source>
         <translation>呼号（A-Z）</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="142"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="143"/>
         <source>Callsign (Z-A)</source>
         <translation>呼号（Z-A）</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/QSLGalleryDialog.cpp" line="165"/>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="423"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="166"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="424"/>
         <source>%n QSL card(s)</source>
         <translation>
             <numerusform>%n 张 QSL 卡片</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="190"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="191"/>
         <source>All QSL Cards</source>
         <translation>所有 QSL 卡片</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="196"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="197"/>
         <source>Favorites</source>
         <translation>收藏</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="204"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="205"/>
         <source>By Country</source>
         <translation>按国家/地区</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="224"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="225"/>
         <source>By Date</source>
         <translation>按日期</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="253"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="254"/>
         <source>By Band</source>
         <translation>按波段</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="267"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="268"/>
         <source>By Mode</source>
         <translation>按模式</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="281"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="282"/>
         <source>By Continent</source>
         <translation>按洲别</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="566"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="567"/>
         <source>Remove from Favorites</source>
         <translation>从收藏中移除</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="566"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="567"/>
         <source>Add to Favorites</source>
         <translation>添加到收藏</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="569"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="570"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="570"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="571"/>
         <source>Save...</source>
         <translation>保存...</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="638"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="639"/>
         <source>Save QSL Card</source>
         <translation>保存 QSL 卡片</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="686"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="687"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="743"/>
         <source>Export QSL Cards</source>
         <translation>导出 QSL 卡片</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="727"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="724"/>
+        <source>Cannot create the exported QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">无法创建导出的 QSL 图库图片 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="726"/>
+        <source>Cannot write the exported QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">无法写入导出的 QSL 图库图片 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="728"/>
+        <source>Cannot finish writing the exported QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">无法完成导出的 QSL 图库图片 %1 的写入：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="740"/>
         <source>Exported %1 of %2 cards</source>
         <translation>已导出 %1 / %2 张卡片</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="744"/>
+        <source>Exported %1 of %2 cards.
+
+%3</source>
+        <translation type="unfinished">已导出 %1 张 QSL 卡，共 %2 张。
+
+%3</translation>
     </message>
 </context>
 <context>
@@ -12465,7 +13657,7 @@ Retrying recovery may overwrite passwords changed manually. Stopping recovery ke
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="335"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="58"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="61"/>
         <source>QSL Card</source>
         <translation>QSL 卡片</translation>
     </message>
@@ -12698,13 +13890,13 @@ Retrying recovery may overwrite passwords changed manually. Stopping recovery ke
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1420"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1138"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1141"/>
         <source>No matching QSOs found</source>
         <translation>未找到匹配的 QSO</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1520"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1177"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1180"/>
         <source>Page 0 of 0</source>
         <translation>第 0 页，共 0 页</translation>
     </message>
@@ -12729,148 +13921,262 @@ Retrying recovery may overwrite passwords changed manually. Stopping recovery ke
         <translation>导出为图像</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="57"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="60"/>
         <source>Label Sheet</source>
         <translation>标签纸</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="65"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="71"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="340"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="399"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="68"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="74"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="343"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="402"/>
         <source>Custom</source>
         <translation>自定义</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="631"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="634"/>
         <source>Empty</source>
         <translation>空</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="614"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="617"/>
         <source>QSOs matching this station profile</source>
         <translation>匹配此台站配置的 QSO</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="60"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="63"/>
         <source>Callsign</source>
         <translation type="unfinished">呼号</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="61"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="64"/>
         <source>QSL Route</source>
         <translation type="unfinished">QSL 寄送途径</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="758"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="761"/>
         <source>Select Label Text Color</source>
         <translation>选择标签文本颜色</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="774"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="777"/>
         <source>Select Label Background Color</source>
         <translation>选择标签背景颜色</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="789"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="799"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="808"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="792"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="802"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="811"/>
         <source>Select QSL Card Background</source>
         <translation>选择 QSL 卡片背景</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="791"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="794"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp)</source>
         <translation>图像 (*.png *.jpg *.jpeg *.bmp)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="800"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="803"/>
         <source>Cannot read selected image file.</source>
         <translation>无法读取选定的图像文件。</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="809"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="812"/>
         <source>Selected file is not a valid image.</source>
         <translation>选定的文件不是有效的图像。</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1052"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1055"/>
         <source>Loading QSOs...</source>
         <translation type="unfinished">正在加载 QSO...</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1054"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1057"/>
         <source>Updating labels...</source>
         <translation type="unfinished">正在更新标签...</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1114"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1117"/>
         <source>Cards: %1 (%2 pages)</source>
         <translation>卡片: %1 (%2 页)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1118"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1121"/>
         <source>Labels: %1 (%2 pages)</source>
         <translation>标签: %1 (%2 页)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1136"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1139"/>
         <source>The QSL card does not fit on the selected page size</source>
         <translation>QSL 卡片不适合所选页面尺寸</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1175"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1178"/>
         <source>Page %1 of %2</source>
         <translation>第 %1 页，共 %2 页</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1226"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1218"/>
+        <source>Print Failed</source>
+        <translation type="unfinished">打印失败</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1218"/>
+        <source>Cannot print QSLs. QSOs were not marked as sent.</source>
+        <translation type="unfinished">无法打印 QSL 卡。通联记录未标记为已发送 QSL 卡。</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1233"/>
         <source>Export PDF</source>
         <translation>导出 PDF</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1228"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1235"/>
         <source>PDF Files (*.pdf)</source>
         <translation>PDF 文件 (*.pdf)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1252"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1279"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1315"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1248"/>
+        <source>Cannot create the QSL PDF export %1:
+%2</source>
+        <translation type="unfinished">无法创建 QSL PDF 导出文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1250"/>
+        <source>Cannot render the QSL PDF export %1:
+%2</source>
+        <translation type="unfinished">无法渲染 QSL PDF 导出文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1251"/>
+        <source>The QSL pages could not be rendered.</source>
+        <translation type="unfinished">无法渲染 QSL 页面。</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1253"/>
+        <source>Cannot finish writing the QSL PDF export %1:
+%2</source>
+        <translation type="unfinished">无法完成 QSL PDF 导出文件 %1 的写入：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1255"/>
+        <source>Cannot save the completed QSL PDF export as %1:
+%2</source>
+        <translation type="unfinished">无法将已完成的 QSL PDF 导出文件保存为 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1259"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1270"/>
+        <source>Export QSL PDF</source>
+        <translation type="unfinished">导出 QSL PDF</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1260"/>
+        <source>%1
+
+QSOs were not marked as sent.</source>
+        <translation type="unfinished">%1
+
+QSOs 没有标记为已发送。</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1271"/>
+        <source>Cannot complete the QSL PDF output %1. QSOs were not marked as sent.</source>
+        <translation type="unfinished">无法完成 QSL PDF 输出 %1。QSOs 没有标记为已发送。</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1287"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1314"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1363"/>
         <source>Export QSL Card Images</source>
         <translation>导出 QSL 卡片图像</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1280"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1315"/>
         <source>Some image files already exist. Overwrite them?</source>
         <translation>一些图像文件已存在。要覆盖它们吗？</translation>
     </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1334"/>
+        <source>Cannot render the QSL card image %1.</source>
+        <translation type="unfinished">无法渲染 QSL 卡片图像 %1。</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1341"/>
+        <source>Cannot create the rendered QSL card image file %1:
+%2</source>
+        <translation type="unfinished">无法创建渲染后的 QSL 卡片图像文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1350"/>
+        <source>Cannot write the rendered QSL card image as JPEG %1:
+%2</source>
+        <translation type="unfinished">无法将渲染后的 QSL 卡片图像写入 JPEG 文件 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1356"/>
+        <source>Cannot finish writing the rendered QSL card image %1:
+%2</source>
+        <translation type="unfinished">无法完成渲染后的 QSL 卡片图像 %1 的写入：
+%2</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1321"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1369"/>
         <source>Exported %n QSL card image(s).</source>
         <translation>
             <numerusform>已导出 %n 张 QSL 卡片图像。</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1328"/>
-        <source>Exported %1 of %2 QSL card images.</source>
-        <translation>已导出 %1 / %2 张 QSL 卡片图像。</translation>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1375"/>
+        <source>Exported %1 of %2 QSL card images.
+
+%3
+
+QSOs were not marked as sent.</source>
+        <translation type="unfinished">已导出 %1 / %2 张 QSL 卡片图像。
+
+%3
+
+QSOs 没有标记为已发送。</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1333"/>
-        <source>QSOs were not marked as sent.</source>
-        <translation>QSOs 没有标记为已发送。</translation>
-    </message>
-    <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1344"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1386"/>
         <source>Mark as Sent</source>
         <translation>标记为已发送</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1345"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1387"/>
         <source>Mark printed/exported QSOs as sent?</source>
         <translation>标记打印/导出的 QSO 为已发送？</translation>
+    </message>
+</context>
+<context>
+    <name>QSLStorage</name>
+    <message>
+        <location filename="../core/QSLStorage.cpp" line="407"/>
+        <source>Cannot look up the QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">无法查找 QSL 图库图像 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/QSLStorage.cpp" line="420"/>
+        <source>Cannot load the QSL gallery image data for %1:
+%2</source>
+        <translation type="unfinished">无法加载 %1 的 QSL 图库图像数据：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/QSLStorage.cpp" line="421"/>
+        <source>Cannot export %1. The QSL image is missing or empty.</source>
+        <translation type="unfinished">无法导出 %1。QSL 图像缺失或为空。</translation>
     </message>
 </context>
 <context>
@@ -14422,7 +15728,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3787"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3841"/>
         <source>Callsign</source>
         <translation>呼号</translation>
     </message>
@@ -14492,20 +15798,20 @@ Please install Hamlib or specify the path manually.</source>
         <location filename="../ui/SettingsDialog.ui" line="3036"/>
         <location filename="../ui/SettingsDialog.ui" line="4050"/>
         <location filename="../ui/SettingsDialog.ui" line="4193"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1025"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1225"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1367"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1483"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1552"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1623"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1637"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1706"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1803"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1901"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1915"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1985"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2079"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2196"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1029"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1229"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1371"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1487"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1556"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1627"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1641"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1710"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1807"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1905"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1919"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1989"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2083"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2200"/>
         <source>Add</source>
         <translation>添加</translation>
     </message>
@@ -15088,7 +16394,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2042"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2888"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2892"/>
         <source>Start rigctld daemon to share rig with other applications (e.g. WSJT-X)</source>
         <translation>启动 rigctld 守护进程以与其他应用程序（例如 WSJT-X）共享电台</translation>
     </message>
@@ -15214,7 +16520,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4122"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3841"/>
         <source>API Key</source>
         <translation>API密钥</translation>
     </message>
@@ -15285,9 +16591,9 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3360"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3679"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3364"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3667"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3683"/>
         <source>Custom</source>
         <translation>自定义</translation>
     </message>
@@ -15423,7 +16729,7 @@ Please install Hamlib or specify the path manually.</source>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3413"/>
         <location filename="../ui/SettingsDialog.cpp" line="661"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2698"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2702"/>
         <source>HamQTH</source>
         <translation>HamQTH</translation>
     </message>
@@ -15450,7 +16756,7 @@ Please install Hamlib or specify the path manually.</source>
         <location filename="../ui/SettingsDialog.ui" line="3453"/>
         <location filename="../ui/SettingsDialog.ui" line="3962"/>
         <location filename="../ui/SettingsDialog.cpp" line="662"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2691"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2695"/>
         <source>QRZ.com</source>
         <translation>QRZ.com</translation>
     </message>
@@ -15738,7 +17044,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="5405"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3158"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3162"/>
         <source>No successful backup yet.</source>
         <translation type="unfinished">尚无成功的备份。</translation>
     </message>
@@ -15905,7 +17211,7 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="464"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1317"/>
         <source>Special - Omnirig</source>
         <translation>特别的 - Ominirig</translation>
     </message>
@@ -15948,14 +17254,14 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="660"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2697"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2694"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2701"/>
         <source>Disabled</source>
         <translation>禁用</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="117"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1430"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1434"/>
         <source>None</source>
         <translation>无</translation>
     </message>
@@ -15971,10 +17277,10 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="124"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3358"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3615"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3659"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3675"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3362"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3619"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3679"/>
         <source>No</source>
         <translation>否</translation>
     </message>
@@ -16225,223 +17531,230 @@ Please install Hamlib or specify the path manually.</source>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="843"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1024"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1183"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1366"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1462"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1550"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1605"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1636"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1689"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1801"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1881"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1914"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1967"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2077"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2167"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1028"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1187"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1370"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1466"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1554"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1609"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1640"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1693"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1805"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1885"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1918"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1971"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2081"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2171"/>
         <source>Modify</source>
         <translation>修改</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="885"/>
-        <source>Cannot write to the backup folder. Choose another folder.</source>
-        <translation type="unfinished">无法写入备份文件夹。请选择其他文件夹。</translation>
+        <location filename="../ui/SettingsDialog.cpp" line="888"/>
+        <source>Choose a folder for the additional backup.</source>
+        <translation type="unfinished">请选择用于额外备份的文件夹。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="893"/>
+        <location filename="../ui/SettingsDialog.cpp" line="889"/>
+        <source>Cannot write to backup folder %1:
+%2</source>
+        <translation type="unfinished">无法写入备份文件夹 %1：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/SettingsDialog.cpp" line="897"/>
         <source>Could not save the backup settings.</source>
         <translation type="unfinished">无法保存备份设置。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="968"/>
-        <location filename="../ui/SettingsDialog.cpp" line="975"/>
-        <location filename="../ui/SettingsDialog.cpp" line="994"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1546"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1632"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1910"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2008"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2014"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2020"/>
+        <location filename="../ui/SettingsDialog.cpp" line="972"/>
+        <location filename="../ui/SettingsDialog.cpp" line="979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="998"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1358"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1636"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1720"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1914"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2012"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2018"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2024"/>
         <source>Must not be empty</source>
         <translation>不能为空</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2392"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2396"/>
         <source>Select File</source>
         <translation>选择文件</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2428"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2432"/>
         <source>Auto Detect</source>
         <translation>自动检测</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2429"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2433"/>
         <source>TQSL was not found on this system.
 Please install TQSL or specify the path manually.</source>
         <translation>TQSL 在此系统上未找到。
 请安装 TQSL 或手动指定路径。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2445"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2449"/>
         <source>Not found</source>
         <translation>未找到</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2787"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2791"/>
         <source>RTS is controlled by hardware flow control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2883"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2887"/>
         <source>Rig sharing is only available for Hamlib driver</source>
         <translation>天线共享仅适用于 Hamlib 驱动</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2885"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2889"/>
         <source>Rig sharing is not available for network connection</source>
         <translation>网络连接不支持天线共享</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2903"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2907"/>
         <source>Off</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2962"/>
         <source>Delete Passwords</source>
         <translation>删除密码</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2962"/>
         <source>All passwords have been deleted</source>
         <translation>所有密码已被删除</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2969"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2973"/>
         <source>Deleting all QSOs...</source>
         <translation>正在删除所有 QSO...</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2970"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2974"/>
         <source>Delete QSOs Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2991"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2991"/>
         <source>Failed to delete all QSOs.</source>
         <translation>删除所有 QSO 失败。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3145"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3149"/>
         <source>Select Backup Folder</source>
         <translation type="unfinished">选择备份文件夹</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3157"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3161"/>
         <source>Last successful internal backup: %1</source>
         <translation type="unfinished">上次成功的内部备份：%1</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3319"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3323"/>
         <source>Enabled</source>
         <translation>启用</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3320"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3324"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3325"/>
         <source>Station Profile</source>
         <translation>台站配置</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3325"/>
         <source>Missing QSL Sent</source>
         <translation>缺失的 QSL 发送</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3322"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3326"/>
         <source>Last Recovery</source>
         <translation>最后恢复</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3355"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3612"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3680"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3359"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3616"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3684"/>
         <source>Queued</source>
         <translation>排队中</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3356"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3614"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3360"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3618"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3659"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3675"/>
         <source>Ignored</source>
         <translation>已忽视</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3357"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3613"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3657"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3673"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3361"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3617"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3661"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3677"/>
         <source>Requested</source>
         <translation>已请求</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3359"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3616"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3661"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3677"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3363"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3620"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3665"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3681"/>
         <source>Yes</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3399"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3403"/>
         <source>Station Profile does not exist. Select another profile and enable this row again.</source>
         <translation>台站配置不存在。请选择另一个配置并重新启用此行。</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3419"/>
         <source>File exists</source>
         <translation>文件存在</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3419"/>
         <source>File does not exist</source>
         <translation>文件不存在</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3544"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3548"/>
         <source>Startup ADI initialized</source>
         <translation>启动 ADI 已初始化</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3558"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3562"/>
         <source>Select ADIF File</source>
         <translation>选择 ADIF 文件</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3560"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3564"/>
         <source>ADIF Files (*.adi *.adif);;All Files (*)</source>
         <translation>ADIF 文件 (*.adi *.adif);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3822"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3826"/>
         <source>members</source>
         <translation>成员</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3833"/>
         <source>Required internet connection during application start</source>
         <translation>在应用程序启动时需要互联网连接</translation>
     </message>
@@ -17443,47 +18756,47 @@ Please install TQSL or specify the path manually.</source>
 <context>
     <name>main</name>
     <message>
-        <location filename="../core/main.cpp" line="531"/>
+        <location filename="../core/main.cpp" line="532"/>
         <source>Run with the specific namespace.</source>
         <translation>使用特定的命名空间运行。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="532"/>
+        <location filename="../core/main.cpp" line="533"/>
         <source>namespace</source>
         <translation>命名空间</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="534"/>
+        <location filename="../core/main.cpp" line="535"/>
         <source>Translation file - absolute or relative path and QM file name.</source>
         <translation>翻译文件 - 绝对或相对路径及 QM 文件名。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="535"/>
+        <location filename="../core/main.cpp" line="536"/>
         <source>path/QM-filename</source>
         <translation>路径/QM-文件名</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="537"/>
+        <location filename="../core/main.cpp" line="538"/>
         <source>Set language. &lt;code&gt; example: &apos;en&apos; or &apos;en_US&apos;. Ignore environment setting.</source>
         <translation>设置语言。&lt;code&gt; 示例: &apos;en&apos; 或 &apos;en_US&apos;。忽略环境设置。</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="538"/>
+        <location filename="../core/main.cpp" line="539"/>
         <source>code</source>
         <translation>代码</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="540"/>
+        <location filename="../core/main.cpp" line="541"/>
         <source>Writes debug messages to the debug file</source>
         <translation>将调试信息写入debug文件</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="542"/>
+        <location filename="../core/main.cpp" line="543"/>
         <source>Process pending database import (internal use)</source>
         <translation>处理待处理的数据库导入（内部使用）</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="544"/>
+        <location filename="../core/main.cpp" line="545"/>
         <source>Force update of all value lists (DXCC, SATs, etc.)</source>
         <translation>强制更新所有值列表（DXCC、SATs 等）</translation>
     </message>

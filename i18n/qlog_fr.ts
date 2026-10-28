@@ -253,7 +253,7 @@
 <context>
     <name>AdiFormat</name>
     <message>
-        <location filename="../logformat/AdiFormat.cpp" line="950"/>
+        <location filename="../logformat/AdiFormat.cpp" line="959"/>
         <source>Invalid value &quot;%1&quot; for ADIF field %2; value ignored</source>
         <translation>Valeur &quot;%1&quot; non valide pour le champ ADIF %2; valeur ignorée</translation>
     </message>
@@ -1975,106 +1975,123 @@
         <translation>yyyy-mm-dd hhmm yyyy-mm-dd hhmm</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="41"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="42"/>
         <source>&amp;Export</source>
         <translation>&amp;Exporter</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="121"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="124"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="129"/>
         <source>Cabrillo Files (*.log);;CBR Files (*.cbr);;All Files (*)</source>
         <translation>Fichiers Cabrillo (*.log);;Fichiers CBR (*.cbr);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="276"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="296"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="285"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="305"/>
         <source>QSO(s): %1</source>
         <translation>QSO(s) : %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="289"/>
         <location filename="../ui/CabrilloExportDialog.cpp" line="298"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="307"/>
         <source>QSOs: ?</source>
         <translation>QSOs: ?</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="463"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="470"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="477"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="485"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="548"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="481"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="488"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="495"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="575"/>
         <source>QLog Warning</source>
         <translation>Avertissement QLog</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="464"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="482"/>
         <source>Please select a contest template.</source>
         <translation>Veuillez sélectionner un modèle de concours.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="471"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="489"/>
         <source>Please select an output file.</source>
         <translation>Veuillez sélectionner un fichier de sortie.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="478"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="496"/>
         <source>No callsign available. Check your filters.</source>
         <translation>Aucun indicatif disponible. Vérifiez vos filtres.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="486"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="504"/>
         <source>Off-Time must contain one UTC interval in the format yyyy-mm-dd hhmm yyyy-mm-dd hhmm. Use valid dates and times, with the end at or after the start.</source>
         <translation type="unfinished">Off-Time doit contenir un seul intervalle en UTC au format yyyy-mm-dd hhmm yyyy-mm-dd hhmm. Saisissez des dates et heures valides, sans que la fin précède le début.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="511"/>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="558"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="521"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="530"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="540"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="585"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="613"/>
+        <source>Export Cabrillo</source>
+        <translation type="unfinished">Exporter Cabrillo</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="522"/>
+        <source>Cannot prepare contact selection for the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer la sélection des QSO pour l’exportation Cabrillo %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="531"/>
+        <source>Cannot read contacts for the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire les QSO pour l’exportation Cabrillo %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="541"/>
+        <source>Cannot finish reading contacts for the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer la lecture des QSO pour l’exportation Cabrillo %1 :
+%2</translation>
+    </message>
+    <message>
         <location filename="../ui/CabrilloExportDialog.cpp" line="586"/>
-        <source>QLog Error</source>
-        <translation>Erreur QLog</translation>
+        <source>Cannot create the Cabrillo export file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier d’exportation Cabrillo %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="503"/>
-        <source>Failed to prepare export query.</source>
-        <translation>Impossible de préparer la requête d’exportation.</translation>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="614"/>
+        <source>Cannot finish saving the Cabrillo export %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’enregistrement de l’exportation Cabrillo %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="511"/>
-        <source>Failed to query QSOs for export.</source>
-        <translation>Impossible de récupérer les QSO pour l’exportation.</translation>
-    </message>
-    <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="549"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="576"/>
         <source>Cabrillo does not define a frequency designator for band-only QSO(s) on: %1. Enter an exact frequency or exclude these QSOs from the export.</source>
         <translation>Cabrillo ne définit pas d’identificateur de fréquence pour les QSO ne contenant que la bande sur : %1. Saisissez une fréquence exacte ou excluez ces QSO de l’exportation.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="559"/>
-        <source>Cannot open file %1 for writing.</source>
-        <translation>Impossible d’ouvrir le fichier %1 en écriture.</translation>
-    </message>
-    <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="569"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="596"/>
         <source>Exporting Cabrillo...</source>
         <translation>Exportation Cabrillo…</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="570"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="597"/>
         <source>Cabrillo Export Progress</source>
         <translation>Progression de l’exportation Cabrillo</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="587"/>
-        <source>Failed to write Cabrillo file %1.</source>
-        <translation type="unfinished">Impossible d’écrire le fichier Cabrillo %1.</translation>
-    </message>
-    <message>
-        <location filename="../ui/CabrilloExportDialog.cpp" line="591"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="618"/>
         <source>QLog Information</source>
         <translation>Information QLog</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/CabrilloExportDialog.cpp" line="592"/>
+        <location filename="../ui/CabrilloExportDialog.cpp" line="619"/>
         <source>Exported %n QSO(s) to Cabrillo file.</source>
         <translation>
             <numerusform>%n QSO exportés dans le fichier Cabrillo.</numerusform>
@@ -2468,88 +2485,123 @@
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="346"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="350"/>
         <source>New Template</source>
         <translation>Nouveau modèle</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="380"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="384"/>
         <source>Copy - %1</source>
         <translation>Copie – %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="402"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="406"/>
         <source>Delete Template</source>
         <translation>Supprimer le modèle</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="403"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="407"/>
         <source>Delete template &apos;%1&apos;?</source>
         <translation>Supprimer le modèle «%1» ?</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="470"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="474"/>
         <source>Import Template</source>
         <translation>Importer un modèle</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="472"/>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="525"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="476"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="529"/>
         <source>QLog Cabrillo Template (*.qct)</source>
         <translation>Modèle Cabrillo QLog (*.qct)</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="482"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="486"/>
         <source>Import Failed</source>
         <translation>Import échoué</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="522"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="526"/>
         <source>Export Template</source>
         <translation>Exporter un modèle</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="533"/>
-        <source>Export Failed</source>
-        <translation>Export échoué</translation>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="537"/>
+        <source>Export Cabrillo Template</source>
+        <translation type="unfinished">Exporter le modèle Cabrillo</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="642"/>
-        <source>Failed to write file: %1</source>
-        <translation>Impossible d’écrire le fichier : %1</translation>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="624"/>
+        <source>Cannot create the Cabrillo template file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier du modèle Cabrillo %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="658"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="633"/>
+        <source>Cannot create a temporary folder for Cabrillo template %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer un dossier temporaire pour le modèle Cabrillo %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="666"/>
+        <source>Cannot write the prepared Cabrillo template %1 in %2. Check free disk space and folder permissions.</source>
+        <translation type="unfinished">Impossible d’écrire le modèle Cabrillo préparé %1 dans %2. Vérifiez l’espace disque disponible et les droits d’accès au dossier.</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="675"/>
+        <source>Cannot open the prepared Cabrillo template %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir le modèle Cabrillo préparé %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="682"/>
+        <source>Cannot read the prepared Cabrillo template data from %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire dans %1 les données du modèle Cabrillo préparé :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="688"/>
+        <source>Cannot finish saving the Cabrillo template %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’enregistrement du modèle Cabrillo %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="704"/>
         <source>File not found: %1</source>
         <translation>Fichier introuvable : %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="669"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="715"/>
         <source>Cannot open file: %1</source>
         <translation>Impossible d’ouvrir le fichier : %1</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="681"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="727"/>
         <source>Invalid template file: missing name</source>
         <translation>Fichier de modèle invalide : nom manquant</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="718"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="764"/>
         <source>QLog Error</source>
         <translation>Erreur QLog</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="718"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="764"/>
         <source>Cannot start database transaction.</source>
         <translation>Impossible de démarrer la transaction de base de données.</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="770"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="816"/>
         <source>QLog Warning</source>
         <translation>Avertissement QLog</translation>
     </message>
     <message>
-        <location filename="../ui/CabrilloTemplateDialog.cpp" line="771"/>
+        <location filename="../ui/CabrilloTemplateDialog.cpp" line="817"/>
         <source>Cannot save template &apos;%1&apos;: %2</source>
         <translation>Impossible d’enregistrer le modèle «%1» : %2</translation>
     </message>
@@ -2731,14 +2783,320 @@
 <context>
     <name>DBSchemaMigration</name>
     <message>
-        <location filename="../core/Migration.cpp" line="48"/>
+        <location filename="../core/Migration.cpp" line="46"/>
+        <source>The database %1 uses format version %2, but this QLog supports up to %3. Use a newer QLog version to open it.</source>
+        <translation type="unfinished">La base de données %1 utilise la version %2 du format, mais cette version de QLog ne prend en charge que les versions jusqu’à %3. Utilisez une version plus récente de QLog pour l’ouvrir.</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="59"/>
+        <source>Cannot create a safety copy before updating the database %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer une copie de sécurité avant la mise à jour de la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="63"/>
         <source>Migrating the database...</source>
         <translation type="unfinished">Migration de la base de données...</translation>
     </message>
     <message>
-        <location filename="../core/Migration.cpp" line="49"/>
+        <location filename="../core/Migration.cpp" line="64"/>
         <source>Database Migration</source>
         <translation>Migration de la base de données</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="84"/>
+        <source>Cannot reopen the database after update %1 in %2:
+%3</source>
+        <translation type="unfinished">Impossible de rouvrir la base de données %2 après la mise à jour %1 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="92"/>
+        <source>Cannot initialize logbook functions after database update %1 in %2.</source>
+        <translation type="unfinished">Impossible d’initialiser les fonctions du carnet de trafic après la mise à jour %1 de la base de données %2.</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="102"/>
+        <source>Cannot start refreshing logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">Impossible de lancer l’actualisation des règles d’envoi du carnet de trafic dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="108"/>
+        <source>Cannot save the refreshed logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer les règles d’envoi actualisées du carnet de trafic dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="132"/>
+        <source>Cannot change database data checks in %1 because the database is closed.</source>
+        <translation type="unfinished">Impossible de modifier les contrôles des données dans %1, car la base de données est fermée.</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="141"/>
+        <source>The database did not accept the requested setting.</source>
+        <translation type="unfinished">La base de données n’a pas accepté le paramètre demandé.</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="142"/>
+        <source>Cannot enable database data checks in %1:
+%2</source>
+        <translation type="unfinished">Impossible d’activer les contrôles des données dans la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="143"/>
+        <source>Cannot disable database data checks for updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de désactiver les contrôles des données pour la mise à jour de la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="163"/>
+        <source>Cannot read the database format version before updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire la version du format de la base de données avant la mise à jour de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="169"/>
+        <source>Cannot load the stored database format version from %1:
+%2</source>
+        <translation type="unfinished">Impossible de charger depuis %1 la version enregistrée du format de la base de données :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="170"/>
+        <source>No database format version is recorded for updating %1.</source>
+        <translation type="unfinished">Aucune version du format de la base de données n’est enregistrée pour la mise à jour de %1.</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="177"/>
+        <source>The stored database format version is invalid in %1.</source>
+        <translation type="unfinished">La version du format enregistrée dans la base de données %1 est invalide.</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="198"/>
+        <source>Cannot prepare recording database format version %1 in %2:
+%3</source>
+        <translation type="unfinished">Impossible de préparer l’enregistrement de la version %1 du format de la base de données dans %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="205"/>
+        <source>Cannot record database format version %1 in %2:
+%3</source>
+        <translation type="unfinished">Impossible d’enregistrer la version %1 du format de la base de données dans %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="225"/>
+        <source>Cannot start database update %1 in %2:
+%3</source>
+        <translation type="unfinished">Impossible de démarrer la mise à jour %1 de la base de données %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="241"/>
+        <source>Some records refer to missing data in table %1 (row %2).</source>
+        <translation type="unfinished">Certains enregistrements font référence à des données manquantes dans la table %1 (ligne %2).</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="243"/>
+        <source>The data consistency check failed after database update %1 in %2:
+%3</source>
+        <translation type="unfinished">Le contrôle de cohérence des données a échoué après la mise à jour %1 de la base de données %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="251"/>
+        <source>Cannot save database update %1 in %2:
+%3</source>
+        <translation type="unfinished">Impossible d’enregistrer la mise à jour %1 de la base de données %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="269"/>
+        <source>Cannot open the database update file %1 for %2:
+%3</source>
+        <translation type="unfinished">Impossible d’ouvrir le fichier de mise à jour de la base de données %1 pour %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="276"/>
+        <source>Cannot read the database update file %1 for %2:
+%3</source>
+        <translation type="unfinished">Impossible de lire le fichier de mise à jour de la base de données %1 pour %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="289"/>
+        <source>Cannot apply database update %1 to %2:
+%3</source>
+        <translation type="unfinished">Impossible d’appliquer la mise à jour %1 à la base de données %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="380"/>
+        <source>Cannot prepare logbook text conversion in %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer la conversion du texte du carnet de trafic dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="386"/>
+        <source>Cannot read text fields for the database update in %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire les champs textuels pour la mise à jour de la base de données dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="402"/>
+        <source>Cannot prepare converted logbook text for saving in %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer l’enregistrement du texte converti du carnet de trafic dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="422"/>
+        <source>Cannot save converted text for contact %1 in database %2:
+%3</source>
+        <translation type="unfinished">Impossible d’enregistrer le texte converti du QSO %1 dans la base de données %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="428"/>
+        <source>Cannot finish reading logbook text while updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer la lecture du texte du carnet de trafic lors de la mise à jour de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="439"/>
+        <source>Cannot save the logbook identifier in %1 while updating its format.</source>
+        <translation type="unfinished">Impossible d’enregistrer l’identifiant du carnet de trafic dans %1 lors de la mise à jour de son format.</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="452"/>
+        <source>Cannot prepare reading station callsigns for updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer la lecture des indicatifs des stations pour la mise à jour de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="458"/>
+        <source>Cannot read station callsigns while updating database %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire les indicatifs des stations lors de la mise à jour de la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="470"/>
+        <source>Cannot prepare converted station geography in %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer les données géographiques converties des stations dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="495"/>
+        <source>Cannot save converted station geography for %1 in %2:
+%3</source>
+        <translation type="unfinished">Impossible d’enregistrer les données géographiques converties de la station %1 dans %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="502"/>
+        <source>Cannot finish reading station callsigns while updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer la lecture des indicatifs des stations lors de la mise à jour de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="532"/>
+        <source>Cannot create the callsign update rule in database %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer la règle de mise à jour des indicatifs dans la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="550"/>
+        <source>Cannot create the rule for new contact callsigns in database %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer la règle pour les indicatifs des nouveaux QSO dans la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="576"/>
+        <source>Cannot prepare QSL image conversion for database %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer la conversion des images QSL pour la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="625"/>
+        <source>Cannot prepare reading station profiles while updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer la lecture des profils de station lors de la mise à jour de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="631"/>
+        <source>Cannot read station profiles while updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire les profils de station lors de la mise à jour de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="639"/>
+        <source>Cannot prepare converted station zone data in %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer les données de zone converties des stations dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="663"/>
+        <source>Cannot save converted station zone data in %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer les données de zone converties des stations dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="670"/>
+        <source>Cannot finish reading station profiles while updating %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer la lecture des profils de station lors de la mise à jour de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1139"/>
+        <source>Cannot inspect contact fields for updated upload rules in %1:
+%2</source>
+        <translation type="unfinished">Impossible d’examiner les champs des QSO pour les règles d’envoi actualisées dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1153"/>
+        <source>Cannot finish reading contact fields for database upload rules in %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer la lecture des champs des QSO pour les règles d’envoi de la base de données dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1159"/>
+        <source>Cannot remove the previous logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer les anciennes règles d’envoi du carnet de trafic dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/Migration.cpp" line="1192"/>
+        <source>Cannot create the updated logbook upload rules in %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer les règles d’envoi actualisées du carnet de trafic dans %1 :
+%2</translation>
     </message>
 </context>
 <context>
@@ -2865,1596 +3223,1601 @@
     </message>
     <message>
         <location filename="dbstrings.tri" line="25"/>
+        <source>Turkey</source>
+        <translation type="unfinished">Turquie</translation>
+    </message>
+    <message>
+        <location filename="dbstrings.tri" line="26"/>
         <source>Austral Islands</source>
         <translation>Îles Australes</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="26"/>
+        <location filename="dbstrings.tri" line="27"/>
         <source>Australia</source>
         <translation>Australie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="27"/>
+        <location filename="dbstrings.tri" line="28"/>
         <source>Austria</source>
         <translation>Autriche</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="28"/>
+        <location filename="dbstrings.tri" line="29"/>
         <source>Aves Island</source>
         <translation>Île d&apos;Aves</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="29"/>
+        <location filename="dbstrings.tri" line="30"/>
         <source>Azerbaijan</source>
         <translation>Azerbaïdjan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="30"/>
+        <location filename="dbstrings.tri" line="31"/>
         <source>Azores</source>
         <translation>Açores</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="31"/>
+        <location filename="dbstrings.tri" line="32"/>
         <source>Bahamas</source>
         <translation>Bahamas</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="32"/>
+        <location filename="dbstrings.tri" line="33"/>
         <source>Bahrain</source>
         <translation>Bahreïn</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="33"/>
+        <location filename="dbstrings.tri" line="34"/>
         <source>Baker &amp; Howland Islands</source>
         <translation>Îles Baker &amp; Howland</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="34"/>
+        <location filename="dbstrings.tri" line="35"/>
         <source>Balearic Islands</source>
         <translation>Îles Baléares</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="35"/>
+        <location filename="dbstrings.tri" line="36"/>
         <source>Banaba Island</source>
         <translation>Île de Banaba</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="36"/>
+        <location filename="dbstrings.tri" line="37"/>
         <source>Bangladesh</source>
         <translation>Bangladesh</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="37"/>
+        <location filename="dbstrings.tri" line="38"/>
         <source>Barbados</source>
         <translation>Barbade</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="38"/>
+        <location filename="dbstrings.tri" line="39"/>
         <source>Belarus</source>
         <translation>Biélorussie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="39"/>
+        <location filename="dbstrings.tri" line="40"/>
         <source>Belgium</source>
         <translation>Belgique</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="40"/>
+        <location filename="dbstrings.tri" line="41"/>
         <source>Belize</source>
         <translation>Belize</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="41"/>
+        <location filename="dbstrings.tri" line="42"/>
         <source>Benin</source>
         <translation>Bénin</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="42"/>
+        <location filename="dbstrings.tri" line="43"/>
         <source>Bermuda</source>
         <translation>Bermudes</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="43"/>
+        <location filename="dbstrings.tri" line="44"/>
         <source>Bhutan</source>
         <translation>Bhoutan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="44"/>
+        <location filename="dbstrings.tri" line="45"/>
         <source>Bolivia</source>
         <translation>Bolivie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="45"/>
+        <location filename="dbstrings.tri" line="46"/>
         <source>Bonaire</source>
         <translation>Bonaire</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="46"/>
+        <location filename="dbstrings.tri" line="47"/>
         <source>Bosnia-Herzegovina</source>
         <translation>Bosnie-Herzégovine</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="47"/>
+        <location filename="dbstrings.tri" line="48"/>
         <source>Botswana</source>
         <translation>Botswana</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="48"/>
+        <location filename="dbstrings.tri" line="49"/>
         <source>Bouvet</source>
         <translation>Bouvet</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="49"/>
+        <location filename="dbstrings.tri" line="50"/>
         <source>Brazil</source>
         <translation>Brésil</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="50"/>
+        <location filename="dbstrings.tri" line="51"/>
         <source>British Virgin Islands</source>
         <translation>Îles Vierges britanniques</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="51"/>
+        <location filename="dbstrings.tri" line="52"/>
         <source>Brunei Darussalam</source>
         <translation>Brunei</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="52"/>
+        <location filename="dbstrings.tri" line="53"/>
         <source>Bulgaria</source>
         <translation>Bulgarie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="53"/>
+        <location filename="dbstrings.tri" line="54"/>
         <source>Burkina Faso</source>
         <translation>Burkina Faso</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="54"/>
+        <location filename="dbstrings.tri" line="55"/>
         <source>Burundi</source>
         <translation>Burundi</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="55"/>
+        <location filename="dbstrings.tri" line="56"/>
         <source>Cambodia</source>
         <translation>Cambodge</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="56"/>
+        <location filename="dbstrings.tri" line="57"/>
         <source>Cameroon</source>
         <translation>Cameroun</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="57"/>
+        <location filename="dbstrings.tri" line="58"/>
         <source>Canada</source>
         <translation>Canada</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="58"/>
+        <location filename="dbstrings.tri" line="59"/>
         <source>Canary Islands</source>
         <translation>Îles Canaries</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="59"/>
+        <location filename="dbstrings.tri" line="60"/>
         <source>Cape Verde</source>
         <translation>Cap-Vert</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="60"/>
+        <location filename="dbstrings.tri" line="61"/>
         <source>Cayman Islands</source>
         <translation>Îles Caïmans</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="61"/>
+        <location filename="dbstrings.tri" line="62"/>
         <source>Central African Republic</source>
         <translation>République centrafricaine</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="62"/>
+        <location filename="dbstrings.tri" line="63"/>
         <source>Central Kiribati</source>
         <translation>Kiribati Central</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="63"/>
+        <location filename="dbstrings.tri" line="64"/>
         <source>Ceuta &amp; Melilla</source>
         <translation>Ceuta &amp; Melilla</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="64"/>
+        <location filename="dbstrings.tri" line="65"/>
         <source>Chad</source>
         <translation>Tchad</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="65"/>
+        <location filename="dbstrings.tri" line="66"/>
         <source>Chagos Islands</source>
         <translation>Archipel des Chagos</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="66"/>
+        <location filename="dbstrings.tri" line="67"/>
         <source>Chatham Islands</source>
         <translation>Îles Chatham</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="67"/>
+        <location filename="dbstrings.tri" line="68"/>
         <source>Chesterfield Islands</source>
         <translation>Îles Chesterfield</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="68"/>
+        <location filename="dbstrings.tri" line="69"/>
         <source>Chile</source>
         <translation>Chili</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="69"/>
+        <location filename="dbstrings.tri" line="70"/>
         <source>China</source>
         <translation>Chine</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="70"/>
+        <location filename="dbstrings.tri" line="71"/>
         <source>Christmas Island</source>
         <translation>Île Christmas</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="71"/>
+        <location filename="dbstrings.tri" line="72"/>
         <source>Clipperton Island</source>
         <translation>Île de Clipperton</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="72"/>
+        <location filename="dbstrings.tri" line="73"/>
         <source>Cocos (Keeling) Islands</source>
         <translation>Îles Cocos (Keeling)</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="73"/>
+        <location filename="dbstrings.tri" line="74"/>
         <source>Cocos Island</source>
         <translation>Île de Cocos</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="74"/>
+        <location filename="dbstrings.tri" line="75"/>
         <source>Colombia</source>
         <translation>Colombie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="75"/>
+        <location filename="dbstrings.tri" line="76"/>
         <source>Comoros</source>
         <translation>Comores</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="76"/>
+        <location filename="dbstrings.tri" line="77"/>
         <source>Conway Reef</source>
         <translation>Récif Conway</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="77"/>
+        <location filename="dbstrings.tri" line="78"/>
         <source>Corsica</source>
         <translation>Corse</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="78"/>
+        <location filename="dbstrings.tri" line="79"/>
         <source>Costa Rica</source>
         <translation>Costa Rica</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="79"/>
+        <location filename="dbstrings.tri" line="80"/>
         <source>Cote d&apos;Ivoire</source>
         <translation>Côte d&apos;Ivoire</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="80"/>
+        <location filename="dbstrings.tri" line="81"/>
         <source>Crete</source>
         <translation>Crète</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="81"/>
+        <location filename="dbstrings.tri" line="82"/>
         <source>Croatia</source>
         <translation>Croatie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="82"/>
+        <location filename="dbstrings.tri" line="83"/>
         <source>Crozet Island</source>
         <translation>Île Crozet</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="83"/>
+        <location filename="dbstrings.tri" line="84"/>
         <source>Cuba</source>
         <translation>Cuba</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="84"/>
+        <location filename="dbstrings.tri" line="85"/>
         <source>Curacao</source>
         <translation>Curaçao</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="85"/>
+        <location filename="dbstrings.tri" line="86"/>
         <source>Cyprus</source>
         <translation>Chypre</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="86"/>
+        <location filename="dbstrings.tri" line="87"/>
         <source>Czech Republic</source>
         <translation>République tchèque</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="87"/>
+        <location filename="dbstrings.tri" line="88"/>
         <source>DPR of Korea</source>
         <translation>Corée du Nord</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="88"/>
+        <location filename="dbstrings.tri" line="89"/>
         <source>Dem. Rep. of the Congo</source>
         <translation>Rép. dém. du Congo</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="89"/>
+        <location filename="dbstrings.tri" line="90"/>
         <source>Denmark</source>
         <translation>Danemark</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="90"/>
+        <location filename="dbstrings.tri" line="91"/>
         <source>Desecheo Island</source>
         <translation>Île Desecheo</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="91"/>
+        <location filename="dbstrings.tri" line="92"/>
         <source>Djibouti</source>
         <translation>Djibouti</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="92"/>
+        <location filename="dbstrings.tri" line="93"/>
         <source>Dodecanese</source>
         <translation>Dodécanèse</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="93"/>
+        <location filename="dbstrings.tri" line="94"/>
         <source>Dominica</source>
         <translation>Dominique</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="94"/>
+        <location filename="dbstrings.tri" line="95"/>
         <source>Dominican Republic</source>
         <translation>République dominicaine</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="95"/>
+        <location filename="dbstrings.tri" line="96"/>
         <source>Ducie Island</source>
         <translation>Île Ducie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="96"/>
+        <location filename="dbstrings.tri" line="97"/>
         <source>East Malaysia</source>
         <translation>Malaisie orientale</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="97"/>
+        <location filename="dbstrings.tri" line="98"/>
         <source>Easter Island</source>
         <translation>Île de Pâques</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="98"/>
+        <location filename="dbstrings.tri" line="99"/>
         <source>Eastern Kiribati</source>
         <translation>Kiribati oriental</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="99"/>
+        <location filename="dbstrings.tri" line="100"/>
         <source>Ecuador</source>
         <translation>Équateur</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="100"/>
+        <location filename="dbstrings.tri" line="101"/>
         <source>Egypt</source>
         <translation>Égypte</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="101"/>
+        <location filename="dbstrings.tri" line="102"/>
         <source>El Salvador</source>
         <translation>Salvador</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="102"/>
+        <location filename="dbstrings.tri" line="103"/>
         <source>England</source>
         <translation>Angleterre</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="103"/>
+        <location filename="dbstrings.tri" line="104"/>
         <source>Equatorial Guinea</source>
         <translation>Guinée équatoriale</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="104"/>
+        <location filename="dbstrings.tri" line="105"/>
         <source>Eritrea</source>
         <translation>Érythrée</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="105"/>
+        <location filename="dbstrings.tri" line="106"/>
         <source>Estonia</source>
         <translation>Estonie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="106"/>
+        <location filename="dbstrings.tri" line="107"/>
         <source>Ethiopia</source>
         <translation>Éthiopie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="107"/>
+        <location filename="dbstrings.tri" line="108"/>
         <source>European Russia</source>
         <translation>Russie européenne</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="108"/>
+        <location filename="dbstrings.tri" line="109"/>
         <source>Falkland Islands</source>
         <translation>Îles Falkland (Malouines)</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="109"/>
+        <location filename="dbstrings.tri" line="110"/>
         <source>Faroe Islands</source>
         <translation>Îles Féroé</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="110"/>
+        <location filename="dbstrings.tri" line="111"/>
         <source>Fed. Rep. of Germany</source>
         <translation>Rép. féd. d&apos;Allemagne</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="111"/>
+        <location filename="dbstrings.tri" line="112"/>
         <source>Fernando de Noronha</source>
         <translation>Fernando de Noronha</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="112"/>
+        <location filename="dbstrings.tri" line="113"/>
         <source>Fiji</source>
         <translation>Fidji</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="113"/>
+        <location filename="dbstrings.tri" line="114"/>
         <source>Finland</source>
         <translation>Finlande</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="114"/>
+        <location filename="dbstrings.tri" line="115"/>
         <source>France</source>
         <translation>France</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="115"/>
+        <location filename="dbstrings.tri" line="116"/>
         <source>Franz Josef Land</source>
         <translation>Terre de François-Joseph</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="116"/>
+        <location filename="dbstrings.tri" line="117"/>
         <source>French Guiana</source>
         <translation>Guyane française</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="117"/>
+        <location filename="dbstrings.tri" line="118"/>
         <source>French Polynesia</source>
         <translation>Polynésie française</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="118"/>
+        <location filename="dbstrings.tri" line="119"/>
         <source>Gabon</source>
         <translation>Gabon</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="119"/>
+        <location filename="dbstrings.tri" line="120"/>
         <source>Galapagos Islands</source>
         <translation>Îles Galapagos</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="120"/>
+        <location filename="dbstrings.tri" line="121"/>
         <source>Georgia</source>
         <translation>Géorgie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="121"/>
+        <location filename="dbstrings.tri" line="122"/>
         <source>Ghana</source>
         <translation>Ghana</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="122"/>
+        <location filename="dbstrings.tri" line="123"/>
         <source>Gibraltar</source>
         <translation>Gibraltar</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="123"/>
+        <location filename="dbstrings.tri" line="124"/>
         <source>Glorioso Islands</source>
         <translation>Îles Glorieuses</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="124"/>
+        <location filename="dbstrings.tri" line="125"/>
         <source>Greece</source>
         <translation>Grèce</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="125"/>
+        <location filename="dbstrings.tri" line="126"/>
         <source>Greenland</source>
         <translation>Groenland</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="126"/>
+        <location filename="dbstrings.tri" line="127"/>
         <source>Grenada</source>
         <translation>Grenade</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="127"/>
+        <location filename="dbstrings.tri" line="128"/>
         <source>Guadeloupe</source>
         <translation>Guadeloupe</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="128"/>
+        <location filename="dbstrings.tri" line="129"/>
         <source>Guam</source>
         <translation>Guam</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="129"/>
+        <location filename="dbstrings.tri" line="130"/>
         <source>Guantanamo Bay</source>
         <translation>Guantanamo Bay</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="130"/>
+        <location filename="dbstrings.tri" line="131"/>
         <source>Guatemala</source>
         <translation>Guatemala</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="131"/>
+        <location filename="dbstrings.tri" line="132"/>
         <source>Guernsey</source>
         <translation>Guernesey</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="132"/>
+        <location filename="dbstrings.tri" line="133"/>
         <source>Guinea</source>
         <translation>Guinée</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="133"/>
+        <location filename="dbstrings.tri" line="134"/>
         <source>Guinea-Bissau</source>
         <translation>Guinée-Bissau</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="134"/>
+        <location filename="dbstrings.tri" line="135"/>
         <source>Guyana</source>
         <translation>Guyana</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="135"/>
+        <location filename="dbstrings.tri" line="136"/>
         <source>Haiti</source>
         <translation>Haïti</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="136"/>
+        <location filename="dbstrings.tri" line="137"/>
         <source>Hawaii</source>
         <translation>Hawaï</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="137"/>
+        <location filename="dbstrings.tri" line="138"/>
         <source>Heard Island</source>
         <translation>Île Heard</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="138"/>
+        <location filename="dbstrings.tri" line="139"/>
         <source>Honduras</source>
         <translation>Honduras</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="139"/>
+        <location filename="dbstrings.tri" line="140"/>
         <source>Hong Kong</source>
         <translation>Hong Kong</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="140"/>
+        <location filename="dbstrings.tri" line="141"/>
         <source>Hungary</source>
         <translation>Hongrie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="141"/>
+        <location filename="dbstrings.tri" line="142"/>
         <source>ITU HQ</source>
         <translation>Siège de l&apos;UIT</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="142"/>
+        <location filename="dbstrings.tri" line="143"/>
         <source>Iceland</source>
         <translation>Islande</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="143"/>
+        <location filename="dbstrings.tri" line="144"/>
         <source>India</source>
         <translation>Inde</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="144"/>
+        <location filename="dbstrings.tri" line="145"/>
         <source>Indonesia</source>
         <translation>Indonésie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="145"/>
+        <location filename="dbstrings.tri" line="146"/>
         <source>Iran</source>
         <translation>Iran</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="146"/>
+        <location filename="dbstrings.tri" line="147"/>
         <source>Iraq</source>
         <translation>Irak</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="147"/>
+        <location filename="dbstrings.tri" line="148"/>
         <source>Ireland</source>
         <translation>Irlande</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="148"/>
+        <location filename="dbstrings.tri" line="149"/>
         <source>Isle of Man</source>
         <translation>Île de Man</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="149"/>
+        <location filename="dbstrings.tri" line="150"/>
         <source>Israel</source>
         <translation>Israël</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="150"/>
+        <location filename="dbstrings.tri" line="151"/>
         <source>Italy</source>
         <translation>Italie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="151"/>
+        <location filename="dbstrings.tri" line="152"/>
         <source>Jamaica</source>
         <translation>Jamaïque</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="152"/>
+        <location filename="dbstrings.tri" line="153"/>
         <source>Jan Mayen</source>
         <translation>Jan Mayen</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="153"/>
+        <location filename="dbstrings.tri" line="154"/>
         <source>Japan</source>
         <translation>Japon</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="154"/>
+        <location filename="dbstrings.tri" line="155"/>
         <source>Jersey</source>
         <translation>Jersey</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="155"/>
+        <location filename="dbstrings.tri" line="156"/>
         <source>Johnston Island</source>
         <translation>Île Johnston</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="156"/>
+        <location filename="dbstrings.tri" line="157"/>
         <source>Jordan</source>
         <translation>Jordanie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="157"/>
+        <location filename="dbstrings.tri" line="158"/>
         <source>Juan Fernandez Islands</source>
         <translation>Îles Juan Fernández</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="158"/>
+        <location filename="dbstrings.tri" line="159"/>
         <source>Juan de Nova &amp; Europa</source>
         <translation>Juan de Nova &amp; Europa</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="159"/>
+        <location filename="dbstrings.tri" line="160"/>
         <source>Kaliningrad</source>
         <translation>Kaliningrad</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="160"/>
+        <location filename="dbstrings.tri" line="161"/>
         <source>Kazakhstan</source>
         <translation>Kazakhstan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="161"/>
+        <location filename="dbstrings.tri" line="162"/>
         <source>Kenya</source>
         <translation>Kenya</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="162"/>
+        <location filename="dbstrings.tri" line="163"/>
         <source>Kerguelen Islands</source>
         <translation>Îles Kerguelen</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="163"/>
+        <location filename="dbstrings.tri" line="164"/>
         <source>Kermadec Islands</source>
         <translation>Îles Kermadec</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="164"/>
+        <location filename="dbstrings.tri" line="165"/>
         <source>Kingdom of Eswatini</source>
         <translation>Royaume d&apos;Eswatini</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="165"/>
+        <location filename="dbstrings.tri" line="166"/>
         <source>Kure Island</source>
         <translation>Île Kure</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="166"/>
+        <location filename="dbstrings.tri" line="167"/>
         <source>Kuwait</source>
         <translation>Koweït</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="167"/>
+        <location filename="dbstrings.tri" line="168"/>
         <source>Kyrgyzstan</source>
         <translation>Kirghizistan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="168"/>
+        <location filename="dbstrings.tri" line="169"/>
         <source>Lakshadweep Islands</source>
         <translation>Îles Lakshadweep</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="169"/>
+        <location filename="dbstrings.tri" line="170"/>
         <source>Laos</source>
         <translation>Laos</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="170"/>
+        <location filename="dbstrings.tri" line="171"/>
         <source>Latvia</source>
         <translation>Lettonie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="171"/>
+        <location filename="dbstrings.tri" line="172"/>
         <source>Lebanon</source>
         <translation>Liban</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="172"/>
+        <location filename="dbstrings.tri" line="173"/>
         <source>Lesotho</source>
         <translation>Lesotho</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="173"/>
+        <location filename="dbstrings.tri" line="174"/>
         <source>Liberia</source>
         <translation>Liberia</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="174"/>
+        <location filename="dbstrings.tri" line="175"/>
         <source>Libya</source>
         <translation>Libye</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="175"/>
+        <location filename="dbstrings.tri" line="176"/>
         <source>Liechtenstein</source>
         <translation>Liechtenstein</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="176"/>
+        <location filename="dbstrings.tri" line="177"/>
         <source>Lithuania</source>
         <translation>Lituanie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="177"/>
+        <location filename="dbstrings.tri" line="178"/>
         <source>Lord Howe Island</source>
         <translation>Île Lord Howe</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="178"/>
+        <location filename="dbstrings.tri" line="179"/>
         <source>Luxembourg</source>
         <translation>Luxembourg</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="179"/>
+        <location filename="dbstrings.tri" line="180"/>
         <source>Macao</source>
         <translation>Macao</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="180"/>
+        <location filename="dbstrings.tri" line="181"/>
         <source>Macquarie Island</source>
         <translation>Île Macquarie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="181"/>
+        <location filename="dbstrings.tri" line="182"/>
         <source>Madagascar</source>
         <translation>Madagascar</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="182"/>
+        <location filename="dbstrings.tri" line="183"/>
         <source>Madeira Islands</source>
         <translation>Archipel de Madère</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="183"/>
+        <location filename="dbstrings.tri" line="184"/>
         <source>Malawi</source>
         <translation>Malawi</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="184"/>
+        <location filename="dbstrings.tri" line="185"/>
         <source>Maldives</source>
         <translation>Maldives</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="185"/>
+        <location filename="dbstrings.tri" line="186"/>
         <source>Mali</source>
         <translation>Mali</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="186"/>
+        <location filename="dbstrings.tri" line="187"/>
         <source>Malpelo Island</source>
         <translation>Île de Malpelo</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="187"/>
+        <location filename="dbstrings.tri" line="188"/>
         <source>Malta</source>
         <translation>Malte</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="188"/>
+        <location filename="dbstrings.tri" line="189"/>
         <source>Mariana Islands</source>
         <translation>Îles Mariannes</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="189"/>
+        <location filename="dbstrings.tri" line="190"/>
         <source>Market Reef</source>
         <translation>Récif Market</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="190"/>
+        <location filename="dbstrings.tri" line="191"/>
         <source>Marquesas Islands</source>
         <translation>Îles Marquises</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="191"/>
+        <location filename="dbstrings.tri" line="192"/>
         <source>Marshall Islands</source>
         <translation>Îles Marshall</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="192"/>
+        <location filename="dbstrings.tri" line="193"/>
         <source>Martinique</source>
         <translation>Martinique</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="193"/>
+        <location filename="dbstrings.tri" line="194"/>
         <source>Mauritania</source>
         <translation>Mauritanie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="194"/>
+        <location filename="dbstrings.tri" line="195"/>
         <source>Mauritius</source>
         <translation>Maurice</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="195"/>
+        <location filename="dbstrings.tri" line="196"/>
         <source>Mayotte</source>
         <translation>Mayotte</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="196"/>
+        <location filename="dbstrings.tri" line="197"/>
         <source>Mellish Reef</source>
         <translation>Récif Mellish</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="197"/>
+        <location filename="dbstrings.tri" line="198"/>
         <source>Mexico</source>
         <translation>Mexique</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="198"/>
+        <location filename="dbstrings.tri" line="199"/>
         <source>Micronesia</source>
         <translation>Micronésie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="199"/>
+        <location filename="dbstrings.tri" line="200"/>
         <source>Midway Island</source>
         <translation>Île Midway</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="200"/>
+        <location filename="dbstrings.tri" line="201"/>
         <source>Minami Torishima</source>
         <translation>Minami Torishima</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="201"/>
+        <location filename="dbstrings.tri" line="202"/>
         <source>Moldova</source>
         <translation>Moldavie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="202"/>
+        <location filename="dbstrings.tri" line="203"/>
         <source>Monaco</source>
         <translation>Monaco</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="203"/>
+        <location filename="dbstrings.tri" line="204"/>
         <source>Mongolia</source>
         <translation>Mongolie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="204"/>
+        <location filename="dbstrings.tri" line="205"/>
         <source>Montenegro</source>
         <translation>Monténégro</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="205"/>
+        <location filename="dbstrings.tri" line="206"/>
         <source>Montserrat</source>
         <translation>Montserrat</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="206"/>
+        <location filename="dbstrings.tri" line="207"/>
         <source>Morocco</source>
         <translation>Maroc</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="207"/>
+        <location filename="dbstrings.tri" line="208"/>
         <source>Mount Athos</source>
         <translation>Mont Athos</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="208"/>
+        <location filename="dbstrings.tri" line="209"/>
         <source>Mozambique</source>
         <translation>Mozambique</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="209"/>
+        <location filename="dbstrings.tri" line="210"/>
         <source>Myanmar</source>
         <translation>Myanmar (Birmanie)</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="210"/>
+        <location filename="dbstrings.tri" line="211"/>
         <source>N.Z. Subantarctic Is.</source>
         <translation>Is. subantarctiques de N.Z.</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="211"/>
+        <location filename="dbstrings.tri" line="212"/>
         <source>Namibia</source>
         <translation>Namibie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="212"/>
+        <location filename="dbstrings.tri" line="213"/>
         <source>Nauru</source>
         <translation>Nauru</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="213"/>
+        <location filename="dbstrings.tri" line="214"/>
         <source>Navassa Island</source>
         <translation>Île de la Navasse</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="214"/>
+        <location filename="dbstrings.tri" line="215"/>
         <source>Nepal</source>
         <translation>Népal</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="215"/>
+        <location filename="dbstrings.tri" line="216"/>
         <source>Netherlands</source>
         <translation>Pays-Bas</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="216"/>
+        <location filename="dbstrings.tri" line="217"/>
         <source>New Caledonia</source>
         <translation>Nouvelle-Calédonie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="217"/>
+        <location filename="dbstrings.tri" line="218"/>
         <source>New Zealand</source>
         <translation>Nouvelle-Zélande</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="218"/>
+        <location filename="dbstrings.tri" line="219"/>
         <source>Nicaragua</source>
         <translation>Nicaragua</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="219"/>
+        <location filename="dbstrings.tri" line="220"/>
         <source>Niger</source>
         <translation>Niger</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="220"/>
+        <location filename="dbstrings.tri" line="221"/>
         <source>Nigeria</source>
         <translation>Nigeria</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="221"/>
+        <location filename="dbstrings.tri" line="222"/>
         <source>Niue</source>
         <translation>Niue</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="222"/>
+        <location filename="dbstrings.tri" line="223"/>
         <source>Norfolk Island</source>
         <translation>Île Norfolk</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="223"/>
+        <location filename="dbstrings.tri" line="224"/>
         <source>North Cook Islands</source>
         <translation>Îles Cook du Nord</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="224"/>
+        <location filename="dbstrings.tri" line="225"/>
         <source>North Macedonia</source>
         <translation>Macédoine du Nord</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="225"/>
+        <location filename="dbstrings.tri" line="226"/>
         <source>Northern Ireland</source>
         <translation>Irlande du Nord</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="226"/>
+        <location filename="dbstrings.tri" line="227"/>
         <source>Norway</source>
         <translation>Norvège</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="227"/>
+        <location filename="dbstrings.tri" line="228"/>
         <source>Ogasawara</source>
         <translation>Ogasawara</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="228"/>
+        <location filename="dbstrings.tri" line="229"/>
         <source>Oman</source>
         <translation>Oman</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="229"/>
+        <location filename="dbstrings.tri" line="230"/>
         <source>Pakistan</source>
         <translation>Pakistan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="230"/>
+        <location filename="dbstrings.tri" line="231"/>
         <source>Palau</source>
         <translation>Palaos</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="231"/>
+        <location filename="dbstrings.tri" line="232"/>
         <source>Palestine</source>
         <translation>Palestine</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="232"/>
+        <location filename="dbstrings.tri" line="233"/>
         <source>Palmyra &amp; Jarvis Islands</source>
         <translation>Îles Palmyra &amp; Jarvis</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="233"/>
+        <location filename="dbstrings.tri" line="234"/>
         <source>Panama</source>
         <translation>Panama</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="234"/>
+        <location filename="dbstrings.tri" line="235"/>
         <source>Papua New Guinea</source>
         <translation>Papouasie-Nouvelle-Guinée</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="235"/>
+        <location filename="dbstrings.tri" line="236"/>
         <source>Paraguay</source>
         <translation>Paraguay</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="236"/>
+        <location filename="dbstrings.tri" line="237"/>
         <source>Peru</source>
         <translation>Pérou</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="237"/>
+        <location filename="dbstrings.tri" line="238"/>
         <source>Peter 1 Island</source>
         <translation>Île Pierre 1er</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="238"/>
+        <location filename="dbstrings.tri" line="239"/>
         <source>Philippines</source>
         <translation>Philippines</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="239"/>
+        <location filename="dbstrings.tri" line="240"/>
         <source>Pitcairn Island</source>
         <translation>Île Pitcairn</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="240"/>
+        <location filename="dbstrings.tri" line="241"/>
         <source>Poland</source>
         <translation>Pologne</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="241"/>
+        <location filename="dbstrings.tri" line="242"/>
         <source>Portugal</source>
         <translation>Portugal</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="242"/>
+        <location filename="dbstrings.tri" line="243"/>
         <source>Pr. Edward &amp; Marion Is.</source>
         <translation>Is. du Prince-Édouard &amp; Marion</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="243"/>
+        <location filename="dbstrings.tri" line="244"/>
         <source>Pratas Island</source>
         <translation>Île Pratas</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="244"/>
+        <location filename="dbstrings.tri" line="245"/>
         <source>Puerto Rico</source>
         <translation>Porto Rico</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="245"/>
+        <location filename="dbstrings.tri" line="246"/>
         <source>Qatar</source>
         <translation>Qatar</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="246"/>
+        <location filename="dbstrings.tri" line="247"/>
         <source>Republic of Korea</source>
         <translation>République de Corée (Sud)</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="247"/>
+        <location filename="dbstrings.tri" line="248"/>
         <source>Republic of Kosovo</source>
         <translation>République du Kosovo</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="248"/>
+        <location filename="dbstrings.tri" line="249"/>
         <source>Republic of South Sudan</source>
         <translation>République du Soudan du Sud</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="249"/>
+        <location filename="dbstrings.tri" line="250"/>
         <source>Republic of the Congo</source>
         <translation>République du Congo</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="250"/>
+        <location filename="dbstrings.tri" line="251"/>
         <source>Reunion Island</source>
         <translation>Île de la Réunion</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="251"/>
+        <location filename="dbstrings.tri" line="252"/>
         <source>Revillagigedo</source>
         <translation>Revillagigedo</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="252"/>
+        <location filename="dbstrings.tri" line="253"/>
         <source>Rodriguez Island</source>
         <translation>Île Rodrigues</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="253"/>
+        <location filename="dbstrings.tri" line="254"/>
         <source>Romania</source>
         <translation>Roumanie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="254"/>
+        <location filename="dbstrings.tri" line="255"/>
         <source>Rotuma Island</source>
         <translation>Île Rotuma</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="255"/>
+        <location filename="dbstrings.tri" line="256"/>
         <source>Rwanda</source>
         <translation>Rwanda</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="256"/>
+        <location filename="dbstrings.tri" line="257"/>
         <source>Saba &amp; St. Eustatius</source>
         <translation>Saba &amp; St. Eustache</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="257"/>
+        <location filename="dbstrings.tri" line="258"/>
         <source>Sable Island</source>
         <translation>Île de Sable</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="258"/>
+        <location filename="dbstrings.tri" line="259"/>
         <source>Samoa</source>
         <translation>Samoa</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="259"/>
+        <location filename="dbstrings.tri" line="260"/>
         <source>San Andres &amp; Providencia</source>
         <translation>San Andrés &amp; Providencia</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="260"/>
+        <location filename="dbstrings.tri" line="261"/>
         <source>San Felix &amp; San Ambrosio</source>
         <translation>San Félix &amp; San Ambrosio</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="261"/>
+        <location filename="dbstrings.tri" line="262"/>
         <source>San Marino</source>
         <translation>Saint-Marin</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="262"/>
+        <location filename="dbstrings.tri" line="263"/>
         <source>Sao Tome &amp; Principe</source>
         <translation>Sao Tomé-et-Principe</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="263"/>
+        <location filename="dbstrings.tri" line="264"/>
         <source>Sardinia</source>
         <translation>Sardaigne</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="264"/>
+        <location filename="dbstrings.tri" line="265"/>
         <source>Saudi Arabia</source>
         <translation>Arabie saoudite</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="265"/>
+        <location filename="dbstrings.tri" line="266"/>
         <source>Scarborough Reef</source>
         <translation>Récif de Scarborough</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="266"/>
+        <location filename="dbstrings.tri" line="267"/>
         <source>Scotland</source>
         <translation>Écosse</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="267"/>
+        <location filename="dbstrings.tri" line="268"/>
         <source>Senegal</source>
         <translation>Sénégal</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="268"/>
+        <location filename="dbstrings.tri" line="269"/>
         <source>Serbia</source>
         <translation>Serbie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="269"/>
+        <location filename="dbstrings.tri" line="270"/>
         <source>Seychelles</source>
         <translation>Seychelles</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="270"/>
+        <location filename="dbstrings.tri" line="271"/>
         <source>Sierra Leone</source>
         <translation>Sierra Leone</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="271"/>
+        <location filename="dbstrings.tri" line="272"/>
         <source>Singapore</source>
         <translation>Singapour</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="272"/>
+        <location filename="dbstrings.tri" line="273"/>
         <source>Sint Maarten</source>
         <translation>Saint-Martin (partie néerlandaise)</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="273"/>
+        <location filename="dbstrings.tri" line="274"/>
         <source>Slovak Republic</source>
         <translation>Slovaquie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="274"/>
+        <location filename="dbstrings.tri" line="275"/>
         <source>Slovenia</source>
         <translation>Slovénie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="275"/>
+        <location filename="dbstrings.tri" line="276"/>
         <source>Solomon Islands</source>
         <translation>Îles Salomon</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="276"/>
+        <location filename="dbstrings.tri" line="277"/>
         <source>Somalia</source>
         <translation>Somalie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="277"/>
+        <location filename="dbstrings.tri" line="278"/>
         <source>South Africa</source>
         <translation>Afrique du Sud</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="278"/>
+        <location filename="dbstrings.tri" line="279"/>
         <source>South Cook Islands</source>
         <translation>Îles Cook du Sud</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="279"/>
+        <location filename="dbstrings.tri" line="280"/>
         <source>South Georgia Island</source>
         <translation>Géorgie du Sud</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="280"/>
+        <location filename="dbstrings.tri" line="281"/>
         <source>South Orkney Islands</source>
         <translation>Orcades du Sud</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="281"/>
+        <location filename="dbstrings.tri" line="282"/>
         <source>South Sandwich Islands</source>
         <translation>Îles Sandwich du Sud</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="282"/>
+        <location filename="dbstrings.tri" line="283"/>
         <source>South Shetland Islands</source>
         <translation>Shetland du Sud</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="283"/>
+        <location filename="dbstrings.tri" line="284"/>
         <source>Sov Mil Order of Malta</source>
         <translation>Ordre souverain de Malte</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="284"/>
+        <location filename="dbstrings.tri" line="285"/>
         <source>Spain</source>
         <translation>Espagne</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="285"/>
+        <location filename="dbstrings.tri" line="286"/>
         <source>Spratly Islands</source>
         <translation>Îles Spratleys</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="286"/>
+        <location filename="dbstrings.tri" line="287"/>
         <source>Sri Lanka</source>
         <translation>Sri Lanka</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="287"/>
+        <location filename="dbstrings.tri" line="288"/>
         <source>St. Barthelemy</source>
         <translation>Saint-Barthélemy</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="288"/>
+        <location filename="dbstrings.tri" line="289"/>
         <source>St. Helena</source>
         <translation>Sainte-Hélène</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="289"/>
+        <location filename="dbstrings.tri" line="290"/>
         <source>St. Kitts &amp; Nevis</source>
         <translation>Saint-Kitts-et-Nevis</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="290"/>
+        <location filename="dbstrings.tri" line="291"/>
         <source>St. Lucia</source>
         <translation>Sainte-Lucie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="291"/>
+        <location filename="dbstrings.tri" line="292"/>
         <source>St. Martin</source>
         <translation>Saint-Martin (partie française)</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="292"/>
+        <location filename="dbstrings.tri" line="293"/>
         <source>St. Paul Island</source>
         <translation>Île Saint-Paul (Alaska)</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="293"/>
+        <location filename="dbstrings.tri" line="294"/>
         <source>St. Peter &amp; St. Paul</source>
         <translation>Rochers Saint-Pierre et Saint-Paul</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="294"/>
+        <location filename="dbstrings.tri" line="295"/>
         <source>St. Pierre &amp; Miquelon</source>
         <translation>Saint-Pierre-et-Miquelon</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="295"/>
+        <location filename="dbstrings.tri" line="296"/>
         <source>St. Vincent</source>
         <translation>Saint-Vincent-et-les-Grenadines</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="296"/>
+        <location filename="dbstrings.tri" line="297"/>
         <source>Sudan</source>
         <translation>Soudan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="297"/>
+        <location filename="dbstrings.tri" line="298"/>
         <source>Suriname</source>
         <translation>Suriname</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="298"/>
+        <location filename="dbstrings.tri" line="299"/>
         <source>Svalbard</source>
         <translation>Svalbard</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="299"/>
+        <location filename="dbstrings.tri" line="300"/>
         <source>Swains Island</source>
         <translation>Île Swains</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="300"/>
+        <location filename="dbstrings.tri" line="301"/>
         <source>Sweden</source>
         <translation>Suède</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="301"/>
+        <location filename="dbstrings.tri" line="302"/>
         <source>Switzerland</source>
         <translation>Suisse</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="302"/>
+        <location filename="dbstrings.tri" line="303"/>
         <source>Syria</source>
         <translation>Syrie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="303"/>
+        <location filename="dbstrings.tri" line="304"/>
         <source>Taiwan</source>
         <translation>Taïwan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="304"/>
+        <location filename="dbstrings.tri" line="305"/>
         <source>Tajikistan</source>
         <translation>Tadjikistan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="305"/>
+        <location filename="dbstrings.tri" line="306"/>
         <source>Tanzania</source>
         <translation>Tanzanie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="306"/>
+        <location filename="dbstrings.tri" line="307"/>
         <source>Temotu Province</source>
         <translation>Province de Temotu</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="307"/>
+        <location filename="dbstrings.tri" line="308"/>
         <source>Thailand</source>
         <translation>Thaïlande</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="308"/>
+        <location filename="dbstrings.tri" line="309"/>
         <source>The Gambia</source>
         <translation>Gambie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="309"/>
+        <location filename="dbstrings.tri" line="310"/>
         <source>Timor - Leste</source>
         <translation>Timor oriental</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="310"/>
+        <location filename="dbstrings.tri" line="311"/>
         <source>Togo</source>
         <translation>Togo</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="311"/>
+        <location filename="dbstrings.tri" line="312"/>
         <source>Tokelau Islands</source>
         <translation>Îles Tokelau</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="312"/>
+        <location filename="dbstrings.tri" line="313"/>
         <source>Tonga</source>
         <translation>Tonga</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="313"/>
+        <location filename="dbstrings.tri" line="314"/>
         <source>Trindade &amp; Martim Vaz</source>
         <translation>Trindade &amp; Martim Vaz</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="314"/>
+        <location filename="dbstrings.tri" line="315"/>
         <source>Trinidad &amp; Tobago</source>
         <translation>Trinité-et-Tobago</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="315"/>
+        <location filename="dbstrings.tri" line="316"/>
         <source>Tristan da Cunha &amp; Gough Islands</source>
         <translation>Tristan da Cunha &amp; Îles Gough</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="316"/>
+        <location filename="dbstrings.tri" line="317"/>
         <source>Tromelin Island</source>
         <translation>Île Tromelin</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="317"/>
+        <location filename="dbstrings.tri" line="318"/>
         <source>Tunisia</source>
         <translation>Tunisie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="318"/>
+        <location filename="dbstrings.tri" line="319"/>
         <source>Turkmenistan</source>
         <translation>Turkménistan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="319"/>
+        <location filename="dbstrings.tri" line="320"/>
         <source>Turks &amp; Caicos Islands</source>
         <translation>Îles Turques-et-Caïques</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="320"/>
+        <location filename="dbstrings.tri" line="321"/>
         <source>Tuvalu</source>
         <translation>Tuvalu</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="321"/>
+        <location filename="dbstrings.tri" line="322"/>
         <source>UK Base Areas on Cyprus</source>
         <translation>Bases souveraines UK à Chypre</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="322"/>
+        <location filename="dbstrings.tri" line="323"/>
         <source>US Virgin Islands</source>
         <translation>Îles Vierges américaines</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="323"/>
+        <location filename="dbstrings.tri" line="324"/>
         <source>Uganda</source>
         <translation>Ouganda</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="324"/>
+        <location filename="dbstrings.tri" line="325"/>
         <source>Ukraine</source>
         <translation>Ukraine</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="325"/>
+        <location filename="dbstrings.tri" line="326"/>
         <source>United Arab Emirates</source>
         <translation>Émirats arabes unis</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="326"/>
+        <location filename="dbstrings.tri" line="327"/>
         <source>United Nations HQ</source>
         <translation>Siège des Nations unies</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="327"/>
+        <location filename="dbstrings.tri" line="328"/>
         <source>United States</source>
         <translation>États-Unis</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="328"/>
+        <location filename="dbstrings.tri" line="329"/>
         <source>Uruguay</source>
         <translation>Uruguay</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="329"/>
+        <location filename="dbstrings.tri" line="330"/>
         <source>Uzbekistan</source>
         <translation>Ouzbékistan</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="330"/>
+        <location filename="dbstrings.tri" line="331"/>
         <source>Vanuatu</source>
         <translation>Vanuatu</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="331"/>
+        <location filename="dbstrings.tri" line="332"/>
         <source>Vatican City</source>
         <translation>Cité du Vatican</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="332"/>
+        <location filename="dbstrings.tri" line="333"/>
         <source>Venezuela</source>
         <translation>Venezuela</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="333"/>
+        <location filename="dbstrings.tri" line="334"/>
         <source>Vietnam</source>
         <translation>Vietnam</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="334"/>
+        <location filename="dbstrings.tri" line="335"/>
         <source>Wake Island</source>
         <translation>Île Wake</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="335"/>
+        <location filename="dbstrings.tri" line="336"/>
         <source>Wales</source>
         <translation>Pays de Galles</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="336"/>
+        <location filename="dbstrings.tri" line="337"/>
         <source>Wallis &amp; Futuna Islands</source>
         <translation>Îles Wallis-et-Futuna</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="337"/>
+        <location filename="dbstrings.tri" line="338"/>
         <source>West Malaysia</source>
         <translation>Malaisie occidentale</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="338"/>
+        <location filename="dbstrings.tri" line="339"/>
         <source>Western Kiribati</source>
         <translation>Kiribati occidental</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="339"/>
+        <location filename="dbstrings.tri" line="340"/>
         <source>Western Sahara</source>
         <translation>Sahara occidental</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="340"/>
+        <location filename="dbstrings.tri" line="341"/>
         <source>Willis Island</source>
         <translation>Île Willis</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="341"/>
+        <location filename="dbstrings.tri" line="342"/>
         <source>Yemen</source>
         <translation>Yémen</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="342"/>
+        <location filename="dbstrings.tri" line="343"/>
         <source>Zambia</source>
         <translation>Zambie</translation>
     </message>
     <message>
-        <location filename="dbstrings.tri" line="343"/>
+        <location filename="dbstrings.tri" line="344"/>
         <source>Zimbabwe</source>
         <translation>Zimbabwe</translation>
     </message>
@@ -4754,72 +5117,72 @@
 <context>
     <name>Data</name>
     <message>
-        <location filename="../data/Data.cpp" line="907"/>
+        <location filename="../data/Data.cpp" line="908"/>
         <source>New Entity</source>
         <translation>Nouvelle entité</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="909"/>
+        <location filename="../data/Data.cpp" line="910"/>
         <source>New Band</source>
         <translation>Nouvelle bande</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="911"/>
+        <location filename="../data/Data.cpp" line="912"/>
         <source>New Mode</source>
         <translation>Nouveau mode</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="913"/>
+        <location filename="../data/Data.cpp" line="914"/>
         <source>New Band&amp;Mode</source>
         <translation>Nouvelle bande &amp; mode</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="915"/>
+        <location filename="../data/Data.cpp" line="916"/>
         <source>New Slot</source>
         <translation>Nouveau créneau</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="917"/>
+        <location filename="../data/Data.cpp" line="918"/>
         <source>Confirmed</source>
         <translation>Confirmé</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="919"/>
+        <location filename="../data/Data.cpp" line="920"/>
         <source>Worked</source>
         <translation>Contacté</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="930"/>
+        <location filename="../data/Data.cpp" line="931"/>
         <source>New for Satellite DXCC</source>
         <translation>Nouveau pour DXCC par satellite</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="932"/>
+        <location filename="../data/Data.cpp" line="933"/>
         <source>Satellite DXCC: Worked</source>
         <translation>DXCC par satellite : Contactées</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="934"/>
+        <location filename="../data/Data.cpp" line="935"/>
         <source>Satellite DXCC: Confirmed</source>
         <translation>DXCC par satellite : Confirmées</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="993"/>
+        <location filename="../data/Data.cpp" line="994"/>
         <source>Hz</source>
         <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="1000"/>
+        <location filename="../data/Data.cpp" line="1001"/>
         <source>kHz</source>
         <translation>kHz</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="1007"/>
+        <location filename="../data/Data.cpp" line="1008"/>
         <source>GHz</source>
         <translation>GHz</translation>
     </message>
     <message>
-        <location filename="../data/Data.cpp" line="1012"/>
+        <location filename="../data/Data.cpp" line="1013"/>
         <source>MHz</source>
         <translation>MHz</translation>
     </message>
@@ -5078,38 +5441,210 @@
     <name>DatabaseBackup</name>
     <message>
         <location filename="../core/DatabaseBackup.cpp" line="124"/>
-        <source>Could not create the backup. Your previous backups have been kept.</source>
-        <translation type="unfinished">Impossible de créer la sauvegarde. Vos sauvegardes précédentes ont été conservées.</translation>
+        <source>Cannot save backup copy %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer la copie de sauvegarde %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="161"/>
-        <source>Could not remove older pending backup files. The new database copy has been kept.</source>
-        <translation type="unfinished">Impossible de supprimer les anciens fichiers de sauvegarde en attente. La nouvelle copie de la base de données a été conservée.</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="132"/>
+        <source>%1
+Your previous backups have been kept.</source>
+        <translation type="unfinished">%1
+Vos sauvegardes précédentes ont été conservées.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="193"/>
-        <location filename="../core/DatabaseBackup.cpp" line="257"/>
-        <source>Could not remove unused backup files.</source>
-        <translation type="unfinished">Impossible de supprimer les fichiers de sauvegarde inutilisés.</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="162"/>
+        <source>Cannot remove the older pending backup %1 because it still has unfinished database writes.</source>
+        <translation type="unfinished">Impossible de supprimer l’ancienne sauvegarde en attente %1, car des écritures dans la base de données ne sont pas encore terminées.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="321"/>
-        <location filename="../core/DatabaseBackup.cpp" line="348"/>
-        <source>Could not save the additional backup. Check the backup folder. The internal backup has been kept.</source>
-        <translation type="unfinished">Impossible d&apos;enregistrer la sauvegarde supplémentaire. Vérifiez le dossier de sauvegarde. La sauvegarde interne a été conservée.</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="170"/>
+        <source>Cannot remove the older pending database backup %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer l’ancienne sauvegarde de base de données en attente %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="428"/>
-        <source>Could not export the backup to ADX. The database copy and previous backups have been kept.</source>
-        <translation type="unfinished">Impossible d&apos;exporter la sauvegarde au format ADX. La copie de la base de données et les sauvegardes précédentes ont été conservées.</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="179"/>
+        <source>%1
+The new database backup copy has been kept.</source>
+        <translation type="unfinished">%1
+La nouvelle copie de sauvegarde de la base de données a été conservée.</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="519"/>
-        <source>The backup was saved, but an older backup could not be removed.</source>
-        <translation type="unfinished">La sauvegarde a été enregistrée, mais une ancienne sauvegarde n&apos;a pas pu être supprimée.</translation>
+        <location filename="../core/DatabaseBackup.cpp" line="201"/>
+        <source>Cannot remove the interrupted backup copy %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer la copie de sauvegarde interrompue %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../core/DatabaseBackup.cpp" line="569"/>
+        <location filename="../core/DatabaseBackup.cpp" line="217"/>
+        <source>Cannot clean up files from an earlier backup:
+%1</source>
+        <translation type="unfinished">Impossible de supprimer les fichiers d’une sauvegarde précédente :
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="283"/>
+        <source>Cannot rename the completed migration backup from %1 to %2:
+%3</source>
+        <translation type="unfinished">Impossible de renommer la sauvegarde de migration terminée de %1 en %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="285"/>
+        <source>Cannot remove the database copy after ADX backup %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer la copie de la base de données après la sauvegarde ADX %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="291"/>
+        <source>The ADX backup was saved, but its temporary files could not be removed:
+%1</source>
+        <translation type="unfinished">La sauvegarde ADX a été enregistrée, mais ses fichiers temporaires n’ont pas pu être supprimés :
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="326"/>
+        <source>Cannot remove a temporary database backup file %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer le fichier temporaire de sauvegarde de la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="357"/>
+        <source>No folder was selected for the additional backup. The internal backup has been kept.</source>
+        <translation type="unfinished">Aucun dossier n’a été sélectionné pour la sauvegarde supplémentaire. La sauvegarde interne a été conservée.</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="388"/>
+        <source>%1
+The internal backup has been kept.</source>
+        <translation type="unfinished">%1
+La sauvegarde interne a été conservée.</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="453"/>
+        <source>Cannot read contacts while writing the ADX backup from %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire les QSO lors de l’écriture de la sauvegarde ADX à partir de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="455"/>
+        <source>Cannot write the internal ADX backup %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire la sauvegarde ADX interne %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="457"/>
+        <source>Cannot export the internal ADX backup %1. Some logbook text contains characters that ADX cannot store.</source>
+        <translation type="unfinished">Impossible d’exporter la sauvegarde ADX interne %1. Certains textes du carnet de trafic contiennent des caractères que le format ADX ne peut pas enregistrer.</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="459"/>
+        <source>Cannot finish saving the internal ADX backup %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’enregistrement de la sauvegarde ADX interne %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="465"/>
+        <source>Cannot start reading contacts for the ADX backup from %1:
+%2</source>
+        <translation type="unfinished">Impossible de commencer la lecture des QSO pour la sauvegarde ADX à partir de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="467"/>
+        <source>Cannot create the internal ADX backup file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier de sauvegarde ADX interne %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="478"/>
+        <source>Cannot open the database copy for ADX backup %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la copie de la base de données pour la sauvegarde ADX %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="484"/>
+        <source>%1
+The database copy and previous backups have been kept.</source>
+        <translation type="unfinished">%1
+La copie de la base de données et les sauvegardes précédentes ont été conservées.</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="499"/>
+        <source>Cannot open the internal backup %1 for copying:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la sauvegarde interne %1 pour la copier :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="516"/>
+        <source>Cannot read the internal backup %1 while comparing copies:
+%2</source>
+        <translation type="unfinished">Impossible de lire la sauvegarde interne %1 lors de la comparaison des copies :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="532"/>
+        <source>Cannot restart reading the internal backup %1:
+%2</source>
+        <translation type="unfinished">Impossible de recommencer la lecture de la sauvegarde interne %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="541"/>
+        <source>Cannot create additional backup %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer la sauvegarde supplémentaire %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="557"/>
+        <source>Cannot read the internal backup %1 while copying:
+%2</source>
+        <translation type="unfinished">Impossible de lire la sauvegarde interne %1 lors de la copie :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="562"/>
+        <source>Cannot write additional backup %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire la sauvegarde supplémentaire %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="571"/>
+        <source>Cannot complete reading the internal backup %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer la lecture de la sauvegarde interne %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="576"/>
+        <source>Cannot finish saving the additional backup %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’enregistrement de la sauvegarde supplémentaire %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="607"/>
+        <source>The backup was saved, but an older backup could not be removed: %1
+%2</source>
+        <translation type="unfinished">La sauvegarde a été enregistrée, mais une ancienne sauvegarde n’a pas pu être supprimée : %1
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/DatabaseBackup.cpp" line="657"/>
         <source>The backup was saved, but its date could not be recorded.</source>
         <translation type="unfinished">La sauvegarde a été enregistrée, mais sa date n&apos;a pas pu être consignée.</translation>
     </message>
@@ -5198,131 +5733,143 @@
         <translation>Saisissez la requête SQL ici... Ctrl+Entrée = exécuter</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="82"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="382"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="84"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="408"/>
         <source>TXT</source>
         <translation>TXT</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="84"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="400"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="86"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="426"/>
         <source>CSV</source>
         <translation>CSV</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="86"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="88"/>
         <source>ADI</source>
         <translation>ADI</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="192"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="194"/>
         <source>Open SQL Query</source>
         <translation>Ouvrir la requête SQL</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="193"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="220"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="195"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="222"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="226"/>
         <source>SQL Files (*.sql);;All Files (*)</source>
         <translation>Fichiers SQL (*.sql);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="201"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="203"/>
         <source>Open Error</source>
         <translation>Erreur d’ouverture</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="202"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="204"/>
         <source>Cannot open file:
 %1</source>
         <translation>Impossible d’ouvrir le fichier:
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="219"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="221"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="225"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="238"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="248"/>
         <source>Save SQL Query</source>
         <translation>Enregistrer la requête SQL</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="231"/>
-        <source>Save Error</source>
-        <translation>Erreur d’enregistrement</translation>
-    </message>
-    <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="232"/>
-        <source>Cannot save file:
-%1</source>
-        <translation>Impossible d’enregistrer le fichier:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="239"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="252"/>
         <source>Query saved to %1</source>
         <translation>Requête enregistrée dans %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="264"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="277"/>
         <source>Error: %1</source>
         <translation>Erreur : %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="281"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="294"/>
         <source>%1 row(s) shown (truncated at %2) in %3 ms</source>
         <translation>%1 ligne(s) affichée(s) (tronqué à %2) en %3 ms</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="285"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="298"/>
         <source>%1 row(s) returned in %2 ms</source>
         <translation>%1 ligne(s) retournée(s) en %2 ms</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="325"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="413"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="344"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="439"/>
         <source>Export</source>
         <translation>Exporter</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="326"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="414"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="345"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="440"/>
         <source>No results to export.</source>
         <translation>Aucun résultat à exporter.</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="337"/>
-        <source>Export Error</source>
-        <translation>Erreur d’exportation</translation>
+        <location filename="../ui/DevToolsDialog.cpp" line="239"/>
+        <source>Cannot create the saved SQL query file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier %1 pour enregistrer la requête SQL :
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="338"/>
-        <source>Cannot open file for writing:
-%1</source>
-        <translation>Impossible d’ouvrir le fichier en écriture:
-%1</translation>
+        <location filename="../ui/DevToolsDialog.cpp" line="248"/>
+        <source>Cannot finish writing the saved SQL query %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’écriture de la requête SQL enregistrée %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="374"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="356"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="395"/>
+        <source>Export Query Results</source>
+        <translation type="unfinished">Exporter les résultats de la requête</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="357"/>
+        <source>Cannot create the %1 query results file %2:
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="396"/>
+        <source>Cannot finish writing the %1 query results to %2:
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="400"/>
         <source>Exported %1 row(s) to %2</source>
         <translation>%1 ligne(s) exportée(s) vers %2</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="383"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="409"/>
         <source>Text Files (*.txt);;All Files (*)</source>
         <translation>Fichiers texte (*.txt);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="401"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="427"/>
         <source>CSV Files (*.csv);;All Files (*)</source>
         <translation>Fichiers CSV (*.csv);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="432"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="452"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="473"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="485"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="458"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="478"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="499"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="511"/>
         <source>ADIF Export</source>
         <translation>Exporter ADIF</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="433"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="459"/>
         <source>ADIF export requires the query to include the contacts &apos;id&apos; column.
 
 Example:
@@ -5330,66 +5877,114 @@ Example:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="453"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="479"/>
         <source>No valid contact IDs found in the result set.</source>
         <translation>Aucun identifiant de contact valide trouvé dans le jeu de résultats.</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="474"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="500"/>
         <source>Failed to retrieve contact records:
 %1</source>
         <translation>Impossible de récupérer les enregistrements de contacts:
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="486"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="512"/>
         <source>No matching contacts found in the database.</source>
         <translation>Aucun contact correspondant trouvé dans la base de données.</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="530"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="556"/>
         <source>Logging rules cleared (defaults)</source>
         <translation>Règles de journalisation réinitialisées (par défaut)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="537"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="563"/>
         <source>Logging rules applied</source>
         <translation>Règles de journalisation appliquées</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="550"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="559"/>
-        <location filename="../ui/DevToolsDialog.cpp" line="580"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="576"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="585"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="590"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="603"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="664"/>
         <source>Save Debug Log</source>
         <translation>Enregistrer le journal de débogage</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="551"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="577"/>
         <source>No debug log file is currently being written</source>
         <translation>Aucun fichier de journal de débogage n’est actuellement en cours d’écriture</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="561"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="587"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="592"/>
         <source>Log Files (*.log);;All Files (*)</source>
         <translation>Fichiers journaux (*.log);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="576"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="603"/>
+        <source>The selected destination %1 is the active debug log. Choose another file.</source>
+        <translation type="unfinished">La destination sélectionnée %1 est le journal de débogage actif. Choisissez un autre fichier.</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="611"/>
+        <source>Cannot open the active debug log %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir le journal de débogage actif %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="613"/>
+        <source>Cannot create the debug log copy %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer la copie du journal de débogage %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="630"/>
+        <source>The active debug log %1 changed while being copied to %2.</source>
+        <translation type="unfinished">Le journal de débogage actif %1 a été modifié pendant sa copie vers %2.</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="631"/>
+        <source>Cannot read the active debug log %1 while saving a copy:
+%2</source>
+        <translation type="unfinished">Impossible de lire le journal de débogage actif %1 lors de l’enregistrement d’une copie :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="640"/>
+        <source>Cannot write the debug log copy to %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire la copie du journal de débogage dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="649"/>
+        <source>The selected debug log copy %1 already contains the active log %2. Choose another file.</source>
+        <translation type="unfinished">La copie du journal de débogage sélectionnée %1 contient déjà le journal actif %2. Choisissez un autre fichier.</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="653"/>
+        <source>Cannot finish saving the debug log copy %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’enregistrement de la copie du journal de débogage %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/DevToolsDialog.cpp" line="660"/>
         <source>Debug log saved to %1</source>
         <translation>Journal de débogage enregistré dans %1</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="581"/>
-        <source>Failed to copy the debug log file.</source>
-        <translation>Impossible de copier le fichier de journal de débogage.</translation>
-    </message>
-    <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="592"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="676"/>
         <source>File logging is disabled</source>
         <translation>La journalisation dans un fichier est désactivée</translation>
     </message>
     <message>
-        <location filename="../ui/DevToolsDialog.cpp" line="594"/>
+        <location filename="../ui/DevToolsDialog.cpp" line="678"/>
         <source>Log file: %1</source>
         <translation>Fichier de journal : %1</translation>
     </message>
@@ -6783,7 +7378,7 @@ Exemple : %3</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.ui" line="83"/>
-        <location filename="../ui/ExportDialog.cpp" line="406"/>
+        <location filename="../ui/ExportDialog.cpp" line="465"/>
         <source>POTA</source>
         <translation>POTA</translation>
     </message>
@@ -6928,92 +7523,149 @@ Exemple : %3</translation>
         <translation>Profil de station</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="25"/>
+        <location filename="../ui/ExportDialog.cpp" line="27"/>
         <source>Export QSOs</source>
         <translation>Exporter les QSO</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="55"/>
+        <location filename="../ui/ExportDialog.cpp" line="57"/>
         <source>&amp;Export</source>
         <translation>&amp;Exporter</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="166"/>
+        <location filename="../ui/ExportDialog.cpp" line="88"/>
+        <source>Export POTA Files</source>
+        <translation type="unfinished">Exporter les fichiers POTA</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="188"/>
         <source>Export only QSOs matching this station profile</source>
         <translation>Exporter uniquement les QSO correspondant à ce profil de station</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="192"/>
-        <source>The selected file already exists. Overwrite it?</source>
-        <translation>Le fichier sélectionné existe déjà. Voulez-vous l’écraser ?</translation>
+        <location filename="../ui/ExportDialog.cpp" line="214"/>
+        <source>Choose a logbook export file before exporting.</source>
+        <translation type="unfinished">Choisissez un fichier d’exportation du carnet de trafic avant d’exporter.</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="271"/>
+        <location filename="../ui/ExportDialog.cpp" line="227"/>
+        <source>The logbook export file %1 already exists. Overwrite it?</source>
+        <translation type="unfinished">Le fichier d’exportation du carnet de trafic %1 existe déjà. Voulez-vous l’écraser ?</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="244"/>
+        <location filename="../ui/ExportDialog.cpp" line="257"/>
+        <location filename="../ui/ExportDialog.cpp" line="352"/>
+        <source>Export Logbook</source>
+        <translation type="unfinished">Exporter le carnet de trafic</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="245"/>
+        <source>Cannot create the %1 logbook export file %2:
+%3</source>
+        <translation type="unfinished">Impossible de créer le fichier %2 pour l’exportation %1 du carnet de trafic :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="258"/>
+        <source>Cannot save the logbook export %1. The selected format %2 is unavailable.</source>
+        <translation type="unfinished">Impossible d’enregistrer l’exportation du carnet de trafic %1. Le format sélectionné %2 n’est pas disponible.</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="272"/>
+        <source>The file %1 already exists. Replace it?</source>
+        <translation type="unfinished">Le fichier %1 existe déjà. Le remplacer ?</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="321"/>
         <source>Exporting...</source>
         <translation>Exportation en cours…</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="271"/>
+        <location filename="../ui/ExportDialog.cpp" line="321"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="272"/>
+        <location filename="../ui/ExportDialog.cpp" line="322"/>
         <source>Export Progress</source>
         <translation>Progression de l’exportation</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="295"/>
+        <location filename="../ui/ExportDialog.cpp" line="344"/>
+        <source>Cannot finish writing the %1 logbook export %2:
+%3</source>
+        <translation type="unfinished">Impossible de terminer l’écriture de l’exportation %1 du carnet de trafic dans %2 :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="347"/>
+        <source>Cannot save the completed main POTA export as %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer l’exportation POTA principale finalisée sous %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="353"/>
+        <source>%1
+
+Some files may already have been saved.</source>
+        <translation type="unfinished">%1
+
+Certains fichiers ont peut-être déjà été enregistrés.</translation>
+    </message>
+    <message>
+        <location filename="../ui/ExportDialog.cpp" line="360"/>
         <source>QLog Error</source>
         <translation>Erreur QLog</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="296"/>
+        <location filename="../ui/ExportDialog.cpp" line="360"/>
         <source>Cannot mark exported QSOs as Sent</source>
         <translation>Impossible de marquer les QSO exportés comme Envoyés</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="359"/>
+        <location filename="../ui/ExportDialog.cpp" line="418"/>
         <source>Generic</source>
         <translation>Générique</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="363"/>
+        <location filename="../ui/ExportDialog.cpp" line="422"/>
         <source>QSLs</source>
         <translation>QSL</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="404"/>
+        <location filename="../ui/ExportDialog.cpp" line="463"/>
         <source>All</source>
         <translation>Tous</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="405"/>
+        <location filename="../ui/ExportDialog.cpp" line="464"/>
         <source>Minimal</source>
         <translation>Minimal</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="407"/>
+        <location filename="../ui/ExportDialog.cpp" line="466"/>
         <source>QSL-specific</source>
         <translation>Spécifique aux QSL</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="408"/>
+        <location filename="../ui/ExportDialog.cpp" line="467"/>
         <source>Custom 1</source>
         <translation>Personnalisé 1</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="409"/>
+        <location filename="../ui/ExportDialog.cpp" line="468"/>
         <source>Custom 2</source>
         <translation>Personnalisé 2</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="410"/>
+        <location filename="../ui/ExportDialog.cpp" line="469"/>
         <source>Custom 3</source>
         <translation>Personnalisé 3</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="530"/>
+        <location filename="../ui/ExportDialog.cpp" line="593"/>
         <source>%1 Files (%2);;All Files (*)</source>
         <translation>Fichiers %1 (%2);;Tous les fichiers (*)</translation>
     </message>
@@ -7051,6 +7703,129 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
         <location filename="../ui/ExportPasswordDialog.ui" line="68"/>
         <source>Delete passwords from Credential Store after export</source>
         <translation>Supprimer les mots de passe du gestionnaire d&apos;identifiants après export</translation>
+    </message>
+</context>
+<context>
+    <name>FileCompressor</name>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="101"/>
+        <source>Cannot open the source file for packing %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir le fichier source pour la compression de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="111"/>
+        <source>Cannot create the packed output file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier de sortie compressé %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="126"/>
+        <source>Cannot start packing %1. The compressor could not be initialized.</source>
+        <translation type="unfinished">Impossible de démarrer la compression de %1. Le compresseur n’a pas pu être initialisé.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="143"/>
+        <source>Cannot read the source data while packing %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire les données source lors de la compression de %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="163"/>
+        <source>Cannot compress the data from %1.</source>
+        <translation type="unfinished">Impossible de compresser les données de %1.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="173"/>
+        <source>Cannot write the packed data to %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire les données compressées dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="185"/>
+        <source>Packing %1 was cancelled.</source>
+        <translation type="unfinished">La compression de %1 a été annulée.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="199"/>
+        <source>Cannot complete packing %1. The compressed data is incomplete.</source>
+        <translation type="unfinished">Impossible de terminer la compression de %1. Les données compressées sont incomplètes.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="208"/>
+        <source>Cannot finish saving the packed file %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’enregistrement du fichier compressé %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="230"/>
+        <source>Cannot open packed file %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir le fichier compressé %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="240"/>
+        <source>Cannot create unpacked file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier décompressé %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="256"/>
+        <source>Cannot unpack %1. There is not enough memory to start decompression.</source>
+        <translation type="unfinished">Impossible de décompresser %1. La mémoire disponible est insuffisante pour démarrer la décompression.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="257"/>
+        <source>Cannot start unpacking %1 (decompression error %2).</source>
+        <translation type="unfinished">Impossible de démarrer la décompression de %1 (erreur de décompression %2).</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="274"/>
+        <source>Cannot read packed file %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire le fichier compressé %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="296"/>
+        <source>Cannot unpack %1. There is not enough memory.</source>
+        <translation type="unfinished">Impossible de décompresser %1. Mémoire insuffisante.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="297"/>
+        <source>Cannot unpack %1. The packed file is damaged or is not a valid QLog packed file.</source>
+        <translation type="unfinished">Impossible de décompresser %1. Le fichier compressé est endommagé ou n’est pas un fichier compressé QLog valide.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="307"/>
+        <source>Cannot write unpacked file %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire le fichier décompressé %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="319"/>
+        <source>Unpacking %1 was cancelled.</source>
+        <translation type="unfinished">La décompression de %1 a été annulée.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="331"/>
+        <source>Cannot unpack %1. The packed file is incomplete or damaged.</source>
+        <translation type="unfinished">Impossible de décompresser %1. Le fichier compressé est incomplet ou endommagé.</translation>
+    </message>
+    <message>
+        <location filename="../core/FileCompressor.cpp" line="339"/>
+        <source>Cannot save unpacked file %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer le fichier décompressé %1 :
+%2</translation>
     </message>
 </context>
 <context>
@@ -7866,17 +8641,17 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
 <context>
     <name>LOVDatabase</name>
     <message>
-        <location filename="../core/LOVDatabase.cpp" line="390"/>
+        <location filename="../core/LOVDatabase.cpp" line="391"/>
         <source>Could not close the reference-list database.</source>
         <translation type="unfinished">Impossible de fermer la base de données des listes de référence.</translation>
     </message>
     <message>
-        <location filename="../core/LOVDatabase.cpp" line="397"/>
+        <location filename="../core/LOVDatabase.cpp" line="398"/>
         <source>Could not update the reference list. Existing data have been kept.</source>
         <translation type="unfinished">Impossible de mettre à jour la liste de référence. Les données existantes ont été conservées.</translation>
     </message>
     <message>
-        <location filename="../core/LOVDatabase.h" line="41"/>
+        <location filename="../core/LOVDatabase.h" line="43"/>
         <source>Could not prepare the reference list.</source>
         <translation type="unfinished">Impossible de préparer la liste de référence.</translation>
     </message>
@@ -7956,42 +8731,55 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
     </message>
     <message>
         <location filename="../ui/LoadDatabaseDialog.cpp" line="173"/>
-        <source>Cannot create temporary file</source>
-        <translation>Impossible de créer le fichier temporaire</translation>
+        <source>Cannot prepare unpacking in %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer la décompression dans %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="187"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="209"/>
+        <source>Cannot unpack %1:
+%2</source>
+        <translation type="unfinished">Impossible de décompresser %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="228"/>
+        <source>Cannot open unpacked database %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la base de données décompressée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="243"/>
+        <source>Cannot load the saved passwords from unpacked database %1:
+%2</source>
+        <translation type="unfinished">Impossible de charger les mots de passe enregistrés dans la base de données décompressée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="189"/>
         <source>Decompressing database...</source>
         <translation>Décompression de la base de données...</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="190"/>
-        <source>Cannot decompress database file</source>
-        <translation>Impossible de décompresser le fichier de base de données</translation>
-    </message>
-    <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="225"/>
-        <source>Cannot open database</source>
-        <translation>Impossible d&apos;ouvrir la base de données</translation>
-    </message>
-    <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="248"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="266"/>
         <source>Valid database</source>
         <translation>Base de données valide</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="253"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="271"/>
         <source>Different platform</source>
         <translation>Plateforme différente</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="262"/>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="304"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="280"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="322"/>
         <source>Password required to import credentials</source>
         <translation>Mot de passe requis pour importer les identifiants</translation>
     </message>
     <message>
-        <location filename="../ui/LoadDatabaseDialog.cpp" line="267"/>
+        <location filename="../ui/LoadDatabaseDialog.cpp" line="285"/>
         <source>No encrypted credentials in database</source>
         <translation>Aucun identifiant chiffré dans la base de données</translation>
     </message>
@@ -9655,7 +10443,7 @@ Sous-mode: %2</translation>
     </message>
     <message>
         <location filename="../ui/MainWindow.ui" line="127"/>
-        <location filename="../ui/MainWindow.cpp" line="2079"/>
+        <location filename="../ui/MainWindow.cpp" line="2086"/>
         <source>Contest</source>
         <translation>Concours (Contest)</translation>
     </message>
@@ -10101,204 +10889,203 @@ Sous-mode: %2</translation>
         <translation>Exporter Cabrillo</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="103"/>
+        <location filename="../ui/MainWindow.cpp" line="104"/>
         <source>Color Theme</source>
         <translation>Thème de couleur</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="126"/>
+        <location filename="../ui/MainWindow.cpp" line="127"/>
         <source>Not enabled for non-Fusion style</source>
         <translation>Non activé pour le style hors-Fusion</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="201"/>
+        <location filename="../ui/MainWindow.cpp" line="202"/>
         <source>Press to tune the alert</source>
         <translation>Appuyez pour régler l&apos;alerte</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="344"/>
+        <location filename="../ui/MainWindow.cpp" line="345"/>
         <source>FLDigi</source>
         <translation>FLDigi</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="345"/>
+        <location filename="../ui/MainWindow.cpp" line="346"/>
         <source>FLDigi test message received.</source>
         <translation>Message de test FLDigi reçu.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="353"/>
+        <location filename="../ui/MainWindow.cpp" line="354"/>
         <source>Startup ADI</source>
         <translation>ADI au démarrage</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="544"/>
+        <location filename="../ui/MainWindow.cpp" line="545"/>
         <source>Clublog Immediately Upload Error</source>
         <translation>Erreur d&apos;envoi immédiat Clublog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="785"/>
-        <location filename="../ui/MainWindow.cpp" line="798"/>
-        <location filename="../ui/MainWindow.cpp" line="808"/>
+        <location filename="../ui/MainWindow.cpp" line="786"/>
+        <location filename="../ui/MainWindow.cpp" line="799"/>
+        <location filename="../ui/MainWindow.cpp" line="809"/>
         <source>&lt;b&gt;Error Detail:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Détail de l&apos;erreur :&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="832"/>
+        <location filename="../ui/MainWindow.cpp" line="833"/>
         <source>op: </source>
         <translation>op : </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1015"/>
+        <location filename="../ui/MainWindow.cpp" line="1016"/>
         <source>A New Version</source>
         <translation>Nouvelle version disponible</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1016"/>
+        <location filename="../ui/MainWindow.cpp" line="1017"/>
         <source>A new version %1 is available.</source>
         <translation>Une nouvelle version %1 est disponible.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1020"/>
+        <location filename="../ui/MainWindow.cpp" line="1021"/>
         <source>Remind Me Later</source>
         <translation>Me le rappeler plus tard</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1021"/>
+        <location filename="../ui/MainWindow.cpp" line="1022"/>
         <source>Download</source>
         <translation>Télécharger</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1279"/>
-        <location filename="../ui/MainWindow.cpp" line="1327"/>
+        <location filename="../ui/MainWindow.cpp" line="1280"/>
+        <location filename="../ui/MainWindow.cpp" line="1328"/>
         <source>QLog Warning</source>
         <translation>Avertissement QLog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1280"/>
+        <location filename="../ui/MainWindow.cpp" line="1281"/>
         <source>LoTW is not configured properly.&lt;p&gt;Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW n’est pas configuré correctement.&lt;p&gt;Utilisez la boîte de dialogue &lt;b&gt;Paramètres&lt;/b&gt; pour le configurer.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1301"/>
-        <location filename="../ui/MainWindow.cpp" line="1379"/>
+        <location filename="../ui/MainWindow.cpp" line="1302"/>
+        <location filename="../ui/MainWindow.cpp" line="1380"/>
         <source>QLog Error</source>
         <translation>Erreur QLog</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1302"/>
+        <location filename="../ui/MainWindow.cpp" line="1303"/>
         <source>Cannot load local DXCC entities from the logbook: </source>
         <translation>Impossible de charger les entités DXCC locales depuis le journal : </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1316"/>
+        <location filename="../ui/MainWindow.cpp" line="1317"/>
         <source>Unknown DXCC Entity</source>
         <translation>Entité DXCC inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1328"/>
+        <location filename="../ui/MainWindow.cpp" line="1329"/>
         <source>Cannot determine a local DXCC entity from logbook contacts.</source>
         <translation>Impossible de déterminer une entité DXCC locale à partir des contacts du journal.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1334"/>
+        <location filename="../ui/MainWindow.cpp" line="1335"/>
         <source>LoTW DXCC Credits</source>
         <translation>Crédits DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1335"/>
+        <location filename="../ui/MainWindow.cpp" line="1336"/>
         <source>Select the local DXCC entity for which LoTW DXCC credits will be downloaded:</source>
         <translation>Sélectionnez l’entité DXCC locale pour laquelle les crédits DXCC LoTW seront téléchargés :</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1346"/>
+        <location filename="../ui/MainWindow.cpp" line="1347"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1347"/>
+        <location filename="../ui/MainWindow.cpp" line="1348"/>
         <source>LoTW DXCC Credit Download</source>
         <translation>Téléchargement des crédits DXCC depuis LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1351"/>
+        <location filename="../ui/MainWindow.cpp" line="1352"/>
         <source>Downloading LoTW DXCC credits</source>
         <translation>Téléchargement des crédits DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1359"/>
+        <location filename="../ui/MainWindow.cpp" line="1360"/>
         <source>Processing LoTW DXCC credits</source>
         <translation>Traitement des crédits DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1371"/>
+        <location filename="../ui/MainWindow.cpp" line="1372"/>
         <source>LoTW DXCC Credit Import Summary</source>
         <translation>Résumé de l’importation des crédits DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1379"/>
+        <location filename="../ui/MainWindow.cpp" line="1380"/>
         <source>LoTW DXCC credit import failed: </source>
         <translation>Échec de l’importation des crédits DXCC LoTW : </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1423"/>
-        <location filename="../ui/MainWindow.cpp" line="1438"/>
-        <location filename="../ui/MainWindow.cpp" line="1446"/>
-        <location filename="../ui/MainWindow.cpp" line="1462"/>
-        <location filename="../ui/MainWindow.cpp" line="1477"/>
-        <location filename="../ui/MainWindow.cpp" line="1488"/>
-        <location filename="../ui/MainWindow.cpp" line="1504"/>
-        <location filename="../ui/MainWindow.cpp" line="1517"/>
-        <location filename="../ui/MainWindow.cpp" line="1523"/>
-        <location filename="../ui/MainWindow.cpp" line="1528"/>
+        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <location filename="../ui/MainWindow.cpp" line="1439"/>
+        <location filename="../ui/MainWindow.cpp" line="1447"/>
+        <location filename="../ui/MainWindow.cpp" line="1452"/>
+        <location filename="../ui/MainWindow.cpp" line="1469"/>
+        <location filename="../ui/MainWindow.cpp" line="1484"/>
+        <location filename="../ui/MainWindow.cpp" line="1495"/>
+        <location filename="../ui/MainWindow.cpp" line="1513"/>
+        <location filename="../ui/MainWindow.cpp" line="1525"/>
+        <location filename="../ui/MainWindow.cpp" line="1531"/>
+        <location filename="../ui/MainWindow.cpp" line="1536"/>
         <source>Pack Data &amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Archiver les données et paramètres</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1424"/>
+        <location filename="../ui/MainWindow.cpp" line="1425"/>
         <source>Data and settings cannot be packed because an import is unfinished.
 
 Restart QLog and complete password recovery or choose &quot;Stop Password Recovery&quot;.</source>
         <translation type="unfinished">Impossible d’archiver les données et les paramètres, car une importation est inachevée.
 
-Redémarrez QLog et terminez la récupération des mots de passe ou choisissez "Arrêter la récupération des mots de passe".</translation>
+Redémarrez QLog et terminez la récupération des mots de passe ou choisissez &quot;Arrêter la récupération des mots de passe&quot;.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1439"/>
+        <location filename="../ui/MainWindow.cpp" line="1440"/>
         <source>Failed to encrypt credentials.</source>
         <translation>Échec du chiffrement des identifiants.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1448"/>
+        <location filename="../ui/MainWindow.cpp" line="1449"/>
+        <location filename="../ui/MainWindow.cpp" line="1454"/>
         <source>Database files (*.dbe);;All files (*)</source>
         <translation>Fichiers base de données (*.dbe);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1463"/>
+        <location filename="../ui/MainWindow.cpp" line="1470"/>
         <source>The file %1 already exists. Replace it?</source>
         <translation type="unfinished">Le fichier %1 existe déjà. Le remplacer ?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1478"/>
-        <source>Choose a different file. The export destination points to the open database.</source>
-        <translation type="unfinished">Choisissez un autre fichier. La destination de l’exportation correspond à la base de données ouverte.</translation>
+        <location filename="../ui/MainWindow.cpp" line="1485"/>
+        <source>Cannot pack into %1 because it is the open logbook database. Choose another file.</source>
+        <translation type="unfinished">Impossible de compresser les données dans %1, car il s’agit de la base de données du carnet de trafic actuellement ouverte. Choisissez un autre fichier.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1489"/>
-        <source>Failed to create temporary file.</source>
-        <translation>Échec de création du fichier temporaire.</translation>
+        <location filename="../ui/MainWindow.cpp" line="1496"/>
+        <source>Cannot create a temporary database file for packing in %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer un fichier temporaire de base de données pour la compression dans %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1505"/>
-        <source>Failed to dump the database.</source>
-        <translation>Échec de l&apos;exportation de la base de données.</translation>
-    </message>
-    <message>
-        <location filename="../ui/MainWindow.cpp" line="1510"/>
+        <location filename="../ui/MainWindow.cpp" line="1518"/>
         <source>Compressing database...</source>
         <translation>Compression de la base...</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1518"/>
+        <location filename="../ui/MainWindow.cpp" line="1526"/>
         <source>Database successfully dumped to
 %1
 Some credentials could not be removed.</source>
@@ -10307,77 +11094,72 @@ Some credentials could not be removed.</source>
 Certaines informations d’authentification n’ont pas pu être supprimées.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1524"/>
+        <location filename="../ui/MainWindow.cpp" line="1532"/>
         <source>Database successfully dumped to
 %1</source>
         <translation>Base de données exportée avec succès vers
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1529"/>
-        <source>Failed to compress the database.</source>
-        <translation>Échec de la compression de la base de données.</translation>
-    </message>
-    <message>
-        <location filename="../ui/MainWindow.cpp" line="1539"/>
-        <location filename="../ui/MainWindow.cpp" line="1589"/>
-        <location filename="../ui/MainWindow.cpp" line="1617"/>
+        <location filename="../ui/MainWindow.cpp" line="1546"/>
+        <location filename="../ui/MainWindow.cpp" line="1596"/>
+        <location filename="../ui/MainWindow.cpp" line="1624"/>
         <source>Unpack Data &amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déballer les données et les paramètres</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1540"/>
+        <location filename="../ui/MainWindow.cpp" line="1547"/>
         <source>Data and settings cannot be unpacked because an import is unfinished.
 
 Restart QLog and complete password recovery or choose &quot;Stop Password Recovery&quot;.</source>
         <translation type="unfinished">Impossible de désarchiver les données et les paramètres, car une importation est inachevée.
 
-Redémarrez QLog et terminez la récupération des mots de passe ou choisissez "Arrêter la récupération des mots de passe".</translation>
+Redémarrez QLog et terminez la récupération des mots de passe ou choisissez &quot;Arrêter la récupération des mots de passe&quot;.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1618"/>
+        <location filename="../ui/MainWindow.cpp" line="1625"/>
         <source>QLog could not be restarted. The prepared import was cancelled.</source>
         <translation type="unfinished">Impossible de redémarrer QLog. L’importation préparée a été annulée.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1619"/>
+        <location filename="../ui/MainWindow.cpp" line="1626"/>
         <source>QLog could not be restarted.
 %1</source>
         <translation type="unfinished">Impossible de redémarrer QLog.
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="1767"/>
+        <location filename="../ui/MainWindow.cpp" line="1774"/>
         <source>Classic</source>
         <translation>Classique</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2004"/>
+        <location filename="../ui/MainWindow.cpp" line="2011"/>
         <source>Accept any received exchange. %1 is updated only when the received exchange is valid for this field.</source>
         <translation>Accepter tout exchange reçu. %1 n’est mis à jour que si l’exchange reçu est valide pour ce champ.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2026"/>
+        <location filename="../ui/MainWindow.cpp" line="2033"/>
         <source>Standard Linking</source>
         <translation>Liaison standard</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2042"/>
+        <location filename="../ui/MainWindow.cpp" line="2049"/>
         <source>Flexible Linking</source>
         <translation>Liaison flexible</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2080"/>
+        <location filename="../ui/MainWindow.cpp" line="2087"/>
         <source>Do you want to remove the Contest filter %1?</source>
         <translation>Voulez-vous supprimer le filtre de concours %1 ?</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2111"/>
+        <location filename="../ui/MainWindow.cpp" line="2118"/>
         <source>Contest: </source>
         <translation>Concours : </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2392"/>
+        <location filename="../ui/MainWindow.cpp" line="2399"/>
         <source>Backup could not be completed. Check Settings → Backup.
 
 %1</source>
@@ -10386,17 +11168,17 @@ Redémarrez QLog et terminez la récupération des mots de passe ou choisissez "
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2514"/>
+        <location filename="../ui/MainWindow.cpp" line="2521"/>
         <source>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Based on Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icon by &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Satellite images by &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect by &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;TimeZone Database by &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</source>
         <translation>&lt;h1&gt;QLog %1&lt;/h1&gt;&lt;p&gt;&amp;copy; 2019 Thomas Gatzweiler DL2IC&lt;br/&gt;&amp;copy; 2021-2026 Ladislav Foldyna OK1MLG&lt;br/&gt;&amp;copy; 2025-2026 Michael Morgan AA5SH&lt;br/&gt;&amp;copy; 2025-2026 Kyle Boyle VE9KZ&lt;/p&gt;&lt;p&gt;Basé sur Qt %2&lt;br/&gt;%3&lt;br/&gt;%4&lt;br/&gt;%5&lt;/p&gt;&lt;p&gt;Icônes par &lt;a href=&apos;http://www.iconshock.com&apos;&gt;Icon Shock&lt;/a&gt;&lt;br /&gt;Images satellites par &lt;a href=&apos;http://www.nasa.gov&apos;&gt;NASA&lt;/a&gt;&lt;br /&gt;ZoneDetect par &lt;a href=&apos;https://github.com/BertoldVdb/ZoneDetect&apos;&gt;Bertold Van den Bergh&lt;/a&gt;&lt;br /&gt;Base de données TimeZone par &lt;a href=&apos;https://github.com/evansiroky/timezone-boundary-builder&apos;&gt;Evan Siroky&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2545"/>
+        <location filename="../ui/MainWindow.cpp" line="2552"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="2596"/>
+        <location filename="../ui/MainWindow.cpp" line="2603"/>
         <source>N/A</source>
         <translation>N/D</translation>
     </message>
@@ -10791,132 +11573,132 @@ Redémarrez QLog et terminez la récupération des mots de passe ou choisissez "
         <translation>La fréquence RX ou la bande doit être renseignée</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2640"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2646"/>
         <source>QLog Warning</source>
         <translation>Avertissement QLog</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2641"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2647"/>
         <source>An exact RX frequency is required to add a Bandmap mark</source>
         <translation>Une fréquence RX exacte est requise pour ajouter un repère à la Bandmap</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2719"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2725"/>
         <source>LP</source>
         <translation>LP (Long Path)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2782"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2788"/>
         <source>New Entity!</source>
         <translation>Nouvelle Entité !</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2785"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2791"/>
         <source>New Band!</source>
         <translation>Nouvelle Bande !</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2788"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2794"/>
         <source>New Mode!</source>
         <translation>Nouveau Mode !</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2791"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2797"/>
         <source>New Band &amp; Mode!</source>
         <translation>Nouveau Bande &amp; Mode !</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2794"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2800"/>
         <source>New Slot!</source>
         <translation>Nouveau Slot !</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2797"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2803"/>
         <source>Worked</source>
         <translation>Contacté (Worked)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="2800"/>
+        <location filename="../ui/NewContactWidget.cpp" line="2806"/>
         <source>Confirmed</source>
         <translation>Confirmé</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3775"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3781"/>
         <source>GE</source>
         <translation>GE (Good Evening)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3785"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3791"/>
         <source>GM</source>
         <translation>GM (Good Morning)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="3791"/>
+        <location filename="../ui/NewContactWidget.cpp" line="3797"/>
         <source>GA</source>
         <translation>GA (Good Afternoon)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4119"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4125"/>
         <source> m</source>
         <translation> m</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4567"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4573"/>
         <source>Callbook search is inactive</source>
         <translation>Recherche Callbook inactive</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4572"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4578"/>
         <source>Callbook search is active</source>
         <translation>Recherche Callbook active</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4650"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4656"/>
         <source>Contest ID must be filled in to activate</source>
         <translation>L&apos;ID du Concours doit être renseigné pour l&apos;activation</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4774"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4780"/>
         <source>two or four adjacent Maidenhead grid locators, each four characters long, (ex. EN98,FM08,EM97,FM07)</source>
         <translation>deux ou quatre locators adjacents (Maidenhead), chacun de quatre caractères (ex. JN18,JN19...)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4777"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4783"/>
         <source>the contacted station&apos;s DARC DOK (District Location Code) (ex. A01)</source>
         <translation>le DOK (District Location Code) DARC de la station contactée (ex. A01)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4797"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4803"/>
         <source>World Wide Flora &amp; Fauna</source>
         <translation>World Wide Flora &amp; Fauna (WWFF)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4801"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4807"/>
         <source>Special Activity Group</source>
         <translation>Groupe d&apos;Activité Spéciale</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4805"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4811"/>
         <source>Special Activity Group Information</source>
         <translation>Informations du Groupe d&apos;Activité Spéciale</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4833"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4839"/>
         <source>It is not the name of the contest but it is an assigned&lt;br&gt;Contest ID (ex. CQ-WW-CW for CQ WW DX Contest (CW)) </source>
         <translation>Ce n&apos;est pas le nom complet du concours mais l&apos;ID attribué&lt;br&gt;(ex. CQ-WW-CW pour le CQ WW DX Contest CW)</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4845"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4851"/>
         <source>Blank</source>
         <translation>Vide</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4846"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4852"/>
         <source> W</source>
         <translation> W</translation>
     </message>
     <message>
-        <location filename="../ui/NewContactWidget.cpp" line="4848"/>
+        <location filename="../ui/NewContactWidget.cpp" line="4854"/>
         <source>Description of the contacted station&apos;s equipment</source>
         <translation>Description de l&apos;équipement de la station contactée</translation>
     </message>
@@ -10934,20 +11716,20 @@ Redémarrez QLog et terminez la récupération des mots de passe ou choisissez "
         <translation>Transceiver 2</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="130"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="222"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="229"/>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="269"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="138"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="230"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="237"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="277"/>
         <source>Initialization Error</source>
         <translation>Erreur d&apos;initialisation</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1078"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1181"/>
         <source>Rig status changed</source>
         <translation>Le statut du poste a changé</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1079"/>
+        <location filename="../rig/drivers/OmnirigRigDrv.cpp" line="1182"/>
         <source>Rig is not connected</source>
         <translation>Le transceiver n&apos;est pas connecté</translation>
     </message>
@@ -10975,20 +11757,20 @@ Redémarrez QLog et terminez la récupération des mots de passe ou choisissez "
         <translation>Transceiver 4</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="133"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="225"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="232"/>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="274"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="141"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="233"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="240"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="282"/>
         <source>Initialization Error</source>
         <translation>Erreur d&apos;initialisation</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="977"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="1080"/>
         <source>Rig status changed</source>
         <translation>Le statut du poste a changé</translation>
     </message>
     <message>
-        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="978"/>
+        <location filename="../rig/drivers/Omnirigv2RigDrv.cpp" line="1081"/>
         <source>Rig is not connected</source>
         <translation>Le transceiver n&apos;est pas connecté</translation>
     </message>
@@ -11130,6 +11912,40 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
     </message>
 </context>
 <context>
+    <name>PotaAdiFormat</name>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="93"/>
+        <source>Choose a different main export file. %1 is also used for a POTA park.</source>
+        <translation type="unfinished">Choisissez un autre fichier d’exportation principal. %1 est aussi utilisé pour un parc POTA.</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="99"/>
+        <source>Export cancelled. The file %1 was not replaced.</source>
+        <translation type="unfinished">Exportation annulée. Le fichier %1 n’a pas été remplacé.</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="107"/>
+        <source>Cannot create the POTA park export file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier %1 pour l’exportation du parc POTA :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="173"/>
+        <source>Cannot finish writing the POTA park export %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’écriture du fichier %1 pour l’exportation du parc POTA :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../logformat/PotaAdiFormat.cpp" line="183"/>
+        <source>Cannot save the completed POTA park export as %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer le fichier d’exportation final du parc POTA sous %1 :
+%2</translation>
+    </message>
+</context>
+<context>
     <name>ProfileImageWidget</name>
     <message>
         <location filename="../ui/ProfileImageWidget.ui" line="14"/>
@@ -11140,9 +11956,17 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../core/main.cpp" line="512"/>
+        <location filename="../core/main.cpp" line="513"/>
         <source>QLog Help</source>
         <translation>Aide de QLog</translation>
+    </message>
+</context>
+<context>
+    <name>QLogFileDialog</name>
+    <message>
+        <location filename="../ui/QLogFileDialog.cpp" line="43"/>
+        <source>Confirm the complete file name, including .%1, in the save dialog.</source>
+        <translation type="unfinished">Confirmez le nom complet du fichier, y compris .%1, dans la boîte de dialogue d’enregistrement.</translation>
     </message>
 </context>
 <context>
@@ -11169,30 +11993,30 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
         <location filename="../core/MembershipQE.cpp" line="211"/>
         <location filename="../core/MembershipQE.cpp" line="338"/>
         <location filename="../core/MembershipQE.cpp" line="345"/>
-        <location filename="../ui/ExportDialog.cpp" line="182"/>
+        <location filename="../ui/ExportDialog.cpp" line="213"/>
         <location filename="../ui/ImportDialog.cpp" line="343"/>
-        <location filename="../ui/MainWindow.cpp" line="783"/>
-        <location filename="../ui/MainWindow.cpp" line="796"/>
-        <location filename="../ui/MainWindow.cpp" line="806"/>
+        <location filename="../ui/MainWindow.cpp" line="784"/>
+        <location filename="../ui/MainWindow.cpp" line="797"/>
+        <location filename="../ui/MainWindow.cpp" line="807"/>
         <location filename="../ui/NewContactWidget.cpp" line="1740"/>
         <location filename="../ui/SettingsDialog.cpp" line="823"/>
         <location filename="../ui/SettingsDialog.cpp" line="848"/>
         <location filename="../ui/SettingsDialog.cpp" line="857"/>
         <location filename="../ui/SettingsDialog.cpp" line="868"/>
-        <location filename="../ui/SettingsDialog.cpp" line="982"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1001"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1361"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1723"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1796"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1841"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2026"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2034"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2041"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2050"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2058"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2065"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2072"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2547"/>
+        <location filename="../ui/SettingsDialog.cpp" line="986"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1005"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1365"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1727"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1800"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1845"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2030"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2038"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2045"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2054"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2062"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2069"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2076"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2551"/>
         <source>QLog Warning</source>
         <translation>Avertissement QLog</translation>
     </message>
@@ -11222,21 +12046,18 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
         <translation>Erreur réseau. Impossible de télécharger la liste des clubs pour</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="604"/>
-        <location filename="../core/main.cpp" line="629"/>
-        <location filename="../core/main.cpp" line="646"/>
+        <location filename="../core/main.cpp" line="605"/>
         <location filename="../ui/AlertRuleDetail.cpp" line="327"/>
-        <location filename="../ui/ExportDialog.cpp" line="204"/>
         <location filename="../ui/KSTChatWidget.cpp" line="311"/>
         <location filename="../ui/NewContactWidget.cpp" line="2023"/>
         <location filename="../ui/QSOFilterDetail.cpp" line="488"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1009"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1018"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1013"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1022"/>
         <source>QLog Error</source>
         <translation>Erreur QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="605"/>
+        <location filename="../core/main.cpp" line="606"/>
         <source>QLog is already running</source>
         <translation>QLog est déjà en cours d&apos;exécution</translation>
     </message>
@@ -11301,29 +12122,23 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
         <translation>Erreur de connexion au serveur DXC</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="183"/>
         <location filename="../ui/ImportDialog.cpp" line="344"/>
         <source>Filename is empty</source>
         <translation>Le nom de fichier est vide</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="205"/>
-        <source>Cannot write to the file</source>
-        <translation>Impossible d&apos;écrire dans le fichier</translation>
-    </message>
-    <message>
-        <location filename="../ui/ExportDialog.cpp" line="307"/>
-        <location filename="../ui/ExportDialog.cpp" line="310"/>
+        <location filename="../ui/ExportDialog.cpp" line="366"/>
+        <location filename="../ui/ExportDialog.cpp" line="369"/>
         <source>QLog Information</source>
         <translation>Information QLog</translation>
     </message>
     <message>
-        <location filename="../ui/ExportDialog.cpp" line="308"/>
+        <location filename="../ui/ExportDialog.cpp" line="367"/>
         <source>Exported.</source>
         <translation>Exporté.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/ExportDialog.cpp" line="311"/>
+        <location filename="../ui/ExportDialog.cpp" line="370"/>
         <source>Exported %n contact(s).</source>
         <translation>
             <numerusform>%n contact exporté.</numerusform>
@@ -11342,17 +12157,17 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
         <translation>Ce nom de filtre existe déjà.</translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="784"/>
+        <location filename="../ui/MainWindow.cpp" line="785"/>
         <source>&lt;b&gt;Rig Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Erreur Transceiver :&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="797"/>
+        <location filename="../ui/MainWindow.cpp" line="798"/>
         <source>&lt;b&gt;Rotator Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Erreur Rotor :&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../ui/MainWindow.cpp" line="807"/>
+        <location filename="../ui/MainWindow.cpp" line="808"/>
         <source>&lt;b&gt;CW Keyer Error:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Erreur Keyer CW :&lt;/b&gt; </translation>
     </message>
@@ -11373,7 +12188,7 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="824"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2548"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2552"/>
         <source>Please, define at least one Station Locations Profile</source>
         <translation>Veuillez définir au moins un profil d&apos;emplacement de station</translation>
     </message>
@@ -11388,77 +12203,77 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
         <translation>Boucle détectée. Le transfert UDP brut utilise le même port que le port de réception WSJT-X.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="983"/>
+        <location filename="../ui/SettingsDialog.cpp" line="987"/>
         <source>Rig port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Le port du transceiver doit être un port COM valide.&lt;br&gt;Pour Windows, utilisez COMxx, pour les OS de type Unix, utilisez un chemin vers le périphérique</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1002"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1006"/>
         <source>Rig PTT port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Le port PTT doit être un port COM valide.&lt;br&gt;Pour Windows, utilisez COMxx, pour les OS de type Unix, utilisez un chemin vers le périphérique</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1010"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1014"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be 0.</source>
         <translation>&lt;b&gt;Plage TX&lt;/b&gt; : La fréquence max ne doit pas être 0.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1019"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1023"/>
         <source>&lt;b&gt;TX Range&lt;/b&gt;: Max Frequency must not be under Min Frequency.</source>
         <translation>&lt;b&gt;Plage TX&lt;/b&gt; : La fréquence max ne doit pas être inférieure à la fréquence min.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1362"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1366"/>
         <source>Rotator port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Le port du rotor doit être un port COM valide.&lt;br&gt;Pour Windows, utilisez COMxx, pour les OS de type Unix, utilisez un chemin vers le périphérique</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1724"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1728"/>
         <source>CW Keyer port must be a valid COM port.&lt;br&gt;For Windows use COMxx, for unix-like OS use a path to device</source>
         <translation>Le port du keyer CW doit être un port COM valide.&lt;br&gt;Pour Windows, utilisez COMxx, pour les OS de type Unix, utilisez un chemin vers le périphérique</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1797"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1801"/>
         <source>Cannot change the CW Keyer Model to &lt;b&gt;Morse over CAT&lt;/b&gt;&lt;br&gt;No Morse over CAT support for Rig(s) &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Impossible de changer le modèle de keyer CW en &lt;b&gt;Morse via CAT&lt;/b&gt;&lt;br&gt;Pas de support Morse via CAT pour le(s) poste(s) &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="1842"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1846"/>
         <source>Cannot delete the CW Keyer Profile&lt;br&gt;The CW Key Profile is used by Rig(s): &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Impossible de supprimer le profil de keyer CW&lt;br&gt;Ce profil est utilisé par le(s) poste(s) : &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2027"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2031"/>
         <source>Callsign has an invalid format</source>
         <translation>Le format de l&apos;indicatif est invalide</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2035"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2039"/>
         <source>Operator Callsign has an invalid format</source>
         <translation>L&apos;indicatif de l&apos;opérateur a un format invalide</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2042"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2046"/>
         <source>Gridsquare has an invalid format</source>
         <translation>Le format du Locator est invalide</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2051"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2055"/>
         <source>VUCC Grids have an invalid format (must be 2 or 4 Gridsquares separated by &apos;,&apos;)</source>
         <translation>Les carrés VUCC ont un format invalide (doit être 2 ou 4 Locators séparés par des virgules)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2059"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2063"/>
         <source>Country must not be empty</source>
         <translation>Le pays ne doit pas être vide</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2066"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2070"/>
         <source>CQZ must not be empty</source>
         <translation>La zone CQ ne doit pas être vide</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2073"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2077"/>
         <source>ITU must not be empty</source>
         <translation>La zone ITU ne doit pas être vide</translation>
     </message>
@@ -11466,115 +12281,125 @@ Vous pouvez laisser les champs vides et les configurer plus tard dans les Param�
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../core/main.cpp" line="375"/>
+        <location filename="../core/main.cpp" line="376"/>
         <source>DXCC Entities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="376"/>
+        <location filename="../core/main.cpp" line="377"/>
         <source>ClubLog DXCC</source>
         <translation type="unfinished">DXCC ClubLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="377"/>
+        <location filename="../core/main.cpp" line="378"/>
         <source>Sats Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="378"/>
+        <location filename="../core/main.cpp" line="379"/>
         <source>SOTA Summits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="379"/>
+        <location filename="../core/main.cpp" line="380"/>
         <source>WWFF Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="380"/>
+        <location filename="../core/main.cpp" line="381"/>
         <source>IOTA Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="381"/>
+        <location filename="../core/main.cpp" line="382"/>
         <source>POTA Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="382"/>
+        <location filename="../core/main.cpp" line="383"/>
         <source>Membership Directory Records</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="383"/>
+        <location filename="../core/main.cpp" line="384"/>
         <source>List of Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="405"/>
+        <location filename="../core/main.cpp" line="406"/>
         <source>Updating %1</source>
         <translation type="unfinished">Mise à jour de %1</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="430"/>
+        <location filename="../core/main.cpp" line="431"/>
         <source>Updating External Resources</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="431"/>
+        <location filename="../core/main.cpp" line="432"/>
         <source>Updating %1…</source>
         <translation type="unfinished">Mise à jour de %1…</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="468"/>
+        <location filename="../core/main.cpp" line="469"/>
         <source>QLog Warning</source>
         <translation type="unfinished">Avertissement QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="469"/>
+        <location filename="../core/main.cpp" line="470"/>
         <source>Could not update these reference lists: %1. Existing data have been kept.</source>
         <translation type="unfinished">Impossible de mettre à jour ces listes de référence : %1. Les données existantes ont été conservées.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="618"/>
+        <location filename="../core/main.cpp" line="619"/>
         <source>Importing Database</source>
         <translation>Importation de la base de données</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="619"/>
+        <location filename="../core/main.cpp" line="620"/>
         <source>Opening Database</source>
         <translation>Ouverture de la base de données</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="633"/>
-        <location filename="../core/main.cpp" line="654"/>
-        <source>Unpack Data &amp; Settings</source>
-        <translation type="unfinished"></translation>
+        <location filename="../core/main.cpp" line="630"/>
+        <source>Open Logbook</source>
+        <translation type="unfinished">Ouvrir le carnet de trafic</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="635"/>
+        <location filename="../core/main.cpp" line="634"/>
+        <location filename="../core/main.cpp" line="656"/>
+        <source>Unpack Data &amp; Settings</source>
+        <translation type="unfinished">Déballer les données et les paramètres</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="637"/>
         <source>The import has not been completed. You can retry it, or cancel it and start QLog without importing the prepared database.</source>
         <translation type="unfinished">L’importation n’est pas terminée. Vous pouvez réessayer ou l’annuler et démarrer QLog sans importer la base de données préparée.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="636"/>
-        <location filename="../core/main.cpp" line="660"/>
+        <location filename="../core/main.cpp" line="638"/>
+        <location filename="../core/main.cpp" line="663"/>
         <source>Retry</source>
         <translation type="unfinished">Réessayer</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="637"/>
+        <location filename="../core/main.cpp" line="639"/>
         <source>Cancel Import and Start QLog</source>
         <translation type="unfinished">Annuler l’importation et démarrer QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="638"/>
-        <location filename="../core/main.cpp" line="663"/>
+        <location filename="../core/main.cpp" line="640"/>
+        <location filename="../core/main.cpp" line="666"/>
         <source>Exit QLog</source>
         <translation type="unfinished">Quitter QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="656"/>
+        <location filename="../core/main.cpp" line="648"/>
+        <source>Cancel Unpacking</source>
+        <translation type="unfinished">Annuler la décompression</translation>
+    </message>
+    <message>
+        <location filename="../core/main.cpp" line="659"/>
         <source>You can continue logging and decide again at the next startup. Packing or unpacking data and settings remains unavailable until recovery is finished or stopped.
 
 Retrying recovery may overwrite passwords changed manually. Stopping recovery keeps the current passwords; missing passwords must be entered manually, and old passwords may remain stored.</source>
@@ -11583,27 +12408,27 @@ Retrying recovery may overwrite passwords changed manually. Stopping recovery ke
 Une nouvelle tentative de récupération peut écraser les mots de passe modifiés manuellement. L’arrêt de la récupération conserve les mots de passe actuels ; les mots de passe manquants doivent être saisis manuellement, et d’anciens mots de passe peuvent rester enregistrés.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="661"/>
+        <location filename="../core/main.cpp" line="664"/>
         <source>Continue Logging</source>
         <translation type="unfinished">Continuer à enregistrer des QSO</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="662"/>
+        <location filename="../core/main.cpp" line="665"/>
         <source>Stop Password Recovery</source>
         <translation type="unfinished">Arrêter la récupération des mots de passe</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="679"/>
+        <location filename="../core/main.cpp" line="682"/>
         <source>QLog Error</source>
         <translation type="unfinished">Erreur QLog</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="679"/>
+        <location filename="../core/main.cpp" line="682"/>
         <source>Could not complete reference-list initialization.</source>
         <translation type="unfinished">Impossible de terminer l’initialisation des listes de référence.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="684"/>
+        <location filename="../core/main.cpp" line="687"/>
         <source>Starting Application</source>
         <translation>Démarrage de l&apos;application</translation>
     </message>
@@ -11784,244 +12609,578 @@ Une nouvelle tentative de récupération peut écraser les mots de passe modifi�
         </translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="346"/>
-        <location filename="../core/LogDatabase.cpp" line="355"/>
-        <location filename="../core/LogDatabase.cpp" line="371"/>
-        <location filename="../core/LogDatabase.cpp" line="390"/>
-        <source>Not a valid QLog database</source>
-        <translation>Base de données QLog invalide</translation>
+        <location filename="../core/LogDatabase.cpp" line="173"/>
+        <source>Cannot copy the logbook database %1 because it is not open.</source>
+        <translation type="unfinished">Impossible de copier la base de données du carnet de trafic %1, car elle n’est pas ouverte.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="363"/>
-        <source>Database version too new (requires newer QLog version)</source>
-        <translation>Version de la base trop récente (nécessite une version plus récente de QLog)</translation>
+        <location filename="../core/LogDatabase.cpp" line="183"/>
+        <source>No file name was provided for the database copy.</source>
+        <translation type="unfinished">Aucun nom de fichier n’a été fourni pour la copie de la base de données.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="381"/>
-        <source>Database is not QLog Export file</source>
-        <translation>Le fichier n&apos;est pas un export QLog</translation>
+        <location filename="../core/LogDatabase.cpp" line="192"/>
+        <source>Cannot access the logbook database %1 for copying. The database driver does not support this operation.</source>
+        <translation type="unfinished">Impossible d’accéder à la base de données du carnet de trafic %1 pour la copier. Le pilote de base de données ne prend pas en charge cette opération.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="513"/>
+        <location filename="../core/LogDatabase.cpp" line="210"/>
+        <source>Cannot open the destination for a database copy %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la destination %1 pour la copie de la base de données :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="220"/>
+        <source>Cannot start copying the logbook database to %1:
+%2</source>
+        <translation type="unfinished">Impossible de démarrer la copie de la base de données du carnet de trafic vers %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="255"/>
+        <source>Cannot copy the logbook data to %1:
+%2</source>
+        <translation type="unfinished">Impossible de copier les données du carnet de trafic vers %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="267"/>
+        <source>Cannot finish the logbook database copy %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer la copie de la base de données du carnet de trafic vers %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="307"/>
+        <source>Cannot open the logbook database %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la base de données du carnet de trafic %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="314"/>
+        <source>Cannot enable logbook data checks in %1:
+%2</source>
+        <translation type="unfinished">Impossible d’activer les contrôles des données du carnet de trafic dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="320"/>
+        <source>Cannot enable safe database writes in %1:
+%2</source>
+        <translation type="unfinished">Impossible d’activer la sécurisation des écritures dans la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="330"/>
+        <source>Cannot initialize the logbook database functions in %1.</source>
+        <translation type="unfinished">Impossible d’initialiser les fonctions de la base de données du carnet de trafic dans %1.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="361"/>
+        <source>Cannot open the database for unpacking inspection %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la base de données %1 pour les vérifications liées à la décompression :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="373"/>
+        <source>Cannot read the database format version from %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire la version du format de la base de données dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="374"/>
+        <source>The database format version is missing from %1.</source>
+        <translation type="unfinished">La version du format de la base de données est absente de %1.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="383"/>
+        <source>The database format version is invalid in %1.</source>
+        <translation type="unfinished">La version du format de la base de données est invalide dans %1.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="391"/>
+        <source>Cannot unpack database %1: its format version is %2, but this QLog supports up to %3. Use a newer QLog version to unpack it.</source>
+        <translation type="unfinished">Impossible de décompresser la base de données %1 : son format est en version %2, mais cette version de QLog ne prend en charge que les versions jusqu’à %3. Utilisez une version plus récente de QLog pour la décompresser.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="400"/>
+        <source>Cannot inspect contacts in the unpacked database %1:
+%2</source>
+        <translation type="unfinished">Impossible de vérifier les QSO dans la base de données décompressée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="411"/>
+        <source>Cannot read the export platform from %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire la plateforme d’exportation dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="412"/>
+        <source>The export platform is missing from %1. Choose a file created by Pack Data &amp; Settings.</source>
+        <translation type="unfinished">La plateforme d’exportation est absente de %1. Choisissez un fichier créé avec Pack Data &amp; Settings.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="421"/>
+        <source>Cannot inspect saved passwords in the unpacked database %1:
+%2</source>
+        <translation type="unfinished">Impossible de vérifier les mots de passe enregistrés dans la base de données décompressée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="473"/>
+        <source>The unpacking progress file %1 contains incomplete or invalid recovery data.</source>
+        <translation type="unfinished">Le fichier de suivi de la décompression %1 contient des données de récupération incomplètes ou invalides.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="477"/>
+        <source>Cannot open the unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir le fichier de suivi de la décompression %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="487"/>
+        <source>Cannot read the unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire le fichier de suivi de la décompression %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="493"/>
+        <source>Cannot understand the unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">Impossible d’interpréter le fichier de suivi de la décompression %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="545"/>
+        <source>Cannot save import progress %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer la progression de l’importation dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="563"/>
         <source>An unfinished import already exists in %1. Preserve these files and finish or explicitly cancel that import first.</source>
         <translation type="unfinished">Une importation inachevée existe déjà dans %1. Conservez ces fichiers et terminez ou annulez explicitement cette importation avant de continuer.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="522"/>
+        <location filename="../core/LogDatabase.cpp" line="572"/>
         <source>The active database cannot be used as an import candidate.</source>
         <translation type="unfinished">La base de données active ne peut pas servir de source d’importation.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="525"/>
+        <location filename="../core/LogDatabase.cpp" line="575"/>
         <source>The import passphrase is required.</source>
         <translation type="unfinished">La phrase secrète d’importation est requise.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="529"/>
+        <location filename="../core/LogDatabase.cpp" line="579"/>
         <source>The source database has unfinished writes and cannot be imported.</source>
         <translation type="unfinished">La base de données source contient des écritures inachevées et ne peut pas être importée.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="569"/>
-        <source>The temporary database files could not be released for import.</source>
-        <translation type="unfinished">Impossible de libérer les fichiers temporaires de la base de données pour l’importation.</translation>
+        <location filename="../core/LogDatabase.cpp" line="621"/>
+        <source>Cannot remove temporary import file %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer le fichier temporaire d’importation %1 :
+%2</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="572"/>
-        <source>Failed to prepare the database for import.</source>
-        <translation type="unfinished">Échec de la préparation de la base de données pour l’importation.</translation>
+        <location filename="../core/LogDatabase.cpp" line="627"/>
+        <source>Cannot open the unpacked database for import preparation %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la base de données décompressée %1 pour préparer l’importation :
+%2</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="575"/>
+        <location filename="../core/LogDatabase.cpp" line="629"/>
+        <source>Cannot prepare imported database %1:
+%2</source>
+        <translation type="unfinished">Impossible de préparer la base de données importée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="642"/>
+        <source>Cannot move unpacked database to %1:
+%2</source>
+        <translation type="unfinished">Impossible de déplacer la base de données décompressée vers %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="659"/>
+        <source>Cannot read unpacked database %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire la base de données décompressée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="660"/>
+        <source>Cannot save imported database %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer la base de données importée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="678"/>
+        <source>%1
+The current database was preserved.</source>
+        <translation type="unfinished">%1
+La base de données actuelle a été conservée.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="693"/>
+        <source>The database is still in use.</source>
+        <translation type="unfinished">La base de données est toujours en cours d’utilisation.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="694"/>
+        <source>Cannot finish pending database writes in %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer les écritures en attente dans la base de données %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="704"/>
+        <source>Cannot remove the temporary file after finishing database writes %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer le fichier temporaire %1 après la fin des écritures dans la base de données :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="736"/>
+        <source>Cannot read the logbook identity from %1:
+%2</source>
+        <translation type="unfinished">Impossible de lire l’identité du carnet de trafic dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="743"/>
+        <source>Cannot open the database to check its logbook identity %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la base de données %1 pour vérifier l’identité de son carnet de trafic :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="800"/>
+        <source>Cannot read the data needed to cancel unpacking:
+%1</source>
+        <translation type="unfinished">Impossible de lire les données nécessaires à l’annulation de la décompression :
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="802"/>
+        <source>The import files in %1 are inconsistent, so unpacking cannot be cancelled safely. Its recovery files were preserved.</source>
+        <translation type="unfinished">Les fichiers d’importation dans %1 sont incohérents. La décompression ne peut donc pas être annulée en toute sécurité. Les fichiers de récupération ont été conservés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="821"/>
+        <source>Cannot record the cancellation of unpacking:
+%1
+Retry cancellation before restarting.</source>
+        <translation type="unfinished">Impossible d’enregistrer l’annulation de la décompression :
+%1
+Réessayez d’annuler avant de redémarrer.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="825"/>
+        <source>Cannot remove the prepared database while cancelling unpacking %1:
+%2
+The import may still run at the next startup.</source>
+        <translation type="unfinished">Impossible de supprimer la base de données préparée %1 lors de l’annulation de la décompression :
+%2
+L’importation risque de s’exécuter au prochain démarrage.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="828"/>
+        <source>The prepared import was removed, but its cancellation could not be recorded:
+%1
+The current database was preserved.</source>
+        <translation type="unfinished">L’importation préparée a été supprimée, mais son annulation n’a pas pu être enregistrée :
+%1
+La base de données actuelle a été conservée.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="839"/>
+        <source>Cannot move the cancelled import from %1 to %2:
+%3
+All recovery files were preserved.</source>
+        <translation type="unfinished">Impossible de déplacer l’importation annulée de %1 vers %2 :
+%3
+Tous les fichiers de récupération ont été conservés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="849"/>
+        <source>Cannot restore the original database from %1 to %2 after cancelling unpacking:
+%3</source>
+        <translation type="unfinished">Impossible de restaurer la base de données d’origine de %1 vers %2 après l’annulation de la décompression :
+%3</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="857"/>
+        <source>Cannot remove a temporary file after cancelling unpacking %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer le fichier temporaire %1 après l’annulation de la décompression :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="865"/>
+        <source>Cannot remove the cancelled unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer le fichier de suivi de la décompression annulée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="884"/>
+        <source>Cannot resume unpacking:
+%1
+Preserve these files and prepare the import again.</source>
+        <translation type="unfinished">Impossible de reprendre la décompression :
+%1
+Conservez ces fichiers et préparez à nouveau l’importation.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="959"/>
+        <source>Cannot resume unpacked password recovery:
+%1
+All recovery files were preserved.</source>
+        <translation type="unfinished">Impossible de reprendre la récupération des mots de passe importés :
+%1
+Tous les fichiers de récupération ont été conservés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="990"/>
+        <source>Cannot validate the prepared import:
+%1
+The original database was preserved.</source>
+        <translation type="unfinished">Impossible de valider l’importation préparée :
+%1
+La base de données d’origine a été conservée.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="994"/>
+        <source>The prepared import database %1 does not match its recovery data in %2. The original database was preserved.</source>
+        <translation type="unfinished">La base de données préparée pour l’importation %1 ne correspond pas à ses données de récupération dans %2. La base de données d’origine a été conservée.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1000"/>
+        <source>%1
+The original database was preserved while preparing the import.</source>
+        <translation type="unfinished">%1
+La base de données d’origine a été conservée pendant la préparation de l’importation.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1061"/>
+        <source>Cannot record that the unpacked database is ready:
+%1
+The original database was preserved.</source>
+        <translation type="unfinished">Impossible d’enregistrer que la base de données décompressée est prête :
+%1
+La base de données d’origine a été conservée.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1084"/>
+        <source>Cannot verify the files before replacing the logbook database:
+%1</source>
+        <translation type="unfinished">Impossible de vérifier les fichiers avant de remplacer la base de données du carnet de trafic :
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1097"/>
+        <source>Cannot resume database replacement in %1 because its files do not match the unpacking progress file %2. All recovery files were preserved.</source>
+        <translation type="unfinished">Impossible de reprendre le remplacement de la base de données dans %1, car ses fichiers ne correspondent pas au fichier de suivi de la décompression %2. Tous les fichiers de récupération ont été conservés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1106"/>
+        <source>%1
+The resumed import recovery files were preserved.</source>
+        <translation type="unfinished">%1
+Les fichiers de récupération de l’importation reprise ont été conservés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1126"/>
+        <source>Cannot open the original logbook database before import %1:
+%2</source>
+        <translation type="unfinished">Impossible d’ouvrir la base de données d’origine du carnet de trafic %1 avant l’importation :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1138"/>
+        <source>Cannot preserve the original logbook database by moving %1 to %2:
+%3
+Import was stopped.</source>
+        <translation type="unfinished">Impossible de conserver la base de données d’origine du carnet de trafic en déplaçant %1 vers %2 :
+%3
+L’importation a été arrêtée.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1148"/>
+        <source>Cannot install the unpacked database by moving %1 to %2:
+%3
+All recovery files were preserved.</source>
+        <translation type="unfinished">Impossible d’installer la base de données décompressée en déplaçant %1 vers %2 :
+%3
+Tous les fichiers de récupération ont été conservés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1154"/>
+        <source>The unpacked database is installed, but this step could not be recorded:
+%1
+Restart to retry.</source>
+        <translation type="unfinished">La base de données décompressée est installée, mais cette étape n’a pas pu être enregistrée :
+%1
+Redémarrez pour réessayer.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1181"/>
+        <source>The active unpacked database %1 does not match its recovery record %2. All files were preserved.</source>
+        <translation type="unfinished">La base de données décompressée active %1 ne correspond pas à ses données de récupération dans %2. Tous les fichiers ont été conservés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1183"/>
+        <source>Cannot verify the active unpacked database:
+%1</source>
+        <translation type="unfinished">Impossible de vérifier la base de données décompressée active :
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1207"/>
+        <source>Cannot record the decision to stop unpacked password recovery:
+%1
+Recovery data was preserved.</source>
+        <translation type="unfinished">Impossible d’enregistrer la décision d’arrêter la récupération des mots de passe importés :
+%1
+Les données de récupération ont été conservées.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1217"/>
+        <source>The database was imported, but its saved passwords could not be decrypted.</source>
+        <translation type="unfinished">La base de données a été importée, mais ses mots de passe enregistrés n’ont pas pu être déchiffrés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1221"/>
+        <source>The database was imported, but its passwords could not be saved securely on this computer.</source>
+        <translation type="unfinished">La base de données a été importée, mais ses mots de passe n’ont pas pu être enregistrés de manière sécurisée sur cet ordinateur.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1251"/>
+        <source>The database was imported, but the previous saved passwords could not be removed.</source>
+        <translation type="unfinished">La base de données a été importée, mais les anciens mots de passe enregistrés n’ont pas pu être supprimés.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1253"/>
+        <source>Cannot record completion of unpacked password recovery:
+%1</source>
+        <translation type="unfinished">Impossible d’enregistrer la fin de la récupération des mots de passe importés :
+%1</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1260"/>
+        <source>Cannot start cleaning up unpacked database settings in %1:
+%2
+Restart to retry.</source>
+        <translation type="unfinished">Impossible de démarrer le nettoyage des paramètres de la base de données décompressée dans %1 :
+%2
+Redémarrez pour réessayer.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1267"/>
+        <source>Cannot remove the imported password data from the logbook database %1.</source>
+        <translation type="unfinished">Impossible de supprimer les données des mots de passe importés de la base de données du carnet de trafic %1.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1269"/>
+        <source>Cannot remove the import platform marker from the logbook database %1.</source>
+        <translation type="unfinished">Impossible de supprimer le marqueur de plateforme d’importation de la base de données du carnet de trafic %1.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1271"/>
+        <source>Cannot save the completed import cleanup in %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer la fin du nettoyage de l’importation dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1280"/>
+        <source>%1
+The import is complete. Restart to retry cleanup.</source>
+        <translation type="unfinished">%1
+L’importation est terminée. Redémarrez pour réessayer le nettoyage.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1289"/>
+        <source>Import cleanup is waiting because the original database still has a temporary file %1.</source>
+        <translation type="unfinished">Le nettoyage de l’importation est en attente, car un fichier temporaire %1 est encore associé à la base de données d’origine.</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1293"/>
+        <source>Cannot remove the original database after successful unpacking %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer la base de données d’origine %1 après la réussite de la décompression :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="1296"/>
+        <source>Cannot remove the completed unpacking progress file %1:
+%2</source>
+        <translation type="unfinished">Impossible de supprimer le fichier de suivi de la décompression terminée %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/LogDatabase.cpp" line="633"/>
         <source>Failed to save the import passphrase.</source>
         <translation type="unfinished">Impossible d’enregistrer la phrase secrète d’importation.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="609"/>
-        <source>Failed to prepare the database for import. The current database was preserved.</source>
-        <translation type="unfinished">Échec de la préparation de la base de données pour l’importation. La base de données actuelle a été préservée.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="713"/>
-        <source>This import cannot be cancelled safely. Its recovery files were preserved.</source>
-        <translation type="unfinished">Cette importation ne peut pas être annulée sans risque. Ses fichiers de récupération ont été conservés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="730"/>
-        <source>Cancellation could not be recorded. All recovery files were preserved; retry cancellation before restarting.</source>
-        <translation type="unfinished">L’annulation n’a pas pu être enregistrée. Tous les fichiers de récupération ont été conservés ; réessayez d’annuler avant de redémarrer.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="733"/>
-        <source>Cancellation failed. The prepared import still exists and may run at the next startup. Preserve its files and resolve the cancellation before restarting.</source>
-        <translation type="unfinished">Échec de l’annulation. L’importation préparée existe toujours et peut s’exécuter au prochain démarrage. Conservez ses fichiers et résolvez le problème d’annulation avant de redémarrer.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="735"/>
-        <source>The import candidate was removed, but cancellation could not be recorded. The current database was preserved.</source>
-        <translation type="unfinished">La base de données à importer a été supprimée, mais l’annulation n’a pas pu être enregistrée. La base de données actuelle a été préservée.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="744"/>
-        <source>The cancelled import could not be moved aside. All recovery files were preserved.</source>
-        <translation type="unfinished">L’importation annulée n’a pas pu être mise de côté. Tous les fichiers de récupération ont été conservés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="751"/>
-        <source>The original database could not be restored. Retry cancellation to finish restoring it.</source>
-        <translation type="unfinished">La base de données d’origine n’a pas pu être restaurée. Réessayez d’annuler pour terminer sa restauration.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="756"/>
-        <source>The import was cancelled, but its temporary files could not be removed.</source>
-        <translation type="unfinished">L’importation a été annulée, mais ses fichiers temporaires n’ont pas pu être supprimés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="812"/>
-        <source>The database could not be opened. Logging cannot continue. Any import recovery files were preserved.</source>
-        <translation type="unfinished">La base de données n’a pas pu être ouverte. Impossible de continuer à enregistrer des QSO. Les éventuels fichiers de récupération de l’importation ont été conservés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="818"/>
-        <source>The database could not be opened or migrated. Logging cannot continue. Any import recovery files were preserved.</source>
-        <translation type="unfinished">La base de données n’a pas pu être ouverte ou migrée. Impossible de continuer à enregistrer des QSO. Les éventuels fichiers de récupération de l’importation ont été conservés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="833"/>
+        <location filename="../core/LogDatabase.cpp" line="933"/>
         <source>Password recovery is unfinished. You can retry it or continue logging.</source>
         <translation type="unfinished">La récupération des mots de passe n’est pas terminée. Vous pouvez réessayer ou continuer à enregistrer des QSO.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="849"/>
+        <location filename="../core/LogDatabase.cpp" line="949"/>
         <source>Password recovery requires the active database to be initialized first.</source>
         <translation type="unfinished">La base de données active doit être initialisée avant de pouvoir récupérer les mots de passe.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="1080"/>
-        <source>The decision to stop password recovery could not be saved. Recovery data was preserved.</source>
-        <translation type="unfinished">La décision d’arrêter la récupération des mots de passe n’a pas pu être enregistrée. Les données de récupération ont été conservées.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1090"/>
-        <location filename="../core/LogDatabase.cpp" line="1094"/>
-        <source>The database was imported, but some passwords could not be restored.</source>
-        <translation type="unfinished">La base de données a été importée, mais certains mots de passe n’ont pas pu être restaurés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1124"/>
-        <source>The database was imported, but password replacement could not be completed.</source>
-        <translation type="unfinished">La base de données a été importée, mais le remplacement des mots de passe n’a pas pu être terminé.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1148"/>
+        <location filename="../core/LogDatabase.cpp" line="1285"/>
         <source>The import is complete, but its saved passphrase could not be removed.</source>
         <translation type="unfinished">L’importation est terminée, mais sa phrase secrète enregistrée n’a pas pu être supprimée.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="1154"/>
-        <source>The import is complete, but its recovery files could not be removed.</source>
-        <translation type="unfinished">L’importation est terminée, mais ses fichiers de récupération n’ont pas pu être supprimés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="762"/>
-        <source>The import was cancelled, but its progress file could not be removed.</source>
-        <translation type="unfinished">L’importation a été annulée, mais son fichier de suivi n’a pas pu être supprimé.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="781"/>
-        <source>The unfinished import has missing or invalid preparation data. Preserve the files in %1 and explicitly prepare the import again.</source>
-        <translation type="unfinished">Les données de préparation de l’importation inachevée sont manquantes ou invalides. Conservez les fichiers dans %1 et relancez explicitement la préparation de l’importation.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="893"/>
-        <source>The prepared import does not match its recovery files. The original database was preserved.</source>
-        <translation type="unfinished">L’importation préparée ne correspond pas à ses fichiers de récupération. La base de données d’origine a été préservée.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="896"/>
-        <source>The imported database could not be opened or migrated. The original database was preserved.</source>
-        <translation type="unfinished">La base de données importée n’a pas pu être ouverte ou migrée. La base de données d’origine a été préservée.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="918"/>
+        <location filename="../core/LogDatabase.cpp" line="1022"/>
         <source>Failed to start the import settings transaction.</source>
         <translation type="unfinished">Impossible de démarrer la transaction d’importation des paramètres.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="930"/>
+        <location filename="../core/LogDatabase.cpp" line="1034"/>
         <source>Import settings could not be applied. The original database was preserved.</source>
         <translation type="unfinished">Les paramètres importés n’ont pas pu être appliqués. La base de données d’origine a été préservée.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="947"/>
+        <location filename="../core/LogDatabase.cpp" line="1051"/>
         <source>The imported database failed its integrity check. The original database was preserved.</source>
         <translation type="unfinished">La base de données importée n’a pas satisfait au contrôle d’intégrité. La base de données d’origine a été préservée.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="952"/>
+        <location filename="../core/LogDatabase.cpp" line="1056"/>
         <source>The import passphrase is unavailable or the passwords could not be decrypted. All recovery files were preserved.</source>
         <translation type="unfinished">La phrase secrète d’importation est indisponible ou les mots de passe n’ont pas pu être déchiffrés. Tous les fichiers de récupération ont été conservés.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="955"/>
-        <source>Failed to finalize the prepared database. The original database was preserved.</source>
-        <translation type="unfinished">Impossible de finaliser la base de données préparée. La base de données d’origine a été préservée.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="988"/>
-        <source>The interrupted import has inconsistent recovery files. All files were preserved for recovery.</source>
-        <translation type="unfinished">Les fichiers de récupération de l’importation interrompue sont incohérents. Tous les fichiers ont été conservés pour permettre la récupération.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="993"/>
-        <source>The prepared database could not be opened or migrated. Its recovery files were preserved.</source>
-        <translation type="unfinished">La base de données préparée n’a pas pu être ouverte ou migrée. Ses fichiers de récupération ont été conservés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="995"/>
+        <location filename="../core/LogDatabase.cpp" line="1108"/>
         <source>The import passwords could not be restored. All recovery files were preserved.</source>
         <translation type="unfinished">Impossible de restaurer les mots de passe importés. Tous les fichiers de récupération ont été conservés.</translation>
     </message>
     <message>
-        <location filename="../core/LogDatabase.cpp" line="997"/>
-        <source>Failed to finish database writes before import.</source>
-        <translation type="unfinished">Impossible de terminer les écritures dans la base de données avant l’importation.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1003"/>
+        <location filename="../core/LogDatabase.cpp" line="1116"/>
         <source>Failed to discard prepared reference lists before import.</source>
         <translation type="unfinished">Impossible de supprimer les listes de référence préparées avant l’importation.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1019"/>
-        <source>The original database could not be preserved. Import was stopped.</source>
-        <translation type="unfinished">La base de données d’origine n’a pas pu être préservée. L’importation a été arrêtée.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1026"/>
-        <source>The prepared database could not be installed. All recovery files were preserved.</source>
-        <translation type="unfinished">La base de données préparée n’a pas pu être installée. Tous les fichiers de récupération ont été conservés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1031"/>
-        <source>The imported database was installed, but its progress could not be saved. Restart to retry.</source>
-        <translation type="unfinished">La base de données importée a été installée, mais l’avancement de l’importation n’a pas pu être enregistré. Redémarrez pour réessayer.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="859"/>
-        <location filename="../core/LogDatabase.cpp" line="1056"/>
-        <source>The imported database does not match its recovery files. All files were preserved.</source>
-        <translation type="unfinished">La base de données importée ne correspond pas à ses fichiers de récupération. Tous les fichiers ont été conservés.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1131"/>
-        <source>The import is complete, but cleanup could not be started. Restart to retry.</source>
-        <translation type="unfinished">L’importation est terminée, mais le nettoyage n’a pas pu démarrer. Redémarrez pour réessayer.</translation>
-    </message>
-    <message>
-        <location filename="../core/LogDatabase.cpp" line="1143"/>
-        <source>The import is complete, but cleanup failed. Restart to retry.</source>
-        <translation type="unfinished">L’importation est terminée, mais le nettoyage a échoué. Redémarrez pour réessayer.</translation>
     </message>
     <message>
         <location filename="../core/PlatformParameterManager.cpp" line="21"/>
@@ -12220,28 +13379,28 @@ Une nouvelle tentative de récupération peut écraser les mots de passe modifi�
         <translation>Exporter filtrés</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="139"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="140"/>
         <source>Date (Newest)</source>
         <translation>Date (plus récent)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="140"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="141"/>
         <source>Date (Oldest)</source>
         <translation>Date (plus ancien)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="141"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="142"/>
         <source>Callsign (A-Z)</source>
         <translation>Indicatif (A-Z)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="142"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="143"/>
         <source>Callsign (Z-A)</source>
         <translation>Indicatif (Z-A)</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/QSLGalleryDialog.cpp" line="165"/>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="423"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="166"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="424"/>
         <source>%n QSL card(s)</source>
         <translation>
             <numerusform>%n carte QSL</numerusform>
@@ -12249,74 +13408,105 @@ Une nouvelle tentative de récupération peut écraser les mots de passe modifi�
         </translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="190"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="191"/>
         <source>All QSL Cards</source>
         <translation>Toutes les cartes QSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="196"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="197"/>
         <source>Favorites</source>
         <translation>Favoris</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="204"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="205"/>
         <source>By Country</source>
         <translation>Par Pays</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="224"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="225"/>
         <source>By Date</source>
         <translation>Par Date</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="253"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="254"/>
         <source>By Band</source>
         <translation>Par Bande</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="267"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="268"/>
         <source>By Mode</source>
         <translation>Par Mode</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="281"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="282"/>
         <source>By Continent</source>
         <translation>Par Continent</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="566"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="567"/>
         <source>Remove from Favorites</source>
         <translation>Retirer des favoris</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="566"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="567"/>
         <source>Add to Favorites</source>
         <translation>Ajouter aux favoris</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="569"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="570"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="570"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="571"/>
         <source>Save...</source>
         <translation>Enregistrer...</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="638"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="639"/>
         <source>Save QSL Card</source>
         <translation>Enregistrer la carte QSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="686"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="687"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="743"/>
         <source>Export QSL Cards</source>
         <translation>Exporter les cartes QSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSLGalleryDialog.cpp" line="727"/>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="724"/>
+        <source>Cannot create the exported QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer l’image %1 exportée de la galerie QSL :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="726"/>
+        <source>Cannot write the exported QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire l’image %1 exportée de la galerie QSL :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="728"/>
+        <source>Cannot finish writing the exported QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’écriture de l’image exportée de la galerie QSL %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="740"/>
         <source>Exported %1 of %2 cards</source>
         <translation>%1 cartes sur %2 exportées</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLGalleryDialog.cpp" line="744"/>
+        <source>Exported %1 of %2 cards.
+
+%3</source>
+        <translation type="unfinished">%1 cartes sur %2 exportées.
+
+%3</translation>
     </message>
 </context>
 <context>
@@ -12474,7 +13664,7 @@ Une nouvelle tentative de récupération peut écraser les mots de passe modifi�
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="335"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="58"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="61"/>
         <source>QSL Card</source>
         <translation>Carte QSL</translation>
     </message>
@@ -12707,13 +13897,13 @@ Une nouvelle tentative de récupération peut écraser les mots de passe modifi�
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1420"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1138"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1141"/>
         <source>No matching QSOs found</source>
         <translation>Aucun QSO correspondant trouvé</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.ui" line="1520"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1177"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1180"/>
         <source>Page 0 of 0</source>
         <translation>Page 0 sur 0</translation>
     </message>
@@ -12738,124 +13928,213 @@ Une nouvelle tentative de récupération peut écraser les mots de passe modifi�
         <translation>Exporter images</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="57"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="60"/>
         <source>Label Sheet</source>
         <translation>Feuille d’étiquettes</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="65"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="71"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="340"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="399"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="68"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="74"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="343"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="402"/>
         <source>Custom</source>
         <translation>Personnalisé</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="631"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="634"/>
         <source>Empty</source>
         <translation>Vide</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="614"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="617"/>
         <source>QSOs matching this station profile</source>
         <translation>QSO correspondant à ce profil de station</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="60"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="63"/>
         <source>Callsign</source>
         <translation type="unfinished">Indicatif</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="61"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="64"/>
         <source>QSL Route</source>
         <translation type="unfinished">Acheminement QSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="758"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="761"/>
         <source>Select Label Text Color</source>
         <translation>Sélectionner la couleur du texte de l’étiquette</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="774"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="777"/>
         <source>Select Label Background Color</source>
         <translation>Sélectionner la couleur de fond de l’étiquette</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="789"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="799"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="808"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="792"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="802"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="811"/>
         <source>Select QSL Card Background</source>
         <translation>Sélectionner l’arrière-plan de la carte QSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="791"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="794"/>
         <source>Images (*.png *.jpg *.jpeg *.bmp)</source>
         <translation>Images (*.png *.jpg *.jpeg *.bmp)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="800"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="803"/>
         <source>Cannot read selected image file.</source>
         <translation>Impossible de lire le fichier image sélectionné.</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="809"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="812"/>
         <source>Selected file is not a valid image.</source>
         <translation>Le fichier sélectionné n’est pas une image valide.</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1052"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1055"/>
         <source>Loading QSOs...</source>
         <translation type="unfinished">Chargement des QSO...</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1054"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1057"/>
         <source>Updating labels...</source>
         <translation type="unfinished">Mise à jour des étiquettes...</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1114"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1117"/>
         <source>Cards: %1 (%2 pages)</source>
         <translation>Cartes : %1 (%2 pages)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1118"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1121"/>
         <source>Labels: %1 (%2 pages)</source>
         <translation>Étiquettes : %1 (%2 pages)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1136"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1139"/>
         <source>The QSL card does not fit on the selected page size</source>
         <translation>La carte QSL ne tient pas dans le format de page sélectionné</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1175"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1178"/>
         <source>Page %1 of %2</source>
         <translation>Page %1 sur %2</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1226"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1218"/>
+        <source>Print Failed</source>
+        <translation type="unfinished">Échec de l’impression</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1218"/>
+        <source>Cannot print QSLs. QSOs were not marked as sent.</source>
+        <translation type="unfinished">Impossible d’imprimer les QSL. Les QSO n’ont pas été marqués comme envoyés.</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1233"/>
         <source>Export PDF</source>
         <translation>Exporter en PDF</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1228"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1235"/>
         <source>PDF Files (*.pdf)</source>
         <translation>Fichiers PDF (*.pdf)</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1252"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1279"/>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1315"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1248"/>
+        <source>Cannot create the QSL PDF export %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier PDF des QSL %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1250"/>
+        <source>Cannot render the QSL PDF export %1:
+%2</source>
+        <translation type="unfinished">Impossible de générer le rendu du fichier PDF des QSL %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1251"/>
+        <source>The QSL pages could not be rendered.</source>
+        <translation type="unfinished">Le rendu des pages QSL n’a pas pu être généré.</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1253"/>
+        <source>Cannot finish writing the QSL PDF export %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’écriture du fichier PDF des QSL %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1255"/>
+        <source>Cannot save the completed QSL PDF export as %1:
+%2</source>
+        <translation type="unfinished">Impossible d’enregistrer le fichier PDF des QSL finalisé sous %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1259"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1270"/>
+        <source>Export QSL PDF</source>
+        <translation type="unfinished">Exporter les QSL en PDF</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1260"/>
+        <source>%1
+
+QSOs were not marked as sent.</source>
+        <translation type="unfinished">%1
+
+Les QSO n’ont pas été marqués comme envoyés.</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1271"/>
+        <source>Cannot complete the QSL PDF output %1. QSOs were not marked as sent.</source>
+        <translation type="unfinished">Impossible de finaliser le fichier PDF des QSL %1. Les QSO n’ont pas été marqués comme envoyés.</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1287"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1314"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1363"/>
         <source>Export QSL Card Images</source>
         <translation>Exporter les images de cartes QSL</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1280"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1315"/>
         <source>Some image files already exist. Overwrite them?</source>
         <translation>Certains fichiers image existent déjà. Les remplacer ?</translation>
     </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1334"/>
+        <source>Cannot render the QSL card image %1.</source>
+        <translation type="unfinished">Impossible de générer le rendu de l’image de la carte QSL %1.</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1341"/>
+        <source>Cannot create the rendered QSL card image file %1:
+%2</source>
+        <translation type="unfinished">Impossible de créer le fichier de l’image générée de la carte QSL %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1350"/>
+        <source>Cannot write the rendered QSL card image as JPEG %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire l’image générée de la carte QSL au format JPEG dans %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1356"/>
+        <source>Cannot finish writing the rendered QSL card image %1:
+%2</source>
+        <translation type="unfinished">Impossible de terminer l’écriture de l’image générée de la carte QSL %1 :
+%2</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1321"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1369"/>
         <source>Exported %n QSL card image(s).</source>
         <translation>
             <numerusform>%n image(s) de carte QSL exportée(s).</numerusform>
@@ -12863,24 +14142,49 @@ Une nouvelle tentative de récupération peut écraser les mots de passe modifi�
         </translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1328"/>
-        <source>Exported %1 of %2 QSL card images.</source>
-        <translation>%1 image(s) de carte QSL exportée(s) sur %2.</translation>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1375"/>
+        <source>Exported %1 of %2 QSL card images.
+
+%3
+
+QSOs were not marked as sent.</source>
+        <translation type="unfinished">%1 image(s) de carte QSL exportée(s) sur %2.
+
+%3
+
+Les QSO n’ont pas été marqués comme envoyés.</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1333"/>
-        <source>QSOs were not marked as sent.</source>
-        <translation>Les QSO n’ont pas été marqués comme envoyés.</translation>
-    </message>
-    <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1344"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1386"/>
         <source>Mark as Sent</source>
         <translation>Marquer comme envoyé</translation>
     </message>
     <message>
-        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1345"/>
+        <location filename="../ui/QSLPrintLabelDialog.cpp" line="1387"/>
         <source>Mark printed/exported QSOs as sent?</source>
         <translation>Marquer les QSO imprimés/exportés comme envoyés ?</translation>
+    </message>
+</context>
+<context>
+    <name>QSLStorage</name>
+    <message>
+        <location filename="../core/QSLStorage.cpp" line="407"/>
+        <source>Cannot look up the QSL gallery image %1:
+%2</source>
+        <translation type="unfinished">Impossible de rechercher l’image %1 dans la galerie QSL :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/QSLStorage.cpp" line="420"/>
+        <source>Cannot load the QSL gallery image data for %1:
+%2</source>
+        <translation type="unfinished">Impossible de charger les données de l’image de la galerie QSL pour %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../core/QSLStorage.cpp" line="421"/>
+        <source>Cannot export %1. The QSL image is missing or empty.</source>
+        <translation type="unfinished">Impossible d’exporter %1. L’image QSL est absente ou vide.</translation>
     </message>
 </context>
 <context>
@@ -14553,20 +15857,20 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
         <location filename="../ui/SettingsDialog.ui" line="3036"/>
         <location filename="../ui/SettingsDialog.ui" line="4050"/>
         <location filename="../ui/SettingsDialog.ui" line="4193"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1025"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1225"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1367"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1483"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1552"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1623"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1637"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1706"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1803"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1901"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1915"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1985"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2079"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2196"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1029"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1229"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1371"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1487"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1556"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1627"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1641"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1710"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1807"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1905"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1919"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1989"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2083"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2200"/>
         <source>Add</source>
         <translation>Ajouter</translation>
     </message>
@@ -14827,7 +16131,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="5405"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3158"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3162"/>
         <source>No successful backup yet.</source>
         <translation type="unfinished">Aucune sauvegarde réussie pour le moment.</translation>
     </message>
@@ -15208,7 +16512,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="2042"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2888"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2892"/>
         <source>Start rigctld daemon to share rig with other applications (e.g. WSJT-X)</source>
         <translation>Lancer le démon rigctld pour partager le poste avec d&apos;autres applis (ex: WSJT-X)</translation>
     </message>
@@ -15405,7 +16709,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3413"/>
         <location filename="../ui/SettingsDialog.cpp" line="661"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2698"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2702"/>
         <source>HamQTH</source>
         <translation>HamQTH</translation>
     </message>
@@ -15432,7 +16736,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
         <location filename="../ui/SettingsDialog.ui" line="3453"/>
         <location filename="../ui/SettingsDialog.ui" line="3962"/>
         <location filename="../ui/SettingsDialog.cpp" line="662"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2691"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2695"/>
         <source>QRZ.com</source>
         <translation>QRZ.com</translation>
     </message>
@@ -15515,7 +16819,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="3787"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3841"/>
         <source>Callsign</source>
         <translation>Indicatif</translation>
     </message>
@@ -15581,7 +16885,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4122"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3837"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3841"/>
         <source>API Key</source>
         <translation>Clé API</translation>
     </message>
@@ -15875,9 +17179,9 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.ui" line="4986"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3360"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3679"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3364"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3667"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3683"/>
         <source>Custom</source>
         <translation>Personnalisé</translation>
     </message>
@@ -15918,7 +17222,7 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="464"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1313"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1317"/>
         <source>Special - Omnirig</source>
         <translation>Spécial - Omnirig</translation>
     </message>
@@ -15961,14 +17265,14 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="660"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2690"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2697"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2694"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2701"/>
         <source>Disabled</source>
         <translation>Désactivé</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="117"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1430"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1434"/>
         <source>None</source>
         <translation>Aucun</translation>
     </message>
@@ -15984,10 +17288,10 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="124"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3358"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3615"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3659"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3675"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3362"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3619"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3663"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3679"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
@@ -16238,223 +17542,230 @@ Veuillez installer Hamlib ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
         <location filename="../ui/SettingsDialog.cpp" line="843"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1024"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1183"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1366"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1462"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1550"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1605"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1636"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1689"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1801"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1881"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1914"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1967"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2077"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2167"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1028"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1187"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1370"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1466"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1554"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1609"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1640"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1693"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1805"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1885"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1918"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1971"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2081"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2171"/>
         <source>Modify</source>
         <translation>Modifier</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="885"/>
-        <source>Cannot write to the backup folder. Choose another folder.</source>
-        <translation type="unfinished">Impossible d’écrire dans le dossier de sauvegarde. Choisissez un autre dossier.</translation>
+        <location filename="../ui/SettingsDialog.cpp" line="888"/>
+        <source>Choose a folder for the additional backup.</source>
+        <translation type="unfinished">Choisissez un dossier pour la sauvegarde supplémentaire.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="893"/>
+        <location filename="../ui/SettingsDialog.cpp" line="889"/>
+        <source>Cannot write to backup folder %1:
+%2</source>
+        <translation type="unfinished">Impossible d’écrire dans le dossier de sauvegarde %1 :
+%2</translation>
+    </message>
+    <message>
+        <location filename="../ui/SettingsDialog.cpp" line="897"/>
         <source>Could not save the backup settings.</source>
         <translation type="unfinished">Impossible d’enregistrer les paramètres de sauvegarde.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="968"/>
-        <location filename="../ui/SettingsDialog.cpp" line="975"/>
-        <location filename="../ui/SettingsDialog.cpp" line="994"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1354"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1546"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1632"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1716"/>
-        <location filename="../ui/SettingsDialog.cpp" line="1910"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2008"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2014"/>
-        <location filename="../ui/SettingsDialog.cpp" line="2020"/>
+        <location filename="../ui/SettingsDialog.cpp" line="972"/>
+        <location filename="../ui/SettingsDialog.cpp" line="979"/>
+        <location filename="../ui/SettingsDialog.cpp" line="998"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1358"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1550"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1636"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1720"/>
+        <location filename="../ui/SettingsDialog.cpp" line="1914"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2012"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2018"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2024"/>
         <source>Must not be empty</source>
         <translation>Ne doit pas être vide</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2392"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2396"/>
         <source>Select File</source>
         <translation>Sélectionner un fichier</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2428"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2432"/>
         <source>Auto Detect</source>
         <translation>Auto-détection</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2429"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2433"/>
         <source>TQSL was not found on this system.
 Please install TQSL or specify the path manually.</source>
         <translation>TQSL n&apos;a pas été trouvé sur ce système.
 Veuillez installer TQSL ou spécifier le chemin manuellement.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2445"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2449"/>
         <source>Not found</source>
         <translation>Non trouvé</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2787"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2791"/>
         <source>RTS is controlled by hardware flow control</source>
         <translation>RTS est contrôlé par le contrôle de flux matériel</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2883"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2887"/>
         <source>Rig sharing is only available for Hamlib driver</source>
         <translation>Le partage du poste n&apos;est disponible qu&apos;avec le pilote Hamlib</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2885"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2889"/>
         <source>Rig sharing is not available for network connection</source>
         <translation>Le partage du poste n&apos;est pas disponible pour les connexions réseau</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2903"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2907"/>
         <source>Off</source>
         <translation>Désactivé</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2962"/>
         <source>Delete Passwords</source>
         <translation>Supprimer les mots de passe</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2958"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2962"/>
         <source>All passwords have been deleted</source>
         <translation>Tous les mots de passe ont été supprimés</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2969"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2973"/>
         <source>Deleting all QSOs...</source>
         <translation>Suppression de tous les QSOs...</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2970"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2974"/>
         <source>Delete QSOs Progress</source>
         <translation>Progression de la suppression des QSO</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2991"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="2987"/>
+        <location filename="../ui/SettingsDialog.cpp" line="2991"/>
         <source>Failed to delete all QSOs.</source>
         <translation>Impossible de supprimer tous les QSOs.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3145"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3149"/>
         <source>Select Backup Folder</source>
         <translation type="unfinished">Sélectionner le dossier de sauvegarde</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3157"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3161"/>
         <source>Last successful internal backup: %1</source>
         <translation type="unfinished">Dernière sauvegarde interne réussie : %1</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3319"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3323"/>
         <source>Enabled</source>
         <translation>Activé</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3320"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3324"/>
         <source>Path</source>
         <translation>Chemin/Trajet</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3325"/>
         <source>Station Profile</source>
         <translation>Profil de station</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3321"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3325"/>
         <source>Missing QSL Sent</source>
         <translation>QSL Sent manquant</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3322"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3326"/>
         <source>Last Recovery</source>
         <translation>Dernière récupération</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3355"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3612"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3680"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3359"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3616"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3684"/>
         <source>Queued</source>
         <translation>En attente</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3356"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3614"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3655"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3671"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3360"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3618"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3659"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3675"/>
         <source>Ignored</source>
         <translation>Ignoré</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3357"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3613"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3657"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3673"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3361"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3617"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3661"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3677"/>
         <source>Requested</source>
         <translation>Demandé</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3359"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3616"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3661"/>
-        <location filename="../ui/SettingsDialog.cpp" line="3677"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3363"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3620"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3665"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3681"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3399"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3403"/>
         <source>Station Profile does not exist. Select another profile and enable this row again.</source>
         <translation>Le profil de station n’existe pas. Sélectionnez un autre profil et réactivez cette ligne.</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3419"/>
         <source>File exists</source>
         <translation>Le fichier existe</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3415"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3419"/>
         <source>File does not exist</source>
         <translation>Le fichier n’existe pas</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3544"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3548"/>
         <source>Startup ADI initialized</source>
         <translation>Startup ADI initialisé</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3558"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3562"/>
         <source>Select ADIF File</source>
         <translation>Sélectionner le fichier ADIF</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3560"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3564"/>
         <source>ADIF Files (*.adi *.adif);;All Files (*)</source>
         <translation>Fichiers ADIF (*.adi *.adif);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3822"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3826"/>
         <source>members</source>
         <translation>membres</translation>
     </message>
     <message>
-        <location filename="../ui/SettingsDialog.cpp" line="3829"/>
+        <location filename="../ui/SettingsDialog.cpp" line="3833"/>
         <source>Required internet connection during application start</source>
         <translation>Connexion internet requise au démarrage de l&apos;application</translation>
     </message>
@@ -17455,47 +18766,47 @@ Veuillez installer TQSL ou spécifier le chemin manuellement.</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="../core/main.cpp" line="531"/>
+        <location filename="../core/main.cpp" line="532"/>
         <source>Run with the specific namespace.</source>
         <translation>Exécuter avec l&apos;espace de noms (namespace) spécifique.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="532"/>
+        <location filename="../core/main.cpp" line="533"/>
         <source>namespace</source>
         <translation>espace de noms</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="534"/>
+        <location filename="../core/main.cpp" line="535"/>
         <source>Translation file - absolute or relative path and QM file name.</source>
         <translation>Fichier de traduction - chemin absolu ou relatif et nom du fichier QM.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="535"/>
+        <location filename="../core/main.cpp" line="536"/>
         <source>path/QM-filename</source>
         <translation>chemin/nom-du-fichier-QM</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="537"/>
+        <location filename="../core/main.cpp" line="538"/>
         <source>Set language. &lt;code&gt; example: &apos;en&apos; or &apos;en_US&apos;. Ignore environment setting.</source>
         <translation>Définir la langue. &lt;code&gt; exemple : &apos;en&apos; ou &apos;en_US&apos;. Ignore les paramètres d&apos;environnement.</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="538"/>
+        <location filename="../core/main.cpp" line="539"/>
         <source>code</source>
         <translation>code</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="540"/>
+        <location filename="../core/main.cpp" line="541"/>
         <source>Writes debug messages to the debug file</source>
         <translation>Écrit les messages de débogage dans le fichier de debug</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="542"/>
+        <location filename="../core/main.cpp" line="543"/>
         <source>Process pending database import (internal use)</source>
         <translation>Traiter l&apos;importation de base de données en attente (usage interne)</translation>
     </message>
     <message>
-        <location filename="../core/main.cpp" line="544"/>
+        <location filename="../core/main.cpp" line="545"/>
         <source>Force update of all value lists (DXCC, SATs, etc.)</source>
         <translation>Forcer la mise à jour de toutes les listes (DXCC, SATs, etc.)</translation>
     </message>
