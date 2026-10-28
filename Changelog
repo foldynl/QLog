@@ -1,4 +1,7 @@
 TBC - 0.54.1
+- Fixed QSLPrint - Ensure QSL PDF exports use a PDF extension
+- Improved file error context and unify error dialogs
+- Fix Flatpak file access and safe export handling
 
 2026/10/20 - 0.54.0
 - [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
