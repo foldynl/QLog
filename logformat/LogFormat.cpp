@@ -1196,7 +1196,6 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
                                 const QString &mode)
     {
         Data *data = Data::instance();
-        data->invalidateDXCCStatusCache(record);
 
         const bool satellite = record.value("prop_mode").toString().compare(
                                    QLatin1String("SAT"), Qt::CaseInsensitive) == 0;
@@ -1313,7 +1312,14 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
         }
 
         // First attempt: exact mode match (used for eQSL; also the fast path for LoTW)
-        model.setFilter(baseFilter + QString(" AND upper(mode)=upper('%1')").arg(mode.toString()));
+        QString modeFilter = baseFilter + QString(" AND upper(mode)=upper('%1')").arg(mode.toString());
+        if ( fromService == EQSL )
+        {
+            const QString submode = database.driver()->formatValue(QSLRecord.field("submode"));
+            modeFilter += QString(" AND upper(COALESCE(submode, '')) = upper(COALESCE(%1, ''))")
+                    .arg(submode);
+        }
+        model.setFilter(modeFilter);
         model.select();
 
         // LoTW fallback: LoTW confirms QSOs when both sides specify modes in the same
@@ -1390,6 +1396,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
             // always try to update contact from received QSL
             if ( QSLRecord.value("qsl_rcvd").toString() == 'Y' ) // qsl_rcvd is OK because LoTW sends lotw_qsl_rcvd value in qsl_rcvd
             {
+                const uint previousDxcc = originalRecord.value("dxcc").toUInt();
                 QStringList updatedFields;
                 bool callUpdate = false;
                 bool newlyReceived = (QSLRecord.value("qsl_rcvd").toString() != originalRecord.value("lotw_qsl_rcvd").toString());
@@ -1537,6 +1544,8 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
                                    + model.lastError().text());
                         return;
                     }
+                    Data::instance()->invalidateSetOfDXCCStatusCache(
+                                {previousDxcc, originalRecord.value("dxcc").toUInt()});
                     if ( newlyReceived )
                     {
                         stats.newQSLs.append(
@@ -1648,6 +1657,7 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
                 return;
             }
 
+            Data::instance()->invalidateDXCCStatusCache(originalRecord);
             if ( newlyReceived )
             {
                 stats.newQSLs.append(reportFormatter(start_time.toDateTime(),
