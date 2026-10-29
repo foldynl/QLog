@@ -2038,21 +2038,21 @@
         <location filename="../ui/CabrilloExportDialog.cpp" line="522"/>
         <source>Cannot prepare contact selection for the Cabrillo export %1:
 %2</source>
-        <translation type="unfinished">Impossibile preparare la selezione dei QSO per l'esportazione Cabrillo %1:
+        <translation type="unfinished">Impossibile preparare la selezione dei QSO per l&apos;esportazione Cabrillo %1:
 %2</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloExportDialog.cpp" line="531"/>
         <source>Cannot read contacts for the Cabrillo export %1:
 %2</source>
-        <translation type="unfinished">Impossibile leggere i QSO per l'esportazione Cabrillo %1:
+        <translation type="unfinished">Impossibile leggere i QSO per l&apos;esportazione Cabrillo %1:
 %2</translation>
     </message>
     <message>
         <location filename="../ui/CabrilloExportDialog.cpp" line="541"/>
         <source>Cannot finish reading contacts for the Cabrillo export %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare la lettura dei QSO per l'esportazione Cabrillo %1:
+        <translation type="unfinished">Impossibile completare la lettura dei QSO per l&apos;esportazione Cabrillo %1:
 %2</translation>
     </message>
     <message>
@@ -2066,7 +2066,7 @@
         <location filename="../ui/CabrilloExportDialog.cpp" line="614"/>
         <source>Cannot finish saving the Cabrillo export %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare il salvataggio dell'esportazione Cabrillo %1:
+        <translation type="unfinished">Impossibile completare il salvataggio dell&apos;esportazione Cabrillo %1:
 %2</translation>
     </message>
     <message>
@@ -2807,19 +2807,19 @@
         <location filename="../core/Migration.cpp" line="84"/>
         <source>Cannot reopen the database after update %1 in %2:
 %3</source>
-        <translation type="unfinished">Impossibile riaprire il database %2 dopo l'aggiornamento %1:
+        <translation type="unfinished">Impossibile riaprire il database %2 dopo l&apos;aggiornamento %1:
 %3</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="92"/>
         <source>Cannot initialize logbook functions after database update %1 in %2.</source>
-        <translation type="unfinished">Impossibile inizializzare le funzioni del registro dopo l'aggiornamento %1 del database %2.</translation>
+        <translation type="unfinished">Impossibile inizializzare le funzioni del registro dopo l&apos;aggiornamento %1 del database %2.</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="102"/>
         <source>Cannot start refreshing logbook upload rules in %1:
 %2</source>
-        <translation type="unfinished">Impossibile avviare l'aggiornamento delle regole di caricamento del registro in %1:
+        <translation type="unfinished">Impossibile avviare l&apos;aggiornamento delle regole di caricamento del registro in %1:
 %2</translation>
     </message>
     <message>
@@ -2837,7 +2837,7 @@
     <message>
         <location filename="../core/Migration.cpp" line="141"/>
         <source>The database did not accept the requested setting.</source>
-        <translation type="unfinished">Il database non ha accettato l'impostazione richiesta.</translation>
+        <translation type="unfinished">Il database non ha accettato l&apos;impostazione richiesta.</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="142"/>
@@ -2850,7 +2850,7 @@
         <location filename="../core/Migration.cpp" line="143"/>
         <source>Cannot disable database data checks for updating %1:
 %2</source>
-        <translation type="unfinished">Impossibile disattivare i controlli sui dati del database per l'aggiornamento di %1:
+        <translation type="unfinished">Impossibile disattivare i controlli sui dati del database per l&apos;aggiornamento di %1:
 %2</translation>
     </message>
     <message>
@@ -2870,7 +2870,7 @@
     <message>
         <location filename="../core/Migration.cpp" line="170"/>
         <source>No database format version is recorded for updating %1.</source>
-        <translation type="unfinished">Nessuna versione del formato del database registrata per l'aggiornamento di %1.</translation>
+        <translation type="unfinished">Nessuna versione del formato del database registrata per l&apos;aggiornamento di %1.</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="177"/>
@@ -2895,7 +2895,7 @@
         <location filename="../core/Migration.cpp" line="225"/>
         <source>Cannot start database update %1 in %2:
 %3</source>
-        <translation type="unfinished">Impossibile avviare l'aggiornamento %1 del database %2:
+        <translation type="unfinished">Impossibile avviare l&apos;aggiornamento %1 del database %2:
 %3</translation>
     </message>
     <message>
@@ -2907,14 +2907,14 @@
         <location filename="../core/Migration.cpp" line="243"/>
         <source>The data consistency check failed after database update %1 in %2:
 %3</source>
-        <translation type="unfinished">Il controllo di coerenza dei dati non è riuscito dopo l'aggiornamento %1 del database %2:
+        <translation type="unfinished">Il controllo di coerenza dei dati non è riuscito dopo l&apos;aggiornamento %1 del database %2:
 %3</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="251"/>
         <source>Cannot save database update %1 in %2:
 %3</source>
-        <translation type="unfinished">Impossibile salvare l'aggiornamento %1 del database %2:
+        <translation type="unfinished">Impossibile salvare l&apos;aggiornamento %1 del database %2:
 %3</translation>
     </message>
     <message>
@@ -2935,7 +2935,7 @@
         <location filename="../core/Migration.cpp" line="289"/>
         <source>Cannot apply database update %1 to %2:
 %3</source>
-        <translation type="unfinished">Impossibile applicare l'aggiornamento %1 al database %2:
+        <translation type="unfinished">Impossibile applicare l&apos;aggiornamento %1 al database %2:
 %3</translation>
     </message>
     <message>
@@ -2949,7 +2949,7 @@
         <location filename="../core/Migration.cpp" line="386"/>
         <source>Cannot read text fields for the database update in %1:
 %2</source>
-        <translation type="unfinished">Impossibile leggere i campi di testo per l'aggiornamento del database in %1:
+        <translation type="unfinished">Impossibile leggere i campi di testo per l&apos;aggiornamento del database in %1:
 %2</translation>
     </message>
     <message>
@@ -2970,26 +2970,26 @@
         <location filename="../core/Migration.cpp" line="428"/>
         <source>Cannot finish reading logbook text while updating %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare la lettura del testo del registro durante l'aggiornamento di %1:
+        <translation type="unfinished">Impossibile completare la lettura del testo del registro durante l&apos;aggiornamento di %1:
 %2</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="439"/>
         <source>Cannot save the logbook identifier in %1 while updating its format.</source>
-        <translation type="unfinished">Impossibile salvare l'identificativo del registro in %1 durante l'aggiornamento del formato.</translation>
+        <translation type="unfinished">Impossibile salvare l&apos;identificativo del registro in %1 durante l&apos;aggiornamento del formato.</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="452"/>
         <source>Cannot prepare reading station callsigns for updating %1:
 %2</source>
-        <translation type="unfinished">Impossibile preparare la lettura dei nominativi di stazione per l'aggiornamento di %1:
+        <translation type="unfinished">Impossibile preparare la lettura dei nominativi di stazione per l&apos;aggiornamento di %1:
 %2</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="458"/>
         <source>Cannot read station callsigns while updating database %1:
 %2</source>
-        <translation type="unfinished">Impossibile leggere i nominativi di stazione durante l'aggiornamento del database %1:
+        <translation type="unfinished">Impossibile leggere i nominativi di stazione durante l&apos;aggiornamento del database %1:
 %2</translation>
     </message>
     <message>
@@ -3010,7 +3010,7 @@
         <location filename="../core/Migration.cpp" line="502"/>
         <source>Cannot finish reading station callsigns while updating %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare la lettura dei nominativi di stazione durante l'aggiornamento di %1:
+        <translation type="unfinished">Impossibile completare la lettura dei nominativi di stazione durante l&apos;aggiornamento di %1:
 %2</translation>
     </message>
     <message>
@@ -3038,14 +3038,14 @@
         <location filename="../core/Migration.cpp" line="625"/>
         <source>Cannot prepare reading station profiles while updating %1:
 %2</source>
-        <translation type="unfinished">Impossibile preparare la lettura dei profili di stazione durante l'aggiornamento di %1:
+        <translation type="unfinished">Impossibile preparare la lettura dei profili di stazione durante l&apos;aggiornamento di %1:
 %2</translation>
     </message>
     <message>
         <location filename="../core/Migration.cpp" line="631"/>
         <source>Cannot read station profiles while updating %1:
 %2</source>
-        <translation type="unfinished">Impossibile leggere i profili di stazione durante l'aggiornamento di %1:
+        <translation type="unfinished">Impossibile leggere i profili di stazione durante l&apos;aggiornamento di %1:
 %2</translation>
     </message>
     <message>
@@ -3066,7 +3066,7 @@
         <location filename="../core/Migration.cpp" line="670"/>
         <source>Cannot finish reading station profiles while updating %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare la lettura dei profili di stazione durante l'aggiornamento di %1:
+        <translation type="unfinished">Impossibile completare la lettura dei profili di stazione durante l&apos;aggiornamento di %1:
 %2</translation>
     </message>
     <message>
@@ -6030,62 +6030,62 @@ Example:
         <translation>Mio Indicativo</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="31"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="32"/>
         <source>All Log Callsigns</source>
         <translation>Tutti i nominativi</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="35"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="39"/>
         <source>&amp;Download</source>
         <translation>&amp;Scarica</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="69"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="73"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW non è configurato correttamente.&lt;p&gt; Utilizza la finestra di dialogo &lt;b&gt;Impostazioni&lt;/b&gt; per configurarlo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="76"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="80"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>eQSL non è configurato correttamente.&lt;p&gt; Utilizza la finestra di dialogo &lt;b&gt;Impostazioni&lt;/b&gt; per configurarlo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="198"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="203"/>
         <source>Cancel</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="199"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="204"/>
         <source>QSL Download Progress</source>
         <translation>Avanzamento del download QSL</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="204"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="209"/>
         <source>Downloading from %1</source>
         <translation>Download da %1</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="217"/>
         <source>Processing %1 QSLs</source>
         <translation>Elaborazione di %1 QSL</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="233"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="246"/>
         <source>QLog Error</source>
         <translation>Errore di QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="233"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="246"/>
         <source>%1 update failed: </source>
         <translation>Aggiornamento di %1 non riuscito: </translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="303"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="316"/>
         <source>QLog Information</source>
         <translation>Informazioni QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="303"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="316"/>
         <source>No service selected</source>
         <translation>Nessun servizio selezionato</translation>
     </message>
@@ -7274,32 +7274,47 @@ Esempio: %3</translation>
 <context>
     <name>EQSLQSLDownloader</name>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="435"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="417"/>
+        <source>QSL download canceled</source>
+        <translation type="unfinished">Download QSL annullato</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="440"/>
         <source>Incorrect Password or QTHProfile Id</source>
         <translation>Password o QTHProfile ID errati</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="454"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="459"/>
         <source>ADIF file not found in eQSL response</source>
         <translation>File ADIF non trovato nella risposta eQSL</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="470"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="475"/>
         <source>Incorrect Username or password</source>
         <translation>Nome utente o password errati</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="506"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="511"/>
         <source>Unknown Error</source>
         <translation>Errore sconosciuto</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="530"/>
-        <source>Cannot open temporary file</source>
-        <translation>Impossibile aprire il file temporaneo</translation>
+        <location filename="../service/eqsl/Eqsl.cpp" line="531"/>
+        <source>eQSL returned an invalid or incomplete ADIF response</source>
+        <translation type="unfinished">eQSL ha restituito una risposta ADIF non valida o incompleta</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="586"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="545"/>
+        <source>Cannot open temporary file: %1</source>
+        <translation type="unfinished">Impossibile aprire il file temporaneo: %1</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="554"/>
+        <source>Cannot save eQSL response to temporary file: %1</source>
+        <translation type="unfinished">Impossibile salvare la risposta eQSL nel file temporaneo: %1</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="606"/>
         <source>Cannot save the image to file</source>
         <translation>Impossibile salvare l&apos;immagine su file</translation>
     </message>
@@ -7564,13 +7579,13 @@ Esempio: %3</translation>
         <location filename="../ui/ExportDialog.cpp" line="245"/>
         <source>Cannot create the %1 logbook export file %2:
 %3</source>
-        <translation type="unfinished">Impossibile creare il file %2 per l'esportazione %1 del registro:
+        <translation type="unfinished">Impossibile creare il file %2 per l&apos;esportazione %1 del registro:
 %3</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.cpp" line="258"/>
         <source>Cannot save the logbook export %1. The selected format %2 is unavailable.</source>
-        <translation type="unfinished">Impossibile salvare l'esportazione del registro %1. Il formato selezionato %2 non è disponibile.</translation>
+        <translation type="unfinished">Impossibile salvare l&apos;esportazione del registro %1. Il formato selezionato %2 non è disponibile.</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.cpp" line="272"/>
@@ -7596,14 +7611,14 @@ Esempio: %3</translation>
         <location filename="../ui/ExportDialog.cpp" line="344"/>
         <source>Cannot finish writing the %1 logbook export %2:
 %3</source>
-        <translation type="unfinished">Impossibile completare la scrittura dell'esportazione %1 del registro nel file %2:
+        <translation type="unfinished">Impossibile completare la scrittura dell&apos;esportazione %1 del registro nel file %2:
 %3</translation>
     </message>
     <message>
         <location filename="../ui/ExportDialog.cpp" line="347"/>
         <source>Cannot save the completed main POTA export as %1:
 %2</source>
-        <translation type="unfinished">Impossibile salvare l'esportazione POTA principale completata nel file %1:
+        <translation type="unfinished">Impossibile salvare l&apos;esportazione POTA principale completata nel file %1:
 %2</translation>
     </message>
     <message>
@@ -8880,50 +8895,56 @@ Questa password sarà necessaria in seguito per ripristinarle.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1185"/>
+        <location filename="../logformat/LogFormat.cpp" line="1186"/>
         <source>Station Callsign:</source>
         <translation>Call della stazione:</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1223"/>
+        <location filename="../logformat/LogFormat.cpp" line="1228"/>
         <source>Cannot start QSL import transaction: </source>
         <translation>Impossibile avviare la transazione di importazione QSL: </translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1363"/>
+        <location filename="../logformat/LogFormat.cpp" line="1255"/>
+        <location filename="../logformat/LogFormat.cpp" line="1705"/>
+        <source>QSL import canceled</source>
+        <translation type="unfinished">Importazione QSL annullata</translation>
+    </message>
+    <message>
+        <location filename="../logformat/LogFormat.cpp" line="1384"/>
         <source>Reason: multiple matches</source>
         <translation>Motivo: più corrispondenze</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1364"/>
+        <location filename="../logformat/LogFormat.cpp" line="1385"/>
         <source>Reason: no match</source>
         <translation>Motivo: nessuna corrispondenza</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1523"/>
-        <location filename="../logformat/LogFormat.cpp" line="1530"/>
-        <location filename="../logformat/LogFormat.cpp" line="1633"/>
-        <location filename="../logformat/LogFormat.cpp" line="1640"/>
+        <location filename="../logformat/LogFormat.cpp" line="1546"/>
+        <location filename="../logformat/LogFormat.cpp" line="1553"/>
+        <location filename="../logformat/LogFormat.cpp" line="1660"/>
+        <location filename="../logformat/LogFormat.cpp" line="1667"/>
         <source>Cannot update QSO in logbook: </source>
         <translation>Impossibile aggiornare il QSO nel log: </translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1208"/>
+        <location filename="../logformat/LogFormat.cpp" line="1213"/>
         <source>DXCC State:</source>
         <translation>Stato DXCC:</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1675"/>
+        <location filename="../logformat/LogFormat.cpp" line="1711"/>
         <source>Cannot commit QSL updates: </source>
         <translation>Impossibile confermare gli aggiornamenti QSL: </translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1792"/>
+        <location filename="../logformat/LogFormat.cpp" line="1828"/>
         <source>Error</source>
         <translation>Errore</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1795"/>
+        <location filename="../logformat/LogFormat.cpp" line="1831"/>
         <source>Warning</source>
         <translation>Attenzione</translation>
     </message>
@@ -10156,29 +10177,29 @@ Submode: %2</source>
 <context>
     <name>LotwDXCCCreditDownloader</name>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="817"/>
+        <location filename="../service/lotw/Lotw.cpp" line="823"/>
         <source>Cannot open test LoTW DXCC credit file</source>
         <translation>Impossibile aprire il file di test dei crediti DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="833"/>
-        <location filename="../service/lotw/Lotw.cpp" line="956"/>
+        <location filename="../service/lotw/Lotw.cpp" line="839"/>
+        <location filename="../service/lotw/Lotw.cpp" line="962"/>
         <source>Incomplete LoTW DXCC credit response</source>
         <translation>Risposta incompleta dei crediti DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="840"/>
-        <location filename="../service/lotw/Lotw.cpp" line="964"/>
+        <location filename="../service/lotw/Lotw.cpp" line="846"/>
+        <location filename="../service/lotw/Lotw.cpp" line="970"/>
         <source>Cannot open temporary file</source>
         <translation>Impossibile aprire il file temporaneo</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="878"/>
+        <location filename="../service/lotw/Lotw.cpp" line="884"/>
         <source>LoTW is not configured properly</source>
         <translation>LoTW non è configurato correttamente</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="944"/>
+        <location filename="../service/lotw/Lotw.cpp" line="950"/>
         <source>Incorrect login or password</source>
         <translation>Nome utente o password errati</translation>
     </message>
@@ -10191,37 +10212,43 @@ Submode: %2</source>
         <translation>Nessun nominativo di stazione trovato nel log</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="603"/>
+        <location filename="../service/lotw/Lotw.cpp" line="575"/>
+        <location filename="../service/lotw/Lotw.cpp" line="728"/>
+        <source>QSL download canceled</source>
+        <translation type="unfinished">Download QSL annullato</translation>
+    </message>
+    <message>
+        <location filename="../service/lotw/Lotw.cpp" line="606"/>
         <source>LoTW returned a non-ADIF response</source>
         <translation>LoTW ha restituito una risposta non ADIF</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="612"/>
+        <location filename="../service/lotw/Lotw.cpp" line="615"/>
         <source>LoTW returned an incomplete response</source>
         <translation>LoTW ha restituito una risposta incompleta</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="615"/>
+        <location filename="../service/lotw/Lotw.cpp" line="618"/>
         <source>Incomplete LoTW response</source>
         <translation>Risposta LoTW incompleta</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="628"/>
+        <location filename="../service/lotw/Lotw.cpp" line="631"/>
         <source>Cannot open temporary file</source>
         <translation>Impossibile aprire il file temporaneo</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="634"/>
+        <location filename="../service/lotw/Lotw.cpp" line="637"/>
         <source>Cannot write LoTW response to temporary file</source>
         <translation>Impossibile scrivere la risposta LoTW nel file temporaneo</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="695"/>
+        <location filename="../service/lotw/Lotw.cpp" line="698"/>
         <source>Station Callsign:</source>
         <translation>Call della stazione:</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="597"/>
+        <location filename="../service/lotw/Lotw.cpp" line="600"/>
         <source>Incorrect login or password</source>
         <translation>Nome utente o password errati</translation>
     </message>
@@ -11938,21 +11965,21 @@ Verificate o aggiornate le seguenti impostazioni.
         <location filename="../logformat/PotaAdiFormat.cpp" line="107"/>
         <source>Cannot create the POTA park export file %1:
 %2</source>
-        <translation type="unfinished">Impossibile creare il file %1 per l'esportazione del parco POTA:
+        <translation type="unfinished">Impossibile creare il file %1 per l&apos;esportazione del parco POTA:
 %2</translation>
     </message>
     <message>
         <location filename="../logformat/PotaAdiFormat.cpp" line="173"/>
         <source>Cannot finish writing the POTA park export %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare la scrittura del file %1 per l'esportazione del parco POTA:
+        <translation type="unfinished">Impossibile completare la scrittura del file %1 per l&apos;esportazione del parco POTA:
 %2</translation>
     </message>
     <message>
         <location filename="../logformat/PotaAdiFormat.cpp" line="183"/>
         <source>Cannot save the completed POTA park export as %1:
 %2</source>
-        <translation type="unfinished">Impossibile salvare l'esportazione completata del parco POTA come %1:
+        <translation type="unfinished">Impossibile salvare l&apos;esportazione completata del parco POTA come %1:
 %2</translation>
     </message>
 </context>
@@ -11977,7 +12004,7 @@ Verificate o aggiornate le seguenti impostazioni.
     <message>
         <location filename="../ui/QLogFileDialog.cpp" line="43"/>
         <source>Confirm the complete file name, including .%1, in the save dialog.</source>
-        <translation type="unfinished">Confermare il nome completo del file, compresa l'estensione .%1, nella finestra di salvataggio.</translation>
+        <translation type="unfinished">Confermare il nome completo del file, compresa l&apos;estensione .%1, nella finestra di salvataggio.</translation>
     </message>
 </context>
 <context>
@@ -12774,7 +12801,7 @@ Un nuovo tentativo di recupero potrebbe sovrascrivere le password modificate man
         <location filename="../core/LogDatabase.cpp" line="545"/>
         <source>Cannot save import progress %1:
 %2</source>
-        <translation type="unfinished">Impossibile salvare l'avanzamento dell'importazione in %1:
+        <translation type="unfinished">Impossibile salvare l&apos;avanzamento dell&apos;importazione in %1:
 %2</translation>
     </message>
     <message>
@@ -12808,7 +12835,7 @@ Un nuovo tentativo di recupero potrebbe sovrascrivere le password modificate man
         <location filename="../core/LogDatabase.cpp" line="627"/>
         <source>Cannot open the unpacked database for import preparation %1:
 %2</source>
-        <translation type="unfinished">Impossibile aprire il database decompresso %1 per preparare l'importazione:
+        <translation type="unfinished">Impossibile aprire il database decompresso %1 per preparare l&apos;importazione:
 %2</translation>
     </message>
     <message>
@@ -12869,14 +12896,14 @@ Il database corrente è stato conservato.</translation>
         <location filename="../core/LogDatabase.cpp" line="736"/>
         <source>Cannot read the logbook identity from %1:
 %2</source>
-        <translation type="unfinished">Impossibile leggere l'identità del registro da %1:
+        <translation type="unfinished">Impossibile leggere l&apos;identità del registro da %1:
 %2</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="743"/>
         <source>Cannot open the database to check its logbook identity %1:
 %2</source>
-        <translation type="unfinished">Impossibile aprire il database %1 per verificare l'identità del registro:
+        <translation type="unfinished">Impossibile aprire il database %1 per verificare l&apos;identità del registro:
 %2</translation>
     </message>
     <message>
@@ -12896,7 +12923,7 @@ Il database corrente è stato conservato.</translation>
         <source>Cannot record the cancellation of unpacking:
 %1
 Retry cancellation before restarting.</source>
-        <translation type="unfinished">Impossibile registrare l'annullamento della decompressione:
+        <translation type="unfinished">Impossibile registrare l&apos;annullamento della decompressione:
 %1
 Riprovare ad annullare prima di riavviare.</translation>
     </message>
@@ -12905,16 +12932,16 @@ Riprovare ad annullare prima di riavviare.</translation>
         <source>Cannot remove the prepared database while cancelling unpacking %1:
 %2
 The import may still run at the next startup.</source>
-        <translation type="unfinished">Impossibile rimuovere il database preparato %1 durante l'annullamento della decompressione:
+        <translation type="unfinished">Impossibile rimuovere il database preparato %1 durante l&apos;annullamento della decompressione:
 %2
-L'importazione potrebbe comunque essere eseguita al prossimo avvio.</translation>
+L&apos;importazione potrebbe comunque essere eseguita al prossimo avvio.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="828"/>
         <source>The prepared import was removed, but its cancellation could not be recorded:
 %1
 The current database was preserved.</source>
-        <translation type="unfinished">L'importazione preparata è stata rimossa, ma non è stato possibile registrarne l'annullamento:
+        <translation type="unfinished">L&apos;importazione preparata è stata rimossa, ma non è stato possibile registrarne l&apos;annullamento:
 %1
 Il database corrente è stato conservato.</translation>
     </message>
@@ -12923,7 +12950,7 @@ Il database corrente è stato conservato.</translation>
         <source>Cannot move the cancelled import from %1 to %2:
 %3
 All recovery files were preserved.</source>
-        <translation type="unfinished">Impossibile spostare l'importazione annullata da %1 a %2:
+        <translation type="unfinished">Impossibile spostare l&apos;importazione annullata da %1 a %2:
 %3
 Tutti i file di ripristino sono stati conservati.</translation>
     </message>
@@ -12931,14 +12958,14 @@ Tutti i file di ripristino sono stati conservati.</translation>
         <location filename="../core/LogDatabase.cpp" line="849"/>
         <source>Cannot restore the original database from %1 to %2 after cancelling unpacking:
 %3</source>
-        <translation type="unfinished">Impossibile ripristinare il database originale da %1 a %2 dopo l'annullamento della decompressione:
+        <translation type="unfinished">Impossibile ripristinare il database originale da %1 a %2 dopo l&apos;annullamento della decompressione:
 %3</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="857"/>
         <source>Cannot remove a temporary file after cancelling unpacking %1:
 %2</source>
-        <translation type="unfinished">Impossibile rimuovere il file temporaneo %1 dopo l'annullamento della decompressione:
+        <translation type="unfinished">Impossibile rimuovere il file temporaneo %1 dopo l&apos;annullamento della decompressione:
 %2</translation>
     </message>
     <message>
@@ -12955,7 +12982,7 @@ Tutti i file di ripristino sono stati conservati.</translation>
 Preserve these files and prepare the import again.</source>
         <translation type="unfinished">Impossibile riprendere la decompressione:
 %1
-Conservare questi file e preparare nuovamente l'importazione.</translation>
+Conservare questi file e preparare nuovamente l&apos;importazione.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="959"/>
@@ -12971,21 +12998,21 @@ Tutti i file di ripristino sono stati conservati.</translation>
         <source>Cannot validate the prepared import:
 %1
 The original database was preserved.</source>
-        <translation type="unfinished">Impossibile convalidare l'importazione preparata:
+        <translation type="unfinished">Impossibile convalidare l&apos;importazione preparata:
 %1
 Il database originale è stato conservato.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="994"/>
         <source>The prepared import database %1 does not match its recovery data in %2. The original database was preserved.</source>
-        <translation type="unfinished">Il database preparato per l'importazione %1 non corrisponde ai relativi dati di ripristino in %2. Il database originale è stato conservato.</translation>
+        <translation type="unfinished">Il database preparato per l&apos;importazione %1 non corrisponde ai relativi dati di ripristino in %2. Il database originale è stato conservato.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="1000"/>
         <source>%1
 The original database was preserved while preparing the import.</source>
         <translation type="unfinished">%1
-Il database originale è stato conservato durante la preparazione dell'importazione.</translation>
+Il database originale è stato conservato durante la preparazione dell&apos;importazione.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="1061"/>
@@ -13013,13 +13040,13 @@ Il database originale è stato conservato.</translation>
         <source>%1
 The resumed import recovery files were preserved.</source>
         <translation type="unfinished">%1
-I file di ripristino dell'importazione ripresa sono stati conservati.</translation>
+I file di ripristino dell&apos;importazione ripresa sono stati conservati.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="1126"/>
         <source>Cannot open the original logbook database before import %1:
 %2</source>
-        <translation type="unfinished">Impossibile aprire il database originale del registro %1 prima dell'importazione:
+        <translation type="unfinished">Impossibile aprire il database originale del registro %1 prima dell&apos;importazione:
 %2</translation>
     </message>
     <message>
@@ -13029,7 +13056,7 @@ I file di ripristino dell'importazione ripresa sono stati conservati.</translati
 Import was stopped.</source>
         <translation type="unfinished">Impossibile conservare il database originale del registro spostando %1 in %2:
 %3
-L'importazione è stata interrotta.</translation>
+L&apos;importazione è stata interrotta.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="1148"/>
@@ -13115,7 +13142,7 @@ Riavviare per riprovare.</translation>
         <location filename="../core/LogDatabase.cpp" line="1271"/>
         <source>Cannot save the completed import cleanup in %1:
 %2</source>
-        <translation type="unfinished">Impossibile salvare in %1 le modifiche al termine della pulizia dell'importazione:
+        <translation type="unfinished">Impossibile salvare in %1 le modifiche al termine della pulizia dell&apos;importazione:
 %2</translation>
     </message>
     <message>
@@ -13123,12 +13150,12 @@ Riavviare per riprovare.</translation>
         <source>%1
 The import is complete. Restart to retry cleanup.</source>
         <translation type="unfinished">%1
-L'importazione è completa. Riavviare per ritentare la pulizia.</translation>
+L&apos;importazione è completa. Riavviare per ritentare la pulizia.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="1289"/>
         <source>Import cleanup is waiting because the original database still has a temporary file %1.</source>
-        <translation type="unfinished">La pulizia dell'importazione è in attesa perché al database originale è ancora associato il file temporaneo %1.</translation>
+        <translation type="unfinished">La pulizia dell&apos;importazione è in attesa perché al database originale è ancora associato il file temporaneo %1.</translation>
     </message>
     <message>
         <location filename="../core/LogDatabase.cpp" line="1293"/>
@@ -13489,21 +13516,21 @@ L'importazione è completa. Riavviare per ritentare la pulizia.</translation>
         <location filename="../ui/QSLGalleryDialog.cpp" line="724"/>
         <source>Cannot create the exported QSL gallery image %1:
 %2</source>
-        <translation type="unfinished">Impossibile creare l'immagine %1 esportata dalla galleria QSL:
+        <translation type="unfinished">Impossibile creare l&apos;immagine %1 esportata dalla galleria QSL:
 %2</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="726"/>
         <source>Cannot write the exported QSL gallery image %1:
 %2</source>
-        <translation type="unfinished">Impossibile scrivere l'immagine %1 esportata dalla galleria QSL:
+        <translation type="unfinished">Impossibile scrivere l&apos;immagine %1 esportata dalla galleria QSL:
 %2</translation>
     </message>
     <message>
         <location filename="../ui/QSLGalleryDialog.cpp" line="728"/>
         <source>Cannot finish writing the exported QSL gallery image %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare la scrittura dell'immagine %1 esportata dalla galleria QSL:
+        <translation type="unfinished">Impossibile completare la scrittura dell&apos;immagine %1 esportata dalla galleria QSL:
 %2</translation>
     </message>
     <message>
@@ -14122,27 +14149,27 @@ I QSO non sono stati contrassegnati come inviati.</translation>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="1334"/>
         <source>Cannot render the QSL card image %1.</source>
-        <translation type="unfinished">Impossibile generare l'immagine della cartolina QSL %1.</translation>
+        <translation type="unfinished">Impossibile generare l&apos;immagine della cartolina QSL %1.</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="1341"/>
         <source>Cannot create the rendered QSL card image file %1:
 %2</source>
-        <translation type="unfinished">Impossibile creare il file %1 per l'immagine generata della cartolina QSL:
+        <translation type="unfinished">Impossibile creare il file %1 per l&apos;immagine generata della cartolina QSL:
 %2</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="1350"/>
         <source>Cannot write the rendered QSL card image as JPEG %1:
 %2</source>
-        <translation type="unfinished">Impossibile scrivere l'immagine generata della cartolina QSL nel file JPEG %1:
+        <translation type="unfinished">Impossibile scrivere l&apos;immagine generata della cartolina QSL nel file JPEG %1:
 %2</translation>
     </message>
     <message>
         <location filename="../ui/QSLPrintLabelDialog.cpp" line="1356"/>
         <source>Cannot finish writing the rendered QSL card image %1:
 %2</source>
-        <translation type="unfinished">Impossibile completare la scrittura dell'immagine generata della cartolina QSL %1:
+        <translation type="unfinished">Impossibile completare la scrittura dell&apos;immagine generata della cartolina QSL %1:
 %2</translation>
     </message>
     <message numerus="yes">
@@ -14183,20 +14210,20 @@ I QSO non sono stati contrassegnati come inviati.</translation>
         <location filename="../core/QSLStorage.cpp" line="407"/>
         <source>Cannot look up the QSL gallery image %1:
 %2</source>
-        <translation type="unfinished">Impossibile cercare l'immagine %1 nella galleria QSL:
+        <translation type="unfinished">Impossibile cercare l&apos;immagine %1 nella galleria QSL:
 %2</translation>
     </message>
     <message>
         <location filename="../core/QSLStorage.cpp" line="420"/>
         <source>Cannot load the QSL gallery image data for %1:
 %2</source>
-        <translation type="unfinished">Impossibile caricare i dati dell'immagine %1 della galleria QSL:
+        <translation type="unfinished">Impossibile caricare i dati dell&apos;immagine %1 della galleria QSL:
 %2</translation>
     </message>
     <message>
         <location filename="../core/QSLStorage.cpp" line="421"/>
         <source>Cannot export %1. The QSL image is missing or empty.</source>
-        <translation type="unfinished">Impossibile esportare %1. L'immagine QSL manca o è vuota.</translation>
+        <translation type="unfinished">Impossibile esportare %1. L&apos;immagine QSL manca o è vuota.</translation>
     </message>
 </context>
 <context>

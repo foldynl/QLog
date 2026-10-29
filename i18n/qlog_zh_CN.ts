@@ -6031,62 +6031,62 @@ Example:
         <translation>我的呼号</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="31"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="32"/>
         <source>All Log Callsigns</source>
         <translation>日志中的所有呼号</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="35"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="39"/>
         <source>&amp;Download</source>
         <translation>&amp;下载</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="69"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="73"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="76"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="80"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>eQSL 配置不正确。&lt;p&gt;请使用&lt;b&gt;设置&lt;/b&gt;对话框进行配置。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="198"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="203"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="199"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="204"/>
         <source>QSL Download Progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="204"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="209"/>
         <source>Downloading from %1</source>
         <translation>从%1下载</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="217"/>
         <source>Processing %1 QSLs</source>
         <translation>正在处理 %1 QSLs</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="233"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="246"/>
         <source>QLog Error</source>
         <translation>QLog错误</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="233"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="246"/>
         <source>%1 update failed: </source>
         <translation>%1 更新失败: </translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="303"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="316"/>
         <source>QLog Information</source>
         <translation>QLog 信息</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="303"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="316"/>
         <source>No service selected</source>
         <translation>未选择服务</translation>
     </message>
@@ -7275,32 +7275,47 @@ Example: %3</source>
 <context>
     <name>EQSLQSLDownloader</name>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="435"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="417"/>
+        <source>QSL download canceled</source>
+        <translation type="unfinished">已取消 QSL 下载</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="440"/>
         <source>Incorrect Password or QTHProfile Id</source>
         <translation>无效的密码或者 QTH 配置文件 ID</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="454"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="459"/>
         <source>ADIF file not found in eQSL response</source>
         <translation>在 eQSL 响应中找不到 ADIF 文件</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="470"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="475"/>
         <source>Incorrect Username or password</source>
         <translation>用户名或密码不正确</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="506"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="511"/>
         <source>Unknown Error</source>
         <translation>未知错误</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="530"/>
-        <source>Cannot open temporary file</source>
-        <translation>无法打开临时文件</translation>
+        <location filename="../service/eqsl/Eqsl.cpp" line="531"/>
+        <source>eQSL returned an invalid or incomplete ADIF response</source>
+        <translation type="unfinished">eQSL 返回了无效或不完整的 ADIF 响应</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="586"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="545"/>
+        <source>Cannot open temporary file: %1</source>
+        <translation type="unfinished">无法打开临时文件：%1</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="554"/>
+        <source>Cannot save eQSL response to temporary file: %1</source>
+        <translation type="unfinished">无法将 eQSL 响应保存到临时文件：%1</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="606"/>
         <source>Cannot save the image to file</source>
         <translation>无法保存图像至文件</translation>
     </message>
@@ -8867,50 +8882,56 @@ The password will be needed to restore them later.</source>
         <translation>授予的积分:</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1185"/>
+        <location filename="../logformat/LogFormat.cpp" line="1186"/>
         <source>Station Callsign:</source>
         <translation>电台呼号：</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1223"/>
+        <location filename="../logformat/LogFormat.cpp" line="1228"/>
         <source>Cannot start QSL import transaction: </source>
         <translation>无法启动 QSL 导入事务：</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1363"/>
+        <location filename="../logformat/LogFormat.cpp" line="1255"/>
+        <location filename="../logformat/LogFormat.cpp" line="1705"/>
+        <source>QSL import canceled</source>
+        <translation type="unfinished">已取消 QSL 导入</translation>
+    </message>
+    <message>
+        <location filename="../logformat/LogFormat.cpp" line="1384"/>
         <source>Reason: multiple matches</source>
         <translation>原因：存在多个匹配项</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1364"/>
+        <location filename="../logformat/LogFormat.cpp" line="1385"/>
         <source>Reason: no match</source>
         <translation>原因：无匹配项</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1523"/>
-        <location filename="../logformat/LogFormat.cpp" line="1530"/>
-        <location filename="../logformat/LogFormat.cpp" line="1633"/>
-        <location filename="../logformat/LogFormat.cpp" line="1640"/>
+        <location filename="../logformat/LogFormat.cpp" line="1546"/>
+        <location filename="../logformat/LogFormat.cpp" line="1553"/>
+        <location filename="../logformat/LogFormat.cpp" line="1660"/>
+        <location filename="../logformat/LogFormat.cpp" line="1667"/>
         <source>Cannot update QSO in logbook: </source>
         <translation>无法更新日志中的 QSO：</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1208"/>
+        <location filename="../logformat/LogFormat.cpp" line="1213"/>
         <source>DXCC State:</source>
         <translation>DXCC状态：</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1675"/>
+        <location filename="../logformat/LogFormat.cpp" line="1711"/>
         <source>Cannot commit QSL updates: </source>
         <translation>无法提交 QSL 更新：</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1792"/>
+        <location filename="../logformat/LogFormat.cpp" line="1828"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1795"/>
+        <location filename="../logformat/LogFormat.cpp" line="1831"/>
         <source>Warning</source>
         <translation>告警</translation>
     </message>
@@ -10143,29 +10164,29 @@ Submode: %2</source>
 <context>
     <name>LotwDXCCCreditDownloader</name>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="817"/>
+        <location filename="../service/lotw/Lotw.cpp" line="823"/>
         <source>Cannot open test LoTW DXCC credit file</source>
         <translation>无法打开测试 LoTW DXCC 积分文件</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="833"/>
-        <location filename="../service/lotw/Lotw.cpp" line="956"/>
+        <location filename="../service/lotw/Lotw.cpp" line="839"/>
+        <location filename="../service/lotw/Lotw.cpp" line="962"/>
         <source>Incomplete LoTW DXCC credit response</source>
         <translation>不完整的 LoTW DXCC 积分响应</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="840"/>
-        <location filename="../service/lotw/Lotw.cpp" line="964"/>
+        <location filename="../service/lotw/Lotw.cpp" line="846"/>
+        <location filename="../service/lotw/Lotw.cpp" line="970"/>
         <source>Cannot open temporary file</source>
         <translation>无法打开临时文件</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="878"/>
+        <location filename="../service/lotw/Lotw.cpp" line="884"/>
         <source>LoTW is not configured properly</source>
         <translation>LoTW 配置不正确</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="944"/>
+        <location filename="../service/lotw/Lotw.cpp" line="950"/>
         <source>Incorrect login or password</source>
         <translation>登录名或密码不正确</translation>
     </message>
@@ -10178,37 +10199,43 @@ Submode: %2</source>
         <translation>日志中未找到电台呼号</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="603"/>
+        <location filename="../service/lotw/Lotw.cpp" line="575"/>
+        <location filename="../service/lotw/Lotw.cpp" line="728"/>
+        <source>QSL download canceled</source>
+        <translation type="unfinished">已取消 QSL 下载</translation>
+    </message>
+    <message>
+        <location filename="../service/lotw/Lotw.cpp" line="606"/>
         <source>LoTW returned a non-ADIF response</source>
         <translation>LoTW 返回了非 ADIF 响应</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="612"/>
+        <location filename="../service/lotw/Lotw.cpp" line="615"/>
         <source>LoTW returned an incomplete response</source>
         <translation>LoTW 返回了不完整的响应</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="615"/>
+        <location filename="../service/lotw/Lotw.cpp" line="618"/>
         <source>Incomplete LoTW response</source>
         <translation>LoTW 响应不完整</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="628"/>
+        <location filename="../service/lotw/Lotw.cpp" line="631"/>
         <source>Cannot open temporary file</source>
         <translation>无法打开临时文件</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="634"/>
+        <location filename="../service/lotw/Lotw.cpp" line="637"/>
         <source>Cannot write LoTW response to temporary file</source>
         <translation>无法将 LoTW 响应写入临时文件</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="695"/>
+        <location filename="../service/lotw/Lotw.cpp" line="698"/>
         <source>Station Callsign:</source>
         <translation>电台呼号：</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="597"/>
+        <location filename="../service/lotw/Lotw.cpp" line="600"/>
         <source>Incorrect login or password</source>
         <translation>登录名或密码不正确</translation>
     </message>

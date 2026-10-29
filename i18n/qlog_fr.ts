@@ -5837,13 +5837,15 @@ La copie de la base de données et les sauvegardes précédentes ont été conse
         <location filename="../ui/DevToolsDialog.cpp" line="357"/>
         <source>Cannot create the %1 query results file %2:
 %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de créer le fichier %2 pour les résultats de la requête au format %1 :
+%3</translation>
     </message>
     <message>
         <location filename="../ui/DevToolsDialog.cpp" line="396"/>
         <source>Cannot finish writing the %1 query results to %2:
 %3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de terminer l’écriture des résultats de la requête au format %1 dans %2 :
+%3</translation>
     </message>
     <message>
         <location filename="../ui/DevToolsDialog.cpp" line="400"/>
@@ -6029,62 +6031,62 @@ Example:
         <translation>Mon indicatif</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="31"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="32"/>
         <source>All Log Callsigns</source>
         <translation>Tous les indicatifs</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="35"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="39"/>
         <source>&amp;Download</source>
         <translation>&amp;Télécharger</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="69"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="73"/>
         <source>LoTW is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>LoTW n&apos;est pas configuré correctement.&lt;p&gt; Veuillez utiliser la fenêtre des &lt;b&gt;Paramètres&lt;/b&gt; pour le configurer.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="76"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="80"/>
         <source>eQSL is not configured properly.&lt;p&gt; Please, use &lt;b&gt;Settings&lt;/b&gt; dialog to configure it.&lt;/p&gt;</source>
         <translation>eQSL n&apos;est pas configuré correctement.&lt;p&gt; Veuillez utiliser la fenêtre des &lt;b&gt;Paramètres&lt;/b&gt; pour le configurer.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="198"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="203"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="199"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="204"/>
         <source>QSL Download Progress</source>
         <translation>Progression du téléchargement des QSL</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="204"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="209"/>
         <source>Downloading from %1</source>
         <translation>Téléchargement depuis %1</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="210"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="217"/>
         <source>Processing %1 QSLs</source>
         <translation>Traitement de %1 QSL</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="233"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="246"/>
         <source>QLog Error</source>
         <translation>Erreur QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="233"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="246"/>
         <source>%1 update failed: </source>
         <translation>La mise à jour de %1 a échoué : </translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="303"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="316"/>
         <source>QLog Information</source>
         <translation>Information QLog</translation>
     </message>
     <message>
-        <location filename="../ui/DownloadQSLDialog.cpp" line="303"/>
+        <location filename="../ui/DownloadQSLDialog.cpp" line="316"/>
         <source>No service selected</source>
         <translation>Aucun service sélectionné</translation>
     </message>
@@ -7273,32 +7275,47 @@ Exemple : %3</translation>
 <context>
     <name>EQSLQSLDownloader</name>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="435"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="417"/>
+        <source>QSL download canceled</source>
+        <translation type="unfinished">Téléchargement des QSL annulé</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="440"/>
         <source>Incorrect Password or QTHProfile Id</source>
         <translation>Mot de passe ou ID de profil QTH incorrect</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="454"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="459"/>
         <source>ADIF file not found in eQSL response</source>
         <translation>Fichier ADIF non trouvé dans la réponse eQSL</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="470"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="475"/>
         <source>Incorrect Username or password</source>
         <translation>Identifiant ou mot de passe incorrect</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="506"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="511"/>
         <source>Unknown Error</source>
         <translation>Erreur inconnue</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="530"/>
-        <source>Cannot open temporary file</source>
-        <translation>Impossible d&apos;ouvrir le fichier temporaire</translation>
+        <location filename="../service/eqsl/Eqsl.cpp" line="531"/>
+        <source>eQSL returned an invalid or incomplete ADIF response</source>
+        <translation type="unfinished">eQSL a renvoyé une réponse ADIF non valide ou incomplète</translation>
     </message>
     <message>
-        <location filename="../service/eqsl/Eqsl.cpp" line="586"/>
+        <location filename="../service/eqsl/Eqsl.cpp" line="545"/>
+        <source>Cannot open temporary file: %1</source>
+        <translation type="unfinished">Impossible d’ouvrir le fichier temporaire : %1</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="554"/>
+        <source>Cannot save eQSL response to temporary file: %1</source>
+        <translation type="unfinished">Impossible d’enregistrer la réponse eQSL dans le fichier temporaire : %1</translation>
+    </message>
+    <message>
+        <location filename="../service/eqsl/Eqsl.cpp" line="606"/>
         <source>Cannot save the image to file</source>
         <translation>Impossible de sauvegarder l&apos;image dans le fichier</translation>
     </message>
@@ -8868,50 +8885,56 @@ Ce mot de passe sera nécessaire pour les restaurer ultérieurement.</translatio
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1185"/>
+        <location filename="../logformat/LogFormat.cpp" line="1186"/>
         <source>Station Callsign:</source>
         <translation>Indicatif de la station:</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1223"/>
+        <location filename="../logformat/LogFormat.cpp" line="1228"/>
         <source>Cannot start QSL import transaction: </source>
         <translation>Impossible de démarrer la transaction d’importation QSL : </translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1363"/>
+        <location filename="../logformat/LogFormat.cpp" line="1255"/>
+        <location filename="../logformat/LogFormat.cpp" line="1705"/>
+        <source>QSL import canceled</source>
+        <translation type="unfinished">Importation des QSL annulée</translation>
+    </message>
+    <message>
+        <location filename="../logformat/LogFormat.cpp" line="1384"/>
         <source>Reason: multiple matches</source>
         <translation>Raison : plusieurs correspondances</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1364"/>
+        <location filename="../logformat/LogFormat.cpp" line="1385"/>
         <source>Reason: no match</source>
         <translation>Raison : aucune correspondance</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1523"/>
-        <location filename="../logformat/LogFormat.cpp" line="1530"/>
-        <location filename="../logformat/LogFormat.cpp" line="1633"/>
-        <location filename="../logformat/LogFormat.cpp" line="1640"/>
+        <location filename="../logformat/LogFormat.cpp" line="1546"/>
+        <location filename="../logformat/LogFormat.cpp" line="1553"/>
+        <location filename="../logformat/LogFormat.cpp" line="1660"/>
+        <location filename="../logformat/LogFormat.cpp" line="1667"/>
         <source>Cannot update QSO in logbook: </source>
         <translation>Impossible de mettre à jour le QSO dans le journal : </translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1208"/>
+        <location filename="../logformat/LogFormat.cpp" line="1213"/>
         <source>DXCC State:</source>
         <translation>État DXCC :</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1675"/>
+        <location filename="../logformat/LogFormat.cpp" line="1711"/>
         <source>Cannot commit QSL updates: </source>
         <translation>Impossible de valider les mises à jour QSL : </translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1792"/>
+        <location filename="../logformat/LogFormat.cpp" line="1828"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../logformat/LogFormat.cpp" line="1795"/>
+        <location filename="../logformat/LogFormat.cpp" line="1831"/>
         <source>Warning</source>
         <translation>Avertissement</translation>
     </message>
@@ -10145,29 +10168,29 @@ Sous-mode: %2</translation>
 <context>
     <name>LotwDXCCCreditDownloader</name>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="817"/>
+        <location filename="../service/lotw/Lotw.cpp" line="823"/>
         <source>Cannot open test LoTW DXCC credit file</source>
         <translation>Impossible d’ouvrir le fichier de test des crédits DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="833"/>
-        <location filename="../service/lotw/Lotw.cpp" line="956"/>
+        <location filename="../service/lotw/Lotw.cpp" line="839"/>
+        <location filename="../service/lotw/Lotw.cpp" line="962"/>
         <source>Incomplete LoTW DXCC credit response</source>
         <translation>Réponse incomplète des crédits DXCC LoTW</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="840"/>
-        <location filename="../service/lotw/Lotw.cpp" line="964"/>
+        <location filename="../service/lotw/Lotw.cpp" line="846"/>
+        <location filename="../service/lotw/Lotw.cpp" line="970"/>
         <source>Cannot open temporary file</source>
         <translation>Impossible d&apos;ouvrir le fichier temporaire</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="878"/>
+        <location filename="../service/lotw/Lotw.cpp" line="884"/>
         <source>LoTW is not configured properly</source>
         <translation>LoTW n’est pas configuré correctement</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="944"/>
+        <location filename="../service/lotw/Lotw.cpp" line="950"/>
         <source>Incorrect login or password</source>
         <translation>Identifiant ou mot de passe incorrect</translation>
     </message>
@@ -10180,37 +10203,43 @@ Sous-mode: %2</translation>
         <translation>Aucun indicatif de station trouvé dans le journal</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="603"/>
+        <location filename="../service/lotw/Lotw.cpp" line="575"/>
+        <location filename="../service/lotw/Lotw.cpp" line="728"/>
+        <source>QSL download canceled</source>
+        <translation type="unfinished">Téléchargement des QSL annulé</translation>
+    </message>
+    <message>
+        <location filename="../service/lotw/Lotw.cpp" line="606"/>
         <source>LoTW returned a non-ADIF response</source>
         <translation>LoTW a renvoyé une réponse non ADIF</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="612"/>
+        <location filename="../service/lotw/Lotw.cpp" line="615"/>
         <source>LoTW returned an incomplete response</source>
         <translation>LoTW a renvoyé une réponse incomplète</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="615"/>
+        <location filename="../service/lotw/Lotw.cpp" line="618"/>
         <source>Incomplete LoTW response</source>
         <translation>Réponse LoTW incomplète</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="628"/>
+        <location filename="../service/lotw/Lotw.cpp" line="631"/>
         <source>Cannot open temporary file</source>
         <translation>Impossible d&apos;ouvrir le fichier temporaire</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="634"/>
+        <location filename="../service/lotw/Lotw.cpp" line="637"/>
         <source>Cannot write LoTW response to temporary file</source>
         <translation>Impossible d’écrire la réponse LoTW dans le fichier temporaire</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="695"/>
+        <location filename="../service/lotw/Lotw.cpp" line="698"/>
         <source>Station Callsign:</source>
         <translation>Indicatif de la station:</translation>
     </message>
     <message>
-        <location filename="../service/lotw/Lotw.cpp" line="597"/>
+        <location filename="../service/lotw/Lotw.cpp" line="600"/>
         <source>Incorrect login or password</source>
         <translation>Identifiant ou mot de passe incorrect</translation>
     </message>
