@@ -556,6 +556,7 @@ MainWindow::MainWindow(QWidget* parent) :
     /********************/
     // Menu actions are defined in the MainWindow.ui file
     // The rest of global shortcuts are defined below
+    connect(ui->actionWipeContact, &QAction::triggered, ui->newContactWidget, &NewContactWidget::resetContact);
     connect(ui->actionSearchCallsign, &QAction::triggered, ui->logbookWidget, &LogbookWidget::focusSearchCallsign);
     connect(ui->actionAddBandmapMark, &QAction::triggered, ui->newContactWidget, &NewContactWidget::markContact);
     connect(ui->actionUseNearestCallsign, &QAction::triggered, ui->newContactWidget, &NewContactWidget::useNearestCallsign);
@@ -581,6 +582,7 @@ MainWindow::MainWindow(QWidget* parent) :
     addAction(ui->actionCWProfileDown);
     addAction(ui->actionPTTOn);
     addAction(ui->actionNewContact);
+    addAction(ui->actionWipeContact);
     addAction(ui->actionSaveContact);
 
     restoreUserDefinedShortcuts();
