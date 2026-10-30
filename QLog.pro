@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 TARGET = qlog
 TEMPLATE = app
-VERSION = 0.54.1dev
+VERSION = 0.54.1
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 

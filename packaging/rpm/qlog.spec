@@ -65,6 +65,17 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_mandir}/man1/*
 
 %changelog
+* Fri Oct 30 2026 Ladislav Foldyna - 0.54.1-1
+- Fixed OmnirigDrv - CW and CWR follow the rig's own normal CW (issue #347 PR #1196 @SebaBecks)
+- Fixed QSLPrint - Ensure QSL PDF exports use a PDF extension
+- Improved file error context and unify error dialogs
+- Fixed Flatpak file access and safe export handling
+- Fixed CTY DXCC matching and geographic overrides (issue #1221)
+- Fixed Club Log DXCC exact-match column alignment
+- DXCC - Preserve host prefixes when resolving numeric callsign suffixes
+- Fixed eQSL profile callsign matching
+- Fixed eQSL submode matching
+
 * Tue Oct 20 2026 Ladislav Foldyna - 0.54.0-1
 - [NEW] - QSL Printing - Added QSL ordering, QSL Manager and QSL DXCC (issue #1145)
 - [NEW] - Awards - Added WAJA, Polish PGA

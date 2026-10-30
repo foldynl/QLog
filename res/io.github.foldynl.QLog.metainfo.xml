@@ -51,6 +51,21 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.54.1" date="2026-10-30">
+      <description>
+        <ul>
+          <li>Fixed OmnirigDrv - CW and CWR follow the rig's own normal CW (issue #347 PR #1196 @SebaBecks)</li>
+          <li>Fixed QSLPrint - Ensure QSL PDF exports use a PDF extension</li>
+          <li>Improved file error context and unify error dialogs</li>
+          <li>Fixed Flatpak file access and safe export handling</li>
+          <li>Fixed CTY DXCC matching and geographic overrides (issue #1221)</li>
+          <li>Fixed Club Log DXCC exact-match column alignment</li>
+          <li>DXCC - Preserve host prefixes when resolving numeric callsign suffixes</li>
+          <li>Fixed eQSL profile callsign matching</li>
+          <li>Fixed eQSL submode matching</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.54.0" date="2026-10-20">
       <description>
         <ul>

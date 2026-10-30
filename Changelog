@@ -1,4 +1,4 @@
-TBC - 0.54.1
+2026/10/30 - 0.54.1
 - Fixed OmnirigDrv - CW and CWR follow the rig's own normal CW (issue #347 PR #1196 @SebaBecks)
 - Fixed QSLPrint - Ensure QSL PDF exports use a PDF extension
 - Improved file error context and unify error dialogs
