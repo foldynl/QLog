@@ -18,6 +18,9 @@ private slots:
     void exportStartWritesAdxHeader();
     void writeSqlRecordExportsApplicationTags();
     void writeSqlRecordExportsRawFieldsFiltersInvalidNames();
+    void exportFiltersInvalidXmlCharacters_data();
+    void exportFiltersInvalidXmlCharacters();
+    void exportFiltersInvalidSurrogates();
     void exportContactNormalizesGridAndTerminatesRecord();
     void importNextMapsAdxFieldsAndStoresUnknownFields();
     void importNextNormalizesConstrainedEnumFields();
@@ -208,6 +211,145 @@ void AdxFormatTest::writeSqlRecordExportsRawFieldsFiltersInvalidNames()
     QVERIFY(!output.contains("space"));
     QVERIFY(!output.contains("angle"));
     QVERIFY(!output.contains("shortapp"));
+}
+
+void AdxFormatTest::exportFiltersInvalidXmlCharacters_data()
+{
+    QTest::addColumn<QString>("input");
+    QTest::addColumn<QString>("expected");
+    QTest::addColumn<QString>("type");
+
+    const QString valid = QString::fromUtf8("Jiří \xf0\x9f\x98\x80") + QStringLiteral("\t\n<&>") + QChar(0x85);
+    QTest::newRow("valid-unicode") << valid << valid << QStringLiteral("M");
+    QTest::newRow("reported-address") << QStringLiteral("Roo ") + QChar(0x1c)
+                                       + QStringLiteral("Moscow Radioclub") + QChar(0x1d)
+                                    << QStringLiteral("Roo Moscow Radioclub") << QStringLiteral("M");
+
+    QString invalid;
+    for ( ushort code = 0; code < 32; ++code )
+        if ( code != 9 && code != 10 && code != 13 )
+            invalid.append(QChar(code));
+    invalid.append(QChar(0xfffe));
+    invalid.append(QChar(0xffff));
+    QTest::newRow("all-forbidden") << invalid + valid + invalid << valid << QStringLiteral("M");
+    QTest::newRow("only-forbidden") << invalid << QString() << QStringLiteral("M");
+    QTest::newRow("application-type") << valid << valid << QStringLiteral("M") + QChar(0x1c);
+}
+
+void AdxFormatTest::exportFiltersInvalidXmlCharacters()
+{
+    QFETCH(QString, input);
+    QFETCH(QString, expected);
+    QFETCH(QString, type);
+
+    QSqlRecord record;
+    appendField(record, QStringLiteral("callsign"), QStringLiteral("OK1ABC"));
+    appendField(record, QStringLiteral("address"), input);
+    appendField(record, QStringLiteral("address_intl"), input);
+    QJsonObject appField;
+    appField.insert(QStringLiteral("value"), input);
+    appField.insert(QStringLiteral("type"), type);
+    QJsonObject fields;
+    QJsonObject unknownField(appField);
+    unknownField.insert(QStringLiteral("type"), QStringLiteral("M"));
+    fields.insert(QStringLiteral("UNKNOWN_FIELD"), unknownField);
+    fields.insert(QStringLiteral("APP_QLOG_NOTE"), appField);
+    appendField(record, QStringLiteral("fields"), QString(QJsonDocument(fields).toJson(QJsonDocument::Compact)));
+    QMap<QString, QString> applTags;
+    applTags.insert(QStringLiteral("APP_QLOG") + QChar(0x1c) + QStringLiteral("_TAG") + QChar(0x1d), input);
+
+    QByteArray output;
+    QBuffer buffer(&output);
+    QVERIFY(buffer.open(QIODevice::WriteOnly));
+    QTextStream stream(&buffer);
+    AdxFormat format(stream);
+    format.exportStart();
+    format.exportContact(record, &applTags);
+    QSqlRecord next;
+    appendField(next, QStringLiteral("callsign"), QStringLiteral("OK2XYZ"));
+    format.exportContact(next);
+    const bool exportError = format.hasExportError();
+    format.exportEnd();
+    stream.flush();
+    QVERIFY(!exportError);
+
+    QMap<QString, QString> values;
+    int recordCount = 0;
+    QXmlStreamReader reader(output);
+    while ( !reader.atEnd() )
+    {
+        reader.readNext();
+        if ( !reader.isStartElement() )
+            continue;
+        const QString name = reader.name().toString();
+        if ( name == QStringLiteral("RECORD") )
+            ++recordCount;
+        else if ( name == QStringLiteral("APP") )
+        {
+            QCOMPARE(reader.attributes().value(QStringLiteral("PROGRAMID")).toString(), QStringLiteral("QLOG"));
+            QCOMPARE(reader.attributes().value(QStringLiteral("TYPE")).toString(), QStringLiteral("M"));
+            const QString fieldName = reader.attributes().value(QStringLiteral("FIELDNAME")).toString();
+            values.insert(fieldName, reader.readElementText());
+        }
+        else if ( name == QStringLiteral("ADDRESS") || name == QStringLiteral("ADDRESS_INTL")
+                  || name == QStringLiteral("UNKNOWN_FIELD") || name == QStringLiteral("CALL") )
+            values.insert(name, reader.readElementText());
+    }
+    QVERIFY(!reader.hasError());
+    QCOMPARE(recordCount, 2);
+    QCOMPARE(values.value(QStringLiteral("CALL")), QStringLiteral("OK2XYZ"));
+    for ( const QString &name : {QStringLiteral("ADDRESS"), QStringLiteral("ADDRESS_INTL"),
+                                 QStringLiteral("UNKNOWN_FIELD"), QStringLiteral("NOTE"), QStringLiteral("TAG")} )
+    {
+        QCOMPARE(values.value(name), expected);
+        QCOMPARE(values.contains(name), !expected.isEmpty());
+    }
+    QCOMPARE(record.value(QStringLiteral("address")).toString(), input);
+    QCOMPARE(record.value(QStringLiteral("address_intl")).toString(), input);
+}
+
+void AdxFormatTest::exportFiltersInvalidSurrogates()
+{
+    const QString pair = QString::fromUtf8("\xf0\x9f\x98\x80");
+    const QString input = QChar(0xdc00) + QStringLiteral("Start ") + QChar(0xd800) + pair
+                          + QChar(0xdc00) + QStringLiteral(" middle ") + QChar(0xd800)
+                          + QStringLiteral("X") + QChar(0xdc00) + pair + QStringLiteral(" end")
+                          + QChar(0xd800) + QChar(0x1c) + QChar(0xdc00) + QChar(0xd800);
+    const QString expected = QStringLiteral("Start ") + pair + QStringLiteral(" middle X")
+                             + pair + QStringLiteral(" end");
+    QSqlRecord record;
+    appendField(record, QStringLiteral("address_intl"), input);
+    QMap<QString, QString> applTags;
+    applTags.insert(QStringLiteral("APP_QLOG_NOTE"), input);
+
+    QByteArray output;
+    QBuffer buffer(&output);
+    QVERIFY(buffer.open(QIODevice::WriteOnly));
+    QTextStream stream(&buffer);
+    AdxFormat format(stream);
+    format.exportStart();
+    format.exportContact(record, &applTags);
+    const bool exportError = format.hasExportError();
+    format.exportEnd();
+    stream.flush();
+    QVERIFY(!exportError);
+
+    QMap<QString, QString> values;
+    QXmlStreamReader reader(output);
+    while ( !reader.atEnd() )
+    {
+        reader.readNext();
+        if ( reader.isStartElement()
+             && (reader.name() == QStringLiteral("ADDRESS_INTL") || reader.name() == QStringLiteral("APP")) )
+        {
+            const QString name = reader.name().toString();
+            values.insert(name, reader.readElementText());
+        }
+    }
+    QVERIFY(!reader.hasError());
+    QCOMPARE(values.value(QStringLiteral("ADDRESS_INTL")), expected);
+    QCOMPARE(values.value(QStringLiteral("APP")), expected);
+    QCOMPARE(record.value(QStringLiteral("address_intl")).toString(), input);
 }
 
 void AdxFormatTest::exportContactNormalizesGridAndTerminatesRecord()

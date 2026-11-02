@@ -206,16 +206,20 @@ void AdxFormat::writeField(const QString &name,
                                 << value
                                 << type;
 
-    if ( writeApplicationField(name, presenceCondition, value, type) )
+    const QString outputName = xmlSafeText(name);
+    const QString outputType = xmlSafeText(type);
+    const QString cleanValue = xmlSafeText(value);
+
+    if ( writeApplicationField(outputName, presenceCondition, cleanValue, outputType) )
         return;
 
-    const QString outputValue(normalizeLineBreaks(value,
-                                                  preserveFieldLineBreaks(name, type),
+    const QString outputValue(normalizeLineBreaks(cleanValue,
+                                                  preserveFieldLineBreaks(outputName, outputType),
                                                   QStringLiteral("\n")));
 
     if (outputValue.isEmpty() || !presenceCondition ) return;
 
-    writer->writeTextElement(name.toUpper(), outputValue);
+    writer->writeTextElement(outputName.toUpper(), outputValue);
 }
 
 void AdxFormat::writeSQLRecord(const QSqlRecord &record, QMap<QString, QString> *applTags)
