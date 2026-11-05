@@ -120,6 +120,13 @@ void OnlineMapWidget::changeTheme(int theme, bool isDark)
     mapController->setDarkTheme(isDark);
 }
 
+void OnlineMapWidget::reloadMapSettings()
+{
+    FCT_IDENTIFICATION;
+
+    mapController->reloadBaseMap();
+}
+
 void OnlineMapWidget::auroraDataUpdate()
 {
     FCT_IDENTIFICATION;

@@ -3119,6 +3119,9 @@ void SettingsDialog::readSettings()
     ui->notifSpotAlertEdit->setText(NetworkNotification::getNotifSpotAlertAddrs());
     ui->notifRigEdit->setText(NetworkNotification::getNotifRigStateAddrs());
 
+    ui->mapTileUrlEdit->setText(LogParam::getMapTileUrl());
+    ui->mapTileAttributionEdit->setText(LogParam::getMapTileAttribution());
+
     /*******/
     /* GUI */
     /*******/
@@ -3296,6 +3299,9 @@ void SettingsDialog::writeSettings()
     NetworkNotification::saveNotifWSJTXCQSpotAddrs(ui->notifWSJTXCQSpotsEdit->text());
     NetworkNotification::saveNotifSpotAlertAddrs(ui->notifSpotAlertEdit->text());
     NetworkNotification::saveNotifRigStateAddrs(ui->notifRigEdit->text());
+
+    LogParam::setMapTileUrl(ui->mapTileUrlEdit->text().trimmed());
+    LogParam::setMapTileAttribution(ui->mapTileAttributionEdit->text().trimmed());
 
     /*******/
     /* GUI */

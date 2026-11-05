@@ -46,6 +46,7 @@ public slots:
     void rotConnected();
     void rotDisconnected();
     void flyToMyQTH();
+    void reloadMapSettings();
     void drawChatUsers(const QList<KSTUsersInfo> &list);
     void drawWSJTXSpot(const WsjtxEntry &spot);
     void clearWSJTXSpots(const QString &id);

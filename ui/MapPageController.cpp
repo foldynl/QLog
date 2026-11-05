@@ -204,6 +204,15 @@ void MapPageController::attach(QWebEngineView *view,
     QUrlQuery mapQuery;
     mapQuery.addQueryItem(QStringLiteral("language"),
                           QCoreApplication::instance()->property("qlogLanguage").toString());
+
+    const QString tileUrl = LogParam::getMapTileUrl();
+    if ( !tileUrl.isEmpty() )
+    {
+        mapQuery.addQueryItem(QStringLiteral("tileUrl"), tileUrl);
+        const QString tileAttribution = LogParam::getMapTileAttribution();
+        if ( !tileAttribution.isEmpty() )
+            mapQuery.addQueryItem(QStringLiteral("tileAttribution"), tileAttribution);
+    }
     mapUrl.setQuery(mapQuery);
     mainPage->load(mapUrl);
     view->setFocusPolicy(Qt::ClickFocus);
@@ -229,6 +238,16 @@ void MapPageController::setDarkTheme(bool isDark)
                            ? QLatin1String("if (typeof setMapDarkMode === \"function\") setMapDarkMode(true);")
                            : QLatin1String("if (typeof setMapDarkMode === \"function\") setMapDarkMode(false);");
     runJavaScript(js);
+}
+
+void MapPageController::reloadBaseMap()
+{
+    FCT_IDENTIFICATION;
+
+    runJavaScript(QStringLiteral("if (typeof applyBaseMapConfig === \"function\") "
+                                 "applyBaseMapConfig(%1, %2);")
+                  .arg(jsonString(LogParam::getMapTileUrl()),
+                       jsonString(LogParam::getMapTileAttribution())));
 }
 
 void MapPageController::setStaticMapTime(const QDateTime &dateTime)

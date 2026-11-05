@@ -463,10 +463,15 @@ bool StatisticsWidget::event(QEvent *event)
     {
         if ( !initialized )
             initializeWidget();
-        else if ( pendingRefresh )
-            refreshWidget();
-        else if ( ui->stackedWidget->currentWidget() == ui->mapPage )
-            mapController->invalidateSize();
+        else
+        {
+            mapController->reloadBaseMap();
+
+            if ( pendingRefresh )
+                refreshWidget();
+            else if ( ui->stackedWidget->currentWidget() == ui->mapPage )
+                mapController->invalidateSize();
+        }
     }
     return QWidget::event(event);  // Propagate the event further
 }

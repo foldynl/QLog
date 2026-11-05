@@ -346,6 +346,10 @@ public:
     static QStringList getMapLayerStates(const QString &widgetID);
     static bool getMapLayerState(const QString &widgetID, const QString &layerName);
     static void setMapLayerState(const QString &widgetID, const QString &layerName, bool state);
+    static QString getMapTileUrl();
+    static bool setMapTileUrl(const QString &url);
+    static QString getMapTileAttribution();
+    static bool setMapTileAttribution(const QString &attribution);
 
     /***************
      * Offline Map

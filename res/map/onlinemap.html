@@ -586,7 +586,13 @@
 
 
     var baseMapLayer = null;
-    const mapLanguage = new URLSearchParams(window.location.search).get('language') || 'en';
+    const mapParams = new URLSearchParams(window.location.search);
+    const mapLanguage = mapParams.get('language') || 'en';
+    const customTileConfig = {
+      url: mapParams.get('tileUrl') || '',
+      attribution: mapParams.get('tileAttribution') || ''
+    };
+    const osmAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
     function rasterMapUrl(language) {
       if (language === 'de')
@@ -595,6 +601,13 @@
         return 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
 
       return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+    }
+
+    function baseMapTileConfig() {
+      if (customTileConfig.url)
+        return {url: customTileConfig.url, attribution: customTileConfig.attribution};
+
+      return {url: rasterMapUrl(mapLanguage), attribution: osmAttribution};
     }
 
     function useRasterBaseMap() {
@@ -606,9 +619,41 @@
       if (failedBaseMapLayer && map.hasLayer(failedBaseMapLayer))
         map.removeLayer(failedBaseMapLayer);
 
-      baseMapLayer = L.tileLayer(rasterMapUrl(mapLanguage), {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      const config = baseMapTileConfig();
+      baseMapLayer = L.tileLayer(config.url, {
+        attribution: config.attribution
       }).addTo(map);
+    }
+
+    function replaceRasterBaseMap() {
+      if (baseMapLayer && map.hasLayer(baseMapLayer))
+        map.removeLayer(baseMapLayer);
+      baseMapLayer = null;
+      useRasterBaseMap();
+    }
+
+    function upgradeToVectorBaseMap() {
+      // a custom tile server fully replaces the default vector base map
+      if (customTileConfig.url)
+        return;
+
+      loadMapLibre().then(useVectorBaseMap, function() {});
+    }
+
+    function applyBaseMapConfig(tileUrl, attribution) {
+      tileUrl = tileUrl || '';
+      attribution = attribution || '';
+
+      if (customTileConfig.url === tileUrl
+          && customTileConfig.attribution === attribution)
+        return;
+
+      customTileConfig.url = tileUrl;
+      customTileConfig.attribution = attribution;
+      replaceRasterBaseMap();
+
+      if (!tileUrl)
+        upgradeToVectorBaseMap();
     }
 
     function expressionUsesMapName(expression) {
@@ -701,6 +746,9 @@
     }
 
     function useVectorBaseMap() {
+      if (customTileConfig.url)
+        return;
+
       let vectorBaseMapLayer = null;
 
       try {
@@ -797,9 +845,7 @@
     }
 
     useRasterBaseMap();
-    window.addEventListener('load', function() {
-      loadMapLibre().then(useVectorBaseMap, function() {});
-    });
+    window.addEventListener('load', upgradeToVectorBaseMap);
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
     var grayline = L.terminator()

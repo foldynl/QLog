@@ -4940,6 +4940,59 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="onlineMapGroupBox">
+         <property name="title">
+          <string>Online Map</string>
+         </property>
+         <layout class="QFormLayout" name="onlineMapFormLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="mapTileAttributionLabel">
+            <property name="text">
+             <string>Tile Attribution</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="mapTileAttributionEdit">
+            <property name="toolTip">
+             <string>Name or copyright of the map tile provider, shown in the corner of the map when a custom tile server is used. HTML links are allowed.</string>
+            </property>
+            <property name="placeholderText">
+             <string>ex. © OpenStreetMap contributors</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="mapTileUrlLabel">
+            <property name="text">
+             <string>Custom Tile Server</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="mapTileUrlEdit">
+            <property name="toolTip">
+             <string>&lt;p&gt;URL template of a raster tile server with {z} (zoom), {x} and {y} placeholders.&lt;/p&gt;&lt;p&gt;Leave empty to use the default OpenStreetMap server.&lt;/p&gt;&lt;p&gt;Note: some providers (e.g. Gaode) use GCJ-02 coordinates, which may offset map markers. Providers based on CGCS2000/WGS-84 (e.g. Tianditu) match GPS coordinates.&lt;/p&gt;</string>
+            </property>
+            <property name="placeholderText">
+             <string>ex. https://tile.openstreetmap.org/{z}/{x}/{y}.png</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="mapTileServerInfoLabel">
+            <property name="text">
+             <string>The tile server change applies to the Online Map immediately; other map views use it when they are reopened.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -5769,6 +5822,8 @@
   <tabstop>notifQSOEdit</tabstop>
   <tabstop>notifWSJTXCQSpotsEdit</tabstop>
   <tabstop>notifRigEdit</tabstop>
+  <tabstop>mapTileAttributionEdit</tabstop>
+  <tabstop>mapTileUrlEdit</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>tabWidget_2</tabstop>
   <tabstop>cwHostNameEdit</tabstop>

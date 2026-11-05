@@ -91,6 +91,7 @@ public:
 
     void setDarkTheme(bool isDark);
     void setStaticMapTime(const QDateTime &dateTime);
+    void reloadBaseMap();
 
     void drawPoints(const QList<MapPoint> &points);
     void drawPointsBusy(const QList<MapPoint> &points,

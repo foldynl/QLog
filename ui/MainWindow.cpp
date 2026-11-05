@@ -382,6 +382,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(this, &MainWindow::settingsChanged, ui->cwconsoleWidget, &CWConsoleWidget::reloadSettings);
     connect(this, &MainWindow::settingsChanged, ui->rotatorWidget, &RotatorWidget::redrawMap);
     connect(this, &MainWindow::settingsChanged, ui->onlineMapWidget, &OnlineMapWidget::flyToMyQTH);
+    connect(this, &MainWindow::settingsChanged, ui->onlineMapWidget, &OnlineMapWidget::reloadMapSettings);
     connect(this, &MainWindow::settingsChanged, ui->logbookWidget, &LogbookWidget::reloadSetting);
     connect(this, &MainWindow::settingsChanged, ui->dxWidget, &DxWidget::reloadSetting);
     connect(this, &MainWindow::settingsChanged, ui->dxWidget, &DxWidget::refreshStatusColors);

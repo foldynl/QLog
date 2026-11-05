@@ -1245,6 +1245,26 @@ void LogParam::setMapLayerState(const QString &widgetID, const QString &layerNam
     setParam(widgetID + "/layerstate/" + layerName, state);
 }
 
+QString LogParam::getMapTileUrl()
+{
+    return getParam("onlinemap/tileurl").toString();
+}
+
+bool LogParam::setMapTileUrl(const QString &url)
+{
+    return setParam("onlinemap/tileurl", url);
+}
+
+QString LogParam::getMapTileAttribution()
+{
+    return getParam("onlinemap/tileattribution").toString();
+}
+
+bool LogParam::setMapTileAttribution(const QString &attribution)
+{
+    return setParam("onlinemap/tileattribution", attribution);
+}
+
 double LogParam::getOfflineMapZoom()
 {
     return getParam("offlinemap/mapzoom", 1.0).toDouble();
