@@ -2,6 +2,7 @@ TBC - 0.54.2
 - Fixed inaccessible rig and rotator error dialogs. (PR #1237 @aa5sh)
 - Fixed ADX - Omit characters forbidden by XML during export
 - Fixed ADI - Removed invalid control characters after reading field values
+- Fixed ESC Key to stop sending CW (issue #1228)
 - ADX - Report XML import errors and reject incomplete records
 - Updated Spanish translation (PR #1232 @dimarmnes)
 

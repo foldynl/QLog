@@ -404,6 +404,23 @@ QPushButton#backupWarningButton:pressed {
     <bool>true</bool>
    </property>
   </action>
+  <action name="actionWipeContact">
+   <property name="text">
+    <string>New QSO - Wipe</string>
+   </property>
+   <property name="toolTip">
+    <string>New QSO - Wipe</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Esc</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+   <property name="changeableshortcut" stdset="0">
+    <bool>true</bool>
+   </property>
+  </action>
   <action name="actionImport">
    <property name="icon">
     <iconset theme="document-import">
