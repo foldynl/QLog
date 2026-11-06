@@ -301,13 +301,30 @@ void AdiFormat::readField(QString& field, QString& value)
             break;
 
         case VALUE:
+        {
             value = QString(stream.read(length));
+            // Remove invalid control characters
+            // Consume the declared length before filtering so subsequent fields stay aligned.
+            QChar *characters = value.data();
+            QString::size_type outputLength = 0;
+            for ( QString::size_type index = 0; index < value.size(); ++index )
+            {
+                const ushort code = characters[index].unicode();
+                if ( code < 0x20 && code != '\t' && code != '\r' && code != '\n' )
+                    continue;
+
+                if ( outputLength != index )
+                    characters[outputLength] = characters[index];
+                ++outputLength;
+            }
+            value.truncate(outputLength);
             state = FIELD;
             if (!inHeader) {
                 return;
             }
             headerFields.insert(field.toLower(), value);
             break;
+        }
         }
     }
 }

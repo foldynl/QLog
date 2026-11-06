@@ -109,6 +109,7 @@ protected:
     QMap<QString, QString>* defaults;
     void addImportWarning(const QString &message) { importWarnings.append(message); }
     void clearImportWarnings() { importWarnings.clear(); }
+    virtual QString importErrorString() const { return QString(); }
     virtual bool importNextDXCCCredit(DXCCCreditRecord&) { return false; }
 
 private:

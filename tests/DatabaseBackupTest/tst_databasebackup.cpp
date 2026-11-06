@@ -85,7 +85,7 @@ private slots:
     void externalAliasCannotPruneInternalBackups();
     void interruptedExportIsRetried();
     void everyPendingExportIsCopied();
-    void invalidXmlKeepsTheDatabaseCopy();
+    void invalidXmlCharactersAreRemovedFromBackup();
     void unrelatedDatabaseCopiesAreIgnored();
     void backupSettingsSurviveInvalidChanges();
     void completedBackupRestoresDateAfterInterruptedNotification();
@@ -96,6 +96,7 @@ private:
     QStringList snapshots() const;
     QStringList exports() const;
     QByteArray readFile(const QString &path) const;
+    static bool removeContactsFromSnapshot(const QString &path);
     QTemporaryDir storage;
 };
 
@@ -363,16 +364,30 @@ void DatabaseBackupTest::newestSnapshotIsExportedFirst_data()
     QTest::newRow("migration") << true;
 }
 
+bool DatabaseBackupTest::removeContactsFromSnapshot(const QString &path)
+{
+    bool removed = false;
+    {
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", "damaged-backup");
+        database.setDatabaseName(path);
+        if ( database.open() )
+        {
+            QSqlQuery query(database);
+            removed = query.exec("DROP TABLE contacts");
+        }
+    }
+    QSqlDatabase::removeDatabase("damaged-backup");
+    return removed;
+}
+
 void DatabaseBackupTest::newestSnapshotIsExportedFirst()
 {
     QFETCH(bool, migration);
     createLog();
     QSqlQuery query;
-    QVERIFY(query.prepare("UPDATE contacts SET name_intl=:name"));
-    query.bindValue(":name", QStringLiteral("Invalid") + QChar(1));
-    QVERIFY(query.exec());
     QVERIFY(DatabaseBackup::prepare());
     const QString pending = snapshots().first();
+    QVERIFY(removeContactsFromSnapshot(LogDatabase::dbDirectory().filePath(pending)));
     QVERIFY(query.exec("UPDATE contacts SET name_intl='Valid', callsign='OK2XYZ'"));
     QString freshSnapshot;
     QVERIFY(DatabaseBackup::prepare(migration, &freshSnapshot));
@@ -625,19 +640,30 @@ void DatabaseBackupTest::everyPendingExportIsCopied()
     QCOMPARE(QDir(config.directory).entryList({"*.adx"}, QDir::Files).size(), 2);
 }
 
-void DatabaseBackupTest::invalidXmlKeepsTheDatabaseCopy()
+void DatabaseBackupTest::invalidXmlCharactersAreRemovedFromBackup()
 {
     createLog();
     QSqlQuery query;
     QVERIFY(query.prepare("UPDATE contacts SET name_intl=:name"));
-    query.bindValue(":name", QStringLiteral("Invalid") + QChar(1));
+    const QString name = QString::fromUtf8("Jiří") + QChar(0x1c) + QStringLiteral(" Club") + QChar(0x1d) + QChar(1);
+    query.bindValue(":name", name);
     QVERIFY(query.exec());
     QVERIFY(DatabaseBackup::prepare());
     runBackup();
-    QVERIFY(exports().isEmpty());
-    QCOMPARE(snapshots().size(), 1);
-    QVERIFY(!LogParam::getLastBackupDate().isValid());
-    QVERIFY2(LogParam::getBackupError().contains("characters"), qPrintable(LogParam::getBackupError()));
+    QCOMPARE(exports().size(), 1);
+    const QByteArray output = readFile(LogDatabase::dbDirectory().filePath(exports().first()));
+    QVERIFY(output.contains(QString::fromUtf8("<NAME_INTL>Jiří Club</NAME_INTL>").toUtf8()));
+    QVERIFY(output.contains("OK1ABC"));
+    QXmlStreamReader reader(output);
+    while ( !reader.atEnd() )
+        reader.readNext();
+    QVERIFY(!reader.hasError());
+    QVERIFY(snapshots().isEmpty());
+    QCOMPARE(LogParam::getLastBackupDate(), QDate::currentDate());
+    QVERIFY(LogParam::getBackupError().isEmpty());
+    QVERIFY(query.exec("SELECT name_intl FROM contacts"));
+    QVERIFY(query.next());
+    QCOMPARE(query.value(0).toString(), name);
 }
 
 void DatabaseBackupTest::unrelatedDatabaseCopiesAreIgnored()
@@ -761,12 +787,9 @@ void DatabaseBackupTest::existingAdxIsReexportedFromPendingDatabase()
 void DatabaseBackupTest::existingAdxDoesNotHideFailedExport()
 {
     createLog();
-    QSqlQuery query;
-    QVERIFY(query.prepare("UPDATE contacts SET name_intl=:name"));
-    query.bindValue(":name", QStringLiteral("Invalid") + QChar(1));
-    QVERIFY(query.exec());
     QVERIFY(DatabaseBackup::prepare());
     const QString snapshot = snapshots().first();
+    QVERIFY(removeContactsFromSnapshot(LogDatabase::dbDirectory().filePath(snapshot)));
     QFile file(LogDatabase::dbDirectory().filePath(snapshot.left(snapshot.size()-3) + ".adx"));
     QVERIFY(file.open(QIODevice::WriteOnly));
     QCOMPARE(file.write("previous ADX"), qint64(12));
@@ -865,11 +888,8 @@ void DatabaseBackupTest::currentSnapshotIsProtectedAfterClockCorrection()
         QCOMPARE(file.write("older ADX"), qint64(9));
         if ( day == 1 )
         {
-            QSqlQuery query;
-            QVERIFY(query.prepare("UPDATE contacts SET name_intl=:name"));
-            query.bindValue(":name", QStringLiteral("Invalid") + QChar(1));
-            QVERIFY(query.exec());
             QVERIFY(LogDatabase::instance()->atomicCopy(oldStem + ".db"));
+            QVERIFY(removeContactsFromSnapshot(directory.filePath(oldStem + ".db")));
         }
     }
     BackupConfig config;
@@ -893,8 +913,6 @@ void DatabaseBackupTest::currentSnapshotIsProtectedAfterClockCorrection()
     // A subsequent complete run must also protect this startup's ADX during internal retention.
     QFile invalid(directory.filePath("qlog_backup_" + QDate::currentDate().addDays(-1).toString("yyyyMMdd") + "000000000.db"));
     QVERIFY(invalid.remove());
-    QSqlQuery query;
-    QVERIFY(query.exec("UPDATE contacts SET name_intl='Valid'"));
     QVERIFY(LogDatabase::instance()->atomicCopy(current));
     runBackup(config, current);
     QCOMPARE(exports().size(), 10);

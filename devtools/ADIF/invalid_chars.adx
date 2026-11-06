@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ADX>
+  <HEADER>
+    <ADIF_VER>3.1.6</ADIF_VER>
+    <PROGRAMID>QLog import test</PROGRAMID>
+  </HEADER>
+  <RECORDS>
+    <RECORD>
+      <CALL>OK1AAA</CALL>
+      <QSO_DATE>20261106</QSO_DATE>
+      <TIME_ON>120100</TIME_ON>
+      <BAND>20m</BAND>
+      <FREQ>14.025</FREQ>
+      <MODE>CW</MODE>
+      <RST_SENT>599</RST_SENT>
+      <RST_RCVD>599</RST_RCVD>
+      <STATION_CALLSIGN>OK1TEST</STATION_CALLSIGN>
+      <MY_GRIDSQUARE>JN79AA</MY_GRIDSQUARE>
+      <COMMENT>QLog ADX import test - record 1</COMMENT>
+      <ADDRESS>Test address</ADDRESS>
+    </RECORD>
+    <RECORD>
+      <CALL>OK1AAB</CALL>
+      <QSO_DATE>20261106</QSO_DATE>
+      <TIME_ON>120200</TIME_ON>
+      <BAND>20m</BAND>
+      <FREQ>14.025</FREQ>
+      <MODE>CW</MODE>
+      <RST_SENT>599</RST_SENT>
+      <RST_RCVD>599</RST_RCVD>
+      <STATION_CALLSIGN>OK1TEST</STATION_CALLSIGN>
+      <MY_GRIDSQUARE>JN79AA</MY_GRIDSQUARE>
+      <COMMENT>QLog ADX import test - record 2</COMMENT>
+      <ADDRESS>Test addressInvalid control character</ADDRESS>
+    </RECORD>
+    <RECORD>
+      <CALL>OK1AAC</CALL>
+      <QSO_DATE>20261106</QSO_DATE>
+      <TIME_ON>120300</TIME_ON>
+      <BAND>20m</BAND>
+      <FREQ>14.025</FREQ>
+      <MODE>CW</MODE>
+      <RST_SENT>599</RST_SENT>
+      <RST_RCVD>599</RST_RCVD>
+      <STATION_CALLSIGN>OK1TEST</STATION_CALLSIGN>
+      <MY_GRIDSQUARE>JN79AA</MY_GRIDSQUARE>
+      <COMMENT>QLog ADX import test - record 3</COMMENT>
+      <ADDRESS>Test address</ADDRESS>
+    </RECORD>
+  </RECORDS>
+</ADX>

@@ -783,6 +783,13 @@ unsigned long LogFormat::runImport(QTextStream& importLogStream,
         }
     }
 
+    const QString parserError = importErrorString();
+    if ( !parserError.isEmpty() )
+    {
+        ++(*errors);
+        writeImportLog(importLogStream, ERROR_SEVERITY, parserError);
+    }
+
     emit importPosition(stream.pos());
     emit finished(count);
 
