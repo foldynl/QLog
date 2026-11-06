@@ -781,7 +781,7 @@ void MainWindow::rigErrorHandler(const QString &error, const QString &errorDetai
 {
     FCT_IDENTIFICATION;
 
-    QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+    QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                          QMessageBox::tr("<b>Rig Error:</b> ") + error
                                          + "<p>" + tr("<b>Error Detail:</b> ") + errorDetail + "</p>");
     if ( ui->actionConnectRig->isChecked() )
@@ -794,7 +794,7 @@ void MainWindow::rotErrorHandler(const QString &error, const QString &errorDetai
 {
     FCT_IDENTIFICATION;
 
-    QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+    QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                          QMessageBox::tr("<b>Rotator Error:</b> ") + error
                                          + "<p>" + tr("<b>Error Detail:</b> ") + errorDetail + "</p>");
     ui->actionConnectRotator->setChecked(false);
@@ -804,7 +804,7 @@ void MainWindow::cwKeyerErrorHandler(const QString &error, const QString &errorD
 {
     FCT_IDENTIFICATION;
 
-    QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+    QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                          QMessageBox::tr("<b>CW Keyer Error:</b> ") + error
                                          + "<p>" + tr("<b>Error Detail:</b> ") + errorDetail + "</p>");
     ui->actionConnectCWKeyer->setChecked(false);
@@ -1004,7 +1004,7 @@ void MainWindow::showUpdateDialog(const QString &newVersion, const QString &repo
 {
     FCT_IDENTIFICATION;
 
-    QMessageBox msgBox;
+    QMessageBox msgBox(this);
     QSettings settings;
 
 #if defined(Q_OS_MACOS) && QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
