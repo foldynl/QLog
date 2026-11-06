@@ -1,8 +1,10 @@
 #include <QObject>
 
+class QWidget;
+
 // Credential outcomes are tested without displaying the existing error dialogs.
 class QMessageBox : public QObject
 {
 public:
-    static void critical(QObject *, const QString &, const QString &) {}
+    static void critical(QWidget *, const QString &, const QString &) {}
 };
