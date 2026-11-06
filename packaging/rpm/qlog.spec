@@ -65,6 +65,14 @@ INSTALL_ROOT=%{buildroot} make -f Makefile install
 %{_mandir}/man1/*
 
 %changelog
+* Fri Nov 6 2026 Ladislav Foldyna - 0.54.2-1
+- Fixed inaccessible rig and rotator error dialogs. (PR #1237 @aa5sh)
+- Fixed ADX - Omit characters forbidden by XML during export
+- Fixed ADI - Removed invalid control characters after reading field values
+- Fixed ESC Key to stop sending CW (issue #1228)
+- ADX - Report XML import errors and reject incomplete records
+- Updated Spanish translation (PR #1232 @dimarmnes)
+
 * Fri Oct 30 2026 Ladislav Foldyna - 0.54.1-1
 - Fixed OmnirigDrv - CW and CWR follow the rig's own normal CW (issue #347 PR #1196 @SebaBecks)
 - Fixed QSLPrint - Ensure QSL PDF exports use a PDF extension

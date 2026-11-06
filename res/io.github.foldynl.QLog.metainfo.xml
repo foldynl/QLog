@@ -51,6 +51,18 @@
   <url type="vcs-browser">https://github.com/foldynl/QLog</url>
   <url type="contribute">https://github.com/foldynl/QLog/blob/master/CONTRIBUTING.md</url>
   <releases>
+    <release version="0.54.2" date="2026-11-06">
+      <description>
+        <ul>
+          <li>Fixed inaccessible rig and rotator error dialogs. (PR #1237 @aa5sh)</li>
+          <li>Fixed ADX - Omit characters forbidden by XML during export</li>
+          <li>Fixed ADI - Removed invalid control characters after reading field values</li>
+          <li>Fixed ESC Key to stop sending CW (issue #1228)</li>
+          <li>ADX - Report XML import errors and reject incomplete records</li>
+          <li>Updated Spanish translation (PR #1232 @dimarmnes)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.54.1" date="2026-10-30">
       <description>
         <ul>
