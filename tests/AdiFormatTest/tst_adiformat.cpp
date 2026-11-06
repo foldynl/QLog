@@ -81,6 +81,8 @@ private slots:
     void parserSkipsHeaderAndReadsTypedFields();
     void parserSkipsMixedCaseHeaderTerminator();
     void parserPreservesLengthDelimitedCRLFData();
+    void importNextRemovesInvalidControlsAfterReading_data();
+    void importNextRemovesInvalidControlsAfterReading();
     void parserReadsMultipleContactsAndMixedCaseEor();
     void writeFieldFormatsTagLengthAndType();
     void writeFieldNormalizesLineBreaksByFieldType();
@@ -359,6 +361,58 @@ void AdiFormatTest::parserPreservesLengthDelimitedCRLFData()
     QCOMPARE(contact.value(QStringLiteral("address")).toString(),
              QString::fromLatin1(address));
     QCOMPARE(contact.value(QStringLiteral("call")).toString(), QStringLiteral("OK1AA"));
+}
+
+void AdiFormatTest::importNextRemovesInvalidControlsAfterReading_data()
+{
+    QTest::addColumn<QByteArray>("value");
+    QTest::addColumn<QString>("expected");
+
+    const QByteArray valid("Caf\xe9\tLine 1\r\nLine 2");
+    QTest::newRow("valid-text") << valid << QString::fromLatin1(valid);
+    QTest::newRow("reported-address") << QByteArray("Roo ") + char(0x1c)
+                                       + "Moscow Radioclub" + char(0x1d)
+                                    << QStringLiteral("Roo Moscow Radioclub");
+
+    QByteArray invalid;
+    for ( char code = 0; code < 32; ++code )
+        if ( code != '\t' && code != '\r' && code != '\n' )
+            invalid.append(code);
+    QTest::newRow("all-forbidden-controls") << invalid + valid + invalid << QString::fromLatin1(valid);
+    QTest::newRow("only-forbidden-controls") << invalid << QString();
+}
+
+void AdiFormatTest::importNextRemovesInvalidControlsAfterReading()
+{
+    QFETCH(QByteArray, value);
+    QFETCH(QString, expected);
+
+    QByteArray input = tag("ADDRESS", value) + tag("APP_QLOG_NOTE", value, "M")
+                       + tag("CALL", "OK1AA") + "<EOR>"
+                       + tag("CALL", "OK2BB") + "<EOR>";
+    QBuffer buffer(&input);
+    QVERIFY(buffer.open(QIODevice::ReadOnly | QIODevice::Text));
+    QTextStream stream(&buffer);
+    TestAdiFormat format(stream);
+
+    QSqlRecord record;
+    appendField(record, QStringLiteral("callsign"), QString());
+    appendField(record, QStringLiteral("address"), QString());
+    appendField(record, QStringLiteral("address_intl"), QString());
+    appendField(record, QStringLiteral("fields"), QString());
+
+    QVERIFY(format.importNext(record));
+    QCOMPARE(record.value(QStringLiteral("address")).toString(), expected);
+    QCOMPARE(record.value(QStringLiteral("address_intl")).toString(), expected);
+    QCOMPARE(record.value(QStringLiteral("callsign")).toString(), QStringLiteral("OK1AA"));
+    const QJsonObject fields = QJsonDocument::fromJson(record.value(QStringLiteral("fields")).toByteArray()).object();
+    QVERIFY(fields.contains(QStringLiteral("app_qlog_note")));
+    QCOMPARE(fields.value(QStringLiteral("app_qlog_note")).toString(), expected);
+
+    record.clearValues();
+    QVERIFY(format.importNext(record));
+    QCOMPARE(record.value(QStringLiteral("callsign")).toString(), QStringLiteral("OK2BB"));
+    QVERIFY(!format.importNext(record));
 }
 
 void AdiFormatTest::parserReadsMultipleContactsAndMixedCaseEor()
