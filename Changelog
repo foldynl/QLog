@@ -3,6 +3,7 @@ TBC - 0.54.2
 - Fixed ADX - Omit characters forbidden by XML during export
 - Fixed ADI - Removed invalid control characters after reading field values
 - ADX - Report XML import errors and reject incomplete records
+- Updated Spanish translation (PR #1232 @dimarmnes)
 
 2026/10/30 - 0.54.1
 - Fixed OmnirigDrv - CW and CWR follow the rig's own normal CW (issue #347 PR #1196 @SebaBecks)
