@@ -820,7 +820,7 @@ void SettingsDialog::save()
 
     if ( stationProfManager->profileNameList().isEmpty() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Please, define at least one Station Locations Profile"));
         return;
     }
@@ -845,7 +845,7 @@ void SettingsDialog::save()
             ui->tabWidget->setCurrentIndex(check.tabIndex);
             if ( check.equipTabIndex >= 0 )
                 ui->equipmentTabWidget->setCurrentIndex(check.equipTabIndex);
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"), pleaseModifyTXT);
+            QMessageBox::warning(this, QMessageBox::tr("QLog Warning"), pleaseModifyTXT);
             return;
         }
     }
@@ -854,7 +854,7 @@ void SettingsDialog::save()
          && ! ui->wsjtMulticastAddressEdit->hasAcceptableInput())
     {
         ui->tabWidget->setCurrentIndex(8);
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("WSJTX Multicast is enabled but the Address is not a multicast address."));
         return;
     }
@@ -865,7 +865,7 @@ void SettingsDialog::save()
         if ( list.hasLocalIPWithPort(ui->wsjtPortSpin->value()) )
         {
             ui->tabWidget->setCurrentIndex(8);
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+            QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                                  QMessageBox::tr("Loop detected. Raw UDP forward uses the same port as the WSJT-X receiving port."));
             return;
         }
@@ -983,7 +983,7 @@ void SettingsDialog::addRigProfile()
     if ( ! ui->rigPortEdit->text().isEmpty()
          && ! ui->rigPortEdit->hasAcceptableInput())
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Rig port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
         return;
     }
@@ -1002,7 +1002,7 @@ void SettingsDialog::addRigProfile()
         if ( ! ui->rigPTTPortEdit->text().isEmpty()
              && ! ui->rigPTTPortEdit->hasAcceptableInput() )
         {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+            QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                                  QMessageBox::tr("Rig PTT port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
             return;
         }
@@ -1010,7 +1010,7 @@ void SettingsDialog::addRigProfile()
 
     if ( ui->rigTXFreqMaxSpinBox->value() == 0.0 )
     {
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
+        QMessageBox::critical(this, QMessageBox::tr("QLog Error"),
                               QMessageBox::tr("<b>TX Range</b>: Max Frequency must not be 0."));
 
         return;
@@ -1019,7 +1019,7 @@ void SettingsDialog::addRigProfile()
     if ( MHz2Hz(ui->rigTXFreqMaxSpinBox->value())
          <= MHz2Hz(ui->rigTXFreqMinSpinBox->value()) )
     {
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
+        QMessageBox::critical(this, QMessageBox::tr("QLog Error"),
                               QMessageBox::tr("<b>TX Range</b>: Max Frequency must not be under Min Frequency."));
 
         return;
@@ -1362,7 +1362,7 @@ void SettingsDialog::addRotProfile()
     if ( ! ui->rotPortEdit->text().isEmpty()
          && ! ui->rotPortEdit->hasAcceptableInput() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Rotator port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
         return;
     }
@@ -1724,7 +1724,7 @@ void SettingsDialog::addCWKeyProfile()
     if ( ! ui->cwPortEdit->text().isEmpty()
          && ! ui->cwPortEdit->hasAcceptableInput() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("CW Keyer port must be a valid COM port.<br>For Windows use COMxx, for unix-like OS use a path to device"));
         return;
     }
@@ -1797,7 +1797,7 @@ void SettingsDialog::addCWKeyProfile()
 
     if ( ! noMorseCATSupportRigs.isEmpty() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Cannot change the CW Keyer Model to <b>Morse over CAT</b><br>No Morse over CAT support for Rig(s) <b>%1</b>").arg(noMorseCATSupportRigs.join(", ")));
         return;
     }
@@ -1842,7 +1842,7 @@ void SettingsDialog::delCWKeyProfile()
         }
         else
         {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+            QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                                  QMessageBox::tr("Cannot delete the CW Keyer Profile<br>The CW Key Profile is used by Rig(s): <b>%1</b>").arg(dependentRigs.join(", ")));
         }
 
@@ -2027,7 +2027,7 @@ void SettingsDialog::addStationProfile()
 
     if ( ! ui->stationCallsignEdit->hasAcceptableInput() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Callsign has an invalid format"));
         return;
     }
@@ -2035,14 +2035,14 @@ void SettingsDialog::addStationProfile()
     if ( !ui->stationOperatorCallsignEdit->text().isEmpty()
          && ! ui->stationOperatorCallsignEdit->hasAcceptableInput() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Operator Callsign has an invalid format"));
         return;
     }
 
     if ( ! ui->stationLocatorEdit->hasAcceptableInput() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Gridsquare has an invalid format"));
         return;
     }
@@ -2051,7 +2051,7 @@ void SettingsDialog::addStationProfile()
     {
         if ( ! ui->stationVUCCEdit->hasAcceptableInput() )
         {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+            QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                                  QMessageBox::tr("VUCC Grids have an invalid format (must be 2 or 4 Gridsquares separated by ',')"));
             return;
         }
@@ -2059,21 +2059,21 @@ void SettingsDialog::addStationProfile()
 
     if ( ui->stationCountryCombo->currentIndex() == 0 )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Country must not be empty"));
         return;
     }
 
     if ( ui->stationCQZEdit->text().isEmpty() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("CQZ must not be empty"));
         return;
     }
 
     if ( ui->stationITUEdit->text().isEmpty() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("ITU must not be empty"));
         return;
     }
@@ -2548,7 +2548,7 @@ void SettingsDialog::cancelled()
 
     if ( stationProfManager->profileNameList().isEmpty() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Please, define at least one Station Locations Profile"));
         return;
     }

@@ -102,7 +102,7 @@ void ActivityEditor::save()
 
     if ( activityNameExists(ui->activityNameEdit->text()) )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Info"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Info"),
                               QMessageBox::tr("Activity name is already exists."));
         return;
     }

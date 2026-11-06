@@ -466,7 +466,7 @@ static bool initializeLOV(LOVDownloader &downloader, SplashScreen &splash, bool 
             failed << lovName(type);
     }
     if ( !failed.isEmpty() )
-        QMessageBox::warning(nullptr, QObject::tr("QLog Warning"),
+        QMessageBox::warning(&splash, QObject::tr("QLog Warning"),
                              QObject::tr("Could not update these reference lists: %1. Existing data have been kept.").arg(failed.join(QStringLiteral(", "))));
     return true;
 }
@@ -679,7 +679,7 @@ int main(int argc, char* argv[])
     LOVDownloader lovDownloader;
     if ( !initializeLOV(lovDownloader, splash, isForceLOVUpdate) )
     {
-        QMessageBox::critical(nullptr, QObject::tr("QLog Error"), QObject::tr("Could not complete reference-list initialization."));
+        QMessageBox::critical(&splash, QObject::tr("QLog Error"), QObject::tr("Could not complete reference-list initialization."));
         return 1;
     }
     QObject::connect(&app, &QCoreApplication::aboutToQuit, &lovDownloader, &LOVDownloader::stopUpdates);

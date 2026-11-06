@@ -7,6 +7,7 @@
 #include <QUrl>
 #include <QMutexLocker>
 #include <QSqlDriver>
+#include <QApplication>
 #include <QMessageBox>
 #include <QCoreApplication>
 
@@ -201,14 +202,14 @@ void MembershipQE::updateLists()
 
     if ( !removeDisabled(enabledLists) )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(QApplication::activeWindow(), QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Club List Update failed. Cannot remove old records"));
         return;
     }
 
     if ( !planDownloads(enabledLists) )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(QApplication::activeWindow(), QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Club List Update failed. Cannot plan new downloads"));
         return;
     }
@@ -320,7 +321,7 @@ void MembershipQE::onFinishedListDownload(QNetworkReply *reply)
         qCDebug(runtime) << "Canceling all downloads";
         removeClubsFromEnabledClubLists(updatePlan);
         updatePlan.clear();
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Critical"),
+        QMessageBox::critical(QApplication::activeWindow(), QMessageBox::tr("QLog Critical"),
                              QMessageBox::tr("Unexpected Club List download. Canceling next downloads"));
 
     }
@@ -335,14 +336,14 @@ void MembershipQE::onFinishedListDownload(QNetworkReply *reply)
         QByteArray data = reply->readAll();        
         if ( ! importData(clubid, data) )
         {
-            QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+            QMessageBox::warning(QApplication::activeWindow(), QMessageBox::tr("QLog Warning"),
                                  QMessageBox::tr("Unexpected Club List content for") + " " + clubid);
             error = true;
         }
     }
     else
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(QApplication::activeWindow(), QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Network error. Cannot download Club List for") + " " + clubid);
         qCDebug(runtime) << "Network Error for club" << clubid << replyStatusCode << reply->error();
         error = true;

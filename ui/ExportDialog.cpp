@@ -210,7 +210,7 @@ void ExportDialog::runExport()
 
     if ( filename.isEmpty() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              tr("Choose a logbook export file before exporting."));
         return;
     }
@@ -363,10 +363,10 @@ void ExportDialog::runExport()
 
     if ( isPota && qsos4export.size() > 0 ) // TODO: correctly calculate
                                                 // the exported QSOs in case of POTA formatter and direct export dialog
-        QMessageBox::information(nullptr, QMessageBox::tr("QLog Information"),
+        QMessageBox::information(this, QMessageBox::tr("QLog Information"),
                                  QMessageBox::tr("Exported."));
     else
-        QMessageBox::information(nullptr, QMessageBox::tr("QLog Information"),
+        QMessageBox::information(this, QMessageBox::tr("QLog Information"),
                                  QMessageBox::tr("Exported %n contact(s).", "", count));
 
     accept();

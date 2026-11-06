@@ -113,7 +113,7 @@ void AlertRuleDetail::save()
 
     if ( ruleExists(ui->ruleNameEdit->text()) )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Info"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Info"),
                               QMessageBox::tr("Rule name is already exists."));
         return;
     }
@@ -123,14 +123,14 @@ void AlertRuleDetail::save()
 
     if ( !rxCall.isValid() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Info"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Info"),
                               QMessageBox::tr("Callsign Regular Expression is incorrect."));
         return;
     }
 
     if ( !rxComm.isValid() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Info"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Info"),
                               QMessageBox::tr("Comment Regular Expression is incorrect."));
         return;
     }
@@ -324,7 +324,7 @@ void AlertRuleDetail::save()
 
     if ( ! rule.save() )
     {
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
+        QMessageBox::critical(this, QMessageBox::tr("QLog Error"),
                               QMessageBox::tr("Cannot Update Alert Rules"));
         return;
     }

@@ -478,14 +478,14 @@ void QSOFilterDetail::save()
 
     if ( filterExists(ui->filterLineEdit->text()) )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Info"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Info"),
                               QMessageBox::tr("Filter name is already exists."));
         return;
     }
 
     if ( !QSOFilterManager::instance()->save(editedFilter) )
     {
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Error"),
+        QMessageBox::critical(this, QMessageBox::tr("QLog Error"),
                               QMessageBox::tr("Cannot update QSO Filter Conditions"));
         return;
     }

@@ -604,7 +604,7 @@ public:
                 if (row == index.row()) continue;
                 if (model->data(model->index(row, index.column()), Qt::EditRole).toString() == text)
                 {
-                    QMessageBox::warning(nullptr, "Duplicate value", "The value must be unique.");
+                    QMessageBox::warning(editor, tr("Duplicate value"), tr("The value must be unique."));
                     return;
                 }
             }

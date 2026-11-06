@@ -140,7 +140,7 @@ void KSTHighlightRuleDetail::save()
 
     if ( ruleExists(ui->ruleLineEdit->text()) )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Info"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Info"),
                               QMessageBox::tr("Filter name is already exists."));
         return;
     }

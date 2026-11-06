@@ -82,7 +82,7 @@ int CredentialStore::savePassword(const QString &storage_key, const QString &use
 
     if ( job.error() )
     {
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Critical"),
+        QMessageBox::critical(QApplication::activeWindow(), QMessageBox::tr("QLog Critical"),
                               QMessageBox::tr("Cannot save a password for %1 to the Credential Store").arg(storage_key)
                               + "<p>"
                               + job.errorString());
@@ -130,7 +130,7 @@ QString CredentialStore::getPassword(const QString &storage_key, const QString &
     {
         if ( success )
             *success = false;
-        QMessageBox::critical(nullptr, QMessageBox::tr("QLog Critical"),
+        QMessageBox::critical(QApplication::activeWindow(), QMessageBox::tr("QLog Critical"),
                               QMessageBox::tr("Cannot get a password for %1 from the Credential Store").arg(storage_key)
                               + "<p>"
                               + job.errorString());

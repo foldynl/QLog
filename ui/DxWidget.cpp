@@ -747,7 +747,7 @@ void DxWidget::toggleConnect()
     {
         if ( !DxServerString::isValidServerString(ui->serverSelect->text()) )
         {
-            QMessageBox::warning(nullptr, QMessageBox::tr("DXC Server Name Error"),
+            QMessageBox::warning(this, QMessageBox::tr("DXC Server Name Error"),
                                           QMessageBox::tr("DXC Server address must be in format<p><b>[username@]hostname:port</b> (ex. hamqth.com:7300)</p>"));
             return;
         }
@@ -1136,7 +1136,7 @@ void DxWidget::receive()
         {
             // invalid login
             disconnectCluster();
-            QMessageBox::warning(nullptr,
+            QMessageBox::warning(this,
                                  tr("DXC Server Error"),
                                  tr("An invalid callsign"));
             return;
@@ -1181,7 +1181,7 @@ void DxWidget::receive()
             // invalid password
             DxClusterCredentials::removePasswd(*connectedServerString);
             disconnectCluster();
-            QMessageBox::warning(nullptr,
+            QMessageBox::warning(this,
                                  QMessageBox::tr("DX Cluster Password"),
                                  QMessageBox::tr("Invalid Password"));
             return;
@@ -1352,7 +1352,7 @@ void DxWidget::socketError(QAbstractSocket::SocketError socker_error)
          && connectionState != PASSWORD_SENT
          && (! reconectRequested || reconnectAttempts == NUM_OF_RECONNECT_ATTEMPTS))
     {
-        QMessageBox::warning(nullptr,
+        QMessageBox::warning(this,
                              QMessageBox::tr("DXC Server Connection Error"),
                              error_msg);
     }

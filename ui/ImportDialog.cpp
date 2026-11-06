@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QComboBox>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -268,7 +269,7 @@ LogFormat::duplicateQSOBehaviour ImportDialog::showDuplicateDialog(QSqlRecord *i
                        + imported->value("start_time").toString() + " "
                        + imported->value("callsign").toString() + "<p> ";
 
-    reply = QMessageBox::question(nullptr,
+    reply = QMessageBox::question(QApplication::activeWindow(),
                                   tr("Duplicate QSO"),
                                   tr("<p>Do you want to import duplicate QSO?</p>%1 %2").arg(inLogQSO,importedQSO),
                                   QMessageBox::Yes|QMessageBox::No|QMessageBox::YesAll|QMessageBox::NoAll);
@@ -340,7 +341,7 @@ void ImportDialog::runImport()
 
     if ( ui->fileEdit->text().isEmpty() )
     {
-        QMessageBox::warning(nullptr, QMessageBox::tr("QLog Warning"),
+        QMessageBox::warning(this, QMessageBox::tr("QLog Warning"),
                              QMessageBox::tr("Filename is empty"));
         return;
     }
