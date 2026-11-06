@@ -25,12 +25,12 @@ void AdxFormat::importStart()
 
     reader = new QXmlStreamReader(stream.device());
 
-    while ( reader->readNextStartElement() )
+    while ( !reader->hasError() && reader->readNextStartElement() )
     {
         qCDebug(runtime)<<reader->name();
         if ( reader->name() == QString("ADX") )
         {
-            while ( reader->readNextStartElement() )
+            while ( !reader->hasError() && reader->readNextStartElement() )
             {
                 qCDebug(runtime)<<reader->name();
                 if ( reader->name() == QString("HEADER") )
@@ -62,6 +62,18 @@ void AdxFormat::importEnd()
         delete reader;
         reader = nullptr;
     }
+}
+
+QString AdxFormat::importErrorString() const
+{
+    FCT_IDENTIFICATION;
+
+    if ( !reader || !reader->hasError() )
+        return QString();
+
+    return tr("The ADX import stopped because of invalid XML at line %1, column %2: %3. "
+              "The remaining contacts were not imported.")
+            .arg(reader->lineNumber()).arg(reader->columnNumber()).arg(reader->errorString());
 }
 
 void AdxFormat::exportStart()
@@ -245,17 +257,22 @@ bool AdxFormat::readContact(QVariantMap & contact)
     while ( !reader->atEnd() )
     {
         reader->readNextStartElement();
+        if ( reader->hasError() )
+            return false;
 
         qCDebug(runtime)<<reader->name();
 
         if ( reader->name() == QString("RECORDS") && reader->isEndElement() )
         {
             qCDebug(runtime)<<"End Records Element";
+            // Read the closing document too, so malformed or truncated tails are reported.
+            while ( !reader->atEnd() )
+                reader->readNext();
             return false;
         }
         if ( reader->name() == QString("RECORD") )
         {
-            while (reader->readNextStartElement() )
+            while ( !reader->hasError() && reader->readNextStartElement() )
             {
                 qCDebug(runtime)<<"adding element " << reader->name();
                 if ( reader->name().compare(QStringLiteral("APP"), Qt::CaseInsensitive) == 0 )
@@ -284,7 +301,7 @@ bool AdxFormat::readContact(QVariantMap & contact)
                     contact[reader->name().toLatin1().toLower()] = QVariant(reader->readElementText());
                 }
             }
-            return true;
+            return !reader->hasError();
         }
         else
         {

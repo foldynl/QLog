@@ -21,6 +21,7 @@ public:
     bool hasExportError() const;
 
 protected:
+    QString importErrorString() const override;
     virtual void writeField(const QString &name,
                             bool presenceCondition,
                             const QString &value,

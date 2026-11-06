@@ -2,12 +2,20 @@
 #include <QBuffer>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QRegularExpression>
 #include <QSqlField>
 #include <QSqlRecord>
 #include <QXmlStreamAttributes>
 #include <QXmlStreamReader>
 
 #include "logformat/AdxFormat.h"
+
+class TestAdxFormat : public AdxFormat
+{
+public:
+    explicit TestAdxFormat(QTextStream &stream) : AdxFormat(stream) {}
+    using AdxFormat::importErrorString;
+};
 
 class AdxFormatTest : public QObject
 {
@@ -23,6 +31,8 @@ private slots:
     void exportFiltersInvalidSurrogates();
     void exportContactNormalizesGridAndTerminatesRecord();
     void importNextMapsAdxFieldsAndStoresUnknownFields();
+    void importNextRejectsInvalidXml_data();
+    void importNextRejectsInvalidXml();
     void importNextNormalizesConstrainedEnumFields();
     void importNextStoresZeroLengthApplicationFields();
     void importNextAppliesDefaultsForMissingFields();
@@ -468,6 +478,75 @@ void AdxFormatTest::importNextMapsAdxFieldsAndStoresUnknownFields()
     QCOMPARE(appField.value(QStringLiteral("value")).toString(), QStringLiteral(" abc "));
     QCOMPARE(appField.value(QStringLiteral("type")).toString(), QStringLiteral("M"));
     QCOMPARE(fields.value(QStringLiteral("unknown_field")).toString(), QStringLiteral(" xyz "));
+}
+
+void AdxFormatTest::importNextRejectsInvalidXml_data()
+{
+    QTest::addColumn<QByteArray>("input");
+    QTest::addColumn<QStringList>("expectedCalls");
+    QTest::addColumn<bool>("expectedError");
+
+    const QByteArray prefix("<ADX>\n<RECORDS>\n");
+    const QByteArray first("<RECORD><CALL>OK1AA</CALL></RECORD>\n");
+    const QByteArray second("<RECORD><CALL>OK2BB</CALL></RECORD>\n");
+    const QByteArray last("<RECORD><CALL>OK3CC</CALL></RECORD>\n");
+    const QByteArray suffix("</RECORDS>\n</ADX>\n");
+
+    QTest::newRow("valid") << prefix + first + second + suffix
+                          << QStringList({"OK1AA", "OK2BB"}) << false;
+    QTest::newRow("invalid-text") << prefix + first
+                                 + "<RECORD>\n<CALL>OK2BB</CALL>\n<ADDRESS>A" + char(0x1c)
+                                 + "B</ADDRESS>\n</RECORD>\n" + last + suffix
+                                 << QStringList({"OK1AA"}) << true;
+    QTest::newRow("invalid-application-field") << prefix + first
+                                              + "<RECORD><CALL>OK2BB</CALL>"
+                                                "<APP PROGRAMID=\"QLOG\" FIELDNAME=\"NOTE\">A&#28;B</APP>"
+                                                "</RECORD>\n" + last + suffix
+                                              << QStringList({"OK1AA"}) << true;
+    QTest::newRow("truncated-record") << prefix + first + "<RECORD><CALL>OK2BB</CALL>"
+                                     << QStringList({"OK1AA"}) << true;
+    QTest::newRow("truncated-document") << prefix + first + "</RECORDS>\n"
+                                       << QStringList({"OK1AA"}) << true;
+    QTest::newRow("trailing-content") << prefix + first + suffix + "unexpected"
+                                     << QStringList({"OK1AA"}) << true;
+    QTest::newRow("invalid-header") << QByteArray("<ADX>\n<HEADER><PROGRAMID>A") + char(0x1d)
+                                   + "B</PROGRAMID></HEADER>\n<RECORDS>" + first + suffix
+                                   << QStringList() << true;
+}
+
+void AdxFormatTest::importNextRejectsInvalidXml()
+{
+    QFETCH(QByteArray, input);
+    QFETCH(QStringList, expectedCalls);
+    QFETCH(bool, expectedError);
+
+    QBuffer buffer(&input);
+    QVERIFY(buffer.open(QIODevice::ReadOnly));
+    QTextStream stream(&buffer);
+    TestAdxFormat format(stream);
+    QVERIFY(format.importErrorString().isEmpty());
+    format.importStart();
+
+    QSqlRecord record;
+    appendField(record, QStringLiteral("callsign"), QString());
+    QStringList calls;
+    while ( format.importNext(record) )
+    {
+        calls.append(record.value(QStringLiteral("callsign")).toString());
+        record.clearValues();
+    }
+    QCOMPARE(calls, expectedCalls);
+    const QString error = format.importErrorString();
+    QCOMPARE(!error.isEmpty(), expectedError);
+    if ( expectedError )
+    {
+        QVERIFY(QRegularExpression(QStringLiteral("line [0-9]+, column [0-9]+:")).match(error).hasMatch());
+        QVERIFY(error.contains(QStringLiteral("remaining contacts were not imported")));
+    }
+    QVERIFY(!format.importNext(record));
+    QCOMPARE(format.importErrorString(), error);
+    format.importEnd();
+    QVERIFY(format.importErrorString().isEmpty());
 }
 
 void AdxFormatTest::importNextStoresZeroLengthApplicationFields()
