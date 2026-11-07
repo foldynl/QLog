@@ -47,6 +47,17 @@ public:
     static void saveUsernamePassword(const QString&, const QString&);
     static void saveTQSLPath(const QString&);
 
+    // Additional accounts used for QSL download. A LoTW account can hold certificates
+    // of several callsigns; without a callsign list it serves the callsign equal to its username.
+    // The account above is the default one, used for callsigns of no additional account.
+    static QStringList getAddlAccounts();
+    static void setAddlAccounts(const QStringList &usernames);
+    static QStringList getAccountCallsigns(const QString &username);
+    static void setAccountCallsigns(const QString &username, const QStringList &callsigns);
+    static QString getAccountPasswd(const QString &username);
+    static void saveAccountPasswd(const QString &newPassword, const QString &username);
+    static QString resolveUsername(const QString &stationCallsign);
+
     // Returns the QLog dxcc group ("CW", "PHONE", "DIGITAL") for the given
     // LoTW generic mode group name, or an empty string for specific mode names.
     static QString lotwGroupNameToDxcc(const QString &lotwMode)

@@ -884,6 +884,39 @@ void LogParam::setLoTWCallbookUsername(const QString &username)
     setParam("services/lotw/callbook/username", username);
 }
 
+QStringList LogParam::getLoTWAccountsList()
+{
+    return getParamStringList("services/lotw/callbook/accounts");
+}
+
+void LogParam::setLoTWAccountsList(const QStringList &list)
+{
+    setParam("services/lotw/callbook/accounts", list);
+}
+
+static QString lotwAccountCallsignsKey(const QString &username)
+{
+    const QByteArray normalizedUsername = username.trimmed().toLower().toUtf8();
+
+    return QStringLiteral("services/lotw/callbook/accountcallsigns/%1")
+            .arg(QString::fromLatin1(normalizedUsername.toHex()));
+}
+
+QStringList LogParam::getLoTWAccountCallsigns(const QString &username)
+{
+    return getParamStringList(lotwAccountCallsignsKey(username));
+}
+
+void LogParam::setLoTWAccountCallsigns(const QString &username, const QStringList &callsigns)
+{
+    setParam(lotwAccountCallsignsKey(username), callsigns);
+}
+
+void LogParam::removeLoTWAccountCallsigns()
+{
+    removeParamGroup("services/lotw/callbook/accountcallsigns/");
+}
+
 QString LogParam::getLoTWTQSLPath(const QString &defaultPath)
 {
     return getParam("services/lotw/callbook/tqsl", defaultPath).toString().trimmed();
