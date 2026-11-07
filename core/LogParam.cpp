@@ -854,6 +854,16 @@ void LogParam::setHRDLogLogbookReqCallsign(const QString &callsign)
     setParam("services/hrdlog/logbook/regcallsign", callsign);
 }
 
+QStringList LogParam::getHRDLogCallsignsList()
+{
+    return getParamStringList("services/hrdlog/logbook/callsigns");
+}
+
+void LogParam::setHRDLogCallsignsList(const QStringList &list)
+{
+    setParam("services/hrdlog/logbook/callsigns", list);
+}
+
 bool LogParam::getHRDLogOnAir()
 {
     return getParam("services/hrdlog/logbook/onair", false).toBool();

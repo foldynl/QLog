@@ -7,6 +7,7 @@
 #include "core/IBPBeacon.h"
 #include "data/Data.h"
 #include "service/hrdlog/HRDLog.h"
+#include "data/StationProfile.h"
 #include "data/BandmapGuide.h"
 #include "data/BandPlan.h"
 
@@ -444,7 +445,8 @@ void RigWidget::sendOnAirState()
 
     if ( rigOnline && HRDLogBase::getOnAirEnabled() )
     {
-        hrdlog->sendOnAir(lastSeenFreq, lastSeenMode);
+        hrdlog->sendOnAir(lastSeenFreq, lastSeenMode,
+                          StationProfilesManager::instance()->getCurProfile1().callsign);
     }
 }
 
