@@ -1178,6 +1178,15 @@ void LogFormat::runDXCCCreditImport()
     emit QSLMergeFinished(stats);
 }
 
+void LogFormat::setQSLImportStationCallsigns(const QStringList &callsigns)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsigns;
+
+    qslImportStationCallsigns = callsigns;
+}
+
 void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
 {
     FCT_IDENTIFICATION;
@@ -1317,7 +1326,19 @@ void LogFormat::runQSLImport(QSLFrom fromService, const bool *canceled)
               startTimeStr,
               QString::number(fromService == EQSL ? 3600 : 1800));
 
-        if ( fromService == LOTW || fromService == EQSL )
+        if ( fromService == EQSL && !qslImportStationCallsigns.isEmpty() )
+        {
+            // Callsign-specific eQSL accounts: an account confirms QSOs of all station callsigns
+            // uploaded through it (portable variants; QSOs without station callsign for the default
+            // account). The empty string stands for QSOs without station callsign and operator.
+            QStringList escapedCallsigns;
+            for ( QString callsign : qslImportStationCallsigns )
+                escapedCallsigns << "'" + callsign.trimmed().toUpper().replace('\'', QStringLiteral("''")) + "'";
+
+            baseFilter += QString(" AND upper(COALESCE(NULLIF(TRIM(station_callsign), ''), TRIM(operator), '')) "
+                                  "IN (%1)").arg(escapedCallsigns.join(", "));
+        }
+        else if ( fromService == LOTW || fromService == EQSL )
         {
             QString escapedStationCallsign = stationCallsign;
             escapedStationCallsign.replace('\'', QStringLiteral("''"));

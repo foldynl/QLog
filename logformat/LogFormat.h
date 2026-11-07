@@ -58,6 +58,9 @@ public:
                             unsigned long *errors,
                             QSet<uint> *importedEntities = nullptr);
     void runQSLImport(QSLFrom fromService, const bool *canceled = nullptr);
+    // eQSL: QSL import matches only QSOs of these station callsigns (the empty string stands
+    // for QSOs without station callsign and operator); if not set, My Callsign of the filter is used
+    void setQSLImportStationCallsigns(const QStringList &callsigns);
     void runDXCCCreditImport();
     long runExport();
     long runExport(const QList<QSqlRecord>&);
@@ -168,6 +171,7 @@ private:
                         const QSqlRecord &record,
                         const QString &msg);
     QDate filterStartDate, filterEndDate;
+    QStringList qslImportStationCallsigns;
     QString filterMyCallsign;
     QString filterMyGridsquare;
     QStringList filterSentPaperQSL;
