@@ -113,6 +113,76 @@ Build containers are removed on success, failure, or interruption. The small
 Fedora/Ubuntu base images remain in the selected engine's cache because
 subsequent builds reuse them.
 
+## Local unit tests
+
+Run the unit tests explicitly from the repository root:
+
+```bash
+./packaging/tests.sh
+```
+
+The script reads `UBUNTU_VERSIONS` from [build-all.conf](build-all.conf), which
+currently selects Ubuntu 22.04, 24.04, and 26.04. For each release it runs the
+existing `tests/tests.pro` suite with Qt 5, then Qt 6. All combinations run
+sequentially in separate temporary containers. An empty `UBUNTU_VERSIONS` array
+skips the tests and reports that no Ubuntu versions are configured.
+
+Select an Ubuntu release, a Qt version, or both using positional arguments:
+
+```bash
+./packaging/tests.sh 24.04 qt6
+./packaging/tests.sh 24.04
+./packaging/tests.sh qt6
+```
+
+The Ubuntu release must be listed in `UBUNTU_VERSIONS`. Omitting it selects all
+configured Ubuntu releases; omitting the Qt argument selects both Qt 5 and Qt 6.
+
+Podman is the default container engine. Use Docker or limit compilation
+parallelism with:
+
+```bash
+CONTAINER_ENGINE=docker ./packaging/tests.sh
+JOBS=4 ./packaging/tests.sh
+```
+
+All test containers use `LANG=C.UTF-8` and `LC_ALL=C.UTF-8` for consistent UTF-8
+encoding across Qt 5 and Qt 6. Dependencies are installed inside each container.
+The checkout is mounted read-only. A temporary source copy preserves working-tree
+edits and excludes
+build artifacts using `.gitignore` rules, so old generated files cannot mix
+Qt versions. Tests are built in a separate temporary `build/` directory under
+the invoking user's UID and GID. Compilation uses `make -j"$(nproc)"` unless
+`JOBS` overrides the CPU count, followed by `make check`. Tests use
+`QT_QPA_PLATFORM=offscreen`; set
+`QLOG_RUN_ADI_IMPORT_BENCHMARK=1` to include the optional ADI import benchmark.
+
+A failure stops the script immediately; no further combinations are started.
+The final summary lists each attempted combination as `PASS` or `FAIL`, followed
+by a green success message or a yellow failure message in a terminal. The counts
+refer to attempted combinations. Redirected output contains no color codes.
+On failure, the final line identifies the Ubuntu/Qt combination and phase:
+
+```text
+FAILED: Ubuntu 22.04 / Qt6; phase: compilation.
+```
+
+Phases distinguish package-list updates, dependency installation, source/build
+preparation, qmake configuration, compilation, and unit tests. Container startup
+or execution failures that prevent phase reporting include the container exit
+status instead.
+
+With the default three Ubuntu releases, a successful run ends with:
+
+```text
+RESULT: All unit tests passed (6/6).
+```
+
+The exit status is `0` when every combination passes or the configured Ubuntu
+list is empty, and `1` if any combination fails. Interruptions return a nonzero
+status. Use `--help` to print usage information without running tests.
+Unit tests are separate from `build-all.sh` and do not build package artifacts.
+
 ## Windows
 
 The native MSVC and Qt build scripts are in `windows/`. Adjust their tool and
