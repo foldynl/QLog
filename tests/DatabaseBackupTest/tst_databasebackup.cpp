@@ -137,10 +137,15 @@ void DatabaseBackupTest::createLog()
 
 void DatabaseBackupTest::runBackup(const BackupConfig &config, const QString &snapshotName)
 {
+    bool completed = false;
     DatabaseBackup backup(config, snapshotName);
-    QSignalSpy finished(&backup, &QThread::finished);
+    // Wait behind complete() in the main thread before destroying the backup.
+    connect(&backup, &QThread::finished, &backup, [&completed]()
+    {
+        completed = true;
+    }, Qt::QueuedConnection);
     backup.start();
-    QTRY_COMPARE(finished.count(), 1);
+    QTRY_VERIFY(completed);
 }
 
 QStringList DatabaseBackupTest::snapshots() const
