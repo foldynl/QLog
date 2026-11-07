@@ -202,6 +202,11 @@ public:
     static void setCloudlogAPIEndpoint(const QString &endpoint);
     static uint getCloudlogStationID();
     static void setCloudlogStationID(uint stationID);
+    static uint getCloudlogStationID(const QString &callsign);
+    static uint getCloudlogStationID(const QString &callsign, uint defaultValue);
+    static void setCloudlogStationID(const QString &callsign, uint stationID);
+    static QStringList getCloudlogAPICallsignsList();
+    static void setCloudlogAPICallsignsList(const QStringList &list);
 
     /*********
      * Clublog

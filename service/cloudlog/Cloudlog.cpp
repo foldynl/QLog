@@ -10,6 +10,7 @@
 #include "core/debug.h"
 #include "core/LogParam.h"
 #include "logformat/AdiFormat.h"
+#include "data/Callsign.h"
 
 MODULE_IDENTIFICATION("qlog.service.cloudlog.clublog");
 
@@ -36,6 +37,85 @@ void CloudlogBase::saveLogbookAPIKey(const QString &newKey)
                  getUsername(), newKey);
 }
 
+QString CloudlogBase::getCallsignLogbookAPIKey(const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    return getPassword(SECURE_STORAGE_API_KEY, callsign);
+}
+
+void CloudlogBase::saveCallsignLogbookAPIKey(const QString &newKey, const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    deletePassword(SECURE_STORAGE_API_KEY, callsign);
+
+    if ( !newKey.isEmpty() )
+        savePassword(SECURE_STORAGE_API_KEY, callsign, newKey);
+}
+
+QStringList CloudlogBase::getLogbookAPIAddlCallsigns()
+{
+    FCT_IDENTIFICATION;
+
+    return LogParam::getCloudlogAPICallsignsList();
+}
+
+void CloudlogBase::setLogbookAPIAddlCallsigns(const QStringList &list)
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setCloudlogAPICallsignsList(list);
+}
+
+QString CloudlogBase::resolveAPIKeyCallsign(const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    const QString normalizedCallsign = callsign.trimmed().toUpper();
+
+    if ( normalizedCallsign.isEmpty() )
+        return QString();
+
+    const QStringList &addlCallsigns = getLogbookAPIAddlCallsigns();
+
+    if ( addlCallsigns.contains(normalizedCallsign) )
+        return normalizedCallsign;
+
+    // portable and prefixed callsigns (SQ8BWA/P, SP/SQ8BWA) use the key of the base callsign
+    // unless they have a key of their own
+    const Callsign parsedCallsign(normalizedCallsign);
+
+    if ( parsedCallsign.isValid() && addlCallsigns.contains(parsedCallsign.getBase()) )
+        return parsedCallsign.getBase();
+
+    return QString();
+}
+
+QString CloudlogBase::resolveLogbookAPIKey(const QString &callsign)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << callsign;
+
+    const QString keyCallsign = resolveAPIKeyCallsign(callsign);
+
+    return keyCallsign.isEmpty() ? getLogbookAPIKey() : getCallsignLogbookAPIKey(keyCallsign);
+}
+
+bool CloudlogBase::isLogbookAPIKeyConfigured()
+{
+    FCT_IDENTIFICATION;
+
+    return !getLogbookAPIKey().isEmpty() || !getLogbookAPIAddlCallsigns().isEmpty();
+}
+
 QString CloudlogBase::getAPIEndpoint()
 {
     FCT_IDENTIFICATION;
@@ -55,10 +135,16 @@ void CloudlogBase::registerCredentials()
     // both storage keys belong to the same logical service
     CredentialRegistry::instance().add(SECURE_STORAGE_API_KEY, []()
     {
-        return QList<CredentialDescriptor>
-        {
-            { SECURE_STORAGE_API_KEY, [](){ return getUsername(); } }
-        };
+        QList<CredentialDescriptor> ret;
+
+        ret.append({ SECURE_STORAGE_API_KEY, [](){ return getUsername(); } });
+
+        const QStringList &addlCallsigns = getLogbookAPIAddlCallsigns();
+
+        for ( QString callsign : addlCallsigns ) // do not use reference - the lambda keeps a copy
+            ret.append({ SECURE_STORAGE_API_KEY, [callsign]() { return callsign; } });
+
+        return ret;
     });
 }
 
@@ -102,16 +188,23 @@ void CloudlogUploader::abortRequest()
     }
 }
 
-void CloudlogUploader::sendStationInfoReq()
+void CloudlogUploader::sendStationInfoReq(const QString &callsign)
 {
     FCT_IDENTIFICATION;
 
-    QUrl url(LogParam::getCloudlogAPIEndpoint() + "/api/station_info/" + getLogbookAPIKey());
+    qCDebug(function_parameters) << callsign;
+
+    // Station IDs belong to the account of the API key, so the list is always replaced
+    stationInfoCallsign = callsign.trimmed().toUpper();
+    availableStationIDs.clear();
+
+    QUrl url(LogParam::getCloudlogAPIEndpoint() + "/api/station_info/" + resolveLogbookAPIKey(stationInfoCallsign));
     QNetworkRequest request(url);
 
     //qCDebug(runtime) << url;
     QNetworkReply *reply = getNetworkAccessManager()->get(request); // do not use currentReply
     reply->setProperty("messageType", QVariant("getStationID"));
+    reply->setProperty("callsign", stationInfoCallsign);
 }
 
 void CloudlogUploader::uploadContact(const QSqlRecord &record, uint stationID)
@@ -120,11 +213,19 @@ void CloudlogUploader::uploadContact(const QSqlRecord &record, uint stationID)
 
     const QByteArray &data = generateADIF({record});
     cancelUpload = false;
-    uploadAdif(data, stationID);
+
+    // based on LoTW source code and ADIF spec - priority STATION_CALLSIGN, OPERATOR
+    QString stationCallsign = record.value("station_callsign").toString();
+    if ( stationCallsign.isEmpty() )
+        stationCallsign = record.value("operator").toString();
+
+    qCDebug(runtime) << "Using station Callsign" << stationCallsign;
+
+    uploadAdif(data, stationID, resolveLogbookAPIKey(stationCallsign));
     currentReply->setProperty("contactID", record.value("id"));
 }
 
-void CloudlogUploader::uploadAdif(const QByteArray &data, uint stationID)
+void CloudlogUploader::uploadAdif(const QByteArray &data, uint stationID, const QString &apiKey)
 {
     FCT_IDENTIFICATION;
 
@@ -134,13 +235,15 @@ void CloudlogUploader::uploadAdif(const QByteArray &data, uint stationID)
     request.setRawHeader("Accept", "application/json");
 
     QJsonObject json;
-    json["key"] = getLogbookAPIKey();
     json["station_profile_id"] = (qint64)stationID;
     json["type"] = "adif";
     json["string"] = QString::fromUtf8(data);
 
+    // log the request without the API key
+    qCDebug(runtime) << "Request Json:" << QJsonDocument(json).toJson();
+
+    json["key"] = apiKey;
     QJsonDocument doc(json);
-    qCDebug(runtime) << "Request Json:" << doc.toJson();
 
     currentReply = getNetworkAccessManager()->post(request, doc.toJson());
     currentReply->setProperty("messageType", QVariant("uploadADIF"));
@@ -260,7 +363,10 @@ void CloudlogUploader::processReply(QNetworkReply *reply)
     /*************/
     else if ( messageType == "getStationID" )
     {
-        if ( replyStatusCode == 200 )
+        // ignore a list requested for a callsign that is no longer selected
+        if ( reply->property("callsign").toString() != stationInfoCallsign )
+            qCDebug(runtime) << "Ignoring Station IDs for" << reply->property("callsign").toString();
+        else if ( replyStatusCode == 200 )
         {
             QJsonDocument doc = QJsonDocument::fromJson(response);
 
@@ -274,6 +380,12 @@ void CloudlogUploader::processReply(QNetworkReply *reply)
                         availableStationIDs.insert(profile.station_id, profile);
                     }
             }
+            emit stationIDsUpdated();
+        }
+        else
+        {
+            // the list was cleared when requested - let the dialog show that the IDs are unknown
+            qCWarning(runtime) << "Cannot get Station IDs, HTTP Code" << replyStatusCode;
             emit stationIDsUpdated();
         }
     }

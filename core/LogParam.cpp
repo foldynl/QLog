@@ -804,6 +804,51 @@ void LogParam::setCloudlogStationID(uint stationID)
     setParam("services/cloudlog/logbook/stationid", stationID);
 }
 
+static QString cloudlogStationIDKey(const QString &callsign)
+{
+    const QByteArray normalizedCall = callsign.trimmed().toUpper().toUtf8();
+
+    return QStringLiteral("services/cloudlog/logbook/stationid/%1")
+            .arg(QString::fromLatin1(normalizedCall.toHex()));
+}
+
+uint LogParam::getCloudlogStationID(const QString &callsign)
+{
+    // the global value is used for callsigns that have no Station ID of their own yet
+    return getCloudlogStationID(callsign, getCloudlogStationID());
+}
+
+uint LogParam::getCloudlogStationID(const QString &callsign, uint defaultValue)
+{
+    if ( callsign.trimmed().isEmpty() )
+        return getCloudlogStationID();
+
+    const QVariant value = getParam(cloudlogStationIDKey(callsign));
+
+    return value.isValid() ? value.toUInt() : defaultValue;
+}
+
+void LogParam::setCloudlogStationID(const QString &callsign, uint stationID)
+{
+    if ( callsign.trimmed().isEmpty() )
+    {
+        setCloudlogStationID(stationID);
+        return;
+    }
+
+    setParam(cloudlogStationIDKey(callsign), stationID);
+}
+
+QStringList LogParam::getCloudlogAPICallsignsList()
+{
+    return getParamStringList("services/cloudlog/logbook/apicallsigns");
+}
+
+void LogParam::setCloudlogAPICallsignsList(const QStringList &list)
+{
+    setParam("services/cloudlog/logbook/apicallsigns", list);
+}
+
 QString LogParam::getClublogLogbookReqEmail()
 {
     return getParam("services/clublog/logbook/regemail").toString().trimmed();
