@@ -1,9 +1,9 @@
 name: CI Linux
 
 on:
-  push:
-    branches:
-      - 'testing_*'
+#  push:
+#    branches:
+#      - 'testing_*'
   pull_request:
     branches:
       - 'testing_*'

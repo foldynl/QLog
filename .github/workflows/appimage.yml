@@ -1,9 +1,9 @@
 name: AppImage
 
 on:
-  push:
-    branches:
-      - master
+#  push:
+#    branches:
+#      - master
   workflow_dispatch:
 
 concurrency:
