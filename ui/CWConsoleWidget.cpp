@@ -419,7 +419,7 @@ void CWConsoleWidget::haltButtonPressed()
 {
     FCT_IDENTIFICATION;
 
-    ui->macroButton1->stop();
+    stopRepeateButtons();
 
     if ( !ui->haltButton->isEnabled() )
         return;
