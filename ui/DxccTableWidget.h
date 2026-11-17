@@ -19,6 +19,9 @@ public slots:
     void setDxCallsign(const QString &dxCallsign,
                        const Band &highlightedBand,
                        bool highlightSatellite = false);
+    void setGrid(const QString &grid,
+                 const Band &highlightedBand,
+                 bool highlightSatellite = false);
 
 private:
     void updateDxTable(const QString &condition,

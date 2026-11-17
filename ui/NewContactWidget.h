@@ -334,6 +334,7 @@ private:
     void setDxccInfo(const QString &callsign);
     bool isSatelliteQSO() const;
     void refreshDXStatTables();
+    void refreshGridStatTable();
     void refreshDxccFlag();
     QList<QLineEdit *> callbookQueryFields() const;
     void setCallbookQueryField(QLineEdit *field, const QString &value);

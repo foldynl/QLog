@@ -599,6 +599,21 @@ void NewContactWidget::refreshDXStatTables()
     ui->stationTableWidget->setDxCallsign(ui->callsignEdit->text(),
                                           highlightedBand,
                                           satellite);
+    refreshGridStatTable();
+}
+
+void NewContactWidget::refreshGridStatTable()
+{
+    FCT_IDENTIFICATION;
+
+    const bool satellite = isSatelliteQSO();
+    const Band highlightedBand = satellite ? Band() : bandTX;
+    const QString square = uiDynamic->gridEdit->text().left(4).toUpper();
+
+    ui->gridTableLabel->setText(square.size() == 4
+                                ? tr("<b>Grid Statistics</b> (%1)").arg(square)
+                                : tr("<b>Grid Statistics</b>"));
+    ui->gridTableWidget->setGrid(square, highlightedBand, satellite);
 }
 
 void NewContactWidget::setDxccInfo(const QString &callsign)
@@ -1307,6 +1322,7 @@ void NewContactWidget::gridChanged()
     }
 
     updateCoordinates(newGrid.getLatitude(), newGrid.getLongitude(), COORD_GRID);
+    refreshGridStatTable();
 }
 
 QList<QLineEdit *> NewContactWidget::callbookQueryFields() const
@@ -1378,6 +1394,8 @@ void NewContactWidget::resetContact()
     uiDynamic->wwffEdit->clear();
     ui->dxccTableWidget->clear();
     ui->stationTableWidget->clear();
+    ui->gridTableWidget->clear();
+    ui->gridTableLabel->setText(tr("<b>Grid Statistics</b>"));
     ui->dxccStatus->clear();
     ui->flagView->setPixmap(QPixmap());
     uiDynamic->ageEdit->clear();

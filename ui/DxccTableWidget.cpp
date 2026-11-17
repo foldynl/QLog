@@ -9,6 +9,7 @@
 #include "core/debug.h"
 #include "data/StationProfile.h"
 #include "data/BandPlan.h"
+#include <QRegularExpression>
 
 MODULE_IDENTIFICATION("qlog.ui.dxcctablewidget");
 
@@ -148,4 +149,31 @@ void DxccTableWidget::setDxcc(int dxcc,
         updateDxTable("c.dxcc = %1", dxcc, highlightedBand, highlightSatellite);
     else
         clear();
+}
+
+void DxccTableWidget::setGrid(const QString &grid,
+                              const Band &highlightedBand,
+                              bool highlightSatellite)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << grid;
+
+    // Statistics are computed for the 4-character Maidenhead square (e.g. JN70)
+    static const QRegularExpression squareRE(QStringLiteral("^[A-R]{2}[0-9]{2}$"));
+    const QString square = grid.left(4).toUpper();
+
+    if ( !squareRE.match(square).hasMatch() )
+    {
+        clear();
+        return;
+    }
+
+    // QSO counts for the square if its gridsquare starts with it
+    // or if the square is listed in VUCC_GRIDS (grid-line / grid-corner QSOs)
+    updateDxTable("(SUBSTR(UPPER(c.gridsquare), 1, 4) = '%1'"
+                  " OR INSTR(UPPER(COALESCE(c.vucc_grids, '')), '%1') > 0)",
+                  square,
+                  highlightedBand,
+                  highlightSatellite);
 }
