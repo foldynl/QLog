@@ -604,6 +604,8 @@ void NewContactWidget::refreshDXStatTables()
 
 void NewContactWidget::refreshGridStatTable()
 {
+    FCT_IDENTIFICATION;
+
     const bool satellite = isSatelliteQSO();
     const Band highlightedBand = satellite ? Band() : bandTX;
     const QString square = uiDynamic->gridEdit->text().left(4).toUpper();
