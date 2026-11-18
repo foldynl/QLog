@@ -802,6 +802,33 @@
     });
 
     var maidenheadConfWorked = L.maidenheadConfWorked({color : 'rgba(255, 0, 0, 0.5)'}).addTo(map);
+
+    // Worked/confirmed squares of the current band. The colors are rendered by
+    // maidenheadConfWorked; this empty layer only switches them on and off.
+    var bandGridsConfirmed = [];
+    var bandGridsWorked = [];
+    var gridStatusLayer = L.layerGroup();
+
+    function applyBandGridStatus() {
+      const visible = map.hasLayer(gridStatusLayer);
+      grids_confirmed = visible ? bandGridsConfirmed : [];
+      grids_worked = visible ? bandGridsWorked : [];
+      maidenheadConfWorked.redraw();
+    }
+
+    function setBandGridStatus(confirmed, worked) {
+      bandGridsConfirmed = Array.isArray(confirmed) ? confirmed : [];
+      bandGridsWorked = Array.isArray(worked) ? worked : [];
+      applyBandGridStatus();
+    }
+
+    gridStatusLayer.on('add', function() {
+      // the squares are drawn by the Grid layer, so it must be visible as well
+      if (!map.hasLayer(maidenheadConfWorked))
+        map.addLayer(maidenheadConfWorked);
+      applyBandGridStatus();
+    });
+    gridStatusLayer.on('remove', applyBandGridStatus);
     var grayline = L.terminator()
 
     function setTerminatorTheme(isDark) {

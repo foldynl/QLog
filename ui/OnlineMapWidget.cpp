@@ -6,6 +6,10 @@
 #include <QVector3D>
 #include <QtMath>
 #include <QFile>
+#include <QHash>
+#include <QRegularExpression>
+#include <QSqlQuery>
+#include <QSqlError>
 #include "OnlineMapWidget.h"
 #include "core/debug.h"
 #include "data/Gridsquare.h"
@@ -35,6 +39,7 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
 
     mapController->attach(this,
                           MapLayer::Grid
+                          | MapLayer::GridStatus
                           | MapLayer::Grayline
                           | MapLayer::Aurora
                           | MapLayer::Muf
@@ -62,6 +67,8 @@ OnlineMapWidget::OnlineMapWidget(QWidget *parent):
     {
         if ( key == QLatin1String("heardMeLayer") )
             emit heardMeLayerVisibilityChanged(visible);
+        else if ( key == QLatin1String("gridStatusLayer") && visible )
+            refreshGridStatus();
     });
 }
 
@@ -190,6 +197,109 @@ void OnlineMapWidget::setCurrentBand(const QString &band)
     FCT_IDENTIFICATION;
 
     mapController->setCurrentBand(band);
+
+    // called on every rig frequency change - query the log only when the band changes
+    if ( band == gridStatusBand )
+        return;
+
+    gridStatusBand = band;
+    refreshGridStatus();
+}
+
+bool OnlineMapWidget::isGridStatusLayerVisible() const
+{
+    FCT_IDENTIFICATION;
+
+    const QString key = QStringLiteral("gridStatusLayer");
+    const QStringList states = LogParam::getMapLayerStates(QStringLiteral("onlinemap"));
+    return states.contains(key)
+           && LogParam::getMapLayerState(QStringLiteral("onlinemap"), key);
+}
+
+void OnlineMapWidget::refreshGridStatus()
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << gridStatusBand;
+
+    QStringList confirmedGrids;
+    QStringList workedGrids;
+
+    // The layer is off - nothing to show; data are loaded again when it is enabled
+    if ( gridStatusBand.isEmpty() || !isGridStatusLayerVisible() )
+    {
+        mapController->setBandGridStatus(confirmedGrids, workedGrids);
+        return;
+    }
+
+    // Same rules as the DXCC statistics: satellite QSOs are not counted on the band,
+    // only QSOs from the current station profile's DXCC are used
+    QString stmt(QLatin1String("SELECT SUBSTR(UPPER(gridsquare), 1, 4), UPPER(vucc_grids), "
+                               "       MAX(CASE WHEN eqsl_qsl_rcvd = 'Y' OR lotw_qsl_rcvd = 'Y' OR qsl_rcvd = 'Y' "
+                               "                THEN 1 ELSE 0 END) "
+                               "FROM contacts "
+                               "WHERE band = :band "
+                               "      AND UPPER(COALESCE(prop_mode, '')) <> 'SAT' "
+                               "      AND (gridsquare IS NOT NULL OR vucc_grids IS NOT NULL) "));
+
+    // StationProfile::operator!= is not const
+    StationProfile profile = StationProfilesManager::instance()->getCurProfile1();
+    const bool filterDxcc = ( profile != StationProfile() );
+
+    if ( filterDxcc )
+        stmt.append(QLatin1String(" AND my_dxcc = :mydxcc "));
+
+    stmt.append(QLatin1String("GROUP BY 1, 2"));
+
+    QSqlQuery query;
+
+    if ( !query.prepare(stmt) )
+    {
+        qCWarning(runtime) << "Cannot prepare grid status query:" << query.lastError();
+        return;
+    }
+
+    query.bindValue(":band", gridStatusBand);
+    if ( filterDxcc )
+        query.bindValue(":mydxcc", profile.dxcc);
+
+    if ( !query.exec() )
+    {
+        qCWarning(runtime) << "Cannot get grid status:" << query.lastError();
+        return;
+    }
+
+    static const QRegularExpression squareRE(QStringLiteral("^[A-R]{2}[0-9]{2}$"));
+    QHash<QString, bool> squares; // square -> confirmed
+
+    auto addSquare = [&squares](const QString &square, bool confirmed)
+    {
+        if ( !squareRE.match(square).hasMatch() )
+            return;
+
+        bool &squareConfirmed = squares[square];
+        squareConfirmed = squareConfirmed || confirmed;
+    };
+
+    while ( query.next() )
+    {
+        const bool confirmed = query.value(2).toInt() > 0;
+
+        addSquare(query.value(0).toString(), confirmed);
+
+        // VUCC_GRIDS holds the squares of grid-line/grid-corner QSOs (empty items fail the check)
+        const QStringList vuccGrids = query.value(1).toString().split(',');
+        for ( const QString &vuccGrid : vuccGrids )
+            addSquare(vuccGrid.trimmed().left(4), confirmed);
+    }
+
+    for ( auto it = squares.constBegin(); it != squares.constEnd(); ++it )
+        ( it.value() ? confirmedGrids : workedGrids ) << it.key();
+
+    qCDebug(runtime) << "Band" << gridStatusBand << "confirmed" << confirmedGrids.size()
+                     << "worked" << workedGrids.size();
+
+    mapController->setBandGridStatus(confirmedGrids, workedGrids);
 }
 
 void OnlineMapWidget::antPositionChanged(double in_azimuth, double in_elevation)

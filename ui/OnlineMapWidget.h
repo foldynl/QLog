@@ -40,6 +40,7 @@ public slots:
     void auroraDataUpdate();
     void mufDataUpdate();
     void setCurrentBand(const QString &band);
+    void refreshGridStatus();
     void setIBPBand(VFOID, double, double, double);
     void setAntennaTarget(double azimuth);
     void antPositionChanged(double in_azimuth, double in_elevation);
@@ -67,6 +68,9 @@ private:
     PropConditions *prop_cond;
     double lastSeenAzimuth, lastSeenElevation;
     bool isRotConnected;
+    QString gridStatusBand;
+
+    bool isGridStatusLayerVisible() const;
 };
 
 #endif // QLOG_UI_ONLINEMAPWIDGET_H

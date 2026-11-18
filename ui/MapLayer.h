@@ -17,7 +17,8 @@ public:
         Chat = 0x0040,
         Wsjtx = 0x0080,
         Path = 0x0100,
-        HeardMe = 0x0200
+        HeardMe = 0x0200,
+        GridStatus = 0x0400
     };
     Q_DECLARE_FLAGS(Layers, Layer)
 };

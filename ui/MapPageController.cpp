@@ -380,6 +380,16 @@ void MapPageController::redrawGridLayer()
     runJavaScript(QLatin1String("maidenheadConfWorked.redraw();"));
 }
 
+void MapPageController::setBandGridStatus(const QStringList &confirmedGrids,
+                                          const QStringList &workedGrids)
+{
+    FCT_IDENTIFICATION;
+
+    runJavaScript(QStringLiteral("setBandGridStatus(%1, %2);")
+                  .arg(jsonArray(stringArray(confirmedGrids)),
+                       jsonArray(stringArray(workedGrids))));
+}
+
 void MapPageController::invalidateSize()
 {
     FCT_IDENTIFICATION;
@@ -518,6 +528,8 @@ QString MapPageController::generateLayerControlJS(MapLayer::Layers layers)
     appendOption(MapLayer::Chat, tr("Chat"), QStringLiteral("chatStationsLayer"));
 
     appendOption(MapLayer::Grid, tr("Grid"), QStringLiteral("maidenheadConfWorked"));
+
+    appendOption(MapLayer::GridStatus, tr("Grid - Worked/Confirmed"), QStringLiteral("gridStatusLayer"));
 
     appendOption(MapLayer::Grayline, tr("Gray-Line"), QStringLiteral("grayline"));
 

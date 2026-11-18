@@ -267,6 +267,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(StationProfilesManager::instance(), &StationProfilesManager::profileChanged,
             ui->onlineMapWidget, &OnlineMapWidget::flyToMyQTH);
     connect(StationProfilesManager::instance(), &StationProfilesManager::profileChanged,
+            ui->onlineMapWidget, &OnlineMapWidget::refreshGridStatus);
+    connect(StationProfilesManager::instance(), &StationProfilesManager::profileChanged,
             ui->chatWidget, &ChatWidget::reloadStationProfile);
     connect(StationProfilesManager::instance(), &StationProfilesManager::profileChanged,
             ui->clockWidget, &ClockWidget::updateSun);
@@ -422,6 +424,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(ui->logbookWidget, &LogbookWidget::deletedEntities, Data::instance(), &Data::invalidateSetOfDXCCStatusCache); // must be the first delete signal
     connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, stats, &StatisticsWidget::refreshWidget);
+    connect(ui->logbookWidget, &LogbookWidget::logbookUpdated, ui->onlineMapWidget, &OnlineMapWidget::refreshGridStatus);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, Data::instance(), &Data::clearDXCCStatusCache);
     connect(ui->logbookWidget, &LogbookWidget::contactUpdated, &networknotification, &NetworkNotification::QSOUpdated);
     connect(ui->logbookWidget, &LogbookWidget::clublogContactUpdated, clublogRT, &ClubLogUploader::updateQSOImmediately);
@@ -447,6 +450,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->wsjtxWidget, &WsjtxWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->dxWidget, &DxWidget::updateSpotsStatusWhenQSOAdded);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->dxWidget, &DxWidget::setLastQSO);
+    connect(ui->newContactWidget, &NewContactWidget::contactAdded, ui->onlineMapWidget, &OnlineMapWidget::refreshGridStatus);
     connect(ui->newContactWidget, &NewContactWidget::contactAdded, clublogRT, &ClubLogUploader::insertQSOImmediately);
     connect(ui->newContactWidget, &NewContactWidget::contestStarted, this, &MainWindow::startContest);
     connect(ui->newContactWidget, &NewContactWidget::newTarget, ui->mapWidget, &MapWidget::setTarget);
