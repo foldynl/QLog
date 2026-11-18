@@ -117,6 +117,8 @@ public:
                        const QStringList &workedGrids);
     void clearGridLayers();
     void redrawGridLayer();
+    void setBandGridStatus(const QStringList &confirmedGrids,
+                           const QStringList &workedGrids);
     void invalidateSize();
     void panToBoundsLongitudeCenter(const QList<MapCoordinate> &coordinates);
 
