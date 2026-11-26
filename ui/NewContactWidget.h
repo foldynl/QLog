@@ -15,6 +15,7 @@
 #include <QToolButton>
 
 #include "data/DxSpot.h"
+#include "data/CurrentContact.h"
 #include "rig/Rig.h"
 #include "core/CallbookManager.h"
 #include "service/QSLManager.h"
@@ -239,6 +240,7 @@ signals:
                         const QDateTime date);
     void rigProfileChanged();
     void callsignChanged(const QString& callsign);
+    void currentContactChanged(const CurrentContact &contact);
     void stationCallsignChanged(const QString &callsign);
     void contactReset();
     void txBandChanged(const QString &bandName);
@@ -349,6 +351,7 @@ private:
     void updateRXBand(const Band &band);
     void updateCoordinates(double lat, double lon, CoordPrecision prec);
     void clearCoordinates();
+    void notifyCurrentContact(const CurrentContact &contact);
     void updateDxccStatus();
     void updatePartnerLocTime();
     void setDefaultReport();
@@ -454,6 +457,7 @@ private:
     NewContactEditLine *srxStringLinkSourceWidget = nullptr;
     bool srxStringLinkFlexible = false;
     bool srxStringEditedByUser = false;
+    CurrentContact lastNotifiedContact;
 };
 
 #endif // QLOG_UI_NEWCONTACTWIDGET_H

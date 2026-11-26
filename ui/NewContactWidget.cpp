@@ -569,6 +569,8 @@ void NewContactWidget::setDxccInfo(const DxccEntity &curr)
         ui->dxccStatus->clear();
 
         emit newTarget(qQNaN(), qQNaN());
+        if ( callsign.trimmed().isEmpty() )
+            notifyCurrentContact(CurrentContact());
         updateCountyCompleter(0);
     }
 }
@@ -1413,6 +1415,7 @@ void NewContactWidget::resetContact()
 
     emit filterCallsign(QString());
     emit newTarget(qQNaN(), qQNaN());
+    notifyCurrentContact(CurrentContact());
     emit contactReset();
 }
 
@@ -2740,7 +2743,45 @@ void NewContactWidget::updateCoordinates(double lat, double lon, CoordPrecision 
         updatePartnerLocTime();
 
         emit newTarget(lat, lon);
+
+        const QString activeCall = callsign.trimmed().toUpper();
+        if ( !activeCall.isEmpty() )
+        {
+            CurrentContact contact;
+            contact.callsign = activeCall;
+            contact.grid = uiDynamic->gridEdit->text().trimmed().toUpper();
+            contact.lat = lat;
+            contact.lon = lon;
+            contact.azimuth = bearing;
+            contact.lpAzimuth = LPBearing;
+            contact.distance = distance;
+            notifyCurrentContact(contact);
+        }
     }
+    else if ( qIsFinite(lat) && qIsFinite(lon) )
+    {
+        const QString activeCall = callsign.trimmed().toUpper();
+        if ( !activeCall.isEmpty() )
+        {
+            CurrentContact contact;
+            contact.callsign = activeCall;
+            contact.grid = uiDynamic->gridEdit->text().trimmed().toUpper();
+            contact.lat = lat;
+            contact.lon = lon;
+            notifyCurrentContact(contact);
+        }
+    }
+}
+
+void NewContactWidget::notifyCurrentContact(const CurrentContact &contact)
+{
+    FCT_IDENTIFICATION;
+
+    if ( contact == lastNotifiedContact )
+        return;
+
+    lastNotifiedContact = contact;
+    emit currentContactChanged(contact);
 }
 
 void NewContactWidget::clearCoordinates()

@@ -614,7 +614,8 @@ SettingsDialog::SettingsDialog(MainWindow *parent) :
     {
         ui->wsjtForwardEdit, ui->notifQSOEdit,
         ui->notifDXSpotsEdit, ui->notifWSJTXCQSpotsEdit,
-        ui->notifSpotAlertEdit, ui->notifRigEdit
+        ui->notifSpotAlertEdit, ui->notifRigEdit,
+        ui->notifCurrentContactEdit
     };
 
     for ( QLineEdit *edit : hostsPortEdits )
@@ -3118,6 +3119,7 @@ void SettingsDialog::readSettings()
     ui->notifWSJTXCQSpotsEdit->setText(NetworkNotification::getNotifWSJTXCQSpotAddrs());
     ui->notifSpotAlertEdit->setText(NetworkNotification::getNotifSpotAlertAddrs());
     ui->notifRigEdit->setText(NetworkNotification::getNotifRigStateAddrs());
+    ui->notifCurrentContactEdit->setText(NetworkNotification::getNotifCurrentContactAddrs());
 
     /*******/
     /* GUI */
@@ -3296,6 +3298,7 @@ void SettingsDialog::writeSettings()
     NetworkNotification::saveNotifWSJTXCQSpotAddrs(ui->notifWSJTXCQSpotsEdit->text());
     NetworkNotification::saveNotifSpotAlertAddrs(ui->notifSpotAlertEdit->text());
     NetworkNotification::saveNotifRigStateAddrs(ui->notifRigEdit->text());
+    NetworkNotification::saveNotifCurrentContactAddrs(ui->notifCurrentContactEdit->text());
 
     /*******/
     /* GUI */

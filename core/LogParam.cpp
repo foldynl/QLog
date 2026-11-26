@@ -990,6 +990,16 @@ void LogParam::setNetworkNotifRigStateAddrs(const QString &addrs)
     setParam("network/notif/rig/state/addrs", addrs);
 }
 
+QString LogParam::getNetworkNotifCurrentContactAddrs()
+{
+    return getParam("network/notif/currentcontact/addrs").toString();
+}
+
+void LogParam::setNetworkNotifCurrentContactAddrs(const QString &addrs)
+{
+    setParam("network/notif/currentcontact/addrs", addrs);
+}
+
 int LogParam::getNetworkFldigiUDPListenerPort(int defaultPort)
 {
     return getParam("network/listener/fldigi/udp/port", defaultPort).toInt();

@@ -366,6 +366,7 @@ HEADERS += \
         data/CWKeyProfile.h \
         data/CWShortcutProfile.h \
         data/Callsign.h \
+        data/CurrentContact.h \
         data/Data.h \
         data/DxServerString.h \
         data/DxSpot.h \

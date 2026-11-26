@@ -1,4 +1,5 @@
 #include <QUuid>
+#include <QtNumeric>
 
 #include "NetworkNotification.h"
 #include "core/debug.h"
@@ -80,6 +81,20 @@ void NetworkNotification::saveNotifRigStateAddrs(const QString &addresses)
     FCT_IDENTIFICATION;
 
      LogParam::setNetworkNotifRigStateAddrs(addresses);
+}
+
+QString NetworkNotification::getNotifCurrentContactAddrs()
+{
+    FCT_IDENTIFICATION;
+
+    return LogParam::getNetworkNotifCurrentContactAddrs();
+}
+
+void NetworkNotification::saveNotifCurrentContactAddrs(const QString &addresses)
+{
+    FCT_IDENTIFICATION;
+
+    LogParam::setNetworkNotifCurrentContactAddrs(addresses);
 }
 
 void NetworkNotification::QSOInserted(const QSqlRecord &record)
@@ -224,6 +239,21 @@ void NetworkNotification::rigStatus(const Rig::Status &status)
     {
         RigStatusNotificationMsg rigStatusMsg(status);
         send(rigStatusMsg.getJson(), destList);
+    }
+}
+
+void NetworkNotification::currentContact(const CurrentContact &contact)
+{
+    FCT_IDENTIFICATION;
+
+    qCDebug(function_parameters) << contact.callsign << contact.grid;
+
+    HostsPortString destList(getNotifCurrentContactAddrs());
+
+    if ( destList.getAddrList().size() > 0 )
+    {
+        CurrentContactNotificationMsg contactMsg(contact);
+        send(contactMsg.getJson(), destList);
     }
 }
 
@@ -785,4 +815,54 @@ RigStatusNotificationMsg::RigStatusNotificationMsg(const Rig::Status &status, QO
 
     msg["msgtype"] = "rigstatus";
     msg["data"] = rigData;
+}
+
+/* Current Contact Message
+ * Example
+ *
+{
+   "appid":"QLog",
+   "data":{
+      "azimuth":92.4,
+      "callsign":"C91RU",
+      "distance":14650.2,
+      "grid":"KG54",
+      "lat":-25.9583,
+      "lon":32.5833,
+      "lp_azimuth":272.4
+   },
+   "logid":"{2046e323-b340-4634-8d52-4e70a4231978}",
+   "msgtype":"currentcontact",
+   "time":1647801358067
+}
+  * Numeric fields are omitted when unavailable (for example when cleared).
+  * More info https://github.com/foldynl/QLog/wiki/Notifications
+  */
+CurrentContactNotificationMsg::CurrentContactNotificationMsg(const CurrentContact &contact,
+                                                             QObject *parent) :
+    GenericNotificationMsg(parent)
+{
+    FCT_IDENTIFICATION;
+
+    QJsonObject contactData;
+    contactData["callsign"] = contact.callsign.trimmed().toUpper();
+    contactData["grid"] = contact.grid.trimmed().toUpper();
+
+    if ( qIsFinite(contact.lat) )
+        contactData["lat"] = contact.lat;
+
+    if ( qIsFinite(contact.lon) )
+        contactData["lon"] = contact.lon;
+
+    if ( qIsFinite(contact.azimuth) )
+        contactData["azimuth"] = contact.azimuth;
+
+    if ( qIsFinite(contact.lpAzimuth) )
+        contactData["lp_azimuth"] = contact.lpAzimuth;
+
+    if ( qIsFinite(contact.distance) )
+        contactData["distance"] = contact.distance;
+
+    msg["msgtype"] = "currentcontact";
+    msg["data"] = contactData;
 }
